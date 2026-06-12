@@ -22,9 +22,9 @@ final class MessageDeletedEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     /// Whether the message was deleted only for the current user
     var deletedForMe: Bool?
     /// Whether the message was hard deleted
-    var hardDelete: Bool
+    var hardDelete: Bool?
     var message: MessageResponse
-    var messageId: String
+    var messageId: String?
     var receivedAt: Date?
     /// The team ID
     var team: String?
@@ -32,7 +32,7 @@ final class MessageDeletedEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     var type: String = "message.deleted"
     var user: UserResponseCommonFields?
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedForMe: Bool? = nil, hardDelete: Bool, message: MessageResponse, messageId: String, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedForMe: Bool? = nil, hardDelete: Bool? = nil, message: MessageResponse, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount

@@ -1,0 +1,105 @@
+{
+    "channel": {
+        "cid": "messaging:D74FA55F-C",
+        "config": {},
+        "created_at": 0,
+        "created_by": null,
+        "custom": {},
+        "disabled": false,
+        "frozen": false,
+        "id": "D74FA55F-C",
+        "members": [
+            {
+                "banned": false,
+                "channel_role": "",
+                "created_at": 1781251500624095046,
+                "custom": {},
+                "notifications_muted": false,
+                "shadow_banned": false,
+                "status": "member",
+                "updated_at": 1781251500624095046,
+                "user": {
+                    "avg_response_time": 277475,
+                    "banned": false,
+                    "blocked_user_ids": [
+                        "chewbacca"
+                    ],
+                    "created_at": 1712223894206412000,
+                    "custom": {
+                        "allowUserToAddToGroup": false,
+                        "birthLand": "Naboo",
+                        "birthland": "Naboo",
+                        "canBeAddedToGroups": true,
+                        "canReceiveMessages": false,
+                        "custom": {
+                            "birthland": "Naboo"
+                        },
+                        "privacy_settings": {
+                            "read_receipts": {
+                                "enabled": false
+                            },
+                            "typing_indicators": {
+                                "enabled": false
+                            }
+                        }
+                    },
+                    "id": "r2-d2",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+                    "language": "en",
+                    "last_active": 1781249373398870836,
+                    "name": "R2-D2",
+                    "online": false,
+                    "role": "user",
+                    "teams": [],
+                    "updated_at": 1780897365845488000
+                },
+                "user_id": "r2-d2"
+            }
+        ],
+        "message_count": 0,
+        "type": "messaging",
+        "updated_at": 0
+    },
+    "channel_id": "D74FA55F-C",
+    "channel_type": "messaging",
+    "cid": "messaging:D74FA55F-C",
+    "created_at": 1781251498435104571,
+    "custom": {},
+    "type": "channel.hidden",
+    "user": {
+        "avg_response_time": 277475,
+        "banned": false,
+        "blocked_user_ids": [
+            "chewbacca"
+        ],
+        "created_at": 1712223894206412000,
+        "custom": {
+            "allowUserToAddToGroup": false,
+            "birthLand": "Naboo",
+            "birthland": "Naboo",
+            "canBeAddedToGroups": true,
+            "canReceiveMessages": false,
+            "custom": {
+                "birthland": "Naboo"
+            },
+            "privacy_settings": {
+                "read_receipts": {
+                    "enabled": false
+                },
+                "typing_indicators": {
+                    "enabled": false
+                }
+            }
+        },
+        "id": "r2-d2",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+        "language": "en",
+        "last_active": 1781249373398870836,
+        "name": "R2-D2",
+        "online": false,
+        "role": "user",
+        "teams": [],
+        "updated_at": 1780897365845488000
+    },
+    "user_id": "r2-d2"
+}

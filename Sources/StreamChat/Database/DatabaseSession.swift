@@ -1026,7 +1026,7 @@ extension DatabaseSession {
                     skipDraftUpdate: false,
                     cache: nil
                 )
-                if dto.hardDelete {
+                if dto.hardDelete == true {
                     savedMessage.isHardDeleted = true
                 } else if dto.deletedForMe == true {
                     savedMessage.deletedForMe = true
@@ -1075,7 +1075,9 @@ extension DatabaseSession {
             if let user = dto.user {
                 try saveUser(payload: user, query: nil, cache: nil)
             }
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
+            if let channel = dto.channel {
+                try saveChannel(payload: channel, query: nil, cache: nil)
+            }
             // Persist the message — the event payload carries the updated
             // `latest_reactions` list which is the source of truth for reactions
             // received over WS.
@@ -1111,7 +1113,9 @@ extension DatabaseSession {
             if let user = dto.user {
                 try saveUser(payload: user, query: nil, cache: nil)
             }
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
+            if let channel = dto.channel {
+                try saveChannel(payload: channel, query: nil, cache: nil)
+            }
             if let cidString = dto.cid,
                let cid = try? ChannelId(cid: cidString),
                let channelDTO = channel(cid: cid),
@@ -1139,7 +1143,9 @@ extension DatabaseSession {
             if let user = dto.user {
                 try saveUser(payload: user, query: nil, cache: nil)
             }
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
+            if let channel = dto.channel {
+                try saveChannel(payload: channel, query: nil, cache: nil)
+            }
             // Save the updated message so its `latest_reactions` reflects the
             // server-side deletion.
             if let messagePayload = dto.message,

@@ -65,6 +65,21 @@ final class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.clearHistory, true)
     }
 
+    func test_ChannelHiddenEvent_syncReplay_decoding() throws {
+        // /chat/sync replays channel.hidden without `clear_history` and with an
+        // empty `channel.config` object.
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelHidden+SyncReplay")
+        let event = try XCTUnwrap(try eventDecoder.decode(from: json).unwrappedEvent as? ChannelHiddenEventDTO)
+        XCTAssertEqual(event.cid, "messaging:D74FA55F-C")
+        XCTAssertNil(event.clearHistory)
+
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let user: UserResponse = .dummy(userId: "r2-d2")
+        try session.saveUser(payload: user)
+        let domainEvent = try XCTUnwrap(event.toDomainEvent(session: session) as? ChannelHiddenEvent)
+        XCTAssertFalse(domainEvent.isHistoryCleared)
+    }
+
     func test_ChannelVisibleEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
         let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ChannelVisibleEventDTO

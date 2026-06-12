@@ -25,7 +25,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
 
                 channelDTO.isHidden = true
 
-                if event.clearHistory {
+                if event.clearHistory == true {
                     channelDTO.truncatedAt = event.createdAt.bridgeDate
                 }
 

@@ -193,7 +193,7 @@ extension ChannelHiddenEventDTO: EventDTO {
         return try? ChannelHiddenEvent(
             cid: channelId,
             user: userDTO.asModel(),
-            isHistoryCleared: clearHistory,
+            isHistoryCleared: clearHistory ?? false,
             createdAt: createdAt
         )
     }

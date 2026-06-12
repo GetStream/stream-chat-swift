@@ -20,14 +20,14 @@ final class MessageUndeletedEventDTO: @unchecked Sendable, Event, Codable, JSONE
     var createdAt: Date
     var custom: [String: RawJSON]
     var message: MessageResponse
-    var messageId: String
+    var messageId: String?
     var receivedAt: Date?
     /// The team ID
     var team: String?
     /// The type of event: "message.undeleted" in this case
     var type: String = "message.undeleted"
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String, receivedAt: Date? = nil, team: String? = nil) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount

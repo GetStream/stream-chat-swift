@@ -17,7 +17,7 @@ final class ChannelHiddenEventDTO: @unchecked Sendable, Event, Codable, JSONEnco
     /// The CID of the channel which was hidden
     var cid: String?
     /// Whether the history was cleared
-    var clearHistory: Bool
+    var clearHistory: Bool?
     /// Date/time of creation
     var createdAt: Date
     var custom: [String: RawJSON]
@@ -28,7 +28,7 @@ final class ChannelHiddenEventDTO: @unchecked Sendable, Event, Codable, JSONEnco
     var type: String = "channel.hidden"
     var user: UserResponseCommonFields?
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, clearHistory: Bool, createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, clearHistory: Bool? = nil, createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

@@ -76,44 +76,44 @@ final class ChannelConfigWithInfo: @unchecked Sendable, Codable, JSONEncodable, 
     }
 
     var allowedFlagReasons: [String]?
-    var automod: ChannelConfigWithInfoAutomod
-    var automodBehavior: ChannelConfigWithInfoAutomodBehavior
+    var automod: ChannelConfigWithInfoAutomod?
+    var automodBehavior: ChannelConfigWithInfoAutomodBehavior?
     var automodThresholds: Thresholds?
     var blocklist: String?
     var blocklistBehavior: ChannelConfigWithInfoBlocklistBehavior?
     var blocklists: [BlockListOptions]?
     var chatPreferences: ChatPreferences?
-    var commands: [CommandPayload]
-    var connectEvents: Bool
-    var countMessages: Bool
-    var createdAt: Date
-    var customEvents: Bool
-    var deliveryEvents: Bool
+    var commands: [CommandPayload]?
+    var connectEvents: Bool?
+    var countMessages: Bool?
+    var createdAt: Date?
+    var customEvents: Bool?
+    var deliveryEvents: Bool?
     var grants: [String: [String]]?
-    var markMessagesPending: Bool
-    var maxMessageLength: Int
-    var mutes: Bool
-    var name: String
+    var markMessagesPending: Bool?
+    var maxMessageLength: Int?
+    var mutes: Bool?
+    var name: String?
     var partitionSize: Int?
     var partitionTtl: String?
-    var polls: Bool
+    var polls: Bool?
     var pushLevel: ChannelConfigWithInfoPushLevel?
-    var pushNotifications: Bool
-    var quotes: Bool
-    var reactions: Bool
-    var readEvents: Bool
-    var reminders: Bool
-    var replies: Bool
-    var search: Bool
-    var sharedLocations: Bool
-    var skipLastMsgUpdateForSystemMsgs: Bool
-    var typingEvents: Bool
-    var updatedAt: Date
-    var uploads: Bool
-    var urlEnrichment: Bool
-    var userMessageReminders: Bool
+    var pushNotifications: Bool?
+    var quotes: Bool?
+    var reactions: Bool?
+    var readEvents: Bool?
+    var reminders: Bool?
+    var replies: Bool?
+    var search: Bool?
+    var sharedLocations: Bool?
+    var skipLastMsgUpdateForSystemMsgs: Bool?
+    var typingEvents: Bool?
+    var updatedAt: Date?
+    var uploads: Bool?
+    var urlEnrichment: Bool?
+    var userMessageReminders: Bool?
 
-    init(allowedFlagReasons: [String]? = nil, automod: ChannelConfigWithInfoAutomod, automodBehavior: ChannelConfigWithInfoAutomodBehavior, automodThresholds: Thresholds? = nil, blocklist: String? = nil, blocklistBehavior: ChannelConfigWithInfoBlocklistBehavior? = nil, blocklists: [BlockListOptions]? = nil, chatPreferences: ChatPreferences? = nil, commands: [CommandPayload], connectEvents: Bool, countMessages: Bool, createdAt: Date, customEvents: Bool, deliveryEvents: Bool, grants: [String: [String]]? = nil, markMessagesPending: Bool, maxMessageLength: Int, mutes: Bool, name: String, partitionSize: Int? = nil, partitionTtl: String? = nil, polls: Bool, pushLevel: ChannelConfigWithInfoPushLevel? = nil, pushNotifications: Bool, quotes: Bool, reactions: Bool, readEvents: Bool, reminders: Bool, replies: Bool, search: Bool, sharedLocations: Bool, skipLastMsgUpdateForSystemMsgs: Bool, typingEvents: Bool, updatedAt: Date, uploads: Bool, urlEnrichment: Bool, userMessageReminders: Bool) {
+    init(allowedFlagReasons: [String]? = nil, automod: ChannelConfigWithInfoAutomod? = nil, automodBehavior: ChannelConfigWithInfoAutomodBehavior? = nil, automodThresholds: Thresholds? = nil, blocklist: String? = nil, blocklistBehavior: ChannelConfigWithInfoBlocklistBehavior? = nil, blocklists: [BlockListOptions]? = nil, chatPreferences: ChatPreferences? = nil, commands: [CommandPayload]? = nil, connectEvents: Bool? = nil, countMessages: Bool? = nil, createdAt: Date? = nil, customEvents: Bool? = nil, deliveryEvents: Bool? = nil, grants: [String: [String]]? = nil, markMessagesPending: Bool? = nil, maxMessageLength: Int? = nil, mutes: Bool? = nil, name: String? = nil, partitionSize: Int? = nil, partitionTtl: String? = nil, polls: Bool? = nil, pushLevel: ChannelConfigWithInfoPushLevel? = nil, pushNotifications: Bool? = nil, quotes: Bool? = nil, reactions: Bool? = nil, readEvents: Bool? = nil, reminders: Bool? = nil, replies: Bool? = nil, search: Bool? = nil, sharedLocations: Bool? = nil, skipLastMsgUpdateForSystemMsgs: Bool? = nil, typingEvents: Bool? = nil, updatedAt: Date? = nil, uploads: Bool? = nil, urlEnrichment: Bool? = nil, userMessageReminders: Bool? = nil) {
         self.allowedFlagReasons = allowedFlagReasons
         self.automod = automod
         self.automodBehavior = automodBehavior

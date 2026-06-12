@@ -147,7 +147,7 @@ class ManualEventHandler: @unchecked Sendable {
             channel: channel,
             message: message,
             createdAt: dto.createdAt,
-            isHardDelete: dto.hardDelete,
+            isHardDelete: dto.hardDelete ?? false,
             deletedForMe: dto.deletedForMe ?? false
         )
     }

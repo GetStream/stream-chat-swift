@@ -22,7 +22,7 @@ final class MessageNewEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     var custom: [String: RawJSON]
     var groupedUnreadChannels: [String: Int]?
     var message: MessageResponse
-    var messageId: String
+    var messageId: String?
     /// The author of the parent message
     var parentAuthor: String?
     var receivedAt: Date?
@@ -38,9 +38,9 @@ final class MessageNewEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     var unreadCount: Int?
     var user: UserResponseCommonFields?
     /// The number of watchers
-    var watcherCount: Int
+    var watcherCount: Int?
 
-    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], groupedUnreadChannels: [String: Int]? = nil, message: MessageResponse, messageId: String, parentAuthor: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadParticipants: [UserResponseCommonFields]? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil, user: UserResponseCommonFields? = nil, watcherCount: Int) {
+    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], groupedUnreadChannels: [String: Int]? = nil, message: MessageResponse, messageId: String? = nil, parentAuthor: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadParticipants: [UserResponseCommonFields]? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil, user: UserResponseCommonFields? = nil, watcherCount: Int? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

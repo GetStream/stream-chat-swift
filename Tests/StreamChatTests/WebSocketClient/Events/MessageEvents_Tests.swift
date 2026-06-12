@@ -43,6 +43,18 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertNil(event?.unreadCount)
     }
 
+    func test_new_syncReplay() throws {
+        // /chat/sync replays stored events without the `message_id` and
+        // `watcher_count` enrichment fields that live WS events carry.
+        let json = XCTestCase.mockData(fromJSONFile: "MessageNew+SyncReplay")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageNewEventDTO
+        XCTAssertEqual(event?.user?.id, "r2-d2")
+        XCTAssertEqual(event?.cid, "messaging:D74FA55F-C")
+        XCTAssertEqual(event?.message.id, "444feb15-b9fb-4e5b-87f2-58b760c673fd")
+        XCTAssertNil(event?.messageId)
+        XCTAssertNil(event?.watcherCount)
+    }
+
     func test_messageNewEventDTO_toDomainEvent_includesUnreadChannelCountsByGroup() throws {
         let unreadChannelCountsByGroup: [String: Int] = [
             "priority": 3,
@@ -105,6 +117,18 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
     }
 
+    func test_messageDeletedEvent_syncReplay() throws {
+        // /chat/sync replays stored events without the `message_id` and
+        // `hard_delete` enrichment fields that live WS events carry.
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted+SyncReplay")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        XCTAssertEqual(event?.user?.id, "r2-d2")
+        XCTAssertEqual(event?.cid, "messaging:D74FA55F-C")
+        XCTAssertEqual(event?.message.id, "1b7d1f28-9b11-4a5d-a49c-52eb5c25b296")
+        XCTAssertNil(event?.messageId)
+        XCTAssertNil(event?.hardDelete)
+    }
+
     func test_messageDeletedEvent_whenNotHardDelete_hardDeleteIsFalse() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
@@ -155,6 +179,18 @@ final class MessageEvents_Tests: XCTestCase {
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageDeletedEvent)
         XCTAssertEqual(domainEvent.message.id, message.id)
+    }
+
+    func test_messageDeletedEvent_syncReplay_toDomainEvent_defaultsToSoftDelete() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted+SyncReplay")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
+
+        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
+
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageDeletedEvent)
+        XCTAssertFalse(domainEvent.isHardDelete)
     }
 
     func test_read() throws {

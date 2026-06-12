@@ -156,6 +156,83 @@ make_user_response_team_fields_optional() {
   done
 }
 
+make_sync_replayed_event_fields_optional() {
+  # INTERIM: /chat/sync replays events stored as the backend's generic event type
+  # where enrichment fields carry `omitempty`, while the spec is generated from the
+  # typed live-WS event structs that mark them required. Replayed events therefore
+  # arrive without `message_id`/`watcher_count`/`hard_delete`/`clear_history`/
+  # reaction `channel`, and one such event throws keyNotFound and fails the whole
+  # SyncResponse decode. Make those fields optional on every event type /sync can
+  # replay (message.*, reaction.*, channel.hidden); channel.*/notification.*
+  # replays do carry `channel`/`member`, so those stay required. Proper fix
+  # belongs upstream (drop the enrichment-only fields from the event schemas'
+  # required lists, or re-enrich replayed events).
+  # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `.
+  local file
+
+  for file in \
+    "$OUTPUT_DIR_CHAT/models/MessageNewEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/MessageUpdatedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/MessageDeletedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/MessageUndeletedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/ReactionUpdatedEventDTO.swift"; do
+    # Property declaration (anchored to end-of-line; `parentMessageId` etc. are not matched).
+    sed -i '' -E 's/^([[:space:]]*)var messageId: String$/\1var messageId: String?/' "$file"
+    # Initializer param (followed by `,` or `)`): add `? = nil` default.
+    sed -i '' -E 's/messageId: String([,)])/messageId: String? = nil\1/' "$file"
+  done
+
+  # Reaction events: replayed without the full `channel` object (reaction.new/
+  # reaction.deleted already generate `messageId` as optional).
+  for file in \
+    "$OUTPUT_DIR_CHAT/models/ReactionNewEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/ReactionUpdatedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/ReactionDeletedEventDTO.swift"; do
+    sed -i '' -E 's/^([[:space:]]*)var channel: ChannelResponse$/\1var channel: ChannelResponse?/' "$file"
+    sed -i '' -E 's/channel: ChannelResponse([,)])/channel: ChannelResponse? = nil\1/' "$file"
+  done
+
+  file="$OUTPUT_DIR_CHAT/models/MessageNewEventDTO.swift"
+  sed -i '' -E 's/^([[:space:]]*)var watcherCount: Int$/\1var watcherCount: Int?/' "$file"
+  sed -i '' -E 's/watcherCount: Int([,)])/watcherCount: Int? = nil\1/' "$file"
+
+  file="$OUTPUT_DIR_CHAT/models/MessageDeletedEventDTO.swift"
+  sed -i '' -E 's/^([[:space:]]*)var hardDelete: Bool$/\1var hardDelete: Bool?/' "$file"
+  sed -i '' -E 's/hardDelete: Bool([,)])/hardDelete: Bool? = nil\1/' "$file"
+
+  file="$OUTPUT_DIR_CHAT/models/ChannelHiddenEventDTO.swift"
+  sed -i '' -E 's/^([[:space:]]*)var clearHistory: Bool$/\1var clearHistory: Bool?/' "$file"
+  sed -i '' -E 's/clearHistory: Bool([,)])/clearHistory: Bool? = nil\1/' "$file"
+}
+
+make_channel_config_with_info_fields_optional() {
+  # INTERIM: channel.hidden sync replays embed the channel with an empty config
+  # (`"config": {}`) because the backend builds the stored event via the legacy
+  # event constructor, so every spec-required config field throws keyNotFound and
+  # the whole SyncResponse decode fails (channel.created/updated replays and all
+  # live events carry the full config). Make every required field optional so the
+  # hollow object decodes; the single consumer (`asChannelConfig`) falls back to
+  # the domain ChannelConfig defaults. Proper fix belongs upstream (store/replay
+  # the full channel for channel.hidden, or drop config from the schema's
+  # required list).
+  # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `.
+  local file="$OUTPUT_DIR_CHAT/models/ChannelConfigWithInfo.swift"
+  local field
+  for field in \
+    automod automodBehavior commands connectEvents countMessages createdAt \
+    customEvents deliveryEvents markMessagesPending maxMessageLength mutes name \
+    polls pushNotifications quotes reactions readEvents reminders replies search \
+    sharedLocations skipLastMsgUpdateForSystemMsgs typingEvents updatedAt uploads \
+    urlEnrichment userMessageReminders; do
+    # Property declaration: append `?` to the type (already-optional lines end
+    # with `?` and are not matched).
+    sed -i '' -E "s/^([[:space:]]*)var ${field}: ([^?]+)\$/\1var ${field}: \2?/" "$file"
+    # Initializer param (followed by `,` or `)`): add `? = nil` default. None of
+    # the matched fields' types contain `,` or `)`.
+    sed -i '' -E "s/${field}: ([^,)]+)([,)])/${field}: \1? = nil\2/" "$file"
+  done
+}
+
 # Hardcoded clashes while StreamChat source models remain the default.
 # Model collisions.
 delete_generated_filename APIError
@@ -265,5 +342,7 @@ make_channel_member_response_partial_fields_optional
 make_message_delivered_last_delivered_at_date
 make_member_event_channel_optional
 make_user_response_team_fields_optional
+make_sync_replayed_event_fields_optional
+make_channel_config_with_info_fields_optional
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"

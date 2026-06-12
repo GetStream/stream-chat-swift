@@ -36,6 +36,18 @@ final class ReactionEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.reaction?.user.id, userId)
     }
 
+    func test_new_syncReplay() throws {
+        // /chat/sync replays stored events without the full `channel` object
+        // that live WS reaction events carry.
+        let json = XCTestCase.mockData(fromJSONFile: "ReactionNew+SyncReplay")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? ReactionNewEventDTO
+        XCTAssertEqual(event?.user?.id, "r2-d2")
+        XCTAssertEqual(event?.cid, "messaging:D74FA55F-C")
+        XCTAssertEqual(event?.message?.id, "ac5d0429-a5e6-42e0-b2cf-c222de322c02")
+        XCTAssertEqual(event?.reaction?.type, "like")
+        XCTAssertNil(event?.channel)
+    }
+
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
         let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReactionUpdatedEventDTO

@@ -240,7 +240,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return log.error("Channel read is missing", subsystems: .webSocket)
         }
 
-        if let skipReason = !event.hardDelete
+        if let skipReason = event.hardDelete != true
             ? .messageIsSoftDeleted
             : unreadCountUpdateSkippingReason(
                 currentUser: currentUser,

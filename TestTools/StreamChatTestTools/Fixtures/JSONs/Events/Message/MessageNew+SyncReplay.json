@@ -1,0 +1,123 @@
+{
+    "channel_id": "D74FA55F-C",
+    "channel_type": "messaging",
+    "cid": "messaging:D74FA55F-C",
+    "created_at": 1781178095772979737,
+    "custom": {},
+    "message": {
+        "attachments": [
+            {
+                "asset_url": "https://frankfurt.stream-io-cdn.com/102399/attachments/8154e2c7-c7a5-475a-b047-03bcb15d468d.messaging-D74FA55F-C-444feb15-b9fb-4e5b-.MOV?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9mcmFua2Z1cnQuc3RyZWFtLWlvLWNkbi5jb20vMTAyMzk5L2F0dGFjaG1lbnRzLzgxNTRlMmM3LWM3YTUtNDc1YS1iMDQ3LTAzYmNiMTVkNDY4ZC5tZXNzYWdpbmctRDc0RkE1NUYtQy00NDRmZWIxNS1iOWZiLTRlNWItLk1PVioiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODIzODc2OTV9fX1dfQ__&Signature=EGMVHfiK-HaJbYTVPHK2zrn5uZYRxGgsgXTwlVKHU1WiuMvL6W1hx4UbnAhJghTRMrG~FdH0KeBBQ1PmHZF3I9cj6vGOGaxOvQMsI2CYPPlBPkA1LL63oMmsLhrezwWfqqkm920jfGDC5UFeGouTbfFkSaOuJhzIYfTrDSK3AdyY0xPLwh~guoNGtNXQms3ey8kkAtcX0sQ2tV9mH6~wnrM8AdAmb1e26StpAq~Dz6dM-2kYEq2KlJ~9kHxvsW3ZHYeF8795IRVrI5tuWCKcV9QWN3KkE8gN17A6DdvSWB0DvnaXWgOTaLCtTIS60WFc70giBhhotXbNpn1~4XDm8g__",
+                "custom": {
+                    "duration": 0.26666666666666666,
+                    "file_size": 35794,
+                    "mime_type": "video/quicktime"
+                },
+                "original_height": 480,
+                "original_width": 360,
+                "thumb_url": "https://frankfurt.stream-io-cdn.com/102399/images/8154e2c7-c7a5-475a-b047-03bcb15d468d.messaging-D74FA55F-C-444feb15-b9fb-4e5b-.MOV.jpg?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9mcmFua2Z1cnQuc3RyZWFtLWlvLWNkbi5jb20vMTAyMzk5L2ltYWdlcy84MTU0ZTJjNy1jN2E1LTQ3NWEtYjA0Ny0wM2JjYjE1ZDQ2OGQubWVzc2FnaW5nLUQ3NEZBNTVGLUMtNDQ0ZmViMTUtYjlmYi00ZTViLS5NT1YuanBnPypvaD00ODAqb3c9MzYwKnM9dioiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODIzODc2OTV9fX1dfQ__&Signature=fPPaHdxDTIsbUSH1CGRW13pub1dXMZsUOILKeTYuopQsHT6lg8PwTkYcKwpS6qntptZsE6TMKqJyUmr1gejk2~TwNVEXUYwXct~gitFimzPkL7B8ApEeXiId0YZDBn082ADwVgA~z2IItsvQbmuoJsIN9-bva4B8wreTX47SMJtZghRGL0VsdcKmXF4eZnrirXSeLKsYqiwgLthK8MWQ0Q~-3XJozl-cQ5jtK3H7fV-eb~pHSJazKYBelwNPRi0A-XORAFuU5KXudUIyeMui8liXxYglrE~1lx2MP-FRg8IyfgNmgHx6~c9JUxBTMEZqxYdpGSAQIa2ivDaRspMRTg__&oh=480&ow=360&s=v",
+                "title": "80287088923__EEAC3E1E-C65D-48C6-A7A7-98A8E4155138.MOV",
+                "type": "video"
+            }
+        ],
+        "cid": "messaging:D74FA55F-C",
+        "created_at": 1781178095683013000,
+        "custom": {},
+        "deleted_reply_count": 0,
+        "html": "",
+        "id": "444feb15-b9fb-4e5b-87f2-58b760c673fd",
+        "latest_reactions": [],
+        "member": {
+            "channel_role": "channel_member",
+            "notifications_muted": false
+        },
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "mentioned_users": [],
+        "own_reactions": [],
+        "pin_expires": null,
+        "pinned": false,
+        "pinned_at": null,
+        "pinned_by": null,
+        "reaction_counts": {},
+        "reaction_scores": {},
+        "reply_count": 0,
+        "restricted_visibility": [],
+        "shadowed": false,
+        "silent": false,
+        "text": "",
+        "type": "regular",
+        "updated_at": 1781178095683013000,
+        "user": {
+            "avg_response_time": 277475,
+            "banned": false,
+            "blocked_user_ids": [
+                "chewbacca"
+            ],
+            "created_at": 1712223894206412000,
+            "custom": {
+                "allowUserToAddToGroup": false,
+                "birthLand": "Naboo",
+                "birthland": "Naboo",
+                "canBeAddedToGroups": true,
+                "canReceiveMessages": false,
+                "custom": {
+                    "birthland": "Naboo"
+                },
+                "privacy_settings": {
+                    "read_receipts": {
+                        "enabled": false
+                    },
+                    "typing_indicators": {
+                        "enabled": false
+                    }
+                }
+            },
+            "id": "r2-d2",
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+            "language": "en",
+            "last_active": 1781249373398870836,
+            "name": "R2-D2",
+            "online": false,
+            "role": "user",
+            "teams": [],
+            "updated_at": 1780897365845488000
+        }
+    },
+    "type": "message.new",
+    "user": {
+        "avg_response_time": 277475,
+        "banned": false,
+        "blocked_user_ids": [
+            "chewbacca"
+        ],
+        "created_at": 1712223894206412000,
+        "custom": {
+            "allowUserToAddToGroup": false,
+            "birthLand": "Naboo",
+            "birthland": "Naboo",
+            "canBeAddedToGroups": true,
+            "canReceiveMessages": false,
+            "custom": {
+                "birthland": "Naboo"
+            },
+            "privacy_settings": {
+                "read_receipts": {
+                    "enabled": false
+                },
+                "typing_indicators": {
+                    "enabled": false
+                }
+            }
+        },
+        "id": "r2-d2",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+        "language": "en",
+        "last_active": 1781249373398870836,
+        "name": "R2-D2",
+        "online": false,
+        "role": "user",
+        "teams": [],
+        "updated_at": 1780897365845488000
+    }
+}

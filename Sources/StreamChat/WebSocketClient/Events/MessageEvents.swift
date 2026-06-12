@@ -180,7 +180,7 @@ extension MessageDeletedEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             message: messageModel,
             createdAt: createdAt,
-            isHardDelete: hardDelete,
+            isHardDelete: hardDelete ?? false,
             deletedForMe: deletedForMe ?? false
         )
     }

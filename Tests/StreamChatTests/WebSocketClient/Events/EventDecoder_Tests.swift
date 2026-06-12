@@ -395,6 +395,33 @@ final class EventDecoder_Tests: XCTestCase {
             XCTAssertTrue(error is ClientError.EventDecoding)
         }
     }
+
+    // MARK: Sync replayed events
+
+    func test_decode_syncResponseWithReplayedEvents() throws {
+        // /chat/sync replays stored events that lack the enrichment fields live
+        // WS events carry (`message_id`, `watcher_count`, `hard_delete`,
+        // `clear_history`, reaction `channel`). One undecodable event fails the
+        // entire response, so all replay shapes must decode.
+        let fixtures = [
+            "MessageNew+SyncReplay",
+            "MessageDeleted+SyncReplay",
+            "ReactionNew+SyncReplay",
+            "ChannelHidden+SyncReplay"
+        ]
+        let events = try fixtures.map { file -> Any in
+            try JSONSerialization.jsonObject(with: XCTestCase.mockData(fromJSONFile: file))
+        }
+        let json = try JSONSerialization.data(withJSONObject: ["duration": "1ms", "events": events])
+
+        let response = try JSONDecoder.default.decode(SyncResponse.self, from: json)
+
+        XCTAssertEqual(response.events.count, fixtures.count)
+        XCTAssertTrue(response.events[0].rawValue is MessageNewEventDTO)
+        XCTAssertTrue(response.events[1].rawValue is MessageDeletedEventDTO)
+        XCTAssertTrue(response.events[2].rawValue is ReactionNewEventDTO)
+        XCTAssertTrue(response.events[3].rawValue is ChannelHiddenEventDTO)
+    }
 }
 
 extension EventDecoder {

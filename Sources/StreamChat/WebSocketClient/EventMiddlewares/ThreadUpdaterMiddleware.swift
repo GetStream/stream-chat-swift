@@ -32,7 +32,7 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
         case let event as MessageDeletedEventDTO:
             /// Parent message deleted
             if let thread = session.thread(parentMessageId: event.message.id, cache: nil) {
-                if event.hardDelete {
+                if event.hardDelete == true {
                     // Delete the thread if parent message is hard deleted.
                     session.delete(thread: thread)
                 } else {

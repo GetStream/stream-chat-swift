@@ -7,26 +7,26 @@ import Foundation
 extension ChannelConfigWithInfo {
     var asChannelConfig: ChannelConfig {
         .init(
-            reactionsEnabled: reactions,
-            typingEventsEnabled: typingEvents,
-            readEventsEnabled: readEvents,
-            deliveryEventsEnabled: deliveryEvents,
-            connectEventsEnabled: connectEvents,
-            uploadsEnabled: uploads,
-            repliesEnabled: replies,
-            quotesEnabled: quotes,
-            searchEnabled: search,
-            mutesEnabled: mutes,
-            pollsEnabled: polls,
-            urlEnrichmentEnabled: urlEnrichment,
-            skipLastMsgAtUpdateForSystemMsg: skipLastMsgUpdateForSystemMsgs,
-            messageRemindersEnabled: userMessageReminders,
-            sharedLocationsEnabled: sharedLocations,
+            reactionsEnabled: reactions ?? false,
+            typingEventsEnabled: typingEvents ?? false,
+            readEventsEnabled: readEvents ?? false,
+            deliveryEventsEnabled: deliveryEvents ?? false,
+            connectEventsEnabled: connectEvents ?? false,
+            uploadsEnabled: uploads ?? false,
+            repliesEnabled: replies ?? false,
+            quotesEnabled: quotes ?? false,
+            searchEnabled: search ?? false,
+            mutesEnabled: mutes ?? false,
+            pollsEnabled: polls ?? false,
+            urlEnrichmentEnabled: urlEnrichment ?? false,
+            skipLastMsgAtUpdateForSystemMsg: skipLastMsgUpdateForSystemMsgs ?? false,
+            messageRemindersEnabled: userMessageReminders ?? false,
+            sharedLocationsEnabled: sharedLocations ?? false,
             messageRetention: "",
-            maxMessageLength: maxMessageLength,
-            commands: commands.map { Command(name: $0.name, description: $0.description, set: $0.set, args: $0.args) },
-            createdAt: createdAt,
-            updatedAt: updatedAt
+            maxMessageLength: maxMessageLength ?? 0,
+            commands: (commands ?? []).map { Command(name: $0.name, description: $0.description, set: $0.set, args: $0.args) },
+            createdAt: createdAt ?? .init(),
+            updatedAt: updatedAt ?? .init()
         )
     }
 }

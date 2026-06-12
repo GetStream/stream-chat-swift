@@ -1,0 +1,112 @@
+{
+    "channel_id": "D74FA55F-C",
+    "channel_type": "messaging",
+    "cid": "messaging:D74FA55F-C",
+    "created_at": 1781178296858495700,
+    "custom": {},
+    "message": {
+        "attachments": [],
+        "cid": "messaging:D74FA55F-C",
+        "created_at": 1781178284530427000,
+        "custom": {},
+        "deleted_at": 1781178296828262000,
+        "deleted_reply_count": 0,
+        "html": "<p>This message was deleted.</p>\n",
+        "id": "1b7d1f28-9b11-4a5d-a49c-52eb5c25b296",
+        "latest_reactions": [],
+        "member": {
+            "channel_role": "channel_member",
+            "notifications_muted": false
+        },
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "mentioned_users": [],
+        "own_reactions": [],
+        "parent_id": "3c346619-07b5-436d-8ea6-b5ae0ba0cec2",
+        "pin_expires": null,
+        "pinned": false,
+        "pinned_at": null,
+        "pinned_by": null,
+        "reaction_counts": {},
+        "reaction_scores": {},
+        "reply_count": 0,
+        "restricted_visibility": [],
+        "shadowed": false,
+        "show_in_channel": true,
+        "silent": false,
+        "text": "This message was deleted.",
+        "type": "deleted",
+        "updated_at": 1781178284530427000,
+        "user": {
+            "avg_response_time": 277475,
+            "banned": false,
+            "blocked_user_ids": [
+                "chewbacca"
+            ],
+            "created_at": 1712223894206412000,
+            "custom": {
+                "allowUserToAddToGroup": false,
+                "birthLand": "Naboo",
+                "birthland": "Naboo",
+                "canBeAddedToGroups": true,
+                "canReceiveMessages": false,
+                "custom": {
+                    "birthland": "Naboo"
+                },
+                "privacy_settings": {
+                    "read_receipts": {
+                        "enabled": false
+                    },
+                    "typing_indicators": {
+                        "enabled": false
+                    }
+                }
+            },
+            "id": "r2-d2",
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+            "language": "en",
+            "last_active": 1781249373398870836,
+            "name": "R2-D2",
+            "online": false,
+            "role": "user",
+            "teams": [],
+            "updated_at": 1780897365845488000
+        }
+    },
+    "type": "message.deleted",
+    "user": {
+        "avg_response_time": 277475,
+        "banned": false,
+        "blocked_user_ids": [
+            "chewbacca"
+        ],
+        "created_at": 1712223894206412000,
+        "custom": {
+            "allowUserToAddToGroup": false,
+            "birthLand": "Naboo",
+            "birthland": "Naboo",
+            "canBeAddedToGroups": true,
+            "canReceiveMessages": false,
+            "custom": {
+                "birthland": "Naboo"
+            },
+            "privacy_settings": {
+                "read_receipts": {
+                    "enabled": false
+                },
+                "typing_indicators": {
+                    "enabled": false
+                }
+            }
+        },
+        "id": "r2-d2",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+        "language": "en",
+        "last_active": 1781249373398870836,
+        "name": "R2-D2",
+        "online": false,
+        "role": "user",
+        "teams": [],
+        "updated_at": 1780897365845488000
+    }
+}

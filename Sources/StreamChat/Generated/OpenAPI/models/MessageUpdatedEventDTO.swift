@@ -20,7 +20,7 @@ final class MessageUpdatedEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     var createdAt: Date
     var custom: [String: RawJSON]
     var message: MessageResponse
-    var messageId: String
+    var messageId: String?
     var messageUpdate: MessageUpdate?
     var receivedAt: Date?
     /// The team ID
@@ -29,7 +29,7 @@ final class MessageUpdatedEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     var type: String = "message.updated"
     var user: UserResponseCommonFields?
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String, messageUpdate: MessageUpdate? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String? = nil, messageUpdate: MessageUpdate? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount
