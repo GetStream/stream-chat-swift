@@ -202,10 +202,6 @@ open class ChatChannelListItemView: _View, ThemeProvider {
     }
 
     open var subtitleIcon: UIImage? {
-        // For search results, the cell renders the matched message rather than the
-        // channel's latest message — so the icon must follow the matched message,
-        // not the channel's last activity (which would, e.g., show a mic icon next
-        // to a plain text search hit when the channel's last message is voice).
         if let searchedMessage = content?.searchedMessage {
             return searchedMessage.voiceRecordingAttachments.isEmpty
                 ? nil
