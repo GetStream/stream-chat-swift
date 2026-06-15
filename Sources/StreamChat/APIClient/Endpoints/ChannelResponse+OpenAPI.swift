@@ -96,25 +96,3 @@ extension ChannelResponse {
     var imageURL: URL? { custom["image"]?.stringValue.flatMap(URL.init(string:)) }
     var name: String? { custom["name"]?.stringValue }
 }
-
-extension ChannelStateResponse {
-    var asChannelStateResponseFields: ChannelStateResponseFields {
-        ChannelStateResponseFields(
-            activeLiveLocations: activeLiveLocations,
-            channel: channel,
-            draft: draft,
-            hidden: hidden,
-            hideMessagesBefore: hideMessagesBefore,
-            members: members,
-            membership: membership,
-            messages: messages,
-            pendingMessages: pendingMessages,
-            pinnedMessages: pinnedMessages,
-            pushPreferences: pushPreferences,
-            read: read,
-            threads: threads,
-            watcherCount: watcherCount,
-            watchers: watchers
-        )
-    }
-}

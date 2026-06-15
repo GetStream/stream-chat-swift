@@ -4,8 +4,8 @@
 
 import Foundation
 
-extension ChannelStateResponseFields {
-    /// Converts the ChannelStateResponseFields to a ChatChannel model
+extension ChannelStateResponse {
+    /// Converts the ChannelStateResponse to a ChatChannel model
     /// - Returns: A ChatChannel instance
     func asModel(
         currentUserId: UserId?,

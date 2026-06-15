@@ -75,7 +75,7 @@ extension LivestreamChatHandler_Tests {
 extension LivestreamChatHandler_Tests {
     func test_populateFromCacheIfEnabled_loadsChannelAndMessagesFromDataStore() throws {
         let cachedMessage = MessageResponse.dummy(messageId: "cached", text: "Cached")
-        let payload = ChannelStateResponseFields.dummy(channel: .dummy(cid: cid), messages: [cachedMessage])
+        let payload = ChannelStateResponse.dummy(channel: .dummy(cid: cid), messages: [cachedMessage])
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: payload)
         }
@@ -87,7 +87,7 @@ extension LivestreamChatHandler_Tests {
     }
 
     func test_populateFromCacheIfEnabled_whenDisabled_doesNotLoadFromDataStore() throws {
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [.dummy(messageId: "cached", text: "Cached")]
         )
@@ -107,7 +107,7 @@ extension LivestreamChatHandler_Tests {
 
 extension LivestreamChatHandler_Tests {
     func test_handleChannelPayload_replacesStateWhenNoPagination() {
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "m1", text: "1"),
@@ -910,7 +910,7 @@ private extension LivestreamChatHandler.Handlers {
 
 extension LivestreamChatHandler_Tests {
     func test_handleChannelPayload_whenShadowedMessagesHidden_filtersShadowedMessages() {
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "visible", text: "Visible", isShadowed: false),
@@ -926,7 +926,7 @@ extension LivestreamChatHandler_Tests {
     func test_handleChannelPayload_whenShadowedMessagesShown_keepsShadowedMessages() {
         setUpHandler(showShadowedMessages: true)
 
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "visible", text: "Visible", isShadowed: false),
@@ -953,7 +953,7 @@ extension LivestreamChatHandler_Tests {
     }
 
     func test_populateFromCacheIfEnabled_whenShadowedMessagesHidden_filtersShadowedMessages() throws {
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "visible", text: "Visible", isShadowed: false),

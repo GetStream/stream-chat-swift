@@ -8,7 +8,7 @@ final class ChannelStateResponse: @unchecked Sendable, Codable, JSONEncodable, H
     var activeLiveLocations: [SharedLocationResponseData]?
     var channel: ChannelResponse?
     var draft: DraftResponse?
-    var duration: String
+    var duration: String?
     var hidden: Bool?
     var hideMessagesBefore: Date?
     var members: [ChannelMemberResponse]
@@ -22,7 +22,7 @@ final class ChannelStateResponse: @unchecked Sendable, Codable, JSONEncodable, H
     var watcherCount: Int?
     var watchers: [UserResponse]?
 
-    init(activeLiveLocations: [SharedLocationResponseData]? = nil, channel: ChannelResponse? = nil, draft: DraftResponse? = nil, duration: String, hidden: Bool? = nil, hideMessagesBefore: Date? = nil, members: [ChannelMemberResponse], membership: ChannelMemberResponse? = nil, messages: [MessageResponse], pendingMessages: [PendingMessageResponse]? = nil, pinnedMessages: [MessageResponse], pushPreferences: ChannelPushPreferencesResponse? = nil, read: [ReadStateResponse]? = nil, threads: [ThreadStateResponse], watcherCount: Int? = nil, watchers: [UserResponse]? = nil) {
+    init(activeLiveLocations: [SharedLocationResponseData]? = nil, channel: ChannelResponse? = nil, draft: DraftResponse? = nil, duration: String? = nil, hidden: Bool? = nil, hideMessagesBefore: Date? = nil, members: [ChannelMemberResponse], membership: ChannelMemberResponse? = nil, messages: [MessageResponse], pendingMessages: [PendingMessageResponse]? = nil, pinnedMessages: [MessageResponse], pushPreferences: ChannelPushPreferencesResponse? = nil, read: [ReadStateResponse]? = nil, threads: [ThreadStateResponse], watcherCount: Int? = nil, watchers: [UserResponse]? = nil) {
         self.activeLiveLocations = activeLiveLocations
         self.channel = channel
         self.draft = draft

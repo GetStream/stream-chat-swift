@@ -138,10 +138,10 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertNil(QueryChannelsResponse.modelClass)
     }
 
-    func test_ChannelStateResponseFields_isIdentifiablePayload() {
-        let payload = ChannelStateResponseFields.dummy()
+    func test_ChannelStateResponse_isIdentifiablePayload() {
+        let payload = ChannelStateResponse.dummy()
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(ChannelStateResponseFields.modelClass)
+        XCTAssertNil(ChannelStateResponse.modelClass)
     }
 
     func test_ChannelResponse_isIdentifiablePayload() {
@@ -199,7 +199,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         }
         let cid = ChannelId.unique
         let channelDetailPayload = ChannelResponse.dummy(cid: cid, createdBy: watchers[0])
-        let channelPayload = ChannelStateResponseFields.dummy(channel: channelDetailPayload, watchers: watchers)
+        let channelPayload = ChannelStateResponse.dummy(channel: channelDetailPayload, watchers: watchers)
         let payload = QueryChannelsResponse(channels: [channelPayload], duration: "")
 
         let cache = payload.recursivelyGetAllIds()
@@ -212,13 +212,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertEqual(channelDetailIds, [cid.rawValue])
     }
 
-    func test_ChannelStateResponseFields_isIdentifiablePayload_recursively() throws {
+    func test_ChannelStateResponse_isIdentifiablePayload_recursively() throws {
         let watchers = (0..<4).map {
             UserResponse.dummy(userId: "\($0)")
         }
         let cid = ChannelId.unique
         let channelDetailPayload = ChannelResponse.dummy(cid: cid, createdBy: watchers[0])
-        let payload = ChannelStateResponseFields.dummy(channel: channelDetailPayload, watchers: watchers)
+        let payload = ChannelStateResponse.dummy(channel: channelDetailPayload, watchers: watchers)
 
         let cache = payload.recursivelyGetAllIds()
 
@@ -343,7 +343,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let messageCount = messagesPerChannel
         let channelReadCount = readCountsPerChannel
         let messageReactionsCount = messageReactionsPerChannel
-        let channels: [ChannelStateResponseFields] = (0..<channelsCount).map { channelIndex in
+        let channels: [ChannelStateResponse] = (0..<channelsCount).map { channelIndex in
             let users = (0..<userCount).map { UserResponse.dummy(userId: "user-\($0)") }
             let watchers = (userCount..<userCount + otherWatchersCount).map { UserResponse.dummy(userId: "watcher-\($0)") }
             let owner = users[channelIndex]
@@ -418,7 +418,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 )
             }
 
-            return ChannelStateResponseFields.dummy(
+            return ChannelStateResponse.dummy(
                 channel: channelDetail,
                 watcherCount: 0,
                 watchers: watchers,

@@ -72,7 +72,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             unreadMessages: 0,
             user: dummyUser(id: userId)
         )
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
             channelReads: [initialRead]
         )
@@ -113,7 +113,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         config.isLocalUnreadCountEnabled = true
         let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
 
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
             channelReads: []
         )
@@ -152,7 +152,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             unreadMessages: 0,
             user: dummyUser(id: userId)
         )
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
             channelReads: [initialRead]
         )
@@ -196,7 +196,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             unreadMessages: 0,
             user: dummyUser(id: userId)
         )
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: true)),
             channelReads: [initialRead]
         )
@@ -238,7 +238,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: UserResponse.dummy(userId: .unique)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [.dummy(user: read.user)],
             channelReads: [read]
         )
@@ -266,7 +266,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_markChannelAsRead_whenReadDoesNotExistButCanBeCreated_isIsCreated() throws {
         // GIVEN
         let member: ChannelMemberResponse = .dummy()
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [member],
             channelReads: []
         )
@@ -294,7 +294,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_markChannelAsRead_whenReadDoesNotExistAndCanNotBeCreated_doesNothing() throws {
         // GIVEN
         let member: ChannelMemberResponse = .dummy()
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [member],
             channelReads: []
         )
@@ -347,7 +347,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             createdAt: anotherUserRead.lastRead.addingTimeInterval(5)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [anotherUserMember, currentUserMember],
             membership: currentUserMember,
             messages: [
@@ -403,7 +403,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             createdAt: Date().addingTimeInterval(-1)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [anotherUserMember, currentUserMember],
             membership: currentUserMember,
             messages: [messageFromAnotherUser, ownMessage1, ownMessage2]
@@ -455,7 +455,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             createdAt: Date().addingTimeInterval(-1)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [anotherUserMember, currentUserMember],
             membership: currentUserMember,
             messages: [messageFromAnotherUser, ownMessage1, ownMessage2]
@@ -533,7 +533,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             channelReads: [read]
@@ -572,7 +572,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             channelReads: [read]
@@ -615,7 +615,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -662,7 +662,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -709,7 +709,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -766,7 +766,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -815,7 +815,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [member],
             channelReads: [read]
         )
@@ -856,7 +856,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: UserResponse.dummy(userId: .unique)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [.dummy(user: read.user)],
             channelReads: [read]
         )
@@ -883,7 +883,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // GIVEN
         let user = UserResponse.dummy(userId: .unique)
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             members: [.dummy(user: user)],
             channelReads: []
         )

@@ -172,7 +172,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // GIVEN
         let newMemberId = UserId.unique
-        let channelPayload: ChannelStateResponseFields = .dummy()
+        let channelPayload: ChannelStateResponse = .dummy()
         let cid = try XCTUnwrap(channelPayload.channel?.channelId)
         let event = makeMemberAddedDTO(cid: cid, userId: newMemberId, memberId: newMemberId)
 
@@ -282,7 +282,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // GIVEN
         let member: ChannelMemberResponse = .dummy()
-        let channelPayload: ChannelStateResponseFields = .dummy(members: [member])
+        let channelPayload: ChannelStateResponse = .dummy(members: [member])
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }

@@ -6,12 +6,12 @@ import Foundation
 
 final class QueryChannelsResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// List of channels
-    var channels: [ChannelStateResponseFields]
+    var channels: [ChannelStateResponse]
     /// Duration of the request in milliseconds
     var duration: String
     var predefinedFilter: ParsedPredefinedFilterResponse?
 
-    init(channels: [ChannelStateResponseFields], duration: String, predefinedFilter: ParsedPredefinedFilterResponse? = nil) {
+    init(channels: [ChannelStateResponse], duration: String, predefinedFilter: ParsedPredefinedFilterResponse? = nil) {
         self.channels = channels
         self.duration = duration
         self.predefinedFilter = predefinedFilter

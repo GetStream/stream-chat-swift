@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension ChannelStateResponseFields {
+extension ChannelStateResponse {
     /// Returns dummy channel payload with the given values.
     static func dummy(
         channel: ChannelResponse = .dummy(),
@@ -22,9 +22,9 @@ extension ChannelStateResponseFields {
         draft: DraftResponse? = nil,
         activeLiveLocations: [SharedLocationResponseData] = [],
         pushPreference: PushPreferencesResponse? = nil
-    ) -> ChannelStateResponseFields {
+    ) -> ChannelStateResponse {
         _ = pushPreference
-        return ChannelStateResponseFields(
+        return ChannelStateResponse(
             activeLiveLocations: activeLiveLocations,
             channel: channel,
             draft: draft,
@@ -58,30 +58,6 @@ extension ReadStateResponse {
             lastReadMessageId: lastReadMessageId,
             unreadMessages: unreadMessages,
             user: user
-        )
-    }
-}
-
-extension ChannelStateResponseFields {
-    /// Wraps the fields into a single-channel response for mocking API results.
-    var asChannelStateResponse: ChannelStateResponse {
-        ChannelStateResponse(
-            activeLiveLocations: activeLiveLocations,
-            channel: channel,
-            draft: draft,
-            duration: "",
-            hidden: hidden,
-            hideMessagesBefore: hideMessagesBefore,
-            members: members,
-            membership: membership,
-            messages: messages,
-            pendingMessages: pendingMessages,
-            pinnedMessages: pinnedMessages,
-            pushPreferences: pushPreferences,
-            read: read,
-            threads: threads,
-            watcherCount: watcherCount,
-            watchers: watchers
         )
     }
 }

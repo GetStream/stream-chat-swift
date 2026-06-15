@@ -434,7 +434,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
         // GIVEN
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             messages: []
         )
 
@@ -472,7 +472,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenNotificationMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
         // GIVEN
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             messages: []
         )
 
@@ -511,7 +511,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_whenMessageIsNotMarkedAsSent_markItAsSent() throws {
         // GIVEN
-        let channel: ChannelStateResponseFields = .dummy(channel: .dummy(cid: .unique))
+        let channel: ChannelStateResponse = .dummy(channel: .dummy(cid: .unique))
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channel)
@@ -567,7 +567,7 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 1000)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             messages: [existingMessage]
         )
 
@@ -613,7 +613,7 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 1000)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             messages: [message]
         )
 
@@ -660,7 +660,7 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 1000)
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             messages: [existingMessage]
         )
 

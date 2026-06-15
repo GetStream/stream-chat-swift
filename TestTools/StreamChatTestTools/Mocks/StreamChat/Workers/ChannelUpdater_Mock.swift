@@ -9,7 +9,7 @@ import XCTest
 final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_channelQuery: ChannelQuery?
     @Atomic var update_onChannelCreated: ((ChannelId) -> Void)?
-    @Atomic var update_completion: ((Result<ChannelStateResponseFields, Error>) -> Void)?
+    @Atomic var update_completion: ((Result<ChannelStateResponse, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
     @Atomic var updateChannel_payload: ChannelInputRequest?
@@ -136,7 +136,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var stopWatching_completion_result: Result<Void, Error>?
 
     @Atomic var channelWatchers_query: ChannelWatcherListQuery?
-    @Atomic var channelWatchers_completion: ((Result<ChannelStateResponseFields, any Error>) -> Void)?
+    @Atomic var channelWatchers_completion: ((Result<ChannelStateResponse, any Error>) -> Void)?
 
     @Atomic var freezeChannel_freeze: Bool?
     @Atomic var freezeChannel_cid: ChannelId?
@@ -341,7 +341,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
         actions: ChannelUpdateActions? = nil,
-        completion: ((Result<ChannelStateResponseFields, Error>) -> Void)? = nil
+        completion: ((Result<ChannelStateResponse, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
         update_onChannelCreated = onChannelCreated
@@ -582,7 +582,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         stopWatching_completion_result?.invoke(with: completion)
     }
 
-    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelStateResponseFields, any Error>) -> Void)? = nil) {
+    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelStateResponse, any Error>) -> Void)? = nil) {
         channelWatchers_query = query
         channelWatchers_completion = completion
     }

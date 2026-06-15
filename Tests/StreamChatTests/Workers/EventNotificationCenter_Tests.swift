@@ -290,7 +290,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
         waitUntil(timeout: 100) { done in
             database.write({ session in
-                try session.saveChannel(payload: ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId)))
+                try session.saveChannel(payload: ChannelStateResponse.dummy(channel: .dummy(cid: channelId)))
                 try existingPayloads.forEach {
                     try session.saveMessage(payload: $0, for: channelId, syncOwnReactions: false, cache: nil)
                 }

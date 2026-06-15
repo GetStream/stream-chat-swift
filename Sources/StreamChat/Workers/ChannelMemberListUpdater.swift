@@ -75,7 +75,7 @@ private extension ChannelMemberListUpdater {
             switch $0 {
             case let .success(response):
                 self?.database.write({ session in
-                    try session.saveChannel(payload: response.asChannelStateResponseFields)
+                    try session.saveChannel(payload: response)
                 }, completion: { error in
                     if let error = error {
                         log.error("Failed to save channel to the database. Error: \(error)")

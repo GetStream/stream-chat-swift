@@ -160,7 +160,7 @@ final class MemberList_Tests: XCTestCase {
     private func createChannel() async throws {
         try await env.client.databaseContainer.write { session in
             try session.saveChannel(
-                payload: ChannelStateResponseFields.dummy(
+                payload: ChannelStateResponse.dummy(
                     channel: .dummy(cid: self.channelId)
                 )
             )

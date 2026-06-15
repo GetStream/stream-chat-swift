@@ -6,7 +6,7 @@ import Foundation
 
 final class GroupedChannelsBucket: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Channels returned for this bucket
-    var channels: [ChannelStateResponseFields]
+    var channels: [ChannelStateResponse]
     /// Cursor for the next page of this group
     var next: String?
     /// Cursor for the previous page of this group
@@ -14,7 +14,7 @@ final class GroupedChannelsBucket: @unchecked Sendable, Codable, JSONEncodable, 
     /// Unread channels currently classified into this bucket
     var unreadChannels: Int?
 
-    init(channels: [ChannelStateResponseFields], next: String? = nil, prev: String? = nil, unreadChannels: Int? = nil) {
+    init(channels: [ChannelStateResponse], next: String? = nil, prev: String? = nil, unreadChannels: Int? = nil) {
         self.channels = channels
         self.next = next
         self.prev = prev

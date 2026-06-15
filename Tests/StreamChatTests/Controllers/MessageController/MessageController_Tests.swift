@@ -2493,7 +2493,7 @@ final class MessageController_Tests: XCTestCase {
     // MARK: Helpers
 
     @discardableResult
-    private func saveReplies(with ids: [MessageId], channelPayload: ChannelStateResponseFields? = nil) throws -> [MessageDTO] {
+    private func saveReplies(with ids: [MessageId], channelPayload: ChannelStateResponse? = nil) throws -> [MessageDTO] {
         let payloads: [MessageResponse] = ids.map {
             MessageResponse.dummy(messageId: $0, parentId: self.messageId)
         }
@@ -2502,7 +2502,7 @@ final class MessageController_Tests: XCTestCase {
     }
 
     @discardableResult
-    private func saveReplies(with payloads: [MessageResponse], channelPayload: ChannelStateResponseFields? = nil) throws -> [MessageDTO] {
+    private func saveReplies(with payloads: [MessageResponse], channelPayload: ChannelStateResponse? = nil) throws -> [MessageDTO] {
         nonisolated(unsafe) var replies: [MessageDTO] = []
 
         try client.databaseContainer.writeSynchronously { session in

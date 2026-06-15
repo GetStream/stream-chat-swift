@@ -1219,8 +1219,8 @@ final class ChannelListController_Tests: XCTestCase {
             cid2,
             cid3
         ]
-        let expectedChannels: [ChannelStateResponseFields] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
-        let unexpectedChannels: [ChannelStateResponseFields] = [
+        let expectedChannels: [ChannelStateResponse] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
+        let unexpectedChannels: [ChannelStateResponse] = [
             .dummy(channel: .dummy(cid: .unique)),
             .dummy(channel: .dummy(cid: .unique))
         ]
@@ -1297,7 +1297,7 @@ final class ChannelListController_Tests: XCTestCase {
         let cidAccentA = ChannelId.unique
         let cidTildeO = ChannelId.unique
 
-        let channelsInDB: [ChannelStateResponseFields] = [
+        let channelsInDB: [ChannelStateResponse] = [
             .dummy(channel: .dummy(cid: cidPlain, name: "Joao Silva")),
             .dummy(channel: .dummy(cid: cidAccentA, name: "João Silva")),
             .dummy(channel: .dummy(cid: cidTildeO, name: "Jõao Silva")),
@@ -1943,7 +1943,7 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         // Save Channels
-        let channelsInDB: [ChannelStateResponseFields] = [
+        let channelsInDB: [ChannelStateResponse] = [
             .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
             .dummy(channel: .dummy(team: .unique)),
             .dummy(channel: .dummy(team: .unique)),
@@ -2021,7 +2021,7 @@ final class ChannelListController_Tests: XCTestCase {
         _ filter: @autoclosure () -> Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         currentUserId: UserId? = nil,
-        channelsInDB: @escaping @autoclosure () -> [ChannelStateResponseFields],
+        channelsInDB: @escaping @autoclosure () -> [ChannelStateResponse],
         expectedResult: @autoclosure () -> [ChannelId],
         file: StaticString = #file,
         line: UInt = #line

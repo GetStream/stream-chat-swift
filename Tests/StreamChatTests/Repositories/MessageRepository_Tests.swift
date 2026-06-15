@@ -434,7 +434,7 @@ final class MessageRepositoryTests: XCTestCase {
                 )
             }
             try session.saveChannel(
-                payload: ChannelStateResponseFields.dummy(
+                payload: ChannelStateResponse.dummy(
                     channel: .dummy(cid: cid),
                     messages: messages
                 )
@@ -462,7 +462,7 @@ final class MessageRepositoryTests: XCTestCase {
                 )
             }
             try session.saveChannel(
-                payload: ChannelStateResponseFields.dummy(
+                payload: ChannelStateResponse.dummy(
                     channel: .dummy(cid: cid),
                     messages: messages
                 )

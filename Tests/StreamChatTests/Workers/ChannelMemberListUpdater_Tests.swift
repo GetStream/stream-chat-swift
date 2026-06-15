@@ -91,8 +91,8 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
 
         // Simulate successful channel response.
-        let dummyChannelStateResponseFields = dummyPayload(with: query.cid)
-        apiClient.test_simulateResponse(.success(dummyChannelStateResponseFields.asChannelStateResponse))
+        let dummyChannelStateResponse = dummyPayload(with: query.cid)
+        apiClient.test_simulateResponse(.success(dummyChannelStateResponse))
 
         let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync {
@@ -168,7 +168,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
 
         // Simulate channel response with  success.
-        apiClient.test_simulateResponse(.success(dummyPayload(with: query.cid).asChannelStateResponse))
+        apiClient.test_simulateResponse(.success(dummyPayload(with: query.cid)))
 
         // Assert the channel database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)

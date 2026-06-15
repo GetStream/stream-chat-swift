@@ -401,7 +401,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
     
     func saveChannel(
-        payload: ChannelStateResponseFields,
+        payload: ChannelStateResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {

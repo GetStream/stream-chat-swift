@@ -128,7 +128,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_get_whenAPISucceeds_thenStateIsUpdated() async throws {
         let cid = channelQuery.cid!
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "1", text: "Message 1"),
@@ -136,7 +136,7 @@ final class LivestreamChat_Tests: XCTestCase {
             ]
         )
 
-        client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
+        client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
 
         try await livestreamChat.get()
 
@@ -160,10 +160,10 @@ final class LivestreamChat_Tests: XCTestCase {
     }
 
     func test_get_tracksLivestreamChatInSyncRepository() async throws {
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: channelQuery.cid!)
         )
-        client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
+        client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
 
         try await livestreamChat.get()
 
@@ -172,7 +172,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_get_callsCorrectAPIEndpoint() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.get()
@@ -186,7 +186,7 @@ final class LivestreamChat_Tests: XCTestCase {
         _ = livestreamChat.state
 
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
         try await livestreamChat.get()
 
@@ -199,7 +199,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_watch_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.watch()
@@ -211,7 +211,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_watch_tracksLivestreamChatInSyncRepository() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.watch()
@@ -230,7 +230,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_stopWatching_removesActiveLivestreamChat() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
         try await livestreamChat.watch()
         XCTAssertEqual(client.syncRepository.activeLivestreamChats.count, 1)
@@ -267,7 +267,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_loadFirstPage_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.loadFirstPage()
@@ -280,7 +280,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_loadOlderMessages_withMessageId_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.loadOlderMessages(before: "specific-message-id", limit: 50)
@@ -302,7 +302,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_loadMessagesAround_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.loadMessages(around: "target", limit: 40)
@@ -316,7 +316,7 @@ final class LivestreamChat_Tests: XCTestCase {
     func test_loadOlderMessages_withoutMessageId_usesOldestLoadedMessageId() async throws {
         try await jumpToMidPageAndClear()
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.loadOlderMessages()
@@ -330,7 +330,7 @@ final class LivestreamChat_Tests: XCTestCase {
     func test_loadNewerMessages_withMessageId_callsCorrectAPI() async throws {
         try await jumpToMidPageAndClear()
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.loadNewerMessages(after: "newer-message-id", limit: 30)
@@ -344,7 +344,7 @@ final class LivestreamChat_Tests: XCTestCase {
     func test_loadNewerMessages_withoutMessageId_usesNewestLoadedMessageId() async throws {
         try await jumpToMidPageAndClear()
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.loadNewerMessages()
@@ -372,7 +372,7 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertTrue(livestreamChat.state.isPaused)
 
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         try await livestreamChat.resume()
@@ -415,13 +415,13 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_didReceiveEvent_notificationAddedToChannelEvent_callsWatch() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
         try await livestreamChat.get()
         client.mockAPIClient.cleanUp()
 
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         let event = NotificationAddedToChannelEvent(
@@ -730,7 +730,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_keystroke_whenChannelCannotSendTypingEvents_doesNotMakeAPIRequest() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!, ownCapabilities: [])).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!, ownCapabilities: [])))
         )
         try await livestreamChat.get()
         client.mockAPIClient.cleanUp()
@@ -755,7 +755,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_applicationDidReceiveMemoryWarning_triggersLoadFirstPage() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         livestreamChat.applicationDidReceiveMemoryWarning()
@@ -769,7 +769,7 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_applicationDidMoveToForeground_whenDisconnected_triggersLoadFirstPage() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!)).asChannelStateResponse)
+            .success(ChannelStateResponse.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
 
         livestreamChat.applicationDidMoveToForeground()
@@ -808,14 +808,14 @@ private extension LivestreamChat_Tests {
     /// the resulting endpoint.
     func jumpToMidPageAndClear() async throws {
         let cid = channelQuery.cid!
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "older", text: "Older"),
                 .dummy(messageId: "newer", text: "Newer")
             ]
         )
-        client.mockAPIClient.test_mockResponseResult(.success(payload.asChannelStateResponse))
+        client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await livestreamChat.loadMessages(around: "older", limit: 2)
         client.mockAPIClient.cleanUp()
     }

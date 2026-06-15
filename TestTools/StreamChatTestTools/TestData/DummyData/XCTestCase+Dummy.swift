@@ -164,7 +164,7 @@ extension XCTestCase {
         cooldownDuration: Int? = nil,
         channelReads: [ReadStateResponse]? = nil,
         pushPreference: PushPreferencesResponse? = nil
-    ) -> ChannelStateResponseFields {
+    ) -> ChannelStateResponse {
         var payloadMessages: [MessageResponse] = []
         if let messages = messages {
             payloadMessages = messages
@@ -200,7 +200,7 @@ extension XCTestCase {
             cooldownDuration: cooldownDuration ?? .random(in: 0...120)
         )
 
-        return ChannelStateResponseFields.dummy(
+        return ChannelStateResponse.dummy(
             channel: detail,
             watcherCount: watchers?.count ?? 1,
             watchers: watchers ?? [dummyUser],
@@ -254,7 +254,7 @@ extension XCTestCase {
         )
     }
 
-    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelStateResponseFields {
+    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelStateResponse {
         let member: ChannelMemberResponse =
             .dummy(
                 user: .init(
@@ -322,7 +322,7 @@ extension XCTestCase {
             cooldownDuration: .random(in: 0...120)
         )
 
-        return ChannelStateResponseFields.dummy(
+        return ChannelStateResponse.dummy(
             channel: detail,
             watcherCount: 10,
             watchers: [dummyUser],

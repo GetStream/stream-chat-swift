@@ -227,8 +227,8 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
 
     // MARK: - Helper Methods
 
-    private func dummyPayload(with channelId: ChannelId) -> ChannelStateResponseFields {
-        ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId))
+    private func dummyPayload(with channelId: ChannelId) -> ChannelStateResponse {
+        ChannelStateResponse.dummy(channel: .dummy(cid: channelId))
     }
 
     private func createMessageNewEvent(channelId: ChannelId, messageId: MessageId, authorUserId: UserId? = nil) throws -> MessageNewEventDTO {

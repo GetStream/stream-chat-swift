@@ -22,7 +22,7 @@ final class MessageState_Tests: XCTestCase {
         
         // Channel is required for saving messages
         env.client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.makeChannelStateResponseFields(messageId: nil))
+            try session.saveChannel(payload: self.makeChannelStateResponse(messageId: nil))
         }
     }
 
@@ -167,8 +167,8 @@ final class MessageState_Tests: XCTestCase {
     private func setUpMessageState(writeMessages: Bool = true) async throws {
         if writeMessages {
             try await env.client.databaseContainer.write { session in
-                try session.saveChannel(payload: self.makeChannelStateResponseFields(messageId: self.messageId))
-                try session.saveChannel(payload: self.makeChannelStateResponseFields(messageId: self.unrelatedMessageId))
+                try session.saveChannel(payload: self.makeChannelStateResponse(messageId: self.messageId))
+                try session.saveChannel(payload: self.makeChannelStateResponse(messageId: self.unrelatedMessageId))
             }
         }
         
@@ -194,7 +194,7 @@ final class MessageState_Tests: XCTestCase {
         }
     }
     
-    private func makeChannelStateResponseFields(messageId: MessageId?) -> ChannelStateResponseFields {
+    private func makeChannelStateResponse(messageId: MessageId?) -> ChannelStateResponse {
         // Note that message pagination relies on createdAt and cid
         var messages = [MessageResponse]()
         if let messageId {
@@ -206,7 +206,7 @@ final class MessageState_Tests: XCTestCase {
                 )
             )
         }
-        return ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId), messages: messages)
+        return ChannelStateResponse.dummy(channel: .dummy(cid: channelId), messages: messages)
     }
     
     private func makeMessageResponse(reactionCount: Int, messageId: MessageId) -> MessageResponse {

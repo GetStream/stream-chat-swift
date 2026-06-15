@@ -31,8 +31,8 @@ final class ChannelRepository_Tests: XCTestCase {
     func test_getChannel_storeFalse_successfulResponse() throws {
         let cid = ChannelId.unique
         let query = ChannelQuery(cid: cid)
-        let channelPayload = ChannelStateResponseFields.dummy(channel: .dummy(cid: cid))
-        apiClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
+        let channelPayload = ChannelStateResponse.dummy(channel: .dummy(cid: cid))
+        apiClient.test_mockResponseResult(.success(channelPayload))
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }

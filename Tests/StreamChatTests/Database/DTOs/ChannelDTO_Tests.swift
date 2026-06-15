@@ -35,7 +35,7 @@ final class ChannelDTO_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 2000)
         )
 
-        let channelPayload: ChannelStateResponseFields = .dummy(
+        let channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(),
             messages: [olderMessage, newerMessage]
         )
@@ -68,7 +68,7 @@ final class ChannelDTO_Tests: XCTestCase {
             deletedAt: Date(timeIntervalSince1970: 2500)
         )
 
-        let channelPayload: ChannelStateResponseFields = .dummy(
+        let channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(),
             messages: [regularMessage, deletedMessage]
         )
@@ -111,7 +111,7 @@ final class ChannelDTO_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 3000)
         )
 
-        let channelPayload: ChannelStateResponseFields = .dummy(
+        let channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(),
             messages: [channelMessage, threadReply, replyShownInChannel]
         )
@@ -158,7 +158,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedByUserId: anotherMember.user!.id
         )
 
-        let channelPayload: ChannelStateResponseFields = .dummy(
+        let channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(),
             members: [currentUserMember, anotherMember],
             membership: currentUserMember,
@@ -206,7 +206,7 @@ final class ChannelDTO_Tests: XCTestCase {
             user: .dummy(userId: .unique)
         )
 
-        nonisolated(unsafe) var channelPayload: ChannelStateResponseFields = .dummy(
+        nonisolated(unsafe) var channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(),
             messages: [message1],
             channelReads: [read1]
@@ -1066,7 +1066,7 @@ final class ChannelDTO_Tests: XCTestCase {
             mentionedUsers: [currentUserResponse.asUserResponse()]
         )
 
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
@@ -1119,7 +1119,7 @@ final class ChannelDTO_Tests: XCTestCase {
             role: .member,
             notificationsMuted: false // incorrectly false
         )
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             members: [memberPayload],
             membership: membershipPayload
@@ -1232,7 +1232,7 @@ final class ChannelDTO_Tests: XCTestCase {
     /// This test verifies that this code is not executed when `currentUser.user` is invalid
     func test_asModel_shouldNotCrashWhenCurrentUserInvalid() throws {
         // GIVEN
-        let channelPayload: ChannelStateResponseFields = .dummy()
+        let channelPayload: ChannelStateResponse = .dummy()
         let userId = UserId.unique
 
         try database.writeSynchronously { session in
@@ -1321,7 +1321,7 @@ final class ChannelDTO_Tests: XCTestCase {
             cid: cid
         )
 
-        let channelPayload: ChannelStateResponseFields = .dummy(
+        let channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             messages: [
                 message1,
@@ -1374,7 +1374,7 @@ final class ChannelDTO_Tests: XCTestCase {
             cid: cid
         )
 
-        let channelPayload: ChannelStateResponseFields = .dummy(
+        let channelPayload: ChannelStateResponse = .dummy(
             channel: .dummy(cid: cid),
             messages: [
                 message1Payload
@@ -1439,7 +1439,7 @@ final class ChannelDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             draft: .dummy(
                 cid: cid,
@@ -1484,7 +1484,7 @@ final class ChannelDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             draft: .dummy(
                 cid: cid,
@@ -1508,7 +1508,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // WHEN
         // Save channel without draft
-        let payloadWithoutDraft = ChannelStateResponseFields.dummy(
+        let payloadWithoutDraft = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid)
         )
 
@@ -1541,7 +1541,7 @@ final class ChannelDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             draft: .dummy(
                 cid: cid,
@@ -1588,7 +1588,7 @@ final class ChannelDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let channelPayload = ChannelStateResponseFields.dummy(
+        let channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             draft: .dummy(
                 cid: cid,
@@ -1618,7 +1618,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
 private extension ChannelDTO_Tests {
     func createChannelWithEmptyPaginationCursors() throws -> ChannelDTO {
-        let channelPayload = ChannelStateResponseFields.dummy()
+        let channelPayload = ChannelStateResponse.dummy()
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }

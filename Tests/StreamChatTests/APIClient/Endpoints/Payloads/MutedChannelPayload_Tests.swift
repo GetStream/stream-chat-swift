@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class MutedChannelStateResponseFields_Tests: XCTestCase {
+final class MutedChannelStateResponse_Tests: XCTestCase {
     func test_payload_isDeserialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MutedChannelPayload")
         let payload = try JSONDecoder.default.decode(ChannelMute.self, from: json)

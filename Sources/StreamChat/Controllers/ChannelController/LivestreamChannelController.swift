@@ -974,7 +974,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     ) {
         handler.beginPagination(for: channelQuery)
 
-        let requestCompletion: @Sendable (Result<ChannelStateResponseFields, Error>) -> Void = { [weak self] result in
+        let requestCompletion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
                 guard let self = self else { return }
 

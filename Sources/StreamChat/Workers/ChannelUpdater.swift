@@ -45,7 +45,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         isInRecoveryMode: Bool,
         onChannelCreated: (@Sendable (ChannelId) -> Void)? = nil,
         actions: ChannelUpdateActions? = nil,
-        completion: (@Sendable (Result<ChannelStateResponseFields, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChannelStateResponse, Error>) -> Void)? = nil
     ) {
         // Drop any stale mid-page slice (and its bounds) synchronously before issuing
         // the request, so any database observers the caller starts in parallel with
@@ -68,7 +68,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
 
                 let response = try result.get()
-                let payload = response.asChannelStateResponseFields
+                let payload = response
                 guard let cid = payload.channel?.channelId else {
                     completion?(.failure(ClientError.ChannelNotCreatedYet()))
                     return
@@ -199,7 +199,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             nonisolated(unsafe) var paginatedMembers: [ChatChannelMember]?
             switch result {
             case .success(let response):
-                let payload = response.asChannelStateResponseFields
+                let payload = response
                 database.write { session in
                     // State layer uses member list query to return all the paginated members
                     // In addition to this, we want to save channel data because reads are
@@ -709,10 +709,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func channelWatchers(query: ChannelWatcherListQuery, completion: (@Sendable (Result<ChannelStateResponseFields, Error>) -> Void)? = nil) {
+    func channelWatchers(query: ChannelWatcherListQuery, completion: (@Sendable (Result<ChannelStateResponse, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelStateResponse, Error>) in
             do {
-                let payload = try result.get().asChannelStateResponseFields
+                let payload = try result.get()
                 self.database.write { (session) in
                     if let channel = session.channel(cid: query.cid) {
                         if query.pagination.offset == 0, payload.watchers?.isEmpty ?? false {
@@ -1198,7 +1198,7 @@ extension ChannelUpdater {
     @discardableResult func update(
         channelQuery: ChannelQuery,
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
-    ) async throws -> ChannelStateResponseFields {
+    ) async throws -> ChannelStateResponse {
         // Just populate the closure since we select the endpoint based on it.
         var useCreateEndpoint: (@Sendable (ChannelId) -> Void)?
         if channelQuery.cid == nil {

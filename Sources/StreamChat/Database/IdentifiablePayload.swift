@@ -137,7 +137,7 @@ extension QueryChannelsResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension ChannelStateResponseFields: IdentifiablePayloadProxy {
+extension ChannelStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         channel?.fillIds(cache: &cache)

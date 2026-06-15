@@ -177,7 +177,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
     }
 
     /// Applies the freshly-fetched channel state response to the in-memory state.
-    func handleChannelPayload(_ payload: ChannelStateResponseFields, channelQuery: ChannelQuery) {
+    func handleChannelPayload(_ payload: ChannelStateResponse, channelQuery: ChannelQuery) {
         paginationStateHandler.end(pagination: channelQuery.pagination, with: .success(payload.messages))
 
         let newChannel = payload.asModel(

@@ -35,7 +35,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let firstPayload = makeChannelStateResponseFields(name: "first")
+        let firstPayload = makeChannelStateResponse(name: "first")
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -49,7 +49,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_entityDidChangeCount_whenDeletingAndInserting_thenSingleDidChange() async throws {
-        let firstPayload = makeChannelStateResponseFields(name: "first")
+        let firstPayload = makeChannelStateResponse(name: "first")
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -62,7 +62,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelStateResponseFields(name: "second")
+        let secondPayload = makeChannelStateResponse(name: "second")
         try await client.mockDatabaseContainer.write { session in
             session.removeChannels(cids: Set([self.channelId]))
             try session.saveChannel(payload: secondPayload)
@@ -85,11 +85,11 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let firstPayload = makeChannelStateResponseFields(name: "first", team: "team1")
+        let firstPayload = makeChannelStateResponse(name: "first", team: "team1")
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
-        let secondPayload = makeChannelStateResponseFields(name: "second", team: "team2")
+        let secondPayload = makeChannelStateResponse(name: "second", team: "team2")
         try await MainActor.run {
             let session = client.mockDatabaseContainer.viewContext
             try session.saveChannel(payload: secondPayload)
@@ -108,7 +108,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     // MARK: Observing List
     
     func test_listDidChangeCount_whenInserting_thenSingleDidChange() async throws {
-        let firstPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponse(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -121,7 +121,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 5)
+        let secondPayload = makeChannelStateResponse(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: secondPayload)
         }
@@ -137,7 +137,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_listDidChangeCount_whenDeletingAndInserting_thenSingleDidChange() async throws {
-        let firstPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponse(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -150,7 +150,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 5)
+        let secondPayload = makeChannelStateResponse(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
             for messageId in firstPayload.messages.map(\.id) {
                 let message = try XCTUnwrap(session.message(id: messageId))
@@ -169,7 +169,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_listDidChangeCount_whenTwoContextsChange_thenTwoDidChange() async throws {
-        let firstPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponse(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -182,11 +182,11 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 5)
+        let secondPayload = makeChannelStateResponse(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: secondPayload)
         }
-        let thirdPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 8)
+        let thirdPayload = makeChannelStateResponse(messageCount: 3, createdAtOffset: 8)
         try await MainActor.run {
             let session = client.mockDatabaseContainer.viewContext
             try session.saveChannel(payload: thirdPayload)
@@ -261,7 +261,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseMessages_whenSomeChange_thenOthersAreReused() async throws {
-        let firstPayload = makeChannelStateResponseFields(messageCount: 10, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponse(messageCount: 10, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -274,7 +274,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(10, messageItemCreatorCounter)
         
         // Change 5 existing messages
-        let secondPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
+        let secondPayload = makeChannelStateResponse(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: secondPayload)
         }
@@ -286,7 +286,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseReactions_whenSomeChange_thenOthersAreReused() async throws {
-        let channelPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
+        let channelPayload = makeChannelStateResponse(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: channelPayload)
         }
@@ -444,11 +444,11 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         )
     }
     
-    private func makeChannelStateResponseFields(name: String?, team: String? = nil) -> ChannelStateResponseFields {
-        ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId, name: name, team: team))
+    private func makeChannelStateResponse(name: String?, team: String? = nil) -> ChannelStateResponse {
+        ChannelStateResponse.dummy(channel: .dummy(cid: channelId, name: name, team: team))
     }
     
-    private func makeChannelStateResponseFields(messageCount: Int, createdAtOffset: Int) -> ChannelStateResponseFields {
+    private func makeChannelStateResponse(messageCount: Int, createdAtOffset: Int) -> ChannelStateResponse {
         let messages: [MessageResponse] = (0..<messageCount)
             .map {
                 .dummy(
@@ -457,7 +457,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                     cid: channelId
                 )
             }
-        return ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId), messages: messages)
+        return ChannelStateResponse.dummy(channel: .dummy(cid: channelId), messages: messages)
     }
 }
 

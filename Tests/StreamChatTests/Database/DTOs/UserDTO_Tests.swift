@@ -357,7 +357,7 @@ final class UserDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
 
         let memberPayload: ChannelMemberResponse = .dummy(user: UserResponse.dummy(userId: userId))
-        let channelPayload: ChannelStateResponseFields = .dummy(channel: .dummy(cid: channelId))
+        let channelPayload: ChannelStateResponse = .dummy(channel: .dummy(cid: channelId))
         let payload: MessageResponse = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
@@ -394,7 +394,7 @@ final class UserDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
 
         let userPayload: UserResponse = .dummy(userId: userId)
-        let channelPayload: ChannelStateResponseFields = .dummy(channel: .dummy(cid: channelId))
+        let channelPayload: ChannelStateResponse = .dummy(channel: .dummy(cid: channelId))
         let payload: MessageResponse = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,

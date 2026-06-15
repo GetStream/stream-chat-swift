@@ -42,7 +42,7 @@ final class ChannelList_Tests: XCTestCase {
     
     func test_restoringState_whenDatabaseHasEntriesWhichShouldBeIgnored_thenStateOnlyIncludesQueryMatchingResults() async throws {
         let matchingQueryChannelsResponse = makeMatchingQueryChannelsResponse(channelCount: 5, createdAtOffset: 0)
-        let deletedChannelPayload = makeMatchingChannelStateResponseFields(createdAtOffset: 5)
+        let deletedChannelPayload = makeMatchingChannelStateResponse(createdAtOffset: 5)
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
             // These match with the query
@@ -640,8 +640,8 @@ final class ChannelList_Tests: XCTestCase {
         }
         
         // New channel event
-        let incomingChannelStateResponseFields = makeMatchingChannelStateResponseFields(createdAtOffset: 1)
-        let incomingCid = try XCTUnwrap(incomingChannelStateResponseFields.channel?.channelId)
+        let incomingChannelStateResponse = makeMatchingChannelStateResponse(createdAtOffset: 1)
+        let incomingCid = try XCTUnwrap(incomingChannelStateResponse.channel?.channelId)
         let event = NotificationAddedToChannelEvent(
             channel: .mock(cid: incomingCid),
             unreadCount: nil,
@@ -650,7 +650,7 @@ final class ChannelList_Tests: XCTestCase {
         )
         // Write the incoming channel to the database
         try await env.client.mockDatabaseContainer.write { session in
-            try session.saveChannel(payload: incomingChannelStateResponseFields)
+            try session.saveChannel(payload: incomingChannelStateResponse)
         }
 
         let stateExpectation = XCTestExpectation(description: "State changed")
@@ -771,7 +771,7 @@ final class ChannelList_Tests: XCTestCase {
             .sorted(by: { $0.cid.rawValue < $1.cid.rawValue })
     }
     
-    private func makeMatchingChannelStateResponseFields(createdAtOffset: Int) -> ChannelStateResponseFields {
+    private func makeMatchingChannelStateResponse(createdAtOffset: Int) -> ChannelStateResponse {
         makeMatchingQueryChannelsResponse(channelCount: 1, createdAtOffset: createdAtOffset).channels[0]
     }
     

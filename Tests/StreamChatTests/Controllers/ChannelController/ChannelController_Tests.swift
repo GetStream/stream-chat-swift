@@ -913,7 +913,7 @@ final class ChannelController_Tests: XCTestCase {
         setupControllerForNewMessageChannel(cid: channelId)
 
         // Save channel with some messages
-        let channelPayload: ChannelStateResponseFields = dummyPayload(with: channelId, numberOfMessages: 5)
+        let channelPayload: ChannelStateResponse = dummyPayload(with: channelId, numberOfMessages: 5)
         let originalLastMessageAt: Date = channelPayload.channel?.lastMessageAt ?? channelPayload.channel?.createdAt ?? Date()
         writeAndWaitForMessageUpdates(count: 5) {
             try $0.saveChannel(payload: channelPayload)
@@ -2567,7 +2567,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Generate messages bigger than pageSize (25)
         let messages: [MessageResponse] = MessageResponse.multipleDummies(amount: 30)
-        let payload = ChannelStateResponseFields.dummy(messages: messages)
+        let payload = ChannelStateResponse.dummy(messages: messages)
         env.channelUpdater?.update_completion?(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -3855,7 +3855,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(
                 cid: channelId,
                 lastMessageAt: lastMessage.createdAt,
@@ -3935,7 +3935,7 @@ final class ChannelController_Tests: XCTestCase {
             cid: channelId
         )
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(
                 cid: channelId,
                 lastMessageAt: lastMessage.createdAt,
@@ -3972,7 +3972,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
             messages: [lastMessage],
             channelReads: [
@@ -4073,7 +4073,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenReadEventsAreNotEnabled() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [])
         )
 
@@ -4102,7 +4102,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let currentUser: OwnUserResponse = .dummy(userId: userId, role: .user)
 
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
             messages: [lastMessage],
             channelReads: [
@@ -4124,7 +4124,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsMarkingAsRead_andCurrentUserIdIsPresent() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
@@ -4149,7 +4149,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
@@ -4170,7 +4170,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterFails() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -4193,7 +4193,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreNoMessages_whenUpdaterSucceeds() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -4268,7 +4268,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenReadEventsAreNotEnabled_messageTimestamp() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [])
         )
 
@@ -4289,7 +4289,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsMarkingAsRead_andCurrentUserIdIsPresent_messageTimestamp() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
@@ -4314,7 +4314,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent_messageTimestamp() throws {
-        let channel: ChannelStateResponseFields = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
@@ -5849,9 +5849,9 @@ extension ChannelController_Tests {
 
     @discardableResult
     func setupChannel(
-        channelPayload: ChannelStateResponseFields? = nil,
+        channelPayload: ChannelStateResponse? = nil,
         withAllNextMessagesLoaded: Bool = true
-    ) throws -> ChannelStateResponseFields {
+    ) throws -> ChannelStateResponse {
         let channelPayload = channelPayload ?? dummyPayload(with: channelId, numberOfMessages: 1)
 
         let error: Error? = try waitFor { done in

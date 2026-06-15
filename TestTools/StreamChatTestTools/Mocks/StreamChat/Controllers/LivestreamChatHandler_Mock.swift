@@ -44,7 +44,7 @@ final class LivestreamChatHandler_Mock: LivestreamChatHandling, @unchecked Senda
     @Atomic var populateFromCacheIfEnabled_callCount = 0
 
     @Atomic var handleChannelPayload_callCount = 0
-    @Atomic var handleChannelPayload_payload: ChannelStateResponseFields?
+    @Atomic var handleChannelPayload_payload: ChannelStateResponse?
     @Atomic var handleChannelPayload_channelQuery: ChannelQuery?
 
     @Atomic var handlePaginationFailure_callCount = 0
@@ -91,7 +91,7 @@ final class LivestreamChatHandler_Mock: LivestreamChatHandling, @unchecked Senda
         populateFromCacheIfEnabled_callCount += 1
     }
 
-    func handleChannelPayload(_ payload: ChannelStateResponseFields, channelQuery: ChannelQuery) {
+    func handleChannelPayload(_ payload: ChannelStateResponse, channelQuery: ChannelQuery) {
         handleChannelPayload_callCount += 1
         handleChannelPayload_payload = payload
         handleChannelPayload_channelQuery = channelQuery

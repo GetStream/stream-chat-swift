@@ -11,7 +11,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     fileprivate var center: EventNotificationCenter_Mock!
     fileprivate var database: DatabaseContainer_Spy!
 
-    var channelPayload: ChannelStateResponseFields!
+    var channelPayload: ChannelStateResponse!
     var currentUserResponse: UserResponse!
     var currentUserReadPayload: ReadStateResponse!
     var anotherUserResponse: UserResponse!
@@ -44,7 +44,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             user: currentUserResponse
         )
 
-        channelPayload = ChannelStateResponseFields.dummy(
+        channelPayload = ChannelStateResponse.dummy(
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
@@ -412,7 +412,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // GIVEN: channel saved without any read entry for the current user
         let cid = ChannelId.unique
-        let channelWithoutReads = ChannelStateResponseFields.dummy(
+        let channelWithoutReads = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             watcherCount: 0,
             watchers: [],
@@ -463,7 +463,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     func test_messageNewEvent_whenNoChannelReadExists_ownMessage_doesNotIncrementCount() throws {
         // GIVEN: channel without read state
         let cid = ChannelId.unique
-        let channelWithoutReads = ChannelStateResponseFields.dummy(
+        let channelWithoutReads = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             watcherCount: 0,
             watchers: [],
@@ -515,7 +515,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // 3. another message arrives → unread = 1 again (not 2)
 
         let cid = ChannelId.unique
-        let channelWithoutReads = ChannelStateResponseFields.dummy(
+        let channelWithoutReads = ChannelStateResponse.dummy(
             channel: .dummy(cid: cid),
             watcherCount: 0,
             watchers: [],

@@ -341,7 +341,7 @@ protocol ChannelDatabaseSession {
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel(
-        payload: ChannelStateResponseFields,
+        payload: ChannelStateResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
@@ -735,7 +735,7 @@ protocol DatabaseSession: UserDatabaseSession,
 
 extension DatabaseSession {
     @discardableResult
-    func saveChannel(payload: ChannelStateResponseFields) throws -> ChannelDTO {
+    func saveChannel(payload: ChannelStateResponse) throws -> ChannelDTO {
         try saveChannel(payload: payload, query: nil, cache: nil)
     }
 

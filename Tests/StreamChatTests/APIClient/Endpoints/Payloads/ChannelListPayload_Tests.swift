@@ -95,7 +95,7 @@ final class QueryChannelsResponse_Tests: XCTestCase {
         let channelReadCount = 20
 
         let users = (0..<max(userCount, 30)).map { userIndex in UserResponse.dummy(userId: "\(userIndex)") }
-        let channels = (0..<channelCount).map { channelIndex -> ChannelStateResponseFields in
+        let channels = (0..<channelCount).map { channelIndex -> ChannelStateResponse in
             let channelUsers = users.shuffled().prefix(30)
 
             let channelCreatedDate = Date.unique
@@ -174,7 +174,7 @@ final class QueryChannelsResponse_Tests: XCTestCase {
                 )
             }
 
-            return ChannelStateResponseFields.dummy(
+            return ChannelStateResponse.dummy(
                 channel: channelDetail,
                 watcherCount: 0,
                 watchers: [],
@@ -210,13 +210,13 @@ final class QueryChannelsResponse_Tests: XCTestCase {
     }
 }
 
-final class ChannelStateResponseFields_Tests: XCTestCase {
+final class ChannelStateResponse_Tests: XCTestCase {
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
         // GIVEN
         let url = XCTestCase.mockData(fromJSONFile: "Channel")
 
         // WHEN
-        let payload = try JSONDecoder.default.decode(ChannelStateResponseFields.self, from: url)
+        let payload = try JSONDecoder.default.decode(ChannelStateResponse.self, from: url)
 
         // THEN
         XCTAssertEqual(payload.watcherCount, 7)
@@ -304,7 +304,7 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         XCTAssertNotNil(payload.pushPreferences)
     }
     
-    // MARK: - ChannelStateResponseFields.asModel() Tests
+    // MARK: - ChannelStateResponse.asModel() Tests
     
     func test_channelPayload_asModel_convertsAllPropertiesCorrectly() {
         let currentUserId = "current-user-id"
@@ -355,7 +355,7 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         let typingUsers = Set([ChatUser.mock(id: "typing-user-id", name: "Typing User")])
         let unreadCount = ChannelUnreadCount(messages: 3, mentions: 1)
 
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: channel,
             watcherCount: 5,
             watchers: [watcherPayload],
@@ -438,7 +438,7 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
             cooldownDuration: 0
         )
 
-        let payload = ChannelStateResponseFields.dummy(
+        let payload = ChannelStateResponse.dummy(
             channel: channel,
             watcherCount: nil,
             watchers: [],

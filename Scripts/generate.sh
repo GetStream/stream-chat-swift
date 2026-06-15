@@ -149,6 +149,21 @@ fold_redundant_user_models() {
   rename_generated_type FullUserResponse UserResponse
 }
 
+fold_redundant_channel_state_models() {
+  # The generator emits ChannelStateResponse and ChannelStateResponseFields, which differ only
+  # by the envelope-level `duration` field that ChannelStateResponseFields omits. The SDK never
+  # reads duration, so collapse them into ChannelStateResponse: drop the Fields definition and
+  # repoint every reference (QueryChannelsResponse.channels, GroupedChannelsBucket.channels).
+  # Then make `duration` optional — the per-channel objects in those array responses arrive
+  # without it, so a required field throws keyNotFound on decode.
+  # Must run AFTER strip_public_open_access_modifiers so the `duration` line has no `public `.
+  delete_generated_filename ChannelStateResponseFields
+  rename_generated_type ChannelStateResponseFields ChannelStateResponse
+  local file="$OUTPUT_DIR_CHAT/models/ChannelStateResponse.swift"
+  sed -i '' -E 's/^([[:space:]]*)var duration: String$/\1var duration: String?/' "$file"
+  sed -i '' -E 's/duration: String([,)])/duration: String? = nil\1/' "$file"
+}
+
 make_user_response_team_fields_optional() {
   # INTERIM: The backend's custom JSON encoder drops nil slices/maps regardless of
   # `omitempty`, so user objects can arrive without `teams`/`blocked_user_ids` even
@@ -363,6 +378,7 @@ make_channel_member_response_partial_fields_optional
 make_message_delivered_last_delivered_at_date
 make_member_event_channel_optional
 fold_redundant_user_models
+fold_redundant_channel_state_models
 make_user_response_team_fields_optional
 make_sync_replayed_event_fields_optional
 make_channel_config_with_info_fields_optional

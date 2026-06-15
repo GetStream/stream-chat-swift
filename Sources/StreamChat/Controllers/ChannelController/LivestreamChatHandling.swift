@@ -83,7 +83,7 @@ protocol LivestreamChatHandling: AnyObject, Sendable {
     func populateFromCacheIfEnabled()
 
     /// Applies the freshly-fetched channel state response to the in-memory state.
-    func handleChannelPayload(_ payload: ChannelStateResponseFields, channelQuery: ChannelQuery)
+    func handleChannelPayload(_ payload: ChannelStateResponse, channelQuery: ChannelQuery)
 
     /// Marks pagination as failed without mutating in-memory data.
     func handlePaginationFailure(channelQuery: ChannelQuery, error: Error)

@@ -283,7 +283,7 @@ public extension FilterKey where Scope == ChannelListFilterScope {
 
     /// A filter key for querying hidden channels.
     /// Supported operators: `equal`
-    // TODO: should it be using the ChannelStateResponseFields.isHidden or ChannelStateResponseFields.channel.isHidden
+    // TODO: should it be using the ChannelStateResponse.isHidden or ChannelStateResponse.channel.isHidden
     static var hidden: FilterKey<Scope, Bool> { .init(rawValue: "hidden", keyPathString: #keyPath(ChannelDTO.isHidden)) }
 
     /// A filter key for matching the `frozen` value.
