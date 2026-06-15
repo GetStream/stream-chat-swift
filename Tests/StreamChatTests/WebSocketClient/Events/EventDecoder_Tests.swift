@@ -58,7 +58,7 @@ final class EventDecoder_Tests: XCTestCase {
                 custom: [:],
                 message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
                 messageId: messageId,
-                user: UserResponseCommonFields.dummy(userId: ""),
+                user: UserResponse.dummy(userId: ""),
                 watcherCount: 0
             )
         )
@@ -217,7 +217,7 @@ final class EventDecoder_Tests: XCTestCase {
             UserBannedEventDTO(
                 createdAt: .unique,
                 custom: [:],
-                user: UserResponseCommonFields.dummy(userId: .unique)
+                user: UserResponse.dummy(userId: .unique)
             )
         )
 
@@ -233,7 +233,7 @@ final class EventDecoder_Tests: XCTestCase {
             UserUnbannedEventDTO(
                 createdAt: .unique,
                 custom: [:],
-                user: UserResponseCommonFields.dummy(userId: .unique)
+                user: UserResponse.dummy(userId: .unique)
             )
         )
 
@@ -252,7 +252,7 @@ final class EventDecoder_Tests: XCTestCase {
                 totalUnreadCount: 2,
                 unreadChannels: 1,
                 unreadCount: 2,
-                user: UserResponseCommonFields.dummy(userId: .unique)
+                user: UserResponse.dummy(userId: .unique)
             )
         )
 

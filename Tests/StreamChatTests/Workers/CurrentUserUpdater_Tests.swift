@@ -78,7 +78,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUserUpdateResponse = UpdateUsersResponse.dummy(
-            user: FullUserResponse.dummy(
+            user: OwnUserResponse.dummy(
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl,
@@ -176,7 +176,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUserUpdateResponse = UpdateUsersResponse.dummy(
-            user: FullUserResponse.dummy(
+            user: OwnUserResponse.dummy(
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl,

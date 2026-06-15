@@ -24,9 +24,9 @@ final class ChannelVisibleEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     var team: String?
     /// The type of event: "channel.visible" in this case
     var type: String = "channel.visible"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, team: String? = nil, user: UserResponse? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

@@ -26,9 +26,9 @@ final class NotificationRemovedFromChannelEventDTO: @unchecked Sendable, Event, 
     var team: String?
     /// The type of event: "notification.removed_from_channel" in this case
     var type: String = "notification.removed_from_channel"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], member: ChannelMemberResponse, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], member: ChannelMemberResponse, receivedAt: Date? = nil, team: String? = nil, user: UserResponse? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

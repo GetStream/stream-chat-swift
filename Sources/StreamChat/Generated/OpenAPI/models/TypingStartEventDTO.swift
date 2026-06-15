@@ -19,9 +19,9 @@ final class TypingStartEventDTO: @unchecked Sendable, Event, Codable, JSONEncoda
     var receivedAt: Date?
     /// The type of event: "typing.start" in this case
     var type: String = "typing.start"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channelId: String? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], parentId: String? = nil, receivedAt: Date? = nil, user: UserResponseCommonFields? = nil) {
+    init(channelId: String? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], parentId: String? = nil, receivedAt: Date? = nil, user: UserResponse? = nil) {
         self.channelId = channelId
         self.channelType = channelType
         self.cid = cid

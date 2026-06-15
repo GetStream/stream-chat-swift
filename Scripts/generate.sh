@@ -129,23 +129,39 @@ make_member_event_channel_optional() {
   done
 }
 
+fold_redundant_user_models() {
+  # The generator emits five near-duplicate user models. Four are only ever turned
+  # into a ChatUser, so collapse them into a single UserResponse. The exception is
+  # FullUserResponse in UpdateUsersResponse (the current-user PATCH response), whose
+  # extra fields feed saveCurrentUser — route that one to OwnUserResponse so no
+  # current-user data (devices/mutes/unread/privacy/push/invisible) is lost.
+
+  # Current-user update response keeps full data via OwnUserResponse. Must run
+  # before the global FullUserResponse rename below.
+  sed -i '' -E 's/[[:<:]]FullUserResponse[[:>:]]/OwnUserResponse/g' "$OUTPUT_DIR_CHAT/models/UpdateUsersResponse.swift"
+
+  # Drop the redundant definitions, then repoint every remaining reference.
+  delete_generated_filename UserResponseCommonFields
+  delete_generated_filename UserResponsePrivacyFields
+  delete_generated_filename FullUserResponse
+  rename_generated_type UserResponseCommonFields UserResponse
+  rename_generated_type UserResponsePrivacyFields UserResponse
+  rename_generated_type FullUserResponse UserResponse
+}
+
 make_user_response_team_fields_optional() {
   # INTERIM: The backend's custom JSON encoder drops nil slices/maps regardless of
   # `omitempty`, so user objects can arrive without `teams`/`blocked_user_ids` even
   # though the spec marks them required (member events' top-level `user` and
   # `member.user` do in practice; message.new users include them). Make both
-  # optional on every UserResponseFields conformer: the protocol's `teams`
-  # requirement becomes `[String]?` and a non-optional stored property cannot
-  # witness an optional requirement, so all five models must change together.
+  # optional on the two surviving user models.
   # (OwnUserResponse.blockedUserIds is already optional — that sed is a no-op there.)
-  # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `.
+  # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `
+  # and AFTER fold_redundant_user_models so the deleted models aren't referenced.
   local file
   for file in \
-    "$OUTPUT_DIR_CHAT/models/FullUserResponse.swift" \
     "$OUTPUT_DIR_CHAT/models/OwnUserResponse.swift" \
-    "$OUTPUT_DIR_CHAT/models/UserResponse.swift" \
-    "$OUTPUT_DIR_CHAT/models/UserResponseCommonFields.swift" \
-    "$OUTPUT_DIR_CHAT/models/UserResponsePrivacyFields.swift"; do
+    "$OUTPUT_DIR_CHAT/models/UserResponse.swift"; do
     # Property declarations (anchored to end-of-line; `teamsRole: [String: String]?`
     # and `latestHiddenChannels: [String]?` are not matched).
     sed -i '' -E 's/^([[:space:]]*)var blockedUserIds: \[String\]$/\1var blockedUserIds: [String]?/' "$file"
@@ -346,6 +362,7 @@ strip_public_open_access_modifiers
 make_channel_member_response_partial_fields_optional
 make_message_delivered_last_delivered_at_date
 make_member_event_channel_optional
+fold_redundant_user_models
 make_user_response_team_fields_optional
 make_sync_replayed_event_fields_optional
 make_channel_config_with_info_fields_optional

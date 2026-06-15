@@ -34,7 +34,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             thread: .dummy(parentMessageId: .unique),
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         _ = middleware.handle(event: event, session: mockSession)
@@ -56,7 +56,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             unreadChannels: .unique,
             unreadCount: .unique,
             unreadMessages: 6,
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         _ = middleware.handle(event: event, session: mockSession)
@@ -254,7 +254,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -296,7 +296,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -342,7 +342,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             hardDelete: false,
             message: messagePayload,
             messageId: messagePayload.id,
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -379,7 +379,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             hardDelete: false,
             message: messagePayload,
             messageId: messagePayload.id,
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -416,7 +416,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             hardDelete: true,
             message: messagePayload,
             messageId: messagePayload.id,
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -452,7 +452,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: messagePayload,
             messageId: messagePayload.id,
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -488,7 +488,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: messagePayload,
             messageId: messagePayload.id,
-            user: UserResponseCommonFields.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in

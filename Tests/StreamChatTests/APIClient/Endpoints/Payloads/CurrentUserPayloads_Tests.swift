@@ -13,7 +13,7 @@ final class OwnUserResponse_Tests: XCTestCase {
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
         let json = XCTestCase.mockData(fromJSONFile: "CurrentUserCustomRole")
         let payload = try JSONDecoder.default.decode(OwnUserResponse.self, from: json)
-        XCTAssertEqual(payload.userRole, UserRole("banana-master"))
+        XCTAssertEqual(payload.asUserResponse().userRole, UserRole("banana-master"))
     }
 
     func test_currentUserJSON_isDecodedCorrectly() throws {
@@ -26,10 +26,10 @@ final class OwnUserResponse_Tests: XCTestCase {
         XCTAssertEqual(payload.name, "Broken Waterfall")
         XCTAssertEqual(payload.teams?.count, 3)
         XCTAssertEqual(
-            payload.imageURL,
+            payload.asUserResponse().imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.userRole, .user)
+        XCTAssertEqual(payload.asUserResponse().userRole, .user)
         XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.devices.map(\.id), [
             "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",

@@ -13,10 +13,10 @@ final class UserGroupMemberAddedEventDTO: @unchecked Sendable, Event, Codable, J
     var receivedAt: Date?
     /// The type of event: "user_group.member_added" in this case
     var type: String = "user_group.member_added"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
     var userGroup: UserGroup?
 
-    init(createdAt: Date, custom: [String: RawJSON], members: [String], receivedAt: Date? = nil, user: UserResponseCommonFields? = nil, userGroup: UserGroup? = nil) {
+    init(createdAt: Date, custom: [String: RawJSON], members: [String], receivedAt: Date? = nil, user: UserResponse? = nil, userGroup: UserGroup? = nil) {
         self.createdAt = createdAt
         self.custom = custom
         self.members = members

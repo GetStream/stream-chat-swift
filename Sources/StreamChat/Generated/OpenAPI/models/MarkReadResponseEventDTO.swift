@@ -15,9 +15,9 @@ final class MarkReadResponseEventDTO: @unchecked Sendable, Codable, JSONEncodabl
     var team: String?
     var thread: ThreadResponse?
     var type: String
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channel: ChannelResponse? = nil, channelId: String, channelLastMessageAt: Date? = nil, channelType: String, cid: String, createdAt: Date, lastReadMessageId: String? = nil, team: String? = nil, thread: ThreadResponse? = nil, type: String, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse? = nil, channelId: String, channelLastMessageAt: Date? = nil, channelType: String, cid: String, createdAt: Date, lastReadMessageId: String? = nil, team: String? = nil, thread: ThreadResponse? = nil, type: String, user: UserResponse? = nil) {
         self.channel = channel
         self.channelId = channelId
         self.channelLastMessageAt = channelLastMessageAt

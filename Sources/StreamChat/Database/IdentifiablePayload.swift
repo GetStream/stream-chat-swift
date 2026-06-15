@@ -113,15 +113,6 @@ extension QueryUsersResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension FullUserResponse: IdentifiablePayload {
-    var databaseId: DatabaseId? { id }
-    static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
-
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        addId(cache: &cache)
-    }
-}
-
 extension GetReactionsResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         reactions.fillIds(cache: &cache)

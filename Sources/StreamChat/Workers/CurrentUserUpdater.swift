@@ -71,7 +71,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                         guard let user = response.users.first?.value else {
                             throw ClientError.Unexpected("Missing updated user.")
                         }
-                        try session.saveCurrentUser(payload: user.asOwnUserResponse())
+                        try session.saveCurrentUser(payload: user)
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)

@@ -11,10 +11,10 @@ final class UserGroupCreatedEventDTO: @unchecked Sendable, Event, Codable, JSONE
     var receivedAt: Date?
     /// The type of event: "user_group.created" in this case
     var type: String = "user_group.created"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
     var userGroup: UserGroup?
 
-    init(createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponseCommonFields? = nil, userGroup: UserGroup? = nil) {
+    init(createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponse? = nil, userGroup: UserGroup? = nil) {
         self.createdAt = createdAt
         self.custom = custom
         self.receivedAt = receivedAt

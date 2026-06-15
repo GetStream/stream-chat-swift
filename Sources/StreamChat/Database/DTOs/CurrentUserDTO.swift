@@ -93,7 +93,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.user = try saveUser(payload: payload)
+        dto.user = try saveUser(payload: payload.asUserResponse())
         dto.isInvisible = payload.invisible
 
         // If not privacy setting is provided by the backend then we treat as enabled by default.

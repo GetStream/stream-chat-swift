@@ -140,7 +140,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     }
 
     func saveUser(
-        payload: some UserResponseFields,
+        payload: UserResponse,
         query: UserListQuery?,
         cache: PreWarmedCache?
     ) throws -> UserDTO {

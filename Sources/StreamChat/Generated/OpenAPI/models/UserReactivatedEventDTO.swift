@@ -7,14 +7,14 @@ import Foundation
 final class UserReactivatedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodable, Hashable {
     /// Date/time of creation
     var createdAt: Date
-    var createdBy: UserResponseCommonFields?
+    var createdBy: UserResponse?
     var custom: [String: RawJSON]
     var receivedAt: Date?
     /// The type of event: "user.reactivated" in this case
     var type: String = "user.reactivated"
-    var user: UserResponseCommonFields
+    var user: UserResponse
 
-    init(createdAt: Date, createdBy: UserResponseCommonFields? = nil, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponseCommonFields) {
+    init(createdAt: Date, createdBy: UserResponse? = nil, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponse) {
         self.createdAt = createdAt
         self.createdBy = createdBy
         self.custom = custom

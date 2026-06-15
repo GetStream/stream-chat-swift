@@ -26,9 +26,9 @@ final class ChannelTruncatedEventDTO: @unchecked Sendable, Event, Codable, JSONE
     var team: String?
     /// The type of event: "channel.truncated" in this case
     var type: String = "channel.truncated"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse? = nil, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse? = nil, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponse? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

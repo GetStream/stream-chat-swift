@@ -101,7 +101,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             message: .dummy(messageId: messageId, authorUserId: reactionPayload.user.id),
             messageId: messageId,
             reaction: reactionPayload,
-            user: reactionPayload.user.asUserResponseCommonFields()
+            user: reactionPayload.user
         )
 
         // Simulate `ReactionDeletedEvent` event.
@@ -147,7 +147,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
             messageId: messageId,
             reaction: reactionPayload,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Simulate `ReactionUpdatedEvent` event.
@@ -201,7 +201,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
             messageId: messageId,
             reaction: reactionPayload,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Simulate `ReactionNewEvent` event.
@@ -235,7 +235,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let testEvent = UserUpdatedEventDTO(
             createdAt: .unique,
             custom: [:],
-            user: user.asUserResponsePrivacyFields()
+            user: user
         )
 
         // Simulate the DB fails to save the payload

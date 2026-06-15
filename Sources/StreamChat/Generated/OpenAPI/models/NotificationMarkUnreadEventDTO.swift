@@ -45,9 +45,9 @@ final class NotificationMarkUnreadEventDTO: @unchecked Sendable, Event, Codable,
     var unreadThreadMessages: Int?
     /// The number of unread threads
     var unreadThreads: Int?
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], firstUnreadMessageId: String? = nil, groupedUnreadChannels: [String: Int]? = nil, lastReadAt: Date? = nil, lastReadMessageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadId: String? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil, unreadMessages: Int? = nil, unreadThreadMessages: Int? = nil, unreadThreads: Int? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], firstUnreadMessageId: String? = nil, groupedUnreadChannels: [String: Int]? = nil, lastReadAt: Date? = nil, lastReadMessageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadId: String? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil, unreadMessages: Int? = nil, unreadThreadMessages: Int? = nil, unreadThreads: Int? = nil, user: UserResponse? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

@@ -27,7 +27,7 @@ final class NotificationThreadMessageNewEventDTO: @unchecked Sendable, Event, Co
     /// The ID of the thread
     var threadId: String
     /// The participants of the thread
-    var threadParticipants: [UserResponseCommonFields]?
+    var threadParticipants: [UserResponse]?
     /// The type of event: "notification.message_new" in this case
     var type: String = "notification.thread_message_new"
     var unreadThreadMessages: Int?
@@ -35,7 +35,7 @@ final class NotificationThreadMessageNewEventDTO: @unchecked Sendable, Event, Co
     /// The number of watchers
     var watcherCount: Int
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String, parentAuthor: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadId: String, threadParticipants: [UserResponseCommonFields]? = nil, unreadThreadMessages: Int? = nil, unreadThreads: Int? = nil, watcherCount: Int) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String, parentAuthor: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadId: String, threadParticipants: [UserResponse]? = nil, unreadThreadMessages: Int? = nil, unreadThreads: Int? = nil, watcherCount: Int) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

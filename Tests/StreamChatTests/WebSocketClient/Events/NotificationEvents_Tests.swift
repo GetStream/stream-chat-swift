@@ -187,7 +187,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadChannels: unreadCount.channels ?? 0,
             unreadCount: unreadCount.messages ?? 0,
             unreadThreadMessages: unreadCount.threads,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -223,7 +223,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadChannels: unreadCount.channels ?? 0,
             unreadCount: unreadCount.messages ?? 0,
             unreadThreadMessages: unreadCount.threads,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -267,7 +267,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadCount: unreadCount.messages,
             unreadMessages: unreadMessages,
             unreadThreadMessages: unreadCount.threads,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -366,7 +366,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: member,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -427,7 +427,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: member,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -462,7 +462,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: member,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -498,7 +498,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: member,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database

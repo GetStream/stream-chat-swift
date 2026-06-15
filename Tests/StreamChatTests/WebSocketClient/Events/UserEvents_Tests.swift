@@ -86,7 +86,7 @@ final class UserEvents_Tests: XCTestCase {
         let dto = UserPresenceChangedEventDTO(
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies
@@ -111,7 +111,7 @@ final class UserEvents_Tests: XCTestCase {
         let dto = UserUpdatedEventDTO(
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponsePrivacyFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies
@@ -139,7 +139,7 @@ final class UserEvents_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields(),
+            user: user,
             watcherCount: watcherCount
         )
 
@@ -170,7 +170,7 @@ final class UserEvents_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields(),
+            user: user,
             watcherCount: 10
         )
 
@@ -202,11 +202,11 @@ final class UserEvents_Tests: XCTestCase {
         let dto = UserBannedEventDTO(
             cid: cid.rawValue,
             createdAt: createdAt,
-            createdBy: createdBy.asUserResponseCommonFields(),
+            createdBy: createdBy,
             custom: [:],
             expiration: banExpiredAt,
             reason: banReason,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies
@@ -237,7 +237,7 @@ final class UserEvents_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies
@@ -263,7 +263,7 @@ final class UserEvents_Tests: XCTestCase {
         let bannedDTO = UserBannedEventDTO(
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies
@@ -288,7 +288,7 @@ final class UserEvents_Tests: XCTestCase {
         let unbannedDTO = UserUnbannedEventDTO(
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies

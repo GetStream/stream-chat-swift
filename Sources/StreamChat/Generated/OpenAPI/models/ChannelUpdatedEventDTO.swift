@@ -26,9 +26,9 @@ final class ChannelUpdatedEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     var team: String?
     /// The type of event: "channel.updated" in this case
     var type: String = "channel.updated"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse? = nil, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse? = nil, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponse? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

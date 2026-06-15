@@ -18,7 +18,7 @@ extension TypingStartEventDTO {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields.dummy(userId: userId)
+            user: UserResponse.dummy(userId: userId)
         )
     }
 }
@@ -31,7 +31,7 @@ extension TypingStopEventDTO {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields.dummy(userId: userId)
+            user: UserResponse.dummy(userId: userId)
         )
     }
 }

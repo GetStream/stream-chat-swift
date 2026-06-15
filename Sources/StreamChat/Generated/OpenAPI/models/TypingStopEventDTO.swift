@@ -19,9 +19,9 @@ final class TypingStopEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     var receivedAt: Date?
     /// The type of event: "typing.stop" in this case
     var type: String = "typing.stop"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channelId: String? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], parentId: String? = nil, receivedAt: Date? = nil, user: UserResponseCommonFields? = nil) {
+    init(channelId: String? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], parentId: String? = nil, receivedAt: Date? = nil, user: UserResponse? = nil) {
         self.channelId = channelId
         self.channelType = channelType
         self.cid = cid

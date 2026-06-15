@@ -193,7 +193,7 @@ class ManualEventHandler: @unchecked Sendable {
 
     private func createTypingEvent(
         isTyping: Bool,
-        userFields: UserResponseCommonFields?,
+        userFields: UserResponse?,
         parentId: MessageId?,
         createdAt: Date,
         cid: ChannelId

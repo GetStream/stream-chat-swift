@@ -16,7 +16,7 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     var cid: String?
     /// Date/time of creation
     var createdAt: Date
-    var createdBy: UserResponseCommonFields?
+    var createdBy: UserResponse?
     var custom: [String: RawJSON]
     /// The expiration date of the ban
     var expiration: Date?
@@ -30,9 +30,9 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     var totalBans: Int?
     /// The type of event: "user.banned" in this case
     var type: String = "user.banned"
-    var user: UserResponseCommonFields
+    var user: UserResponse
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, createdBy: UserResponseCommonFields? = nil, custom: [String: RawJSON], expiration: Date? = nil, reason: String? = nil, receivedAt: Date? = nil, shadow: Bool? = nil, team: String? = nil, totalBans: Int? = nil, user: UserResponseCommonFields) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, createdBy: UserResponse? = nil, custom: [String: RawJSON], expiration: Date? = nil, reason: String? = nil, receivedAt: Date? = nil, shadow: Bool? = nil, team: String? = nil, totalBans: Int? = nil, user: UserResponse) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount

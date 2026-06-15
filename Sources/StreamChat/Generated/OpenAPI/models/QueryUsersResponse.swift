@@ -8,9 +8,9 @@ final class QueryUsersResponse: @unchecked Sendable, Codable, JSONEncodable, Has
     /// Duration of the request in milliseconds
     var duration: String
     /// Array of users as result of filters applied.
-    var users: [FullUserResponse]
+    var users: [UserResponse]
 
-    init(duration: String, users: [FullUserResponse]) {
+    init(duration: String, users: [UserResponse]) {
         self.duration = duration
         self.users = users
     }

@@ -11,9 +11,9 @@ final class UserPresenceChangedEventDTO: @unchecked Sendable, Event, Codable, JS
     var receivedAt: Date?
     /// The type of event: "user.presence.changed" in this case
     var type: String = "user.presence.changed"
-    var user: UserResponseCommonFields
+    var user: UserResponse
 
-    init(createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponseCommonFields) {
+    init(createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponse) {
         self.createdAt = createdAt
         self.custom = custom
         self.receivedAt = receivedAt

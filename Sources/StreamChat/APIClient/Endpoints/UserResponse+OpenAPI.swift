@@ -4,33 +4,7 @@
 
 import Foundation
 
-/// Common fields shared by all generated user response models so that user data
-/// can be persisted and converted to domain models without intermediate copies.
-protocol UserResponseFields: Sendable {
-    var id: String { get }
-    var name: String? { get }
-    var image: String? { get }
-    var banned: Bool { get }
-    var online: Bool { get }
-    var role: String { get }
-    var teamsRole: [String: String]? { get }
-    var language: String { get }
-    var createdAt: Date { get }
-    var updatedAt: Date { get }
-    var deactivatedAt: Date? { get }
-    var lastActive: Date? { get }
-    var teams: [String]? { get }
-    var avgResponseTime: Int? { get }
-    var custom: [String: RawJSON] { get }
-}
-
-extension FullUserResponse: UserResponseFields {}
-extension OwnUserResponse: UserResponseFields {}
-extension UserResponse: UserResponseFields {}
-extension UserResponseCommonFields: UserResponseFields {}
-extension UserResponsePrivacyFields: UserResponseFields {}
-
-extension UserResponseFields {
+extension UserResponse {
     var imageURL: URL? {
         image.flatMap(URL.init(string:))
     }
@@ -54,43 +28,30 @@ extension CreateGuestResponse {
     }
 }
 
-extension FullUserResponse {
-    func asOwnUserResponse() -> OwnUserResponse {
-        OwnUserResponse(
+extension OwnUserResponse {
+    func asUserResponse() -> UserResponse {
+        UserResponse(
             avgResponseTime: avgResponseTime,
             banned: banned,
             blockedUserIds: blockedUserIds,
-            channelMutes: channelMutes,
             createdAt: createdAt,
             custom: custom,
             deactivatedAt: deactivatedAt,
             deletedAt: deletedAt,
-            devices: devices,
             id: id,
             image: image,
-            invisible: invisible,
             language: language,
             lastActive: lastActive,
-            latestHiddenChannels: latestHiddenChannels,
-            mutes: mutes,
             name: name,
             online: online,
-            privacySettings: privacySettings,
-            pushPreferences: nil,
             revokeTokensIssuedBefore: revokeTokensIssuedBefore,
             role: role,
             teams: teams,
             teamsRole: teamsRole,
-            totalUnreadCount: totalUnreadCount,
-            unreadChannels: unreadChannels,
-            unreadCount: unreadCount,
-            unreadThreads: unreadThreads,
             updatedAt: updatedAt
         )
     }
-}
 
-extension OwnUserResponse {
     var unreadCountPayload: UnreadCountPayload? {
         UnreadCountPayload(
             channels: unreadChannels,

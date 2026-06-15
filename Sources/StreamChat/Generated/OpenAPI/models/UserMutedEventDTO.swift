@@ -9,14 +9,14 @@ final class UserMutedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodabl
     var createdAt: Date
     var custom: [String: RawJSON]
     var receivedAt: Date?
-    var targetUser: UserResponseCommonFields?
+    var targetUser: UserResponse?
     /// The target users that were muted
-    var targetUsers: [UserResponseCommonFields]?
+    var targetUsers: [UserResponse]?
     /// The type of event: "user.muted" in this case
     var type: String = "user.muted"
-    var user: UserResponseCommonFields
+    var user: UserResponse
 
-    init(createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, targetUser: UserResponseCommonFields? = nil, targetUsers: [UserResponseCommonFields]? = nil, user: UserResponseCommonFields) {
+    init(createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, targetUser: UserResponse? = nil, targetUsers: [UserResponse]? = nil, user: UserResponse) {
         self.createdAt = createdAt
         self.custom = custom
         self.receivedAt = receivedAt

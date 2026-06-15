@@ -110,7 +110,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -141,7 +141,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: messageFromCurrentUser,
             messageId: messageFromCurrentUser.id,
-            user: currentUserResponse.asUserResponseCommonFields()
+            user: currentUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -178,7 +178,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: messageFromMutedUser,
             messageId: messageFromMutedUser.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -208,7 +208,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: softDeletedMessage,
             messageId: softDeletedMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -238,7 +238,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: silentMessage,
             messageId: silentMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -270,7 +270,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: threadReply,
             messageId: threadReply.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -300,7 +300,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: systemMessage,
             messageId: systemMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -329,7 +329,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -359,7 +359,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -391,7 +391,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -617,7 +617,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: message,
             messageId: message.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -647,7 +647,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: messageFromCurrentUser,
             messageId: messageFromCurrentUser.id,
-            user: currentUserResponse.asUserResponseCommonFields(),
+            user: currentUserResponse,
             watcherCount: 0
         )
 
@@ -683,7 +683,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: messageFromMutedUser,
             messageId: messageFromMutedUser.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -712,7 +712,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: silentMessage,
             messageId: silentMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -743,7 +743,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: threadReplyPayload,
             messageId: threadReplyPayload.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -775,7 +775,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: systemMessage,
             messageId: systemMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -805,7 +805,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: shadowedMessage,
             messageId: shadowedMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -834,7 +834,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: regularMessageEarlierThanLastRead,
             messageId: regularMessageEarlierThanLastRead.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
 
@@ -1059,7 +1059,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: channelId.rawValue,
             createdAt: newReadDate,
             custom: [:],
-            user: UserResponseCommonFields.dummy(userId: dummyCurrentUser.id)
+            user: UserResponse.dummy(userId: dummyCurrentUser.id)
         )
 
         // Let the middleware handle the event
@@ -1105,7 +1105,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: channelId.rawValue,
             createdAt: newReadDate,
             custom: [:],
-            user: dummyUser(id: memberId).asUserResponseCommonFields()
+            user: dummyUser(id: memberId)
         )
 
         // Let the middleware handle the event
@@ -1149,7 +1149,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: newReadDate,
             custom: [:],
             thread: .dummy(parentMessageId: .unique),
-            user: UserResponseCommonFields.dummy(userId: dummyCurrentUser.id)
+            user: UserResponse.dummy(userId: dummyCurrentUser.id)
         )
 
         // Let the middleware handle the event
@@ -1216,7 +1216,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields.dummy(userId: dummyCurrentUser.id)
+            user: UserResponse.dummy(userId: dummyCurrentUser.id)
         )
 
         // Let the middleware handle the event
@@ -1264,7 +1264,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields.dummy(userId: dummyCurrentUser.id)
+            user: UserResponse.dummy(userId: dummyCurrentUser.id)
         )
 
         // Let the middleware handle the event
@@ -1314,7 +1314,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: dummyUser(id: memberId).asUserResponseCommonFields()
+            user: dummyUser(id: memberId)
         )
 
         // Let the middleware handle the event
@@ -1361,7 +1361,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadChannels: 19,
             unreadCount: 124,
             unreadThreadMessages: 20,
-            user: UserResponseCommonFields.dummy(userId: dummyCurrentUser.id)
+            user: UserResponse.dummy(userId: dummyCurrentUser.id)
         )
 
         // Let the middleware handle the event
@@ -1539,7 +1539,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: channelPayload.channel!.cid,
             createdAt: .unique,
             custom: [:],
-            user: anotherUserResponse.asUserResponseCommonFields()
+            user: anotherUserResponse
         )
     }
 
@@ -1564,7 +1564,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: message,
             messageId: message.id,
-            user: user.asUserResponseCommonFields(),
+            user: user,
             watcherCount: 0
         )
     }
@@ -1587,7 +1587,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: regularMessage,
             messageId: regularMessage.id,
-            user: anotherUserResponse.asUserResponseCommonFields(),
+            user: anotherUserResponse,
             watcherCount: 0
         )
     }

@@ -144,7 +144,7 @@ final class ChannelEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             message: message,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -175,7 +175,7 @@ final class ChannelEvents_Tests: XCTestCase {
             channel: channel,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -204,7 +204,7 @@ final class ChannelEvents_Tests: XCTestCase {
             channel: channel,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -235,7 +235,7 @@ final class ChannelEvents_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -266,7 +266,7 @@ final class ChannelEvents_Tests: XCTestCase {
             clearHistory: true,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database

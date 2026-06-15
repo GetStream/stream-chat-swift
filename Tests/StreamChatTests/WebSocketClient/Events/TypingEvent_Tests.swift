@@ -80,7 +80,7 @@ final class TypingEvent_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             parentId: parentId,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies
@@ -111,7 +111,7 @@ final class TypingEvent_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: [:],
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies

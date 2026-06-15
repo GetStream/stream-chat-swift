@@ -16,7 +16,7 @@ final class UserUnbannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncod
     var cid: String?
     /// Date/time of creation
     var createdAt: Date
-    var createdBy: UserResponseCommonFields?
+    var createdBy: UserResponse?
     var custom: [String: RawJSON]
     var receivedAt: Date?
     /// Whether the target user was shadow unbanned
@@ -25,9 +25,9 @@ final class UserUnbannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncod
     var team: String?
     /// The type of event: "user.unbanned" in this case
     var type: String = "user.unbanned"
-    var user: UserResponseCommonFields
+    var user: UserResponse
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, createdBy: UserResponseCommonFields? = nil, custom: [String: RawJSON], receivedAt: Date? = nil, shadow: Bool? = nil, team: String? = nil, user: UserResponseCommonFields) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, createdBy: UserResponse? = nil, custom: [String: RawJSON], receivedAt: Date? = nil, shadow: Bool? = nil, team: String? = nil, user: UserResponse) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount

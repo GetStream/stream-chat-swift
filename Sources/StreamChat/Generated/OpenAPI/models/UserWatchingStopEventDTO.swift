@@ -17,11 +17,11 @@ final class UserWatchingStopEventDTO: @unchecked Sendable, Event, Codable, JSONE
     var receivedAt: Date?
     /// The type of event: "user.watching.stop" in this case
     var type: String = "user.watching.stop"
-    var user: UserResponseCommonFields
+    var user: UserResponse
     /// The number of users watching the channel
     var watcherCount: Int
 
-    init(channelId: String? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponseCommonFields, watcherCount: Int) {
+    init(channelId: String? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], receivedAt: Date? = nil, user: UserResponse, watcherCount: Int) {
         self.channelId = channelId
         self.channelType = channelType
         self.cid = cid

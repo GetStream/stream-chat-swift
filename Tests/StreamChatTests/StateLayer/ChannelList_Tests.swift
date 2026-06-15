@@ -610,7 +610,7 @@ final class ChannelList_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields.dummy(userId: memberId)
+            user: UserResponse.dummy(userId: memberId)
         )
         let expectation = XCTestExpectation()
         env.client.eventNotificationCenter.process(notificationMarkReadEvent, postNotification: true) {

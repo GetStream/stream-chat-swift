@@ -156,7 +156,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             messageId: message.id,
             unreadChannels: unreadCount.channels,
             unreadCount: unreadCount.messages,
-            user: user.asUserResponseCommonFields(),
+            user: user,
             watcherCount: 10
         )
 
@@ -197,7 +197,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             custom: [:],
             message: message,
             messageId: message.id,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -234,7 +234,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             hardDelete: false,
             message: message,
             messageId: message.id,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -274,7 +274,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
                 parentMessage: .dummy(messageId: parentMessageId),
                 parentMessageId: parentMessageId
             ),
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -322,7 +322,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             team: teamId,
-            user: user.asUserResponseCommonFields()
+            user: user
         )
 
         // Save channel to database since it must exist when we get this event

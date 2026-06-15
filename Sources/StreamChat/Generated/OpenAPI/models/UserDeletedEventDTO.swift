@@ -23,9 +23,9 @@ final class UserDeletedEventDTO: @unchecked Sendable, Event, Codable, JSONEncoda
     var receivedAt: Date?
     /// The type of event: "user.deleted" in this case
     var type: String = "user.deleted"
-    var user: UserResponseCommonFields
+    var user: UserResponse
 
-    init(createdAt: Date, custom: [String: RawJSON], deleteConversation: String, deleteConversationChannels: Bool, deleteMessages: String, deleteUser: String, hardDelete: Bool, markMessagesDeleted: Bool, receivedAt: Date? = nil, user: UserResponseCommonFields) {
+    init(createdAt: Date, custom: [String: RawJSON], deleteConversation: String, deleteConversationChannels: Bool, deleteMessages: String, deleteUser: String, hardDelete: Bool, markMessagesDeleted: Bool, receivedAt: Date? = nil, user: UserResponse) {
         self.createdAt = createdAt
         self.custom = custom
         self.deleteConversation = deleteConversation

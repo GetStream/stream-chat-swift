@@ -9,9 +9,9 @@ final class UpdateUsersResponse: @unchecked Sendable, Codable, JSONEncodable, Ha
     var duration: String
     var membershipDeletionTaskId: String
     /// Object containing users
-    var users: [String: FullUserResponse]
+    var users: [String: OwnUserResponse]
 
-    init(duration: String, membershipDeletionTaskId: String, users: [String: FullUserResponse]) {
+    init(duration: String, membershipDeletionTaskId: String, users: [String: OwnUserResponse]) {
         self.duration = duration
         self.membershipDeletionTaskId = membershipDeletionTaskId
         self.users = users

@@ -75,7 +75,7 @@ final class MessageEvents_Tests: XCTestCase {
             totalUnreadCount: unreadCount.messages,
             unreadChannels: unreadCount.channels,
             unreadCount: unreadCount.messages,
-            user: userPayload.asUserResponseCommonFields(),
+            user: userPayload,
             watcherCount: 0
         )
 

@@ -154,7 +154,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(payload.online, loadedCurrentUser.isOnline)
         XCTAssertEqual(payload.invisible, loadedCurrentUser.isInvisible)
         XCTAssertEqual(payload.banned, loadedCurrentUser.isBanned)
-        XCTAssertEqual(payload.userRole, loadedCurrentUser.userRole)
+        XCTAssertEqual(payload.asUserResponse().userRole, loadedCurrentUser.userRole)
         XCTAssertEqual(payload.createdAt, loadedCurrentUser.userCreatedAt)
         XCTAssertEqual(payload.updatedAt, loadedCurrentUser.userUpdatedAt)
         XCTAssertEqual(payload.lastActive, loadedCurrentUser.lastActiveAt)

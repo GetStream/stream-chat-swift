@@ -30,9 +30,9 @@ final class MessageDeletedEventDTO: @unchecked Sendable, Event, Codable, JSONEnc
     var team: String?
     /// The type of event: "message.deleted" in this case
     var type: String = "message.deleted"
-    var user: UserResponseCommonFields?
+    var user: UserResponse?
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedForMe: Bool? = nil, hardDelete: Bool? = nil, message: MessageResponse, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedForMe: Bool? = nil, hardDelete: Bool? = nil, message: MessageResponse, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponse? = nil) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount

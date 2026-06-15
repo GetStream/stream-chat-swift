@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension UserResponseFields {
+extension UserResponse {
     /// Converts the user response fields to a ChatUser model.
     /// - Returns: A ChatUser instance.
     func asModel() -> ChatUser {
