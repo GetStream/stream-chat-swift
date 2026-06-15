@@ -5,19 +5,21 @@
 import Foundation
 
 final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
-    let path: EndpointPath
+    let path: String
     let method: EndpointMethod
     let queryItems: [String: String?]?
     let requiresConnectionId: Bool
     let requiresToken: Bool
+    let shouldBeQueuedOffline: Bool
     let body: (Encodable & Sendable)?
 
     init(
-        path: EndpointPath,
+        path: String,
         method: EndpointMethod,
         queryItems: [String: String?]? = nil,
         requiresConnectionId: Bool = false,
         requiresToken: Bool = true,
+        shouldBeQueuedOffline: Bool = false,
         body: (Encodable & Sendable)? = nil
     ) {
         self.path = path
@@ -25,6 +27,7 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         self.queryItems = queryItems
         self.requiresConnectionId = requiresConnectionId
         self.requiresToken = requiresToken
+        self.shouldBeQueuedOffline = shouldBeQueuedOffline
         self.body = body
     }
 
@@ -34,16 +37,18 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         case queryItems
         case requiresConnectionId
         case requiresToken
+        case shouldBeQueuedOffline
         case body
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        path = try container.decode(EndpointPath.self, forKey: .path)
+        path = try container.decode(String.self, forKey: .path)
         method = try container.decode(EndpointMethod.self, forKey: .method)
         queryItems = try container.decodeIfPresent([String: String?].self, forKey: .queryItems)
         requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)
         requiresToken = try container.decode(Bool.self, forKey: .requiresToken)
+        shouldBeQueuedOffline = try container.decode(Bool.self, forKey: .shouldBeQueuedOffline)
         body = try container.decodeIfPresent(Data.self, forKey: .body)
     }
 
@@ -54,6 +59,7 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         try container.encodeIfPresent(queryItems, forKey: .queryItems)
         try container.encode(requiresConnectionId, forKey: .requiresConnectionId)
         try container.encode(requiresToken, forKey: .requiresToken)
+        try container.encode(shouldBeQueuedOffline, forKey: .shouldBeQueuedOffline)
         if let body = try body?.encodedAsData() {
             try container.encode(body, forKey: .body)
         }
@@ -74,430 +80,201 @@ enum EndpointMethod: String, Codable, Equatable {
     case put = "PUT"
 }
 
-enum EndpointPath: Codable, Equatable {
-    case ban
-    case blockUsers
-    case castPollVote(messageId: String, pollId: String)
-    case createDevice
-    case createDraft(type: String, id: String)
-    case createGuest
-    case createPoll
-    case createPollOption(pollId: String)
-    case createReminder(messageId: String)
-    case deleteChannel(type: String, id: String)
-    case deleteChannelFile(type: String, id: String)
-    case deleteChannelImage(type: String, id: String)
-    case deleteDevice
-    case deleteDraft(type: String, id: String)
-    case deleteFile
-    case deleteImage
-    case deleteMessage(id: String)
-    case deletePoll(pollId: String)
-    case deletePollVote(messageId: String, pollId: String, voteId: String)
-    case deleteReaction(id: String, type: String)
-    case deleteReminder(messageId: String)
-    case flag
-    case getApp
-    case getBlockedUsers
-    case getDraft(type: String, id: String)
-    case getMessage(id: String)
-    case getOG
-    case getOrCreateChannel(type: String, id: String)
-    case getOrCreateDistinctChannel(type: String)
-    case getReactions(id: String)
-    case getReplies(parentId: String)
-    case getThread(messageId: String)
-    case getUserLiveLocations
-    case groupedQueryChannels
-    case hideChannel(type: String, id: String)
-    case listDevices
-    case markChannelsRead
-    case markDelivered
-    case markRead(type: String, id: String)
-    case markUnread(type: String, id: String)
-    case mute
-    case muteChannel
-    case queryChannels
-    case queryDrafts
-    case queryMembers
-    case queryPollVotes(pollId: String)
-    case queryReactions(id: String)
-    case queryReminders
-    case queryThreads
-    case queryUsers
-    case runMessageAction(id: String)
-    case search
-    case sendEvent(type: String, id: String)
-    case sendMessage(type: String, id: String)
-    case sendReaction(id: String)
-    case showChannel(type: String, id: String)
-    case stopWatchingChannel(type: String, id: String)
-    case sync
-    case translateMessage(id: String)
-    case truncateChannel(type: String, id: String)
-    case unblockUsers
-    case unmuteChannel
-    case unreadCounts
-    case updateChannel(type: String, id: String)
-    case updateChannelPartial(type: String, id: String)
-    case updateLiveLocation
-    case updateMemberPartial(type: String, id: String)
-    case updateMessage(id: String)
-    case updateMessagePartial(id: String)
-    case updatePollPartial(pollId: String)
-    case updatePushNotificationPreferences
-    case updateReminder(messageId: String)
-    case updateThreadPartial(messageId: String)
-    case updateUsersPartial
-    case uploadChannelFile(type: String, id: String)
-    case uploadChannelImage(type: String, id: String)
-    case uploadFile
-    case uploadImage
-    case custom(String)
-
-    var value: String {
-        switch self {
-        case .ban:
-            return "/api/v2/moderation/ban"
-        case .blockUsers:
-            return "/api/v2/users/block"
-        case let .castPollVote(messageId, pollId):
-            return "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote"
-        case .createDevice:
-            return "/api/v2/devices"
-        case let .createDraft(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/draft"
-        case .createGuest:
-            return "/api/v2/guest"
-        case .createPoll:
-            return "/api/v2/polls"
-        case let .createPollOption(pollId):
-            return "/api/v2/polls/\(pollId)/options"
-        case let .createReminder(messageId):
-            return "/api/v2/chat/messages/\(messageId)/reminders"
-        case let .deleteChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)"
-        case let .deleteChannelFile(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/file"
-        case let .deleteChannelImage(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/image"
-        case .deleteDevice:
-            return "/api/v2/devices"
-        case let .deleteDraft(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/draft"
-        case .deleteFile:
-            return "/api/v2/uploads/file"
-        case .deleteImage:
-            return "/api/v2/uploads/image"
-        case let .deleteMessage(id):
-            return "/api/v2/chat/messages/\(id)"
-        case let .deletePoll(pollId):
-            return "/api/v2/polls/\(pollId)"
-        case let .deletePollVote(messageId, pollId, voteId):
-            return "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
-        case let .deleteReaction(id, type):
-            return "/api/v2/chat/messages/\(id)/reaction/\(type)"
-        case let .deleteReminder(messageId):
-            return "/api/v2/chat/messages/\(messageId)/reminders"
-        case .flag:
-            return "/api/v2/moderation/flag"
-        case .getApp:
-            return "/api/v2/app"
-        case .getBlockedUsers:
-            return "/api/v2/users/block"
-        case let .getDraft(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/draft"
-        case let .getMessage(id):
-            return "/api/v2/chat/messages/\(id)"
-        case .getOG:
-            return "/api/v2/og"
-        case let .getOrCreateChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/query"
-        case let .getOrCreateDistinctChannel(type):
-            return "/api/v2/chat/channels/\(type)/query"
-        case let .getReactions(id):
-            return "/api/v2/chat/messages/\(id)/reactions"
-        case let .getReplies(parentId):
-            return "/api/v2/chat/messages/\(parentId)/replies"
-        case let .getThread(messageId):
-            return "/api/v2/chat/threads/\(messageId)"
-        case .getUserLiveLocations:
-            return "/api/v2/users/live_locations"
-        case .groupedQueryChannels:
-            return "/api/v2/chat/channels/grouped"
-        case let .hideChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/hide"
-        case .listDevices:
-            return "/api/v2/devices"
-        case .markChannelsRead:
-            return "/api/v2/chat/channels/read"
-        case .markDelivered:
-            return "/api/v2/chat/channels/delivered"
-        case let .markRead(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/read"
-        case let .markUnread(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/unread"
-        case .mute:
-            return "/api/v2/moderation/mute"
-        case .muteChannel:
-            return "/api/v2/chat/moderation/mute/channel"
-        case .queryChannels:
-            return "/api/v2/chat/channels"
-        case .queryDrafts:
-            return "/api/v2/chat/drafts/query"
-        case .queryMembers:
-            return "/api/v2/chat/members"
-        case let .queryPollVotes(pollId):
-            return "/api/v2/polls/\(pollId)/votes"
-        case let .queryReactions(id):
-            return "/api/v2/chat/messages/\(id)/reactions"
-        case .queryReminders:
-            return "/api/v2/chat/reminders/query"
-        case .queryThreads:
-            return "/api/v2/chat/threads"
-        case .queryUsers:
-            return "/api/v2/users"
-        case let .runMessageAction(id):
-            return "/api/v2/chat/messages/\(id)/action"
-        case .search:
-            return "/api/v2/chat/search"
-        case let .sendEvent(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/event"
-        case let .sendMessage(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/message"
-        case let .sendReaction(id):
-            return "/api/v2/chat/messages/\(id)/reaction"
-        case let .showChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/show"
-        case let .stopWatchingChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/stop-watching"
-        case .sync:
-            return "/api/v2/chat/sync"
-        case let .translateMessage(id):
-            return "/api/v2/chat/messages/\(id)/translate"
-        case let .truncateChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/truncate"
-        case .unblockUsers:
-            return "/api/v2/users/unblock"
-        case .unmuteChannel:
-            return "/api/v2/chat/moderation/unmute/channel"
-        case .unreadCounts:
-            return "/api/v2/chat/unread"
-        case let .updateChannel(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)"
-        case let .updateChannelPartial(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)"
-        case .updateLiveLocation:
-            return "/api/v2/users/live_locations"
-        case let .updateMemberPartial(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/member"
-        case let .updateMessage(id):
-            return "/api/v2/chat/messages/\(id)"
-        case let .updateMessagePartial(id):
-            return "/api/v2/chat/messages/\(id)"
-        case let .updatePollPartial(pollId):
-            return "/api/v2/polls/\(pollId)"
-        case .updatePushNotificationPreferences:
-            return "/api/v2/push_preferences"
-        case let .updateReminder(messageId):
-            return "/api/v2/chat/messages/\(messageId)/reminders"
-        case let .updateThreadPartial(messageId):
-            return "/api/v2/chat/threads/\(messageId)"
-        case .updateUsersPartial:
-            return "/api/v2/users"
-        case let .uploadChannelFile(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/file"
-        case let .uploadChannelImage(type, id):
-            return "/api/v2/chat/channels/\(type)/\(id)/image"
-        case .uploadFile:
-            return "/api/v2/uploads/file"
-        case .uploadImage:
-            return "/api/v2/uploads/image"
-        case let .custom(path):
-            return path
-        }
-    }
-}
-
 extension Endpoint {
-    static func ban(banRequest: BanRequest, requiresConnectionId: Bool = false) -> Endpoint<BanResponse> {
+    static func ban(banRequest: BanRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<BanResponse> {
         .init(
-            path: .ban,
+            path: "/api/v2/moderation/ban",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: banRequest
         )
     }
 
-    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
+    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<BlockUsersResponse> {
         .init(
-            path: .blockUsers,
+            path: "/api/v2/users/block",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: blockUsersRequest
         )
     }
 
-    static func castPollVote(messageId: String, pollId: String, castPollVoteRequest: CastPollVoteRequest, requiresConnectionId: Bool = false) -> Endpoint<PollVoteResponse> {
+    static func castPollVote(messageId: String, pollId: String, castPollVoteRequest: CastPollVoteRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<PollVoteResponse> {
         .init(
-            path: .castPollVote(messageId: messageId, pollId: pollId),
+            path: "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: castPollVoteRequest
         )
     }
 
-    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .createDevice,
+            path: "/api/v2/devices",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: createDeviceRequest
         )
     }
 
-    static func createDraft(type: String, id: String, createDraftRequest: CreateDraftRequest, requiresConnectionId: Bool = false) -> Endpoint<CreateDraftResponse> {
+    static func createDraft(type: String, id: String, createDraftRequest: CreateDraftRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<CreateDraftResponse> {
         .init(
-            path: .createDraft(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/draft",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: createDraftRequest
         )
     }
 
-    static func createGuest(createGuestRequest: CreateGuestRequest, requiresConnectionId: Bool = false) -> Endpoint<CreateGuestResponse> {
+    static func createGuest(createGuestRequest: CreateGuestRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<CreateGuestResponse> {
         .init(
-            path: .createGuest,
+            path: "/api/v2/guest",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             requiresToken: false,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: createGuestRequest
         )
     }
 
-    static func createPoll(createPollRequest: CreatePollRequest, requiresConnectionId: Bool = false) -> Endpoint<PollResponse> {
+    static func createPoll(createPollRequest: CreatePollRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<PollResponse> {
         .init(
-            path: .createPoll,
+            path: "/api/v2/polls",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: createPollRequest
         )
     }
 
-    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest, requiresConnectionId: Bool = false) -> Endpoint<PollOptionResponse> {
+    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<PollOptionResponse> {
         .init(
-            path: .createPollOption(pollId: pollId),
+            path: "/api/v2/polls/\(pollId)/options",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: createPollOptionRequest
         )
     }
 
-    static func createReminder(messageId: String, createReminderRequest: CreateReminderRequest, requiresConnectionId: Bool = false) -> Endpoint<ReminderResponseData> {
+    static func createReminder(messageId: String, createReminderRequest: CreateReminderRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<ReminderResponseData> {
         .init(
-            path: .createReminder(messageId: messageId),
+            path: "/api/v2/chat/messages/\(messageId)/reminders",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: createReminderRequest
         )
     }
 
-    static func deleteChannel(type: String, id: String, hardDelete: Bool?, requiresConnectionId: Bool = false) -> Endpoint<DeleteChannelResponse> {
+    static func deleteChannel(type: String, id: String, hardDelete: Bool?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<DeleteChannelResponse> {
         .init(
-            path: .deleteChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)",
             method: .delete,
             queryItems: [
                 "hard_delete": APIHelper.convertAnyToString(hardDelete)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteChannelFile(type: String, id: String, url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteChannelFile(type: String, id: String, url: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .deleteChannelFile(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/file",
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteChannelImage(type: String, id: String, url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteChannelImage(type: String, id: String, url: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .deleteChannelImage(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/image",
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteDevice(id: String, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .deleteDevice,
+            path: "/api/v2/devices",
             method: .delete,
             queryItems: [
                 "id": APIHelper.convertAnyToString(id)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteDraft(type: String, id: String, parentId: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteDraft(type: String, id: String, parentId: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<Response> {
         .init(
-            path: .deleteDraft(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/draft",
             method: .delete,
             queryItems: [
                 "parent_id": APIHelper.convertAnyToString(parentId)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteFile(url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteFile(url: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .deleteFile,
+            path: "/api/v2/uploads/file",
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteImage(url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteImage(url: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .deleteImage,
+            path: "/api/v2/uploads/image",
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteMessage(id: String, hard: Bool?, deletedBy: String?, deleteForMe: Bool?, requiresConnectionId: Bool = false) -> Endpoint<DeleteMessageResponse> {
+    static func deleteMessage(id: String, hard: Bool?, deletedBy: String?, deleteForMe: Bool?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<DeleteMessageResponse> {
         .init(
-            path: .deleteMessage(id: id),
+            path: "/api/v2/chat/messages/\(id)",
             method: .delete,
             queryItems: [
                 "hard": APIHelper.convertAnyToString(hard),
@@ -505,156 +282,170 @@ extension Endpoint {
                 "delete_for_me": APIHelper.convertAnyToString(deleteForMe)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deletePoll(pollId: String, userId: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deletePoll(pollId: String, userId: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .deletePoll(pollId: pollId),
+            path: "/api/v2/polls/\(pollId)",
             method: .delete,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deletePollVote(messageId: String, pollId: String, voteId: String, userId: String?, requiresConnectionId: Bool = false) -> Endpoint<PollVoteResponse> {
+    static func deletePollVote(messageId: String, pollId: String, voteId: String, userId: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<PollVoteResponse> {
         .init(
-            path: .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId),
+            path: "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote/\(voteId)",
             method: .delete,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteReaction(id: String, type: String, userId: String?, requiresConnectionId: Bool = false) -> Endpoint<DeleteReactionResponse> {
+    static func deleteReaction(id: String, type: String, userId: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<DeleteReactionResponse> {
         .init(
-            path: .deleteReaction(id: id, type: type),
+            path: "/api/v2/chat/messages/\(id)/reaction/\(type)",
             method: .delete,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func deleteReminder(messageId: String, requiresConnectionId: Bool = false) -> Endpoint<DeleteReminderResponse> {
+    static func deleteReminder(messageId: String, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<DeleteReminderResponse> {
         .init(
-            path: .deleteReminder(messageId: messageId),
+            path: "/api/v2/chat/messages/\(messageId)/reminders",
             method: .delete,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func flag(flagRequest: FlagRequest, requiresConnectionId: Bool = false) -> Endpoint<FlagResponse> {
+    static func flag(flagRequest: FlagRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<FlagResponse> {
         .init(
-            path: .flag,
+            path: "/api/v2/moderation/flag",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: flagRequest
         )
     }
 
-    static func getApp(requiresConnectionId: Bool = false) -> Endpoint<GetApplicationResponse> {
+    static func getApp(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetApplicationResponse> {
         .init(
-            path: .getApp,
+            path: "/api/v2/app",
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getBlockedUsers(requiresConnectionId: Bool = false) -> Endpoint<GetBlockedUsersResponse> {
+    static func getBlockedUsers(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetBlockedUsersResponse> {
         .init(
-            path: .getBlockedUsers,
+            path: "/api/v2/users/block",
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getDraft(type: String, id: String, parentId: String?, requiresConnectionId: Bool = false) -> Endpoint<GetDraftResponse> {
+    static func getDraft(type: String, id: String, parentId: String?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetDraftResponse> {
         .init(
-            path: .getDraft(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/draft",
             method: .get,
             queryItems: [
                 "parent_id": APIHelper.convertAnyToString(parentId)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<GetMessageResponse> {
+    static func getMessage(id: String, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetMessageResponse> {
         .init(
-            path: .getMessage(id: id),
+            path: "/api/v2/chat/messages/\(id)",
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getOG(url: String, requiresConnectionId: Bool = false) -> Endpoint<GetOGResponse> {
+    static func getOG(url: String, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetOGResponse> {
         .init(
-            path: .getOG,
+            path: "/api/v2/og",
             method: .get,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool = true) -> Endpoint<ChannelStateResponse> {
+    static func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<ChannelStateResponse> {
         .init(
-            path: .getOrCreateChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/query",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: channelGetOrCreateRequest
         )
     }
 
-    static func getOrCreateDistinctChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool = true) -> Endpoint<ChannelStateResponse> {
+    static func getOrCreateDistinctChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<ChannelStateResponse> {
         .init(
-            path: .getOrCreateDistinctChannel(type: type),
+            path: "/api/v2/chat/channels/\(type)/query",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: channelGetOrCreateRequest
         )
     }
 
-    static func getReactions(id: String, limit: Int?, offset: Int?, requiresConnectionId: Bool = false) -> Endpoint<GetReactionsResponse> {
+    static func getReactions(id: String, limit: Int?, offset: Int?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetReactionsResponse> {
         .init(
-            path: .getReactions(id: id),
+            path: "/api/v2/chat/messages/\(id)/reactions",
             method: .get,
             queryItems: [
                 "limit": APIHelper.convertAnyToString(limit),
                 "offset": APIHelper.convertAnyToString(offset)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?, requiresConnectionId: Bool = false) -> Endpoint<GetRepliesResponse> {
+    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetRepliesResponse> {
         .init(
-            path: .getReplies(parentId: parentId),
+            path: "/api/v2/chat/messages/\(parentId)/replies",
             method: .get,
             queryItems: [
                 "limit": APIHelper.convertAnyToString(limit),
@@ -666,13 +457,14 @@ extension Endpoint {
                 "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getThread(messageId: String, watch: Bool?, replyLimit: Int?, participantLimit: Int?, memberLimit: Int?, requiresConnectionId: Bool = true) -> Endpoint<GetThreadResponse> {
+    static func getThread(messageId: String, watch: Bool?, replyLimit: Int?, participantLimit: Int?, memberLimit: Int?, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetThreadResponse> {
         .init(
-            path: .getThread(messageId: messageId),
+            path: "/api/v2/chat/threads/\(messageId)",
             method: .get,
             queryItems: [
                 "watch": APIHelper.convertAnyToString(watch),
@@ -681,477 +473,524 @@ extension Endpoint {
                 "member_limit": APIHelper.convertAnyToString(memberLimit)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func getUserLiveLocations(requiresConnectionId: Bool = false) -> Endpoint<SharedLocationsResponse> {
+    static func getUserLiveLocations(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<SharedLocationsResponse> {
         .init(
-            path: .getUserLiveLocations,
+            path: "/api/v2/users/live_locations",
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func groupedQueryChannels(groupedQueryChannelsRequest: GroupedQueryChannelsRequest, requiresConnectionId: Bool = true) -> Endpoint<GroupedQueryChannelsResponse> {
+    static func groupedQueryChannels(groupedQueryChannelsRequest: GroupedQueryChannelsRequest, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<GroupedQueryChannelsResponse> {
         .init(
-            path: .groupedQueryChannels,
+            path: "/api/v2/chat/channels/grouped",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: groupedQueryChannelsRequest
         )
     }
 
-    static func hideChannel(type: String, id: String, hideChannelRequest: HideChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<HideChannelResponse> {
+    static func hideChannel(type: String, id: String, hideChannelRequest: HideChannelRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<HideChannelResponse> {
         .init(
-            path: .hideChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/hide",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: hideChannelRequest
         )
     }
 
-    static func listDevices(requiresConnectionId: Bool = false) -> Endpoint<ListDevicesResponse> {
+    static func listDevices(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<ListDevicesResponse> {
         .init(
-            path: .listDevices,
+            path: "/api/v2/devices",
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest, requiresConnectionId: Bool = false) -> Endpoint<MarkReadResponse> {
+    static func markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MarkReadResponse> {
         .init(
-            path: .markChannelsRead,
+            path: "/api/v2/chat/channels/read",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: markChannelsReadRequest
         )
     }
 
-    static func markDelivered(markDeliveredRequest: MarkDeliveredRequest, requiresConnectionId: Bool = false) -> Endpoint<MarkDeliveredResponse> {
+    static func markDelivered(markDeliveredRequest: MarkDeliveredRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MarkDeliveredResponse> {
         .init(
-            path: .markDelivered,
+            path: "/api/v2/chat/channels/delivered",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: markDeliveredRequest
         )
     }
 
-    static func markRead(type: String, id: String, markReadRequest: MarkReadRequest, requiresConnectionId: Bool = false) -> Endpoint<MarkReadResponse> {
+    static func markRead(type: String, id: String, markReadRequest: MarkReadRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MarkReadResponse> {
         .init(
-            path: .markRead(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/read",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: markReadRequest
         )
     }
 
-    static func markUnread(type: String, id: String, markUnreadRequest: MarkUnreadRequest, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func markUnread(type: String, id: String, markUnreadRequest: MarkUnreadRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .markUnread(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/unread",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: markUnreadRequest
         )
     }
 
-    static func mute(muteRequest: MuteRequest, requiresConnectionId: Bool = false) -> Endpoint<MuteResponse> {
+    static func mute(muteRequest: MuteRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MuteResponse> {
         .init(
-            path: .mute,
+            path: "/api/v2/moderation/mute",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: muteRequest
         )
     }
 
-    static func muteChannel(muteChannelRequest: MuteChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<MuteChannelResponse> {
+    static func muteChannel(muteChannelRequest: MuteChannelRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MuteChannelResponse> {
         .init(
-            path: .muteChannel,
+            path: "/api/v2/chat/moderation/mute/channel",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: muteChannelRequest
         )
     }
 
-    static func queryChannels(queryChannelsRequest: QueryChannelsRequest, requiresConnectionId: Bool = true) -> Endpoint<QueryChannelsResponse> {
+    static func queryChannels(queryChannelsRequest: QueryChannelsRequest, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<QueryChannelsResponse> {
         .init(
-            path: .queryChannels,
+            path: "/api/v2/chat/channels",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: queryChannelsRequest
         )
     }
 
-    static func queryDrafts(queryDraftsRequest: QueryDraftsRequest, requiresConnectionId: Bool = false) -> Endpoint<QueryDraftsResponse> {
+    static func queryDrafts(queryDraftsRequest: QueryDraftsRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<QueryDraftsResponse> {
         .init(
-            path: .queryDrafts,
+            path: "/api/v2/chat/drafts/query",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: queryDraftsRequest
         )
     }
 
-    static func queryMembers(payload: QueryMembersPayload?, requiresConnectionId: Bool = false) -> Endpoint<MembersResponse> {
+    static func queryMembers(payload: QueryMembersPayload?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MembersResponse> {
         .init(
-            path: .queryMembers,
+            path: "/api/v2/chat/members",
             method: .get,
             queryItems: [
                 "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest, requiresConnectionId: Bool = false) -> Endpoint<PollVotesResponse> {
+    static func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<PollVotesResponse> {
         .init(
-            path: .queryPollVotes(pollId: pollId),
+            path: "/api/v2/polls/\(pollId)/votes",
             method: .post,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: queryPollVotesRequest
         )
     }
 
-    static func queryReactions(id: String, queryReactionsRequest: QueryReactionsRequest, requiresConnectionId: Bool = false) -> Endpoint<QueryReactionsResponse> {
+    static func queryReactions(id: String, queryReactionsRequest: QueryReactionsRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<QueryReactionsResponse> {
         .init(
-            path: .queryReactions(id: id),
+            path: "/api/v2/chat/messages/\(id)/reactions",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: queryReactionsRequest
         )
     }
 
-    static func queryReminders(queryRemindersRequest: QueryRemindersRequest, requiresConnectionId: Bool = false) -> Endpoint<QueryRemindersResponse> {
+    static func queryReminders(queryRemindersRequest: QueryRemindersRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<QueryRemindersResponse> {
         .init(
-            path: .queryReminders,
+            path: "/api/v2/chat/reminders/query",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: queryRemindersRequest
         )
     }
 
-    static func queryThreads(queryThreadsRequest: QueryThreadsRequest, requiresConnectionId: Bool = true) -> Endpoint<QueryThreadsResponse> {
+    static func queryThreads(queryThreadsRequest: QueryThreadsRequest, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<QueryThreadsResponse> {
         .init(
-            path: .queryThreads,
+            path: "/api/v2/chat/threads",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: queryThreadsRequest
         )
     }
 
-    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false) -> Endpoint<QueryUsersResponse> {
+    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<QueryUsersResponse> {
         .init(
-            path: .queryUsers,
+            path: "/api/v2/users",
             method: .get,
             queryItems: [
                 "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func runMessageAction(id: String, messageActionRequest: MessageActionRequest, requiresConnectionId: Bool = false) -> Endpoint<MessageActionResponse> {
+    static func runMessageAction(id: String, messageActionRequest: MessageActionRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MessageActionResponse> {
         .init(
-            path: .runMessageAction(id: id),
+            path: "/api/v2/chat/messages/\(id)/action",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: messageActionRequest
         )
     }
 
-    static func search(payload: SearchPayload?, requiresConnectionId: Bool = false) -> Endpoint<SearchResponse> {
+    static func search(payload: SearchPayload?, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<SearchResponse> {
         .init(
-            path: .search,
+            path: "/api/v2/chat/search",
             method: .get,
             queryItems: [
                 "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func sendEvent(type: String, id: String, sendEventRequest: SendEventRequest, requiresConnectionId: Bool = false) -> Endpoint<EventResponse> {
+    static func sendEvent(type: String, id: String, sendEventRequest: SendEventRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<EventResponse> {
         .init(
-            path: .sendEvent(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/event",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: sendEventRequest
         )
     }
 
-    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest, requiresConnectionId: Bool = false) -> Endpoint<SendMessageResponsePayload> {
+    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<SendMessageResponsePayload> {
         .init(
-            path: .sendMessage(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/message",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: sendMessageRequest
         )
     }
 
-    static func sendReaction(id: String, sendReactionRequest: SendReactionRequest, requiresConnectionId: Bool = false) -> Endpoint<SendReactionResponse> {
+    static func sendReaction(id: String, sendReactionRequest: SendReactionRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<SendReactionResponse> {
         .init(
-            path: .sendReaction(id: id),
+            path: "/api/v2/chat/messages/\(id)/reaction",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: sendReactionRequest
         )
     }
 
-    static func showChannel(type: String, id: String, requiresConnectionId: Bool = false) -> Endpoint<ShowChannelResponse> {
+    static func showChannel(type: String, id: String, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<ShowChannelResponse> {
         .init(
-            path: .showChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/show",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func stopWatchingChannel(type: String, id: String, requiresConnectionId: Bool = true) -> Endpoint<Response> {
+    static func stopWatchingChannel(type: String, id: String, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<Response> {
         .init(
-            path: .stopWatchingChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/stop-watching",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?, requiresConnectionId: Bool = true) -> Endpoint<SyncResponse> {
+    static func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?, requiresConnectionId: Bool = true, shouldBeQueuedOffline: Bool = false) -> Endpoint<SyncResponse> {
         .init(
-            path: .sync,
+            path: "/api/v2/chat/sync",
             method: .post,
             queryItems: [
                 "with_inaccessible_cids": APIHelper.convertAnyToString(withInaccessibleCids),
                 "watch": APIHelper.convertAnyToString(watch)
             ],
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: syncRequest
         )
     }
 
-    static func translateMessage(id: String, translateMessageRequest: TranslateMessageRequest, requiresConnectionId: Bool = false) -> Endpoint<MessageActionResponse> {
+    static func translateMessage(id: String, translateMessageRequest: TranslateMessageRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<MessageActionResponse> {
         .init(
-            path: .translateMessage(id: id),
+            path: "/api/v2/chat/messages/\(id)/translate",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: translateMessageRequest
         )
     }
 
-    static func truncateChannel(type: String, id: String, truncateChannelRequest: TruncateChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<TruncateChannelResponse> {
+    static func truncateChannel(type: String, id: String, truncateChannelRequest: TruncateChannelRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<TruncateChannelResponse> {
         .init(
-            path: .truncateChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/truncate",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: truncateChannelRequest
         )
     }
 
-    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<UnblockUsersResponse> {
+    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UnblockUsersResponse> {
         .init(
-            path: .unblockUsers,
+            path: "/api/v2/users/unblock",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: unblockUsersRequest
         )
     }
 
-    static func unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<UnmuteResponse> {
+    static func unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UnmuteResponse> {
         .init(
-            path: .unmuteChannel,
+            path: "/api/v2/chat/moderation/unmute/channel",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: unmuteChannelRequest
         )
     }
 
-    static func unreadCounts(requiresConnectionId: Bool = false) -> Endpoint<WrappedUnreadCountsResponse> {
+    static func unreadCounts(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<WrappedUnreadCountsResponse> {
         .init(
-            path: .unreadCounts,
+            path: "/api/v2/chat/unread",
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }
 
-    static func updateChannel(type: String, id: String, updateChannelRequest: UpdateChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateChannelResponse> {
+    static func updateChannel(type: String, id: String, updateChannelRequest: UpdateChannelRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpdateChannelResponse> {
         .init(
-            path: .updateChannel(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateChannelRequest
         )
     }
 
-    static func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: UpdateChannelPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateChannelPartialResponse> {
+    static func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: UpdateChannelPartialRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpdateChannelPartialResponse> {
         .init(
-            path: .updateChannelPartial(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)",
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateChannelPartialRequest
         )
     }
 
-    static func updateLiveLocation(updateLiveLocationRequest: UpdateLiveLocationRequest, requiresConnectionId: Bool = false) -> Endpoint<SharedLocationResponse> {
+    static func updateLiveLocation(updateLiveLocationRequest: UpdateLiveLocationRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<SharedLocationResponse> {
         .init(
-            path: .updateLiveLocation,
+            path: "/api/v2/users/live_locations",
             method: .put,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateLiveLocationRequest
         )
     }
 
-    static func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateMemberPartialResponse> {
+    static func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpdateMemberPartialResponse> {
         .init(
-            path: .updateMemberPartial(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/member",
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateMemberPartialRequest
         )
     }
 
-    static func updateMessage(id: String, updateMessageRequest: UpdateMessageRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateMessageResponse> {
+    static func updateMessage(id: String, updateMessageRequest: UpdateMessageRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<UpdateMessageResponse> {
         .init(
-            path: .updateMessage(id: id),
+            path: "/api/v2/chat/messages/\(id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateMessageRequest
         )
     }
 
-    static func updateMessagePartial(id: String, updateMessagePartialRequest: UpdateMessagePartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateMessagePartialResponse> {
+    static func updateMessagePartial(id: String, updateMessagePartialRequest: UpdateMessagePartialRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = true) -> Endpoint<UpdateMessagePartialResponse> {
         .init(
-            path: .updateMessagePartial(id: id),
+            path: "/api/v2/chat/messages/\(id)",
             method: .put,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateMessagePartialRequest
         )
     }
 
-    static func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<PollResponse> {
+    static func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<PollResponse> {
         .init(
-            path: .updatePollPartial(pollId: pollId),
+            path: "/api/v2/polls/\(pollId)",
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updatePollPartialRequest
         )
     }
 
-    static func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest, requiresConnectionId: Bool = false) -> Endpoint<UpsertPushPreferencesResponse> {
+    static func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpsertPushPreferencesResponse> {
         .init(
-            path: .updatePushNotificationPreferences,
+            path: "/api/v2/push_preferences",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: upsertPushPreferencesRequest
         )
     }
 
-    static func updateReminder(messageId: String, updateReminderRequest: UpdateReminderRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateReminderResponse> {
+    static func updateReminder(messageId: String, updateReminderRequest: UpdateReminderRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpdateReminderResponse> {
         .init(
-            path: .updateReminder(messageId: messageId),
+            path: "/api/v2/chat/messages/\(messageId)/reminders",
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateReminderRequest
         )
     }
 
-    static func updateThreadPartial(messageId: String, updateThreadPartialRequest: UpdateThreadPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateThreadPartialResponse> {
+    static func updateThreadPartial(messageId: String, updateThreadPartialRequest: UpdateThreadPartialRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpdateThreadPartialResponse> {
         .init(
-            path: .updateThreadPartial(messageId: messageId),
+            path: "/api/v2/chat/threads/\(messageId)",
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateThreadPartialRequest
         )
     }
 
-    static func updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateUsersResponse> {
+    static func updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UpdateUsersResponse> {
         .init(
-            path: .updateUsersPartial,
+            path: "/api/v2/users",
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: updateUsersPartialRequest
         )
     }
 
-    static func uploadChannelFile(type: String, id: String, uploadChannelFileRequest: UploadChannelFileRequest, requiresConnectionId: Bool = false) -> Endpoint<UploadChannelFileResponse> {
+    static func uploadChannelFile(type: String, id: String, uploadChannelFileRequest: UploadChannelFileRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UploadChannelFileResponse> {
         .init(
-            path: .uploadChannelFile(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/file",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: uploadChannelFileRequest
         )
     }
 
-    static func uploadChannelImage(type: String, id: String, uploadChannelRequest: UploadChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<UploadChannelResponse> {
+    static func uploadChannelImage(type: String, id: String, uploadChannelRequest: UploadChannelRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<UploadChannelResponse> {
         .init(
-            path: .uploadChannelImage(type: type, id: id),
+            path: "/api/v2/chat/channels/\(type)/\(id)/image",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: uploadChannelRequest
         )
     }
 
-    static func uploadFile(fileUploadRequest: FileUploadRequest, requiresConnectionId: Bool = false) -> Endpoint<FileUploadResponse> {
+    static func uploadFile(fileUploadRequest: FileUploadRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<FileUploadResponse> {
         .init(
-            path: .uploadFile,
+            path: "/api/v2/uploads/file",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: fileUploadRequest
         )
     }
 
-    static func uploadImage(imageUploadRequest: ImageUploadRequest, requiresConnectionId: Bool = false) -> Endpoint<ImageUploadResponse> {
+    static func uploadImage(imageUploadRequest: ImageUploadRequest, requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<ImageUploadResponse> {
         .init(
-            path: .uploadImage,
+            path: "/api/v2/uploads/image",
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: imageUploadRequest
         )
     }

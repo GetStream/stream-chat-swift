@@ -10,7 +10,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
     func test_getOG_buildsGeneratedEndpoint() {
         let endpoint: Endpoint<GetOGResponse> = .getOG(url: "https://getstream.io")
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/og")
+        XCTAssertEqual(endpoint.path, "/api/v2/og")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertEqual(endpoint.queryItems?["url"] ?? nil, "https://getstream.io")
         XCTAssertFalse(endpoint.requiresConnectionId)
@@ -24,7 +24,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
             uploadChannelRequest: UploadChannelRequest(file: "image-data")
         )
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/general/image")
+        XCTAssertEqual(endpoint.path, "/api/v2/chat/channels/messaging/general/image")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)

@@ -11,7 +11,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let request = CreatePollRequest(name: "Lunch")
         let endpoint: Endpoint<PollResponse> = .createPoll(createPollRequest: request)
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/polls")
+        XCTAssertEqual(endpoint.path, "/api/v2/polls")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)

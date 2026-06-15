@@ -27,16 +27,15 @@ extension Endpoint {
 
     /// Channel watcher list — uses channel query endpoint with a watcher-shaped query.
     static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelStateResponse> {
-        .init(
-            path: .getOrCreateChannel(type: query.cid.type.rawValue, id: query.cid.id),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: ChannelGetOrCreateRequest(
+        .getOrCreateChannel(
+            type: query.cid.type.rawValue,
+            id: query.cid.id,
+            channelGetOrCreateRequest: ChannelGetOrCreateRequest(
                 state: true,
                 watch: true,
                 watchers: query.pagination.asPaginationParams()
-            )
+            ),
+            requiresConnectionId: true
         )
     }
 
@@ -48,7 +47,7 @@ extension Endpoint {
             return .flag(flagRequest: FlagRequest(custom: extraData, entityId: messageId, entityType: "message", reason: reason))
         }
         return .init(
-            path: .custom("moderation/\(flag ? "flag" : "unflag")"),
+            path: "moderation/\(flag ? "flag" : "unflag")",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -64,7 +63,7 @@ extension Endpoint {
             return .flag(flagRequest: FlagRequest(custom: extraData, entityId: userId, entityType: "user", reason: reason))
         }
         return .init(
-            path: .custom("moderation/\(flag ? "flag" : "unflag")"),
+            path: "moderation/\(flag ? "flag" : "unflag")",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -77,7 +76,7 @@ extension Endpoint {
     /// manually until generation covers it.
     static func pinnedMessages(cid: ChannelId, query: PinnedMessagesQuery) -> Endpoint<MessageListPayload> {
         .init(
-            path: .custom("/api/v2/chat/channels/\(cid.apiPath)/pinned_messages"),
+            path: "/api/v2/chat/channels/\(cid.apiPath)/pinned_messages",
             method: .get,
             queryItems: [
                 "payload": (try? CodableHelper.encode(query).get()).flatMap { String(data: $0, encoding: .utf8) }
@@ -91,7 +90,7 @@ extension Endpoint {
     /// `POST /api/v2/moderation/unban` operation is server-side only.
     static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: .custom("moderation/ban"),
+            path: "moderation/ban",
             method: .delete,
             queryItems: [
                 "target_user_id": userId,
@@ -106,7 +105,7 @@ extension Endpoint {
     /// `POST /api/v2/moderation/unmute` operation is server-side only.
     static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
         .init(
-            path: .custom("moderation/unmute"),
+            path: "moderation/unmute",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -120,7 +119,7 @@ extension Endpoint {
     /// query item and auth headers added by the request encoder.
     static func webSocketConnect() -> Endpoint<EmptyResponse> {
         .init(
-            path: .custom("/api/v2/connect"),
+            path: "/api/v2/connect",
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,

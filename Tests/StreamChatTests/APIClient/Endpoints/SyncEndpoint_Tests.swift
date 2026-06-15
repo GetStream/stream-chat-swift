@@ -17,7 +17,7 @@ final class SyncEndpoint_Tests: XCTestCase {
             watch: false
         )
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/sync")
+        XCTAssertEqual(endpoint.path, "/api/v2/chat/sync")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertEqual(endpoint.queryItems?["with_inaccessible_cids"] ?? nil, APIHelper.convertAnyToString(true))
         XCTAssertEqual(endpoint.queryItems?["watch"] ?? nil, APIHelper.convertAnyToString(false))

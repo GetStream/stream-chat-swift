@@ -11,7 +11,7 @@ final class FileEndpoints_Tests: XCTestCase {
         let request = FileUploadRequest(file: "file-data")
         let endpoint: Endpoint<FileUploadResponse> = .uploadFile(fileUploadRequest: request)
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/uploads/file")
+        XCTAssertEqual(endpoint.path, "/api/v2/uploads/file")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
@@ -21,7 +21,7 @@ final class FileEndpoints_Tests: XCTestCase {
     func test_deleteImage_buildsGeneratedEndpoint() {
         let endpoint: Endpoint<Response> = .deleteImage(url: "https://example.com/image.png")
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/uploads/image")
+        XCTAssertEqual(endpoint.path, "/api/v2/uploads/image")
         XCTAssertEqual(endpoint.method, .delete)
         XCTAssertEqual(endpoint.queryItems?["url"] ?? nil, "https://example.com/image.png")
         XCTAssertFalse(endpoint.requiresConnectionId)

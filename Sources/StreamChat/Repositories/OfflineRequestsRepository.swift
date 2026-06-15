@@ -16,6 +16,7 @@ extension Endpoint {
             queryItems: queryItems,
             requiresConnectionId: requiresConnectionId,
             requiresToken: requiresToken,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: body
         )
     }
@@ -75,7 +76,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
                 let shouldBeDiscarded = hoursQueued > Double(self.maxHoursThreshold)
                 guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
-                    log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
+                    log.error("Queued request for /\(endpoint.path) should not be queued", subsystems: .offlineSupport)
                     requestIdsToDelete.insert(dto.id)
                     continue
                 }
@@ -195,31 +196,55 @@ class OfflineRequestsRepository: @unchecked Sendable {
             try? JSONDecoder.stream.decode(T.self, from: data)
         }
 
-        switch endpoint.path {
-        case let .sendMessage(type, id):
-            guard let response = decodeTo(SendMessageResponsePayload.self),
-                  let cid = try? ChannelId(cid: "\(type):\(id)") else {
+        let path = endpoint.path
+
+        // sendMessage: POST /api/v2/chat/channels/{type}/{id}/message
+        if endpoint.method == .post, let cid = Self.channelId(fromSendMessagePath: path) {
+            guard let response = decodeTo(SendMessageResponsePayload.self) else {
                 completion()
                 return
             }
             messageRepository.saveSuccessfullySentMessage(cid: cid, message: response.message) { _ in completion() }
-        case let .updateMessage(messageId):
-            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
-        case let .updateMessagePartial(messageId):
-            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
-        case .deleteMessage:
-            guard let response = decodeTo(DeleteMessageResponse.self) else {
-                completion()
-                return
-            }
-            messageRepository.saveSuccessfullyDeletedMessage(message: response.message) { _ in completion() }
-        case .sendReaction, .deleteReaction:
-            // No further action
-            completion()
-        default:
-            log.assertionFailure("Should not reach here, request should not require action")
-            completion()
+            return
         }
+
+        // update / delete a single message: /api/v2/chat/messages/{id}
+        if let messageId = Self.messageId(fromSingleMessagePath: path) {
+            if endpoint.method == .delete {
+                guard let response = decodeTo(DeleteMessageResponse.self) else {
+                    completion()
+                    return
+                }
+                messageRepository.saveSuccessfullyDeletedMessage(message: response.message) { _ in completion() }
+            } else {
+                messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
+            }
+            return
+        }
+
+        // Reactions and drafts are replayed but need no local database recovery action.
+        completion()
+    }
+
+    /// Extracts the channel id from a send-message path `/api/v2/chat/channels/{type}/{id}/message`.
+    private static func channelId(fromSendMessagePath path: String) -> ChannelId? {
+        let components = path.split(separator: "/")
+        guard components.count >= 4,
+              components.last == "message",
+              components[components.count - 4] == "channels" else { return nil }
+        let type = components[components.count - 3]
+        let id = components[components.count - 2]
+        return try? ChannelId(cid: "\(type):\(id)")
+    }
+
+    /// Returns the message id when `path` targets a single message `/api/v2/chat/messages/{id}`.
+    /// Sub-resource paths such as `/messages/{id}/reaction` are excluded.
+    private static func messageId(fromSingleMessagePath path: String) -> String? {
+        let marker = "/chat/messages/"
+        guard let markerRange = path.range(of: marker) else { return nil }
+        let remainder = path[markerRange.upperBound...]
+        guard !remainder.isEmpty, !remainder.contains("/") else { return nil }
+        return String(remainder)
     }
 
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable () -> Void)? = nil) {
@@ -259,15 +284,11 @@ private extension OfflineRequestsRepository {
             self.endpoint = endpoint
             
             sendMessageId = {
-                switch endpoint.path {
-                case .sendMessage:
-                    guard let bodyData = endpoint.body as? Data else { return nil }
-                    guard let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else { return nil }
-                    guard let message = json["message"] as? [String: Any] else { return nil }
-                    return message["id"] as? String
-                default:
-                    return nil
-                }
+                guard endpoint.method == .post, endpoint.path.hasSuffix("/message") else { return nil }
+                guard let bodyData = endpoint.body as? Data else { return nil }
+                guard let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else { return nil }
+                guard let message = json["message"] as? [String: Any] else { return nil }
+                return message["id"] as? String
             }()
         }
     }

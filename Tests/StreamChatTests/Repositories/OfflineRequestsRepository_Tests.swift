@@ -72,7 +72,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_createChannel() throws {
         // We add one .createChannel request to the queue. This is NOT a supported offline action anymore.
-        try createRequest(id: .unique, path: .getOrCreateChannel(type: "messaging", id: "unsupported"))
+        try createRequest(id: .unique, path: "/api/v2/chat/channels/messaging/unsupported/query", shouldBeQueuedOffline: false)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -93,7 +93,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_sendMessage() throws {
         // We add one .sendMessage request to the queue
-        try createRequest(id: .unique, path: .sendMessage(type: "messaging", id: .unique))
+        try createRequest(id: .unique, path: "/api/v2/chat/channels/messaging/\(String.unique)/message")
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -120,7 +120,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_editMessage() throws {
         // We add one .editMessage request to the queue
-        try createRequest(id: .unique, path: .updateMessage(id: .unique))
+        try createRequest(id: .unique, path: "/api/v2/chat/messages/\(String.unique)")
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -146,7 +146,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
         // We add one .deleteMessage request to the queue
-        try createRequest(id: .unique, path: .deleteMessage(id: .unique))
+        try createRequest(id: .unique, path: "/api/v2/chat/messages/\(String.unique)", method: .delete)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -214,7 +214,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a Connection Error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if case let .sendMessage(_, id) = endpoint.path, id == "request2" {
+            if endpoint.path.split(separator: "/").dropLast().last.map(String.init) == "request2" {
                 completion?(.failure(ClientError.ConnectionError()))
             } else {
                 completion?(.success(Data()))
@@ -245,7 +245,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a random error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if case let .sendMessage(_, id) = endpoint.path, id == "request2" {
+            if endpoint.path.split(separator: "/").dropLast().last.map(String.init) == "request2" {
                 completion?(.failure(NSError(domain: "whatever", code: 1, userInfo: nil)))
             } else {
                 completion?(.success(Data()))
@@ -289,7 +289,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let id = "request\(count + 1)"
         try createRequest(
             id: id,
-            path: .sendMessage(type: "messaging", id: id),
+            path: "/api/v2/chat/channels/messaging/\(id)/message",
             body: ["some\(id)": 123],
             date: Date()
         )
@@ -350,13 +350,14 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
     }
 
-    private func createRequest(id: String, path: EndpointPath, body: (Encodable & Sendable)? = nil, date: Date = Date()) throws {
+    private func createRequest(id: String, path: String, method: EndpointMethod = .post, shouldBeQueuedOffline: Bool = true, body: (Encodable & Sendable)? = nil, date: Date = Date()) throws {
         let endpoint = Endpoint<EmptyResponse>(
             path: path,
-            method: .post,
+            method: method,
             queryItems: nil,
             requiresConnectionId: true,
             requiresToken: false,
+            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: body
         )
         let endpointData: Data = try JSONEncoder.stream.encode(endpoint)
@@ -369,7 +370,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestNotWanted() {
         let endpoint = DataEndpoint(
-            path: .sendEvent(type: "messaging", id: "id"),
+            path: "/api/v2/chat/channels/messaging/id/event",
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
@@ -387,11 +388,12 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestWanted() {
         let endpoint = DataEndpoint(
-            path: .sendMessage(type: "messaging", id: .unique),
+            path: "/api/v2/chat/channels/messaging/\(String.unique)/message",
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
             requiresToken: true,
+            shouldBeQueuedOffline: true,
             body: nil
         )
 

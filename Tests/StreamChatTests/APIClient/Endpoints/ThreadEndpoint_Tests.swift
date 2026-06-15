@@ -11,7 +11,7 @@ final class ThreadEndpoint_Tests: XCTestCase {
         let request = QueryThreadsRequest(limit: 10, watch: true)
         let endpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/threads")
+        XCTAssertEqual(endpoint.path, "/api/v2/chat/threads")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertTrue(endpoint.requiresConnectionId)
@@ -27,7 +27,7 @@ final class ThreadEndpoint_Tests: XCTestCase {
             memberLimit: 3
         )
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/threads/message-id")
+        XCTAssertEqual(endpoint.path, "/api/v2/chat/threads/message-id")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertEqual(endpoint.queryItems?["watch"] ?? nil, "true")
         XCTAssertEqual(endpoint.queryItems?["reply_limit"] ?? nil, "10")
@@ -42,7 +42,7 @@ final class ThreadEndpoint_Tests: XCTestCase {
             updateThreadPartialRequest: request
         )
 
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/threads/message-id")
+        XCTAssertEqual(endpoint.path, "/api/v2/chat/threads/message-id")
         XCTAssertEqual(endpoint.method, .patch)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)

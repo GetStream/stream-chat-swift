@@ -29,7 +29,7 @@ final class APIClient_Tests: XCTestCase {
     func test_recoveryRequest_recordsDataEndpointAndReturnsQueuedResponse() {
         let apiClient = APIClient_Spy()
         let endpoint = Endpoint<Data>(
-            path: .sendMessage(type: "messaging", id: "general"),
+            path: "/api/v2/chat/channels/messaging/general/message",
             method: .post,
             requiresConnectionId: true,
             body: nil

@@ -406,7 +406,7 @@ final class ChatClient_Tests: XCTestCase {
         // THEN
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
-        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, .deleteDevice)
+        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, "/api/v2/devices")
         XCTAssertEqual(testEnv.apiClient?.request_endpoint?.method, .delete)
     }
 

@@ -287,14 +287,23 @@ while IFS= read -r event_type; do
 done < <(find "$OUTPUT_DIR_CHAT/models" -name '*Event.swift' ! -name 'WSEvent.swift' ! -name 'WSClientEvent.swift' -exec basename {} .swift \; | sort)
 
 # Endpoint factories the SDK never calls. Deleting one removes the factory
-# function, its `EndpointPath` case, and the case's `value` switch entry.
-# If the SDK starts using one of these, remove it from the list and regenerate.
+# function. If the SDK starts using one of these, remove it from the list and regenerate.
 delete_unused_endpoint_factory() {
   local name="$1"
   local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
   sed -i '' -E "/^[[:space:]]+static func ${name}\(/,/^[[:space:]]+\}[[:space:]]*$/d" "$file"
-  sed -i '' -E "/^[[:space:]]+case ${name}(\(|[[:space:]]*$)/d" "$file"
-  sed -i '' -E "/^[[:space:]]+case (let )?\.${name}[(:]/,/^[[:space:]]+return /d" "$file"
+}
+
+# Message/draft endpoints are replayed when offline. The generator defaults every
+# factory's `shouldBeQueuedOffline` to false; flip these to true so callers that omit
+# the argument still queue them.
+set_offline_queued_endpoint_factories() {
+  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
+  local name
+  for name in sendMessage updateMessage updateMessagePartial deleteMessage \
+              sendReaction deleteReaction createDraft deleteDraft; do
+    sed -i '' -E "s/(static func ${name}\(.*shouldBeQueuedOffline: Bool = )false/\1true/" "$file"
+  done
 }
 
 UNUSED_ENDPOINT_FACTORIES=(
@@ -382,5 +391,6 @@ fold_redundant_channel_state_models
 make_user_response_team_fields_optional
 make_sync_replayed_event_fields_optional
 make_channel_config_with_info_fields_optional
+set_offline_queued_endpoint_factories
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"

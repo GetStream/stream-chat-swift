@@ -65,7 +65,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_encodeWriteRequest_whenBodyIsNil_encodesEmptyJSONObjectBody() throws {
         for method in [EndpointMethod.post, .patch, .put] {
             let endpoint = Endpoint<EmptyResponse>(
-                path: .custom("custom/path"),
+                path: "custom/path",
                 method: method,
                 requiresConnectionId: false,
                 requiresToken: false,
