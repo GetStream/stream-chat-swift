@@ -146,7 +146,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
         // We add one .deleteMessage request to the queue
-        try createRequest(id: .unique, path: .deleteMessage(.unique))
+        try createRequest(id: .unique, path: .deleteMessage(.unique), method: .delete)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -214,7 +214,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a Connection Error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
+            if endpoint.path == EndpointPath.sendMessage(.init(type: .messaging, id: "request2")).value {
                 completion?(.failure(ClientError.ConnectionError()))
             } else {
                 completion?(.success(Data()))
@@ -245,7 +245,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a random error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
+            if endpoint.path == EndpointPath.sendMessage(.init(type: .messaging, id: "request2")).value {
                 completion?(.failure(NSError(domain: "whatever", code: 1, userInfo: nil)))
             } else {
                 completion?(.success(Data()))
@@ -350,10 +350,10 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
     }
 
-    private func createRequest(id: String, path: EndpointPath, body: Encodable? = nil, date: Date = Date()) throws {
+    private func createRequest(id: String, path: EndpointPath, method: EndpointMethod = .post, body: Encodable? = nil, date: Date = Date()) throws {
         let endpoint = Endpoint<EmptyResponse>(
             path: path,
-            method: .post,
+            method: method,
             queryItems: nil,
             requiresConnectionId: true,
             requiresToken: false,

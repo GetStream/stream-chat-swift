@@ -680,7 +680,7 @@ final class APIClient_Tests: XCTestCase {
         // 3 tries, token failure was returned until now
         // -> 1 unique | 3 total
         XCTEnsureRequestsWereExecuted(times: 3)
-        let requestPaths = encoder.encodeRequest_endpoints.map(\.path.value)
+        let requestPaths = encoder.encodeRequest_endpoints.map(\.path)
         XCTAssertEqual(requestPaths.count, 3)
         XCTAssertEqual(Set(requestPaths).count, 1)
 
@@ -696,7 +696,7 @@ final class APIClient_Tests: XCTestCase {
         // Requests 2-5: 1 success each = 4
         // -> 5 unique | 8 total
         XCTEnsureRequestsWereExecuted(times: 8)
-        let totalRequests = encoder.encodeRequest_endpoints.map(\.path.value)
+        let totalRequests = encoder.encodeRequest_endpoints.map(\.path)
         XCTAssertEqual(totalRequests.count, 8)
         XCTAssertEqual(Set(totalRequests).count, 5)
     }

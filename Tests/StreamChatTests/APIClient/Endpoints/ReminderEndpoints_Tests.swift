@@ -24,7 +24,7 @@ final class ReminderEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path)
     }
     
     func test_updateReminder_buildsCorrectly() {
@@ -44,7 +44,7 @@ final class ReminderEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path)
     }
     
     func test_deleteReminder_buildsCorrectly() {
@@ -62,7 +62,7 @@ final class ReminderEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)/reminders", endpoint.path)
     }
     
     func test_queryReminders_buildsCorrectly() {
@@ -84,6 +84,6 @@ final class ReminderEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("reminders/query", endpoint.path.value)
+        XCTAssertEqual("reminders/query", endpoint.path)
     }
 }

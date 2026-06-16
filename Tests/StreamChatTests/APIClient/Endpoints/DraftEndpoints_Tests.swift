@@ -21,7 +21,7 @@ final class DraftEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path.value, "drafts/query")
+        XCTAssertEqual(endpoint.path, "drafts/query")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -62,7 +62,7 @@ final class DraftEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/draft")
+        XCTAssertEqual(endpoint.path, "channels/messaging/123/draft")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -83,7 +83,7 @@ final class DraftEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/draft")
+        XCTAssertEqual(endpoint.path, "channels/messaging/123/draft")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.body)
         AssertDictionary(queryItems, expectedQueryItems)
@@ -98,7 +98,7 @@ final class DraftEndpoints_Tests: XCTestCase {
         )
 
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/draft")
+        XCTAssertEqual(endpoint.path, "channels/messaging/123/draft")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.body)
         XCTAssertNil(endpoint.queryItems)
@@ -119,7 +119,7 @@ final class DraftEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/draft")
+        XCTAssertEqual(endpoint.path, "channels/messaging/123/draft")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -134,7 +134,7 @@ final class DraftEndpoints_Tests: XCTestCase {
         )
 
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/draft")
+        XCTAssertEqual(endpoint.path, "channels/messaging/123/draft")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertNil(endpoint.body)

@@ -223,7 +223,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
             throw ClientError.InvalidURL("URL can't be created using components: \(urlComponents)")
         }
 
-        url = url.appendingPathComponent(endpoint.path.value)
+        url = url.appendingPathComponent(endpoint.path)
         return url
     }
 
@@ -296,6 +296,10 @@ private extension URL {
         return newURL
     }
 }
+
+/// A type representing empty body for `.post` Endpoints.
+/// Our backend currently expects a body (not `nil`), even if it's empty.
+struct EmptyBody: Codable, Equatable {}
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {

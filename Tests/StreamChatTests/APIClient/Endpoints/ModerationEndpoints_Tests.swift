@@ -23,7 +23,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/mute", endpoint.path.value)
+        XCTAssertEqual("moderation/mute", endpoint.path)
     }
 
     func test_unmuteUser_buildsCorrectly() {
@@ -42,7 +42,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/unmute", endpoint.path.value)
+        XCTAssertEqual("moderation/unmute", endpoint.path)
     }
 
     func test_banMember_buildsCorrectly() {
@@ -76,7 +76,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/ban", endpoint.path.value)
+        XCTAssertEqual("moderation/ban", endpoint.path)
     }
 
     func test_unbanMember_buildsCorrectly() {
@@ -99,7 +99,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/ban", endpoint.path.value)
+        XCTAssertEqual("moderation/ban", endpoint.path)
     }
 
     func test_flagUser_buildsCorrectly() {
@@ -136,7 +136,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
+            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path)
         }
     }
 
@@ -169,7 +169,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
+            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path)
         }
     }
     
@@ -189,7 +189,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users/block", endpoint.path.value)
+        XCTAssertEqual("users/block", endpoint.path)
     }
 
     func test_unblockUser_buildsCorrectly() {
@@ -208,6 +208,6 @@ final class ModerationEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users/unblock", endpoint.path.value)
+        XCTAssertEqual("users/unblock", endpoint.path)
     }
 }

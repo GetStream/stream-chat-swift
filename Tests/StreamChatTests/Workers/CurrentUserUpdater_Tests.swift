@@ -734,7 +734,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Assert request is made to the correct endpoint
         XCTAssertNotNil(apiClient.request_endpoint)
         let endpoint = apiClient.request_endpoint
-        XCTAssertEqual(endpoint?.path.value, "unread")
+        XCTAssertEqual(endpoint?.path, "unread")
         XCTAssertEqual(endpoint?.method, .get)
         
         // Create test payload for the response
@@ -809,7 +809,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // THEN
         let endpoint = apiClient.request_endpoint
-        XCTAssertEqual(endpoint?.path.value, "users/live_locations")
+        XCTAssertEqual(endpoint?.path, "users/live_locations")
         XCTAssertEqual(endpoint?.method, .get)
     }
     

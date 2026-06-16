@@ -38,7 +38,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels", endpoint.path.value)
+            XCTAssertEqual("channels", endpoint.path)
         }
     }
 
@@ -62,7 +62,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
 
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/grouped", endpoint.path.value)
+            XCTAssertEqual("channels/grouped", endpoint.path)
         }
     }
 
@@ -98,7 +98,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path.value)
+            XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path)
         }
     }
 
@@ -118,7 +118,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(channelPayload.apiPath)", endpoint.path.value)
+        XCTAssertEqual("channels/\(channelPayload.apiPath)", endpoint.path)
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
     }
     
@@ -141,7 +141,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path.value)
+        XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path)
     }
 
     func test_partialChannelUpdate_buildsCorrectly() {
@@ -161,7 +161,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(channelPayload.apiPath)", endpoint.path.value)
+        XCTAssertEqual("channels/\(channelPayload.apiPath)", endpoint.path)
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
     }
 
@@ -181,7 +181,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path)
     }
 
     func test_truncateChannel_buildsCorrectly() {
@@ -210,7 +210,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/truncate", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/truncate", endpoint.path)
     }
 
     func test_hideChannel_buildsCorrectly() {
@@ -232,7 +232,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/hide", endpoint.path.value)
+            XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/hide", endpoint.path)
         }
     }
 
@@ -252,7 +252,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/mute/channel", endpoint.path.value)
+        XCTAssertEqual("moderation/mute/channel", endpoint.path)
     }
     
     func test_muteChannelWithExpiration_buildsCorrectly() {
@@ -277,7 +277,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/mute/channel", endpoint.path.value)
+        XCTAssertEqual("moderation/mute/channel", endpoint.path)
     }
 
     func test_unmuteChannel_buildsCorrectly() {
@@ -296,7 +296,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/unmute/channel", endpoint.path.value)
+        XCTAssertEqual("moderation/unmute/channel", endpoint.path)
     }
 
     func test_showChannel_buildsCorrectly() {
@@ -315,7 +315,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/show", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/show", endpoint.path)
     }
 
     func test_sendMessage_buildsCorrectly() {
@@ -350,7 +350,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/message", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/message", endpoint.path)
     }
 
     func test_addMembers_buildsCorrectly() {
@@ -375,7 +375,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path)
     }
     
     func test_addMembers_withHideHistoryBefore_buildsCorrectly() {
@@ -402,7 +402,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path)
     }
 
     func test_removeMembers_buildsCorrectly() {
@@ -422,7 +422,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path)
     }
 
     func test_inviteMembers_buildsCorrectly() {
@@ -439,7 +439,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         let endpoint: Endpoint<EmptyResponse> = .inviteMembers(cid: cid, userIds: userIds)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path.value)
+        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path)
     }
 
     func test_acceptInvite_buildsCorrectly() {
@@ -460,7 +460,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         let endpoint: Endpoint<EmptyResponse> = .acceptInvite(cid: cid, message: message)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path.value)
+        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path)
     }
 
     func test_rejectInvite_buildsCorrectly() {
@@ -480,7 +480,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         let endpoint: Endpoint<EmptyResponse> = .rejectInvite(cid: cid)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path.value)
+        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path)
     }
 
     func test_markRead_buildsCorrectly() {
@@ -497,7 +497,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/read", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/read", endpoint.path)
     }
 
     func test_markUnreadWithMessageId_buildsCorrectly() {
@@ -519,7 +519,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
+        XCTAssertEqual(endpoint.path, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
     }
     
     func test_markUnreadWithTimestamp_buildsCorrectly() {
@@ -541,7 +541,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageTimestamp(messageTimestamp), userId: userId))
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
+        XCTAssertEqual(endpoint.path, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
     }
 
     func test_markAllRead_buildsCorrectly() {
@@ -556,7 +556,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.markAllRead()
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/read", endpoint.path.value)
+        XCTAssertEqual("channels/read", endpoint.path)
     }
 
     func test_sendEvent_buildsCorrectly() {
@@ -574,7 +574,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.sendEvent(cid: cid, eventType: eventType)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path)
     }
 
     func test_startTypingEvent_withParentMessageId_buildsCorrectly() {
@@ -593,7 +593,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: cid, parentMessageId: messageId)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path)
     }
 
     func test_startTypingEvent_withoutParentMessageId_buildsCorrectly() {
@@ -611,7 +611,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: cid, parentMessageId: nil)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path)
     }
 
     func test_stopTypingEvent_withParentMessageId_buildsCorrectly() {
@@ -630,7 +630,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: cid, parentMessageId: messageId)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path)
     }
 
     func test_stopTypingEvent_withoutParentMessageId_buildsCorrectly() {
@@ -648,7 +648,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: cid, parentMessageId: nil)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path)
     }
 
     func test_enableSlowMode_buildsCorrectly() {
@@ -666,7 +666,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path)
     }
 
     func test_stopWatching_buildsCorrectly() {
@@ -683,7 +683,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.stopWatching(cid: cid)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/stop-watching", endpoint.path.value)
+        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/stop-watching", endpoint.path)
     }
 
     func test_channelWatchers_buildsCorrectly() {
@@ -702,7 +702,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<ChannelPayload> = .channelWatchers(query: query)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(query.cid.type.rawValue)/\(query.cid.id)/query", endpoint.path.value)
+        XCTAssertEqual("channels/\(query.cid.type.rawValue)/\(query.cid.id)/query", endpoint.path)
     }
 
     func test_freezeChannel_buildsCorrectly() {
@@ -720,7 +720,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<EmptyResponse> = .freezeChannel(freeze, cid: cid)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path.value)
+        XCTAssertEqual("channels/" + cid.apiPath, endpoint.path)
     }
 
     func test_sendCustomEvent_buildsCorrectly() {
@@ -738,7 +738,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<EmptyResponse> = .sendEvent(ideaPayload, cid: cid)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath + "/event", endpoint.path.value)
+        XCTAssertEqual("channels/" + cid.apiPath + "/event", endpoint.path)
     }
 
     func test_loadPinnedMessages_buildsCorrectly() {
@@ -759,7 +759,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath + "/pinned_messages", endpoint.path.value)
+        XCTAssertEqual("channels/" + cid.apiPath + "/pinned_messages", endpoint.path)
     }
 
     func test_markChannelsDelivered_buildsCorrectly() {
@@ -787,7 +787,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // THEN
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/delivered", endpoint.path.value)
+        XCTAssertEqual("channels/delivered", endpoint.path)
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
         XCTAssertEqual(expectedEndpoint.requiresConnectionId, endpoint.requiresConnectionId)
     }

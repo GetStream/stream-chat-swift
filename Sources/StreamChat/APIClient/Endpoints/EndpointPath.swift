@@ -76,8 +76,6 @@ enum EndpointPath: Codable {
     case deleteFile(String)
     case deleteImage(String)
 
-    case appSettings
-
     case liveLocations
 
     case polls
@@ -164,7 +162,6 @@ enum EndpointPath: Codable {
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
-        case .appSettings: return "app"
         case .polls: return "polls"
         case .pollsQuery: return "polls/query"
         case let .poll(pollId: pollId): return "polls/\(pollId)"

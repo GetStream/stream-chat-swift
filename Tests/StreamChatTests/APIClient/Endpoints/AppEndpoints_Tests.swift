@@ -7,10 +7,10 @@
 import XCTest
 
 final class AppEndpoints_Tests: XCTestCase {
-    func test_appSettings() throws {
-        let endpoint = AnyEndpoint(Endpoint<AppSettingsPayload>.appSettings())
+    func test_getApp() throws {
+        let endpoint = AnyEndpoint(Endpoint<GetApplicationResponse>.getApp())
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path.value, "app")
+        XCTAssertEqual(endpoint.path, "/api/v2/app")
         XCTAssertEqual(endpoint.queryItems, nil)
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.body, nil)

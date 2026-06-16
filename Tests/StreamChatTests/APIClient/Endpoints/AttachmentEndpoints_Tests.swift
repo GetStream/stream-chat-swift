@@ -34,7 +34,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/\(id.cid.type.rawValue)/\(id.cid.id)/\(pathComponent)", endpoint.path.value)
+            XCTAssertEqual("channels/\(id.cid.type.rawValue)/\(id.cid.id)/\(pathComponent)", endpoint.path)
         }
     }
     
@@ -63,7 +63,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
             XCTAssertEqual(endpoint.method, .delete, "Method should be DELETE for \(type)")
-            XCTAssertEqual(endpoint.path.value, "uploads/\(pathComponent)", "Path should be \(pathComponent) for \(type)")
+            XCTAssertEqual(endpoint.path, "uploads/\(pathComponent)", "Path should be \(pathComponent) for \(type)")
             XCTAssertFalse(endpoint.requiresConnectionId, "Should not require connection ID")
             
             // Verify body contains the URL
@@ -76,7 +76,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
         let remoteURL = URL.unique()
         let endpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
         
-        XCTAssertEqual(endpoint.path.value, "uploads/image")
+        XCTAssertEqual(endpoint.path, "uploads/image")
         XCTAssertEqual(endpoint.method, .delete)
     }
     
@@ -87,7 +87,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
         for type in nonImageTypes {
             let endpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: type)
             
-            XCTAssertEqual(endpoint.path.value, "uploads/file", "Path should be 'file' for \(type)")
+            XCTAssertEqual(endpoint.path, "uploads/file", "Path should be 'file' for \(type)")
             XCTAssertEqual(endpoint.method, .delete)
         }
     }

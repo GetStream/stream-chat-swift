@@ -30,12 +30,12 @@ rm -rf "$OUTPUT_DIR_CHAT"
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
-rm -f "$OUTPUT_DIR_CHAT/Api/DefaultAPI.swift"
-rmdir "$OUTPUT_DIR_CHAT/Api" 2>/dev/null || true
+#    DefaultEndpoints.swift stays under APIs/ as the generator emits it.
+rm -f "$OUTPUT_DIR_CHAT/APIs/DefaultAPI.swift"
 
 # 3. Prune endpoint factories: keep only allowed_paths, delete the rest.
 prune_endpoint_factories() {
-  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
   local name
   while IFS= read -r name; do
     contains "$name" "${allowed_paths[@]}" && continue

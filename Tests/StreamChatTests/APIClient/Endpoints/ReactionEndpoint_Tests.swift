@@ -16,7 +16,7 @@ final class ReactionEndpoints_Tests: XCTestCase {
             pagination: pagination
         )
 
-        XCTAssertEqual(endpoint.path.value, "messages/ID/reactions")
+        XCTAssertEqual(endpoint.path, "messages/ID/reactions")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertTrue(endpoint.queryItems == nil)
         XCTAssertEqual(endpoint.requiresConnectionId, false)
@@ -35,7 +35,7 @@ final class ReactionEndpoints_Tests: XCTestCase {
             query: query
         )
 
-        XCTAssertEqual(endpoint.path.value, "messages/ID/reactions")
+        XCTAssertEqual(endpoint.path, "messages/ID/reactions")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertTrue(endpoint.queryItems == nil)
         XCTAssertEqual(endpoint.requiresConnectionId, false)
@@ -73,7 +73,7 @@ final class ReactionEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path)
     }
 
     func test_addReaction_withSkipPushAndEmojiCode_buildsCorrectly() {
@@ -114,7 +114,7 @@ final class ReactionEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path)
     }
 
     func test_deleteReaction_buildsCorrectly() {
@@ -134,6 +134,6 @@ final class ReactionEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reaction/\(reaction.rawValue)", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)/reaction/\(reaction.rawValue)", endpoint.path)
     }
 }

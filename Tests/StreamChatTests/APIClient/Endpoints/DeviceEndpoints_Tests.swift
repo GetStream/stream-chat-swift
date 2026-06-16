@@ -35,7 +35,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("devices", endpoint.path)
     }
 
     func test_addDevice_whenPushProviderIsFirebase() {
@@ -66,7 +66,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("devices", endpoint.path)
     }
 
     func test_removeDevice_buildsCorrectly() {
@@ -86,7 +86,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("devices", endpoint.path)
     }
 
     func test_devices_buildsCorrectly() {
@@ -105,6 +105,6 @@ final class DeviceEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("devices", endpoint.path)
     }
 }

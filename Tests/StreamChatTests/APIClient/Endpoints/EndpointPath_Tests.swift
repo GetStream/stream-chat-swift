@@ -120,7 +120,6 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.devices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
-        assertResultEncodingAndDecoding(.appSettings)
         assertResultEncodingAndDecoding(.pushPreferences)
 
         assertResultEncodingAndDecoding(.channels)
