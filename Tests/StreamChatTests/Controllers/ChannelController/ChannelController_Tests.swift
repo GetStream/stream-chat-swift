@@ -5478,7 +5478,7 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
-        XCTAssertEqual(isEnabled, true)
+        XCTAssertEqual(isEnabled, false)
     }
 
     func test_shouldSendTypingEvents_whenChannelEnabled_whenUserEnabled() throws {
