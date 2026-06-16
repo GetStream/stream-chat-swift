@@ -160,7 +160,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
-                        for: endpoint,
+                        for: request.recoveryAction,
                         data: data,
                         completion: deleteQueuedRequestAndComplete
                     )
@@ -188,7 +188,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
     }
 
     private func performDatabaseRecoveryActionsUponSuccess(
-        for endpoint: DataEndpoint,
+        for action: Request.RecoveryAction?,
         data: Data,
         completion: @escaping @Sendable () -> Void
     ) {
@@ -196,37 +196,25 @@ class OfflineRequestsRepository: @unchecked Sendable {
             try? JSONDecoder.stream.decode(T.self, from: data)
         }
 
-        let path = endpoint.path
-
-        // sendMessage: POST channels/<type>/<id>/message
-        if endpoint.method == .post, let channelId = Self.channelId(fromSendMessagePath: path) {
+        switch action {
+        case let .sendMessage(channelId, _):
             guard let message = decodeTo(MessagePayload.Boxed.self) else {
                 completion()
                 return
             }
             messageRepository.saveSuccessfullySentMessage(cid: channelId, message: message.message) { _ in completion() }
-            return
-        }
-
-        // edit/delete a single message: messages/<id>
-        if let messageId = Self.messageId(fromSingleMessagePath: path) {
-            if endpoint.method == .delete {
-                guard let message = decodeTo(MessagePayload.Boxed.self) else {
-                    completion()
-                    return
-                }
-                messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
-            } else if endpoint.method == .post {
-                messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
-            } else {
-                // .put (pin/unpin/partial update) requires no local recovery action.
+        case let .editMessage(messageId):
+            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
+        case .deleteMessage:
+            guard let message = decodeTo(MessagePayload.Boxed.self) else {
                 completion()
+                return
             }
-            return
+            messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
+        case .none:
+            // Reactions, pin/unpin and other queued requests require no local recovery action.
+            completion()
         }
-
-        // Reactions and other queued requests require no local recovery action.
-        completion()
     }
 
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable () -> Void)? = nil) {
@@ -254,41 +242,72 @@ class OfflineRequestsRepository: @unchecked Sendable {
 }
 
 private extension OfflineRequestsRepository {
-    /// Extracts the channel id from a send-message path `channels/<type>/<id>/message`.
-    static func channelId(fromSendMessagePath path: String) -> ChannelId? {
-        let components = path.split(separator: "/")
-        guard components.count >= 4,
-              components.last == "message",
-              components[components.count - 4] == "channels" else { return nil }
-        return try? ChannelId(cid: "\(components[components.count - 3]):\(components[components.count - 2])")
-    }
-
-    /// Returns the message id when `path` targets a single message `messages/<id>`.
-    /// Sub-resource paths such as `messages/<id>/reaction` are excluded.
-    static func messageId(fromSingleMessagePath path: String) -> String? {
-        let components = path.split(separator: "/")
-        guard components.count == 2, components[0] == "messages" else { return nil }
-        return String(components[1])
-    }
-
     struct Request {
+        /// The local recovery action to perform once a queued request succeeds.
+        enum RecoveryAction {
+            /// `POST channels/<type>/<id>/message`
+            case sendMessage(cid: ChannelId, messageId: MessageId?)
+            /// `POST messages/<id>`
+            case editMessage(MessageId)
+            /// `DELETE messages/<id>` (the deleted message comes from the decoded response payload).
+            case deleteMessage
+        }
+
         let id: String
         let date: Date
         let endpoint: DataEndpoint
-        let sendMessageId: MessageId?
-     
+        let recoveryAction: RecoveryAction?
+
+        /// The id of the message being sent, used to coalesce duplicate send-message requests.
+        var sendMessageId: MessageId? {
+            guard case let .sendMessage(_, messageId) = recoveryAction else { return nil }
+            return messageId
+        }
+
         init(id: String, date: Date, endpoint: DataEndpoint) {
             self.id = id
             self.date = date
             self.endpoint = endpoint
-            
-            sendMessageId = {
-                guard endpoint.method == .post, endpoint.path.hasSuffix("/message") else { return nil }
-                guard let bodyData = endpoint.body as? Data else { return nil }
-                guard let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else { return nil }
-                guard let message = json["message"] as? [String: Any] else { return nil }
-                return message["id"] as? String
-            }()
+            recoveryAction = Self.recoveryAction(for: endpoint)
+        }
+
+        // Match the meaningful pattern at the end of the path so any prefix (e.g. `/api/v2`) is ignored.
+        private static let sendMessagePattern = "channels/([^/]+)/([^/]+)/message$"
+        private static let singleMessagePattern = "messages/([^/]+)$"
+
+        private static func recoveryAction(for endpoint: DataEndpoint) -> RecoveryAction? {
+            let path = endpoint.path
+            if endpoint.method == .post,
+               let groups = matches(of: sendMessagePattern, in: path), groups.count == 2,
+               let channelId = try? ChannelId(cid: "\(groups[0]):\(groups[1])") {
+                return .sendMessage(cid: channelId, messageId: messageId(fromBody: endpoint.body))
+            }
+            if let messageId = matches(of: singleMessagePattern, in: path)?.first {
+                switch endpoint.method {
+                case .delete: return .deleteMessage
+                case .post: return .editMessage(messageId)
+                default: return nil // .put (pin/unpin/partial update) requires no local recovery action.
+                }
+            }
+            return nil
+        }
+
+        /// Extracts the message id from a send-message request body `{ "message": { "id": ... } }`.
+        private static func messageId(fromBody body: (Encodable & Sendable)?) -> MessageId? {
+            guard let bodyData = body as? Data,
+                  let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any],
+                  let message = json["message"] as? [String: Any] else { return nil }
+            return message["id"] as? String
+        }
+
+        /// Returns the capture-group substrings of the first match, or `nil` when there is no match.
+        private static func matches(of pattern: String, in path: String) -> [String]? {
+            guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
+            let range = NSRange(path.startIndex..., in: path)
+            guard let match = regex.firstMatch(in: path, range: range) else { return nil }
+            return (1..<match.numberOfRanges).compactMap { index in
+                Range(match.range(at: index), in: path).map { String(path[$0]) }
+            }
         }
     }
 }
