@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix `Spacer()` conflicting with SwiftUI's `Spacer` when building with Xcode 27 [#4131](https://github.com/GetStream/stream-chat-swift/pull/4131)
 
+## StreamChat
+### 🐞 Fixed
+- Fix showing voice recording icon in search results [#4127](https://github.com/GetStream/stream-chat-swift/pull/4127)
+
 # [5.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.1)
 _June 11, 2026_
 

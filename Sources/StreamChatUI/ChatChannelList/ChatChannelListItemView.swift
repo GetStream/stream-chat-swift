@@ -202,7 +202,12 @@ open class ChatChannelListItemView: _View, ThemeProvider {
     }
 
     open var subtitleIcon: UIImage? {
-        isLastMessageVoiceRecording ? appearance.images.mic : nil
+        if let searchedMessage = content?.searchedMessage {
+            return searchedMessage.voiceRecordingAttachments.isEmpty
+                ? nil
+                : appearance.images.mic
+        }
+        return isLastMessageVoiceRecording ? appearance.images.mic : nil
     }
 
     /// Text of `timestampLabel` which contains the time of the last sent message.
