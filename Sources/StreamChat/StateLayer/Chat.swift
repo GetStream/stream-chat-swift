@@ -1349,6 +1349,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func keystroke(parentMessageId: MessageId? = nil) async throws {
+        guard await state.channel?.canSendTypingEvents ?? false else { return }
         try await typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId)
     }
     
@@ -1360,6 +1361,7 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func stopTyping(parentMessageId: MessageId? = nil) async throws {
+        guard await state.channel?.canSendTypingEvents ?? false else { return }
         try await typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId)
     }
     
