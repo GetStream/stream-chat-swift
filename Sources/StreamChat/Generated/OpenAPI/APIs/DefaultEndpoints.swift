@@ -70,7 +70,10 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
 
 private extension Encodable where Self: Sendable {
     func encodedAsData() throws -> Data {
-        try JSONEncoder.stream.encode(AnyEncodable(self))
+        if let data = self as? Data {
+            return data
+        }
+        return try JSONEncoder.stream.encode(AnyEncodable(self))
     }
 }
 
@@ -84,7 +87,7 @@ enum EndpointMethod: String, Codable, Equatable {
 
 extension Endpoint {
     static func getApp(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetApplicationResponse> {
-        .init(
+        return .init(
             path: "/api/v2/app",
             method: .get,
             queryItems: nil,
