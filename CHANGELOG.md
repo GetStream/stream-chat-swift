@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🔄 Changed
+- Use v2 app endpoint for app settings [#4133](https://github.com/GetStream/stream-chat-swift/pull/4133)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix `Spacer()` conflicting with SwiftUI's `Spacer` when building with Xcode 27 [#4131](https://github.com/GetStream/stream-chat-swift/pull/4131)
