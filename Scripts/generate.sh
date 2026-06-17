@@ -108,25 +108,15 @@ prune_models() {
 }
 prune_models
 
-# 5. Generated code is internal to the SDK — strip public/open. Runs before the
-#    immutability pass below so `public var` becomes `var` and the `var`→`let`
-#    rewrite can match it.
+# 5. Generated code is internal to the SDK — strip public/open.
 find "$OUTPUT_DIR_CHAT" -name '*.swift' -print0 | while IFS= read -r -d '' file; do
   sed -i '' -E 's/^([[:space:]]*)(public|open) /\1/' "$file"
 done
 
-# 6. Generated models are immutable DTOs — make stored properties `let`.
-#    Matches lines where `var` is the first token after the indentation (skips
-#    `static var`, init params, `case` lines) and skips lines ending in `{` so
-#    any future computed property stays `var`.
-find "$OUTPUT_DIR_CHAT/models" -name '*.swift' -print0 | while IFS= read -r -d '' file; do
-  sed -i '' -E '/\{[[:space:]]*$/!s/^([[:space:]]+)var ([A-Za-z0-9_]+:)/\1let \2/' "$file"
-done
-
-# 7. Format.
+# 6. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 8. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
+# 7. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
 #    The OpenAPI generator owns v2 paths; these v1 cases keep the hand-written
 #    endpoint factories compiling while each endpoint migrates incrementally.
 inject_v1_endpoint_paths() {
