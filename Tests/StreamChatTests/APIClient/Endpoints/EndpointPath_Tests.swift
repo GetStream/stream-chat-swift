@@ -87,6 +87,24 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(EndpointPath.getApp.value, "/api/v2/app")
     }
 
+    func test_blockUsers_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.blockUsers.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.unblockUsers.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getBlockedUsers.shouldBeQueuedOffline)
+    }
+
+    func test_blockUsers_value() {
+        XCTAssertEqual(EndpointPath.blockUsers.value, "/api/v2/users/block")
+    }
+
+    func test_unblockUsers_value() {
+        XCTAssertEqual(EndpointPath.unblockUsers.value, "/api/v2/users/unblock")
+    }
+
+    func test_getBlockedUsers_value() {
+        XCTAssertEqual(EndpointPath.getBlockedUsers.value, "/api/v2/users/block")
+    }
+
     func test_pushPreferences_value() {
         let path = EndpointPath.pushPreferences.value
         XCTAssertEqual(path, "push_preferences")
@@ -162,8 +180,10 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.flagUser(false))
         assertResultEncodingAndDecoding(.flagMessage(false))
         assertResultEncodingAndDecoding(.muteUser(false))
-        assertResultEncodingAndDecoding(.blockUser)
-        
+        assertResultEncodingAndDecoding(.blockUsers)
+        assertResultEncodingAndDecoding(.unblockUsers)
+        assertResultEncodingAndDecoding(.getBlockedUsers)
+
         assertResultEncodingAndDecoding(.polls)
         assertResultEncodingAndDecoding(.pollsQuery)
         assertResultEncodingAndDecoding(.poll(pollId: "test_poll"))
