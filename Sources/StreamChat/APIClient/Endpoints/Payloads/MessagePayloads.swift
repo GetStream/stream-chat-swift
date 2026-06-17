@@ -28,6 +28,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case mentionedHere = "mentioned_here"
     case mentionedChannel = "mentioned_channel"
     case mentionedGroupIds = "mentioned_group_ids"
+    case mentionedGroups = "mentioned_groups"
     case mentionedRoles = "mentioned_roles"
     case threadParticipants = "thread_participants"
     case replyCount = "reply_count"
@@ -99,7 +100,7 @@ final class MessagePayload: Decodable, Sendable {
     let mentionedUsers: [UserPayload]
     let mentionedHere: Bool
     let mentionedChannel: Bool
-    let mentionedGroupIds: [String]
+    let mentionedGroups: [UserGroupMentionPayload]
     let mentionedRoles: [String]
     let restrictedVisibility: [UserId]
     let threadParticipants: [UserPayload]
@@ -157,7 +158,7 @@ final class MessagePayload: Decodable, Sendable {
         mentionedUsers = try container.decodeArrayIgnoringFailures([UserPayload].self, forKey: .mentionedUsers)
         mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere) ?? false
         mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel) ?? false
-        mentionedGroupIds = try container.decodeArrayIfPresentIgnoringFailures([String].self, forKey: .mentionedGroupIds) ?? []
+        mentionedGroups = try container.decodeArrayIfPresentIgnoringFailures([UserGroupMentionPayload].self, forKey: .mentionedGroups) ?? []
         mentionedRoles = try container.decodeArrayIfPresentIgnoringFailures([String].self, forKey: .mentionedRoles) ?? []
         // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
         threadParticipants = try container.decodeIfPresent([UserPayload].self, forKey: .threadParticipants) ?? []
@@ -228,7 +229,7 @@ final class MessagePayload: Decodable, Sendable {
         mentionedUsers: [UserPayload],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
-        mentionedGroupIds: [String] = [],
+        mentionedGroups: [UserGroupMentionPayload] = [],
         mentionedRoles: [String] = [],
         threadParticipants: [UserPayload] = [],
         replyCount: Int,
@@ -276,7 +277,7 @@ final class MessagePayload: Decodable, Sendable {
         self.mentionedUsers = mentionedUsers
         self.mentionedHere = mentionedHere
         self.mentionedChannel = mentionedChannel
-        self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedGroups = mentionedGroups
         self.mentionedRoles = mentionedRoles
         self.threadParticipants = threadParticipants
         self.replyCount = replyCount

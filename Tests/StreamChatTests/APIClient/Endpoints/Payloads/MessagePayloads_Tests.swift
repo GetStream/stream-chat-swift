@@ -33,7 +33,7 @@ final class MessagePayload_Tests: XCTestCase {
             "mentioned_users": [],
             "mentioned_here": true,
             "mentioned_channel": true,
-            "mentioned_group_ids": ["backendsupport"],
+            "mentioned_groups": [{"id": "backendsupport", "name": "Backend Support"}],
             "mentioned_roles": ["admin"]
         }
         """.data(using: .utf8)!
@@ -42,7 +42,8 @@ final class MessagePayload_Tests: XCTestCase {
 
         XCTAssertTrue(payload.mentionedHere)
         XCTAssertTrue(payload.mentionedChannel)
-        XCTAssertEqual(payload.mentionedGroupIds, ["backendsupport"])
+        XCTAssertEqual(payload.mentionedGroups.map(\.id), ["backendsupport"])
+        XCTAssertEqual(payload.mentionedGroups.map(\.name), ["Backend Support"])
         XCTAssertEqual(payload.mentionedRoles, ["admin"])
     }
 
@@ -73,7 +74,7 @@ final class MessagePayload_Tests: XCTestCase {
 
         XCTAssertFalse(payload.mentionedHere)
         XCTAssertFalse(payload.mentionedChannel)
-        XCTAssertEqual(payload.mentionedGroupIds, [])
+        XCTAssertTrue(payload.mentionedGroups.isEmpty)
         XCTAssertEqual(payload.mentionedRoles, [])
     }
 

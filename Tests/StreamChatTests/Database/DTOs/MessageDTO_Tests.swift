@@ -438,7 +438,10 @@ final class MessageDTO_Tests: XCTestCase {
             channel: .dummy(cid: channelId),
             mentionedHere: true,
             mentionedChannel: true,
-            mentionedGroupIds: ["backendsupport"],
+            mentionedGroups: [
+                .init(id: "backendsupport", name: "Backend Support"),
+                .init(id: "engineering", name: "Engineering")
+            ],
             mentionedRoles: ["admin"]
         )
 
@@ -452,15 +455,21 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertTrue(loadedMessage.mentionedHere)
         XCTAssertTrue(loadedMessage.mentionedChannel)
-        XCTAssertEqual(loadedMessage.mentionedGroupIds, ["backendsupport"])
+        XCTAssertEqual(
+            loadedMessage.mentionedGroups,
+            [
+                .init(id: "backendsupport", name: "Backend Support"),
+                .init(id: "engineering", name: "Engineering")
+            ]
+        )
         XCTAssertEqual(loadedMessage.mentionedRoles, ["admin"])
 
-        // Verify the request body re-serializes the fields
+        // Verify the request body re-serializes the group ids
         let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         let requestBody: MessageRequestBody = messageDTO.asRequestBody()
         XCTAssertTrue(requestBody.mentionedHere)
         XCTAssertTrue(requestBody.mentionedChannel)
-        XCTAssertEqual(requestBody.mentionedGroupIds, ["backendsupport"])
+        XCTAssertEqual(requestBody.mentionedGroupIds, ["backendsupport", "engineering"])
         XCTAssertEqual(requestBody.mentionedRoles, ["admin"])
     }
 

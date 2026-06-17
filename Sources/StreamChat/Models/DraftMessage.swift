@@ -148,7 +148,7 @@ extension ChatMessage {
         mentionedUsers = draft.mentionedUsers
         mentionedHere = false
         mentionedChannel = false
-        mentionedGroupIds = []
+        mentionedGroups = []
         mentionedRoles = []
         threadParticipants = []
         _attachments = draft.attachments

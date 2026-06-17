@@ -111,8 +111,8 @@ public struct ChatMessage: Identifiable, Sendable {
     /// Whether all channel members were mentioned (`@channel`).
     public let mentionedChannel: Bool
 
-    /// The ids of the user groups that were mentioned in this message.
-    public let mentionedGroupIds: [String]
+    /// The user groups that were mentioned in this message.
+    public let mentionedGroups: Set<UserGroupMention>
 
     /// The roles that were mentioned in this message (e.g. `admin`, `moderator`).
     public let mentionedRoles: [String]
@@ -231,7 +231,7 @@ public struct ChatMessage: Identifiable, Sendable {
         mentionedUsers: Set<ChatUser>,
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
-        mentionedGroupIds: [String] = [],
+        mentionedGroups: Set<UserGroupMention> = [],
         mentionedRoles: [String] = [],
         threadParticipants: [ChatUser],
         attachments: [AnyChatMessageAttachment],
@@ -288,7 +288,7 @@ public struct ChatMessage: Identifiable, Sendable {
         self.mentionedUsers = mentionedUsers
         self.mentionedHere = mentionedHere
         self.mentionedChannel = mentionedChannel
-        self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedGroups = mentionedGroups
         self.mentionedRoles = mentionedRoles
         self.threadParticipants = threadParticipants
         self.latestReplies = latestReplies
@@ -347,7 +347,7 @@ public struct ChatMessage: Identifiable, Sendable {
             mentionedUsers: mentionedUsers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
-            mentionedGroupIds: mentionedGroupIds,
+            mentionedGroups: mentionedGroups,
             mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
             attachments: attachments ?? allAttachments,
@@ -467,7 +467,7 @@ public struct ChatMessage: Identifiable, Sendable {
             mentionedUsers: mentionedUsers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
-            mentionedGroupIds: mentionedGroupIds,
+            mentionedGroups: mentionedGroups,
             mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
             attachments: attachments ?? [],
@@ -655,7 +655,7 @@ extension ChatMessage: Hashable {
         guard lhs.reminder == rhs.reminder else { return false }
         guard lhs.mentionedHere == rhs.mentionedHere else { return false }
         guard lhs.mentionedChannel == rhs.mentionedChannel else { return false }
-        guard lhs.mentionedGroupIds == rhs.mentionedGroupIds else { return false }
+        guard lhs.mentionedGroups == rhs.mentionedGroups else { return false }
         guard lhs.mentionedRoles == rhs.mentionedRoles else { return false }
         return true
     }
