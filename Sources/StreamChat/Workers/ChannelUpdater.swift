@@ -755,10 +755,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///
     /// This will return the data present in the OG Metadata.
     public func enrichUrl(_ url: URL, completion: @escaping @Sendable (Result<LinkAttachmentPayload, Error>) -> Void) {
-        apiClient.request(endpoint: .enrichUrl(url: url)) { result in
+        apiClient.request(endpoint: .getOG(url: url.absoluteString)) { result in
             switch result {
-            case let .success(payload):
-                completion(.success(payload))
+            case let .success(response):
+                do {
+                    completion(.success(try response.asModel()))
+                } catch {
+                    log.debug("Failed enriching url with error: \(error)")
+                    completion(.failure(error))
+                }
             case let .failure(error):
                 log.debug("Failed enriching url with error: \(error)")
                 completion(.failure(error))

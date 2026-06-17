@@ -13,7 +13,7 @@ extension EndpointPath {
              .deleteChannel, .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead, .markChannelUnread,
              .markAllChannelsRead, .markChannelsDelivered, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadChannelAttachment, .message,
              .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser, .translateMessage,
-             .callToken, .createCall, .deleteFile, .deleteImage, .og, .getApp, .threads, .thread, .markThreadRead, .markThreadUnread,
+             .callToken, .createCall, .deleteFile, .deleteImage, .getOG, .getApp, .threads, .thread, .markThreadRead, .markThreadUnread,
              .polls, .pollsQuery, .poll, .pollOption, .pollOptions, .pollVotes, .pollVoteInMessage, .pollVote,
              .unread, .blockUser, .unblockUser, .drafts, .reminders, .reminder, .liveLocations, .uploadAttachment, .pushPreferences:
             return false

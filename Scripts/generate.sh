@@ -12,11 +12,17 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
     getApp
+    getOG
 )
 allowed_models=(
+  Action
   AppResponseFields
+  Field
   FileUploadConfig
   GetApplicationResponse
+  GetOGResponse
+  ImageData
+  Images
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -133,7 +139,6 @@ inject_v1_endpoint_paths() {
     case guest
     case search
     case devices
-    case og
     case unread
     case pushPreferences
 
@@ -218,7 +223,6 @@ EOF
         case .guest: return "guest"
         case .search: return "search"
         case .devices: return "devices"
-        case .og: return "og"
         case .unread: return "unread"
         case .pushPreferences: return "push_preferences"
 

@@ -46,8 +46,8 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
     }
 
-    func test_og_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.og.shouldBeQueuedOffline)
+    func test_getOG_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getOG.shouldBeQueuedOffline)
     }
 
     func test_threads_shouldNOTBeQueuedOffline() {

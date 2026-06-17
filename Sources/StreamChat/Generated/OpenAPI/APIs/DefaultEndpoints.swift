@@ -11,7 +11,6 @@ enum EndpointPath: Codable {
     case guest
     case search
     case devices
-    case og
     case unread
     case pushPreferences
 
@@ -88,6 +87,7 @@ enum EndpointPath: Codable {
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
     case getApp
+    case getOG
 
     var value: String {
         switch self {
@@ -97,7 +97,6 @@ enum EndpointPath: Codable {
         case .guest: return "guest"
         case .search: return "search"
         case .devices: return "devices"
-        case .og: return "og"
         case .unread: return "unread"
         case .pushPreferences: return "push_preferences"
 
@@ -175,6 +174,8 @@ enum EndpointPath: Codable {
 
         case .getApp:
             return "/api/v2/app"
+        case .getOG:
+            return "/api/v2/og"
         }
     }
 }
@@ -260,6 +261,18 @@ extension Endpoint {
             path: .getApp,
             method: .get,
             queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getOG(url: String, requiresConnectionId: Bool = false) -> Endpoint<GetOGResponse> {
+        return .init(
+            path: .getOG,
+            method: .get,
+            queryItems: [
+                "url": APIHelper.convertAnyToString(url)
+            ],
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
