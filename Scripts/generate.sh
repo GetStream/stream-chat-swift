@@ -11,12 +11,19 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
+    createDevice
+    deleteDevice
     getApp
+    listDevices
 )
 allowed_models=(
   AppResponseFields
+  CreateDeviceRequest
+  DeviceResponse
   FileUploadConfig
   GetApplicationResponse
+  ListDevicesResponse
+  Response
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -132,7 +139,6 @@ inject_v1_endpoint_paths() {
     case users
     case guest
     case search
-    case devices
     case og
     case unread
     case pushPreferences
@@ -217,7 +223,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .devices: return "devices"
         case .og: return "og"
         case .unread: return "unread"
         case .pushPreferences: return "push_preferences"
