@@ -28,4 +28,12 @@ class RolesRepository: @unchecked Sendable {
             }
         }
     }
+
+    func searchRoles(query: RoleSearchQuery) async throws -> [Role] {
+        try await withCheckedThrowingContinuation { continuation in
+            searchRoles(query: query) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
 }
