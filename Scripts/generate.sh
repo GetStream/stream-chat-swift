@@ -7,10 +7,12 @@ OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
 CHAT_DIR="$REPO_ROOT/../chat"
 
 # Incremental OpenAPI adoption: keep ONLY the endpoints/models being migrated right
-# now (app settings); everything else the generator emits is pruned below.
-# allowed_models must hold the FULL transitive model closure of every factory in
-# allowed_paths or the kept code won't compile — the build is the safety net.
-allowed_paths=(getApp)
+# now; everything else the generator emits is pruned below.
+# allowed_models must hold the FULL transitive model closure of every endpoint in
+# allowed_endpoints or the kept code won't compile — the build is the safety net.
+allowed_endpoints=(
+    getApp
+)
 allowed_models=(
   AppResponseFields
   FileUploadConfig
@@ -33,16 +35,66 @@ rm -rf "$OUTPUT_DIR_CHAT"
 #    DefaultEndpoints.swift stays under APIs/ as the generator emits it.
 rm -f "$OUTPUT_DIR_CHAT/APIs/DefaultAPI.swift"
 
-# 3. Prune endpoint factories: keep only allowed_paths, delete the rest.
+# 3. Prune endpoint factories: keep only allowed_endpoints, delete the rest.
 prune_endpoint_factories() {
   local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
   local name
   while IFS= read -r name; do
-    contains "$name" "${allowed_paths[@]}" && continue
+    contains "$name" "${allowed_endpoints[@]}" && continue
     sed -i '' -E "/^[[:space:]]+static func ${name}\(/,/^[[:space:]]+\}[[:space:]]*$/d" "$file"
   done < <(sed -nE 's/^[[:space:]]+static func ([A-Za-z0-9_]+)\(.*/\1/p' "$file")
 }
 prune_endpoint_factories
+
+# Keep generated v2 EndpointPath cases aligned with allowed_endpoints before v1
+# cases are injected. Future migrations should remove matching v1 cases when
+# adding a generated v2 path with the same case name.
+prune_generated_endpoint_paths() {
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
+  local allowed_endpoints_csv
+  allowed_endpoints_csv="$(IFS=,; echo "${allowed_endpoints[*]}")"
+
+  python3 - "$file" "$allowed_endpoints_csv" <<'PY'
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+allowed = set(filter(None, sys.argv[2].split(",")))
+
+def case_name(line):
+    stripped = line.strip()
+    if not stripped.startswith("case "):
+        return None
+    pattern = stripped[len("case "):]
+    if pattern.startswith("let "):
+        pattern = pattern[len("let "):]
+    if pattern.startswith("."):
+        pattern = pattern[1:]
+    return pattern.split("(", 1)[0].split(" ", 1)[0].split(":", 1)[0]
+
+# Within the EndpointPath enum, drop every `case` line and its (possibly multi-line)
+# switch arm whose name isn't allowed; keep every structural line. swiftformat tidies
+# the leftover blank lines afterwards.
+out, in_enum, keep = [], False, True
+for line in path.read_text().splitlines(keepends=True):
+    if line.startswith("enum EndpointPath"):
+        in_enum = True
+    elif line.startswith("final class Endpoint"):
+        in_enum = False
+    if in_enum:
+        name = case_name(line)
+        if name is not None:                                     # `case …`: opens a block
+            keep = name in allowed
+        elif not line.lstrip().startswith(("return ", "let ")):  # structural line
+            keep = True                                          # (arm bodies inherit keep)
+        if not keep:
+            continue
+    out.append(line)
+
+path.write_text("".join(out))
+PY
+}
+prune_generated_endpoint_paths
 
 # 4. Prune models: keep only allowed_models, delete the rest.
 prune_models() {
@@ -244,99 +296,21 @@ EOF
 
 EOF
 
-  local allowed_paths_csv
-  allowed_paths_csv="$(IFS=,; echo "${allowed_paths[*]}")"
-
-  python3 - "$file" "$cases_file" "$values_file" "$allowed_paths_csv" <<'PY'
+  python3 - "$file" "$cases_file" "$values_file" <<'PY'
 import pathlib
 import sys
 
 file_path = pathlib.Path(sys.argv[1])
 cases = pathlib.Path(sys.argv[2]).read_text()
 values = pathlib.Path(sys.argv[3]).read_text()
-allowed_paths = [name for name in sys.argv[4].split(",") if name]
 text = file_path.read_text()
 
 enum_marker = "enum EndpointPath: Codable {\n"
 switch_marker = "        switch self {\n"
-class_marker = "\n}\n\nfinal class Endpoint"
 
-def declaration_name(line):
-    stripped = line.strip()
-    if not stripped.startswith("case "):
-        return None
-    name = stripped[len("case "):]
-    return name.split("(", 1)[0].split(" ", 1)[0]
-
-def switch_case_name(line):
-    stripped = line.strip()
-    if not stripped.startswith("case "):
-        return None
-    pattern = stripped[len("case "):]
-    if pattern.startswith("let "):
-        pattern = pattern[len("let "):]
-    if pattern.startswith("."):
-        pattern = pattern[1:]
-    return pattern.split("(", 1)[0].split(":", 1)[0]
-
-enum_start = text.index(enum_marker)
-enum_end = text.index(class_marker, enum_start) + len("\n}\n")
-enum_text = text[enum_start:enum_end]
-
-value_marker = "\n    var value: String {\n        switch self {\n"
-case_region_end = enum_text.index(value_marker)
-case_region = enum_text[len(enum_marker):case_region_end]
-
-switch_region_start = enum_text.index(switch_marker) + len(switch_marker)
-switch_region_end = enum_text.rindex("        }\n    }\n")
-switch_region = enum_text[switch_region_start:switch_region_end]
-
-kept_case_lines = []
-kept_case_names = []
-for line in case_region.splitlines(keepends=True):
-    name = declaration_name(line)
-    if name in allowed_paths:
-        kept_case_lines.append(line)
-        kept_case_names.append(name)
-
-switch_blocks = {}
-current_name = None
-current_block = []
-for line in switch_region.splitlines(keepends=True):
-    name = switch_case_name(line)
-    if name is not None:
-        if current_name in allowed_paths:
-            switch_blocks[current_name] = current_block
-        current_name = name
-        current_block = [line]
-    elif current_name is not None:
-        current_block.append(line)
-if current_name in allowed_paths:
-    switch_blocks[current_name] = current_block
-
-missing_cases = [name for name in allowed_paths if name not in kept_case_names]
-missing_values = [name for name in allowed_paths if name not in switch_blocks]
-if missing_cases or missing_values:
-    sys.exit(f"missing generated EndpointPath entries: cases={missing_cases}, values={missing_values}")
-
-kept_switch_blocks = []
-for name in kept_case_names:
-    kept_switch_blocks.extend(switch_blocks[name])
-
-new_enum = (
-    enum_marker
-    + cases
-    + "".join(kept_case_lines)
-    + "\n    var value: String {\n"
-    + switch_marker
-    + values
-    + "".join(kept_switch_blocks)
-    + "        }\n"
-    + "    }\n"
-    + "}\n"
-)
-
-file_path.write_text(text[:enum_start] + new_enum + text[enum_end:])
+text = text.replace(enum_marker, enum_marker + cases, 1)
+text = text.replace(switch_marker, switch_marker + values, 1)
+file_path.write_text(text)
 PY
 }
 inject_v1_endpoint_paths

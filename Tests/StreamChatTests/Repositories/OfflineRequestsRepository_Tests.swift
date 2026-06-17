@@ -214,7 +214,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a Connection Error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if endpoint.path.value == EndpointPath.sendMessage(.init(type: .messaging, id: "request2")).value {
+            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
                 completion?(.failure(ClientError.ConnectionError()))
             } else {
                 completion?(.success(Data()))
@@ -245,7 +245,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a random error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if endpoint.path.value == EndpointPath.sendMessage(.init(type: .messaging, id: "request2")).value {
+            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
                 completion?(.failure(NSError(domain: "whatever", code: 1, userInfo: nil)))
             } else {
                 completion?(.success(Data()))

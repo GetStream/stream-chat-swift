@@ -153,9 +153,9 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 }, completion: { _ in group.leave() })
             }
 
-            log.info("Executing queued offline request for /\(endpoint.path.value)", subsystems: .offlineSupport)
+            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
             apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
-                log.info("Completed queued offline request /\(endpoint.path.value)", subsystems: .offlineSupport)
+                log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
@@ -166,13 +166,13 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 case .failure(_ as ClientError.ConnectionError):
                     // If we failed because there is still no successful connection, we don't remove it from the queue
                     log.info(
-                        "Keeping offline request /\(endpoint.path.value) as there is no connection",
+                        "Keeping offline request /\(endpoint.path) as there is no connection",
                         subsystems: .offlineSupport
                     )
                     group.leave()
                 case let .failure(error):
                     log.info(
-                        "Request for /\(endpoint.path.value) failed: \(error)",
+                        "Request for /\(endpoint.path) failed: \(error)",
                         subsystems: .offlineSupport
                     )
                     deleteQueuedRequestAndComplete()
@@ -228,14 +228,14 @@ class OfflineRequestsRepository: @unchecked Sendable {
         let date = Date()
         retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {
-                log.error("Could not encode queued request for /\(endpoint.path.value)", subsystems: .offlineSupport)
+                log.error("Could not encode queued request for /\(endpoint.path)", subsystems: .offlineSupport)
                 completion?()
                 return
             }
 
             database.write { _ in
                 QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
-                log.info("Queued request for /\(endpoint.path.value)", subsystems: .offlineSupport)
+                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
             } completion: { _ in
                 completion?()
             }
@@ -249,12 +249,12 @@ private extension OfflineRequestsRepository {
         let date: Date
         let endpoint: DataEndpoint
         let sendMessageId: MessageId?
-
+     
         init(id: String, date: Date, endpoint: DataEndpoint) {
             self.id = id
             self.date = date
             self.endpoint = endpoint
-
+            
             sendMessageId = {
                 switch endpoint.path {
                 case .sendMessage:
