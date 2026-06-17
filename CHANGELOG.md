@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `all_mentions` and `direct_mentions` push notification preference levels [#4137](https://github.com/GetStream/stream-chat-swift/pull/4137)
 - Add user groups support [#4138](https://github.com/GetStream/stream-chat-swift/pull/4138)
 - Add support for searching roles [#4139](https://github.com/GetStream/stream-chat-swift/pull/4139)
+- Add support for `@here`, `@channel`, role and group mentions in messages [#4140](https://github.com/GetStream/stream-chat-swift/pull/4140)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
 ### 🔄 Changed
