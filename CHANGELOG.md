@@ -41,6 +41,7 @@ _June 03, 2026_
 - Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `unreadChannelCountsByGroup` to `CurrentChatUser`, observable for changes via `ConnectedUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `all_mentions` and `direct_mentions` push notification preference levels [#4137](https://github.com/GetStream/stream-chat-swift/pull/4137)
+- Add support for searching roles [#4139](https://github.com/GetStream/stream-chat-swift/pull/4139)
 
 # [4.101.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.0)
 _June 03, 2026_
