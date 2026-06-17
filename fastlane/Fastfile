@@ -725,6 +725,20 @@ lane :copyright do
   )
 end
 
+desc 'Regenerate Sourcery code (predefined channel-list filter/sort mappings)'
+lane :generate do
+  Dir.chdir('..') { sh('make generate') }
+end
+
+desc 'Fail if generated code is stale (run `make generate` and commit the result)'
+lane :validate_generated_code do
+  generate
+  Dir.chdir('..') do
+    changed = sh('git status --porcelain Sources/StreamChat/Generated/PredefinedFilter+Generated.swift', log: false).strip
+    UI.user_error!('Generated code is stale. Run `make generate` and commit the result.') unless changed.empty?
+  end
+end
+
 lane :validate_public_interface do
   next unless is_check_required(sources: sources_matrix[:public_interface], force_check: @force_check)
 

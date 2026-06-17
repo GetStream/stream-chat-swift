@@ -151,7 +151,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// A boolean value indicating if it should send typing events.
     /// It is `true` if the channel typing events are enabled as well as the user privacy settings.
     func shouldSendTypingEvents(completion: @escaping @Sendable (Bool) -> Void) {
-        guard channel?.canSendTypingEvents ?? true else {
+        guard channel?.canSendTypingEvents ?? false else {
             completion(false)
             return
         }

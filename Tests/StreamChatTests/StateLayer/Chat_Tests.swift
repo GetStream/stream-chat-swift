@@ -245,7 +245,45 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.freezeChannel_cid)
         XCTAssertEqual(false, env.channelUpdaterMock.freezeChannel_freeze)
     }
-    
+
+    // MARK: - Typing Indicators
+
+    func test_keystroke_whenChannelCannotSendTypingEvents_doesNotMakeAPIRequest() async throws {
+        try await setUpChatWithLoadedChannel(ownCapabilities: [])
+
+        try await chat.keystroke()
+
+        XCTAssertNil(env.client.mockAPIClient.request_endpoint)
+    }
+
+    func test_stopTyping_whenChannelCannotSendTypingEvents_doesNotMakeAPIRequest() async throws {
+        try await setUpChatWithLoadedChannel(ownCapabilities: [])
+
+        try await chat.stopTyping()
+
+        XCTAssertNil(env.client.mockAPIClient.request_endpoint)
+    }
+
+    func test_keystroke_whenChannelCanSendTypingEvents_makesAPIRequest() async throws {
+        try await setUpChatWithLoadedChannel(ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
+        env.client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await chat.keystroke()
+
+        let expectedEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: channelId, parentMessageId: nil)
+        XCTAssertEqual(env.client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_stopTyping_whenChannelCanSendTypingEvents_makesAPIRequest() async throws {
+        try await setUpChatWithLoadedChannel(ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
+        env.client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await chat.stopTyping()
+
+        let expectedEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: channelId, parentMessageId: nil)
+        XCTAssertEqual(env.client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
     // MARK: - Invites
     
     func test_acceptInvite_whenChannelUpdaterSucceeds_thenAcceptInviteSucceeds() async throws {
@@ -1955,6 +1993,15 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
+    /// Sets up a chat backed by real updaters and loads a channel with the given capabilities into the state.
+    @MainActor private func setUpChatWithLoadedChannel(ownCapabilities: [String]) async throws {
+        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId, ownCapabilities: ownCapabilities))
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
+        try await setUpChat(usesMockedUpdaters: false)
+        try await chat.get(watch: false)
+        env.client.mockAPIClient.cleanUp()
+    }
+
     private func makeChannelPayload(
         cid: ChannelId? = nil,
         messageCount: Int,

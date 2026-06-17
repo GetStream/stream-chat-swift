@@ -98,19 +98,18 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
                 done(.continue)
                 return
             }
-            guard channelList.query.groupKey == nil else {
+            guard channelList.groupKey == nil else {
                 done(.continue)
                 return
             }
-            let query = channelList.query
             Task {
                 do {
                     let channelIds = try await channelList.refreshLoadedChannels()
-                    log.debug("Synced \(channelIds.count) channels in a channel list (\(query.filter))", subsystems: .offlineSupport)
+                    log.debug("Synced \(channelIds.count) channels in a channel list", subsystems: .offlineSupport)
                     context.synchedChannelIds.formUnion(channelIds)
                     done(.continue)
                 } catch {
-                    log.error("Failed refreshing channel list (\(query.filter)) with error \(error)", subsystems: .offlineSupport)
+                    log.error("Failed refreshing channel list with error \(error)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }
@@ -122,7 +121,7 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
 /// returned channel ids in `context.synchedChannelIds` so the subsequent `/sync` step skips them.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
-        let groupKeys = Set(groupedChannelLists.compactMap(\.query.groupKey))
+        let groupKeys = Set(groupedChannelLists.compactMap(\.groupKey))
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
             // All grouped lists share the same persisted flags (set together by the initial
             // `queryGroupedChannels` call), so any one of them is a valid source. `sorted().first`

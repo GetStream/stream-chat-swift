@@ -1,0 +1,7 @@
+sources:
+  - ./Query/ChannelListQuery.swift
+  - ./Query/Sorting/ChannelListSortingKey.swift
+templates:
+  - ./Generated/PredefinedFilter.stencil
+output:
+  ./Generated/PredefinedFilter+Generated.swift

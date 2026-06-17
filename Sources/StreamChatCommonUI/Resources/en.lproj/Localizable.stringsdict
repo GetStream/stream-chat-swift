@@ -90,6 +90,24 @@
 			<string>%d UNREAD MESSAGES</string>
 		</dict>
 	</dict>
+	<key>polls.button.view-comments</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@comments@</string>
+		<key>comments</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>View %d Comments</string>
+			<key>one</key>
+			<string>View %d Comment</string>
+			<key>other</key>
+			<string>View %d Comments</string>
+		</dict>
+	</dict>
 	<key>reaction.authors.number-of-reactions</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
