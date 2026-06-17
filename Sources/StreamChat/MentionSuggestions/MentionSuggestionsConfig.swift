@@ -33,6 +33,6 @@ public struct MentionSuggestionsConfig: Sendable {
 
     /// A configuration that enables all enhanced mention types.
     public static let enhanced = MentionSuggestionsConfig(
-        allowedMentionTypes: Set(MentionType.allCases)
+        allowedMentionTypes: MentionType.allBuiltIn
     )
 }
