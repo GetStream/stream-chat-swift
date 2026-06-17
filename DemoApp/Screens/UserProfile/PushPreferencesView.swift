@@ -53,7 +53,7 @@ struct PushPreferencesView: View {
         NavigationView {
             Form {
                 Section(header: Text("Notification Level")) {
-                    ForEach([PushPreferenceLevel.all, .mentions, .none], id: \.rawValue) { level in
+                    ForEach([PushPreferenceLevel.all, .allMentions, .directMentions, .none], id: \.rawValue) { level in
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(levelTitle(for: level))
@@ -199,8 +199,10 @@ struct PushPreferencesView: View {
         switch level {
         case .all:
             return "All Notifications"
-        case .mentions:
-            return "Mentions Only"
+        case .allMentions:
+            return "All Mentions"
+        case .directMentions:
+            return "Direct Mentions Only"
         case .none:
             return "No Notifications"
         default:
@@ -212,8 +214,10 @@ struct PushPreferencesView: View {
         switch level {
         case .all:
             return "Receive notifications for all messages"
-        case .mentions:
-            return "Only receive notifications when mentioned"
+        case .allMentions:
+            return "Receive notifications for @mentions, @channel, @here, group, and role mentions"
+        case .directMentions:
+            return "Only receive notifications for direct @mentions and thread replies"
         case .none:
             return "Disable all push notifications"
         default:
