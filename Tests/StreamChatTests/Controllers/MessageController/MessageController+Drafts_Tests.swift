@@ -47,7 +47,11 @@ final class MessageController_Drafts_Tests: XCTestCase {
             text: text,
             isSilent: false,
             attachments: [],
-            mentionedUserIds: [],
+            mentionedUserIds: ["leia"],
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["engineering"],
+            mentionedRoles: ["admin"],
             quotedMessageId: nil,
             showReplyInChannel: false,
             extraData: [:]
@@ -64,6 +68,11 @@ final class MessageController_Drafts_Tests: XCTestCase {
         let calledWith = draftsRepository.updateDraft_calledWith
         XCTAssertEqual(calledWith?.cid, controller.cid)
         XCTAssertEqual(calledWith?.threadId, controller.messageId)
+        XCTAssertEqual(calledWith?.mentionedUserIds, ["leia"])
+        XCTAssertEqual(calledWith?.mentionedHere, true)
+        XCTAssertEqual(calledWith?.mentionedChannel, true)
+        XCTAssertEqual(calledWith?.mentionedGroupIds, ["engineering"])
+        XCTAssertEqual(calledWith?.mentionedRoles, ["admin"])
     }
     
     func test_updateDraftReply_whenFailure() {

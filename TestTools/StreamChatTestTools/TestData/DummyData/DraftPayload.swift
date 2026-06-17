@@ -36,6 +36,10 @@ extension DraftMessagePayload {
         args: String? = nil,
         showReplyInChannel: Bool = false,
         mentionedUsers: [UserPayload]? = nil,
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroups: [UserGroupMentionPayload] = [],
+        mentionedRoles: [String] = [],
         extraData: [String: RawJSON] = [:],
         attachments: [MessageAttachmentPayload]? = nil,
         isSilent: Bool = false
@@ -47,6 +51,10 @@ extension DraftMessagePayload {
             args: args,
             showReplyInChannel: showReplyInChannel,
             mentionedUsers: mentionedUsers,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroups: mentionedGroups,
+            mentionedRoles: mentionedRoles,
             extraData: extraData,
             attachments: attachments,
             isSilent: isSilent

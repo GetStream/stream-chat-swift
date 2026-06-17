@@ -995,6 +995,10 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
     ///   - attachments: The attachments of the draft message.
     ///   - mentionedUserIds: The mentioned user ids of the draft message.
+    ///   - mentionedHere: A flag indicating whether `@here` is mentioned in the draft message.
+    ///   - mentionedChannel: A flag indicating whether `@channel` is mentioned in the draft message.
+    ///   - mentionedGroupIds: The mentioned user group ids of the draft message.
+    ///   - mentionedRoles: The mentioned roles of the draft message.
     ///   - quotedMessageId: The message that the draft message is quoting.
     ///   - showReplyInChannel: If the draft message should be shown in the channel.
     ///   - command: The command of the draft message.
@@ -1005,6 +1009,10 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         command: Command? = nil,
@@ -1021,6 +1029,10 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             arguments: command?.args,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { result in

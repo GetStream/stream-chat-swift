@@ -34,6 +34,10 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository, @unchecked Se
         arguments: String?,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool,
+        mentionedChannel: Bool,
+        mentionedGroupIds: [String],
+        mentionedRoles: [String],
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON]
     )?
@@ -49,6 +53,10 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository, @unchecked Se
         arguments: String?,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool,
+        mentionedChannel: Bool,
+        mentionedGroupIds: [String],
+        mentionedRoles: [String],
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON],
         completion: ((Result<DraftMessage, Error>) -> Void)?
@@ -64,6 +72,10 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository, @unchecked Se
             arguments: arguments,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         )

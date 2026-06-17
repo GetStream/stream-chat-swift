@@ -147,12 +147,21 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     var updateDraftMessage_callCount = 0
     var updateDraftMessage_completion: (@MainActor (Result<DraftMessage, Error>) -> Void)?
     var updateDraftMessage_text = ""
+    var updateDraftMessage_mentionedUserIds: [UserId]?
+    var updateDraftMessage_mentionedHere: Bool?
+    var updateDraftMessage_mentionedChannel: Bool?
+    var updateDraftMessage_mentionedGroupIds: [String]?
+    var updateDraftMessage_mentionedRoles: [String]?
 
     override func updateDraftMessage(
         text: String,
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
         command: Command? = nil,
         extraData: [String: RawJSON] = [:],
@@ -161,6 +170,11 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         updateDraftMessage_text = text
         updateDraftMessage_callCount += 1
         updateDraftMessage_completion = completion
+        updateDraftMessage_mentionedUserIds = mentionedUserIds
+        updateDraftMessage_mentionedHere = mentionedHere
+        updateDraftMessage_mentionedChannel = mentionedChannel
+        updateDraftMessage_mentionedGroupIds = mentionedGroupIds
+        updateDraftMessage_mentionedRoles = mentionedRoles
     }
 
     var deleteDraftMessage_callCount = 0

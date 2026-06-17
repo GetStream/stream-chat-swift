@@ -47,6 +47,18 @@ public struct DraftMessage: Sendable, Identifiable {
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<ChatUser>
 
+    /// A flag indicating whether `@here` was mentioned in this message.
+    public let mentionedHere: Bool
+
+    /// A flag indicating whether `@channel` was mentioned in this message.
+    public let mentionedChannel: Bool
+
+    /// A list of user groups that are mentioned in this message.
+    public let mentionedGroups: Set<UserGroupMention>
+
+    /// A list of roles that are mentioned in this message.
+    public let mentionedRoles: [String]
+
     /// A list of attachments of the message.
     public let attachments: [AnyChatMessageAttachment]
 
@@ -67,6 +79,10 @@ public struct DraftMessage: Sendable, Identifiable {
         currentUser: ChatUser,
         quotedMessage: ChatMessage?,
         mentionedUsers: Set<ChatUser>,
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroups: Set<UserGroupMention> = [],
+        mentionedRoles: [String] = [],
         attachments: [AnyChatMessageAttachment]
     ) {
         self.id = id
@@ -81,6 +97,10 @@ public struct DraftMessage: Sendable, Identifiable {
         self.extraData = extraData
         _quotedMessage = BoxedAny(quotedMessage)
         self.mentionedUsers = mentionedUsers
+        self.mentionedHere = mentionedHere
+        self.mentionedChannel = mentionedChannel
+        self.mentionedGroups = mentionedGroups
+        self.mentionedRoles = mentionedRoles
         self.attachments = attachments
         self.currentUser = currentUser
     }
@@ -98,6 +118,10 @@ public struct DraftMessage: Sendable, Identifiable {
         extraData = message.extraData
         _quotedMessage = BoxedAny(message.quotedMessage)
         mentionedUsers = message.mentionedUsers
+        mentionedHere = message.mentionedHere
+        mentionedChannel = message.mentionedChannel
+        mentionedGroups = message.mentionedGroups
+        mentionedRoles = message.mentionedRoles
         attachments = message.allAttachments
         currentUser = message.author
     }
@@ -146,10 +170,10 @@ extension ChatMessage {
         reactionGroups = [:]
         author = draft.currentUser
         mentionedUsers = draft.mentionedUsers
-        mentionedHere = false
-        mentionedChannel = false
-        mentionedGroups = []
-        mentionedRoles = []
+        mentionedHere = draft.mentionedHere
+        mentionedChannel = draft.mentionedChannel
+        mentionedGroups = draft.mentionedGroups
+        mentionedRoles = draft.mentionedRoles
         threadParticipants = []
         _attachments = draft.attachments
         latestReplies = []
