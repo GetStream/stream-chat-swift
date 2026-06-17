@@ -96,6 +96,11 @@ public class ChatClient: @unchecked Sendable {
         environment.userGroupsRepositoryBuilder(databaseContainer, apiClient)
     }()
 
+    /// Repository for searching roles.
+    lazy var rolesRepository: RolesRepository = {
+        environment.rolesRepositoryBuilder(apiClient)
+    }()
+
     let channelListUpdater: ChannelListUpdater
 
     /// Handler for watching channels and preventing duplicate watch requests.

@@ -94,6 +94,7 @@ enum EndpointPath: Codable {
     case userGroupMembersDelete(id: String)
 
     case getApp
+    case rolesSearch
 
     var value: String {
         switch self {
@@ -187,6 +188,7 @@ enum EndpointPath: Codable {
 
         case .getApp:
             return "/api/v2/app"
+        case .rolesSearch: return "roles/search"
         }
     }
 }

@@ -198,6 +198,12 @@ extension ChatClient {
         ) -> UserGroupsRepository = {
             UserGroupsRepository(database: $0, apiClient: $1)
         }
+
+        var rolesRepositoryBuilder: @Sendable (
+            _ apiClient: APIClient
+        ) -> RolesRepository = {
+            RolesRepository(apiClient: $0)
+        }
         
         var channelListUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,
