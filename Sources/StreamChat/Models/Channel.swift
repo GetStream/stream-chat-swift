@@ -565,6 +565,14 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     public static let castPollVote: Self = "cast-poll-vote"
     /// Ability to share location.
     public static let shareLocation: Self = "share-location"
+    /// Ability to mention the whole channel (`@channel`).
+    public static let notifyChannel: Self = "notify-channel"
+    /// Ability to mention a user group (`@group`).
+    public static let notifyGroup: Self = "notify-group"
+    /// Ability to mention the online members of the channel (`@here`).
+    public static let notifyHere: Self = "notify-here"
+    /// Ability to mention members that have a given role (`@role`).
+    public static let notifyRole: Self = "notify-role"
 }
 
 public extension ChatChannel {
@@ -726,5 +734,25 @@ public extension ChatChannel {
     /// Can the current user share location in this channel.
     var canShareLocation: Bool {
         ownCapabilities.contains(.shareLocation)
+    }
+
+    /// Can the current user mention the whole channel (`@channel`) in this channel.
+    var canNotifyChannel: Bool {
+        ownCapabilities.contains(.notifyChannel)
+    }
+
+    /// Can the current user mention a user group (`@group`) in this channel.
+    var canNotifyGroup: Bool {
+        ownCapabilities.contains(.notifyGroup)
+    }
+
+    /// Can the current user mention the online members (`@here`) in this channel.
+    var canNotifyHere: Bool {
+        ownCapabilities.contains(.notifyHere)
+    }
+
+    /// Can the current user mention members with a given role (`@role`) in this channel.
+    var canNotifyRole: Bool {
+        ownCapabilities.contains(.notifyRole)
     }
 }
