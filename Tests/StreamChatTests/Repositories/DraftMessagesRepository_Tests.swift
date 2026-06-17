@@ -110,6 +110,10 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             arguments: nil,
             attachments: [],
             mentionedUserIds: ["leia"],
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["engineering"],
+            mentionedRoles: ["admin"],
             quotedMessageId: "quotedID",
             extraData: [:]
         ) { result in
@@ -126,6 +130,10 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         let requestBodyMessage = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary()["message"] as? [String: Any])
         AssertDictionary(ignoringKeys: ["id"], requestBodyMessage, [
             "mentioned_users": ["leia"],
+            "mentioned_here": 1,
+            "mentioned_channel": 1,
+            "mentioned_group_ids": ["engineering"],
+            "mentioned_roles": ["admin"],
             "parent_id": threadId,
             "show_in_channel": 1,
             "silent": 0,
@@ -148,6 +156,10 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             arguments: nil,
             attachments: [],
             mentionedUserIds: [],
+            mentionedHere: false,
+            mentionedChannel: false,
+            mentionedGroupIds: [],
+            mentionedRoles: [],
             quotedMessageId: nil,
             extraData: [:]
         ) { result in

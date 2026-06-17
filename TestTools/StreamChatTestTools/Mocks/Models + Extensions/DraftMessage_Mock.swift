@@ -21,6 +21,10 @@ public extension DraftMessage {
         extraData: [String: RawJSON] = [:],
         isSilent: Bool = false,
         mentionedUsers: Set<ChatUser> = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroups: Set<UserGroupMention> = [],
+        mentionedRoles: [String] = [],
         attachments: [AnyChatMessageAttachment] = []
     ) -> Self {
         .init(
@@ -37,6 +41,10 @@ public extension DraftMessage {
             currentUser: currentUser,
             quotedMessage: quotedMessage,
             mentionedUsers: mentionedUsers,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroups: mentionedGroups,
+            mentionedRoles: mentionedRoles,
             attachments: attachments
         )
     }

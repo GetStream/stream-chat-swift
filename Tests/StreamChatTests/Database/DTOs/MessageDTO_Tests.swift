@@ -4485,6 +4485,47 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNil(draftMessage.parentMessageId)
     }
 
+    func test_saveDraftMessage_storesEnhancedMentions() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+
+        let draftPayload = DraftPayload.dummy(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            message: .dummy(
+                text: "Draft @here @channel @admin @Engineering",
+                mentionedHere: true,
+                mentionedChannel: true,
+                mentionedGroups: [.init(id: "eng", name: "Engineering")],
+                mentionedRoles: ["admin"]
+            )
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // THEN: the DTO stores all mention types
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        let draftDTO = try XCTUnwrap(channelDTO.draftMessage)
+        XCTAssertTrue(draftDTO.mentionedHere)
+        XCTAssertTrue(draftDTO.mentionedChannel)
+        XCTAssertEqual(draftDTO.mentionedRoles, ["admin"])
+
+        // THEN: the draft model exposes all mention types
+        let draft = DraftMessage(try draftDTO.asModel())
+        XCTAssertTrue(draft.mentionedHere)
+        XCTAssertTrue(draft.mentionedChannel)
+        XCTAssertEqual(draft.mentionedRoles, ["admin"])
+        XCTAssertEqual(draft.mentionedGroups, [.init(id: "eng", name: "Engineering")])
+    }
+
     func test_saveDraftMessage_inThread() throws {
         // GIVEN
         let cid: ChannelId = .unique

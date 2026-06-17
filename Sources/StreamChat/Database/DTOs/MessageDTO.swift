@@ -819,6 +819,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         parentMessageId: MessageId?,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool,
+        mentionedChannel: Bool,
+        mentionedGroupIds: [String],
+        mentionedRoles: [String],
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
@@ -854,10 +858,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionCounts = [:]
         message.reactionGroups = []
         message.mentionedUserIds = mentionedUserIds
-        message.mentionedHere = false
-        message.mentionedChannel = false
-        message.mentionedGroupIds = []
-        message.mentionedRoles = []
+        message.mentionedHere = mentionedHere
+        message.mentionedChannel = mentionedChannel
+        message.mentionedGroupIds = mentionedGroupIds
+        message.mentionedRoles = mentionedRoles
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
         message.user = currentUserDTO.user
@@ -1258,6 +1262,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
             dto.mentionedUserIds = mentionedUsers.map(\.id)
         }
+
+        dto.mentionedHere = draftDetailsPayload.mentionedHere
+        dto.mentionedChannel = draftDetailsPayload.mentionedChannel
+        dto.mentionedGroupIds = draftDetailsPayload.mentionedGroups.map(\.id)
+        dto.mentionedGroups = try Set(draftDetailsPayload.mentionedGroups.map { try saveGroupMention(payload: $0) })
+        dto.mentionedRoles = draftDetailsPayload.mentionedRoles
 
         if let attachments = draftDetailsPayload.attachments {
             dto.attachments = Set(
@@ -1680,6 +1690,10 @@ extension MessageDTO {
             quotedMessageId: quotedMessage?.id,
             attachments: uploadedAttachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             extraData: extraData
         )
     }

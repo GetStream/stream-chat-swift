@@ -68,6 +68,10 @@ final class DraftMessagePayload: Decodable, Sendable {
     let args: String?
     let showReplyInChannel: Bool
     let mentionedUsers: [UserPayload]?
+    let mentionedHere: Bool
+    let mentionedChannel: Bool
+    let mentionedGroups: [UserGroupMentionPayload]
+    let mentionedRoles: [String]
     let extraData: [String: RawJSON]
     let attachments: [MessageAttachmentPayload]?
     let isSilent: Bool
@@ -79,6 +83,10 @@ final class DraftMessagePayload: Decodable, Sendable {
         args: String?,
         showReplyInChannel: Bool,
         mentionedUsers: [UserPayload]?,
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroups: [UserGroupMentionPayload] = [],
+        mentionedRoles: [String] = [],
         extraData: [String: RawJSON],
         attachments: [MessageAttachmentPayload]?,
         isSilent: Bool
@@ -89,6 +97,10 @@ final class DraftMessagePayload: Decodable, Sendable {
         self.args = args
         self.showReplyInChannel = showReplyInChannel
         self.mentionedUsers = mentionedUsers
+        self.mentionedHere = mentionedHere
+        self.mentionedChannel = mentionedChannel
+        self.mentionedGroups = mentionedGroups
+        self.mentionedRoles = mentionedRoles
         self.extraData = extraData
         self.attachments = attachments
         self.isSilent = isSilent
@@ -102,6 +114,10 @@ final class DraftMessagePayload: Decodable, Sendable {
         args = try container.decodeIfPresent(String.self, forKey: .args)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)
+        mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere) ?? false
+        mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel) ?? false
+        mentionedGroups = try container.decodeArrayIfPresentIgnoringFailures([UserGroupMentionPayload].self, forKey: .mentionedGroups) ?? []
+        mentionedRoles = try container.decodeArrayIfPresentIgnoringFailures([String].self, forKey: .mentionedRoles) ?? []
         attachments = try container.decodeIfPresent([MessageAttachmentPayload].self, forKey: .attachments)
         isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         if var payload = try? [String: RawJSON](from: decoder) {
@@ -124,6 +140,10 @@ final class DraftMessageRequestBody: Encodable, Sendable {
     let quotedMessageId: String?
     let attachments: [MessageAttachmentPayload]
     let mentionedUserIds: [UserId]
+    let mentionedHere: Bool
+    let mentionedChannel: Bool
+    let mentionedGroupIds: [String]
+    let mentionedRoles: [String]
     let extraData: [String: RawJSON]
 
     init(
@@ -137,6 +157,10 @@ final class DraftMessageRequestBody: Encodable, Sendable {
         quotedMessageId: String?,
         attachments: [MessageAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -149,6 +173,10 @@ final class DraftMessageRequestBody: Encodable, Sendable {
         self.quotedMessageId = quotedMessageId
         self.attachments = attachments
         self.mentionedUserIds = mentionedUserIds
+        self.mentionedHere = mentionedHere
+        self.mentionedChannel = mentionedChannel
+        self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedRoles = mentionedRoles
         self.extraData = extraData
     }
 
@@ -169,6 +197,22 @@ final class DraftMessageRequestBody: Encodable, Sendable {
 
         if !mentionedUserIds.isEmpty {
             try container.encode(mentionedUserIds, forKey: .mentionedUsers)
+        }
+
+        if mentionedHere {
+            try container.encode(mentionedHere, forKey: .mentionedHere)
+        }
+
+        if mentionedChannel {
+            try container.encode(mentionedChannel, forKey: .mentionedChannel)
+        }
+
+        if !mentionedGroupIds.isEmpty {
+            try container.encode(mentionedGroupIds, forKey: .mentionedGroupIds)
+        }
+
+        if !mentionedRoles.isEmpty {
+            try container.encode(mentionedRoles, forKey: .mentionedRoles)
         }
 
         try extraData.encode(to: encoder)
