@@ -48,6 +48,14 @@ class UserGroupsRepository: @unchecked Sendable {
         }
     }
 
+    func searchUserGroups(query: UserGroupSearchQuery) async throws -> [UserGroup] {
+        try await withCheckedThrowingContinuation { continuation in
+            searchUserGroups(query: query) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     func loadUserGroup(
         id: String,
         teamId: String?,
