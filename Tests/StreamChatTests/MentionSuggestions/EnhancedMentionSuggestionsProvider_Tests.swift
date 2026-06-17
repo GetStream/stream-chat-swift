@@ -23,7 +23,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     func test_mentionSuggestions_whenEmptyText_returnsBroadcastsAndDoesNotFetchRolesAndGroups() async throws {
         client.mockRolesRepository.searchRoles_completion_result = .success([Role(name: "admin")])
         client.mockUserGroupsRepository.searchUserGroups_completion_result = .success([makeGroup(id: "g1")])
-        let provider = makeProvider(config: .enhanced)
+        let provider = makeProvider()
 
         let suggestions = try await provider.mentionSuggestions(
             for: MentionSuggestionsRequest(text: "", channel: makeChannel())
@@ -40,7 +40,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     func test_mentionSuggestions_whenText_returnsBroadcastRolesGroupsAndUsers() async throws {
         client.mockRolesRepository.searchRoles_completion_result = .success([Role(name: "admin")])
         client.mockUserGroupsRepository.searchUserGroups_completion_result = .success([makeGroup(id: "g1")])
-        let provider = makeProvider(config: .enhanced)
+        let provider = makeProvider()
 
         let suggestions = try await provider.mentionSuggestions(
             for: MentionSuggestionsRequest(text: "ch", channel: makeChannel())
@@ -57,7 +57,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     func test_mentionSuggestions_whenTextMatchesHere_returnsHereBroadcastOnly() async throws {
         client.mockRolesRepository.searchRoles_completion_result = .success([])
         client.mockUserGroupsRepository.searchUserGroups_completion_result = .success([])
-        let provider = makeProvider(config: .enhanced)
+        let provider = makeProvider()
 
         let suggestions = try await provider.mentionSuggestions(
             for: MentionSuggestionsRequest(text: "he", channel: makeChannel())
@@ -67,22 +67,22 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
         XCTAssertFalse(suggestions.contains { $0.type == .channel })
     }
 
-    func test_mentionSuggestions_whenHereNotAllowed_doesNotSuggestHere() async throws {
-        let provider = makeProvider(config: .init(allowedMentionTypes: [.channel, .user]))
+    func test_mentionSuggestions_whenHereNotAllowedByChannel_doesNotSuggestHere() async throws {
+        let provider = makeProvider()
 
         let suggestions = try await provider.mentionSuggestions(
-            for: MentionSuggestionsRequest(text: "", channel: makeChannel())
+            for: MentionSuggestionsRequest(text: "", channel: makeChannel(capabilities: [.notifyChannel]))
         )
 
         XCTAssertTrue(suggestions.contains { $0.type == .channel })
         XCTAssertFalse(suggestions.contains { $0.type == .here })
     }
 
-    func test_mentionSuggestions_whenUserOnlyConfig_doesNotFetchOrSuggestOtherTypes() async throws {
-        let provider = makeProvider(config: .init(allowedMentionTypes: [.user]))
+    func test_mentionSuggestions_whenChannelHasNoNotifyCapabilities_doesNotFetchOrSuggestOtherTypes() async throws {
+        let provider = makeProvider()
 
         let suggestions = try await provider.mentionSuggestions(
-            for: MentionSuggestionsRequest(text: "ch", channel: makeChannel())
+            for: MentionSuggestionsRequest(text: "ch", channel: makeChannel(capabilities: []))
         )
 
         XCTAssertTrue(suggestions.allSatisfy { $0.type == .user })
@@ -93,7 +93,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     func test_mentionSuggestions_whenRolesAndGroupsRequestsFail_stillReturnsBroadcasts() async throws {
         client.mockRolesRepository.searchRoles_completion_result = .failure(TestError())
         client.mockUserGroupsRepository.searchUserGroups_completion_result = .failure(TestError())
-        let provider = makeProvider(config: .enhanced)
+        let provider = makeProvider()
 
         let suggestions = try await provider.mentionSuggestions(
             for: MentionSuggestionsRequest(text: "ch", channel: makeChannel())
@@ -104,13 +104,16 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
 
     // MARK: - private
 
-    private func makeProvider(config: MentionSuggestionsConfig) -> EnhancedMentionSuggestionsProvider {
-        EnhancedMentionSuggestionsProvider(client: client, config: config)
+    private func makeProvider(mentionAllAppUsers: Bool = false) -> EnhancedMentionSuggestionsProvider {
+        EnhancedMentionSuggestionsProvider(client: client, mentionAllAppUsers: mentionAllAppUsers)
     }
 
-    private func makeChannel() -> ChatChannel {
+    private func makeChannel(
+        capabilities: Set<ChannelCapability> = [.notifyHere, .notifyChannel, .notifyRole, .notifyGroup]
+    ) -> ChatChannel {
         ChatChannel.mock(
             cid: .unique,
+            ownCapabilities: capabilities,
             lastActiveMembers: [
                 .mock(id: "martin", name: "Martin"),
                 .mock(id: "john", name: "John")

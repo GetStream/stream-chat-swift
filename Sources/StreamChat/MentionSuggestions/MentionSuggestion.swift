@@ -31,9 +31,6 @@ public extension MentionType {
     static let role: Self = "role"
     /// Mentions all members of a user group (e.g. `@Dream Team`).
     static let group: Self = "group"
-
-    /// The set of mention types provided by the SDK out of the box.
-    static let allBuiltIn: Set<MentionType> = [.user, .here, .channel, .role, .group]
 }
 
 /// A single mention suggestion shown in the composer's suggestion list.

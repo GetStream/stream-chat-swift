@@ -8,10 +8,12 @@ import Foundation
 ///
 /// In addition to user mentions, it suggests `@here` and `@channel` broadcasts,
 /// roles and user groups, matching the behaviour of the other Stream Chat SDKs.
-/// The set of suggested types is controlled by ``MentionSuggestionsConfig/allowedMentionTypes``.
+/// Which of these types are suggested is determined by the channel's own
+/// capabilities (`notify-here`, `notify-channel`, `notify-role`, `notify-group`).
 public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvider, @unchecked Sendable {
-    /// The configuration controlling which mention types are suggested.
-    public var config: MentionSuggestionsConfig
+    /// When `true`, user suggestions are searched across all app users instead
+    /// of only the channel's members and watchers.
+    public var mentionAllAppUsers: Bool
 
     private let userSearch: UserSearch
     private let roleSearch: RoleSearch
@@ -22,9 +24,9 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
     ///
     /// - Parameters:
     ///   - client: The chat client used to perform searches.
-    ///   - config: The configuration controlling which mention types are suggested.
-    public init(client: ChatClient, config: MentionSuggestionsConfig = .enhanced) {
-        self.config = config
+    ///   - mentionAllAppUsers: Whether user suggestions are searched across all app users.
+    public init(client: ChatClient, mentionAllAppUsers: Bool = false) {
+        self.mentionAllAppUsers = mentionAllAppUsers
         userSearch = client.makeUserSearch()
         roleSearch = client.makeRoleSearch()
         userGroupSearch = client.makeUserGroupSearch()
@@ -33,23 +35,21 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
 
     public func mentionSuggestions(for request: MentionSuggestionsRequest) async throws -> [MentionSuggestion] {
         let text = request.text
-        let allowedTypes = config.allowedMentionTypes
+        let channel = request.channel
 
         // Broadcasts (`@here`, `@channel`) are shown on a bare `@` and filtered
         // by prefix as the user keeps typing, matching the other SDKs.
-        var suggestions = broadcastSuggestions(for: text, allowedTypes: allowedTypes)
+        var suggestions = broadcastSuggestions(for: text, channel: channel)
 
         // Roles and groups require a non-empty query to avoid surfacing the
         // entire list on a bare `@`.
-        async let roles = (allowedTypes.contains(.role) && !text.isEmpty)
+        async let roles = (channel.canNotifyRole && !text.isEmpty)
             ? fetchRoles(for: text)
             : []
-        async let groups = (allowedTypes.contains(.group) && !text.isEmpty)
+        async let groups = (channel.canNotifyGroup && !text.isEmpty)
             ? fetchGroups(for: text)
             : []
-        async let users = allowedTypes.contains(.user)
-            ? fetchUsers(for: request)
-            : []
+        async let users = fetchUsers(for: request)
 
         suggestions += await roles
         suggestions += await groups
@@ -61,14 +61,14 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
 
     private func broadcastSuggestions(
         for text: String,
-        allowedTypes: Set<MentionType>
+        channel: ChatChannel
     ) -> [MentionSuggestion] {
         let query = text.lowercased()
         var result: [MentionSuggestion] = []
-        if allowedTypes.contains(.channel), matchesBroadcast("channel", query: query) {
+        if channel.canNotifyChannel, matchesBroadcast("channel", query: query) {
             result.append(.channel)
         }
-        if allowedTypes.contains(.here), matchesBroadcast("here", query: query) {
+        if channel.canNotifyHere, matchesBroadcast("here", query: query) {
             result.append(.here)
         }
         return result
@@ -90,7 +90,7 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
 
     private func fetchUsers(for request: MentionSuggestionsRequest) async -> [MentionSuggestion] {
         let users: [ChatUser]
-        if config.mentionAllAppUsers {
+        if mentionAllAppUsers {
             let query = MentionSuggestionsSearch.allAppUsersQuery(for: request.text)
             users = (try? await userSearch.search(query: query)) ?? []
         } else {
