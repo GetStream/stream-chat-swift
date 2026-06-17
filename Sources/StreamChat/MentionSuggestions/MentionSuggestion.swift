@@ -45,53 +45,53 @@ public extension MentionType {
 public struct MentionSuggestion: Identifiable, Sendable {
     /// A user mention suggestion.
     public static func user(_ user: ChatUser) -> MentionSuggestion {
-        .init(UserSuggestion(user: user))
+        .init(User(user: user))
     }
 
     /// The `@here` broadcast suggestion.
-    public static let here = MentionSuggestion(HereSuggestion())
+    public static let here = MentionSuggestion(Here())
 
     /// The `@channel` broadcast suggestion.
-    public static let channel = MentionSuggestion(ChannelSuggestion())
+    public static let channel = MentionSuggestion(Channel())
 
     /// A role mention suggestion.
-    public static func role(_ role: Role) -> MentionSuggestion {
-        .init(RoleSuggestion(role: role))
+    public static func role(_ role: StreamChat.Role) -> MentionSuggestion {
+        .init(Role(role: role))
     }
 
     /// A user group mention suggestion.
     public static func group(_ group: UserGroup) -> MentionSuggestion {
-        .init(GroupSuggestion(group: group))
+        .init(Group(group: group))
     }
 
     /// The value describing the suggestion variant.
-    public let suggestion: any Suggestion
+    public let kind: any Kind
 
-    /// Wraps the provided suggestion. Use this to provide a custom variant by
-    /// passing your own ``MentionSuggestion/Suggestion`` conforming type.
-    public init(_ suggestion: any Suggestion) {
-        self.suggestion = suggestion
+    /// Wraps the provided suggestion kind. Use this to provide a custom variant
+    /// by passing your own ``MentionSuggestion/Kind`` conforming type.
+    public init(_ kind: any Kind) {
+        self.kind = kind
     }
 
     /// A stable identifier used for diffing the suggestion list.
-    public var id: String { suggestion.id }
+    public var id: String { kind.id }
 
     /// The type of the suggestion.
-    public var type: MentionType { suggestion.mentionType }
+    public var type: MentionType { kind.mentionType }
 
     /// The text inserted into the composer when the suggestion is selected.
     ///
     /// The leading `@` that triggered the suggestion stays in place, so this is
     /// the text that follows it (e.g. the user name, role name, etc.).
-    public var mentionText: String { suggestion.mentionText }
+    public var mentionText: String { kind.mentionText }
 
     /// A type that provides the data for a mention suggestion variant.
     ///
-    /// The built-in variants are ``MentionSuggestion/UserSuggestion``,
-    /// ``MentionSuggestion/HereSuggestion``, ``MentionSuggestion/ChannelSuggestion``,
-    /// ``MentionSuggestion/RoleSuggestion`` and ``MentionSuggestion/GroupSuggestion``.
+    /// The built-in variants are ``MentionSuggestion/User``,
+    /// ``MentionSuggestion/Here``, ``MentionSuggestion/Channel``,
+    /// ``MentionSuggestion/Role`` and ``MentionSuggestion/Group``.
     /// Conform your own type to provide a custom variant.
-    public protocol Suggestion: Sendable {
+    public protocol Kind: Sendable {
         /// A stable identifier for the suggestion (used for diffing in lists).
         var id: String { get }
         /// The type of the mention suggestion.
@@ -101,7 +101,7 @@ public struct MentionSuggestion: Identifiable, Sendable {
     }
 
     /// A user mention suggestion's data.
-    public struct UserSuggestion: Suggestion {
+    public struct User: Kind {
         /// The suggested user.
         public let user: ChatUser
 
@@ -115,7 +115,7 @@ public struct MentionSuggestion: Identifiable, Sendable {
     }
 
     /// The `@here` broadcast suggestion's data.
-    public struct HereSuggestion: Suggestion {
+    public struct Here: Kind {
         public var id: String { "broadcast-here" }
         public var mentionType: MentionType { .here }
         public var mentionText: String { "here" }
@@ -124,7 +124,7 @@ public struct MentionSuggestion: Identifiable, Sendable {
     }
 
     /// The `@channel` broadcast suggestion's data.
-    public struct ChannelSuggestion: Suggestion {
+    public struct Channel: Kind {
         public var id: String { "broadcast-channel" }
         public var mentionType: MentionType { .channel }
         public var mentionText: String { "channel" }
@@ -133,21 +133,21 @@ public struct MentionSuggestion: Identifiable, Sendable {
     }
 
     /// A role mention suggestion's data.
-    public struct RoleSuggestion: Suggestion {
+    public struct Role: Kind {
         /// The suggested role.
-        public let role: Role
+        public let role: StreamChat.Role
 
         public var id: String { "role-\(role.name)" }
         public var mentionType: MentionType { .role }
         public var mentionText: String { role.name }
 
-        public init(role: Role) {
+        public init(role: StreamChat.Role) {
             self.role = role
         }
     }
 
     /// A user group mention suggestion's data.
-    public struct GroupSuggestion: Suggestion {
+    public struct Group: Kind {
         /// The suggested user group.
         public let group: UserGroup
 
