@@ -16,7 +16,6 @@ extension Endpoint {
             queryItems: queryItems,
             requiresConnectionId: requiresConnectionId,
             requiresToken: requiresToken,
-            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: body
         )
     }
@@ -76,7 +75,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
                 let shouldBeDiscarded = hoursQueued > Double(self.maxHoursThreshold)
                 guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
-                    log.error("Queued request for /\(endpoint.path) should not be queued", subsystems: .offlineSupport)
+                    log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
                     requestIdsToDelete.insert(dto.id)
                     continue
                 }
@@ -154,26 +153,26 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 }, completion: { _ in group.leave() })
             }
 
-            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
+            log.info("Executing queued offline request for /\(endpoint.path.value)", subsystems: .offlineSupport)
             apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
-                log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
+                log.info("Completed queued offline request /\(endpoint.path.value)", subsystems: .offlineSupport)
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
-                        for: request.recoveryAction,
+                        for: endpoint,
                         data: data,
                         completion: deleteQueuedRequestAndComplete
                     )
                 case .failure(_ as ClientError.ConnectionError):
                     // If we failed because there is still no successful connection, we don't remove it from the queue
                     log.info(
-                        "Keeping offline request /\(endpoint.path) as there is no connection",
+                        "Keeping offline request /\(endpoint.path.value) as there is no connection",
                         subsystems: .offlineSupport
                     )
                     group.leave()
                 case let .failure(error):
                     log.info(
-                        "Request for /\(endpoint.path) failed: \(error)",
+                        "Request for /\(endpoint.path.value) failed: \(error)",
                         subsystems: .offlineSupport
                     )
                     deleteQueuedRequestAndComplete()
@@ -188,7 +187,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
     }
 
     private func performDatabaseRecoveryActionsUponSuccess(
-        for action: Request.RecoveryAction?,
+        for endpoint: DataEndpoint,
         data: Data,
         completion: @escaping @Sendable () -> Void
     ) {
@@ -196,8 +195,8 @@ class OfflineRequestsRepository: @unchecked Sendable {
             try? JSONDecoder.stream.decode(T.self, from: data)
         }
 
-        switch action {
-        case let .sendMessage(channelId, _):
+        switch endpoint.path {
+        case let .sendMessage(channelId):
             guard let message = decodeTo(MessagePayload.Boxed.self) else {
                 completion()
                 return
@@ -211,8 +210,11 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 return
             }
             messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
-        case .none:
-            // Reactions, pin/unpin and other queued requests require no local recovery action.
+        case .addReaction, .deleteReaction:
+            // No further action
+            completion()
+        default:
+            log.assertionFailure("Should not reach here, request should not require action")
             completion()
         }
     }
@@ -226,14 +228,14 @@ class OfflineRequestsRepository: @unchecked Sendable {
         let date = Date()
         retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {
-                log.error("Could not encode queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+                log.error("Could not encode queued request for /\(endpoint.path.value)", subsystems: .offlineSupport)
                 completion?()
                 return
             }
 
             database.write { _ in
                 QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
-                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+                log.info("Queued request for /\(endpoint.path.value)", subsystems: .offlineSupport)
             } completion: { _ in
                 completion?()
             }
@@ -243,71 +245,27 @@ class OfflineRequestsRepository: @unchecked Sendable {
 
 private extension OfflineRequestsRepository {
     struct Request {
-        /// The local recovery action to perform once a queued request succeeds.
-        enum RecoveryAction {
-            /// `POST channels/<type>/<id>/message`
-            case sendMessage(cid: ChannelId, messageId: MessageId?)
-            /// `POST messages/<id>`
-            case editMessage(MessageId)
-            /// `DELETE messages/<id>` (the deleted message comes from the decoded response payload).
-            case deleteMessage
-        }
-
         let id: String
         let date: Date
         let endpoint: DataEndpoint
-        let recoveryAction: RecoveryAction?
-
-        /// The id of the message being sent, used to coalesce duplicate send-message requests.
-        var sendMessageId: MessageId? {
-            guard case let .sendMessage(_, messageId) = recoveryAction else { return nil }
-            return messageId
-        }
+        let sendMessageId: MessageId?
 
         init(id: String, date: Date, endpoint: DataEndpoint) {
             self.id = id
             self.date = date
             self.endpoint = endpoint
-            recoveryAction = Self.recoveryAction(for: endpoint)
-        }
 
-        // Match the meaningful pattern at the end of the path so any prefix (e.g. `/api/v2`) is ignored.
-        private static let sendMessagePattern = "channels/([^/]+)/([^/]+)/message$"
-        private static let singleMessagePattern = "messages/([^/]+)$"
-
-        private static func recoveryAction(for endpoint: DataEndpoint) -> RecoveryAction? {
-            let path = endpoint.path
-            if endpoint.method == .post,
-               let groups = matches(of: sendMessagePattern, in: path), groups.count == 2,
-               let channelId = try? ChannelId(cid: "\(groups[0]):\(groups[1])") {
-                return .sendMessage(cid: channelId, messageId: messageId(fromBody: endpoint.body))
-            }
-            if let messageId = matches(of: singleMessagePattern, in: path)?.first {
-                switch endpoint.method {
-                case .delete: return .deleteMessage
-                case .post: return .editMessage(messageId)
-                default: return nil // .put (pin/unpin/partial update) requires no local recovery action.
+            sendMessageId = {
+                switch endpoint.path {
+                case .sendMessage:
+                    guard let bodyData = endpoint.body as? Data else { return nil }
+                    guard let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else { return nil }
+                    guard let message = json["message"] as? [String: Any] else { return nil }
+                    return message["id"] as? String
+                default:
+                    return nil
                 }
-            }
-            return nil
-        }
-
-        /// Extracts the message id from a send-message request body `{ "message": { "id": ... } }`.
-        private static func messageId(fromBody body: (Encodable & Sendable)?) -> MessageId? {
-            guard let bodyData = body as? Data,
-                  let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any],
-                  let message = json["message"] as? [String: Any] else { return nil }
-            return message["id"] as? String
-        }
-
-        /// Returns the capture-group substrings of the first match, or `nil` when there is no match.
-        private static func matches(of pattern: String, in path: String) -> [String]? {
-            guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
-            let range = NSRange(path.startIndex..., in: path)
-            guard let match = regex.firstMatch(in: path, range: range) else { return nil }
-            return (1..<match.numberOfRanges).compactMap { index in
-                Range(match.range(at: index), in: path).map { String(path[$0]) }
-            }
+            }()
         }
     }
 }

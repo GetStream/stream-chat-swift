@@ -4,22 +4,195 @@
 
 import Foundation
 
+enum EndpointPath: Codable {
+    case connect
+    case sync
+    case users
+    case guest
+    case search
+    case devices
+    case og
+    case unread
+    case pushPreferences
+
+    case members
+    case partialMemberUpdate(userId: UserId, cid: ChannelId)
+
+    case threads
+    case thread(messageId: MessageId)
+    case markThreadRead(cid: ChannelId)
+    case markThreadUnread(cid: ChannelId)
+
+    case channels
+    case groupedChannels
+    case createChannel(String)
+    case updateChannel(String)
+    case deleteChannel(String)
+    case channelUpdate(String)
+    case muteChannel(Bool)
+    case showChannel(String, Bool)
+    case truncateChannel(String)
+    case markChannelRead(String)
+    case markChannelUnread(String)
+    case markAllChannelsRead
+    case markChannelsDelivered
+    case channelEvent(String)
+    case stopWatchingChannel(String)
+    case pinnedMessages(String)
+    case uploadChannelAttachment(channelId: String, type: String)
+    case uploadAttachment(String)
+
+    case sendMessage(ChannelId)
+    case message(MessageId)
+    case editMessage(MessageId)
+    case deleteMessage(MessageId)
+    case pinMessage(MessageId)
+    case unpinMessage(MessageId)
+    case replies(MessageId)
+    case reactions(MessageId)
+    case addReaction(MessageId)
+    case deleteReaction(MessageId, MessageReactionType)
+    case messageAction(MessageId)
+    case translateMessage(MessageId)
+
+    // Drafts
+    case drafts
+    case draftMessage(ChannelId)
+
+    // Reminders
+    case reminders
+    case reminder(MessageId)
+
+    case banMember
+    case flagUser(Bool)
+    case flagMessage(Bool)
+    case muteUser(Bool)
+    case blockUser
+    case unblockUser
+
+    case callToken(String)
+    case createCall(String)
+
+    case deleteFile(String)
+    case deleteImage(String)
+
+    case liveLocations
+
+    case polls
+    case pollsQuery
+    case poll(pollId: String)
+    case pollOption(pollId: String, optionId: String)
+    case pollOptions(pollId: String)
+    case pollVotes(pollId: String)
+    case pollVoteInMessage(messageId: MessageId, pollId: String)
+    case pollVote(messageId: MessageId, pollId: String, voteId: String)
+
+    case getApp
+
+    var value: String {
+        switch self {
+        case .connect: return "connect"
+        case .sync: return "sync"
+        case .users: return "users"
+        case .guest: return "guest"
+        case .search: return "search"
+        case .devices: return "devices"
+        case .og: return "og"
+        case .unread: return "unread"
+        case .pushPreferences: return "push_preferences"
+
+        case .members: return "members"
+        case let .partialMemberUpdate(userId, cid):
+            return "channels/\(cid.apiPath)/member/\(userId)"
+
+        case .threads:
+            return "threads"
+        case let .thread(threadId):
+            return "threads/\(threadId)"
+        case let .markThreadRead(cid):
+            return "channels/\(cid.apiPath)/read"
+        case let .markThreadUnread(cid):
+            return "channels/\(cid.apiPath)/unread"
+
+        case .liveLocations: return "users/live_locations"
+
+        case .channels: return "channels"
+        case .groupedChannels: return "channels/grouped"
+        case let .createChannel(queryString): return "channels/\(queryString)/query"
+        case let .updateChannel(queryString): return "channels/\(queryString)/query"
+        case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
+        case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
+        case let .muteChannel(mute): return "moderation/\(mute ? "mute" : "unmute")/channel"
+        case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
+        case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
+        case let .markChannelRead(channelId): return "channels/\(channelId)/read"
+        case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
+        case .markAllChannelsRead: return "channels/read"
+        case .markChannelsDelivered: return "channels/delivered"
+        case let .channelEvent(channelId): return "channels/\(channelId)/event"
+        case let .stopWatchingChannel(channelId): return "channels/\(channelId)/stop-watching"
+        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
+        case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
+        case let .uploadAttachment(type): return "uploads/\(type)"
+
+        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
+        case let .message(messageId): return "messages/\(messageId)"
+        case let .editMessage(messageId): return "messages/\(messageId)"
+        case let .deleteMessage(messageId): return "messages/\(messageId)"
+        case let .pinMessage(messageId): return "messages/\(messageId)"
+        case let .unpinMessage(messageId): return "messages/\(messageId)"
+        case let .replies(messageId): return "messages/\(messageId)/replies"
+        case let .reactions(messageId): return "messages/\(messageId)/reactions"
+        case let .addReaction(messageId): return "messages/\(messageId)/reaction"
+        case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
+        case let .messageAction(messageId): return "messages/\(messageId)/action"
+        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
+
+        case .drafts: return "drafts/query"
+        case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
+
+        case .reminders: return "reminders/query"
+        case let .reminder(messageId): return "messages/\(messageId)/reminders"
+
+        case .banMember: return "moderation/ban"
+        case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
+        case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
+        case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
+        case .blockUser: return "users/block"
+        case .unblockUser: return "users/unblock"
+        case let .callToken(callId): return "calls/\(callId)"
+        case let .createCall(queryString): return "channels/\(queryString)/call"
+        case let .deleteFile(channelId): return "channels/\(channelId)/file"
+        case let .deleteImage(channelId): return "channels/\(channelId)/image"
+        case .polls: return "polls"
+        case .pollsQuery: return "polls/query"
+        case let .poll(pollId: pollId): return "polls/\(pollId)"
+        case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
+        case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
+        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
+        case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
+        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
+
+        case .getApp:
+            return "/api/v2/app"
+        }
+    }
+}
+
 final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
-    let path: String
+    let path: EndpointPath
     let method: EndpointMethod
     let queryItems: (Encodable & Sendable)?
     let requiresConnectionId: Bool
     let requiresToken: Bool
-    let shouldBeQueuedOffline: Bool
     let body: (Encodable & Sendable)?
 
     init(
-        path: String,
+        path: EndpointPath,
         method: EndpointMethod,
         queryItems: (Encodable & Sendable)? = nil,
         requiresConnectionId: Bool = false,
         requiresToken: Bool = true,
-        shouldBeQueuedOffline: Bool = false,
         body: (Encodable & Sendable)? = nil
     ) {
         self.path = path
@@ -27,7 +200,6 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         self.queryItems = queryItems
         self.requiresConnectionId = requiresConnectionId
         self.requiresToken = requiresToken
-        self.shouldBeQueuedOffline = shouldBeQueuedOffline
         self.body = body
     }
 
@@ -37,18 +209,16 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         case queryItems
         case requiresConnectionId
         case requiresToken
-        case shouldBeQueuedOffline
         case body
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        path = try container.decode(String.self, forKey: .path)
+        path = try container.decode(EndpointPath.self, forKey: .path)
         method = try container.decode(EndpointMethod.self, forKey: .method)
         queryItems = try container.decodeIfPresent(Data.self, forKey: .queryItems)
         requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)
         requiresToken = try container.decode(Bool.self, forKey: .requiresToken)
-        shouldBeQueuedOffline = try container.decode(Bool.self, forKey: .shouldBeQueuedOffline)
         body = try container.decodeIfPresent(Data.self, forKey: .body)
     }
 
@@ -61,7 +231,6 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         }
         try container.encode(requiresConnectionId, forKey: .requiresConnectionId)
         try container.encode(requiresToken, forKey: .requiresToken)
-        try container.encode(shouldBeQueuedOffline, forKey: .shouldBeQueuedOffline)
         if let body = try body?.encodedAsData() {
             try container.encode(body, forKey: .body)
         }
@@ -86,13 +255,12 @@ enum EndpointMethod: String, Codable, Equatable {
 }
 
 extension Endpoint {
-    static func getApp(requiresConnectionId: Bool = false, shouldBeQueuedOffline: Bool = false) -> Endpoint<GetApplicationResponse> {
+    static func getApp(requiresConnectionId: Bool = false) -> Endpoint<GetApplicationResponse> {
         return .init(
-            path: "/api/v2/app",
+            path: .getApp,
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
-            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: nil
         )
     }

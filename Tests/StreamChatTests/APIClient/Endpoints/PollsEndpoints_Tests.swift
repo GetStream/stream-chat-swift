@@ -34,7 +34,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "polls")
+        XCTAssertEqual(endpoint.path.value, "polls")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -67,7 +67,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .put)
-        XCTAssertEqual(endpoint.path, "polls")
+        XCTAssertEqual(endpoint.path.value, "polls")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -82,7 +82,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "polls/query")
+        XCTAssertEqual(endpoint.path.value, "polls/query")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -93,7 +93,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.deletePoll(pollId: "test")
         
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.path, "polls/test")
+        XCTAssertEqual(endpoint.path.value, "polls/test")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -103,7 +103,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<PollPayloadResponse>.getPoll(pollId: "test")
         
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path, "polls/test")
+        XCTAssertEqual(endpoint.path.value, "polls/test")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -125,7 +125,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .patch)
-        XCTAssertEqual(endpoint.path, "polls/test")
+        XCTAssertEqual(endpoint.path.value, "polls/test")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -146,7 +146,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "polls/test/options")
+        XCTAssertEqual(endpoint.path.value, "polls/test/options")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -168,7 +168,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .put)
-        XCTAssertEqual(endpoint.path, "polls/test/options")
+        XCTAssertEqual(endpoint.path.value, "polls/test/options")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -179,7 +179,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<EmptyResponse>.deletePollOption(pollId: "test", optionId: "option_id")
 
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.path, "polls/test/options/option_id")
+        XCTAssertEqual(endpoint.path.value, "polls/test/options/option_id")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -189,7 +189,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<PollOptionResponse>.getPollOption(pollId: "test", optionId: "option_id")
 
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path, "polls/test/options/option_id")
+        XCTAssertEqual(endpoint.path.value, "polls/test/options/option_id")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -203,7 +203,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "polls/test/votes")
+        XCTAssertEqual(endpoint.path.value, "polls/test/votes")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -228,7 +228,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "messages/message_id/polls/test/vote")
+        XCTAssertEqual(endpoint.path.value, "messages/message_id/polls/test/vote")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)
@@ -243,7 +243,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         )
 
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.path, "messages/message_id/polls/test/vote/vote")
+        XCTAssertEqual(endpoint.path.value, "messages/message_id/polls/test/vote/vote")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.requiresToken, true)
         XCTAssertNil(endpoint.queryItems)

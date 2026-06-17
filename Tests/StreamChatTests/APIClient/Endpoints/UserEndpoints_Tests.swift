@@ -26,7 +26,7 @@ final class UserEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users", endpoint.path)
+        XCTAssertEqual("users", endpoint.path.value)
     }
 
     func test_updateCurrentUser_buildsCorrectly() {
@@ -64,7 +64,7 @@ final class UserEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(id: userId, payload: payload, unset: unset)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users", endpoint.path)
+        XCTAssertEqual("users", endpoint.path.value)
     }
 
     func test_unread_buildsCorrectly() {
@@ -81,7 +81,7 @@ final class UserEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path, "unread")
+        XCTAssertEqual(endpoint.path.value, "unread")
     }
 
     func test_pushPreferences_buildsCorrectly() {
@@ -115,7 +115,7 @@ final class UserEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path, "push_preferences")
+        XCTAssertEqual(endpoint.path.value, "push_preferences")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }

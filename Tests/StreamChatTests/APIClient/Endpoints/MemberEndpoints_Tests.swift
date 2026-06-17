@@ -27,7 +27,7 @@ final class MemberEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("members", endpoint.path)
+        XCTAssertEqual("members", endpoint.path.value)
     }
 
     func test_partialMemberUpdate_buildsCorrectly() {

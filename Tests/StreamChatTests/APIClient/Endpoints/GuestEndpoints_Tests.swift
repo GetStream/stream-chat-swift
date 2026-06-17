@@ -34,7 +34,7 @@ final class GuestEndpoints_Tests: XCTestCase {
             AnyEndpoint(expectedEndpoint),
             AnyEndpoint(actualEndpoint)
         )
-        XCTAssertEqual("guest", actualEndpoint.path)
+        XCTAssertEqual("guest", actualEndpoint.path.value)
     }
 
     func test_token_buildsCorrectly_withCustomExtraData() {
@@ -64,6 +64,6 @@ final class GuestEndpoints_Tests: XCTestCase {
             AnyEndpoint(expectedEndpoint),
             AnyEndpoint(actualEndpoint)
         )
-        XCTAssertEqual("guest", actualEndpoint.path)
+        XCTAssertEqual("guest", actualEndpoint.path.value)
     }
 }

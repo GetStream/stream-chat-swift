@@ -24,7 +24,7 @@ final class FileEndpoints_Tests: XCTestCase {
         
         // Then
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(channelId.apiPath)/file", endpoint.path)
+        XCTAssertEqual("channels/\(channelId.apiPath)/file", endpoint.path.value)
     }
     
     func test_deleteImage_buildsCorrectly() {
@@ -44,6 +44,6 @@ final class FileEndpoints_Tests: XCTestCase {
         
         // Then
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(channelId.apiPath)/image", endpoint.path)
+        XCTAssertEqual("channels/\(channelId.apiPath)/image", endpoint.path.value)
     }
 }

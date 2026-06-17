@@ -29,7 +29,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "guest")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .post)
         XCTAssertNil(decodedEndpoint.queryItems)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
@@ -58,7 +58,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "guest")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .post)
         XCTAssertNil(decodedEndpoint.queryItems)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
@@ -94,7 +94,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "guest")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .get)
         XCTAssertNil(decodedEndpoint.body)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
@@ -130,7 +130,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "guest")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .post)
         XCTAssertNil(decodedEndpoint.queryItems)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)

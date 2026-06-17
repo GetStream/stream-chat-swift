@@ -32,7 +32,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "threads")
+        XCTAssertEqual(endpoint.path.value, "threads")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -61,7 +61,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "threads")
+        XCTAssertEqual(endpoint.path.value, "threads")
         XCTAssertEqual(endpoint.requiresConnectionId, true)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -90,7 +90,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "threads")
+        XCTAssertEqual(endpoint.path.value, "threads")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -112,7 +112,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path, "threads/123")
+        XCTAssertEqual(endpoint.path.value, "threads/123")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.body)
         AssertDictionary(queryItems, expectedQueryItems)
@@ -134,7 +134,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.path, "threads/123")
+        XCTAssertEqual(endpoint.path.value, "threads/123")
         XCTAssertEqual(endpoint.requiresConnectionId, true)
         XCTAssertNil(endpoint.body)
         AssertDictionary(queryItems, expectedQueryItems)
@@ -156,7 +156,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(endpoint.method, .patch)
-        XCTAssertEqual(endpoint.path, "threads/123")
+        XCTAssertEqual(endpoint.path.value, "threads/123")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -173,7 +173,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
             "thread_id": "test"
         ]
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "channels/messaging/123/read")
+        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/read")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
@@ -190,7 +190,7 @@ final class ThreadEndpoints_Tests: XCTestCase {
             "thread_id": "test"
         ]
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path, "channels/messaging/123/unread")
+        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/unread")
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)

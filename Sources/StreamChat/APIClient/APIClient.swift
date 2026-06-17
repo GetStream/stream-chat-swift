@@ -194,7 +194,7 @@ class APIClient: @unchecked Sendable {
 
                     done(.continue)
                 case .success, .failure:
-                    log.debug("Request completed for /\(endpoint.path)", subsystems: .offlineSupport)
+                    log.debug("Request completed for /\(endpoint.path.value)", subsystems: .offlineSupport)
                     completion(result)
                     done(.continue)
                 }
@@ -219,7 +219,7 @@ class APIClient: @unchecked Sendable {
                     completion(result)
                     done(.continue)
                 case .success, .failure:
-                    log.debug("Request succeeded /\(endpoint.path)", subsystems: .offlineSupport)
+                    log.debug("Request succeeded /\(endpoint.path.value)", subsystems: .offlineSupport)
                     completion(result)
                     done(.continue)
                 }

@@ -23,7 +23,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_deleteMessage_whenHardDeleteDisabled_buildsCorrectly() {
@@ -44,7 +44,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_deleteMessage_whenHardDeleteEnabled_buildsCorrectly() {
@@ -65,7 +65,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_deleteMessage_whenDeleteForMeEnabled_buildsCorrectly() {
@@ -87,7 +87,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_deleteMessage_whenDeleteForMeDisabled_buildsCorrectly() {
@@ -109,7 +109,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_deleteMessage_whenDeleteForMeIsNil_buildsCorrectly() {
@@ -130,7 +130,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_editMessage_buildsCorrectly() {
@@ -163,7 +163,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(payload.id)", endpoint.path)
+        XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
     }
 
     func test_editMessage_withSkipPush_buildsCorrectly() {
@@ -192,7 +192,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(payload.id)", endpoint.path)
+        XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
     }
     
     func test_pinMessage_buildsCorrectly() {
@@ -212,7 +212,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_loadReplies_buildsCorrectly() {
@@ -232,7 +232,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/replies", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)/replies", endpoint.path.value)
     }
 
     func test_sendMessageAction_buildsCorrectly() {
@@ -267,7 +267,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/action", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)/action", endpoint.path.value)
     }
 
     func test_translate_buildsCorrectly() {
@@ -286,7 +286,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/translate", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)/translate", endpoint.path.value)
     }
 
     func test_partialUpdateMessage_buildsCorrectly() {
@@ -310,6 +310,6 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)", endpoint.path)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 }

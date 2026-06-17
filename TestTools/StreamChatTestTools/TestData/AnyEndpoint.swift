@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 public struct AnyEndpoint: Equatable {
-    public let path: String
+    public let path: EndpointPath
     public let method: EndpointMethod
     public let queryItems: AnyEncodable?
     public let requiresConnectionId: Bool
@@ -24,7 +24,7 @@ public struct AnyEndpoint: Equatable {
     }
 
     public static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {
-        lhs.path == rhs.path
+        lhs.path.value == rhs.path.value
             && lhs.method == rhs.method
             && lhs.queryItems == rhs.queryItems
             && lhs.requiresConnectionId == rhs.requiresConnectionId

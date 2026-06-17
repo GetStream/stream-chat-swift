@@ -29,6 +29,6 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("connect", endpoint.path)
+        XCTAssertEqual("connect", endpoint.path.value)
     }
 }

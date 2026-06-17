@@ -223,7 +223,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
             throw ClientError.InvalidURL("URL can't be created using components: \(urlComponents)")
         }
 
-        url = url.appendingPathComponent(endpoint.path)
+        url = url.appendingPathComponent(endpoint.path.value)
         return url
     }
 

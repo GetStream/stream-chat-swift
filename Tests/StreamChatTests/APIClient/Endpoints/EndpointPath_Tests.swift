@@ -79,6 +79,14 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
     }
 
+    func test_getApp_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getApp.shouldBeQueuedOffline)
+    }
+
+    func test_getApp_value() {
+        XCTAssertEqual(EndpointPath.getApp.value, "/api/v2/app")
+    }
+
     func test_pushPreferences_value() {
         let path = EndpointPath.pushPreferences.value
         XCTAssertEqual(path, "push_preferences")
@@ -121,6 +129,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
         assertResultEncodingAndDecoding(.pushPreferences)
+        assertResultEncodingAndDecoding(.getApp)
 
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))

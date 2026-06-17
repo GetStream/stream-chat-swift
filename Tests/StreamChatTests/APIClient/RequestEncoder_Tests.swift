@@ -330,7 +330,7 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(request.url?.scheme, baseURL.scheme)
         XCTAssertEqual(request.url?.host, baseURL.host)
         XCTAssertEqual(request.url?.port, baseURL.port)
-        XCTAssertEqual(request.url?.path, "/" + endpoint.path)
+        XCTAssertEqual(request.url?.path, "/" + endpoint.path.value)
 
         // Check custom query items
         let urlComponenets = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
