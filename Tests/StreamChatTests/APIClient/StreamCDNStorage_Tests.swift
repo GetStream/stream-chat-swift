@@ -15,7 +15,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
             uploadChannelRequest: .init()
         )
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/channels/messaging/general/image")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/general/image")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
@@ -25,7 +25,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
     func test_fileUploadEndpoint_matchesGeneratedEndpointShape() {
         let endpoint: Endpoint<FileUploadResponse> = .uploadFile(fileUploadRequest: .init())
 
-        XCTAssertEqual(endpoint.path, "/api/v2/uploads/file")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/uploads/file")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
@@ -39,12 +39,12 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let fileEndpoint: Endpoint<Response> = .deleteFile(url: fileURL)
         let imageEndpoint: Endpoint<Response> = .deleteImage(url: imageURL)
 
-        XCTAssertEqual(fileEndpoint.path, "/api/v2/uploads/file")
+        XCTAssertEqual(fileEndpoint.path.value, "/api/v2/uploads/file")
         XCTAssertEqual(fileEndpoint.method, .delete)
-        XCTAssertEqual(fileEndpoint.queryItems?["url"] ?? nil, fileURL)
+        XCTAssertEqual(fileEndpoint.queryItemsDictionary["url"] ?? nil, fileURL)
 
-        XCTAssertEqual(imageEndpoint.path, "/api/v2/uploads/image")
+        XCTAssertEqual(imageEndpoint.path.value, "/api/v2/uploads/image")
         XCTAssertEqual(imageEndpoint.method, .delete)
-        XCTAssertEqual(imageEndpoint.queryItems?["url"] ?? nil, imageURL)
+        XCTAssertEqual(imageEndpoint.queryItemsDictionary["url"] ?? nil, imageURL)
     }
 }

@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 public struct AnyEndpoint: Equatable {
-    public let path: String
+    public let path: EndpointPath
     public let method: EndpointMethod
     public let queryItems: AnyEncodable?
     public let requiresConnectionId: Bool
@@ -17,25 +17,14 @@ public struct AnyEndpoint: Equatable {
     public init<T: Decodable>(_ endpoint: Endpoint<T>) {
         path = endpoint.path
         method = endpoint.method
-        queryItems = endpoint.queryItems?.mapValues { $0.map(Self.canonicalizingJSONKeyOrder) }.asAnyEncodable
+        queryItems = endpoint.queryItems?.asAnyEncodable
         requiresConnectionId = endpoint.requiresConnectionId
         body = endpoint.body?.asAnyEncodable
         payloadType = T.self
     }
 
-    // JSON-encoded query item values have nondeterministic key order, so two
-    // independently built endpoints only compare equal after sorting the keys.
-    private static func canonicalizingJSONKeyOrder(_ value: String) -> String {
-        guard value.hasPrefix("{") || value.hasPrefix("["),
-              let object = try? JSONSerialization.jsonObject(with: Data(value.utf8)),
-              let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]),
-              let canonical = String(data: data, encoding: .utf8)
-        else { return value }
-        return canonical
-    }
-
     public static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {
-        lhs.path == rhs.path
+        lhs.path.value == rhs.path.value
             && lhs.method == rhs.method
             && lhs.queryItems == rhs.queryItems
             && lhs.requiresConnectionId == rhs.requiresConnectionId
@@ -57,6 +46,18 @@ public struct AnyEndpoint: Equatable {
             throw NSError(domain: "com.getstream.io.any-endpoint", code: 1)
         }
         return requestBody
+    }
+}
+
+extension Endpoint {
+    /// Test helper exposing the endpoint's query items as a `[String: String]` map.
+    /// The generated factories stringify every query value (via `APIHelper`), so a flat
+    /// string map matches what the request encoder ultimately sends — and keeps the
+    /// per-endpoint tests reading values by key without unwrapping the opaque
+    /// `(Encodable & Sendable)?` query payload.
+    var queryItemsDictionary: [String: String] {
+        guard let dictionary = try? AnyEndpoint(self).queryItemsAsDictionary() else { return [:] }
+        return dictionary.compactMapValues { $0 as? String }
     }
 }
 

@@ -10,7 +10,7 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
     func test_webSocketConnect_buildsCompatibilityEndpoint() {
         let endpoint: Endpoint<EmptyResponse> = .webSocketConnect()
 
-        XCTAssertEqual(endpoint.path, "/api/v2/connect")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/connect")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)

@@ -17,10 +17,10 @@ final class SyncEndpoint_Tests: XCTestCase {
             watch: false
         )
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/sync")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/sync")
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.queryItems?["with_inaccessible_cids"] ?? nil, APIHelper.convertAnyToString(true))
-        XCTAssertEqual(endpoint.queryItems?["watch"] ?? nil, APIHelper.convertAnyToString(false))
+        XCTAssertEqual(endpoint.queryItemsDictionary["with_inaccessible_cids"] ?? nil, APIHelper.convertAnyToString(true))
+        XCTAssertEqual(endpoint.queryItemsDictionary["watch"] ?? nil, APIHelper.convertAnyToString(false))
         XCTAssertTrue(endpoint.requiresConnectionId)
         XCTAssertEqual(endpoint.body as? SyncRequest, SyncRequest(channelCids: [cid.rawValue], lastSyncAt: since))
     }

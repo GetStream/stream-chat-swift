@@ -10,12 +10,14 @@ STRIP_ACCESS_MODIFIERS_EXCLUDED_FILES=(
 )
 rm -rf "$OUTPUT_DIR_CHAT"
 # `make openapi` builds the chat-manager binary into ./build/chat-manager and regenerates the specs.
+# `--language swift` emits models/, APIs/DefaultAPI.swift (async client) and APIs/DefaultEndpoints.swift
+# (the EndpointPath enum + Endpoint factories).
 ( cd "$CHAT_DIR" ; make openapi ; \
-  ./build/chat-manager openapi generate-client --language swift           --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" ; \
-  ./build/chat-manager openapi generate-client --language swift-endpoints --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
+  ./build/chat-manager openapi generate-client --language swift --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # The generated async API client is unused — the SDK ships its own APIClient + Endpoint factories.
-rm -rf "$OUTPUT_DIR_CHAT/APIs"
+# DefaultEndpoints.swift stays under APIs/ as the generator emits it.
+rm -f "$OUTPUT_DIR_CHAT/APIs/DefaultAPI.swift"
 
 is_access_modifier_stripping_excluded() {
   local file="$1"
@@ -287,23 +289,66 @@ while IFS= read -r event_type; do
 done < <(find "$OUTPUT_DIR_CHAT/models" -name '*Event.swift' ! -name 'WSEvent.swift' ! -name 'WSClientEvent.swift' -exec basename {} .swift \; | sort)
 
 # Endpoint factories the SDK never calls. Deleting one removes the factory
-# function. If the SDK starts using one of these, remove it from the list and regenerate.
+# function, its `EndpointPath` case, and the case's `value` switch arm (the
+# generator names the enum case after the factory). If the SDK starts using one
+# of these, remove it from the list and regenerate.
 delete_unused_endpoint_factory() {
   local name="$1"
-  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
   sed -i '' -E "/^[[:space:]]+static func ${name}\(/,/^[[:space:]]+\}[[:space:]]*$/d" "$file"
+  sed -i '' -E "/^[[:space:]]+case ${name}(\(|[[:space:]]*$)/d" "$file"
+  sed -i '' -E "/^[[:space:]]+case (let )?\.${name}[(:]/,/^[[:space:]]+return /d" "$file"
 }
 
-# Message/draft endpoints are replayed when offline. The generator defaults every
-# factory's `shouldBeQueuedOffline` to false; flip these to true so callers that omit
-# the argument still queue them.
-set_offline_queued_endpoint_factories() {
-  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
-  local name
-  for name in sendMessage updateMessage updateMessagePartial deleteMessage \
-              sendReaction deleteReaction createDraft deleteDraft; do
-    sed -i '' -E "s/(static func ${name}\(.*shouldBeQueuedOffline: Bool = )false/\1true/" "$file"
-  done
+# Inject the SDK's remaining v1 endpoint paths into the generated EndpointPath enum.
+# The OpenAPI generator owns the v2 paths; these few v1 cases keep the hand-written
+# factories in Endpoint+Custom.swift compiling until the backend exposes v2 routes for
+# them. The `value` strings match the paths those factories used inline before, so the
+# resulting URLs are unchanged. Runs LAST (after swiftformat) so formatting can't disturb
+# the markers or re-flow the pre-formatted injected block.
+inject_v1_endpoint_paths() {
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
+  local cases_file values_file
+  cases_file="$(mktemp)"
+  values_file="$(mktemp)"
+  trap 'rm -f "$cases_file" "$values_file"' RETURN
+
+  cat > "$cases_file" <<'EOF'
+    case unflagMessage
+    case unflagUser
+    case pinnedMessages(type: String, id: String)
+    case unbanMember
+    case unmuteUser
+    case webSocketConnect
+
+EOF
+
+  cat > "$values_file" <<'EOF'
+        case .unflagMessage: return "moderation/unflag"
+        case .unflagUser: return "moderation/unflag"
+        case let .pinnedMessages(type, id): return "/api/v2/chat/channels/\(type)/\(id)/pinned_messages"
+        case .unbanMember: return "moderation/ban"
+        case .unmuteUser: return "moderation/unmute"
+        case .webSocketConnect: return "/api/v2/connect"
+
+EOF
+
+  python3 - "$file" "$cases_file" "$values_file" <<'PY'
+import pathlib
+import sys
+
+file_path = pathlib.Path(sys.argv[1])
+cases = pathlib.Path(sys.argv[2]).read_text()
+values = pathlib.Path(sys.argv[3]).read_text()
+text = file_path.read_text()
+
+enum_marker = "enum EndpointPath: Codable {\n"
+switch_marker = "        switch self {\n"
+
+text = text.replace(enum_marker, enum_marker + cases, 1)
+text = text.replace(switch_marker, switch_marker + values, 1)
+file_path.write_text(text)
+PY
 }
 
 UNUSED_ENDPOINT_FACTORIES=(
@@ -391,6 +436,7 @@ fold_redundant_channel_state_models
 make_user_response_team_fields_optional
 make_sync_replayed_event_fields_optional
 make_channel_config_with_info_fields_optional
-set_offline_queued_endpoint_factories
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
+
+inject_v1_endpoint_paths

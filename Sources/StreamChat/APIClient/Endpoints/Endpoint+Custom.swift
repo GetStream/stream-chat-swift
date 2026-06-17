@@ -47,7 +47,7 @@ extension Endpoint {
             return .flag(flagRequest: FlagRequest(custom: extraData, entityId: messageId, entityType: "message", reason: reason))
         }
         return .init(
-            path: "moderation/\(flag ? "flag" : "unflag")",
+            path: .unflagMessage,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -63,7 +63,7 @@ extension Endpoint {
             return .flag(flagRequest: FlagRequest(custom: extraData, entityId: userId, entityType: "user", reason: reason))
         }
         return .init(
-            path: "moderation/\(flag ? "flag" : "unflag")",
+            path: .unflagUser,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -76,7 +76,7 @@ extension Endpoint {
     /// manually until generation covers it.
     static func pinnedMessages(cid: ChannelId, query: PinnedMessagesQuery) -> Endpoint<MessageListPayload> {
         .init(
-            path: "/api/v2/chat/channels/\(cid.apiPath)/pinned_messages",
+            path: .pinnedMessages(type: cid.type.rawValue, id: cid.id),
             method: .get,
             queryItems: [
                 "payload": (try? CodableHelper.encode(query).get()).flatMap { String(data: $0, encoding: .utf8) }
@@ -90,7 +90,7 @@ extension Endpoint {
     /// `POST /api/v2/moderation/unban` operation is server-side only.
     static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "moderation/ban",
+            path: .unbanMember,
             method: .delete,
             queryItems: [
                 "target_user_id": userId,
@@ -105,7 +105,7 @@ extension Endpoint {
     /// `POST /api/v2/moderation/unmute` operation is server-side only.
     static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "moderation/unmute",
+            path: .unmuteUser,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -119,7 +119,7 @@ extension Endpoint {
     /// query item and auth headers added by the request encoder.
     static func webSocketConnect() -> Endpoint<EmptyResponse> {
         .init(
-            path: "/api/v2/connect",
+            path: .webSocketConnect,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,

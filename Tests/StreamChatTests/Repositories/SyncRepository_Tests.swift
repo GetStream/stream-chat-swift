@@ -499,7 +499,7 @@ class SyncRepository_Tests: XCTestCase {
         )
 
         let endpoint = DataEndpoint(
-            path: "/api/v2/guest",
+            path: .createGuest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
@@ -525,7 +525,7 @@ class SyncRepository_Tests: XCTestCase {
         )
 
         let endpoint = DataEndpoint(
-            path: "/api/v2/guest",
+            path: .createGuest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,

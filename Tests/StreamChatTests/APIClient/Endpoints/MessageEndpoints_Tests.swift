@@ -10,7 +10,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_getMessage_buildsGeneratedEndpoint() {
         let endpoint: Endpoint<GetMessageResponse> = .getMessage(id: "message-id")
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/messages/message-id")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message-id")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
@@ -25,11 +25,11 @@ final class MessageEndpoints_Tests: XCTestCase {
             deleteForMe: false
         )
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/messages/message-id")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message-id")
         XCTAssertEqual(endpoint.method, .delete)
-        XCTAssertEqual(endpoint.queryItems?["hard"] ?? nil, "true")
-        XCTAssertEqual(endpoint.queryItems?["deleted_by"] ?? nil, "moderator-id")
-        XCTAssertEqual(endpoint.queryItems?["delete_for_me"] ?? nil, "false")
+        XCTAssertEqual(endpoint.queryItemsDictionary["hard"] ?? nil, "true")
+        XCTAssertEqual(endpoint.queryItemsDictionary["deleted_by"] ?? nil, "moderator-id")
+        XCTAssertEqual(endpoint.queryItemsDictionary["delete_for_me"] ?? nil, "false")
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
     }
@@ -47,10 +47,10 @@ final class MessageEndpoints_Tests: XCTestCase {
             sort: sort
         )
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/messages/message-id/replies")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message-id/replies")
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertEqual(endpoint.queryItems?["limit"] ?? nil, "25")
-        let sortJSON = try XCTUnwrap(endpoint.queryItems?["sort"] ?? nil)
+        XCTAssertEqual(endpoint.queryItemsDictionary["limit"] ?? nil, "25")
+        let sortJSON = try XCTUnwrap(endpoint.queryItemsDictionary["sort"] ?? nil)
         XCTAssertEqual(try JSONDecoder.stream.decode([SortParamRequest].self, from: Data(sortJSON.utf8)), sort)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
@@ -60,9 +60,9 @@ final class MessageEndpoints_Tests: XCTestCase {
         let payload = SearchPayload(filterConditions: ["cid": .string("messaging:general")], limit: 10, query: "hello")
         let endpoint: Endpoint<SearchResponse> = .search(payload: payload)
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/search")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/search")
         XCTAssertEqual(endpoint.method, .get)
-        let payloadJSON = try XCTUnwrap(endpoint.queryItems?["payload"] ?? nil)
+        let payloadJSON = try XCTUnwrap(endpoint.queryItemsDictionary["payload"] ?? nil)
         XCTAssertEqual(try JSONDecoder.stream.decode(SearchPayload.self, from: Data(payloadJSON.utf8)), payload)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
@@ -75,7 +75,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             updateMessagePartialRequest: request
         )
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/messages/message-id")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message-id")
         XCTAssertEqual(endpoint.method, .put)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)

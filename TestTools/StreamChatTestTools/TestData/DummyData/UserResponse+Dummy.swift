@@ -121,8 +121,8 @@ extension ChannelPushPreferencesResponse {
 extension UpsertPushPreferencesResponse {
     static func dummy(
         duration: String = "",
-        userChannelPreferences: [String: [String: ChannelPushPreferencesResponse?]] = [:],
-        userPreferences: [String: PushPreferencesResponse?] = [:]
+        userChannelPreferences: [String: [String: ChannelPushPreferencesResponse]] = [:],
+        userPreferences: [String: PushPreferencesResponse] = [:]
     ) -> UpsertPushPreferencesResponse {
         .init(
             duration: duration,

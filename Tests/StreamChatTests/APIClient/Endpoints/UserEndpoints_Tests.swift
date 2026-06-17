@@ -11,9 +11,9 @@ final class UserEndpoints_Tests: XCTestCase {
         let payload = QueryUsersPayload(filterConditions: ["id": .string("user-id")], limit: 10, presence: true)
         let endpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
 
-        XCTAssertEqual(endpoint.path, "/api/v2/users")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/users")
         XCTAssertEqual(endpoint.method, .get)
-        let payloadJSON = try XCTUnwrap(endpoint.queryItems?["payload"] ?? nil)
+        let payloadJSON = try XCTUnwrap(endpoint.queryItemsDictionary["payload"] ?? nil)
         XCTAssertEqual(try JSONDecoder.stream.decode(QueryUsersPayload.self, from: Data(payloadJSON.utf8)), payload)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
@@ -32,7 +32,7 @@ final class UserEndpoints_Tests: XCTestCase {
         ])
         let endpoint: Endpoint<UpdateUsersResponse> = .updateUsersPartial(updateUsersPartialRequest: request)
 
-        XCTAssertEqual(endpoint.path, "/api/v2/users")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/users")
         XCTAssertEqual(endpoint.method, .patch)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
@@ -42,7 +42,7 @@ final class UserEndpoints_Tests: XCTestCase {
     func test_unreadCounts_buildsGeneratedEndpoint() {
         let endpoint: Endpoint<WrappedUnreadCountsResponse> = .unreadCounts()
 
-        XCTAssertEqual(endpoint.path, "/api/v2/chat/unread")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/unread")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)

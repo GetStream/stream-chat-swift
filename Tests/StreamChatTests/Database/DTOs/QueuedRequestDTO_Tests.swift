@@ -25,7 +25,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
         let id = String.newUniqueId
         let date = Date()
         let endpoint = Endpoint<EmptyResponse>(
-            path: "guest",
+            path: .webSocketConnect,
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
@@ -49,7 +49,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
         let databaseEndpointData = try XCTUnwrap(request?.endpoint)
         XCTAssertEqual(databaseEndpointData, endpointData)
         let databaseEndpoint = try JSONDecoder.stream.decode(Endpoint<EmptyResponse>.self, from: databaseEndpointData)
-        XCTAssertEqual(databaseEndpoint.path, "guest")
+        XCTAssertEqual(databaseEndpoint.path.value, "/api/v2/connect")
         XCTAssertEqual(databaseEndpoint.method, .post)
         XCTAssertNil(databaseEndpoint.queryItems)
         XCTAssertTrue(databaseEndpoint.requiresConnectionId)
@@ -99,7 +99,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
             let id = "request\(index)"
             let date = Date()
             let endpoint = Endpoint<EmptyResponse>(
-                path: "/api/v2/chat/channels/\(ChannelType.messaging.rawValue)/\(index)/message",
+                path: .sendMessage(type: ChannelType.messaging.rawValue, id: "\(index)"),
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: true,

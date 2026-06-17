@@ -109,15 +109,15 @@ final class PushPreferencePayload_Tests: XCTestCase {
         XCTAssertEqual(response.userChannelPreferences.count, 1)
         
         // Test user preferences
-        let user1Preference = try XCTUnwrap(try XCTUnwrap(response.userPreferences["user1"]))
+        let user1Preference = try XCTUnwrap(response.userPreferences["user1"])
         XCTAssertEqual(user1Preference.chatLevel, "all")
         XCTAssertNil(user1Preference.disabledUntil)
         
         // Test channel preferences
         let channelPreferences = try XCTUnwrap(response.userChannelPreferences["messaging:channel1"])
         let user1ChannelPreference = try XCTUnwrap(channelPreferences["user1"])
-        XCTAssertEqual(user1ChannelPreference?.chatLevel, "mentions")
-        XCTAssertEqual(user1ChannelPreference?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
+        XCTAssertEqual(user1ChannelPreference.chatLevel, "mentions")
+        XCTAssertEqual(user1ChannelPreference.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
     
     func test_pushPreferencesPayloadResponse_withMissingFields_isDecodedCorrectly() throws {

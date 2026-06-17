@@ -16,7 +16,6 @@ extension Endpoint {
             queryItems: queryItems,
             requiresConnectionId: requiresConnectionId,
             requiresToken: requiresToken,
-            shouldBeQueuedOffline: shouldBeQueuedOffline,
             body: body
         )
     }
@@ -76,7 +75,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
                 let shouldBeDiscarded = hoursQueued > Double(self.maxHoursThreshold)
                 guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
-                    log.error("Queued request for /\(endpoint.path) should not be queued", subsystems: .offlineSupport)
+                    log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
                     requestIdsToDelete.insert(dto.id)
                     continue
                 }
@@ -154,9 +153,9 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 }, completion: { _ in group.leave() })
             }
 
-            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
+            log.info("Executing queued offline request for /\(endpoint.path.value)", subsystems: .offlineSupport)
             apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
-                log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
+                log.info("Completed queued offline request /\(endpoint.path.value)", subsystems: .offlineSupport)
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
@@ -167,13 +166,13 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 case .failure(_ as ClientError.ConnectionError):
                     // If we failed because there is still no successful connection, we don't remove it from the queue
                     log.info(
-                        "Keeping offline request /\(endpoint.path) as there is no connection",
+                        "Keeping offline request /\(endpoint.path.value) as there is no connection",
                         subsystems: .offlineSupport
                     )
                     group.leave()
                 case let .failure(error):
                     log.info(
-                        "Request for /\(endpoint.path) failed: \(error)",
+                        "Request for /\(endpoint.path.value) failed: \(error)",
                         subsystems: .offlineSupport
                     )
                     deleteQueuedRequestAndComplete()
@@ -196,55 +195,31 @@ class OfflineRequestsRepository: @unchecked Sendable {
             try? JSONDecoder.stream.decode(T.self, from: data)
         }
 
-        let path = endpoint.path
-
-        // sendMessage: POST /api/v2/chat/channels/{type}/{id}/message
-        if endpoint.method == .post, let cid = Self.channelId(fromSendMessagePath: path) {
-            guard let response = decodeTo(SendMessageResponsePayload.self) else {
+        switch endpoint.path {
+        case let .sendMessage(type, id):
+            guard let response = decodeTo(SendMessageResponsePayload.self),
+                  let cid = try? ChannelId(cid: "\(type):\(id)") else {
                 completion()
                 return
             }
             messageRepository.saveSuccessfullySentMessage(cid: cid, message: response.message) { _ in completion() }
-            return
-        }
-
-        // update / delete a single message: /api/v2/chat/messages/{id}
-        if let messageId = Self.messageId(fromSingleMessagePath: path) {
-            if endpoint.method == .delete {
-                guard let response = decodeTo(DeleteMessageResponse.self) else {
-                    completion()
-                    return
-                }
-                messageRepository.saveSuccessfullyDeletedMessage(message: response.message) { _ in completion() }
-            } else {
-                messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
+        case let .updateMessage(messageId):
+            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
+        case let .updateMessagePartial(messageId):
+            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
+        case .deleteMessage:
+            guard let response = decodeTo(DeleteMessageResponse.self) else {
+                completion()
+                return
             }
-            return
+            messageRepository.saveSuccessfullyDeletedMessage(message: response.message) { _ in completion() }
+        case .sendReaction, .deleteReaction:
+            // No further action
+            completion()
+        default:
+            log.assertionFailure("Should not reach here, request should not require action")
+            completion()
         }
-
-        // Reactions and drafts are replayed but need no local database recovery action.
-        completion()
-    }
-
-    /// Extracts the channel id from a send-message path `/api/v2/chat/channels/{type}/{id}/message`.
-    private static func channelId(fromSendMessagePath path: String) -> ChannelId? {
-        let components = path.split(separator: "/")
-        guard components.count >= 4,
-              components.last == "message",
-              components[components.count - 4] == "channels" else { return nil }
-        let type = components[components.count - 3]
-        let id = components[components.count - 2]
-        return try? ChannelId(cid: "\(type):\(id)")
-    }
-
-    /// Returns the message id when `path` targets a single message `/api/v2/chat/messages/{id}`.
-    /// Sub-resource paths such as `/messages/{id}/reaction` are excluded.
-    private static func messageId(fromSingleMessagePath path: String) -> String? {
-        let marker = "/chat/messages/"
-        guard let markerRange = path.range(of: marker) else { return nil }
-        let remainder = path[markerRange.upperBound...]
-        guard !remainder.isEmpty, !remainder.contains("/") else { return nil }
-        return String(remainder)
     }
 
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable () -> Void)? = nil) {
@@ -256,14 +231,14 @@ class OfflineRequestsRepository: @unchecked Sendable {
         let date = Date()
         retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {
-                log.error("Could not encode queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+                log.error("Could not encode queued request for /\(endpoint.path.value)", subsystems: .offlineSupport)
                 completion?()
                 return
             }
 
             database.write { _ in
                 QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
-                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+                log.info("Queued request for /\(endpoint.path.value)", subsystems: .offlineSupport)
             } completion: { _ in
                 completion?()
             }
@@ -284,11 +259,15 @@ private extension OfflineRequestsRepository {
             self.endpoint = endpoint
             
             sendMessageId = {
-                guard endpoint.method == .post, endpoint.path.hasSuffix("/message") else { return nil }
-                guard let bodyData = endpoint.body as? Data else { return nil }
-                guard let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else { return nil }
-                guard let message = json["message"] as? [String: Any] else { return nil }
-                return message["id"] as? String
+                switch endpoint.path {
+                case .sendMessage:
+                    guard let bodyData = endpoint.body as? Data else { return nil }
+                    guard let json = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else { return nil }
+                    guard let message = json["message"] as? [String: Any] else { return nil }
+                    return message["id"] as? String
+                default:
+                    return nil
+                }
             }()
         }
     }

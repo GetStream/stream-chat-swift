@@ -8,11 +8,11 @@ final class UpsertPushPreferencesResponse: @unchecked Sendable, Codable, JSONEnc
     /// Duration of the request in milliseconds
     var duration: String
     /// The channel specific push notification preferences, only returned for channels you've edited.
-    var userChannelPreferences: [String: [String: ChannelPushPreferencesResponse?]]
+    var userChannelPreferences: [String: [String: ChannelPushPreferencesResponse]]
     /// The user preferences, always returned regardless if you edited it
-    var userPreferences: [String: PushPreferencesResponse?]
+    var userPreferences: [String: PushPreferencesResponse]
 
-    init(duration: String, userChannelPreferences: [String: [String: ChannelPushPreferencesResponse?]], userPreferences: [String: PushPreferencesResponse?]) {
+    init(duration: String, userChannelPreferences: [String: [String: ChannelPushPreferencesResponse]], userPreferences: [String: PushPreferencesResponse]) {
         self.duration = duration
         self.userChannelPreferences = userChannelPreferences
         self.userPreferences = userPreferences

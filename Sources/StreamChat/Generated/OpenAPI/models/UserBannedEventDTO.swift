@@ -23,6 +23,8 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     /// The reason for the ban
     var reason: String?
     var receivedAt: Date?
+    /// ID of the review queue item (flagged message) that triggered the ban, if the ban was applied from the moderation review queue
+    var reviewQueueItemId: String?
     /// Whether the user was shadow banned
     var shadow: Bool?
     /// The team of the channel where the target user was banned
@@ -32,7 +34,7 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
     var type: String = "user.banned"
     var user: UserResponse
 
-    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, createdBy: UserResponse? = nil, custom: [String: RawJSON], expiration: Date? = nil, reason: String? = nil, receivedAt: Date? = nil, shadow: Bool? = nil, team: String? = nil, totalBans: Int? = nil, user: UserResponse) {
+    init(channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, createdBy: UserResponse? = nil, custom: [String: RawJSON], expiration: Date? = nil, reason: String? = nil, receivedAt: Date? = nil, reviewQueueItemId: String? = nil, shadow: Bool? = nil, team: String? = nil, totalBans: Int? = nil, user: UserResponse) {
         self.channelCustom = channelCustom
         self.channelId = channelId
         self.channelMemberCount = channelMemberCount
@@ -45,6 +47,7 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
         self.expiration = expiration
         self.reason = reason
         self.receivedAt = receivedAt
+        self.reviewQueueItemId = reviewQueueItemId
         self.shadow = shadow
         self.team = team
         self.totalBans = totalBans
@@ -64,6 +67,7 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
         case expiration
         case reason
         case receivedAt = "received_at"
+        case reviewQueueItemId = "review_queue_item_id"
         case shadow
         case team
         case totalBans = "total_bans"
@@ -84,6 +88,7 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
             lhs.expiration == rhs.expiration &&
             lhs.reason == rhs.reason &&
             lhs.receivedAt == rhs.receivedAt &&
+            lhs.reviewQueueItemId == rhs.reviewQueueItemId &&
             lhs.shadow == rhs.shadow &&
             lhs.team == rhs.team &&
             lhs.totalBans == rhs.totalBans &&
@@ -104,6 +109,7 @@ final class UserBannedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodab
         hasher.combine(expiration)
         hasher.combine(reason)
         hasher.combine(receivedAt)
+        hasher.combine(reviewQueueItemId)
         hasher.combine(shadow)
         hasher.combine(team)
         hasher.combine(totalBans)
