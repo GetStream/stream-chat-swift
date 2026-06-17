@@ -5,9 +5,9 @@
 import Foundation
 
 final class GetApplicationResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var app: AppResponseFields
+    let app: AppResponseFields
     /// Duration of the request in milliseconds
-    var duration: String
+    let duration: String
 
     init(app: AppResponseFields, duration: String) {
         self.app = app

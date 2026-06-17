@@ -5,13 +5,13 @@
 import Foundation
 
 final class AppResponseFields: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var asyncUrlEnrichEnabled: Bool
-    var autoTranslationEnabled: Bool
-    var fileUploadConfig: FileUploadConfig
-    var id: Int
-    var imageUploadConfig: FileUploadConfig
-    var name: String
-    var placement: String
+    let asyncUrlEnrichEnabled: Bool
+    let autoTranslationEnabled: Bool
+    let fileUploadConfig: FileUploadConfig
+    let id: Int
+    let imageUploadConfig: FileUploadConfig
+    let name: String
+    let placement: String
 
     init(asyncUrlEnrichEnabled: Bool, autoTranslationEnabled: Bool, fileUploadConfig: FileUploadConfig, id: Int, imageUploadConfig: FileUploadConfig, name: String, placement: String) {
         self.asyncUrlEnrichEnabled = asyncUrlEnrichEnabled

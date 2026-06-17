@@ -5,11 +5,11 @@
 import Foundation
 
 final class FileUploadConfig: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var allowedFileExtensions: [String]
-    var allowedMimeTypes: [String]
-    var blockedFileExtensions: [String]
-    var blockedMimeTypes: [String]
-    var sizeLimit: Int
+    let allowedFileExtensions: [String]
+    let allowedMimeTypes: [String]
+    let blockedFileExtensions: [String]
+    let blockedMimeTypes: [String]
+    let sizeLimit: Int
 
     init(allowedFileExtensions: [String], allowedMimeTypes: [String], blockedFileExtensions: [String], blockedMimeTypes: [String], sizeLimit: Int) {
         self.allowedFileExtensions = allowedFileExtensions
