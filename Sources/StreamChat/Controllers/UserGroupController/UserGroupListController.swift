@@ -183,7 +183,7 @@ public extension UserGroupListController {
             id: id,
             name: name,
             description: description,
-            teamId: teamId,
+            teamId: teamId ?? query.teamId,
             memberIds: memberIds
         )
 

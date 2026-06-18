@@ -215,4 +215,30 @@ final class UserGroupListController_Tests: XCTestCase {
         XCTAssertEqual(repository.createUserGroup_request?.description, "A new group")
         XCTAssertEqual(repository.createUserGroup_request?.memberIds, ["user1"])
     }
+
+    func test_createUserGroup_whenTeamIdIsNil_fallsBackToQueryTeamId() {
+        controller = client.userGroupListController(query: .init(teamId: "engineering"))
+        repository.createUserGroup_completion_result = .success(
+            UserGroup(id: "newgroup", name: "New Group", createdAt: .unique, updatedAt: .unique)
+        )
+
+        let exp = expectation(description: "create completes")
+        controller.createUserGroup(name: "New Group") { _ in exp.fulfill() }
+
+        wait(for: [exp], timeout: defaultTimeout)
+        XCTAssertEqual(repository.createUserGroup_request?.teamId, "engineering")
+    }
+
+    func test_createUserGroup_whenTeamIdIsProvided_overridesQueryTeamId() {
+        controller = client.userGroupListController(query: .init(teamId: "engineering"))
+        repository.createUserGroup_completion_result = .success(
+            UserGroup(id: "newgroup", name: "New Group", createdAt: .unique, updatedAt: .unique)
+        )
+
+        let exp = expectation(description: "create completes")
+        controller.createUserGroup(name: "New Group", teamId: "design") { _ in exp.fulfill() }
+
+        wait(for: [exp], timeout: defaultTimeout)
+        XCTAssertEqual(repository.createUserGroup_request?.teamId, "design")
+    }
 }
