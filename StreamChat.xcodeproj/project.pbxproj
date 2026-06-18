@@ -967,6 +967,7 @@
 				StreamChatTests/StateLayer/MessageState_Tests.swift,
 				StreamChatTests/StateLayer/ReactionList_Tests.swift,
 				StreamChatTests/StateLayer/RoleSearch_Tests.swift,
+				StreamChatTests/StateLayer/RoleSearchState_Tests.swift,
 				StreamChatTests/StateLayer/StateLayerDatabaseObserver_Tests.swift,
 				StreamChatTests/StateLayer/UserGroupSearchState_Tests.swift,
 				StreamChatTests/StateLayer/UserGroupSearch_Tests.swift,
