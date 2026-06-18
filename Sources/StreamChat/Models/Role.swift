@@ -4,7 +4,9 @@
 
 import Foundation
 
-/// A role that can be mentioned in a channel to notify all of its members.
+/// A role that can be mentioned in a channel to notify users assigned to it.
+///
+/// Roles can be either app-level (global) or channel-specific.
 public struct Role: Equatable, Identifiable, Sendable {
     /// The unique name of the role (e.g. `admin`, `moderator`). Also used as the identifier.
     public let name: String
