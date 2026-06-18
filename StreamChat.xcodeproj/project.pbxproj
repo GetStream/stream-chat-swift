@@ -937,6 +937,7 @@
 				StreamChatTests/Query/PinnedMessages/PinnedMessagesQuery_Tests.swift,
 				StreamChatTests/Query/PinnedMessages/PinnedMessagesSortingKey_Tests.swift,
 				StreamChatTests/Query/ReactionListQuery_Tests.swift,
+				StreamChatTests/Query/RoleSearchQuery_Tests.swift,
 				StreamChatTests/Query/Sorting/ChannelListSortingKey_Tests.swift,
 				StreamChatTests/Query/Sorting/ChannelMemberListSortingKey_Tests.swift,
 				"StreamChatTests/Query/Sorting/ListDatabaseObserver+Sorting_Tests.swift",
