@@ -13,8 +13,7 @@ public extension ChatClient {
 
 /// A controller for searching roles.
 ///
-/// Roles are not persisted locally. Results are kept in memory and
-/// replaced on every new search.
+/// Results are replaced on every new search.
 public class RoleSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient

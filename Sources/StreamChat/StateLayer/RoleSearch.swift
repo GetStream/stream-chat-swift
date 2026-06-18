@@ -6,8 +6,7 @@ import Foundation
 
 /// An object which represents a list of `Role` for the specified search query.
 ///
-/// Roles are not persisted locally; results are kept in ``RoleSearchState`` and
-/// replaced on every new search.
+/// Results are kept in ``RoleSearchState`` and replaced on every new search.
 public class RoleSearch: @unchecked Sendable {
     @MainActor private var stateBuilder: StateBuilder<RoleSearchState>
     private let rolesRepository: RolesRepository
