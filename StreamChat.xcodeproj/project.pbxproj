@@ -796,6 +796,7 @@
 				StreamChatTests/APIClient/Endpoints/SyncEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ThreadEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/UserEndpoints_Tests.swift,
+				StreamChatTests/APIClient/Endpoints/UserGroupEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/WebSocketConnectEndpoint_Tests.swift,
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
 				StreamChatTests/APIClient/RequestDecoder_Tests.swift,
