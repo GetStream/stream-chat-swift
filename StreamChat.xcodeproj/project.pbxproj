@@ -917,6 +917,7 @@
 				StreamChatTests/Models/MessageDeliveryCriteriaValidator_Tests.swift,
 				StreamChatTests/Models/MessageReactionType_Tests.swift,
 				StreamChatTests/Models/Poll_Tests.swift,
+				StreamChatTests/Models/Role_Tests.swift,
 				StreamChatTests/Models/User_Tests.swift,
 				StreamChatTests/Query/ChannelListFilterScope_Tests.swift,
 				StreamChatTests/Query/ChannelListQuery_PredefinedFilter_Tests.swift,
