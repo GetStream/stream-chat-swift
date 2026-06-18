@@ -89,6 +89,12 @@ enum EndpointPath: Codable {
     case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
+    case userGroups
+    case userGroupSearch
+    case userGroup(id: String)
+    case userGroupMembers(id: String)
+    case userGroupMembersDelete(id: String)
+
     var value: String {
         switch self {
         case .connect: return "connect"
@@ -173,6 +179,12 @@ enum EndpointPath: Codable {
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
+
+        case .userGroups: return "usergroups"
+        case .userGroupSearch: return "usergroups/search"
+        case let .userGroup(id): return "usergroups/\(id)"
+        case let .userGroupMembers(id): return "usergroups/\(id)/members"
+        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
         }
     }
 }

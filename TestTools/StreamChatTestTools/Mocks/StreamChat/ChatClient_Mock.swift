@@ -275,6 +275,10 @@ extension ChatClient {
         remindersRepository as! RemindersRepository_Mock
     }
 
+    var mockUserGroupsRepository: UserGroupsRepository_Mock {
+        userGroupsRepository as! UserGroupsRepository_Mock
+    }
+
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
             webSocketClient(
@@ -356,6 +360,7 @@ extension ChatClient.Environment {
                 )
             },
             remindersRepositoryBuilder: RemindersRepository_Mock.init,
+            userGroupsRepositoryBuilder: UserGroupsRepository_Mock.init,
             channelListUpdaterBuilder: {
                 ChannelListUpdater_Spy(
                     database: $0,
