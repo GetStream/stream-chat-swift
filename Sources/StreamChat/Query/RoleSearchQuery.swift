@@ -31,7 +31,7 @@ public struct RoleSearchQuery: Encodable, Sendable, Equatable {
     /// Whether global (application-level) roles should be included in the results.
     public var includeGlobalRoles: Bool?
 
-    /// Cursor: return roles with a name greater than this value.
+    /// Return roles with a name greater than this value.
     public var nameGreaterThan: String?
 
     /// When set, restricts the search to roles of the given type.
