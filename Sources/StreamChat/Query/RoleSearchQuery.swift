@@ -5,11 +5,23 @@
 import Foundation
 
 /// The type of roles to include when searching.
-public enum RoleType: String, Sendable, Equatable {
+public struct RoleType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+public extension RoleType {
     /// Roles that can be assigned to users.
-    case user
+    static let user: Self = "user"
     /// Roles that can be assigned within a channel.
-    case channel
+    static let channel: Self = "channel"
 }
 
 /// A query used for searching roles from the backend.
