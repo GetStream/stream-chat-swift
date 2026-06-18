@@ -954,6 +954,7 @@
 				StreamChatTests/Repositories/OfflineRequestsRepository_Tests.swift,
 				StreamChatTests/Repositories/PollsRepository_Tests.swift,
 				StreamChatTests/Repositories/RemindersRepository_Tests.swift,
+				StreamChatTests/Repositories/RolesRepository_Tests.swift,
 				StreamChatTests/Repositories/SyncOperations_Tests.swift,
 				StreamChatTests/Repositories/SyncRepository_Tests.swift,
 				StreamChatTests/Repositories/UserGroupsRepository_Tests.swift,
