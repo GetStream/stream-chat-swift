@@ -52,6 +52,40 @@ final class PushPreferencePayload_Tests: XCTestCase {
         XCTAssertEqual(model.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
     
+    func test_pushPreferencePayload_withAllMentionsLevel_isDecodedCorrectly() throws {
+        // GIVEN
+        let json = """
+        {
+            "chat_level": "all_mentions",
+            "disabled_until": null
+        }
+        """.data(using: .utf8)!
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(PushPreferencePayload.self, from: json)
+
+        // THEN
+        XCTAssertEqual(payload.chatLevel, "all_mentions")
+        XCTAssertEqual(payload.asModel().level, .allMentions)
+    }
+
+    func test_pushPreferencePayload_withDirectMentionsLevel_isDecodedCorrectly() throws {
+        // GIVEN
+        let json = """
+        {
+            "chat_level": "direct_mentions",
+            "disabled_until": null
+        }
+        """.data(using: .utf8)!
+
+        // WHEN
+        let payload = try JSONDecoder.default.decode(PushPreferencePayload.self, from: json)
+
+        // THEN
+        XCTAssertEqual(payload.chatLevel, "direct_mentions")
+        XCTAssertEqual(payload.asModel().level, .directMentions)
+    }
+
     func test_pushPreferencePayload_withNoneLevel_isDecodedCorrectly() throws {
         // GIVEN
         let json = """
