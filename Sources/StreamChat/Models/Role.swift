@@ -23,7 +23,7 @@ public struct Role: Equatable, Identifiable, Sendable {
 
     public var id: String { name }
 
-    public init(
+    init(
         name: String,
         isCustom: Bool = false,
         scopes: [String] = [],
