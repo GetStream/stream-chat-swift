@@ -19,7 +19,7 @@ public struct PushPreferenceLevel: RawRepresentable, Equatable, ExpressibleByStr
     /// No push notifications will be delivered.
     public static let none: PushPreferenceLevel = "none"
     /// Push notifications will only be delivered for mentions.
-    @available(*, deprecated, message: "Use `directMentions` instead.")
+    @available(*, deprecated, renamed: "directMentions")
     public static let mentions: PushPreferenceLevel = "mentions"
     /// Push notifications will be delivered for any kind of mention, including
     /// explicit @mentions, @channel, @here, group, and role mentions.
