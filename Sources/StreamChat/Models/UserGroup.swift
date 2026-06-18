@@ -30,7 +30,7 @@ public struct UserGroup: Equatable, Identifiable, Sendable {
     /// The identifier of the user who created the group.
     public let createdBy: UserId?
 
-    public init(
+    init(
         id: String,
         name: String,
         description: String? = nil,
@@ -65,7 +65,7 @@ public struct UserGroupMember: Equatable, Sendable {
     /// The date when the member was added to the group.
     public let createdAt: Date
 
-    public init(
+    init(
         groupId: String,
         userId: UserId,
         isAdmin: Bool,
