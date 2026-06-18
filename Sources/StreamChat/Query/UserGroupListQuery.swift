@@ -13,20 +13,20 @@ public struct UserGroupListQuery: Encodable, Sendable, Equatable {
         case teamId = "team_id"
     }
 
-    /// The maximum number of groups to return (1–100).
-    public var limit: Int
+    /// The maximum number of groups to return. When `nil`, the backend decides the default.
+    public var limit: Int?
 
-    /// Cursor: return groups with an ID greater than this value.
+    /// Return groups with an ID greater than this value.
     public var idGreaterThan: String?
 
-    /// Cursor: return groups created after this timestamp.
+    /// Return groups created after this timestamp.
     public var createdAtGreaterThan: Date?
 
     /// When set, only groups scoped to this team are returned.
     public var teamId: String?
 
     public init(
-        limit: Int = 20,
+        limit: Int? = nil,
         idGreaterThan: String? = nil,
         createdAtGreaterThan: Date? = nil,
         teamId: String? = nil
@@ -51,13 +51,13 @@ public struct UserGroupSearchQuery: Encodable, Sendable, Equatable {
     /// The search term (1–255 characters).
     public let query: String
 
-    /// The maximum number of groups to return (1–25).
-    public var limit: Int
+    /// The maximum number of groups to return. When `nil`, the backend decides the default.
+    public var limit: Int?
 
-    /// Cursor: return groups with a name greater than this value.
+    /// Return groups with a name greater than this value.
     public var nameGreaterThan: String?
 
-    /// Cursor: return groups with an ID greater than this value.
+    /// Return groups with an ID greater than this value.
     public var idGreaterThan: String?
 
     /// When set, only groups scoped to this team are returned.
@@ -65,7 +65,7 @@ public struct UserGroupSearchQuery: Encodable, Sendable, Equatable {
 
     public init(
         query: String,
-        limit: Int = 10,
+        limit: Int? = nil,
         nameGreaterThan: String? = nil,
         idGreaterThan: String? = nil,
         teamId: String? = nil

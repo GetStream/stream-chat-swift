@@ -151,7 +151,7 @@ class UserGroupsRepository: @unchecked Sendable {
 
     private func saveUserGroups(
         _ payloads: [UserGroupPayload],
-        expectedCount: Int,
+        expectedCount: Int?,
         completion: @escaping @Sendable (Result<UserGroupListResponse, Error>) -> Void
     ) {
         database.write(converting: { session in
@@ -163,9 +163,15 @@ class UserGroupsRepository: @unchecked Sendable {
                     return nil
                 }
             }
+            let hasMore: Bool
+            if let expectedCount {
+                hasMore = payloads.count >= expectedCount
+            } else {
+                hasMore = !payloads.isEmpty
+            }
             return UserGroupListResponse(
                 userGroups: userGroups,
-                hasMore: payloads.count >= expectedCount
+                hasMore: hasMore
             )
         }, completion: completion)
     }
