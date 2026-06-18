@@ -793,6 +793,7 @@
 				StreamChatTests/APIClient/Endpoints/Requests/GuestUserTokenRequestPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/MessageReactionRequestPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/MissingEventsRequestBody_Tests.swift,
+				StreamChatTests/APIClient/Endpoints/RoleEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/SyncEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ThreadEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/UserEndpoints_Tests.swift,
