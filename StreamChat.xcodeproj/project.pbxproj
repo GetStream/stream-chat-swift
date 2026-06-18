@@ -859,6 +859,7 @@
 				StreamChatTests/Controllers/PollsControllers/PollVoteListController_Tests.swift,
 				"StreamChatTests/Controllers/PollsControllers/PollVoteListController+Combine_Tests.swift",
 				StreamChatTests/Controllers/RoleSearchController/RoleSearchController_Tests.swift,
+				"StreamChatTests/Controllers/RoleSearchController/RoleSearchController+Combine_Tests.swift",
 				StreamChatTests/Controllers/SearchControllers/MessageSearchController/MessageSearchController_Tests.swift,
 				StreamChatTests/Controllers/SearchControllers/UserController/UserController_Tests.swift,
 				"StreamChatTests/Controllers/SearchControllers/UserController/UserController+Combine_Tests.swift",
