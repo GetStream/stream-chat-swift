@@ -20,12 +20,11 @@ struct UserGroupsConfigView: View {
     @State private var newGroupName = ""
     @State private var selectedGroup: UserGroup?
     @State private var searchDebouncer = Debouncer(0.3, queue: .main)
-
-    private let listController: UserGroupListController
+    @State private var listController: UserGroupListController
 
     init(client: ChatClient) {
         self.client = client
-        listController = client.userGroupListController()
+        _listController = State(initialValue: client.userGroupListController())
     }
 
     private var displayedGroups: [UserGroup] {
@@ -241,8 +240,7 @@ private struct UserGroupDetailView: View {
     @State private var showRenameAlert = false
     @State private var errorMessage: String?
     @State private var isLoading = false
-
-    private let controller: UserGroupController
+    @State private var controller: UserGroupController
 
     init(
         client: ChatClient,
@@ -254,7 +252,7 @@ private struct UserGroupDetailView: View {
         self.listController = listController
         self.onChanged = onChanged
         _group = State(initialValue: group)
-        controller = client.userGroupController(userGroupId: group.id, teamId: group.teamId)
+        _controller = State(initialValue: client.userGroupController(userGroupId: group.id, teamId: group.teamId))
     }
 
     var body: some View {
