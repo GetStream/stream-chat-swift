@@ -646,6 +646,32 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(pointSize: 13)
         )
 
+        // MARK: - Mention Suggestion Icons
+
+        public var mentionHere: UIImage = loadSafely(
+            systemName: "megaphone",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var mentionChannel: UIImage = loadSafely(
+            systemName: "megaphone",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var mentionRole: UIImage = loadSafely(
+            systemName: "shield",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var mentionGroup: UIImage = loadSafely(
+            systemName: "person.2",
+            config: UIImage.SymbolConfiguration(
+                pointSize: 18,
+                weight: .medium,
+                scale: .large
+            )
+        )
+
         // MARK: - V5 - File Type Preview Icons
 
         public var iconPdf: UIImage = loadImageSafely(with: "file-pdf")
