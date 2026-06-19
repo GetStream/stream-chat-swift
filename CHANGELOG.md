@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add user groups support [#4138](https://github.com/GetStream/stream-chat-swift/pull/4138)
 - Add support for searching roles [#4139](https://github.com/GetStream/stream-chat-swift/pull/4139)
 - Add highlighting for `@here`, `@channel`, role and group mentions in messages [#4140](https://github.com/GetStream/stream-chat-swift/pull/4140)
-- Add customizable mention suggestion providers for user, here, channel, role and group mentions [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
+- Add customizable mention suggestion providers [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
 ### 🔄 Changed
