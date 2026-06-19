@@ -102,7 +102,8 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
             for: MentionSuggestionsRequest(text: "ch", channel: makeChannel())
         )
 
-        XCTAssertEqual(suggestions.map(\.type), [.channel])
+        XCTAssertEqual(suggestions.count, 1)
+        XCTAssertTrue(suggestions[0].kind is MentionSuggestion.Channel)
     }
 
     // MARK: - private

@@ -12,8 +12,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add customizable mention suggestion providers [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
-### 🔄 Changed
-- Use v2 app endpoint for app settings [#4133](https://github.com/GetStream/stream-chat-swift/pull/4133)
 
 ## StreamChatUI
 ### 🐞 Fixed
