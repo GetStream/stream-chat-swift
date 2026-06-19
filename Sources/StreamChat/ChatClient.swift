@@ -91,6 +91,16 @@ public class ChatClient: @unchecked Sendable {
         environment.remindersRepositoryBuilder(databaseContainer, apiClient)
     }()
 
+    /// Repository for handling user groups.
+    lazy var userGroupsRepository: UserGroupsRepository = {
+        environment.userGroupsRepositoryBuilder(databaseContainer, apiClient)
+    }()
+
+    /// Repository for searching roles.
+    lazy var rolesRepository: RolesRepository = {
+        environment.rolesRepositoryBuilder(apiClient)
+    }()
+
     let channelListUpdater: ChannelListUpdater
 
     /// Handler for watching channels and preventing duplicate watch requests.
@@ -626,7 +636,7 @@ public class ChatClient: @unchecked Sendable {
     public func loadAppSettings(
         completion: (@Sendable (Result<AppSettings, Error>) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .appSettings()) { [weak self] result in
+        apiClient.request(endpoint: .getApp()) { [weak self] result in
             switch result {
             case let .success(payload):
                 let appSettings = payload.asModel()
