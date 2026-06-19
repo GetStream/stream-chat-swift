@@ -624,39 +624,47 @@ public extension ChatMessage {
 
 extension ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        guard lhs.id == rhs.id else { return false }
-        guard lhs.localState == rhs.localState else { return false }
-        guard lhs.updatedAt == rhs.updatedAt else { return false }
-        guard lhs.deletedAt == rhs.deletedAt else { return false }
-        guard lhs.deletedForMe == rhs.deletedForMe else { return false }
-        guard lhs.allAttachments == rhs.allAttachments else { return false }
-        guard lhs.poll == rhs.poll else { return false }
-        guard lhs.author == rhs.author else { return false }
-        guard lhs.currentUserReactionsCount == rhs.currentUserReactionsCount else { return false }
-        guard lhs.text == rhs.text else { return false }
-        guard lhs.parentMessageId == rhs.parentMessageId else { return false }
-        guard lhs.reactionCounts == rhs.reactionCounts else { return false }
-        guard lhs.reactionGroups == rhs.reactionGroups else { return false }
-        guard lhs.reactionScores == rhs.reactionScores else { return false }
-        guard lhs.readByCount == rhs.readByCount else { return false }
-        guard lhs.replyCount == rhs.replyCount else { return false }
-        guard lhs.showReplyInChannel == rhs.showReplyInChannel else { return false }
-        guard lhs.threadParticipantsCount == rhs.threadParticipantsCount else { return false }
-        guard lhs.arguments == rhs.arguments else { return false }
-        guard lhs.command == rhs.command else { return false }
-        guard lhs.extraData == rhs.extraData else { return false }
-        guard lhs.isFlaggedByCurrentUser == rhs.isFlaggedByCurrentUser else { return false }
-        guard lhs.isShadowed == rhs.isShadowed else { return false }
-        guard lhs.quotedMessage == rhs.quotedMessage else { return false }
-        guard lhs.translations == rhs.translations else { return false }
-        guard lhs.type == rhs.type else { return false }
-        guard lhs.draftReply == rhs.draftReply else { return false }
-        guard lhs.sharedLocation == rhs.sharedLocation else { return false }
-        guard lhs.reminder == rhs.reminder else { return false }
-        guard lhs.mentionedHere == rhs.mentionedHere else { return false }
-        guard lhs.mentionedChannel == rhs.mentionedChannel else { return false }
-        guard lhs.mentionedGroups == rhs.mentionedGroups else { return false }
-        guard lhs.mentionedRoles == rhs.mentionedRoles else { return false }
+        lhs.hasEqualContent(to: rhs) && lhs.hasEqualMetadata(to: rhs)
+    }
+
+    private func hasEqualContent(to other: Self) -> Bool {
+        guard id == other.id else { return false }
+        guard localState == other.localState else { return false }
+        guard updatedAt == other.updatedAt else { return false }
+        guard deletedAt == other.deletedAt else { return false }
+        guard deletedForMe == other.deletedForMe else { return false }
+        guard allAttachments == other.allAttachments else { return false }
+        guard poll == other.poll else { return false }
+        guard author == other.author else { return false }
+        guard currentUserReactionsCount == other.currentUserReactionsCount else { return false }
+        guard text == other.text else { return false }
+        guard parentMessageId == other.parentMessageId else { return false }
+        guard reactionCounts == other.reactionCounts else { return false }
+        guard reactionGroups == other.reactionGroups else { return false }
+        guard reactionScores == other.reactionScores else { return false }
+        guard readByCount == other.readByCount else { return false }
+        guard replyCount == other.replyCount else { return false }
+        guard showReplyInChannel == other.showReplyInChannel else { return false }
+        return true
+    }
+
+    private func hasEqualMetadata(to other: Self) -> Bool {
+        guard threadParticipantsCount == other.threadParticipantsCount else { return false }
+        guard arguments == other.arguments else { return false }
+        guard command == other.command else { return false }
+        guard extraData == other.extraData else { return false }
+        guard isFlaggedByCurrentUser == other.isFlaggedByCurrentUser else { return false }
+        guard isShadowed == other.isShadowed else { return false }
+        guard quotedMessage == other.quotedMessage else { return false }
+        guard translations == other.translations else { return false }
+        guard type == other.type else { return false }
+        guard draftReply == other.draftReply else { return false }
+        guard sharedLocation == other.sharedLocation else { return false }
+        guard reminder == other.reminder else { return false }
+        guard mentionedHere == other.mentionedHere else { return false }
+        guard mentionedChannel == other.mentionedChannel else { return false }
+        guard mentionedGroups == other.mentionedGroups else { return false }
+        guard mentionedRoles == other.mentionedRoles else { return false }
         return true
     }
 
