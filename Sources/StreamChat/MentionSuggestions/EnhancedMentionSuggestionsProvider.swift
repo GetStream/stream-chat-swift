@@ -37,7 +37,7 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
         let channel = request.channel
 
         // Broadcasts (`@here`, `@channel`) are shown on a bare `@` and filtered
-        // by prefix as the user keeps typing, matching the other SDKs.
+        // by prefix as the user keeps typing.
         var suggestions = broadcastSuggestions(for: text, channel: channel)
 
         // Roles and groups require a non-empty query to avoid surfacing the
