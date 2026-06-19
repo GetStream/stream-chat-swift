@@ -35,7 +35,7 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func blockUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .blockUser(userId)) {
+        apiClient.request(endpoint: .blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId))) {
             switch $0 {
             case .success:
                 self.database.write({ session in
@@ -67,7 +67,7 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unblockUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .unblockUser(userId)) {
+        apiClient.request(endpoint: .unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId))) {
             switch $0 {
             case .success:
                 self.database.write({ session in
