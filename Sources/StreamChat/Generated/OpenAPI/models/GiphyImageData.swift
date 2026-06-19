@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ImageData: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class GiphyImageData: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var frames: String
     var height: String
     var size: String
@@ -27,7 +27,7 @@ final class ImageData: @unchecked Sendable, Codable, JSONEncodable, Hashable {
         case width
     }
 
-    static func == (lhs: ImageData, rhs: ImageData) -> Bool {
+    static func == (lhs: GiphyImageData, rhs: GiphyImageData) -> Bool {
         lhs.frames == rhs.frames &&
             lhs.height == rhs.height &&
             lhs.size == rhs.size &&

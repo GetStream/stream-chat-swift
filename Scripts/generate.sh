@@ -31,6 +31,30 @@ contains() {
   printf '%s\n' "$@" | grep -qxF "$needle"
 }
 
+# Rename helpers. rename_generated_filename only moves the model definition file
+# (models/ holds those); rename_generated_type rewrites every whole-word reference
+# across the entire generated tree (models/ AND APIs/, so endpoint factories in
+# DefaultEndpoints.swift are covered now and for any future references).
+rename_generated_filename() {
+  local old="$1"
+  local new="$2"
+  local old_path="$OUTPUT_DIR_CHAT/models/${old}.swift"
+  local new_path="$OUTPUT_DIR_CHAT/models/${new}.swift"
+  [[ -f "$old_path" ]] && mv "$old_path" "$new_path"
+}
+
+rename_generated_type() {
+  local old="$1"
+  local new="$2"
+  find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E "s/[[:<:]]$old[[:>:]]/$new/g" {} +
+}
+
+# Rename both the model file and every reference to the type.
+rename_generated() {
+  rename_generated_filename "$1" "$2"
+  rename_generated_type "$1" "$2"
+}
+
 # 1. Clean + generate.
 rm -rf "$OUTPUT_DIR_CHAT"
 ( cd "$CHAT_DIR" ; make openapi ; \
@@ -113,6 +137,14 @@ prune_models() {
   done
 }
 prune_models
+
+# 4b. Rename selected generated models for clarity and to avoid generic-name
+#     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
+#     so allowed_models above still matches the generator's original names.
+rename_generated Action AttachmentActionPayload
+rename_generated Field AttachmentFieldPayload
+rename_generated ImageData GiphyImageData
+rename_generated Images GiphyImages
 
 # 5. Generated code is internal to the SDK — strip public/open.
 find "$OUTPUT_DIR_CHAT" -name '*.swift' -print0 | while IFS= read -r -d '' file; do

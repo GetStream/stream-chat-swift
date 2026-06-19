@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class Field: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class AttachmentFieldPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var short: Bool
     var title: String
     var value: String
@@ -21,7 +21,7 @@ final class Field: @unchecked Sendable, Codable, JSONEncodable, Hashable {
         case value
     }
 
-    static func == (lhs: Field, rhs: Field) -> Bool {
+    static func == (lhs: AttachmentFieldPayload, rhs: AttachmentFieldPayload) -> Bool {
         lhs.short == rhs.short &&
             lhs.title == rhs.title &&
             lhs.value == rhs.value

@@ -5,7 +5,7 @@
 import Foundation
 
 final class GetOGResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var actions: [Action]?
+    var actions: [AttachmentActionPayload]?
     /// URL of detected video or audio
     var assetUrl: String?
     var authorIcon: String?
@@ -17,10 +17,10 @@ final class GetOGResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable
     var custom: [String: RawJSON]
     var duration: String
     var fallback: String?
-    var fields: [Field]?
+    var fields: [AttachmentFieldPayload]?
     var footer: String?
     var footerIcon: String?
-    var giphy: Images?
+    var giphy: GiphyImages?
     /// URL of detected image
     var imageUrl: String?
     /// extracted url from the text
@@ -39,7 +39,7 @@ final class GetOGResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable
     /// Attachment type, could be empty, image, audio or video
     var type: String?
 
-    init(actions: [Action]? = nil, assetUrl: String? = nil, authorIcon: String? = nil, authorLink: String? = nil, authorName: String? = nil, color: String? = nil, custom: [String: RawJSON], duration: String, fallback: String? = nil, fields: [Field]? = nil, footer: String? = nil, footerIcon: String? = nil, giphy: Images? = nil, imageUrl: String? = nil, ogScrapeUrl: String? = nil, originalHeight: Int? = nil, originalWidth: Int? = nil, pretext: String? = nil, text: String? = nil, thumbUrl: String? = nil, title: String? = nil, titleLink: String? = nil) {
+    init(actions: [AttachmentActionPayload]? = nil, assetUrl: String? = nil, authorIcon: String? = nil, authorLink: String? = nil, authorName: String? = nil, color: String? = nil, custom: [String: RawJSON], duration: String, fallback: String? = nil, fields: [AttachmentFieldPayload]? = nil, footer: String? = nil, footerIcon: String? = nil, giphy: GiphyImages? = nil, imageUrl: String? = nil, ogScrapeUrl: String? = nil, originalHeight: Int? = nil, originalWidth: Int? = nil, pretext: String? = nil, text: String? = nil, thumbUrl: String? = nil, title: String? = nil, titleLink: String? = nil) {
         self.actions = actions
         self.assetUrl = assetUrl
         self.authorIcon = authorIcon

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class Action: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class AttachmentActionPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var name: String
     var style: String?
     var text: String
@@ -27,7 +27,7 @@ final class Action: @unchecked Sendable, Codable, JSONEncodable, Hashable {
         case value
     }
 
-    static func == (lhs: Action, rhs: Action) -> Bool {
+    static func == (lhs: AttachmentActionPayload, rhs: AttachmentActionPayload) -> Bool {
         lhs.name == rhs.name &&
             lhs.style == rhs.style &&
             lhs.text == rhs.text &&

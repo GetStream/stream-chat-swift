@@ -4,16 +4,16 @@
 
 import Foundation
 
-final class Images: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var fixedHeight: ImageData
-    var fixedHeightDownsampled: ImageData
-    var fixedHeightStill: ImageData
-    var fixedWidth: ImageData
-    var fixedWidthDownsampled: ImageData
-    var fixedWidthStill: ImageData
-    var original: ImageData
+final class GiphyImages: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+    var fixedHeight: GiphyImageData
+    var fixedHeightDownsampled: GiphyImageData
+    var fixedHeightStill: GiphyImageData
+    var fixedWidth: GiphyImageData
+    var fixedWidthDownsampled: GiphyImageData
+    var fixedWidthStill: GiphyImageData
+    var original: GiphyImageData
 
-    init(fixedHeight: ImageData, fixedHeightDownsampled: ImageData, fixedHeightStill: ImageData, fixedWidth: ImageData, fixedWidthDownsampled: ImageData, fixedWidthStill: ImageData, original: ImageData) {
+    init(fixedHeight: GiphyImageData, fixedHeightDownsampled: GiphyImageData, fixedHeightStill: GiphyImageData, fixedWidth: GiphyImageData, fixedWidthDownsampled: GiphyImageData, fixedWidthStill: GiphyImageData, original: GiphyImageData) {
         self.fixedHeight = fixedHeight
         self.fixedHeightDownsampled = fixedHeightDownsampled
         self.fixedHeightStill = fixedHeightStill
@@ -33,7 +33,7 @@ final class Images: @unchecked Sendable, Codable, JSONEncodable, Hashable {
         case original
     }
 
-    static func == (lhs: Images, rhs: Images) -> Bool {
+    static func == (lhs: GiphyImages, rhs: GiphyImages) -> Bool {
         lhs.fixedHeight == rhs.fixedHeight &&
             lhs.fixedHeightDownsampled == rhs.fixedHeightDownsampled &&
             lhs.fixedHeightStill == rhs.fixedHeightStill &&
