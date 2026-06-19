@@ -59,7 +59,7 @@ public struct UserGroupMention: Hashable, Identifiable, Sendable {
     /// The display name of the group.
     public let name: String
 
-    public init(id: String, name: String) {
+    init(id: String, name: String) {
         self.id = id
         self.name = name
     }
