@@ -47,6 +47,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var createNewReply_parentMessageId: MessageId?
     @Atomic var createNewReply_attachments: [AnyAttachmentPayload]?
     @Atomic var createNewReply_mentionedUserIds: [UserId]?
+    @Atomic var createNewReply_mentionedHere: Bool?
+    @Atomic var createNewReply_mentionedChannel: Bool?
+    @Atomic var createNewReply_mentionedGroupIds: [String]?
+    @Atomic var createNewReply_mentionedRoles: [String]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_isSilent: Bool?
     @Atomic var createNewReply_skipPush: Bool?
@@ -182,6 +186,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         createNewReply_parentMessageId = nil
         createNewReply_attachments = nil
         createNewReply_mentionedUserIds = nil
+        createNewReply_mentionedHere = nil
+        createNewReply_mentionedChannel = nil
+        createNewReply_mentionedGroupIds = nil
+        createNewReply_mentionedRoles = nil
         createNewReply_showReplyInChannel = nil
         createNewReply_isSilent = nil
         createNewReply_skipPush = nil
@@ -377,6 +385,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         parentMessageId: MessageId?,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
@@ -392,6 +404,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         createNewReply_parentMessageId = parentMessageId
         createNewReply_attachments = attachments
         createNewReply_mentionedUserIds = mentionedUserIds
+        createNewReply_mentionedHere = mentionedHere
+        createNewReply_mentionedChannel = mentionedChannel
+        createNewReply_mentionedGroupIds = mentionedGroupIds
+        createNewReply_mentionedRoles = mentionedRoles
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_isSilent = isSilent
         createNewReply_skipPush = skipPush

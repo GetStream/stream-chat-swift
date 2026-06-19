@@ -51,6 +51,20 @@ public struct UserGroup: Equatable, Identifiable, Sendable {
     }
 }
 
+/// A reference to a user group mentioned in a message.
+public struct UserGroupMention: Hashable, Identifiable, Sendable {
+    /// The group identifier.
+    public let id: String
+
+    /// The display name of the group.
+    public let name: String
+
+    init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
+}
+
 /// A member of a user group.
 public struct UserGroupMember: Equatable, Sendable {
     /// The group identifier.
