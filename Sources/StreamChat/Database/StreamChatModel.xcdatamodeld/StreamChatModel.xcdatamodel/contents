@@ -249,6 +249,10 @@
         <attribute name="latestReactions" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="locallyCreatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
+        <attribute name="mentionedChannel" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="mentionedGroupIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="mentionedHere" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="mentionedRoles" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="mentionedUserIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="newestReplyAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="originalLanguage" optional="YES" attributeType="String"/>
@@ -279,6 +283,7 @@
         <relationship name="draftReply" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="draftOfThread" inverseEntity="MessageDTO"/>
         <relationship name="flaggedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="flaggedMessages" inverseEntity="CurrentUserDTO"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SharedLocationDTO" inverseName="message" inverseEntity="SharedLocationDTO"/>
+        <relationship name="mentionedGroups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GroupMentionDTO" inverseName="messages" inverseEntity="GroupMentionDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
         <relationship name="moderationDetails" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageModerationDetailsDTO" inverseName="message" inverseEntity="MessageModerationDetailsDTO"/>
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
@@ -362,6 +367,19 @@
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
+    </entity>
+    <entity name="GroupMentionDTO" representedClassName="GroupMentionDTO" syncable="YES">
+        <attribute name="id" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="mentionedGroups" inverseEntity="MessageDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="UserGroupDTO" representedClassName="UserGroupDTO" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>

@@ -71,6 +71,17 @@ class MessageDTO: NSManagedObject {
     @NSManaged var mentionedUsers: Set<UserDTO>
     /// Use this property ONLY when creating/updating a message with new mentioned users.
     @NSManaged var mentionedUserIds: [String]
+    
+    /// Whether all online/active channel members were mentioned (@here).
+    @NSManaged var mentionedHere: Bool
+    /// Whether all channel members were mentioned (@channel).
+    @NSManaged var mentionedChannel: Bool
+    /// The ids of the user groups that were mentioned. Use this property ONLY when creating/updating a message.
+    @NSManaged var mentionedGroupIds: [String]
+    /// Use this property in case you want to read the user groups mentioned in the message.
+    @NSManaged var mentionedGroups: Set<GroupMentionDTO>
+    /// The roles that were mentioned (e.g. `admin`, `moderator`).
+    @NSManaged var mentionedRoles: [String]
 
     @NSManaged var threadParticipants: NSOrderedSet
     @NSManaged var channel: ChannelDTO?
@@ -773,6 +784,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         )
 
         message.mentionedUserIds = mentionedUserIds
+        message.mentionedHere = false
+        message.mentionedChannel = false
+        message.mentionedGroupIds = []
+        message.mentionedRoles = []
 
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
@@ -839,6 +854,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.reactionCounts = [:]
         message.reactionGroups = []
         message.mentionedUserIds = mentionedUserIds
+        message.mentionedHere = false
+        message.mentionedChannel = false
+        message.mentionedGroupIds = []
+        message.mentionedRoles = []
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
         message.user = currentUserDTO.user
@@ -1006,6 +1025,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return user
         })
         dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
+        dto.mentionedHere = payload.mentionedHere
+        dto.mentionedChannel = payload.mentionedChannel
+        dto.mentionedGroupIds = payload.mentionedGroups.map(\.id)
+        dto.mentionedGroups = try Set(payload.mentionedGroups.map { try saveGroupMention(payload: $0) })
+        dto.mentionedRoles = payload.mentionedRoles
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         dto.threadParticipants = try NSOrderedSet(
@@ -1611,6 +1635,10 @@ extension MessageDTO {
             quotedMessageId: quotedMessage?.id,
             attachments: uploadedAttachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
             pollId: poll?.id,
@@ -1775,6 +1803,8 @@ private extension ChatMessage {
 
         let mentionedUsers = Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
 
+        let mentionedGroups = Set(dto.mentionedGroups.map { $0.asModel() })
+
         let author = try dto.user.asModel()
         let _attachments = dto.attachments
             .compactMap { $0.asAnyModel() }
@@ -1824,6 +1854,10 @@ private extension ChatMessage {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedHere: dto.mentionedHere,
+            mentionedChannel: dto.mentionedChannel,
+            mentionedGroups: mentionedGroups,
+            mentionedRoles: dto.mentionedRoles,
             threadParticipants: threadParticipants,
             attachments: _attachments,
             latestReplies: latestReplies,

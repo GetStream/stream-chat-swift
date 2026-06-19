@@ -420,7 +420,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                         user: .dummy(userId: currentUserId)
                     )
                 ),
-                .dummy(),
+                .dummy(mentionedGroups: [.init(id: .unique, name: .unique)]),
                 .dummy(),
                 .dummy()
             ]
