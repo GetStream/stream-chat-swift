@@ -29,7 +29,8 @@ extension Array where Element == ChatChannel {
             lastActiveMembers: [
                 .mock(id: .unique, name: "Darth Vader", imageURL: XCTestCase.TestImages.vader.url, isOnline: true),
                 .mock(id: .unique)
-            ]
+            ],
+            pushPreference: .init(level: .directMentions, disabledUntil: nil)
         )
         let channelWithLongTextAndUnreadCount = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel3"),
