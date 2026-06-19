@@ -74,6 +74,15 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteReminder(messageId: messageId)
     }
 
+    func saveUserGroup(payload: UserGroupPayload) throws -> UserGroupDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveUserGroup(payload: payload)
+    }
+
+    func deleteUserGroup(id: String) {
+        underlyingSession.deleteUserGroup(id: id)
+    }
+
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?,

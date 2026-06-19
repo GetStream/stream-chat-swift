@@ -338,3 +338,16 @@ extension ChatClient {
         UserSearch(client: self)
     }
 }
+
+// MARK: - Factory Methods for Searching User Groups
+
+extension ChatClient {
+    /// Creates an instance of ``UserGroupSearch`` which represents an array of user groups matching to the specified ``UserGroupSearchQuery``.
+    ///
+    /// Use ``UserGroupSearch`` as a data source for user group search UIs, such as group mentions in the composer.
+    ///
+    /// - Returns: An instance of ``UserGroupSearch`` which represents search actions and the search state.
+    public func makeUserGroupSearch() -> UserGroupSearch {
+        UserGroupSearch(client: self)
+    }
+}
