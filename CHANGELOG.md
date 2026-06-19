@@ -10,8 +10,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for searching roles [#4139](https://github.com/GetStream/stream-chat-swift/pull/4139)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
-### 🔄 Changed
-- Use v2 endpoints for app settings and OG link previews [#4133](https://github.com/GetStream/stream-chat-swift/pull/4133) [#4135](https://github.com/GetStream/stream-chat-swift/pull/4135)
 
 ## StreamChatUI
 ### 🐞 Fixed
