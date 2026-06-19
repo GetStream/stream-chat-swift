@@ -12,7 +12,7 @@ import Foundation
 public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvider, @unchecked Sendable {
     /// When `true`, user suggestions are searched across all app users instead
     /// of only the channel's members and watchers.
-    public var mentionAllAppUsers: Bool
+    public let mentionAllAppUsers: Bool
 
     private let userSearch: UserSearch
     private let roleSearch: RoleSearch
@@ -78,20 +78,35 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
     }
 
     private func fetchRoles(for text: String) async -> [MentionSuggestion] {
-        let roles = (try? await roleSearch.search(text: text)) ?? []
-        return roles.map { MentionSuggestion.role($0) }
+        do {
+            let roles = try await roleSearch.search(text: text)
+            return roles.map { MentionSuggestion.role($0) }
+        } catch {
+            log.error("Failed to fetch role suggestions: \(error)")
+            return []
+        }
     }
 
     private func fetchGroups(for text: String) async -> [MentionSuggestion] {
-        let groups = (try? await userGroupSearch.search(text: text)) ?? []
-        return groups.map { MentionSuggestion.group($0) }
+        do {
+            let groups = try await userGroupSearch.search(text: text)
+            return groups.map { MentionSuggestion.group($0) }
+        } catch {
+            log.error("Failed to fetch group suggestions: \(error)")
+            return []
+        }
     }
 
     private func fetchUsers(for request: MentionSuggestionsRequest) async -> [MentionSuggestion] {
         let users: [ChatUser]
         if mentionAllAppUsers {
-            let query = MentionSuggestionsSearch.allAppUsersQuery(for: request.text)
-            users = (try? await userSearch.search(query: query)) ?? []
+            do {
+                let query = MentionSuggestionsSearch.allAppUsersQuery(for: request.text)
+                users = try await userSearch.search(query: query)
+            } catch {
+                log.error("Failed to fetch user suggestions: \(error)")
+                users = []
+            }
         } else {
             let channel = request.channel
             users = MentionSuggestionsSearch.searchUsers(

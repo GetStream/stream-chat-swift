@@ -7,12 +7,12 @@ import Foundation
 /// The default mention suggestions provider.
 ///
 /// Suggests users only, preserving the historical mention behaviour. By default
-/// it searches the channel's members and watchers; set ``mentionAllAppUsers`` to
-/// `true` to search across all app users instead.
+/// it searches the channel's members and watchers; pass `mentionAllAppUsers: true`
+/// at initialization to search across all app users instead.
 public final class DefaultMentionSuggestionsProvider: MentionSuggestionsProvider, @unchecked Sendable {
     /// When `true`, user suggestions are searched across all app users instead
     /// of only the channel's members and watchers.
-    public var mentionAllAppUsers: Bool
+    public let mentionAllAppUsers: Bool
 
     private let userSearch: UserSearch
     private let currentUserId: () -> UserId?
@@ -32,7 +32,7 @@ public final class DefaultMentionSuggestionsProvider: MentionSuggestionsProvider
         let users: [ChatUser]
         if mentionAllAppUsers {
             let query = MentionSuggestionsSearch.allAppUsersQuery(for: request.text)
-            users = (try? await userSearch.search(query: query)) ?? []
+            users = try await userSearch.search(query: query)
         } else {
             let channel = request.channel
             users = MentionSuggestionsSearch.searchUsers(

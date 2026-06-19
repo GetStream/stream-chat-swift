@@ -646,7 +646,7 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(pointSize: 13)
         )
 
-        // MARK: - V5 - Mention Suggestion Icons
+        // MARK: - Mention Suggestion Icons
 
         public var mentionHere: UIImage = loadSafely(
             systemName: "megaphone",

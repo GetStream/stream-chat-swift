@@ -35,10 +35,10 @@ public extension MentionType {
 
 /// A single mention suggestion shown in the composer's suggestion list.
 ///
-/// Modeled as a struct wrapping a ``MentionSuggestion/Content`` value rather
+/// Modeled as a struct wrapping a ``MentionSuggestion/Kind`` value rather
 /// than an enum, so new suggestion variants can be added (by the SDK or by
 /// customers) without introducing source-breaking changes. Match a suggestion's
-/// variant by casting its ``content`` to one of the built-in content types.
+/// variant by casting its ``kind`` to one of the built-in kind types.
 public struct MentionSuggestion: Identifiable, Sendable {
     /// A user mention suggestion.
     public static func user(_ user: ChatUser) -> MentionSuggestion {
