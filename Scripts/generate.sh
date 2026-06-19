@@ -1,10 +1,132 @@
-//
-// Copyright © 2026 Stream.io Inc. All rights reserved.
-//
+#!/bin/bash
+set -euo pipefail
 
-import Foundation
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
+CHAT_DIR="$REPO_ROOT/../chat"
 
-enum EndpointPath: Codable {
+# Incremental OpenAPI adoption: keep ONLY the endpoints/models being migrated right
+# now; everything else the generator emits is pruned below.
+# allowed_models must hold the FULL transitive model closure of every endpoint in
+# allowed_endpoints or the kept code won't compile — the build is the safety net.
+allowed_endpoints=(
+    getApp
+)
+allowed_models=(
+  AppResponseFields
+  FileUploadConfig
+  GetApplicationResponse
+)
+
+# Exact membership test (macOS bash 3.2 — no associative arrays).
+contains() {
+  local needle="$1"; shift
+  printf '%s\n' "$@" | grep -qxF "$needle"
+}
+
+# 1. Clean + generate.
+rm -rf "$OUTPUT_DIR_CHAT"
+( cd "$CHAT_DIR" ; make openapi ; \
+  ./build/chat-manager openapi generate-client --language swift \
+    --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
+
+# 2. Drop the generated async API client — the SDK ships its own APIClient.
+#    DefaultEndpoints.swift stays under APIs/ as the generator emits it.
+rm -f "$OUTPUT_DIR_CHAT/APIs/DefaultAPI.swift"
+
+# 3. Prune endpoint factories: keep only allowed_endpoints, delete the rest.
+prune_endpoint_factories() {
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
+  local name
+  while IFS= read -r name; do
+    contains "$name" "${allowed_endpoints[@]}" && continue
+    sed -i '' -E "/^[[:space:]]+static func ${name}\(/,/^[[:space:]]+\}[[:space:]]*$/d" "$file"
+  done < <(sed -nE 's/^[[:space:]]+static func ([A-Za-z0-9_]+)\(.*/\1/p' "$file")
+}
+prune_endpoint_factories
+
+# Keep generated v2 EndpointPath cases aligned with allowed_endpoints before v1
+# cases are injected. Future migrations should remove matching v1 cases when
+# adding a generated v2 path with the same case name.
+prune_generated_endpoint_paths() {
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
+  local allowed_endpoints_csv
+  allowed_endpoints_csv="$(IFS=,; echo "${allowed_endpoints[*]}")"
+
+  python3 - "$file" "$allowed_endpoints_csv" <<'PY'
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+allowed = set(filter(None, sys.argv[2].split(",")))
+
+def case_name(line):
+    stripped = line.strip()
+    if not stripped.startswith("case "):
+        return None
+    pattern = stripped[len("case "):]
+    if pattern.startswith("let "):
+        pattern = pattern[len("let "):]
+    if pattern.startswith("."):
+        pattern = pattern[1:]
+    return pattern.split("(", 1)[0].split(" ", 1)[0].split(":", 1)[0]
+
+# Within the EndpointPath enum, drop every `case` line and its (possibly multi-line)
+# switch arm whose name isn't allowed; keep every structural line. swiftformat tidies
+# the leftover blank lines afterwards.
+out, in_enum, keep = [], False, True
+for line in path.read_text().splitlines(keepends=True):
+    if line.startswith("enum EndpointPath"):
+        in_enum = True
+    elif line.startswith("final class Endpoint"):
+        in_enum = False
+    if in_enum:
+        name = case_name(line)
+        if name is not None:                                     # `case …`: opens a block
+            keep = name in allowed
+        elif not line.lstrip().startswith(("return ", "let ")):  # structural line
+            keep = True                                          # (arm bodies inherit keep)
+        if not keep:
+            continue
+    out.append(line)
+
+path.write_text("".join(out))
+PY
+}
+prune_generated_endpoint_paths
+
+# 4. Prune models: keep only allowed_models, delete the rest.
+prune_models() {
+  local f base
+  for f in "$OUTPUT_DIR_CHAT"/models/*.swift; do
+    [ -e "$f" ] || continue
+    base="$(basename "$f" .swift)"
+    contains "$base" "${allowed_models[@]}" && continue
+    rm -f "$f"
+  done
+}
+prune_models
+
+# 5. Generated code is internal to the SDK — strip public/open.
+find "$OUTPUT_DIR_CHAT" -name '*.swift' -print0 | while IFS= read -r -d '' file; do
+  sed -i '' -E 's/^([[:space:]]*)(public|open) /\1/' "$file"
+done
+
+# 6. Format.
+swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
+
+# 7. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
+#    The OpenAPI generator owns v2 paths; these v1 cases keep the hand-written
+#    endpoint factories compiling while each endpoint migrates incrementally.
+inject_v1_endpoint_paths() {
+  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
+  local cases_file values_file
+  cases_file="$(mktemp)"
+  values_file="$(mktemp)"
+  trap 'rm -f "$cases_file" "$values_file"' RETURN
+
+  cat > "$cases_file" <<'EOF'
     case connect
     case sync
     case users
@@ -72,11 +194,9 @@ enum EndpointPath: Codable {
 
     case callToken(String)
     case createCall(String)
-    
+
     case deleteFile(String)
     case deleteImage(String)
-
-    case appSettings
 
     case liveLocations
 
@@ -95,8 +215,9 @@ enum EndpointPath: Codable {
     case userGroupMembers(id: String)
     case userGroupMembersDelete(id: String)
 
-    var value: String {
-        switch self {
+EOF
+
+  cat > "$values_file" <<'EOF'
         case .connect: return "connect"
         case .sync: return "sync"
         case .users: return "users"
@@ -170,7 +291,6 @@ enum EndpointPath: Codable {
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
-        case .appSettings: return "app"
         case .polls: return "polls"
         case .pollsQuery: return "polls/query"
         case let .poll(pollId: pollId): return "polls/\(pollId)"
@@ -185,6 +305,24 @@ enum EndpointPath: Codable {
         case let .userGroup(id): return "usergroups/\(id)"
         case let .userGroupMembers(id): return "usergroups/\(id)/members"
         case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
-        }
-    }
+
+EOF
+
+  python3 - "$file" "$cases_file" "$values_file" <<'PY'
+import pathlib
+import sys
+
+file_path = pathlib.Path(sys.argv[1])
+cases = pathlib.Path(sys.argv[2]).read_text()
+values = pathlib.Path(sys.argv[3]).read_text()
+text = file_path.read_text()
+
+enum_marker = "enum EndpointPath: Codable {\n"
+switch_marker = "        switch self {\n"
+
+text = text.replace(enum_marker, enum_marker + cases, 1)
+text = text.replace(switch_marker, switch_marker + values, 1)
+file_path.write_text(text)
+PY
 }
+inject_v1_endpoint_paths

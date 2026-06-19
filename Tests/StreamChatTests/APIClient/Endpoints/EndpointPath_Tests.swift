@@ -79,6 +79,14 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
     }
 
+    func test_getApp_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getApp.shouldBeQueuedOffline)
+    }
+
+    func test_getApp_value() {
+        XCTAssertEqual(EndpointPath.getApp.value, "/api/v2/app")
+    }
+
     func test_userGroups_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.userGroups.shouldBeQueuedOffline)
         XCTAssertFalse(EndpointPath.userGroupSearch.shouldBeQueuedOffline)
@@ -139,8 +147,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.devices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
-        assertResultEncodingAndDecoding(.appSettings)
         assertResultEncodingAndDecoding(.pushPreferences)
+        assertResultEncodingAndDecoding(.getApp)
         assertResultEncodingAndDecoding(.userGroups)
         assertResultEncodingAndDecoding(.userGroupSearch)
         assertResultEncodingAndDecoding(.userGroup(id: "group"))

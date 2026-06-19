@@ -750,7 +750,6 @@
 				StreamChatTests/APIClient/Endpoints/MemberEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/MessageEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ModerationEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/AppSettingsPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelDeliveredPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelEditDetailPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelListPayload_Tests.swift,
