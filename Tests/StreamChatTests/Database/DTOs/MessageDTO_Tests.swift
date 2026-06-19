@@ -465,8 +465,10 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.mentionedRoles, ["admin"])
 
         // Verify the request body re-serializes the group ids
-        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
-        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
+        let requestBody: MessageRequestBody = try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            return messageDTO.asRequestBody()
+        }
         XCTAssertTrue(requestBody.mentionedHere)
         XCTAssertTrue(requestBody.mentionedChannel)
         XCTAssertEqual(requestBody.mentionedGroupIds, ["backendsupport", "engineering"])
