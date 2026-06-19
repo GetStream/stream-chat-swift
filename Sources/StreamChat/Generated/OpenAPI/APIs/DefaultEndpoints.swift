@@ -85,16 +85,18 @@ enum EndpointPath: Codable {
     case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
-    case blockUsers
-    case getApp
-    case getBlockedUsers
-    case unblockUsers
-
     case userGroups
     case userGroupSearch
     case userGroup(id: String)
     case userGroupMembers(id: String)
     case userGroupMembersDelete(id: String)
+
+    case rolesSearch
+
+    case blockUsers
+    case getApp
+    case getBlockedUsers
+    case unblockUsers
 
     var value: String {
         switch self {
@@ -178,6 +180,14 @@ enum EndpointPath: Codable {
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
+        case .userGroups: return "usergroups"
+        case .userGroupSearch: return "usergroups/search"
+        case let .userGroup(id): return "usergroups/\(id)"
+        case let .userGroupMembers(id): return "usergroups/\(id)/members"
+        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
+
+        case .rolesSearch: return "roles/search"
+
         case .blockUsers:
             return "/api/v2/users/block"
         case .getApp:
@@ -186,11 +196,6 @@ enum EndpointPath: Codable {
             return "/api/v2/users/block"
         case .unblockUsers:
             return "/api/v2/users/unblock"
-        case .userGroups: return "usergroups"
-        case .userGroupSearch: return "usergroups/search"
-        case let .userGroup(id): return "usergroups/\(id)"
-        case let .userGroupMembers(id): return "usergroups/\(id)/members"
-        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
         }
     }
 }
