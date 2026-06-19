@@ -396,6 +396,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
@@ -429,6 +433,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             )
+            newMessageDTO.mentionedHere = mentionedHere
+            newMessageDTO.mentionedChannel = mentionedChannel
+            newMessageDTO.mentionedGroupIds = mentionedGroupIds
+            newMessageDTO.mentionedRoles = mentionedRoles
             if quotedMessageId != nil {
                 newMessageDTO.showInsideThread = true
             }
@@ -944,6 +952,10 @@ extension ChannelUpdater {
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
@@ -962,6 +974,10 @@ extension ChannelUpdater {
                 arguments: arguments,
                 attachments: attachments,
                 mentionedUserIds: mentionedUserIds,
+                mentionedHere: mentionedHere,
+                mentionedChannel: mentionedChannel,
+                mentionedGroupIds: mentionedGroupIds,
+                mentionedRoles: mentionedRoles,
                 quotedMessageId: quotedMessageId,
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,
