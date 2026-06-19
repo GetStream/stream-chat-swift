@@ -6,9 +6,8 @@ import Foundation
 
 /// The enhanced mention suggestions provider.
 ///
-/// In addition to user mentions, it suggests `@here` and `@channel` broadcasts,
-/// roles and user groups, matching the behaviour of the other Stream Chat SDKs.
-/// Which of these types are suggested is determined by the channel's own
+/// In addition to user mentions, it suggests `@here`, `@channel`, roles and user groups.
+/// Which of these types is suggested is determined by the channel's own
 /// capabilities (`notify-here`, `notify-channel`, `notify-role`, `notify-group`).
 public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvider, @unchecked Sendable {
     /// When `true`, user suggestions are searched across all app users instead
