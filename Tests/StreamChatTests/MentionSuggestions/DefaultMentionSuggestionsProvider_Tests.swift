@@ -102,7 +102,7 @@ final class DefaultMentionSuggestionsProvider_Tests: XCTestCase {
         )
 
         XCTAssertFalse(suggestions.isEmpty)
-        XCTAssertTrue(suggestions.allSatisfy { $0.type == .user })
+        XCTAssertTrue(suggestions.allSatisfy { $0.kind is MentionSuggestion.User })
     }
 
     // MARK: - private

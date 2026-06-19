@@ -30,11 +30,12 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
         )
 
         // Broadcasts come first, on a bare `@`.
-        XCTAssertEqual(Array(suggestions.map(\.type).prefix(2)), [.channel, .here])
+        XCTAssertTrue(suggestions[0].kind is MentionSuggestion.Channel)
+        XCTAssertTrue(suggestions[1].kind is MentionSuggestion.Here)
         // Roles and groups are not fetched for an empty query.
         XCTAssertNil(client.mockRolesRepository.searchRoles_query)
         XCTAssertNil(client.mockUserGroupsRepository.searchUserGroups_query)
-        XCTAssertFalse(suggestions.contains { $0.type == .role || $0.type == .group })
+        XCTAssertFalse(suggestions.contains { $0.kind is MentionSuggestion.Role || $0.kind is MentionSuggestion.Group })
     }
 
     func test_mentionSuggestions_whenText_returnsBroadcastRolesGroupsAndUsers() async throws {
@@ -47,7 +48,9 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
         )
 
         // `@channel` matches the prefix, `@here` does not.
-        XCTAssertEqual(suggestions.map(\.type), [.channel, .role, .group])
+        XCTAssertTrue(suggestions[0].kind is MentionSuggestion.Channel)
+        XCTAssertTrue(suggestions[1].kind is MentionSuggestion.Role)
+        XCTAssertTrue(suggestions[2].kind is MentionSuggestion.Group)
         XCTAssertEqual(roleNames(from: suggestions), ["admin"])
         XCTAssertEqual(groupIds(from: suggestions), ["g1"])
         XCTAssertEqual(client.mockRolesRepository.searchRoles_query?.query, "ch")
@@ -63,8 +66,8 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
             for: MentionSuggestionsRequest(text: "he", channel: makeChannel())
         )
 
-        XCTAssertTrue(suggestions.contains { $0.type == .here })
-        XCTAssertFalse(suggestions.contains { $0.type == .channel })
+        XCTAssertTrue(suggestions.contains { $0.kind is MentionSuggestion.Here })
+        XCTAssertFalse(suggestions.contains { $0.kind is MentionSuggestion.Channel })
     }
 
     func test_mentionSuggestions_whenHereNotAllowedByChannel_doesNotSuggestHere() async throws {
@@ -74,8 +77,8 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
             for: MentionSuggestionsRequest(text: "", channel: makeChannel(capabilities: [.notifyChannel]))
         )
 
-        XCTAssertTrue(suggestions.contains { $0.type == .channel })
-        XCTAssertFalse(suggestions.contains { $0.type == .here })
+        XCTAssertTrue(suggestions.contains { $0.kind is MentionSuggestion.Channel })
+        XCTAssertFalse(suggestions.contains { $0.kind is MentionSuggestion.Here })
     }
 
     func test_mentionSuggestions_whenChannelHasNoNotifyCapabilities_doesNotFetchOrSuggestOtherTypes() async throws {
@@ -85,7 +88,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
             for: MentionSuggestionsRequest(text: "ch", channel: makeChannel(capabilities: []))
         )
 
-        XCTAssertTrue(suggestions.allSatisfy { $0.type == .user })
+        XCTAssertTrue(suggestions.allSatisfy { $0.kind is MentionSuggestion.User })
         XCTAssertNil(client.mockRolesRepository.searchRoles_query)
         XCTAssertNil(client.mockUserGroupsRepository.searchUserGroups_query)
     }
