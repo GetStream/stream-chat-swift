@@ -11,8 +11,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add highlighting for `@here`, `@channel`, role and group mentions in messages [#4140](https://github.com/GetStream/stream-chat-swift/pull/4140)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
-### 🔄 Changed
-- Use v2 endpoints for app settings and device push management [#4133](https://github.com/GetStream/stream-chat-swift/pull/4133) [#4134](https://github.com/GetStream/stream-chat-swift/pull/4134)
 
 ## StreamChatUI
 ### 🐞 Fixed
