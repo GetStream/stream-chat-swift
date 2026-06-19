@@ -118,6 +118,14 @@ final class EndpointPathTests: XCTestCase {
         )
     }
 
+    func test_rolesSearch_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.rolesSearch.shouldBeQueuedOffline)
+    }
+
+    func test_rolesSearch_value() {
+        XCTAssertEqual(EndpointPath.rolesSearch.value, "roles/search")
+    }
+
     func test_pushPreferences_value() {
         let path = EndpointPath.pushPreferences.value
         XCTAssertEqual(path, "push_preferences")
@@ -168,6 +176,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.userGroup(id: "group"))
         assertResultEncodingAndDecoding(.userGroupMembers(id: "group"))
         assertResultEncodingAndDecoding(.userGroupMembersDelete(id: "group"))
+        assertResultEncodingAndDecoding(.rolesSearch)
 
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))
