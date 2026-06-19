@@ -180,7 +180,8 @@ public extension ChatChannel {
         pendingMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         draftMessage: DraftMessage? = nil,
-        activeLiveLocations: [SharedLocation] = []
+        activeLiveLocations: [SharedLocation] = [],
+        pushPreference: PushPreference? = nil
     ) -> Self {
         self.init(
             cid: .init(type: .messaging, id: "!members" + .newUniqueId),
@@ -216,7 +217,7 @@ public extension ChatChannel {
             muteDetails: muteDetails,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
-            pushPreference: nil
+            pushPreference: pushPreference
         )
     }
 

@@ -4,18 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `all_mentions` and `direct_mentions` push notification preference levels [#4137](https://github.com/GetStream/stream-chat-swift/pull/4137)
+- Add user groups support [#4138](https://github.com/GetStream/stream-chat-swift/pull/4138)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
-- ### 🔄 Changed
-- Use v2 app endpoint for app settings [#4133](https://github.com/GetStream/stream-chat-swift/pull/4133)
-- Use v2 endpoints for blocking, unblocking and listing blocked users [#4136](https://github.com/GetStream/stream-chat-swift/pull/4136)
+### 🔄 Changed
+- Use v2 endpoints for app settings, blocking, unblocking and listing blocked users [#4133](https://github.com/GetStream/stream-chat-swift/pull/4133) [#4136](https://github.com/GetStream/stream-chat-swift/pull/4136)
 
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix `Spacer()` conflicting with SwiftUI's `Spacer` when building with Xcode 27 [#4131](https://github.com/GetStream/stream-chat-swift/pull/4131)
-
-## StreamChat
-### 🐞 Fixed
 - Fix showing voice recording icon in search results [#4127](https://github.com/GetStream/stream-chat-swift/pull/4127)
 
 # [5.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.1)
@@ -41,6 +40,7 @@ _June 03, 2026_
 - Add `ChatClient.queryGroupedChannels(groups:limit:presence:watch:)` to fetch grouped channels with per-group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `unreadChannelCountsByGroup` to `CurrentChatUser`, observable for changes via `ConnectedUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+- Add `all_mentions` and `direct_mentions` push notification preference levels [#4137](https://github.com/GetStream/stream-chat-swift/pull/4137)
 
 # [4.101.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.0)
 _June 03, 2026_

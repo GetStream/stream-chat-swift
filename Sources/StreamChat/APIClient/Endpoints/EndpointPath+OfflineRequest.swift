@@ -15,7 +15,8 @@ extension EndpointPath {
              .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser, .translateMessage,
              .callToken, .createCall, .deleteFile, .deleteImage, .og, .getApp, .threads, .thread, .markThreadRead, .markThreadUnread,
              .polls, .pollsQuery, .poll, .pollOption, .pollOptions, .pollVotes, .pollVoteInMessage, .pollVote,
-             .unread, .blockUsers, .unblockUsers, .getBlockedUsers, .drafts, .reminders, .reminder, .liveLocations, .uploadAttachment, .pushPreferences:
+             .unread, .blockUsers, .unblockUsers, .getBlockedUsers, .drafts, .reminders, .reminder, .liveLocations, .uploadAttachment, .pushPreferences,
+             .userGroups, .userGroupSearch, .userGroup, .userGroupMembers, .userGroupMembersDelete:
             return false
         }
     }

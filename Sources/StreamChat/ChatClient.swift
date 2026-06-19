@@ -91,6 +91,11 @@ public class ChatClient: @unchecked Sendable {
         environment.remindersRepositoryBuilder(databaseContainer, apiClient)
     }()
 
+    /// Repository for handling user groups.
+    lazy var userGroupsRepository: UserGroupsRepository = {
+        environment.userGroupsRepositoryBuilder(databaseContainer, apiClient)
+    }()
+
     let channelListUpdater: ChannelListUpdater
 
     /// Handler for watching channels and preventing duplicate watch requests.
