@@ -9,7 +9,7 @@ import Foundation
 /// In addition to user mentions, it suggests `@here`, `@channel`, roles and user groups.
 /// Which of these types is suggested is determined by the channel's own
 /// capabilities (`notify-here`, `notify-channel`, `notify-role`, `notify-group`).
-public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvider, @unchecked Sendable {
+public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvider, Sendable {
     /// When `true`, user suggestions are searched across all app users instead
     /// of only the channel's members and watchers.
     public let mentionAllAppUsers: Bool
@@ -17,7 +17,7 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
     private let userSearch: UserSearch
     private let roleSearch: RoleSearch
     private let userGroupSearch: UserGroupSearch
-    private let currentUserId: () -> UserId?
+    private let currentUserId: @Sendable () -> UserId?
 
     /// Creates a new enhanced mention suggestions provider.
     ///
