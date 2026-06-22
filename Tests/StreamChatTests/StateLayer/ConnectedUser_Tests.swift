@@ -54,7 +54,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_loadDevices_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         
-        let apiResult = DeviceListPayload(devices: [.dummy, .dummy, .dummy])
+        let apiResult = ListDevicesResponse.dummy(devices: [.dummy(), .dummy(), .dummy()])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         
         let devices = try await connectedUser.loadDevices()
@@ -71,7 +71,7 @@ final class ConnectedUser_Tests: XCTestCase {
         
         // Fetch devices which resets the device list
         try await setUpConnectedUser(usesMockedUpdaters: false)
-        let apiResult = DeviceListPayload(devices: [.dummy, .dummy, .dummy])
+        let apiResult = ListDevicesResponse.dummy(devices: [.dummy(), .dummy(), .dummy()])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         let devices = try await connectedUser.loadDevices()
         
@@ -83,7 +83,7 @@ final class ConnectedUser_Tests: XCTestCase {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         await XCTAssertEqual(0, connectedUser.state.user.devices.count)
         
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(Response.dummy))
         try await connectedUser.addDevice(.apn(token: Data("test123".utf8)))
         
         // Converted to hex (test123 > 74657374313233)
@@ -93,7 +93,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_removeDevice_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false, initialDeviceCount: 2)
         
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(Response.dummy))
         var devices = await connectedUser.state.user.devices
         let deviceToRemove = try XCTUnwrap(devices.popLast()?.id)
         try await connectedUser.removeDevice(deviceToRemove)

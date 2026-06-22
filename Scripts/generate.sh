@@ -12,8 +12,11 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
     blockUsers
+    createDevice
+    deleteDevice
     getApp
     getBlockedUsers
+    listDevices
     unblockUsers
 )
 allowed_models=(
@@ -21,9 +24,13 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
+  CreateDeviceRequest
+  DeviceResponse
   FileUploadConfig
   GetApplicationResponse
   GetBlockedUsersResponse
+  ListDevicesResponse
+  Response
   UnblockUsersRequest
   UnblockUsersResponse
   UserResponse
@@ -142,7 +149,6 @@ inject_v1_endpoint_paths() {
     case users
     case guest
     case search
-    case devices
     case og
     case unread
     case pushPreferences
@@ -233,7 +239,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .devices: return "devices"
         case .og: return "og"
         case .unread: return "unread"
         case .pushPreferences: return "push_preferences"

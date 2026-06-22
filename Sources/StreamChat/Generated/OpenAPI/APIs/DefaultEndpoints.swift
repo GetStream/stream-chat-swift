@@ -10,7 +10,6 @@ enum EndpointPath: Codable {
     case users
     case guest
     case search
-    case devices
     case og
     case unread
     case pushPreferences
@@ -94,8 +93,11 @@ enum EndpointPath: Codable {
     case rolesSearch
 
     case blockUsers
+    case createDevice
+    case deleteDevice
     case getApp
     case getBlockedUsers
+    case listDevices
     case unblockUsers
 
     var value: String {
@@ -105,7 +107,6 @@ enum EndpointPath: Codable {
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .devices: return "devices"
         case .og: return "og"
         case .unread: return "unread"
         case .pushPreferences: return "push_preferences"
@@ -190,10 +191,16 @@ enum EndpointPath: Codable {
 
         case .blockUsers:
             return "/api/v2/users/block"
+        case .createDevice:
+            return "/api/v2/devices"
+        case .deleteDevice:
+            return "/api/v2/devices"
         case .getApp:
             return "/api/v2/app"
         case .getBlockedUsers:
             return "/api/v2/users/block"
+        case .listDevices:
+            return "/api/v2/devices"
         case .unblockUsers:
             return "/api/v2/users/unblock"
         }
@@ -286,6 +293,28 @@ extension Endpoint {
         )
     }
 
+    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+        return .init(
+            path: .createDevice,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createDeviceRequest
+        )
+    }
+
+    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+        return .init(
+            path: .deleteDevice,
+            method: .delete,
+            queryItems: [
+                "id": APIHelper.convertAnyToString(id)
+            ],
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func getApp(requiresConnectionId: Bool = false) -> Endpoint<GetApplicationResponse> {
         return .init(
             path: .getApp,
@@ -299,6 +328,16 @@ extension Endpoint {
     static func getBlockedUsers(requiresConnectionId: Bool = false) -> Endpoint<GetBlockedUsersResponse> {
         return .init(
             path: .getBlockedUsers,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func listDevices(requiresConnectionId: Bool = false) -> Endpoint<ListDevicesResponse> {
+        return .init(
+            path: .listDevices,
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,

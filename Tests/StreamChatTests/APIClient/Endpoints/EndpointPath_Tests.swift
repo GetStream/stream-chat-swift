@@ -87,6 +87,18 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(EndpointPath.getApp.value, "/api/v2/app")
     }
 
+    func test_devices_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.createDevice.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteDevice.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.listDevices.shouldBeQueuedOffline)
+    }
+
+    func test_devices_value() {
+        XCTAssertEqual(EndpointPath.createDevice.value, "/api/v2/devices")
+        XCTAssertEqual(EndpointPath.deleteDevice.value, "/api/v2/devices")
+        XCTAssertEqual(EndpointPath.listDevices.value, "/api/v2/devices")
+    }
+
     func test_blockUsers_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.blockUsers.shouldBeQueuedOffline)
         XCTAssertFalse(EndpointPath.unblockUsers.shouldBeQueuedOffline)
@@ -170,7 +182,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.members)
         assertResultEncodingAndDecoding(.partialMemberUpdate(userId: "1", cid: .init(type: .messaging, id: "2")))
         assertResultEncodingAndDecoding(.search)
-        assertResultEncodingAndDecoding(.devices)
+        assertResultEncodingAndDecoding(.createDevice)
+        assertResultEncodingAndDecoding(.deleteDevice)
+        assertResultEncodingAndDecoding(.listDevices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
         assertResultEncodingAndDecoding(.pushPreferences)
