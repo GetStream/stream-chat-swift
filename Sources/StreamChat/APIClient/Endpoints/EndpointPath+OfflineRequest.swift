@@ -9,13 +9,13 @@ extension EndpointPath {
         switch self {
         case .sendMessage, .editMessage, .deleteMessage, .pinMessage, .unpinMessage, .addReaction, .deleteReaction, .draftMessage:
             return true
-        case .createChannel, .connect, .sync, .users, .guest, .members, .partialMemberUpdate, .search, .devices, .channels, .groupedChannels, .updateChannel,
+        case .createChannel, .connect, .sync, .users, .guest, .members, .partialMemberUpdate, .search, .createDevice, .deleteDevice, .listDevices, .channels, .groupedChannels, .updateChannel,
              .deleteChannel, .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead, .markChannelUnread,
              .markAllChannelsRead, .markChannelsDelivered, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadChannelAttachment, .message,
              .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser, .translateMessage,
              .callToken, .createCall, .deleteFile, .deleteImage, .getOG, .getApp, .threads, .thread, .markThreadRead, .markThreadUnread,
              .polls, .pollsQuery, .poll, .pollOption, .pollOptions, .pollVotes, .pollVoteInMessage, .pollVote,
-             .unread, .blockUser, .unblockUser, .drafts, .reminders, .reminder, .liveLocations, .uploadAttachment, .pushPreferences,
+             .unread, .blockUsers, .unblockUsers, .getBlockedUsers, .drafts, .reminders, .reminder, .liveLocations, .uploadAttachment, .pushPreferences,
              .userGroups, .userGroupSearch, .userGroup, .userGroupMembers, .userGroupMembersDelete,
              .rolesSearch:
             return false

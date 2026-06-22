@@ -425,6 +425,56 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
+    func test_messagePayload_enhancedMentions_areStoredAndLoadedAndSerialized() throws {
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+
+        try database.createCurrentUser()
+        try database.createChannel(cid: channelId, withMessages: false)
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: .unique,
+            channel: .dummy(cid: channelId),
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroups: [
+                .init(id: "backendsupport", name: "Backend Support"),
+                .init(id: "engineering", name: "Engineering")
+            ],
+            mentionedRoles: ["admin"]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+        }
+
+        // Verify the model exposes the fields
+        let loadedMessage: ChatMessage = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asModel()
+        )
+        XCTAssertTrue(loadedMessage.mentionedHere)
+        XCTAssertTrue(loadedMessage.mentionedChannel)
+        XCTAssertEqual(
+            loadedMessage.mentionedGroups,
+            [
+                .init(id: "backendsupport", name: "Backend Support"),
+                .init(id: "engineering", name: "Engineering")
+            ]
+        )
+        XCTAssertEqual(loadedMessage.mentionedRoles, ["admin"])
+
+        // Verify the request body re-serializes the group ids
+        let requestBody: MessageRequestBody = try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            return messageDTO.asRequestBody()
+        }
+        XCTAssertTrue(requestBody.mentionedHere)
+        XCTAssertTrue(requestBody.mentionedChannel)
+        XCTAssertEqual(requestBody.mentionedGroupIds, ["backendsupport", "engineering"])
+        XCTAssertEqual(requestBody.mentionedRoles, ["admin"])
+    }
+
     func test_messagePayload_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique

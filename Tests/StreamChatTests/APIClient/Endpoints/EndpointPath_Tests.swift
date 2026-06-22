@@ -87,6 +87,36 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(EndpointPath.getApp.value, "/api/v2/app")
     }
 
+    func test_devices_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.createDevice.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteDevice.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.listDevices.shouldBeQueuedOffline)
+    }
+
+    func test_devices_value() {
+        XCTAssertEqual(EndpointPath.createDevice.value, "/api/v2/devices")
+        XCTAssertEqual(EndpointPath.deleteDevice.value, "/api/v2/devices")
+        XCTAssertEqual(EndpointPath.listDevices.value, "/api/v2/devices")
+    }
+
+    func test_blockUsers_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.blockUsers.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.unblockUsers.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getBlockedUsers.shouldBeQueuedOffline)
+    }
+
+    func test_blockUsers_value() {
+        XCTAssertEqual(EndpointPath.blockUsers.value, "/api/v2/users/block")
+    }
+
+    func test_unblockUsers_value() {
+        XCTAssertEqual(EndpointPath.unblockUsers.value, "/api/v2/users/unblock")
+    }
+
+    func test_getBlockedUsers_value() {
+        XCTAssertEqual(EndpointPath.getBlockedUsers.value, "/api/v2/users/block")
+    }
+
     func test_userGroups_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.userGroups.shouldBeQueuedOffline)
         XCTAssertFalse(EndpointPath.userGroupSearch.shouldBeQueuedOffline)
@@ -152,7 +182,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.members)
         assertResultEncodingAndDecoding(.partialMemberUpdate(userId: "1", cid: .init(type: .messaging, id: "2")))
         assertResultEncodingAndDecoding(.search)
-        assertResultEncodingAndDecoding(.devices)
+        assertResultEncodingAndDecoding(.createDevice)
+        assertResultEncodingAndDecoding(.deleteDevice)
+        assertResultEncodingAndDecoding(.listDevices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
         assertResultEncodingAndDecoding(.pushPreferences)
@@ -195,8 +227,10 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.flagUser(false))
         assertResultEncodingAndDecoding(.flagMessage(false))
         assertResultEncodingAndDecoding(.muteUser(false))
-        assertResultEncodingAndDecoding(.blockUser)
-        
+        assertResultEncodingAndDecoding(.blockUsers)
+        assertResultEncodingAndDecoding(.unblockUsers)
+        assertResultEncodingAndDecoding(.getBlockedUsers)
+
         assertResultEncodingAndDecoding(.polls)
         assertResultEncodingAndDecoding(.pollsQuery)
         assertResultEncodingAndDecoding(.poll(pollId: "test_poll"))

@@ -137,14 +137,12 @@ struct UserGroupsConfigView: View {
         errorMessage = nil
 
         listController.synchronize { error in
-            DispatchQueue.main.async {
-                isLoading = false
-                if let error {
-                    errorMessage = error.localizedDescription
-                } else {
-                    groups = listController.userGroups
-                    hasLoadedAllUserGroups = listController.hasLoadedAllUserGroups
-                }
+            isLoading = false
+            if let error {
+                errorMessage = error.localizedDescription
+            } else {
+                groups = listController.userGroups
+                hasLoadedAllUserGroups = listController.hasLoadedAllUserGroups
             }
         }
     }
@@ -158,14 +156,12 @@ struct UserGroupsConfigView: View {
         errorMessage = nil
 
         listController.loadMoreUserGroups { error in
-            DispatchQueue.main.async {
-                isLoadingMore = false
-                if let error {
-                    errorMessage = error.localizedDescription
-                } else {
-                    groups = listController.userGroups
-                    hasLoadedAllUserGroups = listController.hasLoadedAllUserGroups
-                }
+            isLoadingMore = false
+            if let error {
+                errorMessage = error.localizedDescription
+            } else {
+                groups = listController.userGroups
+                hasLoadedAllUserGroups = listController.hasLoadedAllUserGroups
             }
         }
     }
@@ -191,14 +187,12 @@ struct UserGroupsConfigView: View {
         errorMessage = nil
 
         listController.searchUserGroups(text: query) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case let .success(groups):
-                    searchResults = groups
-                case let .failure(error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case let .success(groups):
+                searchResults = groups
+            case let .failure(error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -212,14 +206,12 @@ struct UserGroupsConfigView: View {
         newGroupName = ""
 
         listController.createUserGroup(name: name) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case .success:
-                    loadGroups()
-                case let .failure(error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case .success:
+                loadGroups()
+            case let .failure(error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -374,13 +366,11 @@ private struct UserGroupDetailView: View {
         errorMessage = nil
 
         controller.synchronize { error in
-            DispatchQueue.main.async {
-                isLoading = false
-                if let error {
-                    errorMessage = error.localizedDescription
-                } else if let updatedGroup = controller.userGroup {
-                    group = updatedGroup
-                }
+            isLoading = false
+            if let error {
+                errorMessage = error.localizedDescription
+            } else if let updatedGroup = controller.userGroup {
+                group = updatedGroup
             }
         }
     }
@@ -394,15 +384,13 @@ private struct UserGroupDetailView: View {
         newGroupName = ""
 
         controller.update(name: name) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case let .success(updatedGroup):
-                    group = updatedGroup
-                    onChanged()
-                case let .failure(error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case let .success(updatedGroup):
+                group = updatedGroup
+                onChanged()
+            case let .failure(error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -412,14 +400,12 @@ private struct UserGroupDetailView: View {
         errorMessage = nil
 
         listController.deleteUserGroup(id: group.id, teamId: group.teamId) { error in
-            DispatchQueue.main.async {
-                isLoading = false
-                if let error {
-                    errorMessage = error.localizedDescription
-                } else {
-                    onChanged()
-                    dismiss()
-                }
+            isLoading = false
+            if let error {
+                errorMessage = error.localizedDescription
+            } else {
+                onChanged()
+                dismiss()
             }
         }
     }
@@ -433,15 +419,13 @@ private struct UserGroupDetailView: View {
         newMemberId = ""
 
         controller.addMembers([userId]) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case let .success(updatedGroup):
-                    group = updatedGroup
-                    onChanged()
-                case let .failure(error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case let .success(updatedGroup):
+                group = updatedGroup
+                onChanged()
+            case let .failure(error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -451,15 +435,13 @@ private struct UserGroupDetailView: View {
         errorMessage = nil
 
         controller.removeMembers([userId]) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case let .success(updatedGroup):
-                    group = updatedGroup
-                    onChanged()
-                case let .failure(error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case let .success(updatedGroup):
+                group = updatedGroup
+                onChanged()
+            case let .failure(error):
+                errorMessage = error.localizedDescription
             }
         }
     }

@@ -319,7 +319,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Mock successful API response
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(Response.dummy))
 
         // Call addDevice
         currentUserUpdater.addDevice(
@@ -333,11 +333,12 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<EmptyResponse> = .addDevice(
-            userId: userPayload.id,
-            deviceId: deviceId,
-            pushProvider: pushProvider,
-            providerName: providerName
+        let expectedEndpoint = Endpoint<Response>.createDevice(
+            createDeviceRequest: CreateDeviceRequest(
+                id: deviceId,
+                pushProvider: .init(rawValue: pushProvider.rawValue) ?? .unknown,
+                pushProviderName: providerName
+            )
         )
 
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
@@ -353,7 +354,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Mock failure API response
         let error = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<Response, Error>.failure(error))
 
         // Call addDevice
         nonisolated(unsafe) var completionCalledError: Error?
@@ -388,7 +389,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         assert(currentUser?.currentDevice == nil)
 
         // Mock successful API response
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(Response.dummy))
 
         // Call addDevice
         currentUserUpdater.addDevice(
@@ -419,7 +420,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Mock successful API response
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(Response.dummy))
 
         let exp = expectation(description: "should complete addDevice call")
 
@@ -447,7 +448,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
 
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(Response.dummy))
         let expectation = XCTestExpectation()
         
         // Call removeDevice
@@ -460,7 +461,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         wait(for: [expectation], timeout: defaultTimeout)
         
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<EmptyResponse> = .removeDevice(userId: userPayload.id, deviceId: "01")
+        let expectedEndpoint = Endpoint<Response>.deleteDevice(id: "01")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -472,7 +473,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(Response.dummy))
         let expectation = XCTestExpectation()
 
         // Call removeDevice
@@ -486,7 +487,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Simulate API error
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<Response, Error>.failure(error))
         apiClient.cleanUp()
 
         // Assert the completion is called with the error
@@ -510,7 +511,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with devices data
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
+        apiClient.test_simulateResponse(.success(Response.dummy))
 
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
@@ -543,7 +544,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<DeviceListPayload> = .devices(userId: userPayload.id)
+        let expectedEndpoint = Endpoint<ListDevicesResponse>.listDevices()
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -570,7 +571,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API error
         let error = TestError()
-        apiClient.test_simulateResponse(Result<DeviceListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ListDevicesResponse, Error>.failure(error))
         apiClient.cleanUp()
 
         // Assert the completion is called with the error
@@ -598,7 +599,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Simulate successful API response
-        apiClient.test_simulateResponse(.success(DeviceListPayload.dummy))
+        apiClient.test_simulateResponse(.success(ListDevicesResponse.dummy()))
 
         // Check returned error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -626,7 +627,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUserDevices([.dummy, .dummy, .dummy, .dummy])
         }
         
-        let dummyDevices = DeviceListPayload.dummy
+        let dummyDevices = ListDevicesResponse.dummy()
         let apiDevices = dummyDevices.devices.map { Device(id: $0.id, createdAt: $0.createdAt) }
 
         // Call updateDevices
@@ -1086,5 +1087,70 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // THEN
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Load Blocked Users
+
+    func test_loadBlockedUsers_makesCorrectAPICall() {
+        // Simulate `loadBlockedUsers` call
+        currentUserUpdater.loadBlockedUsers { _ in }
+
+        // Assert correct endpoint is called
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<GetBlockedUsersResponse>.getBlockedUsers())
+        )
+    }
+
+    func test_loadBlockedUsers_propagatesSuccessfulResponse() throws {
+        // Simulate current user already set
+        let currentUserId: UserId = .unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+        }
+
+        // Mock the API response before the call so the completion is invoked
+        let blockedUserId: UserId = .unique
+        let createdAt: Date = .unique
+        let payload = GetBlockedUsersResponse(
+            blocks: [
+                BlockedUserResponse(
+                    blockedUser: .dummy(userId: blockedUserId),
+                    blockedUserId: blockedUserId,
+                    createdAt: createdAt,
+                    user: .dummy(userId: currentUserId),
+                    userId: currentUserId
+                )
+            ],
+            duration: ""
+        )
+        apiClient.test_mockResponseResult(Result<GetBlockedUsersResponse, Error>.success(payload))
+        let expectation = XCTestExpectation()
+
+        // Simulate `loadBlockedUsers` call
+        nonisolated(unsafe) var result: [BlockedUserDetails]?
+        currentUserUpdater.loadBlockedUsers {
+            result = try? $0.get()
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Assert the returned details map the generated response
+        XCTAssertEqual(result?.map(\.userId), [blockedUserId])
+        XCTAssertEqual(result?.first?.blockedAt, createdAt)
+    }
+
+    func test_loadBlockedUsers_propagatesError() {
+        // Mock the API failure before the call so the completion is invoked synchronously
+        let error = TestError()
+        apiClient.test_mockResponseResult(Result<GetBlockedUsersResponse, Error>.failure(error))
+
+        // Simulate `loadBlockedUsers` call
+        nonisolated(unsafe) var completionCalledError: Error?
+        currentUserUpdater.loadBlockedUsers { completionCalledError = $0.error }
+
+        // Assert the completion is called with the error
+        XCTAssertEqual(completionCalledError as? TestError, error)
     }
 }

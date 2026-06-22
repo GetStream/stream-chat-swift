@@ -14,7 +14,9 @@ extension EndpointPath: Equatable {
         case (.guest, .guest): return true
         case (.members, .members): return true
         case (.search, .search): return true
-        case (.devices, .devices): return true
+        case (.createDevice, .createDevice): return true
+        case (.deleteDevice, .deleteDevice): return true
+        case (.listDevices, .listDevices): return true
         case (.channels, .channels): return true
         case let (.createChannel(string1), .createChannel(string2)): return string1 == string2
         case let (.updateChannel(string1), .updateChannel(string2)): return string1 == string2
