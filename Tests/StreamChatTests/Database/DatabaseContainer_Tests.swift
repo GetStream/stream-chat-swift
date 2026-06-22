@@ -379,12 +379,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
             session.currentUser?.mutedUsers = Set([mutedUserDTO])
             try session.savePushPreference(id: "currentUserId", payload: .init(chatLevel: "mentions", disabledUntil: nil))
-            try session.saveUserGroup(payload: .init(
-                id: .unique,
-                name: .unique,
-                createdAt: .unique,
-                updatedAt: .unique
-            ))
+            try session.saveUserGroup(.dummy())
             session.saveThreadList(
                 payload: ThreadListPayload(
                     threads: [
@@ -420,7 +415,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                         user: .dummy(userId: currentUserId)
                     )
                 ),
-                .dummy(mentionedGroups: [.init(id: .unique, name: .unique)]),
+                .dummy(mentionedGroups: [.dummy(id: .unique, name: .unique)]),
                 .dummy(),
                 .dummy()
             ]

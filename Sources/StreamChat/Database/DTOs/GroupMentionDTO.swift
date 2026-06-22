@@ -42,7 +42,7 @@ class GroupMentionDTO: NSManagedObject {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveGroupMention(payload: UserGroupMentionPayload) throws -> GroupMentionDTO {
+    func saveGroupMention(payload: UserGroupResponse) throws -> GroupMentionDTO {
         let dto = GroupMentionDTO.loadOrCreate(id: payload.id, context: self)
         dto.id = payload.id
         dto.name = payload.name

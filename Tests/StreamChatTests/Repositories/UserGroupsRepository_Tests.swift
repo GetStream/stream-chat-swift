@@ -36,34 +36,30 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(UserGroupListPayload(userGroups: [])))
+        apiClient.test_simulateResponse(.success(ListUserGroupsResponse.dummy(userGroups: [])))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UserGroupListPayload> = .userGroups(query: query)
+        let expectedEndpoint: Endpoint<ListUserGroupsResponse> = .listUserGroups(
+            limit: 10,
+            idGt: nil,
+            createdAtGt: nil,
+            teamId: "engineering"
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_createUserGroup_savesUserGroupToDatabase() throws {
-        let request = CreateUserGroupRequestBody(
+        let request = CreateUserGroupRequest(
             id: "backendsupport",
-            name: "Backend Support Team",
-            memberIds: ["user1"]
+            memberIds: ["user1"],
+            name: "Backend Support Team"
         )
 
-        let response = UserGroupPayloadResponse(
-            userGroup: .init(
+        let response = CreateUserGroupResponse.dummy(
+            userGroup: .dummy(
                 id: "backendsupport",
-                name: "Backend Support Team",
-                members: [
-                    .init(
-                        groupId: "backendsupport",
-                        userId: "user1",
-                        isAdmin: false,
-                        createdAt: .unique
-                    )
-                ],
-                createdAt: .unique,
-                updatedAt: .unique
+                members: [.dummy(groupId: "backendsupport", userId: "user1")],
+                name: "Backend Support Team"
             )
         )
 
@@ -84,12 +80,6 @@ final class UserGroupsRepository_Tests: XCTestCase {
 
     func test_searchUserGroups_mapsPayloadsToDomainModels() {
         let query = UserGroupSearchQuery(query: "backend", limit: 10)
-        let payload = UserGroupPayload(
-            id: "backendsupport",
-            name: "Backend Support Team",
-            createdAt: .unique,
-            updatedAt: .unique
-        )
 
         nonisolated(unsafe) var result: Result<[UserGroup], Error>?
         let exp = expectation(description: "completion is called")
@@ -98,10 +88,18 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(UserGroupListPayload(userGroups: [payload])))
+        apiClient.test_simulateResponse(.success(SearchUserGroupsResponse.dummy(
+            userGroups: [.dummy(id: "backendsupport", name: "Backend Support Team")]
+        )))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UserGroupListPayload> = .searchUserGroups(query: query)
+        let expectedEndpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+            query: "backend",
+            limit: 10,
+            nameGt: nil,
+            idGt: nil,
+            teamId: nil
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         guard case .success(let userGroups) = result else {
@@ -116,31 +114,27 @@ final class UserGroupsRepository_Tests: XCTestCase {
 
     func test_searchUserGroups_asyncOverload_mapsPayloadsToDomainModels() async throws {
         let query = UserGroupSearchQuery(query: "backend", limit: 10)
-        let payload = UserGroupPayload(
-            id: "backendsupport",
-            name: "Backend Support Team",
-            createdAt: .unique,
-            updatedAt: .unique
-        )
 
-        apiClient.test_mockResponseResult(.success(UserGroupListPayload(userGroups: [payload])))
+        apiClient.test_mockResponseResult(.success(SearchUserGroupsResponse.dummy(
+            userGroups: [.dummy(id: "backendsupport", name: "Backend Support Team")]
+        )))
 
         let userGroups = try await repository.searchUserGroups(query: query)
 
-        let expectedEndpoint: Endpoint<UserGroupListPayload> = .searchUserGroups(query: query)
+        let expectedEndpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+            query: "backend",
+            limit: 10,
+            nameGt: nil,
+            idGt: nil,
+            teamId: nil
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertEqual(userGroups.map(\.id), ["backendsupport"])
     }
 
     func test_loadUserGroup_savesUserGroupToDatabase() throws {
-        let response = UserGroupPayloadResponse(
-            userGroup: .init(
-                id: "backendsupport",
-                name: "Backend Support Team",
-                teamId: "engineering",
-                createdAt: .unique,
-                updatedAt: .unique
-            )
+        let response = GetUserGroupResponse.dummy(
+            userGroup: .dummy(id: "backendsupport", name: "Backend Support Team", teamId: "engineering")
         )
 
         nonisolated(unsafe) var result: Result<UserGroup, Error>?
@@ -153,7 +147,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UserGroupPayloadResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
+        let expectedEndpoint: Endpoint<GetUserGroupResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertEqual(result?.value?.id, "backendsupport")
 
@@ -163,14 +157,9 @@ final class UserGroupsRepository_Tests: XCTestCase {
     }
 
     func test_updateUserGroup_savesUserGroupToDatabase() throws {
-        let request = UpdateUserGroupRequestBody(name: "Updated Name")
-        let response = UserGroupPayloadResponse(
-            userGroup: .init(
-                id: "backendsupport",
-                name: "Updated Name",
-                createdAt: .unique,
-                updatedAt: .unique
-            )
+        let request = UpdateUserGroupRequest(name: "Updated Name")
+        let response = UpdateUserGroupResponse.dummy(
+            userGroup: .dummy(id: "backendsupport", name: "Updated Name")
         )
 
         let exp = expectation(description: "completion is called")
@@ -182,7 +171,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UserGroupPayloadResponse> = .updateUserGroup(id: "backendsupport", request: request)
+        let expectedEndpoint: Endpoint<UpdateUserGroupResponse> = .updateUserGroup(id: "backendsupport", updateUserGroupRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         let loadedGroup = database.viewContext.userGroup(id: "backendsupport")?.asModel()
@@ -192,14 +181,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
     func test_deleteUserGroup_removesUserGroupFromDatabase() throws {
         // Pre-populate the database with a group to delete.
         try database.writeSynchronously { session in
-            try session.saveUserGroup(
-                payload: .init(
-                    id: "backendsupport",
-                    name: "Backend Support Team",
-                    createdAt: .unique,
-                    updatedAt: .unique
-                )
-            )
+            try session.saveUserGroup(.dummy(id: "backendsupport", name: "Backend Support Team"))
         }
         XCTAssertNotNil(database.viewContext.userGroup(id: "backendsupport"))
 
@@ -210,26 +192,22 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
+        apiClient.test_simulateResponse(.success(Response.dummy))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<EmptyResponse> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
+        let expectedEndpoint: Endpoint<Response> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(completionError)
         XCTAssertNil(database.viewContext.userGroup(id: "backendsupport"))
     }
 
     func test_addMembers_savesUserGroupToDatabase() throws {
-        let request = UserGroupMembersRequestBody(memberIds: ["user1"], asAdmin: true)
-        let response = UserGroupPayloadResponse(
-            userGroup: .init(
+        let request = AddUserGroupMembersRequest(asAdmin: true, memberIds: ["user1"])
+        let response = AddUserGroupMembersResponse.dummy(
+            userGroup: .dummy(
                 id: "backendsupport",
-                name: "Backend Support Team",
-                members: [
-                    .init(groupId: "backendsupport", userId: "user1", isAdmin: true, createdAt: .unique)
-                ],
-                createdAt: .unique,
-                updatedAt: .unique
+                members: [.dummy(groupId: "backendsupport", isAdmin: true, userId: "user1")],
+                name: "Backend Support Team"
             )
         )
 
@@ -242,7 +220,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UserGroupPayloadResponse> = .addUserGroupMembers(id: "backendsupport", request: request)
+        let expectedEndpoint: Endpoint<AddUserGroupMembersResponse> = .addUserGroupMembers(id: "backendsupport", addUserGroupMembersRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         let loadedGroup = database.viewContext.userGroup(id: "backendsupport")?.asModel()
@@ -250,15 +228,9 @@ final class UserGroupsRepository_Tests: XCTestCase {
     }
 
     func test_removeMembers_savesUserGroupToDatabase() throws {
-        let request = UserGroupMembersRequestBody(memberIds: ["user1"])
-        let response = UserGroupPayloadResponse(
-            userGroup: .init(
-                id: "backendsupport",
-                name: "Backend Support Team",
-                members: [],
-                createdAt: .unique,
-                updatedAt: .unique
-            )
+        let request = RemoveUserGroupMembersRequest(memberIds: ["user1"])
+        let response = RemoveUserGroupMembersResponse.dummy(
+            userGroup: .dummy(id: "backendsupport", members: [], name: "Backend Support Team")
         )
 
         let exp = expectation(description: "completion is called")
@@ -270,7 +242,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UserGroupPayloadResponse> = .removeUserGroupMembers(id: "backendsupport", request: request)
+        let expectedEndpoint: Endpoint<RemoveUserGroupMembersResponse> = .removeUserGroupMembers(id: "backendsupport", removeUserGroupMembersRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         let loadedGroup = database.viewContext.userGroup(id: "backendsupport")?.asModel()
@@ -288,7 +260,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<UserGroupListPayload, Error>.failure(testError))
+        apiClient.test_simulateResponse(Result<ListUserGroupsResponse, Error>.failure(testError))
         wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssertEqual(result?.error as? TestError, testError)
@@ -304,7 +276,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<UserGroupPayloadResponse, Error>.failure(testError))
+        apiClient.test_simulateResponse(Result<GetUserGroupResponse, Error>.failure(testError))
         wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssertEqual(result?.error as? TestError, testError)

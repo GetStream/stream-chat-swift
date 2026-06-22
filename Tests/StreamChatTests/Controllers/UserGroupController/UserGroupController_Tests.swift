@@ -126,6 +126,5 @@ final class UserGroupController_Tests: XCTestCase {
         XCTAssertEqual(repository.removeMembers_id, "backendsupport")
         XCTAssertEqual(repository.removeMembers_request?.memberIds, memberIds)
         XCTAssertEqual(repository.removeMembers_request?.teamId, "engineering")
-        XCTAssertNil(repository.removeMembers_request?.asAdmin)
     }
 }

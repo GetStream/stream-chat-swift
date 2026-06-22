@@ -100,7 +100,7 @@ final class MessagePayload: Decodable, Sendable {
     let mentionedUsers: [UserPayload]
     let mentionedHere: Bool
     let mentionedChannel: Bool
-    let mentionedGroups: [UserGroupMentionPayload]
+    let mentionedGroups: [UserGroupResponse]
     let mentionedRoles: [String]
     let restrictedVisibility: [UserId]
     let threadParticipants: [UserPayload]
@@ -158,7 +158,7 @@ final class MessagePayload: Decodable, Sendable {
         mentionedUsers = try container.decodeArrayIgnoringFailures([UserPayload].self, forKey: .mentionedUsers)
         mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere) ?? false
         mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel) ?? false
-        mentionedGroups = try container.decodeArrayIfPresentIgnoringFailures([UserGroupMentionPayload].self, forKey: .mentionedGroups) ?? []
+        mentionedGroups = try container.decodeArrayIfPresentIgnoringFailures([UserGroupResponse].self, forKey: .mentionedGroups) ?? []
         mentionedRoles = try container.decodeArrayIfPresentIgnoringFailures([String].self, forKey: .mentionedRoles) ?? []
         // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
         threadParticipants = try container.decodeIfPresent([UserPayload].self, forKey: .threadParticipants) ?? []
@@ -229,7 +229,7 @@ final class MessagePayload: Decodable, Sendable {
         mentionedUsers: [UserPayload],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
-        mentionedGroups: [UserGroupMentionPayload] = [],
+        mentionedGroups: [UserGroupResponse] = [],
         mentionedRoles: [String] = [],
         threadParticipants: [UserPayload] = [],
         replyCount: Int,

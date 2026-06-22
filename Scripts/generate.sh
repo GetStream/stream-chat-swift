@@ -11,28 +11,49 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
+    addUserGroupMembers
     blockUsers
     createDevice
+    createUserGroup
     deleteDevice
+    deleteUserGroup
     getApp
     getBlockedUsers
+    getUserGroup
     listDevices
+    listUserGroups
+    removeUserGroupMembers
+    searchUserGroups
     unblockUsers
+    updateUserGroup
 )
 allowed_models=(
+  AddUserGroupMembersRequest
+  AddUserGroupMembersResponse
   AppResponseFields
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CreateDeviceRequest
+  CreateUserGroupRequest
+  CreateUserGroupResponse
   DeviceResponse
   FileUploadConfig
   GetApplicationResponse
   GetBlockedUsersResponse
+  GetUserGroupResponse
   ListDevicesResponse
+  ListUserGroupsResponse
+  RemoveUserGroupMembersRequest
+  RemoveUserGroupMembersResponse
   Response
+  SearchUserGroupsResponse
   UnblockUsersRequest
   UnblockUsersResponse
+  UpdateUserGroupRequest
+  UpdateUserGroupResponse
+  UserGroupMember
+  UserGroupResponse
   UserResponse
 )
 
@@ -40,6 +61,30 @@ allowed_models=(
 contains() {
   local needle="$1"; shift
   printf '%s\n' "$@" | grep -qxF "$needle"
+}
+
+# Rename helpers. rename_generated_filename only moves the model definition file
+# (models/ holds those); rename_generated_type rewrites every whole-word reference
+# across the entire generated tree (models/ AND APIs/, so endpoint factories in
+# DefaultEndpoints.swift are covered now and for any future references).
+rename_generated_filename() {
+  local old="$1"
+  local new="$2"
+  local old_path="$OUTPUT_DIR_CHAT/models/${old}.swift"
+  local new_path="$OUTPUT_DIR_CHAT/models/${new}.swift"
+  [[ -f "$old_path" ]] && mv "$old_path" "$new_path"
+}
+
+rename_generated_type() {
+  local old="$1"
+  local new="$2"
+  find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E "s/[[:<:]]$old[[:>:]]/$new/g" {} +
+}
+
+# Rename both the model file and every reference to the type.
+rename_generated() {
+  rename_generated_filename "$1" "$2"
+  rename_generated_type "$1" "$2"
 }
 
 # 1. Clean + generate.
@@ -124,6 +169,11 @@ prune_models() {
   done
 }
 prune_models
+
+# 4b. Rename selected generated models for clarity and to avoid generic-name
+#     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
+#     so allowed_models above still matches the generator's original names.
+rename_generated UserGroupMember UserGroupMemberResponse
 
 # 5. Generated code is internal to the SDK — strip public/open.
 find "$OUTPUT_DIR_CHAT" -name '*.swift' -print0 | while IFS= read -r -d '' file; do
@@ -223,12 +273,6 @@ inject_v1_endpoint_paths() {
     case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
-    case userGroups
-    case userGroupSearch
-    case userGroup(id: String)
-    case userGroupMembers(id: String)
-    case userGroupMembersDelete(id: String)
-
     case rolesSearch
 
 EOF
@@ -312,12 +356,6 @@ EOF
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
-
-        case .userGroups: return "usergroups"
-        case .userGroupSearch: return "usergroups/search"
-        case let .userGroup(id): return "usergroups/\(id)"
-        case let .userGroupMembers(id): return "usergroups/\(id)/members"
-        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
 
         case .rolesSearch: return "roles/search"
 

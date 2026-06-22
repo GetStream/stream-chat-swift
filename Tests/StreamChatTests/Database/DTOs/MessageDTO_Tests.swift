@@ -439,8 +439,8 @@ final class MessageDTO_Tests: XCTestCase {
             mentionedHere: true,
             mentionedChannel: true,
             mentionedGroups: [
-                .init(id: "backendsupport", name: "Backend Support"),
-                .init(id: "engineering", name: "Engineering")
+                .dummy(id: "backendsupport", name: "Backend Support"),
+                .dummy(id: "engineering", name: "Engineering")
             ],
             mentionedRoles: ["admin"]
         )

@@ -77,12 +77,3 @@ public struct UserGroupSearchQuery: Encodable, Sendable, Equatable {
         self.teamId = teamId
     }
 }
-
-/// Query parameters for team-scoped user group endpoints.
-struct UserGroupTeamQuery: Encodable, Sendable {
-    let teamId: String?
-
-    enum CodingKeys: String, CodingKey {
-        case teamId = "team_id"
-    }
-}

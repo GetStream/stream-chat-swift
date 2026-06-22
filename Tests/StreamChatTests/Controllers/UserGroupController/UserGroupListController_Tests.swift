@@ -134,11 +134,10 @@ final class UserGroupListController_Tests: XCTestCase {
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUserGroup(
-                payload: .init(
-                    id: "backendsupport",
-                    name: "Backend Support",
+                .dummy(
                     createdAt: createdAt,
-                    updatedAt: .unique
+                    id: "backendsupport",
+                    name: "Backend Support"
                 )
             )
         }
