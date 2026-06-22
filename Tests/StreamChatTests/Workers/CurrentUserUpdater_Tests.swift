@@ -1088,4 +1088,69 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+
+    // MARK: - Load Blocked Users
+
+    func test_loadBlockedUsers_makesCorrectAPICall() {
+        // Simulate `loadBlockedUsers` call
+        currentUserUpdater.loadBlockedUsers { _ in }
+
+        // Assert correct endpoint is called
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<GetBlockedUsersResponse>.getBlockedUsers())
+        )
+    }
+
+    func test_loadBlockedUsers_propagatesSuccessfulResponse() throws {
+        // Simulate current user already set
+        let currentUserId: UserId = .unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+        }
+
+        // Mock the API response before the call so the completion is invoked
+        let blockedUserId: UserId = .unique
+        let createdAt: Date = .unique
+        let payload = GetBlockedUsersResponse(
+            blocks: [
+                BlockedUserResponse(
+                    blockedUser: .dummy(userId: blockedUserId),
+                    blockedUserId: blockedUserId,
+                    createdAt: createdAt,
+                    user: .dummy(userId: currentUserId),
+                    userId: currentUserId
+                )
+            ],
+            duration: ""
+        )
+        apiClient.test_mockResponseResult(Result<GetBlockedUsersResponse, Error>.success(payload))
+        let expectation = XCTestExpectation()
+
+        // Simulate `loadBlockedUsers` call
+        nonisolated(unsafe) var result: [BlockedUserDetails]?
+        currentUserUpdater.loadBlockedUsers {
+            result = try? $0.get()
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Assert the returned details map the generated response
+        XCTAssertEqual(result?.map(\.userId), [blockedUserId])
+        XCTAssertEqual(result?.first?.blockedAt, createdAt)
+    }
+
+    func test_loadBlockedUsers_propagatesError() {
+        // Mock the API failure before the call so the completion is invoked synchronously
+        let error = TestError()
+        apiClient.test_mockResponseResult(Result<GetBlockedUsersResponse, Error>.failure(error))
+
+        // Simulate `loadBlockedUsers` call
+        nonisolated(unsafe) var completionCalledError: Error?
+        currentUserUpdater.loadBlockedUsers { completionCalledError = $0.error }
+
+        // Assert the completion is called with the error
+        XCTAssertEqual(completionCalledError as? TestError, error)
+    }
 }

@@ -11,19 +11,29 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
+    blockUsers
     createDevice
     deleteDevice
     getApp
+    getBlockedUsers
     listDevices
+    unblockUsers
 )
 allowed_models=(
   AppResponseFields
+  BlockedUserResponse
+  BlockUsersRequest
+  BlockUsersResponse
   CreateDeviceRequest
   DeviceResponse
   FileUploadConfig
   GetApplicationResponse
+  GetBlockedUsersResponse
   ListDevicesResponse
   Response
+  UnblockUsersRequest
+  UnblockUsersResponse
+  UserResponse
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -195,8 +205,6 @@ inject_v1_endpoint_paths() {
     case flagUser(Bool)
     case flagMessage(Bool)
     case muteUser(Bool)
-    case blockUser
-    case unblockUser
 
     case callToken(String)
     case createCall(String)
@@ -292,8 +300,6 @@ EOF
         case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
-        case .blockUser: return "users/block"
-        case .unblockUser: return "users/unblock"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
