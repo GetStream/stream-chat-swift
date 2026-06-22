@@ -766,8 +766,8 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(.success(LinkAttachmentPayload(
-            originalURL: url
+        mockAPIClient.test_mockResponseResult(.success(GetOGResponse.dummy(
+            ogScrapeUrl: url.absoluteString
         )))
 
         composerVC.didChangeLinks([
@@ -797,8 +797,8 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(.success(LinkAttachmentPayload(
-            originalURL: url
+        mockAPIClient.test_mockResponseResult(.success(GetOGResponse.dummy(
+            ogScrapeUrl: url.absoluteString
         )))
 
         composerVC.didChangeLinks([
@@ -828,7 +828,7 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(StreamChat.ClientError()))
+        mockAPIClient.test_mockResponseResult(Result<GetOGResponse, Error>.failure(StreamChat.ClientError()))
 
         composerVC.didChangeLinks([
             .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
@@ -856,7 +856,7 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(StreamChat.ClientError()))
+        mockAPIClient.test_mockResponseResult(Result<GetOGResponse, Error>.failure(StreamChat.ClientError()))
 
         composerVC.didChangeLinks([
             .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
@@ -885,7 +885,7 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(StreamChat.ClientError()))
+        mockAPIClient.test_mockResponseResult(Result<GetOGResponse, Error>.failure(StreamChat.ClientError()))
 
         composerVC.didChangeLinks([
             .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
