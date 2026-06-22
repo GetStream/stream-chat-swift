@@ -83,12 +83,24 @@ final class AttachmentEndpoints_Tests: XCTestCase {
     func test_deleteAttachment_nonImageType_usesFilePath() {
         let remoteURL = URL.unique()
         let nonImageTypes: [AttachmentType] = [.video, .audio, .file]
-        
+
         for type in nonImageTypes {
             let endpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: type)
-            
+
             XCTAssertEqual(endpoint.path.value, "uploads/file", "Path should be 'file' for \(type)")
             XCTAssertEqual(endpoint.method, .delete)
         }
+    }
+
+    func test_getOG_buildsGeneratedEndpoint() {
+        let endpoint: Endpoint<GetOGResponse> = .getOG(url: "https://getstream.io")
+
+        XCTAssertEqual(endpoint.path.value, "/api/v2/og")
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNil(endpoint.body)
+
+        let queryItems = endpoint.queryItems as? [String: String?]
+        XCTAssertEqual(queryItems?["url"] ?? nil, "https://getstream.io")
     }
 }

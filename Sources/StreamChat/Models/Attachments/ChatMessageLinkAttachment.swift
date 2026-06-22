@@ -105,3 +105,23 @@ extension LinkAttachmentPayload: Decodable {
         )
     }
 }
+
+// MARK: - Response -> Model
+
+extension GetOGResponse {
+    func asModel() throws -> LinkAttachmentPayload {
+        guard let ogScrapeUrl, let originalURL = URL(string: ogScrapeUrl) else {
+            throw ClientError.Unexpected("GetOGResponse is missing a valid `og_scrape_url`.")
+        }
+        let assetURL = imageUrl.flatMap { URL(string: $0) } ?? assetUrl.flatMap { URL(string: $0) }
+        return LinkAttachmentPayload(
+            originalURL: originalURL,
+            title: title?.trimmingCharacters(in: .whitespacesAndNewlines),
+            text: text?.trimmingCharacters(in: .whitespacesAndNewlines),
+            author: authorName,
+            titleLink: titleLink.flatMap { URL(string: $0) },
+            assetURL: assetURL,
+            previewURL: thumbUrl.flatMap { URL(string: $0) } ?? assetURL
+        )
+    }
+}
