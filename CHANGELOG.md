@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add customizable mention suggestion providers [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
-- Fix `typing.stop` being sent unconditionally on every message send, even on channels with typing events disabled [#4146](https://github.com/GetStream/stream-chat-swift/pull/4146)
+- Fix `typing.stop` being sent unconditionally on every message send [#4146](https://github.com/GetStream/stream-chat-swift/pull/4146)
 
 ## StreamChatUI
 ### 🐞 Fixed
