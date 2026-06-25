@@ -72,12 +72,14 @@ class TypingEventsSender: Worker, @unchecked Sendable {
     }
 
     func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: (@Sendable (Error?) -> Void)? = nil) {
-        // If there's a timer set, we clear it
-        if currentUserLastTypingDate != nil {
-            cancelScheduledTypingTimerControl()
-            currentUserLastTypingDate = nil
+        guard currentUserLastTypingDate != nil else {
+            typingInfo = nil
+            completion?(nil)
+            return
         }
 
+        cancelScheduledTypingTimerControl()
+        currentUserLastTypingDate = nil
         typingInfo = nil
 
         apiClient.request(
