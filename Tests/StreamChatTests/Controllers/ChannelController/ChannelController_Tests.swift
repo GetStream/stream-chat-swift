@@ -3496,6 +3496,11 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_createNewMessage_doesNotSendStopTyping_whenTypingEventsDisabled() {
+        let payload = dummyPayload(with: channelId, ownCapabilities: [])
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
+            try session.saveChannel(payload: payload)
+        }
+
         controller.createNewMessage(text: .unique)
 
         XCTAssertNil(env.eventSender?.stopTyping_cid)
