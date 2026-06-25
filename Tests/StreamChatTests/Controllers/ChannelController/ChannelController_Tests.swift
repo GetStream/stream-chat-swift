@@ -3637,6 +3637,24 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, transformer.mockTransformedMessage.extraData)
     }
 
+    func test_createNewMessage_doesNotSendStopTyping_whenTypingEventsDisabled() {
+        controller.createNewMessage(text: .unique)
+
+        XCTAssertNil(env.eventSender?.stopTyping_cid)
+    }
+
+    func test_createNewMessage_sendsStopTyping_whenTypingEventsEnabled() throws {
+        let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        controller.createNewMessage(text: .unique)
+
+        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
+        XCTAssertEqual(env.eventSender?.stopTyping_cid, channelId)
+    }
+
     // MARK: - Create system message
 
     func test_createSystemMessage_callsChannelUpdater() {
