@@ -3370,6 +3370,55 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: typing events is disabled for this channel.")
     }
 
+    func test_sendKeystrokeEvent_whenChannelIsNotLoaded_doesNotSend() throws {
+        // Do not save a channel, so the controller's channel is `nil` and capabilities are unknown.
+        nonisolated(unsafe) var completionCalled = false
+
+        let error: Error? = try waitFor { completion in
+            controller.sendKeystrokeEvent {
+                completionCalled = true
+                completion($0)
+            }
+        }
+
+        XCTAssertTrue(completionCalled)
+        XCTAssertNil(error)
+        // The event sender is built lazily only when an event is actually sent, so a `nil` sender confirms no send happened.
+        XCTAssertNil(env.eventSender?.keystroke_cid)
+    }
+
+    func test_sendStartTypingEvent_whenChannelIsNotLoaded_errors() throws {
+        // Do not save a channel, so the controller's channel is `nil` and capabilities are unknown.
+        nonisolated(unsafe) var completionCalled = false
+
+        let error: Error? = try waitFor { completion in
+            controller.sendStartTypingEvent {
+                completionCalled = true
+                completion($0)
+            }
+        }
+
+        XCTAssertTrue(completionCalled)
+        XCTAssertTrue(error is ClientError.ChannelFeatureDisabled)
+        XCTAssertNil(env.eventSender?.startTyping_cid)
+    }
+
+    func test_sendStopTypingEvent_whenChannelIsNotLoaded_errors() throws {
+        // Do not save a channel, so the controller's channel is `nil` and capabilities are unknown.
+        nonisolated(unsafe) var completionCalled = false
+
+        let error: Error? = try waitFor { completion in
+            controller.sendStopTypingEvent {
+                completionCalled = true
+                completion($0)
+            }
+        }
+
+        XCTAssertTrue(completionCalled)
+        XCTAssertTrue(error is ClientError.ChannelFeatureDisabled)
+        XCTAssertNil(env.eventSender?.stopTyping_cid)
+    }
+
     func test_keystroke_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
         writeAndWaitForMessageUpdates(count: 1, channelChanges: true) {
@@ -3586,6 +3635,29 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_text, transformer.mockTransformedMessage.text)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, transformer.mockTransformedMessage.attachments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, transformer.mockTransformedMessage.extraData)
+    }
+
+    func test_createNewMessage_doesNotSendStopTyping_whenTypingEventsDisabled() {
+        let payload = dummyPayload(with: channelId, ownCapabilities: [])
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        controller.createNewMessage(text: .unique)
+
+        XCTAssertNil(env.eventSender?.stopTyping_cid)
+    }
+
+    func test_createNewMessage_sendsStopTyping_whenTypingEventsEnabled() throws {
+        let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
+        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        controller.createNewMessage(text: .unique)
+
+        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
+        XCTAssertEqual(env.eventSender?.stopTyping_cid, channelId)
     }
 
     // MARK: - Create system message
@@ -5429,7 +5501,7 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         let isEnabled = try waitFor { controller.shouldSendTypingEvents(completion: $0) }
-        XCTAssertEqual(isEnabled, true)
+        XCTAssertEqual(isEnabled, false)
     }
 
     func test_shouldSendTypingEvents_whenChannelEnabled_whenUserEnabled() throws {

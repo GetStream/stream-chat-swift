@@ -3,7 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix sending typing events to channels without typing events capability [#4147](https://github.com/GetStream/stream-chat-swift/pull/4147)
+- Fix `typing.stop` being sent unconditionally on every message send, even on channels with typing events disabled [#4147](https://github.com/GetStream/stream-chat-swift/pull/4147)
+
 
 # [4.101.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.1)
 _June 11, 2026_
