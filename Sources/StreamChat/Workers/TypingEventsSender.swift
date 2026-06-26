@@ -77,6 +77,7 @@ class TypingEventsSender: Worker {
             cancelScheduledTypingTimerControl()
             currentUserLastTypingDate = nil
         }
+
         typingInfo = nil
 
         apiClient.request(

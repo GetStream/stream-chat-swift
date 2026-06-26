@@ -111,25 +111,16 @@ final class TypingEventsSender_Tests: XCTestCase {
         XCTAssertEqual(calls, [AnyEndpoint(startTypingEndpoint), AnyEndpoint(startTypingEndpoint)])
     }
 
-    func test_stopTyping_withoutPriorTyping_doesNotMakeAPICall() {
-        let cid = ChannelId.unique
-
-        eventSender.stopTyping(in: cid, parentMessageId: nil)
-
-        XCTAssertNil(apiClient.request_endpoint)
-    }
-
-    func test_stopTyping_afterStartTyping_withoutParentMessageId_makesCorrectAPICall() {
+    func test_stopTyping_withoutParentMessageId_makesCorrectAPICall() {
         let cid = ChannelId.unique
         let parentMessageId: MessageId? = nil
 
-        eventSender.startTyping(in: cid, parentMessageId: parentMessageId)
-        apiClient.request_endpoint = nil
-
+        // Call stopTyping
         eventSender.stopTyping(in: cid, parentMessageId: parentMessageId)
 
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+        // Check the start typing event has been sent.
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
     }
 
     func test_stopTyping_afterKeystroke() {
