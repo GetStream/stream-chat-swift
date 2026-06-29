@@ -4,8 +4,8 @@
 
 import Foundation
 
-final class UnblockUsersRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var blockedUserId: String
+final class UnblockUsersRequest: Sendable, Codable, JSONEncodable {
+    let blockedUserId: String
 
     init(blockedUserId: String) {
         self.blockedUserId = blockedUserId
@@ -13,13 +13,5 @@ final class UnblockUsersRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case blockedUserId = "blocked_user_id"
-    }
-
-    static func == (lhs: UnblockUsersRequest, rhs: UnblockUsersRequest) -> Bool {
-        lhs.blockedUserId == rhs.blockedUserId
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(blockedUserId)
     }
 }

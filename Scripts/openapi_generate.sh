@@ -76,6 +76,7 @@ rename_generated() {
 rm -rf "$OUTPUT_DIR_CHAT"
 ( cd "$CHAT_DIR" ; make openapi ; \
   ./build/chat-manager openapi generate-client --language swift \
+    --opt immutable_models=true --opt access_modifier=internal \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
@@ -163,15 +164,10 @@ rename_generated Field AttachmentFieldPayload
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
 
-# 5. Generated code is internal to the SDK — strip public/open.
-find "$OUTPUT_DIR_CHAT" -name '*.swift' -print0 | while IFS= read -r -d '' file; do
-  sed -i '' -E 's/^([[:space:]]*)(public|open) /\1/' "$file"
-done
-
-# 6. Format.
+# 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 7. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
+# 6. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
 #    The OpenAPI generator owns v2 paths; these v1 cases keep the hand-written
 #    endpoint factories compiling while each endpoint migrates incrementally.
 inject_v1_endpoint_paths() {
