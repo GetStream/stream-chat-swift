@@ -4,14 +4,14 @@
 
 import Foundation
 
-final class AppResponseFields: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var asyncUrlEnrichEnabled: Bool
-    var autoTranslationEnabled: Bool
-    var fileUploadConfig: FileUploadConfig
-    var id: Int
-    var imageUploadConfig: FileUploadConfig
-    var name: String
-    var placement: String
+final class AppResponseFields: Sendable, Codable, JSONEncodable {
+    let asyncUrlEnrichEnabled: Bool
+    let autoTranslationEnabled: Bool
+    let fileUploadConfig: FileUploadConfig
+    let id: Int
+    let imageUploadConfig: FileUploadConfig
+    let name: String
+    let placement: String
 
     init(asyncUrlEnrichEnabled: Bool, autoTranslationEnabled: Bool, fileUploadConfig: FileUploadConfig, id: Int, imageUploadConfig: FileUploadConfig, name: String, placement: String) {
         self.asyncUrlEnrichEnabled = asyncUrlEnrichEnabled
@@ -31,25 +31,5 @@ final class AppResponseFields: @unchecked Sendable, Codable, JSONEncodable, Hash
         case imageUploadConfig = "image_upload_config"
         case name
         case placement
-    }
-
-    static func == (lhs: AppResponseFields, rhs: AppResponseFields) -> Bool {
-        lhs.asyncUrlEnrichEnabled == rhs.asyncUrlEnrichEnabled &&
-            lhs.autoTranslationEnabled == rhs.autoTranslationEnabled &&
-            lhs.fileUploadConfig == rhs.fileUploadConfig &&
-            lhs.id == rhs.id &&
-            lhs.imageUploadConfig == rhs.imageUploadConfig &&
-            lhs.name == rhs.name &&
-            lhs.placement == rhs.placement
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(asyncUrlEnrichEnabled)
-        hasher.combine(autoTranslationEnabled)
-        hasher.combine(fileUploadConfig)
-        hasher.combine(id)
-        hasher.combine(imageUploadConfig)
-        hasher.combine(name)
-        hasher.combine(placement)
     }
 }
