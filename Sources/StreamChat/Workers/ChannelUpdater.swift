@@ -644,7 +644,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameter cid: Channel id of the channel to stop watching
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func stopWatching(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .stopWatching(cid: cid)) {
+        apiClient.request(endpoint: .stopWatchingChannel(type: cid.type.rawValue, id: cid.id)) {
             completion?($0.error)
         }
     }

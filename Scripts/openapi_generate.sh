@@ -18,6 +18,7 @@ allowed_endpoints=(
     getBlockedUsers
     getOG
     listDevices
+    stopWatchingChannel
     unblockUsers
 )
 allowed_models=(
@@ -36,7 +37,6 @@ allowed_models=(
   ImageData
   Images
   ListDevicesResponse
-  Response
   UnblockUsersRequest
   UnblockUsersResponse
   UserResponse
@@ -164,6 +164,8 @@ rename_generated Field AttachmentFieldPayload
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
 
+rename_generated_type Response EmptyResponse
+
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
@@ -208,7 +210,6 @@ inject_v1_endpoint_paths() {
     case markAllChannelsRead
     case markChannelsDelivered
     case channelEvent(String)
-    case stopWatchingChannel(String)
     case pinnedMessages(String)
     case uploadChannelAttachment(channelId: String, type: String)
     case uploadAttachment(String)
@@ -304,7 +305,6 @@ EOF
         case .markAllChannelsRead: return "channels/read"
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .stopWatchingChannel(channelId): return "channels/\(channelId)/stop-watching"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
         case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
         case let .uploadAttachment(type): return "uploads/\(type)"
