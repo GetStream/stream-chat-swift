@@ -11,34 +11,55 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
+    addUserGroupMembers
     blockUsers
     createDevice
+    createUserGroup
     deleteDevice
+    deleteUserGroup
     getApp
     getBlockedUsers
     getOG
+    getUserGroup
     listDevices
+    listUserGroups
+    removeUserGroupMembers
+    searchUserGroups
     unblockUsers
+    updateUserGroup
 )
 allowed_models=(
   Action
+  AddUserGroupMembersRequest
+  AddUserGroupMembersResponse
   AppResponseFields
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CreateDeviceRequest
+  CreateUserGroupRequest
+  CreateUserGroupResponse
   DeviceResponse
   Field
   FileUploadConfig
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
+  GetUserGroupResponse
   ImageData
   Images
   ListDevicesResponse
+  ListUserGroupsResponse
+  RemoveUserGroupMembersRequest
+  RemoveUserGroupMembersResponse
   Response
+  SearchUserGroupsResponse
   UnblockUsersRequest
   UnblockUsersResponse
+  UpdateUserGroupRequest
+  UpdateUserGroupResponse
+  UserGroupMember
+  UserGroupResponse
   UserResponse
 )
 
@@ -163,6 +184,7 @@ rename_generated Action AttachmentActionPayload
 rename_generated Field AttachmentFieldPayload
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
+rename_generated UserGroupMember UserGroupMemberPayload
 
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
@@ -256,12 +278,6 @@ inject_v1_endpoint_paths() {
     case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
-    case userGroups
-    case userGroupSearch
-    case userGroup(id: String)
-    case userGroupMembers(id: String)
-    case userGroupMembersDelete(id: String)
-
     case rolesSearch
 
 EOF
@@ -344,12 +360,6 @@ EOF
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
-
-        case .userGroups: return "usergroups"
-        case .userGroupSearch: return "usergroups/search"
-        case let .userGroup(id): return "usergroups/\(id)"
-        case let .userGroupMembers(id): return "usergroups/\(id)/members"
-        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
 
         case .rolesSearch: return "roles/search"
 

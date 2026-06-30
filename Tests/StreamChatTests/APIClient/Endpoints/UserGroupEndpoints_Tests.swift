@@ -7,76 +7,56 @@
 import XCTest
 
 final class UserGroupEndpoints_Tests: XCTestCase {
-    func test_userGroups_buildsCorrectly() {
+    func test_listUserGroups_buildsCorrectly() {
         let query = UserGroupListQuery(limit: 10, teamId: "engineering")
 
-        let expectedEndpoint = Endpoint<UserGroupListPayload>(
-            path: .userGroups,
-            method: .get,
-            queryItems: query,
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
+        let endpoint: Endpoint<ListUserGroupsResponse> = .listUserGroups(
+            limit: query.limit,
+            idGt: query.idGreaterThan,
+            createdAtGt: query.createdAtGreaterThan.map { RFC3339DateFormatter.string(from: $0) },
+            teamId: query.teamId
         )
 
-        let endpoint: Endpoint<UserGroupListPayload> = .userGroups(query: query)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups", endpoint.path.value)
         XCTAssertEqual(.get, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
-        XCTAssertTrue(endpoint.requiresToken)
     }
 
     func test_searchUserGroups_buildsCorrectly() {
         let query = UserGroupSearchQuery(query: "backend", limit: 5, teamId: "engineering")
 
-        let expectedEndpoint = Endpoint<UserGroupListPayload>(
-            path: .userGroupSearch,
-            method: .get,
-            queryItems: query,
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
+        let endpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+            query: query.query,
+            limit: query.limit,
+            nameGt: query.nameGreaterThan,
+            idGt: query.idGreaterThan,
+            teamId: query.teamId
         )
 
-        let endpoint: Endpoint<UserGroupListPayload> = .searchUserGroups(query: query)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups/search", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups/search", endpoint.path.value)
         XCTAssertEqual(.get, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_getUserGroup_buildsCorrectly() {
-        let expectedEndpoint = Endpoint<UserGroupPayloadResponse>(
-            path: .userGroup(id: "backendsupport"),
-            method: .get,
-            queryItems: UserGroupTeamQuery(teamId: "engineering"),
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
-        )
+        let endpoint: Endpoint<GetUserGroupResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
 
-        let endpoint: Endpoint<UserGroupPayloadResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups/backendsupport", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups/backendsupport", endpoint.path.value)
         XCTAssertEqual(.get, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_createUserGroup_buildsCorrectly() {
-        let request = CreateUserGroupRequestBody(
-            id: "backendsupport",
-            name: "Backend Support Team",
+        let request = CreateUserGroupRequest(
             description: "On-call backend support engineers",
-            teamId: "engineering",
-            memberIds: ["user1", "user2"]
+            id: "backendsupport",
+            memberIds: ["user1", "user2"],
+            name: "Backend Support Team",
+            teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<UserGroupPayloadResponse>(
-            path: .userGroups,
+        let expectedEndpoint = Endpoint<CreateUserGroupResponse>(
+            path: .createUserGroup,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -84,23 +64,23 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<UserGroupPayloadResponse> = .createUserGroup(request: request)
+        let endpoint: Endpoint<CreateUserGroupResponse> = .createUserGroup(createUserGroupRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups", endpoint.path.value)
         XCTAssertEqual(.post, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_updateUserGroup_buildsCorrectly() {
-        let request = UpdateUserGroupRequestBody(
-            name: "Updated Name",
+        let request = UpdateUserGroupRequest(
             description: "Updated description",
+            name: "Updated Name",
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<UserGroupPayloadResponse>(
-            path: .userGroup(id: "backendsupport"),
+        let expectedEndpoint = Endpoint<UpdateUserGroupResponse>(
+            path: .updateUserGroup(id: "backendsupport"),
             method: .put,
             queryItems: nil,
             requiresConnectionId: false,
@@ -108,41 +88,31 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<UserGroupPayloadResponse> = .updateUserGroup(id: "backendsupport", request: request)
+        let endpoint: Endpoint<UpdateUserGroupResponse> = .updateUserGroup(id: "backendsupport", updateUserGroupRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups/backendsupport", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups/backendsupport", endpoint.path.value)
         XCTAssertEqual(.put, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_deleteUserGroup_buildsCorrectly() {
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .userGroup(id: "backendsupport"),
-            method: .delete,
-            queryItems: UserGroupTeamQuery(teamId: "engineering"),
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
-        )
+        let endpoint: Endpoint<Response> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
 
-        let endpoint: Endpoint<EmptyResponse> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups/backendsupport", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups/backendsupport", endpoint.path.value)
         XCTAssertEqual(.delete, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_addUserGroupMembers_buildsCorrectly() {
-        let request = UserGroupMembersRequestBody(
-            memberIds: ["user1", "user2"],
+        let request = AddUserGroupMembersRequest(
             asAdmin: true,
+            memberIds: ["user1", "user2"],
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<UserGroupPayloadResponse>(
-            path: .userGroupMembers(id: "backendsupport"),
+        let expectedEndpoint = Endpoint<AddUserGroupMembersResponse>(
+            path: .addUserGroupMembers(id: "backendsupport"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -150,22 +120,22 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<UserGroupPayloadResponse> = .addUserGroupMembers(id: "backendsupport", request: request)
+        let endpoint: Endpoint<AddUserGroupMembersResponse> = .addUserGroupMembers(id: "backendsupport", addUserGroupMembersRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups/backendsupport/members", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups/backendsupport/members", endpoint.path.value)
         XCTAssertEqual(.post, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_removeUserGroupMembers_buildsCorrectly() {
-        let request = UserGroupMembersRequestBody(
+        let request = RemoveUserGroupMembersRequest(
             memberIds: ["user1", "user2"],
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<UserGroupPayloadResponse>(
-            path: .userGroupMembersDelete(id: "backendsupport"),
+        let expectedEndpoint = Endpoint<RemoveUserGroupMembersResponse>(
+            path: .removeUserGroupMembers(id: "backendsupport"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -173,10 +143,10 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<UserGroupPayloadResponse> = .removeUserGroupMembers(id: "backendsupport", request: request)
+        let endpoint: Endpoint<RemoveUserGroupMembersResponse> = .removeUserGroupMembers(id: "backendsupport", removeUserGroupMembersRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("usergroups/backendsupport/members/delete", endpoint.path.value)
+        XCTAssertEqual("/api/v2/usergroups/backendsupport/members/delete", endpoint.path.value)
         XCTAssertEqual(.post, endpoint.method)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }

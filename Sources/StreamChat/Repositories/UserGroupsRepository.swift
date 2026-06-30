@@ -24,7 +24,12 @@ class UserGroupsRepository: @unchecked Sendable {
         query: UserGroupListQuery,
         completion: @escaping @Sendable (Result<UserGroupListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .userGroups(query: query)) { [weak self] result in
+        apiClient.request(endpoint: .listUserGroups(
+            limit: query.limit,
+            idGt: query.idGreaterThan,
+            createdAtGt: query.createdAtGreaterThan.map { RFC3339DateFormatter.string(from: $0) },
+            teamId: query.teamId
+        )) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.saveUserGroups(response.userGroups, expectedCount: query.limit, completion: completion)
@@ -38,7 +43,13 @@ class UserGroupsRepository: @unchecked Sendable {
         query: UserGroupSearchQuery,
         completion: @escaping @Sendable (Result<[UserGroup], Error>) -> Void
     ) {
-        apiClient.request(endpoint: .searchUserGroups(query: query)) { result in
+        apiClient.request(endpoint: .searchUserGroups(
+            query: query.query,
+            limit: query.limit,
+            nameGt: query.nameGreaterThan,
+            idGt: query.idGreaterThan,
+            teamId: query.teamId
+        )) { result in
             switch result {
             case .success(let response):
                 completion(.success(response.userGroups.map { $0.asModel() }))
@@ -72,10 +83,10 @@ class UserGroupsRepository: @unchecked Sendable {
     }
 
     func createUserGroup(
-        request: CreateUserGroupRequestBody,
+        request: CreateUserGroupRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .createUserGroup(request: request)) { [weak self] result in
+        apiClient.request(endpoint: .createUserGroup(createUserGroupRequest: request)) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.saveUserGroup(response.userGroup, completion: completion)
@@ -87,10 +98,10 @@ class UserGroupsRepository: @unchecked Sendable {
 
     func updateUserGroup(
         id: String,
-        request: UpdateUserGroupRequestBody,
+        request: UpdateUserGroupRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .updateUserGroup(id: id, request: request)) { [weak self] result in
+        apiClient.request(endpoint: .updateUserGroup(id: id, updateUserGroupRequest: request)) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.saveUserGroup(response.userGroup, completion: completion)
@@ -121,10 +132,10 @@ class UserGroupsRepository: @unchecked Sendable {
 
     func addMembers(
         id: String,
-        request: UserGroupMembersRequestBody,
+        request: AddUserGroupMembersRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .addUserGroupMembers(id: id, request: request)) { [weak self] result in
+        apiClient.request(endpoint: .addUserGroupMembers(id: id, addUserGroupMembersRequest: request)) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.saveUserGroup(response.userGroup, completion: completion)
@@ -136,10 +147,10 @@ class UserGroupsRepository: @unchecked Sendable {
 
     func removeMembers(
         id: String,
-        request: UserGroupMembersRequestBody,
+        request: RemoveUserGroupMembersRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .removeUserGroupMembers(id: id, request: request)) { [weak self] result in
+        apiClient.request(endpoint: .removeUserGroupMembers(id: id, removeUserGroupMembersRequest: request)) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.saveUserGroup(response.userGroup, completion: completion)
@@ -150,7 +161,7 @@ class UserGroupsRepository: @unchecked Sendable {
     }
 
     private func saveUserGroups(
-        _ payloads: [UserGroupPayload],
+        _ payloads: [UserGroupResponse],
         expectedCount: Int?,
         completion: @escaping @Sendable (Result<UserGroupListResponse, Error>) -> Void
     ) {
@@ -177,9 +188,13 @@ class UserGroupsRepository: @unchecked Sendable {
     }
 
     private func saveUserGroup(
-        _ payload: UserGroupPayload,
+        _ payload: UserGroupResponse?,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
+        guard let payload else {
+            completion(.failure(ClientError.Unexpected("Received a user group response without a user group.")))
+            return
+        }
         database.write(converting: { session in
             try session.saveUserGroup(payload: payload).asModel()
         }, completion: completion)

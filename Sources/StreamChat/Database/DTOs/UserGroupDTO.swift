@@ -109,7 +109,7 @@ extension UserGroupDTO {
 
 extension NSManagedObjectContext: UserGroupDatabaseSession {
     @discardableResult
-    func saveUserGroup(payload: UserGroupPayload) throws -> UserGroupDTO {
+    func saveUserGroup(payload: UserGroupResponse) throws -> UserGroupDTO {
         let dto = UserGroupDTO.loadOrCreate(id: payload.id, context: self)
         dto.id = payload.id
         dto.name = payload.name
@@ -118,7 +118,7 @@ extension NSManagedObjectContext: UserGroupDatabaseSession {
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.createdBy = payload.createdBy
-        dto.members = payload.members.map { $0.asModel() }
+        dto.members = payload.members?.map { $0.asModel() } ?? []
         return dto
     }
 
