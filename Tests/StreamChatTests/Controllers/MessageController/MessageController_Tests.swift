@@ -1602,7 +1602,7 @@ final class MessageController_Tests: XCTestCase {
         let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
 
         let exp = expectation(description: "load first page completes")
-        controller.loadFirstPage { error in
+        controller.loadFirstPage() { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -1620,7 +1620,7 @@ final class MessageController_Tests: XCTestCase {
     func test_loadFirstPage_whenError() throws {
         let exp = expectation(description: "load first page completes")
         nonisolated(unsafe) var expectedError: Error?
-        controller.loadFirstPage { error in
+        controller.loadFirstPage() { error in
             expectedError = error
             exp.fulfill()
         }
@@ -2379,7 +2379,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadRead_whenSuccess() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadRead { error in
+        controller.markThreadRead() { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -2393,7 +2393,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadRead_whenFailure() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadRead { error in
+        controller.markThreadRead() { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
@@ -2409,7 +2409,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadUnread_whenSuccess() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadUnread { error in
+        controller.markThreadUnread() { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -2423,7 +2423,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadUnread_whenFailure() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadUnread { error in
+        controller.markThreadUnread() { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
