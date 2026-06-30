@@ -4,9 +4,9 @@
 
 import Foundation
 
-final class Response: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class Response: Sendable, Codable, JSONEncodable {
     /// Duration of the request in milliseconds
-    var duration: String
+    let duration: String
 
     init(duration: String) {
         self.duration = duration
@@ -14,13 +14,5 @@ final class Response: @unchecked Sendable, Codable, JSONEncodable, Hashable {
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
-    }
-
-    static func == (lhs: Response, rhs: Response) -> Bool {
-        lhs.duration == rhs.duration
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(duration)
     }
 }

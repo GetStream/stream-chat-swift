@@ -4,12 +4,12 @@
 
 import Foundation
 
-final class GiphyImageData: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var frames: String
-    var height: String
-    var size: String
-    var url: String
-    var width: String
+final class GiphyImageData: Sendable, Codable, JSONEncodable {
+    let frames: String
+    let height: String
+    let size: String
+    let url: String
+    let width: String
 
     init(frames: String, height: String, size: String, url: String, width: String) {
         self.frames = frames
@@ -25,21 +25,5 @@ final class GiphyImageData: @unchecked Sendable, Codable, JSONEncodable, Hashabl
         case size
         case url
         case width
-    }
-
-    static func == (lhs: GiphyImageData, rhs: GiphyImageData) -> Bool {
-        lhs.frames == rhs.frames &&
-            lhs.height == rhs.height &&
-            lhs.size == rhs.size &&
-            lhs.url == rhs.url &&
-            lhs.width == rhs.width
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(frames)
-        hasher.combine(height)
-        hasher.combine(size)
-        hasher.combine(url)
-        hasher.combine(width)
     }
 }

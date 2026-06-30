@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
     enum CreateDeviceRequestPushProvider: String, Sendable, Codable, CaseIterable {
         case apn
         case firebase
@@ -24,15 +24,15 @@ final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     }
 
     /// Stable physical device identifier used to deduplicate pushes across push providers (e.g. APNs VoIP and Firebase on the same iOS device). Distinct from 'id', which is the push token.
-    var hardwareId: String?
+    let hardwareId: String?
     /// Device ID
-    var id: String
+    let id: String
     /// Push provider
-    var pushProvider: CreateDeviceRequestPushProvider
+    let pushProvider: CreateDeviceRequestPushProvider
     /// Push provider name
-    var pushProviderName: String?
+    let pushProviderName: String?
     /// When true the token is for Apple VoIP push notifications
-    var voipToken: Bool?
+    let voipToken: Bool?
 
     init(hardwareId: String? = nil, id: String, pushProvider: CreateDeviceRequestPushProvider, pushProviderName: String? = nil, voipToken: Bool? = nil) {
         self.hardwareId = hardwareId
@@ -48,21 +48,5 @@ final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
         case pushProvider = "push_provider"
         case pushProviderName = "push_provider_name"
         case voipToken = "voip_token"
-    }
-
-    static func == (lhs: CreateDeviceRequest, rhs: CreateDeviceRequest) -> Bool {
-        lhs.hardwareId == rhs.hardwareId &&
-            lhs.id == rhs.id &&
-            lhs.pushProvider == rhs.pushProvider &&
-            lhs.pushProviderName == rhs.pushProviderName &&
-            lhs.voipToken == rhs.voipToken
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(hardwareId)
-        hasher.combine(id)
-        hasher.combine(pushProvider)
-        hasher.combine(pushProviderName)
-        hasher.combine(voipToken)
     }
 }

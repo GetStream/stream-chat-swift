@@ -4,11 +4,11 @@
 
 import Foundation
 
-final class GetBlockedUsersResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class GetBlockedUsersResponse: Sendable, Codable, JSONEncodable {
     /// Array of blocked user object
-    var blocks: [BlockedUserResponse]
+    let blocks: [BlockedUserResponse]
     /// Duration of the request in milliseconds
-    var duration: String
+    let duration: String
 
     init(blocks: [BlockedUserResponse], duration: String) {
         self.blocks = blocks
@@ -18,15 +18,5 @@ final class GetBlockedUsersResponse: @unchecked Sendable, Codable, JSONEncodable
     enum CodingKeys: String, CodingKey, CaseIterable {
         case blocks
         case duration
-    }
-
-    static func == (lhs: GetBlockedUsersResponse, rhs: GetBlockedUsersResponse) -> Bool {
-        lhs.blocks == rhs.blocks &&
-            lhs.duration == rhs.duration
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(blocks)
-        hasher.combine(duration)
     }
 }

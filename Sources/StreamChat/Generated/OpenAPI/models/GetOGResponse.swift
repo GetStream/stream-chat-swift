@@ -4,42 +4,42 @@
 
 import Foundation
 
-final class GetOGResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var actions: [AttachmentActionPayload]?
+final class GetOGResponse: Sendable, Codable, JSONEncodable {
+    let actions: [AttachmentActionPayload]?
     /// URL of detected video or audio
-    var assetUrl: String?
-    var authorIcon: String?
+    let assetUrl: String?
+    let authorIcon: String?
     /// og:site
-    var authorLink: String?
+    let authorLink: String?
     /// og:site_name
-    var authorName: String?
-    var color: String?
-    var custom: [String: RawJSON]
-    var duration: String
-    var fallback: String?
-    var fields: [AttachmentFieldPayload]?
-    var footer: String?
-    var footerIcon: String?
-    var giphy: GiphyImages?
+    let authorName: String?
+    let color: String?
+    let custom: [String: RawJSON]
+    let duration: String
+    let fallback: String?
+    let fields: [AttachmentFieldPayload]?
+    let footer: String?
+    let footerIcon: String?
+    let giphy: GiphyImages?
     /// URL of detected image
-    var imageUrl: String?
+    let imageUrl: String?
     /// extracted url from the text
-    var ogScrapeUrl: String?
-    var originalHeight: Int?
-    var originalWidth: Int?
-    var pretext: String?
+    let ogScrapeUrl: String?
+    let originalHeight: Int?
+    let originalWidth: Int?
+    let pretext: String?
     /// og:description
-    var text: String?
+    let text: String?
     /// URL of detected thumb image
-    var thumbUrl: String?
+    let thumbUrl: String?
     /// og:title
-    var title: String?
+    let title: String?
     /// og:url
-    var titleLink: String?
+    let titleLink: String?
     /// Attachment type, could be empty, image, audio or video
-    var type: String?
+    let type: String?
 
-    init(actions: [AttachmentActionPayload]? = nil, assetUrl: String? = nil, authorIcon: String? = nil, authorLink: String? = nil, authorName: String? = nil, color: String? = nil, custom: [String: RawJSON], duration: String, fallback: String? = nil, fields: [AttachmentFieldPayload]? = nil, footer: String? = nil, footerIcon: String? = nil, giphy: GiphyImages? = nil, imageUrl: String? = nil, ogScrapeUrl: String? = nil, originalHeight: Int? = nil, originalWidth: Int? = nil, pretext: String? = nil, text: String? = nil, thumbUrl: String? = nil, title: String? = nil, titleLink: String? = nil) {
+    init(actions: [AttachmentActionPayload]? = nil, assetUrl: String? = nil, authorIcon: String? = nil, authorLink: String? = nil, authorName: String? = nil, color: String? = nil, custom: [String: RawJSON], duration: String, fallback: String? = nil, fields: [AttachmentFieldPayload]? = nil, footer: String? = nil, footerIcon: String? = nil, giphy: GiphyImages? = nil, imageUrl: String? = nil, ogScrapeUrl: String? = nil, originalHeight: Int? = nil, originalWidth: Int? = nil, pretext: String? = nil, text: String? = nil, thumbUrl: String? = nil, title: String? = nil, titleLink: String? = nil, type: String? = nil) {
         self.actions = actions
         self.assetUrl = assetUrl
         self.authorIcon = authorIcon
@@ -62,6 +62,7 @@ final class GetOGResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable
         self.thumbUrl = thumbUrl
         self.title = title
         self.titleLink = titleLink
+        self.type = type
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
@@ -88,57 +89,5 @@ final class GetOGResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable
         case title
         case titleLink = "title_link"
         case type
-    }
-
-    static func == (lhs: GetOGResponse, rhs: GetOGResponse) -> Bool {
-        lhs.actions == rhs.actions &&
-            lhs.assetUrl == rhs.assetUrl &&
-            lhs.authorIcon == rhs.authorIcon &&
-            lhs.authorLink == rhs.authorLink &&
-            lhs.authorName == rhs.authorName &&
-            lhs.color == rhs.color &&
-            lhs.custom == rhs.custom &&
-            lhs.duration == rhs.duration &&
-            lhs.fallback == rhs.fallback &&
-            lhs.fields == rhs.fields &&
-            lhs.footer == rhs.footer &&
-            lhs.footerIcon == rhs.footerIcon &&
-            lhs.giphy == rhs.giphy &&
-            lhs.imageUrl == rhs.imageUrl &&
-            lhs.ogScrapeUrl == rhs.ogScrapeUrl &&
-            lhs.originalHeight == rhs.originalHeight &&
-            lhs.originalWidth == rhs.originalWidth &&
-            lhs.pretext == rhs.pretext &&
-            lhs.text == rhs.text &&
-            lhs.thumbUrl == rhs.thumbUrl &&
-            lhs.title == rhs.title &&
-            lhs.titleLink == rhs.titleLink &&
-            lhs.type == rhs.type
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(actions)
-        hasher.combine(assetUrl)
-        hasher.combine(authorIcon)
-        hasher.combine(authorLink)
-        hasher.combine(authorName)
-        hasher.combine(color)
-        hasher.combine(custom)
-        hasher.combine(duration)
-        hasher.combine(fallback)
-        hasher.combine(fields)
-        hasher.combine(footer)
-        hasher.combine(footerIcon)
-        hasher.combine(giphy)
-        hasher.combine(imageUrl)
-        hasher.combine(ogScrapeUrl)
-        hasher.combine(originalHeight)
-        hasher.combine(originalWidth)
-        hasher.combine(pretext)
-        hasher.combine(text)
-        hasher.combine(thumbUrl)
-        hasher.combine(title)
-        hasher.combine(titleLink)
-        hasher.combine(type)
     }
 }
