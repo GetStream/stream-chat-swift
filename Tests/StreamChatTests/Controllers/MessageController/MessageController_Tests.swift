@@ -728,6 +728,33 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
     }
 
+    func test_downloadAttachment_callsCompletion_evenWhenControllerIsNotRetained() {
+        let attachmentId = AttachmentId.unique
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+
+        // Simulate `downloadAttachment` call and catch the completion
+        nonisolated(unsafe) var completionResult: Result<ChatMessageFileAttachment, Error>?
+        controller.downloadAttachment(expected) { completionResult = $0 }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate the network response after the controller reference is dropped
+        env.messageUpdater.downloadAttachment_completion?(.success(expected.asAnyAttachment))
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater.downloadAttachment_completion = nil
+
+        // Assert completion is still called even though the controller was not retained
+        AssertAsync.willBeTrue(completionResult != nil)
+        XCTAssertEqual(try? completionResult?.get(), expected)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
     func test_downloadAttachment_propagatesError() {
         let attachmentId = AttachmentId.unique
         let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
@@ -1575,7 +1602,7 @@ final class MessageController_Tests: XCTestCase {
         let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
 
         let exp = expectation(description: "load first page completes")
-        controller.loadFirstPage() { error in
+        controller.loadFirstPage { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -1593,7 +1620,7 @@ final class MessageController_Tests: XCTestCase {
     func test_loadFirstPage_whenError() throws {
         let exp = expectation(description: "load first page completes")
         nonisolated(unsafe) var expectedError: Error?
-        controller.loadFirstPage() { error in
+        controller.loadFirstPage { error in
             expectedError = error
             exp.fulfill()
         }
@@ -2352,7 +2379,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadRead_whenSuccess() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadRead() { error in
+        controller.markThreadRead { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -2366,7 +2393,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadRead_whenFailure() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadRead() { error in
+        controller.markThreadRead { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
@@ -2382,7 +2409,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadUnread_whenSuccess() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadUnread() { error in
+        controller.markThreadUnread { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -2396,7 +2423,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_markThreadUnread_whenFailure() {
         let exp = expectation(description: "mark read completion")
-        controller.markThreadUnread() { error in
+        controller.markThreadUnread { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
