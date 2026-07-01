@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
 - Fix `typing.stop` being sent unconditionally on every message send [#4146](https://github.com/GetStream/stream-chat-swift/pull/4146)
+- Fix attachment download completion handler not being called when the message controller is not retained until the download finishes [#4149](https://github.com/GetStream/stream-chat-swift/pull/4149)
 
 ## StreamChatUI
 ### 🐞 Fixed
