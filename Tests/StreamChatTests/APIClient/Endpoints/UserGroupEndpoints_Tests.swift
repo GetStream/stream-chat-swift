@@ -97,7 +97,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
     }
 
     func test_deleteUserGroup_buildsCorrectly() {
-        let endpoint: Endpoint<Response> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
+        let endpoint: Endpoint<EmptyResponse> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
 
         XCTAssertEqual("/api/v2/usergroups/backendsupport", endpoint.path.value)
         XCTAssertEqual(.delete, endpoint.method)

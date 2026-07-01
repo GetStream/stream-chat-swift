@@ -192,10 +192,10 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(Response.dummy))
+        apiClient.test_simulateResponse(.success(EmptyResponse()))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<Response> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
+        let expectedEndpoint: Endpoint<EmptyResponse> = .deleteUserGroup(id: "backendsupport", teamId: "engineering")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(completionError)
         XCTAssertNil(database.viewContext.userGroup(id: "backendsupport"))
