@@ -21,9 +21,3 @@ extension ListDevicesResponse {
         .init(devices: devices, duration: "")
     }
 }
-
-extension Response {
-    static var dummy: Response {
-        .init(duration: "")
-    }
-}

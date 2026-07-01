@@ -35,7 +35,6 @@ enum EndpointPath: Codable {
     case markAllChannelsRead
     case markChannelsDelivered
     case channelEvent(String)
-    case stopWatchingChannel(String)
     case pinnedMessages(String)
     case uploadChannelAttachment(channelId: String, type: String)
     case uploadAttachment(String)
@@ -99,6 +98,7 @@ enum EndpointPath: Codable {
     case listUserGroups
     case removeUserGroupMembers(id: String)
     case searchUserGroups
+    case stopWatchingChannel(type: String, id: String)
     case unblockUsers
     case updateUserGroup(id: String)
 
@@ -141,7 +141,6 @@ enum EndpointPath: Codable {
         case .markAllChannelsRead: return "channels/read"
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .stopWatchingChannel(channelId): return "channels/\(channelId)/stop-watching"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
         case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
         case let .uploadAttachment(type): return "uploads/\(type)"
@@ -212,6 +211,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
+        case let .stopWatchingChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
             return "/api/v2/users/unblock"
         case let .updateUserGroup(id: id):
@@ -316,7 +317,7 @@ extension Endpoint {
         )
     }
 
-    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .createDevice,
             method: .post,
@@ -336,7 +337,7 @@ extension Endpoint {
         )
     }
 
-    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteDevice,
             method: .delete,
@@ -348,7 +349,7 @@ extension Endpoint {
         )
     }
 
-    static func deleteUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
+    static func deleteUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteUserGroup(id: id),
             method: .delete,
@@ -450,6 +451,16 @@ extension Endpoint {
                 "id_gt": APIHelper.convertAnyToString(idGt),
                 "team_id": APIHelper.convertAnyToString(teamId)
             ],
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func stopWatchingChannel(type: String, id: String, requiresConnectionId: Bool = true) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .stopWatchingChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
         )

@@ -380,16 +380,6 @@ extension Endpoint {
         )
     }
 
-    static func stopWatching(cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .stopWatchingChannel(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: nil
-        )
-    }
-
     static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload> {
         .init(
             path: .updateChannel(query.cid.apiPath),

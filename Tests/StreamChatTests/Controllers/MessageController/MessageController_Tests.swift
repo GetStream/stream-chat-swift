@@ -728,6 +728,33 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
     }
 
+    func test_downloadAttachment_callsCompletion_evenWhenControllerIsNotRetained() {
+        let attachmentId = AttachmentId.unique
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+
+        // Simulate `downloadAttachment` call and catch the completion
+        nonisolated(unsafe) var completionResult: Result<ChatMessageFileAttachment, Error>?
+        controller.downloadAttachment(expected) { completionResult = $0 }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate the network response after the controller reference is dropped
+        env.messageUpdater.downloadAttachment_completion?(.success(expected.asAnyAttachment))
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater.downloadAttachment_completion = nil
+
+        // Assert completion is still called even though the controller was not retained
+        AssertAsync.willBeTrue(completionResult != nil)
+        XCTAssertEqual(try? completionResult?.get(), expected)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
     func test_downloadAttachment_propagatesError() {
         let attachmentId = AttachmentId.unique
         let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
