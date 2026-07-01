@@ -39,3 +39,17 @@ public struct Role: Equatable, Identifiable, Sendable {
         self.updatedAt = updatedAt
     }
 }
+
+// MARK: - Response -> Model
+
+extension RolePayload {
+    func asModel() -> Role {
+        Role(
+            name: name,
+            isCustom: custom,
+            scopes: scopes,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
+    }
+}

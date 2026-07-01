@@ -7,25 +7,23 @@
 import XCTest
 
 final class RoleEndpoints_Tests: XCTestCase {
-    func test_searchRoles_buildsCorrectly() {
-        let query = RoleSearchQuery(query: "adm", limit: 10, roleType: .user)
-
-        let expectedEndpoint = Endpoint<RoleListPayload>(
-            path: .rolesSearch,
-            method: .get,
-            queryItems: query,
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
+    func test_searchRoles_buildsGeneratedEndpoint() {
+        let endpoint: Endpoint<SearchRolesResponse> = .searchRoles(
+            query: "adm",
+            limit: 10,
+            nameGt: nil,
+            roleType: "user",
+            includeGlobalRoles: nil
         )
 
-        let endpoint: Endpoint<RoleListPayload> = .searchRoles(query: query)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("roles/search", endpoint.path.value)
-        XCTAssertEqual(.get, endpoint.method)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/roles/search")
+        XCTAssertEqual(endpoint.method, .get)
         XCTAssertFalse(endpoint.requiresConnectionId)
-        XCTAssertTrue(endpoint.requiresToken)
         XCTAssertNil(endpoint.body)
+
+        let queryItems = endpoint.queryItems as? [String: String?]
+        XCTAssertEqual(queryItems?["query"] ?? nil, "adm")
+        XCTAssertEqual(queryItems?["limit"] ?? nil, "10")
+        XCTAssertEqual(queryItems?["role_type"] ?? nil, "user")
     }
 }

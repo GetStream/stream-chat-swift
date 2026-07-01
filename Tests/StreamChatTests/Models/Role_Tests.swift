@@ -56,4 +56,24 @@ final class Role_Tests: XCTestCase {
         XCTAssertNotEqual(role, Role(name: "admin", isCustom: true))
         XCTAssertNotEqual(role, Role(name: "admin", scopes: ["user"]))
     }
+
+    func test_rolePayload_asModel_mapsAllFields() {
+        let createdAt = Date.unique
+        let updatedAt = Date.unique
+        let payload = RolePayload.dummy(
+            createdAt: createdAt,
+            custom: true,
+            name: "admin",
+            scopes: ["user", "channel"],
+            updatedAt: updatedAt
+        )
+
+        let model = payload.asModel()
+
+        XCTAssertEqual(model.name, "admin")
+        XCTAssertTrue(model.isCustom)
+        XCTAssertEqual(model.scopes, ["user", "channel"])
+        XCTAssertEqual(model.createdAt, createdAt)
+        XCTAssertEqual(model.updatedAt, updatedAt)
+    }
 }

@@ -19,7 +19,13 @@ class RolesRepository: @unchecked Sendable {
         query: RoleSearchQuery,
         completion: @escaping @Sendable (Result<[Role], Error>) -> Void
     ) {
-        apiClient.request(endpoint: .searchRoles(query: query)) { result in
+        apiClient.request(endpoint: .searchRoles(
+            query: query.query,
+            limit: query.limit,
+            nameGt: query.nameGreaterThan,
+            roleType: query.roleType?.rawValue,
+            includeGlobalRoles: query.includeGlobalRoles
+        )) { result in
             switch result {
             case .success(let response):
                 completion(.success(response.roles.map { $0.asModel() }))
