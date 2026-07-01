@@ -319,7 +319,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Mock successful API response
-        apiClient.test_mockResponseResult(.success(Response.dummy))
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
 
         // Call addDevice
         currentUserUpdater.addDevice(
@@ -333,7 +333,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint = Endpoint<Response>.createDevice(
+        let expectedEndpoint = Endpoint<EmptyResponse>.createDevice(
             createDeviceRequest: CreateDeviceRequest(
                 id: deviceId,
                 pushProvider: .init(rawValue: pushProvider.rawValue) ?? .unknown,
@@ -354,7 +354,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Mock failure API response
         let error = TestError()
-        apiClient.test_mockResponseResult(Result<Response, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
 
         // Call addDevice
         nonisolated(unsafe) var completionCalledError: Error?
@@ -389,7 +389,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         assert(currentUser?.currentDevice == nil)
 
         // Mock successful API response
-        apiClient.test_mockResponseResult(.success(Response.dummy))
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
 
         // Call addDevice
         currentUserUpdater.addDevice(
@@ -420,7 +420,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Mock successful API response
-        apiClient.test_mockResponseResult(.success(Response.dummy))
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
 
         let exp = expectation(description: "should complete addDevice call")
 
@@ -448,7 +448,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
 
-        apiClient.test_mockResponseResult(.success(Response.dummy))
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
         let expectation = XCTestExpectation()
         
         // Call removeDevice
@@ -461,7 +461,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         wait(for: [expectation], timeout: defaultTimeout)
         
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint = Endpoint<Response>.deleteDevice(id: "01")
+        let expectedEndpoint = Endpoint<EmptyResponse>.deleteDevice(id: "01")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -473,7 +473,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
-        apiClient.test_mockResponseResult(.success(Response.dummy))
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
         let expectation = XCTestExpectation()
 
         // Call removeDevice
@@ -487,7 +487,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Simulate API error
         let error = TestError()
-        apiClient.test_simulateResponse(Result<Response, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         apiClient.cleanUp()
 
         // Assert the completion is called with the error
@@ -511,7 +511,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with devices data
-        apiClient.test_simulateResponse(.success(Response.dummy))
+        apiClient.test_simulateResponse(.success(EmptyResponse()))
 
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {

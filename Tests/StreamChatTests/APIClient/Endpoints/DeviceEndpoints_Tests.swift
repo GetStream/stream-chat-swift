@@ -12,7 +12,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         let providerName: String = "Push Configuration Name"
         let createDeviceRequest = CreateDeviceRequest(id: deviceId, pushProvider: .apn, pushProviderName: providerName)
 
-        let expectedEndpoint: Endpoint<Response> = .init(
+        let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .createDevice,
             method: .post,
             queryItems: nil,
@@ -21,7 +21,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<Response> = .createDevice(createDeviceRequest: createDeviceRequest)
+        let endpoint: Endpoint<EmptyResponse> = .createDevice(createDeviceRequest: createDeviceRequest)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -33,7 +33,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         let providerName: String = "Push Configuration Name"
         let createDeviceRequest = CreateDeviceRequest(id: deviceId, pushProvider: .firebase, pushProviderName: providerName)
 
-        let expectedEndpoint: Endpoint<Response> = .init(
+        let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .createDevice,
             method: .post,
             queryItems: nil,
@@ -42,7 +42,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<Response> = .createDevice(createDeviceRequest: createDeviceRequest)
+        let endpoint: Endpoint<EmptyResponse> = .createDevice(createDeviceRequest: createDeviceRequest)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -52,7 +52,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
     func test_removeDevice_buildsCorrectly() {
         let deviceId: String = .unique
 
-        let expectedEndpoint: Endpoint<Response> = .init(
+        let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .deleteDevice,
             method: .delete,
             queryItems: ["id": deviceId],
@@ -61,7 +61,7 @@ final class DeviceEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<Response> = .deleteDevice(id: deviceId)
+        let endpoint: Endpoint<EmptyResponse> = .deleteDevice(id: deviceId)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
