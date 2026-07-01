@@ -64,6 +64,8 @@ enum EndpointPath: Codable {
     case flagUser(Bool)
     case flagMessage(Bool)
     case muteUser(Bool)
+    case blockUser
+    case unblockUser
 
     case callToken(String)
     case createCall(String)
@@ -90,15 +92,12 @@ enum EndpointPath: Codable {
 
     case rolesSearch
 
-    case blockUsers
     case createDevice
     case deleteDevice
     case getApp
-    case getBlockedUsers
     case getOG
     case listDevices
     case stopWatchingChannel(type: String, id: String)
-    case unblockUsers
 
     var value: String {
         switch self {
@@ -166,6 +165,8 @@ enum EndpointPath: Codable {
         case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
+        case .blockUser: return "users/block"
+        case .unblockUser: return "users/unblock"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
@@ -187,24 +188,18 @@ enum EndpointPath: Codable {
 
         case .rolesSearch: return "roles/search"
 
-        case .blockUsers:
-            return "/api/v2/users/block"
         case .createDevice:
             return "/api/v2/devices"
         case .deleteDevice:
             return "/api/v2/devices"
         case .getApp:
             return "/api/v2/app"
-        case .getBlockedUsers:
-            return "/api/v2/users/block"
         case .getOG:
             return "/api/v2/og"
         case .listDevices:
             return "/api/v2/devices"
         case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
-        case .unblockUsers:
-            return "/api/v2/users/unblock"
         }
     }
 }
@@ -285,16 +280,6 @@ enum EndpointMethod: String, Codable, Equatable {
 }
 
 extension Endpoint {
-    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
-        return .init(
-            path: .blockUsers,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: requiresConnectionId,
-            body: blockUsersRequest
-        )
-    }
-
     static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .createDevice,
@@ -320,16 +305,6 @@ extension Endpoint {
     static func getApp(requiresConnectionId: Bool = false) -> Endpoint<GetApplicationResponse> {
         return .init(
             path: .getApp,
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: requiresConnectionId,
-            body: nil
-        )
-    }
-
-    static func getBlockedUsers(requiresConnectionId: Bool = false) -> Endpoint<GetBlockedUsersResponse> {
-        return .init(
-            path: .getBlockedUsers,
             method: .get,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -366,16 +341,6 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
-        )
-    }
-
-    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<UnblockUsersResponse> {
-        return .init(
-            path: .unblockUsers,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: requiresConnectionId,
-            body: unblockUsersRequest
         )
     }
 }

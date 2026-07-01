@@ -99,24 +99,6 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(EndpointPath.listDevices.value, "/api/v2/devices")
     }
 
-    func test_blockUsers_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.blockUsers.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.unblockUsers.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.getBlockedUsers.shouldBeQueuedOffline)
-    }
-
-    func test_blockUsers_value() {
-        XCTAssertEqual(EndpointPath.blockUsers.value, "/api/v2/users/block")
-    }
-
-    func test_unblockUsers_value() {
-        XCTAssertEqual(EndpointPath.unblockUsers.value, "/api/v2/users/unblock")
-    }
-
-    func test_getBlockedUsers_value() {
-        XCTAssertEqual(EndpointPath.getBlockedUsers.value, "/api/v2/users/block")
-    }
-
     func test_userGroups_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.userGroups.shouldBeQueuedOffline)
         XCTAssertFalse(EndpointPath.userGroupSearch.shouldBeQueuedOffline)
@@ -227,9 +209,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.flagUser(false))
         assertResultEncodingAndDecoding(.flagMessage(false))
         assertResultEncodingAndDecoding(.muteUser(false))
-        assertResultEncodingAndDecoding(.blockUsers)
-        assertResultEncodingAndDecoding(.unblockUsers)
-        assertResultEncodingAndDecoding(.getBlockedUsers)
+        assertResultEncodingAndDecoding(.blockUser)
 
         assertResultEncodingAndDecoding(.polls)
         assertResultEncodingAndDecoding(.pollsQuery)

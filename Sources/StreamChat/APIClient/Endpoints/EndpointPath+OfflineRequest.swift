@@ -17,7 +17,7 @@ extension EndpointPath {
              .unpinMessage:
             return true
         case .banMember,
-             .blockUsers,
+             .blockUser,
              .callToken,
              .channelEvent,
              .channels,
@@ -34,7 +34,6 @@ extension EndpointPath {
              .flagMessage,
              .flagUser,
              .getApp,
-             .getBlockedUsers,
              .getOG,
              .groupedChannels,
              .guest,
@@ -75,7 +74,7 @@ extension EndpointPath {
              .threads,
              .translateMessage,
              .truncateChannel,
-             .unblockUsers,
+             .unblockUser,
              .unread,
              .updateChannel,
              .uploadAttachment,

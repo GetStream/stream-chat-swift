@@ -240,16 +240,16 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadBlockedUsers(completion: @escaping @Sendable (Result<[BlockedUserDetails], Error>) -> Void) {
-        apiClient.request(endpoint: .getBlockedUsers()) {
+        apiClient.request(endpoint: .loadBlockedUsers()) {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    session.currentUser?.blockedUserIds = Set(payload.blocks.map(\.blockedUserId))
+                    session.currentUser?.blockedUserIds = Set(payload.blockedUsers.map(\.blockedUserId))
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
                     }
-                    let blockedUsers = payload.blocks.map {
+                    let blockedUsers = payload.blockedUsers.map {
                         BlockedUserDetails(userId: $0.blockedUserId, blockedAt: $0.createdAt)
                     }
                     completion(.success(blockedUsers))
