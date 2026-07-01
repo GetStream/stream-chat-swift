@@ -20,7 +20,8 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var downloadAttachment_attachmentId: AttachmentId?
     @Atomic var downloadAttachment_request: URLRequest?
     @Atomic var downloadAttachment_completion_result: Result<AnyChatMessageAttachment, Error>?
-    
+    @Atomic var downloadAttachment_completion: ((Result<AnyChatMessageAttachment, Error>) -> Void)?
+
     @Atomic var deleteLocalAttachmentDownload_attachmentId: AttachmentId?
     @Atomic var deleteLocalAttachmentDownload_completion_result: Result<Void, Error>?
 
@@ -173,7 +174,8 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         downloadAttachment_attachmentId = nil
         downloadAttachment_request = nil
         downloadAttachment_completion_result = nil
-        
+        downloadAttachment_completion = nil
+
         editMessage_messageId = nil
         editMessage_text = nil
         editMessage_skipPush = nil
@@ -317,6 +319,18 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     ) where Payload: DownloadableAttachmentPayload {
         downloadAttachment_attachmentId = attachment.id
         downloadAttachment_request = request
+        downloadAttachment_completion = { result in
+            switch result {
+            case .success(let anyAttachment):
+                if let result = anyAttachment.attachment(payloadType: Payload.self) {
+                    completion(.success(result))
+                } else {
+                    completion(.failure(TestError()))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
         switch downloadAttachment_completion_result {
         case .success(let anyAttachment):
             if let result = anyAttachment.attachment(payloadType: Payload.self) {
