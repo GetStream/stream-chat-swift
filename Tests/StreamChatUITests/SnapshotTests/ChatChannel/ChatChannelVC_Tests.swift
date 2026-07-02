@@ -1378,12 +1378,9 @@ import XCTest
     }
 
     func test_didUpdateChannel_whenChannelBecomesReadInBackground_unreadMessagesBannerRemainsVisible() throws {
-        // Regression test: opening a channel that was previously marked as unread should keep
-        // showing the unread messages banner for that session, even if `markRead()` is triggered
-        // automatically (e.g. because the last message is immediately visible) and resets the
-        // channel's unread count in the background. The banner should only disappear the next
-        // time the channel is opened. See `ChatChannelViewModel` in the SwiftUI SDK for the
-        // equivalent, intentional behavior (`markRead()` explicitly keeps `firstUnreadMessageId` set).
+        // Regression test: the unread messages banner should keep showing for the session even if
+        // `markRead()` is triggered automatically in the background and resets the channel's unread
+        // count. It should only disappear the next time the channel is opened.
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self

@@ -671,12 +671,10 @@ private extension ChatChannelVC {
 
     /// Updates the anchor message id used to render the unread messages banner.
     ///
-    /// Once anchored for the current channel screen session, the banner is intentionally left in
-    /// place even if a subsequent `markRead()` call (e.g. triggered by the last message becoming
-    /// visible, or by scrolling) resets the channel's unread count in the background: it's only
-    /// recalculated the next time the channel is opened, or when `forceUpdate` is passed because the
-    /// unread boundary genuinely moved (e.g. a new mark-as-unread action). This mirrors the SwiftUI
-    /// SDK's `ChatChannelViewModel`, which keeps `firstUnreadMessageId` set after calling `markRead()`.
+    /// Once anchored for the current channel screen session, the banner stays in place even if a
+    /// subsequent `markRead()` call resets the channel's unread count in the background. It's only
+    /// recalculated on the next channel open, or when `forceUpdate` is passed because the unread
+    /// boundary genuinely moved (e.g. a new mark-as-unread action).
     func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil, forceUpdate: Bool = false) {
         guard forceUpdate || firstUnreadMessageId == nil else { return }
         if forceUpdate {
