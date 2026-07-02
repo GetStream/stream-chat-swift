@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.6.0)
+_July 02, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `all_mentions` and `direct_mentions` push notification preference levels [#4137](https://github.com/GetStream/stream-chat-swift/pull/4137)
