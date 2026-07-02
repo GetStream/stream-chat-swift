@@ -1377,6 +1377,55 @@ import XCTest
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_didUpdateChannel_whenChannelBecomesReadInBackground_unreadMessagesBannerRemainsVisible() throws {
+        // Regression test: opening a channel that was previously marked as unread should keep
+        // showing the unread messages banner for that session, even if `markRead()` is triggered
+        // automatically (e.g. because the last message is immediately visible) and resets the
+        // channel's unread count in the background. The banner should only disappear the next
+        // time the channel is opened. See `ChatChannelViewModel` in the SwiftUI SDK for the
+        // equivalent, intentional behavior (`markRead()` explicitly keeps `firstUnreadMessageId` set).
+        var components = Components.mock
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
+        components.isUnreadMessagesSeparatorEnabled = true
+        vc.components = components
+        vc.messageListVC.components = components
+        vc.messageListVC.dataSource = vc
+
+        let firstMessageId = MessageId.unique
+        channelControllerMock.mockFirstUnreadMessageId = firstMessageId
+        vc.messages = [
+            .mock(id: firstMessageId, text: "First unread message", createdAt: Date(timeIntervalSince1970: 0)),
+            .mock(text: "Newer message", createdAt: Date(timeIntervalSince1970: 1))
+        ]
+
+        // The channel opens with an unread message (e.g. it was previously marked as unread).
+        let unreadChannel = ChatChannel.mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0))
+        channelControllerMock.simulateInitial(channel: unreadChannel, messages: vc.messages, state: .remoteDataFetched)
+        vc.channelController(vc.channelController, didUpdateChannel: .update(unreadChannel))
+
+        func shouldShowUnreadMessages() throws -> Bool {
+            let header = vc.chatMessageListVC(
+                vc.messageListVC,
+                headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
+                at: .init(row: 0, section: 0)
+            )
+            let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
+            return try XCTUnwrap(headerDecorationView.content).shouldShowUnreadMessages
+        }
+
+        XCTAssertTrue(try shouldShowUnreadMessages())
+
+        // Simulate the channel being auto-marked-as-read in the background (e.g. a `markRead()`
+        // triggered by `viewDidAppear`/scrolling completing), which resets the unread count to 0
+        // and triggers a new `didUpdateChannel` callback, just like it would right after opening.
+        let readChannel = ChatChannel.mock(cid: unreadChannel.cid, unreadCount: .noUnread)
+        channelControllerMock.channel_mock = readChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(readChannel))
+
+        XCTAssertTrue(try shouldShowUnreadMessages())
+    }
+
     func test_headerViewForMessage_whenUnreadSeparatorIsDisabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
