@@ -24,6 +24,7 @@ _July 02, 2026_
 ### 🐞 Fixed
 - Fix `Spacer()` conflicting with SwiftUI's `Spacer` when building with Xcode 27 [#4131](https://github.com/GetStream/stream-chat-swift/pull/4131)
 - Fix showing voice recording icon in search results [#4127](https://github.com/GetStream/stream-chat-swift/pull/4127)
+- Fix unread messages banner disappearing instantly after marking a message as unread and reopening the channel [#4154](https://github.com/GetStream/stream-chat-swift/pull/4154)
 
 # [5.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.1)
 _June 11, 2026_
