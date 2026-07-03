@@ -1,0 +1,10 @@
+# Properties stripped from the generated OpenAPI models (step 4c in openapi_generate.sh).
+# Format: <ModelTypeName> <propertyName> ... — one model per line, everything alphabetical.
+AppResponseFields id placement
+BlockedUserResponse blockedUser user userId
+CreateDeviceRequest hardwareId voipToken
+DeviceResponse disabled disabledReason hardwareId pushProvider pushProviderName userId voip
+GetApplicationResponse duration
+GetBlockedUsersResponse duration
+GetOGResponse actions authorIcon authorLink color custom duration fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
+ListDevicesResponse duration

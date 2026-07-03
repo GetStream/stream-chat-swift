@@ -95,45 +95,35 @@ prune_generated_endpoint_paths() {
   local allowed_endpoints_csv
   allowed_endpoints_csv="$(IFS=,; echo "${allowed_endpoints[*]}")"
 
-  python3 - "$file" "$allowed_endpoints_csv" <<'PY'
-import pathlib
-import sys
-
-path = pathlib.Path(sys.argv[1])
-allowed = set(filter(None, sys.argv[2].split(",")))
-
-def case_name(line):
-    stripped = line.strip()
-    if not stripped.startswith("case "):
-        return None
-    pattern = stripped[len("case "):]
-    if pattern.startswith("let "):
-        pattern = pattern[len("let "):]
-    if pattern.startswith("."):
-        pattern = pattern[1:]
-    return pattern.split("(", 1)[0].split(" ", 1)[0].split(":", 1)[0]
-
-# Within the EndpointPath enum, drop every `case` line and its (possibly multi-line)
-# switch arm whose name isn't allowed; keep every structural line. swiftformat tidies
-# the leftover blank lines afterwards.
-out, in_enum, keep = [], False, True
-for line in path.read_text().splitlines(keepends=True):
-    if line.startswith("enum EndpointPath"):
-        in_enum = True
-    elif line.startswith("final class Endpoint"):
-        in_enum = False
-    if in_enum:
-        name = case_name(line)
-        if name is not None:                                     # `case …`: opens a block
-            keep = name in allowed
-        elif not line.lstrip().startswith(("return ", "let ")):  # structural line
-            keep = True                                          # (arm bodies inherit keep)
-        if not keep:
-            continue
-    out.append(line)
-
-path.write_text("".join(out))
-PY
+  # Within the EndpointPath enum, drop every `case` line and its (possibly multi-line)
+  # switch arm whose name isn't allowed; keep every structural line. swiftformat tidies
+  # the leftover blank lines afterwards.
+  awk -v allowed_csv="$allowed_endpoints_csv" '
+    BEGIN {
+      n = split(allowed_csv, names, ",")
+      for (i = 1; i <= n; i++) allowed[names[i]] = 1
+      keep = 1
+    }
+    /^enum EndpointPath/ { in_enum = 1 }
+    /^final class Endpoint/ { in_enum = 0 }
+    {
+      if (in_enum) {
+        line = $0
+        sub(/^[[:space:]]+/, "", line)
+        if (line ~ /^case /) {                              # `case …`: opens a block
+          name = line
+          sub(/^case /, "", name); sub(/^let /, "", name); sub(/^\./, "", name)
+          sub(/[(: ].*$/, "", name)
+          keep = (name in allowed)
+        } else if (line !~ /^(return |let )/) {             # structural line
+          keep = 1                                          # (arm bodies inherit keep)
+        }
+        if (!keep) next
+      }
+      print
+    }
+  ' "$file" > "$file.tmp"
+  mv "$file.tmp" "$file"
 }
 prune_generated_endpoint_paths
 
@@ -161,110 +151,92 @@ rename_generated_type BlockUsersResponse EmptyResponse
 rename_generated_type UnblockUsersResponse EmptyResponse
 
 # 4c. Strip ignored (unused) properties from the kept models.
-#     openapi_models_ignored_fields.json maps model type name (AFTER the renames
-#     above) -> alphabetical list of property names to remove. Update the JSON
+#     openapi_models_ignored_fields.txt maps model type name (AFTER the renames
+#     above) to the property names to remove — one `Model prop prop ...` line per
+#     model, everything alphabetical, `#` starts a comment. Update the file
 #     whenever models are regenerated or their usage changes; the step fails when
 #     an entry no longer matches a generated model/property. If stripping would
 #     leave a model entirely unreferenced, drop it from allowed_models instead of
 #     listing all of its fields here; if a response model would end up with no
 #     fields at all, drop it and rename its type to EmptyResponse in 4b instead.
 strip_ignored_model_fields() {
-  python3 - "$OUTPUT_DIR_CHAT/models" "$SCRIPT_DIR/openapi_models_ignored_fields.json" <<'PY'
-import json
-import pathlib
-import re
-import sys
+  local ignored_file="$SCRIPT_DIR/openapi_models_ignored_fields.txt"
+  local model props prop file errfile
+  local errors=()
+  errfile="$(mktemp)"
 
-models_dir = pathlib.Path(sys.argv[1])
-ignored_path = pathlib.Path(sys.argv[2])
-ignored = json.loads(ignored_path.read_text())
-
-INIT_RE = re.compile(r"^(?:(?:public|internal|package) )?init\((.*)\) \{$")
-
-# Remove `prop` from the single-line memberwise init signature. Parameters are
-# split on top-level commas (bracket-depth aware — types like [String: RawJSON]).
-def drop_init_param(line, prop):
-    stripped = line.strip()
-    params = INIT_RE.match(stripped).group(1)
-    parts, current, depth = [], "", 0
-    for ch in params:
-        if ch in "([":
-            depth += 1
-        elif ch in ")]":
-            depth -= 1
-        if ch == "," and depth == 0:
-            parts.append(current)
-            current = ""
-        else:
-            current += ch
-    if current.strip():
-        parts.append(current)
-    parts = [p.strip() for p in parts]
-    kept = [p for p in parts if not p.startswith(prop + ":")]
-    indent = line[:len(line) - len(line.lstrip())]
-    prefix = stripped[:stripped.index("init(")]
-    ending = "\n" if line.endswith("\n") else ""
-    new_line = indent + prefix + "init(" + ", ".join(kept) + ") {" + ending
-    return new_line, len(kept) != len(parts)
-
-errors = []
-for model, props in ignored.items():
-    path = models_dir / (model + ".swift")
-    if not path.exists():
-        errors.append(model + ": no generated model file - remove the stale entry")
-        continue
-    lines = path.read_text().splitlines(keepends=True)
-    for prop in props:
-        escaped = re.escape(prop)
-        decl_re = re.compile(r"^(?:(?:public|internal|package) )?let " + escaped + r": ")
-        assign_re = re.compile(r"^self\." + escaped + r" = " + escaped + r"$")
-        case_re = re.compile(r"^case " + escaped + r"(?: = \"[^\"]*\")?$")
-        found = {"declaration": False, "init param": False, "assignment": False, "coding key": False}
-        out = []
-        in_coding_keys = False
-        for line in lines:
-            stripped = line.strip()
-            if stripped.startswith("enum CodingKeys"):
-                in_coding_keys = True
-            elif in_coding_keys and stripped == "}":
-                in_coding_keys = False
-            if decl_re.match(stripped):
-                found["declaration"] = True
-                # Drop doc comments / attributes attached to the declaration.
-                while out and out[-1].strip().startswith(("///", "@available")):
-                    out.pop()
-                continue
-            if assign_re.match(stripped):
-                found["assignment"] = True
-                continue
-            if in_coding_keys and case_re.match(stripped):
-                found["coding key"] = True
-                continue
-            if INIT_RE.match(stripped):
-                new_line, removed = drop_init_param(line, prop)
-                if removed:
-                    found["init param"] = True
-                    line = new_line
-            out.append(line)
-        missing = [name for name, ok in found.items() if not ok]
-        if missing:
-            errors.append(model + "." + prop + ": " + ", ".join(missing) + " not found")
-        lines = out
+  while read -r model props; do
+    [[ -z "$model" || "$model" == \#* ]] && continue   # blank lines / comments
+    file="$OUTPUT_DIR_CHAT/models/${model}.swift"
+    if [[ ! -f "$file" ]]; then
+      errors+=("$model: no generated model file - remove the stale entry")
+      continue
+    fi
+    for prop in $props; do
+      # Remove the property declaration (with attached doc comments), the init
+      # parameter, the assignment, and the CodingKeys case; fail if any is missing.
+      if awk -v prop="$prop" '
+        function flush() { for (i = 1; i <= buffered; i++) print buffer[i]; buffered = 0 }
+        BEGIN {
+          decl_re   = "^(public |internal |package )?let " prop ": "
+          assign_re = "^self\\." prop " = " prop "$"
+          case_re   = "^case " prop "( = \"[^\"]*\")?$"
+        }
+        {
+          line = $0
+          sub(/^[[:space:]]+/, "", line)
+          if (line ~ /^enum CodingKeys/) in_ck = 1
+          else if (in_ck && line == "}") in_ck = 0
+          if (line ~ decl_re) { found_decl = 1; buffered = 0; next }  # drops buffered docs too
+          if (line ~ assign_re) { found_assign = 1; next }
+          if (in_ck && line ~ case_re) { found_case = 1; next }
+          if (line ~ /^(public |internal |package )?init\(.*\) \{$/) {
+            # Drop the parameter; generated param types never contain "," or ")".
+            if (sub("\\(" prop ": [^,)]*, ", "(") ||
+                sub(", " prop ": [^,)]*", "") ||
+                sub("\\(" prop ": [^,)]*\\)", "()")) found_init = 1
+          }
+          if (line ~ /^(\/\/\/|@available)/) { buffer[++buffered] = $0; next }  # may precede a dropped decl
+          flush(); print
+        }
+        END {
+          flush()
+          if (!(found_decl && found_init && found_assign && found_case)) {
+            msg = ""
+            if (!found_decl)   msg = msg ", declaration"
+            if (!found_init)   msg = msg ", init param"
+            if (!found_assign) msg = msg ", assignment"
+            if (!found_case)   msg = msg ", coding key"
+            printf "%s not found\n", substr(msg, 3) > "/dev/stderr"
+            exit 1
+          }
+        }
+      ' "$file" > "$file.tmp" 2> "$errfile"; then
+        mv "$file.tmp" "$file"
+      else
+        rm -f "$file.tmp"
+        errors+=("$model.$prop: $(cat "$errfile")")
+      fi
+    done
     # Drop the CodingKeys enum entirely when no cases remain.
-    text = "".join(lines)
-    text = re.sub(
-        r"\n[ \t]*(?:(?:public|internal|package) )?enum CodingKeys: String, CodingKey, CaseIterable \{[ \t\n]*\}\n",
-        "\n",
-        text,
-    )
-    path.write_text(text)
+    awk '
+      pending != "" {
+        if ($0 ~ /^[[:space:]]*\}$/) { pending = ""; next }
+        print pending; pending = ""
+      }
+      /^[[:space:]]*(public |internal |package )?enum CodingKeys: String, CodingKey, CaseIterable \{$/ { pending = $0; next }
+      { print }
+      END { if (pending != "") print pending }
+    ' "$file" > "$file.tmp"
+    mv "$file.tmp" "$file"
+  done < "$ignored_file"
+  rm -f "$errfile"
 
-if errors:
-    sys.stderr.write("openapi_models_ignored_fields.json is out of sync with the generated models:\n")
-    for error in errors:
-        sys.stderr.write("  - " + error + "\n")
-    sys.exit(1)
-PY
+  if ((${#errors[@]} > 0)); then
+    echo "openapi_models_ignored_fields.txt is out of sync with the generated models:" >&2
+    printf '  - %s\n' "${errors[@]}" >&2
+    exit 1
+  fi
 }
 strip_ignored_model_fields
 
@@ -457,21 +429,21 @@ EOF
 
 EOF
 
-  python3 - "$file" "$cases_file" "$values_file" <<'PY'
-import pathlib
-import sys
-
-file_path = pathlib.Path(sys.argv[1])
-cases = pathlib.Path(sys.argv[2]).read_text()
-values = pathlib.Path(sys.argv[3]).read_text()
-text = file_path.read_text()
-
-enum_marker = "enum EndpointPath: Codable {\n"
-switch_marker = "        switch self {\n"
-
-text = text.replace(enum_marker, enum_marker + cases, 1)
-text = text.replace(switch_marker, switch_marker + values, 1)
-file_path.write_text(text)
-PY
+  # Insert the v1 cases after the enum opening and the v1 values after the first
+  # `switch self {` — first occurrence only, matching lines exactly.
+  awk -v cases_file="$cases_file" -v values_file="$values_file" '
+    { print }
+    !cases_done && $0 == "enum EndpointPath: Codable {" {
+      while ((getline line < cases_file) > 0) print line
+      close(cases_file)
+      cases_done = 1
+    }
+    !values_done && $0 == "        switch self {" {
+      while ((getline line < values_file) > 0) print line
+      close(values_file)
+      values_done = 1
+    }
+  ' "$file" > "$file.tmp"
+  mv "$file.tmp" "$file"
 }
 inject_v1_endpoint_paths
