@@ -5,27 +5,17 @@
 import Foundation
 
 final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
-    let blockedUser: UserResponse
     /// ID of the user who got blocked
     let blockedUserId: String
     let createdAt: Date
-    let user: UserResponse
-    /// ID of the user who blocked another user
-    let userId: String
 
-    init(blockedUser: UserResponse, blockedUserId: String, createdAt: Date, user: UserResponse, userId: String) {
-        self.blockedUser = blockedUser
+    init(blockedUserId: String, createdAt: Date) {
         self.blockedUserId = blockedUserId
         self.createdAt = createdAt
-        self.user = user
-        self.userId = userId
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case blockedUser = "blocked_user"
         case blockedUserId = "blocked_user_id"
         case createdAt = "created_at"
-        case user
-        case userId = "user_id"
     }
 }

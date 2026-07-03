@@ -285,7 +285,7 @@ enum EndpointMethod: String, Codable, Equatable {
 }
 
 extension Endpoint {
-    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
+    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .blockUsers,
             method: .post,
@@ -369,7 +369,7 @@ extension Endpoint {
         )
     }
 
-    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<UnblockUsersResponse> {
+    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .unblockUsers,
             method: .post,

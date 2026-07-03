@@ -7,15 +7,12 @@ import Foundation
 final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
     /// List of devices
     let devices: [DeviceResponse]
-    let duration: String
 
-    init(devices: [DeviceResponse], duration: String) {
+    init(devices: [DeviceResponse]) {
         self.devices = devices
-        self.duration = duration
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case devices
-        case duration
     }
 }

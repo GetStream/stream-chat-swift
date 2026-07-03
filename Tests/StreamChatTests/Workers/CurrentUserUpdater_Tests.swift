@@ -1115,14 +1115,10 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let payload = GetBlockedUsersResponse(
             blocks: [
                 BlockedUserResponse(
-                    blockedUser: .dummy(userId: blockedUserId),
                     blockedUserId: blockedUserId,
-                    createdAt: createdAt,
-                    user: .dummy(userId: currentUserId),
-                    userId: currentUserId
+                    createdAt: createdAt
                 )
-            ],
-            duration: ""
+            ]
         )
         apiClient.test_mockResponseResult(Result<GetBlockedUsersResponse, Error>.success(payload))
         let expectation = XCTestExpectation()
