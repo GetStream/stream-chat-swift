@@ -6,7 +6,7 @@ import Foundation
 
 /// An object which represents a list of `ChatUser`.
 public final class UserList: Sendable {
-    private let query: UserListQuery
+    let query: UserListQuery
     @MainActor private var stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     

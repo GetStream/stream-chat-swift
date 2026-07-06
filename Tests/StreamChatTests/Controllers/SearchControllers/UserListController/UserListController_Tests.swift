@@ -53,11 +53,16 @@ final class UserListController_Tests: XCTestCase {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
 
-        // Simulate `synchronize` call
-        controller.synchronize()
-
         // Simulate successfull network call.
-        env.userListUpdater?.update_completion?(.success([]))
+        env.userListUpdater?.update_completion_result = .success([])
+
+        // Simulate `synchronize` call and wait for its completion.
+        let expectation = XCTestExpectation(description: "Synchronize")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -78,12 +83,17 @@ final class UserListController_Tests: XCTestCase {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
 
-        // Simulate `synchronize` call
-        controller.synchronize()
-
         // Simulate failed network call.
         let error = TestError()
-        env.userListUpdater?.update_completion?(.failure(error))
+        env.userListUpdater?.update_completion_result = .failure(error)
+
+        // Simulate `synchronize` call and wait for its completion.
+        let expectation = XCTestExpectation(description: "Synchronize")
+        controller.synchronize { error in
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -121,6 +131,9 @@ final class UserListController_Tests: XCTestCase {
     /// This test simulates a bug where the `users` field was not updated if it wasn't
     /// touched before calling synchronize.
     @MainActor func test_usersAreFetched_afterCallingSynchronize() throws {
+        // Simulate successful network call.
+        env.userListUpdater?.update_completion_result = .success([])
+
         // Simulate `synchronize` call
         controller.synchronize()
 
@@ -131,9 +144,6 @@ final class UserListController_Tests: XCTestCase {
             try session.saveUser(payload: self.dummyUser(id: userId), query: self.query, cache: nil)
         }
 
-        // Simulate successful network call.
-        env.userListUpdater?.update_completion?(.success([]))
-        
         waitForUsersChange(expectedUserCount: 1)
 
         // Assert the existing user is loaded
@@ -141,11 +151,14 @@ final class UserListController_Tests: XCTestCase {
     }
 
     func test_synchronize_callsUserQueryUpdater() {
+        // Simulate successful update
+        env.userListUpdater?.update_completion_result = .success([])
+
         // Simulate `synchronize` call and catch the completion
-        nonisolated(unsafe) var completionError: Error?
+        let expectation = XCTestExpectation(description: "Synchronize")
         controller.synchronize { error in
             XCTAssertNil(error)
-            completionError = error
+            expectation.fulfill()
         }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -155,40 +168,36 @@ final class UserListController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
+        // Completion should be called
+        wait(for: [expectation], timeout: defaultTimeout)
+
         // Assert the updater is called with the query
         XCTAssertEqual(env.userListUpdater!.update_queries.first?.filter?.filterHash, query.filter?.filterHash)
-        // Completion shouldn't be called yet
-        XCTAssertTrue(completionError == nil)
 
-        // Simulate successful update
-        env.userListUpdater!.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.userListUpdater!.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionError == nil)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
     func test_synchronize_propagatesErrorFromUpdater() {
-        // Simulate `synchronize` call and catch the completion
-        nonisolated(unsafe) var completionError: Error?
-        controller.synchronize { error in
-            completionError = error
-        }
-
         // Simulate failed update
         let testError = TestError()
-        env.userListUpdater!.update_completion?(.failure(testError))
+        env.userListUpdater?.update_completion_result = .failure(testError)
 
-        // Completion should be called with the error
-        AssertAsync.willBeEqual(completionError as? TestError, testError)
+        // Simulate `synchronize` call and wait for the completion to be called with the error
+        let expectation = XCTestExpectation(description: "Synchronize")
+        controller.synchronize { error in
+            XCTAssertEqual(error as? TestError, testError)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     // MARK: - Change propagation tests
 
     func test_changesInTheDatabase_arePropagated() throws {
+        // Simulate successful network call.
+        env.userListUpdater?.update_completion_result = .success([])
+
         // Simulate `synchronize` call
         controller.synchronize()
 
@@ -227,11 +236,11 @@ final class UserListController_Tests: XCTestCase {
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
+        // Simulate network call response
+        env.userListUpdater?.update_completion_result = .success([])
+
         // Synchronize
         controller.synchronize()
-
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(.success([]))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -260,20 +269,16 @@ final class UserListController_Tests: XCTestCase {
     // MARK: - Users pagination
 
     func test_loadNextUsers_callsUserListUpdater() {
-        nonisolated(unsafe) var completionCalled = false
+        // Simulate successful update
+        env.userListUpdater?.update_completion_result = .success([])
+
+        // Simulate `loadNextUsers` call and catch the completion
         let limit = 42
+        let expectation = XCTestExpectation(description: "Load next users")
         controller.loadNextUsers(limit: limit) { error in
             XCTAssertNil(error)
-            completionCalled = true
+            expectation.fulfill()
         }
-
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
-        // Assert correct `Pagination` is created
-        XCTAssertEqual(
-            env!.userListUpdater?.update_queries.first?.pagination,
-            .init(pageSize: limit, offset: controller.users.count)
-        )
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -282,30 +287,31 @@ final class UserListController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
-        // Simulate successful update
-        env!.userListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.userListUpdater!.update_completion = nil
-
         // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Assert correct `Pagination` is created
+        XCTAssertEqual(
+            env!.userListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: limit, offset: 0)
+        )
+
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
     func test_loadNextUsers_callsUserUpdaterWithError() {
-        // Simulate `loadNextUsers` call and catch the completion
-        nonisolated(unsafe) var completionError: Error?
-        controller.loadNextUsers { error in
-            completionError = error
-        }
-
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
-        env.userListUpdater!.update_completion?(.failure(testError))
+        env.userListUpdater?.update_completion_result = .failure(testError)
 
-        // Completion should be called with the error
-        AssertAsync.willBeEqual(completionError as? TestError, testError)
+        // Simulate `loadNextUsers` call and wait for the completion to be called with the error
+        let expectation = XCTestExpectation(description: "Load next users")
+        controller.loadNextUsers { error in
+            XCTAssertEqual(error as? TestError, testError)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
     }
     
     // MARK: -
@@ -338,12 +344,17 @@ private class TestEnvironment {
     @Atomic var userListUpdater: UserListUpdater_Mock?
 
     lazy var environment: ChatUserListController.Environment =
-        .init(userQueryUpdaterBuilder: { [unowned self] in
-            self.userListUpdater = UserListUpdater_Mock(
-                database: $0,
-                apiClient: $1
+        .init(userListBuilder: { [unowned self] query, client in
+            let userListUpdater = UserListUpdater_Mock(
+                database: client.databaseContainer,
+                apiClient: client.apiClient
             )
-            return self.userListUpdater!
+            self.userListUpdater = userListUpdater
+            return UserList(
+                query: query,
+                client: client,
+                environment: .init(userListUpdater: { _, _ in userListUpdater })
+            )
         })
 }
 

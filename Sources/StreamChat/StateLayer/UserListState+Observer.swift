@@ -20,7 +20,7 @@ extension UserListState {
         }
         
         struct Handlers {
-            let usersDidChange: @Sendable @MainActor ([ChatUser]) async -> Void
+            let usersDidChange: @Sendable @MainActor ([ChatUser], [ListChange<ChatUser>]) -> Void
         }
         
         func start(with handlers: Handlers) -> [ChatUser] {

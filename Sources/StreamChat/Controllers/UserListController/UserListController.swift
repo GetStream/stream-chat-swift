@@ -2,7 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import CoreData
+import Combine
 import Foundation
 
 extension ChatClient {
@@ -22,7 +22,7 @@ extension ChatClient {
 /// - Note: For an async-await alternative of the `ChatUserListController`, please check ``UserList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of users.
-    public let query: UserListQuery
+    public var query: UserListQuery { userList.query }
 
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -34,15 +34,8 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///
     public var users: [ChatUser] {
         startUserListObserverIfNeeded()
-        return userListObserver.items
+        return StreamConcurrency.onMain { userList.state.users }
     }
-
-    /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: UserListUpdater = self.environment
-        .userQueryUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatUserListControllerDelegate> = .init() {
@@ -55,43 +48,8 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         }
     }
 
-    /// Used for observing the database for changes.
-    private(set) lazy var userListObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
-        let request = UserDTO.userListFetchRequest(query: self.query)
-
-        let observer = self.environment.createUserListDabaseObserver(
-            client.databaseContainer,
-            request,
-            { try $0.asModel() }
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controller(self, didChangeUsers: changes)
-            }
-        }
-
-        return observer
-    }()
-
-    var _basePublishers: Any?
-    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
-    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
-    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
-    var basePublishers: BasePublishers {
-        if let value = _basePublishers as? BasePublishers {
-            return value
-        }
-        _basePublishers = BasePublishers(controller: self)
-        return _basePublishers as? BasePublishers ?? .init(controller: self)
-    }
-
-    private let environment: Environment
+    private let userList: UserList
+    let usersChangesSubject = PassthroughSubject<[ListChange<ChatUser>], Never>()
 
     /// Creates a new `UserListController`.
     ///
@@ -100,33 +58,28 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///   - client: The `Client` instance this controller belongs to.
     init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
-        self.query = query
-        self.environment = environment
+        self.userList = environment.userListBuilder(query, client)
     }
 
     override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
-
-        worker.update(userListQuery: query) { result in
+        withOnMainCompletion {
+            try await self.userList.get()
+        } completion: { result in
             self.state = result.error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: result.error))
-            self.callback { completion?(result.error) }
+            completion?(result.error)
         }
     }
 
-    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
-    /// `userListObserver` to fetch the local data and start observing the changes. It also changes
-    /// `state` based on the result.
-    ///
-    /// It's safe to call this method repeatedly.
-    ///
-    private func startUserListObserverIfNeeded() {
+    func startUserListObserverIfNeeded() {
         guard state == .initialized else { return }
-        do {
-            try userListObserver.startObserving()
+        StreamConcurrency.onMain {
+            userList.state.usersDidChangeHandler = { [weak self] changes in
+                guard let self else { return }
+                usersChangesSubject.send(changes)
+                delegateCallback { $0.controller(self, didChangeUsers: changes) }
+            }
             state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
 }
@@ -145,34 +98,23 @@ public extension ChatUserListController {
         limit: Int = 25,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        worker.update(userListQuery: updatedQuery) { result in
-            self.callback { completion?(result.error) }
+        startUserListObserverIfNeeded()
+        withOnMainCompletion {
+            try await self.userList.loadMoreUsers(limit: limit)
+        } completion: { result in
+            completion?(result.error)
         }
     }
 }
 
 extension ChatUserListController {
     struct Environment {
-        var userQueryUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> UserListUpdater = UserListUpdater.init
-
-        var createUserListDabaseObserver: (
-            _ database: DatabaseContainer,
-            _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) throws -> ChatUser
-        )
-            -> BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
-                BackgroundListDatabaseObserver(
-                    database: $0,
-                    fetchRequest: $1,
-                    itemCreator: $2,
-                    itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
-                )
-            }
+        var userListBuilder: (
+            _ query: UserListQuery,
+            _ client: ChatClient
+        ) -> UserList = { query, client in
+            UserList(query: query, client: client)
+        }
     }
 }
 
