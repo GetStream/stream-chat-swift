@@ -150,7 +150,7 @@ rename_generated_type Response EmptyResponse
 rename_generated_type BlockUsersResponse EmptyResponse
 rename_generated_type UnblockUsersResponse EmptyResponse
 
-# 4c. Strip ignored (unused) properties from the kept models.
+# 4c. Strip unused properties from the kept models.
 #     openapi_models_ignored_fields.txt maps model type name (AFTER the renames
 #     above) to the property names to remove — one `Model prop prop ...` line per
 #     model, everything alphabetical, `#` starts a comment. Update the file
