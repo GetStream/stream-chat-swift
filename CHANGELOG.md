@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 
 # [5.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.6.0)
-_July 02, 2026_
+_July 03, 2026_
 
 ## StreamChat
 ### ✅ Added
@@ -25,6 +25,14 @@ _July 02, 2026_
 - Fix `Spacer()` conflicting with SwiftUI's `Spacer` when building with Xcode 27 [#4131](https://github.com/GetStream/stream-chat-swift/pull/4131)
 - Fix showing voice recording icon in search results [#4127](https://github.com/GetStream/stream-chat-swift/pull/4127)
 - Fix unread messages banner disappearing instantly after marking a message as unread and reopening the channel [#4154](https://github.com/GetStream/stream-chat-swift/pull/4154)
+
+# [4.101.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.2)
+_July 03, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix sending typing events to channels without typing events capability [#4147](https://github.com/GetStream/stream-chat-swift/pull/4147)
+- Fix `typing.stop` being sent unconditionally on every message send, even on channels with typing events disabled [#4147](https://github.com/GetStream/stream-chat-swift/pull/4147)
 
 # [5.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.1)
 _June 11, 2026_
