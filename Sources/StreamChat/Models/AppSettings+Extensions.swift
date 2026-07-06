@@ -13,6 +13,7 @@ extension AppSettings {
 extension AppSettings.UploadConfig {
     /// The file size limit allowed in Bytes.
     /// This value is configurable from Stream's Dashboard App Settings.
+    @available(*, deprecated, renamed: "sizeLimit")
     public var sizeLimitInBytes: Int64? { Int64(sizeLimit) }
 }
 
