@@ -34,7 +34,10 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     ///
     public var users: [ChatUser] {
         startUserListObserverIfNeeded()
-        return StreamConcurrency.onMain { userList.state.users }
+        if Thread.current.isMainThread {
+            return MainActor.assumeIsolated { userList.state.users }
+        }
+        return userList.observer.items
     }
 
     /// A type-erased delegate.

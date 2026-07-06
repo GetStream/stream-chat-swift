@@ -7,6 +7,7 @@ import Foundation
 /// An object which represents a list of `ChatUser`.
 public final class UserList: Sendable {
     let query: UserListQuery
+    let observer: UserListState.Observer
     @MainActor private var stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     
@@ -16,10 +17,15 @@ public final class UserList: Sendable {
             client.databaseContainer,
             client.apiClient
         )
+        let observer = UserListState.Observer(
+            query: query,
+            database: client.databaseContainer
+        )
+        self.observer = observer
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 query,
-                client.databaseContainer
+                observer
             )
         }
     }
@@ -82,9 +88,9 @@ extension UserList {
         
         var stateBuilder: @Sendable @MainActor (
             _ query: UserListQuery,
-            _ database: DatabaseContainer
+            _ observer: UserListState.Observer
         ) -> UserListState = { @MainActor in
-            UserListState(query: $0, database: $1)
+            UserListState(query: $0, observer: $1)
         }
     }
 }

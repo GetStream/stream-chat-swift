@@ -9,8 +9,8 @@ import Foundation
 @MainActor public final class UserListState: ObservableObject {
     private let observer: Observer
     
-    init(query: UserListQuery, database: DatabaseContainer) {
-        observer = Observer(query: query, database: database)
+    init(query: UserListQuery, observer: Observer) {
+        self.observer = observer
         self.query = query
 
         users = observer.start(

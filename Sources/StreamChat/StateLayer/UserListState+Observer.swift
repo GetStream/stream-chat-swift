@@ -19,6 +19,10 @@ extension UserListState {
             )
         }
         
+        var items: [ChatUser] {
+            usersObserver.items
+        }
+
         struct Handlers {
             let usersDidChange: @Sendable @MainActor ([ChatUser], [ListChange<ChatUser>]) -> Void
         }
