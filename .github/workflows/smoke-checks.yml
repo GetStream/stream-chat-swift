@@ -21,7 +21,7 @@ concurrency:
 
 permissions:
   contents: read
-    pull-requests: read
+  pull-requests: read
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
