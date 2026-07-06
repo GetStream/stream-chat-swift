@@ -20,7 +20,8 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var downloadAttachment_attachmentId: AttachmentId?
     @Atomic var downloadAttachment_request: URLRequest?
     @Atomic var downloadAttachment_completion_result: Result<AnyChatMessageAttachment, Error>?
-    
+    @Atomic var downloadAttachment_completion: ((Result<AnyChatMessageAttachment, Error>) -> Void)?
+
     @Atomic var deleteLocalAttachmentDownload_attachmentId: AttachmentId?
     @Atomic var deleteLocalAttachmentDownload_completion_result: Result<Void, Error>?
 
@@ -47,6 +48,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var createNewReply_parentMessageId: MessageId?
     @Atomic var createNewReply_attachments: [AnyAttachmentPayload]?
     @Atomic var createNewReply_mentionedUserIds: [UserId]?
+    @Atomic var createNewReply_mentionedHere: Bool?
+    @Atomic var createNewReply_mentionedChannel: Bool?
+    @Atomic var createNewReply_mentionedGroupIds: [String]?
+    @Atomic var createNewReply_mentionedRoles: [String]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_isSilent: Bool?
     @Atomic var createNewReply_skipPush: Bool?
@@ -169,7 +174,8 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         downloadAttachment_attachmentId = nil
         downloadAttachment_request = nil
         downloadAttachment_completion_result = nil
-        
+        downloadAttachment_completion = nil
+
         editMessage_messageId = nil
         editMessage_text = nil
         editMessage_skipPush = nil
@@ -182,6 +188,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         createNewReply_parentMessageId = nil
         createNewReply_attachments = nil
         createNewReply_mentionedUserIds = nil
+        createNewReply_mentionedHere = nil
+        createNewReply_mentionedChannel = nil
+        createNewReply_mentionedGroupIds = nil
+        createNewReply_mentionedRoles = nil
         createNewReply_showReplyInChannel = nil
         createNewReply_isSilent = nil
         createNewReply_skipPush = nil
@@ -309,6 +319,18 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     ) where Payload: DownloadableAttachmentPayload {
         downloadAttachment_attachmentId = attachment.id
         downloadAttachment_request = request
+        downloadAttachment_completion = { result in
+            switch result {
+            case .success(let anyAttachment):
+                if let result = anyAttachment.attachment(payloadType: Payload.self) {
+                    completion(.success(result))
+                } else {
+                    completion(.failure(TestError()))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
         switch downloadAttachment_completion_result {
         case .success(let anyAttachment):
             if let result = anyAttachment.attachment(payloadType: Payload.self) {
@@ -377,6 +399,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         parentMessageId: MessageId?,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
@@ -392,6 +418,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         createNewReply_parentMessageId = parentMessageId
         createNewReply_attachments = attachments
         createNewReply_mentionedUserIds = mentionedUserIds
+        createNewReply_mentionedHere = mentionedHere
+        createNewReply_mentionedChannel = mentionedChannel
+        createNewReply_mentionedGroupIds = mentionedGroupIds
+        createNewReply_mentionedRoles = mentionedRoles
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_isSilent = isSilent
         createNewReply_skipPush = skipPush

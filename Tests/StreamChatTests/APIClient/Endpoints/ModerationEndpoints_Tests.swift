@@ -173,41 +173,58 @@ final class ModerationEndpoints_Tests: XCTestCase {
         }
     }
     
-    func test_blockUser_buildsCorrectly() {
+    func test_blockUsers_buildsCorrectly() {
         let userId: UserId = .unique
 
-        let expectedEndpoint = Endpoint<BlockingUserPayload>(
-            path: .blockUser,
+        let expectedEndpoint = Endpoint<BlockUsersResponse>(
+            path: .blockUsers,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["blocked_user_id": userId]
+            body: BlockUsersRequest(blockedUserId: userId)
         )
 
         // Build endpoint
-        let endpoint: Endpoint<BlockingUserPayload> = .blockUser(userId)
+        let endpoint = Endpoint<BlockUsersResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId))
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users/block", endpoint.path.value)
+        XCTAssertEqual("/api/v2/users/block", endpoint.path.value)
     }
 
-    func test_unblockUser_buildsCorrectly() {
+    func test_unblockUsers_buildsCorrectly() {
         let userId: UserId = .unique
 
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .unblockUser,
+        let expectedEndpoint = Endpoint<UnblockUsersResponse>(
+            path: .unblockUsers,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["blocked_user_id": userId]
+            body: UnblockUsersRequest(blockedUserId: userId)
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .unblockUser(userId)
+        let endpoint = Endpoint<UnblockUsersResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId))
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users/unblock", endpoint.path.value)
+        XCTAssertEqual("/api/v2/users/unblock", endpoint.path.value)
+    }
+
+    func test_getBlockedUsers_buildsCorrectly() {
+        let expectedEndpoint = Endpoint<GetBlockedUsersResponse>(
+            path: .getBlockedUsers,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+
+        // Build endpoint
+        let endpoint = Endpoint<GetBlockedUsersResponse>.getBlockedUsers()
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("/api/v2/users/block", endpoint.path.value)
     }
 }

@@ -14,7 +14,9 @@ extension EndpointPath: Equatable {
         case (.guest, .guest): return true
         case (.members, .members): return true
         case (.search, .search): return true
-        case (.devices, .devices): return true
+        case (.createDevice, .createDevice): return true
+        case (.deleteDevice, .deleteDevice): return true
+        case (.listDevices, .listDevices): return true
         case (.channels, .channels): return true
         case let (.createChannel(string1), .createChannel(string2)): return string1 == string2
         case let (.updateChannel(string1), .updateChannel(string2)): return string1 == string2
@@ -26,7 +28,7 @@ extension EndpointPath: Equatable {
         case let (.markChannelRead(string1), .markChannelRead(string2)): return string1 == string2
         case (.markAllChannelsRead, .markAllChannelsRead): return true
         case let (.channelEvent(string1), .channelEvent(string2)): return string1 == string2
-        case let (.stopWatchingChannel(string1), .stopWatchingChannel(string2)): return string1 == string2
+        case let (.stopWatchingChannel(type1, id1), .stopWatchingChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.pinnedMessages(string1), .pinnedMessages(string2)): return string1 == string2
         case let (.uploadChannelAttachment(channelId1, type1), .uploadChannelAttachment(channelId2, type2)): return channelId1 == channelId2 &&
             type1 ==

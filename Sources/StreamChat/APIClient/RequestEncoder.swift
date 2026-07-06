@@ -297,6 +297,10 @@ private extension URL {
     }
 }
 
+/// A type representing empty body for `.post` Endpoints.
+/// Our backend currently expects a body (not `nil`), even if it's empty.
+struct EmptyBody: Codable, Equatable {}
+
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
     func provideConnectionId(timeout: TimeInterval, completion: @escaping @Sendable (Result<ConnectionId, Error>) -> Void)

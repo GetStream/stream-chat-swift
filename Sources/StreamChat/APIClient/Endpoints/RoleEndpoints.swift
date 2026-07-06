@@ -5,11 +5,11 @@
 import Foundation
 
 extension Endpoint {
-    static func appSettings() -> Endpoint<AppSettingsPayload> {
+    static func searchRoles(query: RoleSearchQuery) -> Endpoint<RoleListPayload> {
         .init(
-            path: .appSettings,
+            path: .rolesSearch,
             method: .get,
-            queryItems: nil,
+            queryItems: query,
             requiresConnectionId: false,
             body: nil
         )

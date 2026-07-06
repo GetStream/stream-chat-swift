@@ -400,6 +400,10 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         pinning: MessagePinning? = nil,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool = false,
         isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
@@ -429,6 +433,10 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             parentMessageId: parentMessageId,
             attachments: transformableInfo.attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             showReplyInChannel: showReplyInChannel,
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
@@ -799,8 +807,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         request: URLRequest? = nil,
         completion: @escaping @MainActor (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
-        messageUpdater.downloadAttachment(attachment, request: request) { [weak self] result in
-            self?.callback {
+        messageUpdater.downloadAttachment(attachment, request: request) { result in
+            self.callback {
                 completion(result)
             }
         }

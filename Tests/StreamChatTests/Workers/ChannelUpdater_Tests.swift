@@ -2167,7 +2167,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         channelUpdater.stopWatching(cid: cid)
 
-        let referenceEndpoint: Endpoint<EmptyResponse> = .stopWatching(cid: cid)
+        let referenceEndpoint = Endpoint<EmptyResponse>.stopWatchingChannel(type: cid.type.rawValue, id: cid.id)
 
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
@@ -2182,7 +2182,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         XCTAssertFalse(completionCalled)
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(EmptyResponse()))
 
         AssertAsync.willBeTrue(completionCalled)
     }
@@ -2457,8 +2457,8 @@ final class ChannelUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(LinkAttachmentPayload(
-            originalURL: url,
+        apiClient.test_simulateResponse(.success(GetOGResponse.dummy(
+            ogScrapeUrl: url.absoluteString,
             title: "Google"
         )))
 
@@ -2479,7 +2479,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         apiClient
-            .test_simulateResponse(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+            .test_simulateResponse(Result<GetOGResponse, Error>.failure(ClientError()))
 
         wait(for: [exp], timeout: defaultTimeout)
 

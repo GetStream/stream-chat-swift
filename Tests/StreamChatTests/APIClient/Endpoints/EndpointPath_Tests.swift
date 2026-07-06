@@ -46,8 +46,8 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
     }
 
-    func test_og_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.og.shouldBeQueuedOffline)
+    func test_getOG_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getOG.shouldBeQueuedOffline)
     }
 
     func test_threads_shouldNOTBeQueuedOffline() {
@@ -77,6 +77,71 @@ final class EndpointPathTests: XCTestCase {
 
     func test_pushPreferences_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
+    }
+
+    func test_getApp_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getApp.shouldBeQueuedOffline)
+    }
+
+    func test_getApp_value() {
+        XCTAssertEqual(EndpointPath.getApp.value, "/api/v2/app")
+    }
+
+    func test_devices_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.createDevice.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteDevice.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.listDevices.shouldBeQueuedOffline)
+    }
+
+    func test_devices_value() {
+        XCTAssertEqual(EndpointPath.createDevice.value, "/api/v2/devices")
+        XCTAssertEqual(EndpointPath.deleteDevice.value, "/api/v2/devices")
+        XCTAssertEqual(EndpointPath.listDevices.value, "/api/v2/devices")
+    }
+
+    func test_blockUsers_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.blockUsers.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.unblockUsers.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getBlockedUsers.shouldBeQueuedOffline)
+    }
+
+    func test_blockUsers_value() {
+        XCTAssertEqual(EndpointPath.blockUsers.value, "/api/v2/users/block")
+    }
+
+    func test_unblockUsers_value() {
+        XCTAssertEqual(EndpointPath.unblockUsers.value, "/api/v2/users/unblock")
+    }
+
+    func test_getBlockedUsers_value() {
+        XCTAssertEqual(EndpointPath.getBlockedUsers.value, "/api/v2/users/block")
+    }
+
+    func test_userGroups_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.userGroups.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroupSearch.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroup(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroupMembers(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroupMembersDelete(id: "group").shouldBeQueuedOffline)
+    }
+
+    func test_userGroups_value() {
+        XCTAssertEqual(EndpointPath.userGroups.value, "usergroups")
+        XCTAssertEqual(EndpointPath.userGroupSearch.value, "usergroups/search")
+        XCTAssertEqual(EndpointPath.userGroup(id: "backendsupport").value, "usergroups/backendsupport")
+        XCTAssertEqual(EndpointPath.userGroupMembers(id: "backendsupport").value, "usergroups/backendsupport/members")
+        XCTAssertEqual(
+            EndpointPath.userGroupMembersDelete(id: "backendsupport").value,
+            "usergroups/backendsupport/members/delete"
+        )
+    }
+
+    func test_rolesSearch_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.rolesSearch.shouldBeQueuedOffline)
+    }
+
+    func test_rolesSearch_value() {
+        XCTAssertEqual(EndpointPath.rolesSearch.value, "roles/search")
     }
 
     func test_pushPreferences_value() {
@@ -117,11 +182,19 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.members)
         assertResultEncodingAndDecoding(.partialMemberUpdate(userId: "1", cid: .init(type: .messaging, id: "2")))
         assertResultEncodingAndDecoding(.search)
-        assertResultEncodingAndDecoding(.devices)
+        assertResultEncodingAndDecoding(.createDevice)
+        assertResultEncodingAndDecoding(.deleteDevice)
+        assertResultEncodingAndDecoding(.listDevices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
-        assertResultEncodingAndDecoding(.appSettings)
         assertResultEncodingAndDecoding(.pushPreferences)
+        assertResultEncodingAndDecoding(.getApp)
+        assertResultEncodingAndDecoding(.userGroups)
+        assertResultEncodingAndDecoding(.userGroupSearch)
+        assertResultEncodingAndDecoding(.userGroup(id: "group"))
+        assertResultEncodingAndDecoding(.userGroupMembers(id: "group"))
+        assertResultEncodingAndDecoding(.userGroupMembersDelete(id: "group"))
+        assertResultEncodingAndDecoding(.rolesSearch)
 
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))
@@ -135,7 +208,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.markAllChannelsRead)
         assertResultEncodingAndDecoding(.markChannelsDelivered)
         assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
-        assertResultEncodingAndDecoding(.stopWatchingChannel("channel_idq"))
+        assertResultEncodingAndDecoding(.stopWatchingChannel(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
         assertResultEncodingAndDecoding(.uploadChannelAttachment(channelId: "channel_id", type: "file"))
 
@@ -154,8 +227,10 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.flagUser(false))
         assertResultEncodingAndDecoding(.flagMessage(false))
         assertResultEncodingAndDecoding(.muteUser(false))
-        assertResultEncodingAndDecoding(.blockUser)
-        
+        assertResultEncodingAndDecoding(.blockUsers)
+        assertResultEncodingAndDecoding(.unblockUsers)
+        assertResultEncodingAndDecoding(.getBlockedUsers)
+
         assertResultEncodingAndDecoding(.polls)
         assertResultEncodingAndDecoding(.pollsQuery)
         assertResultEncodingAndDecoding(.poll(pollId: "test_poll"))

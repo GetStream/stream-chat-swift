@@ -771,6 +771,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
@@ -795,6 +799,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             isSilent: isSilent,
             attachments: transformableInfo.attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
@@ -1831,6 +1839,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId? = nil,
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
@@ -1848,8 +1860,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        /// Send stop typing event.
-        eventSender.stopTyping(in: cid, parentMessageId: nil)
+        /// Send stop typing event only if the channel supports typing events.
+        shouldSendTypingEvents { isEnabled in
+            guard isEnabled else { return }
+            self.eventSender.stopTyping(in: cid, parentMessageId: nil)
+        }
 
         updater.createNewMessage(
             in: cid,
@@ -1862,6 +1877,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             arguments: nil,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,

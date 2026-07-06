@@ -83,11 +83,12 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             }
             self.apiClient
                 .request(
-                    endpoint: .addDevice(
-                        userId: currentUserId,
-                        deviceId: deviceId,
-                        pushProvider: pushProvider,
-                        providerName: providerName
+                    endpoint: .createDevice(
+                        createDeviceRequest: CreateDeviceRequest(
+                            id: deviceId,
+                            pushProvider: .init(rawValue: pushProvider.rawValue) ?? .unknown,
+                            pushProviderName: providerName
+                        )
                     ),
                     completion: { result in
                         if let error = result.error {
@@ -119,10 +120,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             }
             self.apiClient
                 .request(
-                    endpoint: .removeDevice(
-                        userId: currentUserId,
-                        deviceId: id
-                    ),
+                    endpoint: .deleteDevice(id: id),
                     completion: { result in
                         completion?(result.error)
                     }
@@ -135,15 +133,16 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
     func fetchDevices(currentUserId: UserId, completion: (@Sendable (Result<[Device], Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
+        apiClient.request(endpoint: .listDevices()) { [weak self] result in
             do {
                 nonisolated(unsafe) var devices = [Device]()
-                let devicesPayload = try result.get()
+                let response = try result.get()
+                let devicePayloads = response.devices.map { DevicePayload(id: $0.id, createdAt: $0.createdAt) }
                 self?.database.write({ (session) in
                     // Since this call always return all device, we want' to clear the existing ones
                     // to remove the deleted devices.
                     devices = try session.saveCurrentUserDevices(
-                        devicesPayload.devices,
+                        devicePayloads,
                         clearExisting: true
                     )
                     .map { try $0.asModel() }
@@ -241,16 +240,16 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadBlockedUsers(completion: @escaping @Sendable (Result<[BlockedUserDetails], Error>) -> Void) {
-        apiClient.request(endpoint: .loadBlockedUsers()) {
+        apiClient.request(endpoint: .getBlockedUsers()) {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    session.currentUser?.blockedUserIds = Set(payload.blockedUsers.map(\.blockedUserId))
+                    session.currentUser?.blockedUserIds = Set(payload.blocks.map(\.blockedUserId))
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
                     }
-                    let blockedUsers = payload.blockedUsers.map {
+                    let blockedUsers = payload.blocks.map {
                         BlockedUserDetails(userId: $0.blockedUserId, blockedAt: $0.createdAt)
                     }
                     completion(.success(blockedUsers))

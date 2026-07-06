@@ -33,9 +33,9 @@ public struct AppSettings: Sendable {
     }
 }
 
-// MARK: - Payload -> Model
+// MARK: - Response -> Model
 
-extension AppSettingsPayload {
+extension GetApplicationResponse {
     func asModel() -> AppSettings {
         .init(
             name: app.name,
@@ -47,14 +47,14 @@ extension AppSettingsPayload {
     }
 }
 
-extension AppSettingsPayload.UploadConfigPayload {
+extension FileUploadConfig {
     func asModel() -> AppSettings.UploadConfig {
         .init(
             allowedFileExtensions: allowedFileExtensions,
             blockedFileExtensions: blockedFileExtensions,
             allowedMimeTypes: allowedMimeTypes,
             blockedMimeTypes: blockedMimeTypes,
-            sizeLimitInBytes: sizeLimit
+            sizeLimitInBytes: Int64(sizeLimit)
         )
     }
 }

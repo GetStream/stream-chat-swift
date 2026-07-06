@@ -362,7 +362,10 @@ final class UserUpdater_Tests: XCTestCase {
         userUpdater.blockUser(userId)
 
         // Assert correct endpoint is called
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.blockUser(userId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<BlockUsersResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId)))
+        )
     }
 
     func test_blockUser_propagatesSuccessfulResponse() {
@@ -377,8 +380,8 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate API response with success
-        let payload: BlockingUserPayload = .init(blockedUserId: .unique, blockedByUserId: .unique, createdAt: .unique)
-        apiClient.test_simulateResponse(Result<BlockingUserPayload, Error>.success(payload))
+        let payload = BlockUsersResponse(blockedByUserId: .unique, blockedUserId: .unique, createdAt: .unique, duration: "")
+        apiClient.test_simulateResponse(Result<BlockUsersResponse, Error>.success(payload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -393,7 +396,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<BlockingUserPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<BlockUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -408,7 +411,10 @@ final class UserUpdater_Tests: XCTestCase {
         userUpdater.unblockUser(userId)
 
         // Assert correct endpoint is called
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.unblockUser(userId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<UnblockUsersResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId)))
+        )
     }
 
     func test_unblockUser_propagatesSuccessfulResponse() {
@@ -423,7 +429,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.success(.init(duration: "")))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -438,7 +444,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

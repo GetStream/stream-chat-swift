@@ -137,6 +137,7 @@ jobs:
 
   build-and-test-common-ui-debug:
     name: Test CommonUI (Debug)
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
     strategy:
       matrix:
         include:

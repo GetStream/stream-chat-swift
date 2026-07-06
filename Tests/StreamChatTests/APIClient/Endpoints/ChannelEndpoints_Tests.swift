@@ -673,17 +673,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .stopWatchingChannel(cid.apiPath),
+            path: .stopWatchingChannel(type: cid.type.rawValue, id: cid.id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
             body: nil
         )
 
-        let endpoint = Endpoint<EmptyResponse>.stopWatching(cid: cid)
+        let endpoint = Endpoint<EmptyResponse>.stopWatchingChannel(type: cid.type.rawValue, id: cid.id)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/stop-watching", endpoint.path.value)
+        XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/stop-watching", endpoint.path.value)
     }
 
     func test_channelWatchers_buildsCorrectly() {

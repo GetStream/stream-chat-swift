@@ -8,103 +8,80 @@ import XCTest
 
 final class DeviceEndpoints_Tests: XCTestCase {
     func test_addDevice_whenPushProviderIsAPN() {
-        let userId: UserId = .unique
         let deviceId: String = .unique
         let providerName: String = "Push Configuration Name"
+        let createDeviceRequest = CreateDeviceRequest(id: deviceId, pushProvider: .apn, pushProviderName: providerName)
 
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
-            path: .devices,
+            path: .createDevice,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "user_id": userId,
-                "id": deviceId,
-                "push_provider": "apn",
-                "push_provider_name": providerName
-            ]
+            body: createDeviceRequest
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .addDevice(
-            userId: userId,
-            deviceId: deviceId,
-            pushProvider: .apn,
-            providerName: providerName
-        )
+        let endpoint: Endpoint<EmptyResponse> = .createDevice(createDeviceRequest: createDeviceRequest)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("/api/v2/devices", endpoint.path.value)
     }
 
     func test_addDevice_whenPushProviderIsFirebase() {
-        let userId: UserId = .unique
         let deviceId: String = .unique
         let providerName: String = "Push Configuration Name"
+        let createDeviceRequest = CreateDeviceRequest(id: deviceId, pushProvider: .firebase, pushProviderName: providerName)
 
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
-            path: .devices,
+            path: .createDevice,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "user_id": userId,
-                "id": deviceId,
-                "push_provider": "firebase",
-                "push_provider_name": providerName
-            ]
+            body: createDeviceRequest
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .addDevice(
-            userId: userId,
-            deviceId: deviceId,
-            pushProvider: .firebase,
-            providerName: providerName
-        )
+        let endpoint: Endpoint<EmptyResponse> = .createDevice(createDeviceRequest: createDeviceRequest)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("/api/v2/devices", endpoint.path.value)
     }
 
     func test_removeDevice_buildsCorrectly() {
-        let userId: UserId = .unique
         let deviceId: String = .unique
 
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
-            path: .devices,
+            path: .deleteDevice,
             method: .delete,
-            queryItems: ["user_id": userId, "id": deviceId],
+            queryItems: ["id": deviceId],
             requiresConnectionId: false,
             body: nil
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .removeDevice(userId: userId, deviceId: deviceId)
+        let endpoint: Endpoint<EmptyResponse> = .deleteDevice(id: deviceId)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("/api/v2/devices", endpoint.path.value)
     }
 
     func test_devices_buildsCorrectly() {
-        let userId: UserId = .unique
-
-        let expectedEndpoint: Endpoint<DeviceListPayload> = .init(
-            path: .devices,
+        let expectedEndpoint: Endpoint<ListDevicesResponse> = .init(
+            path: .listDevices,
             method: .get,
-            queryItems: ["user_id": userId],
+            queryItems: nil,
             requiresConnectionId: false,
             body: nil
         )
 
         // Build endpoint
-        let endpoint: Endpoint<DeviceListPayload> = .devices(userId: userId)
+        let endpoint: Endpoint<ListDevicesResponse> = .listDevices()
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("devices", endpoint.path.value)
+        XCTAssertEqual("/api/v2/devices", endpoint.path.value)
     }
 }

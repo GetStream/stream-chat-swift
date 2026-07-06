@@ -396,6 +396,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
@@ -429,6 +433,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             )
+            newMessageDTO.mentionedHere = mentionedHere
+            newMessageDTO.mentionedChannel = mentionedChannel
+            newMessageDTO.mentionedGroupIds = mentionedGroupIds
+            newMessageDTO.mentionedRoles = mentionedRoles
             if quotedMessageId != nil {
                 newMessageDTO.showInsideThread = true
             }
@@ -636,7 +644,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameter cid: Channel id of the channel to stop watching
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func stopWatching(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .stopWatching(cid: cid)) {
+        apiClient.request(endpoint: .stopWatchingChannel(type: cid.type.rawValue, id: cid.id)) {
             completion?($0.error)
         }
     }
@@ -755,10 +763,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///
     /// This will return the data present in the OG Metadata.
     public func enrichUrl(_ url: URL, completion: @escaping @Sendable (Result<LinkAttachmentPayload, Error>) -> Void) {
-        apiClient.request(endpoint: .enrichUrl(url: url)) { result in
+        apiClient.request(endpoint: .getOG(url: url.absoluteString)) { result in
             switch result {
-            case let .success(payload):
-                completion(.success(payload))
+            case let .success(response):
+                do {
+                    completion(.success(try response.asModel()))
+                } catch {
+                    log.debug("Failed enriching url with error: \(error)")
+                    completion(.failure(error))
+                }
             case let .failure(error):
                 log.debug("Failed enriching url with error: \(error)")
                 completion(.failure(error))
@@ -944,6 +957,10 @@ extension ChannelUpdater {
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
@@ -962,6 +979,10 @@ extension ChannelUpdater {
                 arguments: arguments,
                 attachments: attachments,
                 mentionedUserIds: mentionedUserIds,
+                mentionedHere: mentionedHere,
+                mentionedChannel: mentionedChannel,
+                mentionedGroupIds: mentionedGroupIds,
+                mentionedRoles: mentionedRoles,
                 quotedMessageId: quotedMessageId,
                 skipPush: skipPush,
                 skipEnrichUrl: skipEnrichUrl,

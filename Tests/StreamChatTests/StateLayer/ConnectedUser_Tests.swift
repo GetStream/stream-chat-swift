@@ -54,7 +54,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_loadDevices_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         
-        let apiResult = DeviceListPayload(devices: [.dummy, .dummy, .dummy])
+        let apiResult = ListDevicesResponse.dummy(devices: [.dummy(), .dummy(), .dummy()])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         
         let devices = try await connectedUser.loadDevices()
@@ -71,7 +71,7 @@ final class ConnectedUser_Tests: XCTestCase {
         
         // Fetch devices which resets the device list
         try await setUpConnectedUser(usesMockedUpdaters: false)
-        let apiResult = DeviceListPayload(devices: [.dummy, .dummy, .dummy])
+        let apiResult = ListDevicesResponse.dummy(devices: [.dummy(), .dummy(), .dummy()])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         let devices = try await connectedUser.loadDevices()
         
