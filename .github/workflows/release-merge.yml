@@ -3,12 +3,11 @@ name: "Merge release"
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch:
 
 permissions:
   contents: read
   issues: read
-
-  workflow_dispatch:
 
 jobs:
   merge-release-to-main:
