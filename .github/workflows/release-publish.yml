@@ -3,6 +3,9 @@ name: "Publish new release"
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   release:
     name: Publish new release

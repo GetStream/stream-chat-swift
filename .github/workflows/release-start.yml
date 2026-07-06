@@ -8,6 +8,10 @@ on:
         type: string
         required: true
 
+permissions:
+  contents: read
+    actions: write
+
 jobs:
   test-release:
     name: Start new release
