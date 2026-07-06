@@ -98,11 +98,12 @@ final class IdentifiablePayload_Tests: XCTestCase {
         }
         
         for cache in caches {
-            XCTAssertEqual(cache.keys.count, 4)
+            XCTAssertEqual(cache.keys.count, 5)
             XCTAssertEqual(cache["\(ChannelDTO.self)"]?.count, 5)
             XCTAssertEqual(cache["\(MessageDTO.self)"]?.count, 50)
             XCTAssertEqual(cache["\(UserDTO.self)"]?.count, 7)
             XCTAssertEqual(cache["\(MessageReactionDTO.self)"]?.count, 200)
+            XCTAssertEqual(cache["\(ChannelReadDTO.self)"]?.count, 10)
         }
     }
 

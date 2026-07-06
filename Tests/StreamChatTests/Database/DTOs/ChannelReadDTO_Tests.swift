@@ -842,6 +842,152 @@ final class ChannelReadDTO_Tests: XCTestCase {
         ChannelReadDTO.load(cid: cid, userId: userId, context: database.viewContext)
     }
 
+    // MARK: - Composed identifier & pre-warming
+
+    func test_createId_composesCidAndUserId() {
+        let cid = ChannelId(type: .messaging, id: "the-channel")
+        let userId = "the-user"
+
+        let id = ChannelReadDTO.createId(cid: cid, userId: userId)
+
+        XCTAssertEqual(id, "messaging:the-channel/the-user")
+    }
+
+    func test_recursivelyGetAllIds_includesComposedChannelReadId() {
+        // GIVEN
+        let cid = ChannelId.unique
+        let read = ChannelReadPayload(
+            user: .dummy(userId: .unique),
+            lastReadAt: .unique,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 3
+        )
+        let channel: ChannelPayload = .dummy(channel: .dummy(cid: cid), channelReads: [read])
+
+        // WHEN
+        let ids = channel.recursivelyGetAllIds()
+
+        // THEN
+        let expectedReadId = ChannelReadDTO.createId(cid: cid, userId: read.user.id)
+        XCTAssertEqual(ids[ChannelReadDTO.className]?.contains(expectedReadId), true)
+    }
+
+    func test_loadOrCreate_assignsComposedId() throws {
+        // GIVEN a persisted channel with a member but no read yet.
+        let cid = ChannelId.unique
+        let member: MemberPayload = .dummy()
+        let channel: ChannelPayload = .dummy(channel: .dummy(cid: cid), members: [member], channelReads: [])
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        try database.writeSynchronously { session in
+            let context = session as! NSManagedObjectContext
+            _ = ChannelReadDTO.loadOrCreate(cid: cid, userId: member.userId, context: context, cache: nil)
+        }
+
+        // THEN
+        let readDTO = try XCTUnwrap(readDTO(cid: cid, userId: member.userId))
+        XCTAssertEqual(readDTO.id, ChannelReadDTO.createId(cid: cid, userId: member.userId))
+    }
+
+    func test_loadOrCreate_usesPrewarmedCache() throws {
+        // GIVEN
+        let cid = ChannelId.unique
+        let read = ChannelReadPayload(
+            user: .dummy(userId: .unique),
+            lastReadAt: .unique,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 4
+        )
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            members: [.dummy(user: read.user)],
+            channelReads: [read]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let readId = ChannelReadDTO.createId(cid: cid, userId: read.user.id)
+        let cache = channel.getPayloadToModelIdMappings(context: database.viewContext)
+        let cachedRead = cache.model(for: readId, context: database.viewContext, type: ChannelReadDTO.self)
+
+        // THEN
+        XCTAssertEqual(cachedRead?.id, readId)
+        XCTAssertEqual(cachedRead?.user.id, read.user.id)
+    }
+
+    func test_loadOrCreate_whenLegacyReadWithoutId_backfillsIdAndReusesDTO() throws {
+        // GIVEN a read persisted before the `id` attribute existed (id is nil).
+        let cid = ChannelId.unique
+        let read = ChannelReadPayload(
+            user: .dummy(userId: .unique),
+            lastReadAt: .unique,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 6
+        )
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            members: [.dummy(user: read.user)],
+            channelReads: [read]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        try database.writeSynchronously { session in
+            let context = session as! NSManagedObjectContext
+            let legacy = try XCTUnwrap(ChannelReadDTO.load(cid: cid, userId: read.user.id, context: context))
+            legacy.setValue(nil, forKey: "id")
+        }
+        XCTAssertNil(readDTO(cid: cid, userId: read.user.id)?.id)
+
+        // WHEN loading or creating the same read again.
+        try database.writeSynchronously { session in
+            let context = session as! NSManagedObjectContext
+            _ = ChannelReadDTO.loadOrCreate(cid: cid, userId: read.user.id, context: context, cache: nil)
+        }
+
+        // THEN the legacy DTO is reused (not duplicated) and its id is backfilled.
+        XCTAssertEqual(reads(cid: cid).count, 1)
+        XCTAssertEqual(readDTO(cid: cid, userId: read.user.id)?.id, ChannelReadDTO.createId(cid: cid, userId: read.user.id))
+    }
+
+    func test_saveChannel_savedTwice_doesNotDuplicateReads() throws {
+        // GIVEN
+        let cid = ChannelId.unique
+        let read = ChannelReadPayload(
+            user: .dummy(userId: .unique),
+            lastReadAt: .unique,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 2
+        )
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            members: [.dummy(user: read.user)],
+            channelReads: [read]
+        )
+
+        // WHEN saving the same channel payload twice.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // THEN only a single read exists for the channel.
+        XCTAssertEqual(reads(cid: cid).count, 1)
+    }
+
+    private func reads(cid: ChannelId) -> [ChannelReadDTO] {
+        let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
+        return (try? database.viewContext.fetch(request)) ?? []
+    }
+
     // MARK: - loadOrCreateChannelRead
 
     func test_loadOrCreateChannelRead_channelReadExists_returnsExpectedResult() throws {

@@ -99,7 +99,8 @@ final class IdentifiableModel_Tests: XCTestCase {
         let dto = type.init(context: database.viewContext)
 
         XCTAssertEqual(type.className, "ChannelReadDTO")
-        XCTAssertNil(type.idKeyPath)
+        XCTAssertEqual(type.idKeyPath, "id")
+        // A freshly-inserted read has no composed id assigned yet.
         XCTAssertNil(type.id(for: dto))
 
         XCTAssertNil(type.id(for: deviceDTO))

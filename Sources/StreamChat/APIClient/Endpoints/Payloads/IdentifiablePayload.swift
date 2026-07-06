@@ -143,7 +143,13 @@ extension ChannelPayload: IdentifiablePayloadProxy {
         membership?.fillIds(cache: &cache)
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
-        channelReads.fillIds(cache: &cache)
+        // A channel read's id is composed of the channel cid and the user id, so it can only be
+        // resolved here where the parent cid is known.
+        channelReads.forEach { read in
+            read.fillIds(cache: &cache)
+            let readId = ChannelReadDTO.createId(cid: channel.cid, userId: read.user.id)
+            cache[ChannelReadDTO.className, default: []].insert(readId)
+        }
     }
 }
 

@@ -149,6 +149,7 @@
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="channelMutes" inverseEntity="CurrentUserDTO"/>
     </entity>
     <entity name="ChannelReadDTO" representedClassName="ChannelReadDTO" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="lastDeliveredAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastDeliveredMessageId" optional="YES" attributeType="String"/>
         <attribute name="lastReadAt" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
@@ -157,6 +158,9 @@
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="reads" inverseEntity="ChannelDTO"/>
         <relationship name="readMessagesFromCurrentUser" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="reads" inverseEntity="MessageDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="channelReads" inverseEntity="UserDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
     <entity name="CommandDTO" representedClassName="CommandDTO" syncable="YES">
         <attribute name="args" attributeType="String" defaultValueString=""/>
