@@ -51,11 +51,12 @@ final class IdentifiablePayload_Tests: XCTestCase {
             cache = channelList.recursivelyGetAllIds()
         }
 
-        XCTAssertEqual(cache.keys.count, 4)
+        XCTAssertEqual(cache.keys.count, 5)
         XCTAssertEqual(cache["\(ChannelDTO.self)"]?.count, 25)
         XCTAssertEqual(cache["\(MessageDTO.self)"]?.count, 500)
         XCTAssertEqual(cache["\(UserDTO.self)"]?.count, 50)
         XCTAssertEqual(cache["\(MessageReactionDTO.self)"]?.count, 1000)
+        XCTAssertEqual(cache["\(MemberDTO.self)"]?.count, 625)
     }
 
     func test_measureBigPayload_getPayloadToModelIdMappings() {
@@ -68,11 +69,12 @@ final class IdentifiablePayload_Tests: XCTestCase {
             cache = channelList.getPayloadToModelIdMappings(context: database.viewContext)
         }
 
-        XCTAssertEqual(cache.keys.count, 4)
+        XCTAssertEqual(cache.keys.count, 5)
         XCTAssertEqual(cache["\(ChannelDTO.self)"]?.count, 25)
         XCTAssertEqual(cache["\(MessageDTO.self)"]?.count, 500)
         XCTAssertEqual(cache["\(UserDTO.self)"]?.count, 50)
         XCTAssertEqual(cache["\(MessageReactionDTO.self)"]?.count, 1000)
+        XCTAssertEqual(cache["\(MemberDTO.self)"]?.count, 625)
     }
     
     func test_concurrentPerform_getPayloadToModelIdMappings() {
@@ -98,12 +100,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
         }
         
         for cache in caches {
-            XCTAssertEqual(cache.keys.count, 5)
+            XCTAssertEqual(cache.keys.count, 6)
             XCTAssertEqual(cache["\(ChannelDTO.self)"]?.count, 5)
             XCTAssertEqual(cache["\(MessageDTO.self)"]?.count, 50)
             XCTAssertEqual(cache["\(UserDTO.self)"]?.count, 7)
             XCTAssertEqual(cache["\(MessageReactionDTO.self)"]?.count, 200)
             XCTAssertEqual(cache["\(ChannelReadDTO.self)"]?.count, 10)
+            XCTAssertEqual(cache["\(MemberDTO.self)"]?.count, 25)
         }
     }
 
@@ -277,7 +280,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let userIds = try XCTUnwrap(cache[UserDTO.className])
         let reactionIds = try XCTUnwrap(cache[MessageReactionDTO.className])
 
-        XCTAssertEqual(cache.keys.count, 4)
+        XCTAssertEqual(cache.keys.count, 5)
         // Channels
         XCTAssertEqual(channelIds, ["messaging:channel-0", "messaging:channel-1", "messaging:channel-2", "messaging:channel-3"])
         // Messages
@@ -309,6 +312,14 @@ final class IdentifiablePayload_Tests: XCTestCase {
             }
         }
         XCTAssertEqual(reactionIds, Set(expectedReactionIds))
+        // Members
+        let memberIds = try XCTUnwrap(cache[MemberDTO.className])
+        let expectedMemberIds = (0..<channelsCount).flatMap { channelId in
+            (0..<userCount).map {
+                MemberDTO.createId(userId: "user-\($0)", channeldId: ChannelId(type: .messaging, id: "channel-\(channelId)"))
+            }
+        }
+        XCTAssertEqual(memberIds, Set(expectedMemberIds))
     }
 
     func createChannelList(

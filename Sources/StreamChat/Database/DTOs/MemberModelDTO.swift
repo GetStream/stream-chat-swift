@@ -35,7 +35,7 @@ class MemberDTO: NSManagedObject {
     @NSManaged var queries: Set<ChannelMemberListQueryDTO>
     @NSManaged var channel: ChannelDTO
 
-    private static func createId(userId: String, channeldId: ChannelId) -> String {
+    static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
 }
@@ -75,6 +75,22 @@ extension MemberDTO {
 
     static func load(memberId: String, context: NSManagedObjectContext) -> MemberDTO? {
         load(by: memberId, context: context).first as? Self
+    }
+
+    /// Batch-fetches existing `MemberDTO`s for the given `userId`s within a single channel, keyed by
+    /// their composed id. Used to pre-warm a cache and avoid one fetch per member during a batch save.
+    static func prewarmedIds(
+        forUserIds userIds: [String],
+        channelId: ChannelId,
+        context: NSManagedObjectContext
+    ) -> [DatabaseId: NSManagedObjectID] {
+        guard !userIds.isEmpty else { return [:] }
+        let ids = userIds.map { createId(userId: $0, channeldId: channelId) }
+        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        request.predicate = NSPredicate(format: "id IN %@", ids)
+        var mapping: [DatabaseId: NSManagedObjectID] = [:]
+        load(by: request, context: context).forEach { mapping[$0.id] = $0.objectID }
+        return mapping
     }
 
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
@@ -166,7 +182,14 @@ extension NSManagedObjectContext {
             queryDTO?.members = []
         }
 
-        let cache = payload.getPayloadToModelIdMappings(context: self)
+        var cache = payload.getPayloadToModelIdMappings(context: self)
+        // `ChannelMemberListPayload` doesn't carry the channel id, so the composed `MemberDTO` id
+        // cannot be resolved by the generic payload-id mechanism. Pre-warm it here instead.
+        cache[MemberDTO.className] = MemberDTO.prewarmedIds(
+            forUserIds: payload.members.map(\.userId),
+            channelId: channelId,
+            context: self
+        )
         return payload.members.compactMapLoggingError {
             try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
         }

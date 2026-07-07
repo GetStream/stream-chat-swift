@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -227,6 +228,84 @@ final class MemberModelDTO_Tests: XCTestCase {
         
         // THEN
         XCTAssertEqual(member.name, "transformed member")
+    }
+
+    // MARK: - Composed identifier & pre-warming
+
+    func test_recursivelyGetAllIds_includesComposedMemberId() {
+        // GIVEN
+        let cid = ChannelId.unique
+        let member: MemberPayload = .dummy()
+        let channel: ChannelPayload = .dummy(channel: .dummy(cid: cid), members: [member], membership: nil)
+
+        // WHEN
+        let ids = channel.recursivelyGetAllIds()
+
+        // THEN
+        let expectedMemberId = MemberDTO.createId(userId: member.userId, channeldId: cid)
+        XCTAssertEqual(ids[MemberDTO.className]?.contains(expectedMemberId), true)
+    }
+
+    func test_saveChannel_usesPrewarmedCacheForMembers() throws {
+        // GIVEN a persisted channel with a member.
+        let cid = ChannelId.unique
+        let member: MemberPayload = .dummy()
+        let channel: ChannelPayload = .dummy(channel: .dummy(cid: cid), members: [member], membership: nil)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let memberId = MemberDTO.createId(userId: member.userId, channeldId: cid)
+        let cache = channel.getPayloadToModelIdMappings(context: database.viewContext)
+        let cachedMember = cache.model(for: memberId, context: database.viewContext, type: MemberDTO.self)
+
+        // THEN
+        XCTAssertEqual(cachedMember?.id, memberId)
+        XCTAssertEqual(cachedMember?.user.id, member.userId)
+    }
+
+    func test_prewarmedIds_returnsMappingForExistingMembersOnly() throws {
+        // GIVEN a persisted member and a user id that has no member yet.
+        let cid = ChannelId.unique
+        let existingMember: MemberPayload = .dummy()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), members: [existingMember], membership: nil))
+        }
+
+        // WHEN
+        let mapping = MemberDTO.prewarmedIds(
+            forUserIds: [existingMember.userId, "missing-user"],
+            channelId: cid,
+            context: database.viewContext
+        )
+
+        // THEN
+        XCTAssertEqual(mapping.count, 1)
+        XCTAssertEqual(mapping.keys.first, MemberDTO.createId(userId: existingMember.userId, channeldId: cid))
+    }
+
+    func test_saveMembers_savedTwice_doesNotDuplicateMembers() throws {
+        // GIVEN
+        let cid = ChannelId.unique
+        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [], includeMembership: false))
+        }
+
+        // WHEN saving the same member list payload twice.
+        try database.writeSynchronously { session in
+            _ = session.saveMembers(payload: members, channelId: cid, query: nil)
+        }
+        try database.writeSynchronously { session in
+            _ = session.saveMembers(payload: members, channelId: cid, query: nil)
+        }
+
+        // THEN only two members exist for the channel (no duplicates created).
+        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
+        let savedMembers = try database.viewContext.fetch(request)
+        XCTAssertEqual(savedMembers.count, 2)
     }
 
     private func saveDummyMembers(

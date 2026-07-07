@@ -140,7 +140,10 @@ extension ChannelPayload: IdentifiablePayloadProxy {
         addId(cache: &cache)
         channel.fillIds(cache: &cache)
         watchers?.fillIds(cache: &cache)
-        membership?.fillIds(cache: &cache)
+        // A member's id is composed of the channel cid and the user id, so it can only be
+        // resolved here where the parent cid is known.
+        members.forEach { $0.fillIds(cache: &cache, cid: channel.cid) }
+        membership?.fillIds(cache: &cache, cid: channel.cid)
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
         // A channel read's id is composed of the channel cid and the user id, so it can only be
@@ -160,8 +163,10 @@ extension ChannelDetailPayload: IdentifiablePayload {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         createdBy?.fillIds(cache: &cache)
-        members?.fillIds(cache: &cache)
-        invitedMembers.fillIds(cache: &cache)
+        // A member's id is composed of the channel cid and the user id, so it can only be
+        // resolved here where the parent cid is known.
+        members?.forEach { $0.fillIds(cache: &cache, cid: cid) }
+        invitedMembers.forEach { $0.fillIds(cache: &cache, cid: cid) }
     }
 }
 
@@ -243,6 +248,12 @@ extension MemberPayload: IdentifiablePayload {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user?.fillIds(cache: &cache)
+    }
+
+    /// Resolves the composed `MemberDTO` id using the parent channel's `cid` and adds it to the cache.
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], cid: ChannelId) {
+        fillIds(cache: &cache)
+        cache[MemberDTO.className, default: []].insert(MemberDTO.createId(userId: userId, channeldId: cid))
     }
 }
 
