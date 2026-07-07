@@ -9,7 +9,7 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-public struct ChatMessage: Identifiable, Sendable {
+public final class ChatMessage: Identifiable, @unchecked Sendable {
     /// A unique identifier of the message.
     public let id: MessageId
 
@@ -623,11 +623,11 @@ public extension ChatMessage {
 }
 
 extension ChatMessage: Hashable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: ChatMessage, rhs: ChatMessage) -> Bool {
         lhs.hasEqualContent(to: rhs) && lhs.hasEqualMetadata(to: rhs)
     }
 
-    private func hasEqualContent(to other: Self) -> Bool {
+    private func hasEqualContent(to other: ChatMessage) -> Bool {
         guard id == other.id else { return false }
         guard localState == other.localState else { return false }
         guard updatedAt == other.updatedAt else { return false }
@@ -648,7 +648,7 @@ extension ChatMessage: Hashable {
         return true
     }
 
-    private func hasEqualMetadata(to other: Self) -> Bool {
+    private func hasEqualMetadata(to other: ChatMessage) -> Bool {
         guard threadParticipantsCount == other.threadParticipantsCount else { return false }
         guard arguments == other.arguments else { return false }
         guard command == other.command else { return false }

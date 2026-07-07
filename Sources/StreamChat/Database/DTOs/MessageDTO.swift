@@ -1586,13 +1586,13 @@ extension MessageDTO {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
+    func asModel() throws -> ChatMessage { try .create(fromDTO: self, depth: 0) }
 
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
     func relationshipAsModel(depth: Int) throws -> ChatMessage? {
         do {
-            return try ChatMessage(fromDTO: self, depth: depth + 1)
+            return try ChatMessage.create(fromDTO: self, depth: depth + 1)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -1706,7 +1706,7 @@ extension MessageDTO {
 
 private extension ChatMessage {
     // swiftlint:disable function_body_length
-    init(fromDTO dto: MessageDTO, depth: Int) throws {
+    static func create(fromDTO dto: MessageDTO, depth: Int) throws -> ChatMessage {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -1815,7 +1815,7 @@ private extension ChatMessage {
             return dto.replies
                 .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
                 .prefix(5)
-                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
+                .compactMap { try? ChatMessage.create(fromDTO: $0, depth: depth) }
         }()
 
         let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
@@ -1884,11 +1884,10 @@ private extension ChatMessage {
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {
-            self = transformer.transform(message: message)
-            return
+            return transformer.transform(message: message)
         }
 
-        self = message
+        return message
     }
 
     // swiftlint:enable function_body_length

@@ -7,7 +7,7 @@ import Foundation
 
 /// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
 ///
-public struct ChatChannel: Sendable {
+public final class ChatChannel: @unchecked Sendable {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
 
@@ -84,7 +84,7 @@ public struct ChatChannel: Sendable {
     public let currentlyTypingUsers: Set<ChatUser>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
-    public internal(set) var membership: ChatChannelMember?
+    public let membership: ChatChannelMember?
 
     /// Returns `true`, if the channel is archived.
     public var isArchived: Bool {
@@ -317,7 +317,7 @@ public struct ChatChannel: Sendable {
         isBlocked: Bool? = nil,
         reads: [ChatChannelRead]? = nil,
         members: [ChatChannelMember]? = nil,
-        membership: ChatChannelMember? = nil,
+        membership: ChatChannelMember?? = nil,
         memberCount: Int? = nil,
         watchers: [ChatUser]? = nil,
         watcherCount: Int? = nil,
