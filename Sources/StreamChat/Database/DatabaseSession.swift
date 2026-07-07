@@ -65,10 +65,10 @@ protocol CurrentUserDatabaseSession {
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
 
-    /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
+    /// Updates the `CurrentUserDTO.devices` with the provided devices.
     /// If there's no current user set, an error will be thrown.
     @discardableResult
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO]
+    func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO]
 
     /// Saves the `currentDevice` for current user.
     func saveCurrentDevice(_ deviceId: String) throws
@@ -92,7 +92,7 @@ protocol CurrentUserDatabaseSession {
 
 extension CurrentUserDatabaseSession {
     @discardableResult
-    func saveCurrentUserDevices(_ devices: [DevicePayload]) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [Device]) throws -> [DeviceDTO] {
         try saveCurrentUserDevices(devices, clearExisting: false)
     }
 }

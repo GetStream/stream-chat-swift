@@ -22,7 +22,7 @@ extension CurrentUserPayload {
         teamsRole: [String: UserRole]? = nil,
         unreadCount: UnreadCountPayload? = .dummy,
         extraData: [String: RawJSON] = [:],
-        devices: [DevicePayload] = [],
+        devices: [Device] = [],
         mutedUsers: [MutedUserPayload] = [],
         teams: [TeamId] = [],
         language: String? = nil,
@@ -57,7 +57,7 @@ extension CurrentUserPayload {
     static func dummy(
         userPayload: UserPayload,
         unreadCount: UnreadCountPayload? = .dummy,
-        devices: [DevicePayload] = [],
+        devices: [Device] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
         privacySettings: UserPrivacySettingsPayload? = nil,

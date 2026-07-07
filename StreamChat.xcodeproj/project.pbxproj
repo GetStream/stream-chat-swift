@@ -758,7 +758,6 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelReadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CurrentUserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CustomDataHashMap_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/DevicePayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/DraftPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/FileUploadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/FlagMessagePayload_Tests.swift,

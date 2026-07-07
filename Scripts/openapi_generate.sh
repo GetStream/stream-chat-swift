@@ -161,6 +161,7 @@ prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
+rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
@@ -178,6 +179,7 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
+publicize_model Device
 publicize_model UploadConfig
 
 # 5. Format.

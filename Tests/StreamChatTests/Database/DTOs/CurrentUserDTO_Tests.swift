@@ -46,7 +46,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
         let payload: CurrentUserPayload = .dummy(
             userPayload: userPayload,
-            devices: [DevicePayload.dummy],
+            devices: [Device.dummy()],
             mutedUsers: [
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
@@ -114,7 +114,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {
-        let initialDevice = DevicePayload.dummy
+        let initialDevice = Device.dummy()
         let initialCurrentUserPayload = CurrentUserPayload.dummy(userId: .unique, role: .admin, devices: [initialDevice])
 
         // Save the payload to the db
@@ -133,7 +133,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         // ..and is set to currentDevice
         XCTAssertNotEqual(currentUser?.currentDevice, nil)
 
-        let newCurrentUserPayload = CurrentUserPayload.dummy(userId: initialCurrentUserPayload.id, role: .admin, devices: [.dummy])
+        let newCurrentUserPayload = CurrentUserPayload.dummy(userId: initialCurrentUserPayload.id, role: .admin, devices: [.dummy()])
 
         // Save the payload to the db
         try database.writeSynchronously { session in

@@ -5,8 +5,8 @@
 import Foundation
 @testable import StreamChat
 
-extension DeviceResponse {
-    static func dummy(pushProvider: String = "apn", userId: String = .unique) -> DeviceResponse {
+extension Device {
+    static func dummy(pushProvider: String = "apn", userId: String = .unique) -> Device {
         .init(
             createdAt: .unique,
             id: .unique,
@@ -17,7 +17,7 @@ extension DeviceResponse {
 }
 
 extension ListDevicesResponse {
-    static func dummy(devices: [DeviceResponse] = [.dummy(), .dummy()]) -> ListDevicesResponse {
+    static func dummy(devices: [Device] = [.dummy(), .dummy()]) -> ListDevicesResponse {
         .init(devices: devices, duration: "")
     }
 }
