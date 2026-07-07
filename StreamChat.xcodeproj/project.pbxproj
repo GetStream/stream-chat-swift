@@ -987,6 +987,7 @@
 				StreamChatTests/StreamChatTests.swift,
 				StreamChatTests/TestsEnvironmentSetup.swift,
 				StreamChatTests/Utils/ArraySampling_Tests.swift,
+				"StreamChatTests/Utils/Codable+Extensions_Tests.swift",
 				StreamChatTests/Utils/CooldownTracker_Tests.swift,
 				StreamChatTests/Utils/Database/NSManagedObject_Tests.swift,
 				StreamChatTests/Utils/Debouncer_Tests.swift,
