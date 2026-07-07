@@ -5,82 +5,40 @@
 import CoreServices
 import Foundation
 
-/// A type representing the app settings.
-public struct AppSettings: Sendable {
-    /// The name of the app.
-    public let name: String
-    /// The the file uploading configuration.
-    public let fileUploadConfig: UploadConfig
-    /// The the image uploading configuration.
-    public let imageUploadConfig: UploadConfig
-    /// A boolean value determining if auto translation is enabled.
-    public let autoTranslationEnabled: Bool
-    /// A boolean value determining if async url enrichment is enabled.
-    public let asyncUrlEnrichEnabled: Bool
-
-    public struct UploadConfig: Sendable {
-        /// The allowed file extensions.
-        public let allowedFileExtensions: [String]
-        /// The blocked file extensions.
-        public let blockedFileExtensions: [String]
-        /// The allowed mime types.
-        public let allowedMimeTypes: [String]
-        /// The blocked mime types.
-        public let blockedMimeTypes: [String]
-        /// The file size limit allowed in Bytes.
-        /// This value is configurable from Stream's Dashboard App Settings.
-        public let sizeLimitInBytes: Int64?
-    }
+extension AppSettings {
+    /// The upload configuration.
+    public typealias UploadConfig = StreamChat.UploadConfig
 }
 
-// MARK: - Response -> Model
-
-extension GetApplicationResponse {
-    func asModel() -> AppSettings {
-        .init(
-            name: app.name,
-            fileUploadConfig: app.fileUploadConfig.asModel(),
-            imageUploadConfig: app.imageUploadConfig.asModel(),
-            autoTranslationEnabled: app.autoTranslationEnabled,
-            asyncUrlEnrichEnabled: app.asyncUrlEnrichEnabled
-        )
-    }
-}
-
-extension FileUploadConfig {
-    func asModel() -> AppSettings.UploadConfig {
-        .init(
-            allowedFileExtensions: allowedFileExtensions,
-            blockedFileExtensions: blockedFileExtensions,
-            allowedMimeTypes: allowedMimeTypes,
-            blockedMimeTypes: blockedMimeTypes,
-            sizeLimitInBytes: Int64(sizeLimit)
-        )
-    }
+extension AppSettings.UploadConfig {
+    /// The file size limit allowed in Bytes.
+    /// This value is configurable from Stream's Dashboard App Settings.
+    @available(*, deprecated, renamed: "sizeLimit")
+    public var sizeLimitInBytes: Int64? { Int64(sizeLimit) }
 }
 
 // MARK: - Validation
 
 extension AppSettings.UploadConfig {
     // MARK: - UTI Validation
-    
+
     /// Returns an array of allowed UTI identifiers based on allowed mime types and file extensions.
     public var allowedUTITypes: [String] {
         allowedMimeTypes.compactMap { $0.utiType(mime: true) } +
             allowedFileExtensions.compactMap { $0.utiType(mime: false) }
     }
-    
+
     /// Returns an array of blocked UTI identifiers based on allowed mime types and file extensions.
     public var blockedUTITypes: [String] {
         blockedMimeTypes.compactMap { $0.utiType(mime: true) } +
             blockedFileExtensions.compactMap { $0.utiType(mime: false) }
     }
-    
+
     // MARK: - URL Validation
-    
+
     func isAllowed(localURL: URL) -> Bool {
         guard !localURL.pathExtension.isEmpty else { return true }
-        
+
         if !allowedFileExtensions.isEmpty || !blockedFileExtensions.isEmpty {
             if !isAllowed(pathExtension: localURL.pathExtension.lowercased()) {
                 return false
@@ -94,7 +52,7 @@ extension AppSettings.UploadConfig {
         }
         return true
     }
-    
+
     private func isAllowed(pathExtension: String) -> Bool {
         let isBlocked = blockedFileExtensions.contains { blocked in
             blocked.drop(while: { $0 == Character(".") }).caseInsensitiveCompare(pathExtension) == .orderedSame
@@ -105,7 +63,7 @@ extension AppSettings.UploadConfig {
             allowed.drop(while: { $0 == Character(".") }).caseInsensitiveCompare(pathExtension) == .orderedSame
         }
     }
-    
+
     private func isAllowed(mimeType: String) -> Bool {
         let isBlocked = blockedMimeTypes.contains { blocked in
             blocked.caseInsensitiveCompare(mimeType) == .orderedSame

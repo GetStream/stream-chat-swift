@@ -160,11 +160,25 @@ prune_models
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
+rename_generated AppResponseFields AppSettings
 rename_generated Field AttachmentFieldPayload
+rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
 
 rename_generated_type Response EmptyResponse
+
+# 4c. Expose selected generated models as public API. The class and its stored
+#     properties become public; the memberwise init and CodingKeys stay internal.
+publicize_model() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E \
+    -e 's/^final class /public final class /' \
+    -e 's/^    let /    public let /' \
+    "$file"
+}
+publicize_model AppSettings
+publicize_model UploadConfig
 
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
