@@ -425,11 +425,13 @@ extension AppSettings {
         asyncUrlEnrichEnabled: Bool = false
     ) -> AppSettings {
         .init(
-            name: name,
-            fileUploadConfig: fileUploadConfig ?? .mock(),
-            imageUploadConfig: imageUploadConfig ?? .mock(),
+            asyncUrlEnrichEnabled: asyncUrlEnrichEnabled,
             autoTranslationEnabled: autoTranslationEnabled,
-            asyncUrlEnrichEnabled: asyncUrlEnrichEnabled
+            fileUploadConfig: fileUploadConfig ?? .mock(),
+            id: 1,
+            imageUploadConfig: imageUploadConfig ?? .mock(),
+            name: name,
+            placement: ""
         )
     }
 }
@@ -444,10 +446,10 @@ extension AppSettings.UploadConfig {
     ) -> AppSettings.UploadConfig {
         .init(
             allowedFileExtensions: allowedFileExtensions,
-            blockedFileExtensions: blockedFileExtensions,
             allowedMimeTypes: allowedMimeTypes,
+            blockedFileExtensions: blockedFileExtensions,
             blockedMimeTypes: blockedMimeTypes,
-            sizeLimitInBytes: sizeLimitInBytes
+            sizeLimit: sizeLimitInBytes.map(Int.init) ?? 0
         )
     }
 }

@@ -1505,19 +1505,19 @@ open class ComposerVC: _ViewController,
             return Components.default.maxAttachmentSize
         }
 
-        let maxAttachmentSize: Int64?
+        let maxAttachmentSize: Int
         switch attachmentType {
         case .image:
-            maxAttachmentSize = client.appSettings?.imageUploadConfig.sizeLimitInBytes
+            maxAttachmentSize = client.appSettings?.imageUploadConfig.sizeLimit ?? 0
         default:
-            maxAttachmentSize = client.appSettings?.fileUploadConfig.sizeLimitInBytes
+            maxAttachmentSize = client.appSettings?.fileUploadConfig.sizeLimit ?? 0
         }
 
-        guard let maxSize = maxAttachmentSize, maxSize > 0 else {
+        guard maxAttachmentSize > 0 else {
             return Components.default.maxAttachmentSize
         }
 
-        return maxSize
+        return Int64(maxAttachmentSize)
     }
 
     /// Shows an alert for the error thrown when adding attachment to a composer.

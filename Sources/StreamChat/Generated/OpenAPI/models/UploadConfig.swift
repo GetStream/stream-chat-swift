@@ -4,12 +4,12 @@
 
 import Foundation
 
-final class FileUploadConfig: Sendable, Codable, JSONEncodable {
-    let allowedFileExtensions: [String]
-    let allowedMimeTypes: [String]
-    let blockedFileExtensions: [String]
-    let blockedMimeTypes: [String]
-    let sizeLimit: Int
+public final class UploadConfig: Sendable, Codable, JSONEncodable {
+    public let allowedFileExtensions: [String]
+    public let allowedMimeTypes: [String]
+    public let blockedFileExtensions: [String]
+    public let blockedMimeTypes: [String]
+    public let sizeLimit: Int
 
     init(allowedFileExtensions: [String], allowedMimeTypes: [String], blockedFileExtensions: [String], blockedMimeTypes: [String], sizeLimit: Int) {
         self.allowedFileExtensions = allowedFileExtensions
