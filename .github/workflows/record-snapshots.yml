@@ -3,6 +3,10 @@ name: Record Snapshots
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   record:
     name: Record
