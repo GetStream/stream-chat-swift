@@ -7,12 +7,14 @@ import CoreData
 extension NSManagedObjectContext: DatabaseSession {
     private static let chatClientConfigKey = "io.getStream.StreamChat.config.key"
 
+    /// `chatClientConfig` is written once right after the context is created (see `setChatClientConfig`),
+    /// before the context is ever handed out, and is never mutated afterwards. Every read of it happens
+    /// from code that is already executing on this context's queue (e.g. DTO -> model conversion), so
+    /// wrapping the read in `performAndWait` only adds a redundant queue-confinement check. This getter
+    /// is called very frequently (once per model created while decoding a channel/message/member), so
+    /// avoiding that overhead matters.
     var chatClientConfig: ChatClientConfig? {
-        nonisolated(unsafe) var config: ChatClientConfig?
-        performAndWait {
-            config = userInfo[Self.chatClientConfigKey] as? ChatClientConfig
-        }
-        return config
+        userInfo[Self.chatClientConfigKey] as? ChatClientConfig
     }
 
     func setChatClientConfig(_ config: ChatClientConfig) {
