@@ -2072,7 +2072,8 @@ private extension ChatChannelController {
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: {
                     try $0.asModel() as ChatChannel
-                }
+                },
+                itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid)
             ).onChange { [weak self] change in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {

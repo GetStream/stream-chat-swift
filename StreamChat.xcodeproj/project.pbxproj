@@ -822,6 +822,7 @@
 				StreamChatTests/Audio/StreamAudioWaveformAnalyser_Tests.swift,
 				StreamChatTests/Audio/StreamPlayerObserver_Tests.swift,
 				"StreamChatTests/Audio/StreamΑudioRecorderMeterNormaliser_Tests.swift",
+				StreamChatTests/BackgroundEntityDatabaseObserver_Tests.swift,
 				StreamChatTests/BackgroundListDatabaseObserver_Tests.swift,
 				StreamChatTests/ChatClient_Tests.swift,
 				StreamChatTests/ChatClientFactory_Tests.swift,

@@ -600,7 +600,15 @@ extension CurrentChatUserController {
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
             _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = BackgroundEntityDatabaseObserver.init
+        ) -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\CurrentChatUser.id, \CurrentUserDTO.user.id),
+                fetchedResultsControllerType: $3
+            )
+        }
 
         var currentUserActiveLiveLocationMessagesObserverBuilder: (
             _ database: DatabaseContainer,

@@ -255,7 +255,15 @@ extension ChatChannelMemberController {
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
             _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<ChatChannelMember, MemberDTO> = BackgroundEntityDatabaseObserver.init
+        ) -> BackgroundEntityDatabaseObserver<ChatChannelMember, MemberDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
+                fetchedResultsControllerType: $3
+            )
+        }
     }
 }
 
