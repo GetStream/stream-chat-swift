@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Expose additional device data on `Device`: `pushProvider`, `pushProviderName`, `userId`, `disabled`, `disabledReason`, `hardwareId`, and `voip` [#4161](https://github.com/GetStream/stream-chat-swift/pull/4161)
+
 ### 🔄 Changed
 
 # [5.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.6.0)
