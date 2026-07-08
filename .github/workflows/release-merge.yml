@@ -6,6 +6,10 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: read
+
 jobs:
   merge-release-to-main:
     name: Merge release to main
