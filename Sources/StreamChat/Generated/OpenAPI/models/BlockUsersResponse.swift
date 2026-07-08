@@ -28,19 +28,3 @@ final class BlockUsersResponse: Sendable, Codable, JSONEncodable {
         case duration
     }
 }
-
-extension BlockUsersResponse: Hashable {
-    static func == (lhs: BlockUsersResponse, rhs: BlockUsersResponse) -> Bool {
-        lhs.blockedByUserId == rhs.blockedByUserId &&
-            lhs.blockedUserId == rhs.blockedUserId &&
-            lhs.createdAt == rhs.createdAt &&
-            lhs.duration == rhs.duration
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(blockedByUserId)
-        hasher.combine(blockedUserId)
-        hasher.combine(createdAt)
-        hasher.combine(duration)
-    }
-}

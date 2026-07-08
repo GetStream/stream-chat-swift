@@ -15,13 +15,3 @@ final class UnblockUsersRequest: Sendable, Codable, JSONEncodable {
         case blockedUserId = "blocked_user_id"
     }
 }
-
-extension UnblockUsersRequest: Hashable {
-    static func == (lhs: UnblockUsersRequest, rhs: UnblockUsersRequest) -> Bool {
-        lhs.blockedUserId == rhs.blockedUserId
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(blockedUserId)
-    }
-}

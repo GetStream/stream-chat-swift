@@ -50,21 +50,3 @@ final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
         case voipToken = "voip_token"
     }
 }
-
-extension CreateDeviceRequest: Hashable {
-    static func == (lhs: CreateDeviceRequest, rhs: CreateDeviceRequest) -> Bool {
-        lhs.hardwareId == rhs.hardwareId &&
-            lhs.id == rhs.id &&
-            lhs.pushProvider == rhs.pushProvider &&
-            lhs.pushProviderName == rhs.pushProviderName &&
-            lhs.voipToken == rhs.voipToken
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(hardwareId)
-        hasher.combine(id)
-        hasher.combine(pushProvider)
-        hasher.combine(pushProviderName)
-        hasher.combine(voipToken)
-    }
-}

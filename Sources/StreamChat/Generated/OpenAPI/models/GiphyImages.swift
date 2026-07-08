@@ -33,25 +33,3 @@ final class GiphyImages: Sendable, Codable, JSONEncodable {
         case original
     }
 }
-
-extension GiphyImages: Hashable {
-    static func == (lhs: GiphyImages, rhs: GiphyImages) -> Bool {
-        lhs.fixedHeight == rhs.fixedHeight &&
-            lhs.fixedHeightDownsampled == rhs.fixedHeightDownsampled &&
-            lhs.fixedHeightStill == rhs.fixedHeightStill &&
-            lhs.fixedWidth == rhs.fixedWidth &&
-            lhs.fixedWidthDownsampled == rhs.fixedWidthDownsampled &&
-            lhs.fixedWidthStill == rhs.fixedWidthStill &&
-            lhs.original == rhs.original
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(fixedHeight)
-        hasher.combine(fixedHeightDownsampled)
-        hasher.combine(fixedHeightStill)
-        hasher.combine(fixedWidth)
-        hasher.combine(fixedWidthDownsampled)
-        hasher.combine(fixedWidthStill)
-        hasher.combine(original)
-    }
-}
