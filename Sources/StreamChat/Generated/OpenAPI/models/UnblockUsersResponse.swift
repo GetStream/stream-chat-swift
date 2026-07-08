@@ -16,3 +16,13 @@ final class UnblockUsersResponse: Sendable, Codable, JSONEncodable {
         case duration
     }
 }
+
+extension UnblockUsersResponse: Hashable {
+    static func == (lhs: UnblockUsersResponse, rhs: UnblockUsersResponse) -> Bool {
+        lhs.duration == rhs.duration
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(duration)
+    }
+}

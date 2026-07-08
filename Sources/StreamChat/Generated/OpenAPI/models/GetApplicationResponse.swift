@@ -19,3 +19,15 @@ final class GetApplicationResponse: Sendable, Codable, JSONEncodable {
         case duration
     }
 }
+
+extension GetApplicationResponse: Hashable {
+    static func == (lhs: GetApplicationResponse, rhs: GetApplicationResponse) -> Bool {
+        lhs.app == rhs.app &&
+            lhs.duration == rhs.duration
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(app)
+        hasher.combine(duration)
+    }
+}

@@ -21,3 +21,17 @@ final class AttachmentFieldPayload: Sendable, Codable, JSONEncodable {
         case value
     }
 }
+
+extension AttachmentFieldPayload: Hashable {
+    static func == (lhs: AttachmentFieldPayload, rhs: AttachmentFieldPayload) -> Bool {
+        lhs.short == rhs.short &&
+            lhs.title == rhs.title &&
+            lhs.value == rhs.value
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(short)
+        hasher.combine(title)
+        hasher.combine(value)
+    }
+}

@@ -29,3 +29,21 @@ final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
         case userId = "user_id"
     }
 }
+
+extension BlockedUserResponse: Hashable {
+    static func == (lhs: BlockedUserResponse, rhs: BlockedUserResponse) -> Bool {
+        lhs.blockedUser == rhs.blockedUser &&
+            lhs.blockedUserId == rhs.blockedUserId &&
+            lhs.createdAt == rhs.createdAt &&
+            lhs.user == rhs.user &&
+            lhs.userId == rhs.userId
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(blockedUser)
+        hasher.combine(blockedUserId)
+        hasher.combine(createdAt)
+        hasher.combine(user)
+        hasher.combine(userId)
+    }
+}

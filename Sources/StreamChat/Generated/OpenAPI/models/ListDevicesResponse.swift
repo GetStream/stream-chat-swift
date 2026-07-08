@@ -19,3 +19,15 @@ final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
         case duration
     }
 }
+
+extension ListDevicesResponse: Hashable {
+    static func == (lhs: ListDevicesResponse, rhs: ListDevicesResponse) -> Bool {
+        lhs.devices == rhs.devices &&
+            lhs.duration == rhs.duration
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(devices)
+        hasher.combine(duration)
+    }
+}

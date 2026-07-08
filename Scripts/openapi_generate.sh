@@ -169,12 +169,15 @@ rename_generated Images GiphyImages
 rename_generated_type Response EmptyResponse
 
 # 4c. Expose selected generated models as public API. The class and its stored
-#     properties become public; the memberwise init and CodingKeys stay internal.
+#     properties become public, along with the generated Hashable conformance
+#     (== and hash(into:)); the memberwise init and CodingKeys stay internal.
 publicize_model() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   sed -i '' -E \
     -e 's/^final class /public final class /' \
     -e 's/^    let /    public let /' \
+    -e 's/^    static func == /    public static func == /' \
+    -e 's/^    func hash\(into /    public func hash(into /' \
     "$file"
 }
 publicize_model AppSettings
