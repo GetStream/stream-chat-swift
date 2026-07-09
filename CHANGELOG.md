@@ -17,6 +17,7 @@ _July 03, 2026_
 - Add customizable mention suggestion providers [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
 ### ⚡️ Performance
 - Improve channel list performance with optimizations in model conversions [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
+- Reduce SDK size by 1 MB (including StreamChatCommonUI) [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
 ### 🔄 Changed
 - Convert `ChatChannel` and `ChatMessage` to final immutable classes [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
 ### 🐞 Fixed
