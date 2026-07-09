@@ -42,6 +42,14 @@ allowed_models=(
   UserResponse
 )
 
+# Models that keep the generated Hashable conformance; every other model has its
+# Hashable extension stripped in step 4d. Uses the post-rename names (step 4b),
+# unlike allowed_models above which uses the generator's original names.
+allowed_hashable_models=(
+  AppSettings
+  UploadConfig
+)
+
 # Exact membership test (macOS bash 3.2 — no associative arrays).
 contains() {
   local needle="$1"; shift
@@ -181,17 +189,35 @@ rename_generated Images GiphyImages
 rename_generated_type Response EmptyResponse
 
 # 4c. Expose selected generated models as public API. The class and its stored
-#     properties become public; the memberwise init and CodingKeys stay internal.
+#     properties become public, along with the generated Hashable conformance
+#     (== and hash(into:)); the memberwise init and CodingKeys stay internal.
 publicize_model() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   sed -i '' -E \
     -e 's/^final class /public final class /' \
     -e 's/^    let /    public let /' \
+    -e 's/^    static func == /    public static func == /' \
+    -e 's/^    func hash\(into /    public func hash(into /' \
     "$file"
 }
 publicize_model AppSettings
 publicize_model Device
 publicize_model UploadConfig
+
+# 4d. Strip the generated Hashable conformance from every model not in
+#     allowed_hashable_models. The Hashable extension is always the last block in
+#     the file (opening at column 0, running to EOF), so delete from its opening
+#     line to end of file; swiftformat (step 5) tidies the leftover blank line.
+strip_hashable_conformance() {
+  local f base
+  for f in "$OUTPUT_DIR_CHAT"/models/*.swift; do
+    [ -e "$f" ] || continue
+    base="$(basename "$f" .swift)"
+    contains "$base" "${allowed_hashable_models[@]}" && continue
+    sed -i '' -E "/^extension ${base}: Hashable \{\$/,\$d" "$f"
+  done
+}
+strip_hashable_conformance
 
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"

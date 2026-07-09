@@ -27,3 +27,21 @@ public final class UploadConfig: Sendable, Codable, JSONEncodable {
         case sizeLimit = "size_limit"
     }
 }
+
+extension UploadConfig: Hashable {
+    public static func == (lhs: UploadConfig, rhs: UploadConfig) -> Bool {
+        lhs.allowedFileExtensions == rhs.allowedFileExtensions &&
+            lhs.allowedMimeTypes == rhs.allowedMimeTypes &&
+            lhs.blockedFileExtensions == rhs.blockedFileExtensions &&
+            lhs.blockedMimeTypes == rhs.blockedMimeTypes &&
+            lhs.sizeLimit == rhs.sizeLimit
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(allowedFileExtensions)
+        hasher.combine(allowedMimeTypes)
+        hasher.combine(blockedFileExtensions)
+        hasher.combine(blockedMimeTypes)
+        hasher.combine(sizeLimit)
+    }
+}
