@@ -12,6 +12,7 @@ env:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   copyright:
