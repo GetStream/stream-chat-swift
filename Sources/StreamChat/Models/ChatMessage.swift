@@ -320,21 +320,35 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         deletedAt: Date? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatMessage {
-        .init(
+        // Resolve the coalesced values up front so the type-checker does not
+        // have to evaluate all of them inside the single large initializer call.
+        let newText = text ?? self.text
+        let newType = type ?? self.type
+        let newCommand = command ?? self.command
+        let newDeletedAt = deletedAt ?? self.deletedAt
+        let newArguments = arguments ?? self.arguments
+        let newExtraData = extraData ?? self.extraData
+        let newAttachments = attachments ?? allAttachments
+        let newLocalState = state ?? localState
+        let newTranslations = translations ?? self.translations
+        let newOriginalLanguage = originalLanguage ?? self.originalLanguage
+        let newModerationDetails = moderationDetails ?? self.moderationDetails
+        let newReadBy = readBy ?? self.readBy
+        return .init(
             id: id,
             cid: cid,
-            text: text ?? self.text,
-            type: type ?? self.type,
-            command: command ?? self.command,
+            text: newText,
+            type: newType,
+            command: newCommand,
             createdAt: createdAt,
             locallyCreatedAt: locallyCreatedAt,
             updatedAt: updatedAt,
-            deletedAt: deletedAt ?? self.deletedAt,
-            arguments: arguments ?? self.arguments,
+            deletedAt: newDeletedAt,
+            arguments: newArguments,
             parentMessageId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
             replyCount: replyCount,
-            extraData: extraData ?? self.extraData,
+            extraData: newExtraData,
             quotedMessage: quotedMessage,
             isBounced: isBounced,
             isSilent: isSilent,
@@ -350,18 +364,18 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             mentionedGroups: mentionedGroups,
             mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
-            attachments: attachments ?? allAttachments,
+            attachments: newAttachments,
             latestReplies: latestReplies,
-            localState: state ?? localState,
+            localState: newLocalState,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
-            translations: translations ?? self.translations,
-            originalLanguage: originalLanguage ?? self.originalLanguage,
-            moderationDetails: moderationDetails ?? self.moderationDetails,
-            readBy: readBy ?? self.readBy,
+            translations: newTranslations,
+            originalLanguage: newOriginalLanguage,
+            moderationDetails: newModerationDetails,
+            readBy: newReadBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
