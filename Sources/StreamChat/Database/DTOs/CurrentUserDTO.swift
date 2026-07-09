@@ -186,7 +186,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         let deviceDTOs = devices.map { device -> DeviceDTO in
             let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
-            dto.createdAt = device.createdAt.bridgeDate
+            dto.createdAt = device.createdAt?.bridgeDate
             dto.disabled = device.disabled.map { NSNumber(value: $0) }
             dto.disabledReason = device.disabledReason
             dto.hardwareId = device.hardwareId

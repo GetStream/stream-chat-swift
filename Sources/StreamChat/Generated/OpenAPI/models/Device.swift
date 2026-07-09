@@ -6,7 +6,7 @@ import Foundation
 
 public final class Device: Sendable, Codable, JSONEncodable {
     /// Date/time of creation
-    public let createdAt: Date
+    public let createdAt: Date?
     /// Whether device is disabled or not
     public let disabled: Bool?
     /// Reason explaining why device had been disabled

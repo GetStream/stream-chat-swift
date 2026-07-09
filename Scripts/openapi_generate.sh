@@ -156,6 +156,17 @@ prune_models() {
 }
 prune_models
 
+# Relax selected generated stored properties back to optional. Some models are
+#     exposed as public API where a property was historically optional (e.g.
+#     Device.createdAt was Date? before the OpenAPI migration).
+optionalize_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E \
+    -e "s/^(    let $2: [^?]+)$/\1?/" \
+    "$file"
+}
+optionalize_property DeviceResponse createdAt
+
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
