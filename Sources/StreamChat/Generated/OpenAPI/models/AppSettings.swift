@@ -33,3 +33,25 @@ public final class AppSettings: Sendable, Codable, JSONEncodable {
         case placement
     }
 }
+
+extension AppSettings: Hashable {
+    public static func == (lhs: AppSettings, rhs: AppSettings) -> Bool {
+        lhs.asyncUrlEnrichEnabled == rhs.asyncUrlEnrichEnabled &&
+            lhs.autoTranslationEnabled == rhs.autoTranslationEnabled &&
+            lhs.fileUploadConfig == rhs.fileUploadConfig &&
+            lhs.id == rhs.id &&
+            lhs.imageUploadConfig == rhs.imageUploadConfig &&
+            lhs.name == rhs.name &&
+            lhs.placement == rhs.placement
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(asyncUrlEnrichEnabled)
+        hasher.combine(autoTranslationEnabled)
+        hasher.combine(fileUploadConfig)
+        hasher.combine(id)
+        hasher.combine(imageUploadConfig)
+        hasher.combine(name)
+        hasher.combine(placement)
+    }
+}
