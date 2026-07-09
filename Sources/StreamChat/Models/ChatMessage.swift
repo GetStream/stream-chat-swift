@@ -9,6 +9,9 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
+///
+/// `@unchecked Sendable` is safe here because every stored property is `let`, and the type-erased
+/// `_quotedMessage` is only read through `getValue()`, which the compiler cannot prove.
 public final class ChatMessage: Identifiable, @unchecked Sendable {
     /// A unique identifier of the message.
     public let id: MessageId

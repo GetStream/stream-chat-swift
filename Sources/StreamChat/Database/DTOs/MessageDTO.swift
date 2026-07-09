@@ -1815,7 +1815,7 @@ private extension ChatMessage {
             return dto.replies
                 .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
                 .prefix(5)
-                .compactMap { try? ChatMessage.create(fromDTO: $0, depth: depth) }
+                .compactMap { try? $0.relationshipAsModel(depth: depth) }
         }()
 
         let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
