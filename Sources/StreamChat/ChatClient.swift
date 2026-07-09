@@ -639,7 +639,7 @@ public class ChatClient: @unchecked Sendable {
         apiClient.request(endpoint: .getApp()) { [weak self] result in
             switch result {
             case let .success(payload):
-                let appSettings = payload.asModel()
+                let appSettings = payload.app
                 self?.appSettings = appSettings
                 try? self?.backgroundWorker(of: AttachmentQueueUploader.self)
                     .setAppSettings(appSettings)

@@ -224,7 +224,8 @@ final class LivestreamChat_Tests: XCTestCase {
 
         try await livestreamChat.stopWatching()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.stopWatching(cid: channelQuery.cid!)
+        let cid = channelQuery.cid!
+        let expectedEndpoint = Endpoint<EmptyResponse>.stopWatchingChannel(type: cid.type.rawValue, id: cid.id)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

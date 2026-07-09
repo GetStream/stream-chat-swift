@@ -4,10 +4,10 @@
 
 import Foundation
 
-final class ListDevicesResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
     /// List of devices
-    var devices: [DeviceResponse]
-    var duration: String
+    let devices: [DeviceResponse]
+    let duration: String
 
     init(devices: [DeviceResponse], duration: String) {
         self.devices = devices
@@ -17,15 +17,5 @@ final class ListDevicesResponse: @unchecked Sendable, Codable, JSONEncodable, Ha
     enum CodingKeys: String, CodingKey, CaseIterable {
         case devices
         case duration
-    }
-
-    static func == (lhs: ListDevicesResponse, rhs: ListDevicesResponse) -> Bool {
-        lhs.devices == rhs.devices &&
-            lhs.duration == rhs.duration
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(devices)
-        hasher.combine(duration)
     }
 }

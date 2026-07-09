@@ -4,12 +4,12 @@
 
 import Foundation
 
-final class GetApplicationResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var app: AppResponseFields
+final class GetApplicationResponse: Sendable, Codable, JSONEncodable {
+    let app: AppSettings
     /// Duration of the request in milliseconds
-    var duration: String
+    let duration: String
 
-    init(app: AppResponseFields, duration: String) {
+    init(app: AppSettings, duration: String) {
         self.app = app
         self.duration = duration
     }
@@ -17,15 +17,5 @@ final class GetApplicationResponse: @unchecked Sendable, Codable, JSONEncodable,
     enum CodingKeys: String, CodingKey, CaseIterable {
         case app
         case duration
-    }
-
-    static func == (lhs: GetApplicationResponse, rhs: GetApplicationResponse) -> Bool {
-        lhs.app == rhs.app &&
-            lhs.duration == rhs.duration
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(app)
-        hasher.combine(duration)
     }
 }

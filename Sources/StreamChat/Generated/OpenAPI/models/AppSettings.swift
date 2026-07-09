@@ -4,16 +4,16 @@
 
 import Foundation
 
-final class AppResponseFields: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var asyncUrlEnrichEnabled: Bool
-    var autoTranslationEnabled: Bool
-    var fileUploadConfig: FileUploadConfig
-    var id: Int
-    var imageUploadConfig: FileUploadConfig
-    var name: String
-    var placement: String
+public final class AppSettings: Sendable, Codable, JSONEncodable {
+    public let asyncUrlEnrichEnabled: Bool
+    public let autoTranslationEnabled: Bool
+    public let fileUploadConfig: UploadConfig
+    public let id: Int
+    public let imageUploadConfig: UploadConfig
+    public let name: String
+    public let placement: String
 
-    init(asyncUrlEnrichEnabled: Bool, autoTranslationEnabled: Bool, fileUploadConfig: FileUploadConfig, id: Int, imageUploadConfig: FileUploadConfig, name: String, placement: String) {
+    init(asyncUrlEnrichEnabled: Bool, autoTranslationEnabled: Bool, fileUploadConfig: UploadConfig, id: Int, imageUploadConfig: UploadConfig, name: String, placement: String) {
         self.asyncUrlEnrichEnabled = asyncUrlEnrichEnabled
         self.autoTranslationEnabled = autoTranslationEnabled
         self.fileUploadConfig = fileUploadConfig
@@ -32,8 +32,10 @@ final class AppResponseFields: @unchecked Sendable, Codable, JSONEncodable, Hash
         case name
         case placement
     }
+}
 
-    static func == (lhs: AppResponseFields, rhs: AppResponseFields) -> Bool {
+extension AppSettings: Hashable {
+    public static func == (lhs: AppSettings, rhs: AppSettings) -> Bool {
         lhs.asyncUrlEnrichEnabled == rhs.asyncUrlEnrichEnabled &&
             lhs.autoTranslationEnabled == rhs.autoTranslationEnabled &&
             lhs.fileUploadConfig == rhs.fileUploadConfig &&
@@ -43,7 +45,7 @@ final class AppResponseFields: @unchecked Sendable, Codable, JSONEncodable, Hash
             lhs.placement == rhs.placement
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(asyncUrlEnrichEnabled)
         hasher.combine(autoTranslationEnabled)
         hasher.combine(fileUploadConfig)

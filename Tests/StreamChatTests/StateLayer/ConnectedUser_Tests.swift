@@ -83,7 +83,7 @@ final class ConnectedUser_Tests: XCTestCase {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         await XCTAssertEqual(0, connectedUser.state.user.devices.count)
         
-        env.client.mockAPIClient.test_mockResponseResult(.success(Response.dummy))
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
         try await connectedUser.addDevice(.apn(token: Data("test123".utf8)))
         
         // Converted to hex (test123 > 74657374313233)
@@ -93,7 +93,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_removeDevice_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false, initialDeviceCount: 2)
         
-        env.client.mockAPIClient.test_mockResponseResult(.success(Response.dummy))
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
         var devices = await connectedUser.state.user.devices
         let deviceToRemove = try XCTUnwrap(devices.popLast()?.id)
         try await connectedUser.removeDevice(deviceToRemove)
