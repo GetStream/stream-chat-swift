@@ -48,3 +48,29 @@ public final class Device: Sendable, Codable, JSONEncodable {
         case voip
     }
 }
+
+extension Device: Hashable {
+    public static func == (lhs: Device, rhs: Device) -> Bool {
+        lhs.createdAt == rhs.createdAt &&
+            lhs.disabled == rhs.disabled &&
+            lhs.disabledReason == rhs.disabledReason &&
+            lhs.hardwareId == rhs.hardwareId &&
+            lhs.id == rhs.id &&
+            lhs.pushProvider == rhs.pushProvider &&
+            lhs.pushProviderName == rhs.pushProviderName &&
+            lhs.userId == rhs.userId &&
+            lhs.voip == rhs.voip
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(createdAt)
+        hasher.combine(disabled)
+        hasher.combine(disabledReason)
+        hasher.combine(hardwareId)
+        hasher.combine(id)
+        hasher.combine(pushProvider)
+        hasher.combine(pushProviderName)
+        hasher.combine(userId)
+        hasher.combine(voip)
+    }
+}

@@ -47,6 +47,7 @@ allowed_models=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
+  Device
   UploadConfig
 )
 

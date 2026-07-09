@@ -13,17 +13,3 @@ extension Data {
 }
 
 extension Device: Identifiable {}
-
-extension Device: Equatable {
-    public static func == (lhs: Device, rhs: Device) -> Bool {
-        lhs.id == rhs.id
-            && lhs.createdAt == rhs.createdAt
-            && lhs.disabled == rhs.disabled
-            && lhs.disabledReason == rhs.disabledReason
-            && lhs.hardwareId == rhs.hardwareId
-            && lhs.pushProvider == rhs.pushProvider
-            && lhs.pushProviderName == rhs.pushProviderName
-            && lhs.userId == rhs.userId
-            && lhs.voip == rhs.voip
-    }
-}
