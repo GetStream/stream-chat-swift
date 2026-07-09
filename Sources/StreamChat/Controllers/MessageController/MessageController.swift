@@ -807,8 +807,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         request: URLRequest? = nil,
         completion: @escaping @MainActor (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
-        messageUpdater.downloadAttachment(attachment, request: request) { [weak self] result in
-            self?.callback {
+        messageUpdater.downloadAttachment(attachment, request: request) { result in
+            self.callback {
                 completion(result)
             }
         }

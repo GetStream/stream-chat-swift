@@ -4,12 +4,12 @@
 
 import Foundation
 
-final class FileUploadConfig: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var allowedFileExtensions: [String]
-    var allowedMimeTypes: [String]
-    var blockedFileExtensions: [String]
-    var blockedMimeTypes: [String]
-    var sizeLimit: Int
+public final class UploadConfig: Sendable, Codable, JSONEncodable {
+    public let allowedFileExtensions: [String]
+    public let allowedMimeTypes: [String]
+    public let blockedFileExtensions: [String]
+    public let blockedMimeTypes: [String]
+    public let sizeLimit: Int
 
     init(allowedFileExtensions: [String], allowedMimeTypes: [String], blockedFileExtensions: [String], blockedMimeTypes: [String], sizeLimit: Int) {
         self.allowedFileExtensions = allowedFileExtensions
@@ -26,8 +26,10 @@ final class FileUploadConfig: @unchecked Sendable, Codable, JSONEncodable, Hasha
         case blockedMimeTypes = "blocked_mime_types"
         case sizeLimit = "size_limit"
     }
+}
 
-    static func == (lhs: FileUploadConfig, rhs: FileUploadConfig) -> Bool {
+extension UploadConfig: Hashable {
+    public static func == (lhs: UploadConfig, rhs: UploadConfig) -> Bool {
         lhs.allowedFileExtensions == rhs.allowedFileExtensions &&
             lhs.allowedMimeTypes == rhs.allowedMimeTypes &&
             lhs.blockedFileExtensions == rhs.blockedFileExtensions &&
@@ -35,7 +37,7 @@ final class FileUploadConfig: @unchecked Sendable, Codable, JSONEncodable, Hasha
             lhs.sizeLimit == rhs.sizeLimit
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(allowedFileExtensions)
         hasher.combine(allowedMimeTypes)
         hasher.combine(blockedFileExtensions)

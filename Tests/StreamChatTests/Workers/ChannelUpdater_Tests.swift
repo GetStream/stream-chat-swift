@@ -2167,7 +2167,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         channelUpdater.stopWatching(cid: cid)
 
-        let referenceEndpoint: Endpoint<EmptyResponse> = .stopWatching(cid: cid)
+        let referenceEndpoint = Endpoint<EmptyResponse>.stopWatchingChannel(type: cid.type.rawValue, id: cid.id)
 
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
@@ -2182,7 +2182,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         XCTAssertFalse(completionCalled)
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(EmptyResponse()))
 
         AssertAsync.willBeTrue(completionCalled)
     }

@@ -4,14 +4,14 @@
 
 import Foundation
 
-final class BlockedUserResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var blockedUser: UserResponse
+final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
+    let blockedUser: UserResponse
     /// ID of the user who got blocked
-    var blockedUserId: String
-    var createdAt: Date
-    var user: UserResponse
+    let blockedUserId: String
+    let createdAt: Date
+    let user: UserResponse
     /// ID of the user who blocked another user
-    var userId: String
+    let userId: String
 
     init(blockedUser: UserResponse, blockedUserId: String, createdAt: Date, user: UserResponse, userId: String) {
         self.blockedUser = blockedUser
@@ -27,21 +27,5 @@ final class BlockedUserResponse: @unchecked Sendable, Codable, JSONEncodable, Ha
         case createdAt = "created_at"
         case user
         case userId = "user_id"
-    }
-
-    static func == (lhs: BlockedUserResponse, rhs: BlockedUserResponse) -> Bool {
-        lhs.blockedUser == rhs.blockedUser &&
-            lhs.blockedUserId == rhs.blockedUserId &&
-            lhs.createdAt == rhs.createdAt &&
-            lhs.user == rhs.user &&
-            lhs.userId == rhs.userId
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(blockedUser)
-        hasher.combine(blockedUserId)
-        hasher.combine(createdAt)
-        hasher.combine(user)
-        hasher.combine(userId)
     }
 }

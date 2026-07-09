@@ -443,7 +443,7 @@ open class ChatChannelVC: _ViewController,
             dismiss(animated: true) { [weak self] in
                 self?.channelController.markUnread(from: message.id) { result in
                     if case let .success(channel) = result {
-                        self?.updateAllUnreadMessagesRelatedComponents(channel: channel)
+                        self?.updateAllUnreadMessagesRelatedComponents(channel: channel, forceUpdateBanner: true)
                     }
                 }
             }
@@ -606,7 +606,7 @@ open class ChatChannelVC: _ViewController,
         }
         
         if let event = event as? NotificationMarkUnreadEvent, let channel = channelController.channel, event.cid == channelController.cid, !messages.isEmpty {
-            updateAllUnreadMessagesRelatedComponents(channel: channel)
+            updateAllUnreadMessagesRelatedComponents(channel: channel, forceUpdateBanner: true)
         }
     }
 
@@ -647,10 +647,10 @@ private extension ChatChannelVC {
         )
     }
 
-    func updateAllUnreadMessagesRelatedComponents(channel: ChatChannel? = nil) {
+    func updateAllUnreadMessagesRelatedComponents(channel: ChatChannel? = nil, forceUpdateBanner: Bool = false) {
         updateScrollToBottomButtonCount(channel: channel)
         updateJumpToUnreadRelatedComponents(channel: channel)
-        updateUnreadMessagesBannerRelatedComponents(channel: channel)
+        updateUnreadMessagesBannerRelatedComponents(channel: channel, forceUpdate: forceUpdateBanner)
     }
 
     func updateScrollToBottomButtonCount(channel: ChatChannel? = nil) {
@@ -669,7 +669,17 @@ private extension ChatChannelVC {
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
 
-    func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil) {
+    /// Updates the anchor message id used to render the unread messages banner.
+    ///
+    /// Once anchored for the current channel screen session, the banner stays in place even if a
+    /// subsequent `markRead()` call resets the channel's unread count in the background. It's only
+    /// recalculated on the next channel open, or when `forceUpdate` is passed because the unread
+    /// boundary genuinely moved (e.g. a new mark-as-unread action).
+    func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil, forceUpdate: Bool = false) {
+        guard forceUpdate || firstUnreadMessageId == nil else { return }
+        if forceUpdate {
+            hasSeenFirstUnreadMessage = false
+        }
         let resolvedChannel = channel ?? channelController.channel
         let hasUnreadMessages = (resolvedChannel?.unreadCount.messages ?? 0) > 0
         let firstUnreadMessageId = hasUnreadMessages

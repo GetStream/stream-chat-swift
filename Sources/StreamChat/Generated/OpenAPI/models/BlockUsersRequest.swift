@@ -4,9 +4,9 @@
 
 import Foundation
 
-final class BlockUsersRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class BlockUsersRequest: Sendable, Codable, JSONEncodable {
     /// User id to block
-    var blockedUserId: String
+    let blockedUserId: String
 
     init(blockedUserId: String) {
         self.blockedUserId = blockedUserId
@@ -14,13 +14,5 @@ final class BlockUsersRequest: @unchecked Sendable, Codable, JSONEncodable, Hash
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case blockedUserId = "blocked_user_id"
-    }
-
-    static func == (lhs: BlockUsersRequest, rhs: BlockUsersRequest) -> Bool {
-        lhs.blockedUserId == rhs.blockedUserId
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(blockedUserId)
     }
 }
