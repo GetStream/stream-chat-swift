@@ -12,6 +12,10 @@ env:
   IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.5)"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   test-backend-integration:
     name: Test Backend Integration
