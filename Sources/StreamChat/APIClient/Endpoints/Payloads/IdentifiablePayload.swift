@@ -143,13 +143,7 @@ extension ChannelPayload: IdentifiablePayloadProxy {
         membership?.fillIds(cache: &cache)
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
-        // A channel read's id is composed of the channel cid and the user id, so it can only be
-        // resolved here where the parent cid is known.
-        channelReads.forEach { read in
-            read.fillIds(cache: &cache)
-            let readId = ChannelReadDTO.createId(cid: channel.cid, userId: read.user.id)
-            cache[ChannelReadDTO.className, default: []].insert(readId)
-        }
+        channelReads.fillIds(cache: &cache, channelCid: channel.cid)
     }
 }
 
@@ -253,6 +247,21 @@ extension ChannelReadPayload: IdentifiablePayload {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
+    }
+
+    /// Registers the composed read id in the cache. Requires the parent channel cid because reads do not
+    /// carry it on the payload.
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], channelCid: ChannelId) {
+        user.fillIds(cache: &cache)
+        cache[ChannelReadDTO.className, default: []].insert(
+            ChannelReadDTO.createId(cid: channelCid, userId: user.id)
+        )
+    }
+}
+
+extension Array where Element == ChannelReadPayload {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], channelCid: ChannelId) {
+        forEach { $0.fillIds(cache: &cache, channelCid: channelCid) }
     }
 }
 
