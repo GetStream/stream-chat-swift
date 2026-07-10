@@ -52,12 +52,11 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
 // MARK: - Observing a Single Entity
 
 extension StateLayerDatabaseObserver where ResultType == EntityResult {
-    @_disfavoredOverload
     convenience init(
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
-        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil
+        entityItemReuseKeyPaths itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil
     ) {
         self.init(
             context: database.stateLayerContext,

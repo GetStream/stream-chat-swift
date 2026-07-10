@@ -22,7 +22,7 @@ extension MessageState {
                 database: database,
                 fetchRequest: MessageDTO.message(withID: messageId),
                 itemCreator: { try $0.asModel() },
-                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
+                entityItemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
             reactionsObserver = StateLayerDatabaseObserver(
                 database: database,

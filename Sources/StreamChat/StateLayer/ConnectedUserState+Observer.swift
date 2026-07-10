@@ -13,7 +13,7 @@ extension ConnectedUserState {
                 database: database,
                 fetchRequest: CurrentUserDTO.defaultFetchRequest,
                 itemCreator: { try $0.asModel() },
-                itemReuseKeyPaths: (\CurrentChatUser.id, \CurrentUserDTO.user.id)
+                entityItemReuseKeyPaths: (\CurrentChatUser.id, \CurrentUserDTO.user.id)
             )
         }
         
