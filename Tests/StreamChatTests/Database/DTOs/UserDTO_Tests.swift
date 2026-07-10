@@ -326,7 +326,7 @@ final class UserDTO_Tests: XCTestCase {
             userId: userId,
             role: .admin,
             extraData: [:],
-            devices: [DevicePayload.dummy],
+            devices: [Device.dummy()],
             mutedUsers: [
                 .dummy(userId: .unique)
             ]

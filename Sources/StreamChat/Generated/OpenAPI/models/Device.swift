@@ -4,25 +4,25 @@
 
 import Foundation
 
-final class DeviceResponse: Sendable, Codable, JSONEncodable {
+public final class Device: Sendable, Codable, JSONEncodable {
     /// Date/time of creation
-    let createdAt: Date
+    public let createdAt: Date?
     /// Whether device is disabled or not
-    let disabled: Bool?
+    public let disabled: Bool?
     /// Reason explaining why device had been disabled
-    let disabledReason: String?
+    public let disabledReason: String?
     /// Stable physical device identifier used to deduplicate pushes across push providers
-    let hardwareId: String?
+    public let hardwareId: String?
     /// Device ID
-    let id: String
+    public let id: String
     /// Push provider
-    let pushProvider: String
+    public let pushProvider: String
     /// Push provider name
-    let pushProviderName: String?
+    public let pushProviderName: String?
     /// User ID
-    let userId: String
+    public let userId: String
     /// When true the token is for Apple VoIP push notifications
-    let voip: Bool?
+    public let voip: Bool?
 
     init(createdAt: Date, disabled: Bool? = nil, disabledReason: String? = nil, hardwareId: String? = nil, id: String, pushProvider: String, pushProviderName: String? = nil, userId: String, voip: Bool? = nil) {
         self.createdAt = createdAt
@@ -46,5 +46,31 @@ final class DeviceResponse: Sendable, Codable, JSONEncodable {
         case pushProviderName = "push_provider_name"
         case userId = "user_id"
         case voip
+    }
+}
+
+extension Device: Hashable {
+    public static func == (lhs: Device, rhs: Device) -> Bool {
+        lhs.createdAt == rhs.createdAt &&
+            lhs.disabled == rhs.disabled &&
+            lhs.disabledReason == rhs.disabledReason &&
+            lhs.hardwareId == rhs.hardwareId &&
+            lhs.id == rhs.id &&
+            lhs.pushProvider == rhs.pushProvider &&
+            lhs.pushProviderName == rhs.pushProviderName &&
+            lhs.userId == rhs.userId &&
+            lhs.voip == rhs.voip
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(createdAt)
+        hasher.combine(disabled)
+        hasher.combine(disabledReason)
+        hasher.combine(hardwareId)
+        hasher.combine(id)
+        hasher.combine(pushProvider)
+        hasher.combine(pushProviderName)
+        hasher.combine(userId)
+        hasher.combine(voip)
     }
 }

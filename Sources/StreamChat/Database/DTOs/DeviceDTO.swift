@@ -9,6 +9,13 @@ import Foundation
 class DeviceDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var createdAt: DBDate?
+    @NSManaged var disabled: NSNumber?
+    @NSManaged var disabledReason: String?
+    @NSManaged var hardwareId: String?
+    @NSManaged var pushProvider: String
+    @NSManaged var pushProviderName: String?
+    @NSManaged var userId: String
+    @NSManaged var voip: NSNumber?
 
     @NSManaged var user: CurrentUserDTO
 }
@@ -46,6 +53,16 @@ extension DeviceDTO {
 extension DeviceDTO {
     func asModel() throws -> Device {
         try isNotDeleted()
-        return Device(id: id, createdAt: createdAt?.bridgeDate)
+        return Device(
+            createdAt: createdAt?.bridgeDate ?? Date(timeIntervalSince1970: 0),
+            disabled: disabled?.boolValue,
+            disabledReason: disabledReason,
+            hardwareId: hardwareId,
+            id: id,
+            pushProvider: pushProvider,
+            pushProviderName: pushProviderName,
+            userId: userId,
+            voip: voip?.boolValue
+        )
     }
 }

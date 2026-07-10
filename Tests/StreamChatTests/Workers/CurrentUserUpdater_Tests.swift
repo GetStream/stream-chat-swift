@@ -371,7 +371,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     }
 
     func test_addDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy])
+        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy()])
 
         // Save user to the db
         try database.writeSynchronously {
@@ -495,7 +495,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     }
 
     func test_removeDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy])
+        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy()])
         let deviceId = userPayload.devices.first!.id
 
         // Save user to the db
@@ -527,9 +527,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     // MARK: fetchDevices
 
     func test_fetchDevices_makesCorrectAPICall() throws {
-        let payloads: [DevicePayload] = [.dummy, .dummy]
-        let expectedDevices = payloads.map { Device(id: $0.id, createdAt: $0.createdAt) }
-        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: payloads)
+        let expectedDevices: [Device] = [.dummy(), .dummy()]
+        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: expectedDevices)
 
         // Save user to the db
         try database.writeSynchronously {
@@ -624,11 +623,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Save previous device to the db
         try database.writeSynchronously {
             // Simulate 4 devices exist in the DB
-            try $0.saveCurrentUserDevices([.dummy, .dummy, .dummy, .dummy])
+            try $0.saveCurrentUserDevices([.dummy(), .dummy(), .dummy(), .dummy()])
         }
-        
+
         let dummyDevices = ListDevicesResponse.dummy()
-        let apiDevices = dummyDevices.devices.map { Device(id: $0.id, createdAt: $0.createdAt) }
+        let apiDevices = dummyDevices.devices
 
         // Call updateDevices
         nonisolated(unsafe) var callbackCalled = false

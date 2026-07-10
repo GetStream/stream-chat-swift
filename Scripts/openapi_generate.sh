@@ -47,6 +47,7 @@ allowed_models=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
+  Device
   UploadConfig
 )
 
@@ -164,11 +165,23 @@ prune_models() {
 }
 prune_models
 
+# Relax selected generated stored properties back to optional. Some models are
+#     exposed as public API where a property was historically optional (e.g.
+#     Device.createdAt was Date? before the OpenAPI migration).
+optionalize_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E \
+    -e "s/^(    let $2: [^?]+)$/\1?/" \
+    "$file"
+}
+optionalize_property DeviceResponse createdAt
+
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
+rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
@@ -189,6 +202,7 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
+publicize_model Device
 publicize_model UploadConfig
 
 # 4d. Strip the generated Hashable conformance from every model not in

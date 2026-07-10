@@ -170,7 +170,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.unreadChannelCountsByGroup = counts
     }
 
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {
         invalidateCurrentUserCache()
 
         guard let currentUser = currentUser else {
@@ -187,6 +187,13 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let deviceDTOs = devices.map { device -> DeviceDTO in
             let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
             dto.createdAt = device.createdAt?.bridgeDate
+            dto.disabled = device.disabled.map { NSNumber(value: $0) }
+            dto.disabledReason = device.disabledReason
+            dto.hardwareId = device.hardwareId
+            dto.pushProvider = device.pushProvider
+            dto.pushProviderName = device.pushProviderName
+            dto.userId = device.userId
+            dto.voip = device.voip.map { NSNumber(value: $0) }
             dto.user = currentUser
             return dto
         }
