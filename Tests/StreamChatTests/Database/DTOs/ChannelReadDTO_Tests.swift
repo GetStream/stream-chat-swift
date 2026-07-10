@@ -920,41 +920,6 @@ final class ChannelReadDTO_Tests: XCTestCase {
         XCTAssertEqual(cachedRead?.user.id, read.user.id)
     }
 
-    func test_loadOrCreate_whenLegacyReadWithoutId_backfillsIdAndReusesDTO() throws {
-        // GIVEN a read persisted before the `id` attribute existed (id is nil).
-        let cid = ChannelId.unique
-        let read = ChannelReadPayload(
-            user: .dummy(userId: .unique),
-            lastReadAt: .unique,
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 6
-        )
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(cid: cid),
-            members: [.dummy(user: read.user)],
-            channelReads: [read]
-        )
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: channel)
-        }
-        try database.writeSynchronously { session in
-            let context = session as! NSManagedObjectContext
-            let legacy = try XCTUnwrap(ChannelReadDTO.load(cid: cid, userId: read.user.id, context: context))
-            legacy.setValue(nil, forKey: "id")
-        }
-        XCTAssertNil(readDTO(cid: cid, userId: read.user.id)?.id)
-
-        // WHEN loading or creating the same read again.
-        try database.writeSynchronously { session in
-            let context = session as! NSManagedObjectContext
-            _ = ChannelReadDTO.loadOrCreate(cid: cid, userId: read.user.id, context: context, cache: nil)
-        }
-
-        // THEN the legacy DTO is reused (not duplicated) and its id is backfilled.
-        XCTAssertEqual(reads(cid: cid).count, 1)
-        XCTAssertEqual(readDTO(cid: cid, userId: read.user.id)?.id, ChannelReadDTO.createId(cid: cid, userId: read.user.id))
-    }
-
     func test_saveChannel_savedTwice_doesNotDuplicateReads() throws {
         // GIVEN
         let cid = ChannelId.unique

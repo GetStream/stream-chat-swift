@@ -8,8 +8,6 @@ import Foundation
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
     /// A composed identifier (`channel cid` + `user id`) used to look up a read without a compound predicate.
-    ///
-    /// Optional because reads persisted before this attribute existed have no value until they are next saved.
     @NSManaged private(set) var id: String?
     @NSManaged var lastReadAt: DBDate
     @NSManaged var lastReadMessageId: MessageId?
@@ -78,13 +76,6 @@ class ChannelReadDTO: NSManagedObject {
 
         if let existing = load(id: readId, context: context) {
             return existing
-        }
-
-        // Fallback for reads persisted before the `id` attribute existed: look them up by the
-        // compound predicate and backfill the identifier so subsequent lookups can use the id.
-        if let legacy = load(cid: cid, userId: userId, context: context) {
-            legacy.id = readId
-            return legacy
         }
 
         let request = fetchRequest(id: readId)
