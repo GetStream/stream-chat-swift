@@ -5,13 +5,13 @@
 import Foundation
 
 extension Endpoint {
-    static func searchRoles(query: RoleSearchQuery) -> Endpoint<RoleListPayload> {
-        .init(
-            path: .rolesSearch,
-            method: .get,
-            queryItems: query,
-            requiresConnectionId: false,
-            body: nil
+    static func searchRoles(query: RoleSearchQuery) -> Endpoint<SearchRolesResponse> {
+        .searchRoles(
+            query: query.query,
+            limit: query.limit,
+            nameGt: query.nameGreaterThan,
+            roleType: query.roleType?.rawValue,
+            includeGlobalRoles: query.includeGlobalRoles
         )
     }
 }

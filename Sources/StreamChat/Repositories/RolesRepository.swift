@@ -22,7 +22,7 @@ class RolesRepository: @unchecked Sendable {
         apiClient.request(endpoint: .searchRoles(query: query)) { result in
             switch result {
             case .success(let response):
-                completion(.success(response.roles.map { $0.asModel() }))
+                completion(.success(response.roles))
             case .failure(let error):
                 completion(.failure(error))
             }

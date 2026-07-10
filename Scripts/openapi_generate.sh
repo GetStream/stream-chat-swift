@@ -18,6 +18,7 @@ allowed_endpoints=(
     getBlockedUsers
     getOG
     listDevices
+    searchRoles
     stopWatchingChannel
     unblockUsers
 )
@@ -37,6 +38,8 @@ allowed_models=(
   ImageData
   Images
   ListDevicesResponse
+  Role
+  SearchRolesResponse
   UnblockUsersRequest
   UnblockUsersResponse
   UserResponse
@@ -48,6 +51,7 @@ allowed_models=(
 allowed_hashable_models=(
   AppSettings
   Device
+  Role
   UploadConfig
 )
 
@@ -175,6 +179,8 @@ optionalize_property() {
     "$file"
 }
 optionalize_property DeviceResponse createdAt
+optionalize_property Role createdAt
+optionalize_property Role updatedAt
 
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
@@ -203,6 +209,7 @@ publicize_model() {
 }
 publicize_model AppSettings
 publicize_model Device
+publicize_model Role
 publicize_model UploadConfig
 
 # 4d. Strip the generated Hashable conformance from every model not in
@@ -317,8 +324,6 @@ inject_v1_endpoint_paths() {
     case userGroupMembers(id: String)
     case userGroupMembersDelete(id: String)
 
-    case rolesSearch
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -404,8 +409,6 @@ EOF
         case let .userGroup(id): return "usergroups/\(id)"
         case let .userGroupMembers(id): return "usergroups/\(id)/members"
         case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
-
-        case .rolesSearch: return "roles/search"
 
 EOF
 

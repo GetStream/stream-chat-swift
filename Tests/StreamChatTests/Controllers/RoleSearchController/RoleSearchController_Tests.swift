@@ -29,7 +29,7 @@ final class RoleSearchController_Tests: XCTestCase {
     // MARK: - searchRoles(text:roleType:)
 
     func test_searchRoles_withText_forwardsRequestToRepository() {
-        let role = Role(name: "admin", isCustom: true)
+        let role = Role.dummy(custom: true, name: "admin")
         repository.searchRoles_completion_result = .success([role])
 
         let exp = expectation(description: "search completes")
@@ -59,7 +59,7 @@ final class RoleSearchController_Tests: XCTestCase {
     // MARK: - searchRoles(query:)
 
     func test_searchRoles_withQuery_forwardsRequestToRepository() {
-        let role = Role(name: "admin")
+        let role = Role.dummy(name: "admin")
         repository.searchRoles_completion_result = .success([role])
 
         let query = RoleSearchQuery(query: "adm", limit: 5, roleType: .channel)
@@ -74,7 +74,7 @@ final class RoleSearchController_Tests: XCTestCase {
     }
 
     func test_searchRoles_whenRequestSucceeds_thenRolesAndStateAreUpdated() {
-        let roles = [Role(name: "admin"), Role(name: "moderator")]
+        let roles = [Role.dummy(name: "admin"), Role.dummy(name: "moderator")]
         repository.searchRoles_completion_result = .success(roles)
 
         let exp = expectation(description: "search completes")
@@ -100,7 +100,7 @@ final class RoleSearchController_Tests: XCTestCase {
 
         let delegate = DelegateMock()
         controller.delegate = delegate
-        repository.searchRoles_completion_result = .success([Role(name: "admin")])
+        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
 
         controller.searchRoles(text: "adm")
 

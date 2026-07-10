@@ -88,8 +88,6 @@ enum EndpointPath: Codable {
     case userGroupMembers(id: String)
     case userGroupMembersDelete(id: String)
 
-    case rolesSearch
-
     case blockUsers
     case createDevice
     case deleteDevice
@@ -97,6 +95,7 @@ enum EndpointPath: Codable {
     case getBlockedUsers
     case getOG
     case listDevices
+    case searchRoles
     case stopWatchingChannel(type: String, id: String)
     case unblockUsers
 
@@ -185,8 +184,6 @@ enum EndpointPath: Codable {
         case let .userGroupMembers(id): return "usergroups/\(id)/members"
         case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
 
-        case .rolesSearch: return "roles/search"
-
         case .blockUsers:
             return "/api/v2/users/block"
         case .createDevice:
@@ -201,6 +198,8 @@ enum EndpointPath: Codable {
             return "/api/v2/og"
         case .listDevices:
             return "/api/v2/devices"
+        case .searchRoles:
+            return "/api/v2/roles/search"
         case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
@@ -309,9 +308,9 @@ extension Endpoint {
         return .init(
             path: .deleteDevice,
             method: .delete,
-            queryItems: [
-                "id": APIHelper.convertAnyToString(id)
-            ],
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "id": id
+            ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
@@ -341,9 +340,9 @@ extension Endpoint {
         return .init(
             path: .getOG,
             method: .get,
-            queryItems: [
-                "url": APIHelper.convertAnyToString(url)
-            ],
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "url": url
+            ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
@@ -354,6 +353,22 @@ extension Endpoint {
             path: .listDevices,
             method: .get,
             queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func searchRoles(query: String, limit: Int?, nameGt: String?, roleType: String?, includeGlobalRoles: Bool?, requiresConnectionId: Bool = false) -> Endpoint<SearchRolesResponse> {
+        return .init(
+            path: .searchRoles,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "query": query,
+                "limit": limit,
+                "name_gt": nameGt,
+                "role_type": roleType,
+                "include_global_roles": includeGlobalRoles
+            ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
