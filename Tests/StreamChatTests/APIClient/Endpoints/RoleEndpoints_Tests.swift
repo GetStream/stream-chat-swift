@@ -16,9 +16,7 @@ final class RoleEndpoints_Tests: XCTestCase {
             queryItems: [
                 "query": "adm",
                 "limit": "10",
-                "name_gt": nil,
-                "role_type": "user",
-                "include_global_roles": nil
+                "role_type": "user"
             ],
             requiresConnectionId: false,
             requiresToken: true,
