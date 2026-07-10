@@ -30,7 +30,8 @@ extension ChatState {
             channelObserver = StateLayerDatabaseObserver(
                 database: database,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
-                itemCreator: { try $0.asModel() }
+                itemCreator: { try $0.asModel() },
+                itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid)
             )
             messagesObserver = StateLayerDatabaseObserver(
                 database: database,

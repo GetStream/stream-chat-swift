@@ -52,16 +52,18 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
 // MARK: - Observing a Single Entity
 
 extension StateLayerDatabaseObserver where ResultType == EntityResult {
+    @_disfavoredOverload
     convenience init(
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
-        itemCreator: @escaping (DTO) throws -> Item
+        itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil
     ) {
         self.init(
             context: database.stateLayerContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
-            itemReuseKeyPaths: nil,
+            itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: []
         )
     }
@@ -69,11 +71,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     var item: Item? {
         nonisolated(unsafe) var item: Item?
         context.performAndWait {
-            item = Self.makeEntity(
-                frc: frc,
-                change: nil,
-                itemCreator: itemCreator
-            )
+            item = updateEntityItem(nil)
         }
         return item
     }
@@ -100,11 +98,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
             guard let self else { return }
             guard let change = changes.first else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
-            let item = Self.makeEntity(
-                frc: self.frc,
-                change: changes.first,
-                itemCreator: self.itemCreator
-            )
+            let item = self.updateEntityItem(changes)
             onContextDidChange(item, EntityChange(listChange: change))
         }
         frc.delegate = changeAggregator
@@ -112,21 +106,28 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         return item
     }
     
-    static func makeEntity(
-        frc: NSFetchedResultsController<DTO>,
-        change: ListChange<Item>?,
-        itemCreator: @escaping (DTO) throws -> Item
-    ) -> Item? {
+    private func updateEntityItem(_ changes: [ListChange<Item>]?) -> Item? {
+        let dtos = frc.fetchedObjects ?? []
+        log.assert(
+            dtos.count <= 1,
+            "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(dtos)"
+        )
         do {
-            guard let dtos = frc.fetchedObjects else { return nil }
-            log.assert(
-                dtos.count <= 1,
-                "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(dtos)"
+            let items = DatabaseItemConverter.convert(
+                dtos: dtos,
+                existing: reuseItems ?? [],
+                changes: changes,
+                itemCreator: itemCreator,
+                itemReuseKeyPaths: itemReuseKeyPaths,
+                sorting: []
             )
-            if let item = change?.item {
-                return item
-            }
-            return try dtos.first.flatMap(itemCreator)
+            log.assert(
+                items.count <= 1,
+                "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(items.count)"
+            )
+            let item = items.first
+            reuseItems = item.map { [$0] }
+            return item
         } catch {
             log.debug("Failed to convert DTO (\(DTO.self) to \(Item.self)")
             return nil
