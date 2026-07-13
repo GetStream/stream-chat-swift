@@ -224,7 +224,15 @@ extension ChatUserController {
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<ChatUser, UserDTO> = BackgroundEntityDatabaseObserver.init
+        ) -> BackgroundEntityDatabaseObserver<ChatUser, UserDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
+                fetchedResultsControllerType: $3
+            )
+        }
     }
 }
 

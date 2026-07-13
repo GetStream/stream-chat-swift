@@ -122,53 +122,51 @@ extension DraftMessage: Equatable {
 extension ChatMessage {
     /// Converts the draft message to a regular message so that it
     /// can be easily used in existing UI components.
-    public init(_ draft: DraftMessage) {
-        id = draft.id
-        cid = draft.cid
-        text = draft.text
-        type = .regular
-        command = draft.command
-        createdAt = draft.createdAt
-        locallyCreatedAt = draft.createdAt
-        updatedAt = draft.createdAt
-        deletedAt = nil
-        arguments = draft.arguments
-        parentMessageId = draft.threadId
-        showReplyInChannel = draft.showReplyInChannel
-        replyCount = 0
-        extraData = draft.extraData
-        _quotedMessage = BoxedAny(draft.quotedMessage)
-        isBounced = false
-        isSilent = false
-        isShadowed = false
-        reactionScores = [:]
-        reactionCounts = [:]
-        reactionGroups = [:]
-        author = draft.currentUser
-        mentionedUsers = draft.mentionedUsers
-        mentionedHere = false
-        mentionedChannel = false
-        mentionedGroups = []
-        mentionedRoles = []
-        threadParticipants = []
-        _attachments = draft.attachments
-        latestReplies = []
-        localState = nil
-        isFlaggedByCurrentUser = false
-        latestReactions = []
-        currentUserReactions = []
-        isSentByCurrentUser = true
-        pinDetails = nil
-        translations = nil
-        originalLanguage = nil
-        moderationDetails = nil
-        readBy = []
-        poll = nil
-        textUpdatedAt = nil
-        draftReply = nil
-        reminder = nil
-        sharedLocation = nil
-        channelRole = nil
-        deletedForMe = false
+    public convenience init(_ draft: DraftMessage) {
+        self.init(
+            id: draft.id,
+            cid: draft.cid,
+            text: draft.text,
+            type: .regular,
+            command: draft.command,
+            createdAt: draft.createdAt,
+            locallyCreatedAt: draft.createdAt,
+            updatedAt: draft.createdAt,
+            deletedAt: nil,
+            arguments: draft.arguments,
+            parentMessageId: draft.threadId,
+            showReplyInChannel: draft.showReplyInChannel,
+            replyCount: 0,
+            extraData: draft.extraData,
+            quotedMessage: draft.quotedMessage,
+            isBounced: false,
+            isSilent: false,
+            isShadowed: false,
+            deletedForMe: false,
+            reactionScores: [:],
+            reactionCounts: [:],
+            reactionGroups: [:],
+            author: draft.currentUser,
+            mentionedUsers: draft.mentionedUsers,
+            threadParticipants: [],
+            attachments: draft.attachments,
+            latestReplies: [],
+            localState: nil,
+            isFlaggedByCurrentUser: false,
+            latestReactions: [],
+            currentUserReactions: [],
+            isSentByCurrentUser: true,
+            pinDetails: nil,
+            translations: nil,
+            originalLanguage: nil,
+            moderationDetails: nil,
+            readBy: [],
+            poll: nil,
+            textUpdatedAt: nil,
+            draftReply: nil,
+            reminder: nil,
+            sharedLocation: nil,
+            channelRole: nil
+        )
     }
 }

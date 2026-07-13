@@ -12,7 +12,8 @@ extension ConnectedUserState {
             userObserver = StateLayerDatabaseObserver(
                 database: database,
                 fetchRequest: CurrentUserDTO.defaultFetchRequest,
-                itemCreator: { try $0.asModel() }
+                itemCreator: { try $0.asModel() },
+                entityItemReuseKeyPaths: (\CurrentChatUser.id, \CurrentUserDTO.user.id)
             )
         }
         

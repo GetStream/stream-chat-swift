@@ -832,11 +832,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        /// Makes sure to delete the existing draft message if it exists.
-        deleteDraftMessage(in: cid, threadId: parentMessageId)
+        // Reuses the existing draft's id, if there is one, instead of always
+        // deleting and recreating it. This avoids unnecessary relationship
+        // churn (and the resulting channel list observer notification) when
+        // resaving an otherwise-unchanged draft, e.g. opening and closing a
+        // channel without editing its draft.
+        let existingDraftId = existingDraftMessageId(in: cid, threadId: parentMessageId)
+        if existingDraftId == nil {
+            deleteDraftMessage(in: cid, threadId: parentMessageId)
+        }
 
         let createdAt = Date()
-        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        let message = MessageDTO.loadOrCreate(id: existingDraftId ?? .newUniqueId, context: self, cache: nil)
         message.isDraft = true
         message.locallyCreatedAt = createdAt.bridgeDate
         message.createdAt = createdAt.bridgeDate
@@ -1287,6 +1294,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return messageDTO
     }
 
+    /// The id of the existing draft message for the given channel or thread, if there is one.
+    func existingDraftMessageId(in cid: ChannelId, threadId: MessageId?) -> MessageId? {
+        if let threadId = threadId, let parentMessage = message(id: threadId) {
+            return parentMessage.draftReply?.id
+        }
+        return channel(cid: cid)?.draftMessage?.id
+    }
+
     func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?) {
         if let threadId = threadId, let parentMessage = message(id: threadId) {
             parentMessage.draftReply.map {
@@ -1586,13 +1601,13 @@ extension MessageDTO {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
+    func asModel() throws -> ChatMessage { try .create(fromDTO: self, depth: 0) }
 
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
     /// limit has not been reached
     func relationshipAsModel(depth: Int) throws -> ChatMessage? {
         do {
-            return try ChatMessage(fromDTO: self, depth: depth + 1)
+            return try ChatMessage.create(fromDTO: self, depth: depth + 1)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -1706,7 +1721,7 @@ extension MessageDTO {
 
 private extension ChatMessage {
     // swiftlint:disable function_body_length
-    init(fromDTO dto: MessageDTO, depth: Int) throws {
+    static func create(fromDTO dto: MessageDTO, depth: Int) throws -> ChatMessage {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
@@ -1815,7 +1830,7 @@ private extension ChatMessage {
             return dto.replies
                 .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
                 .prefix(5)
-                .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
+                .compactMap { try? $0.relationshipAsModel(depth: depth) }
         }()
 
         let quotedMessage = try? dto.quotedMessage?.relationshipAsModel(depth: depth)
@@ -1884,11 +1899,10 @@ private extension ChatMessage {
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {
-            self = transformer.transform(message: message)
-            return
+            return transformer.transform(message: message)
         }
 
-        self = message
+        return message
     }
 
     // swiftlint:enable function_body_length

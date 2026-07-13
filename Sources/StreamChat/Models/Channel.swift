@@ -7,7 +7,7 @@ import Foundation
 
 /// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
 ///
-public struct ChatChannel: Sendable {
+public final class ChatChannel: @unchecked Sendable {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
 
@@ -84,7 +84,7 @@ public struct ChatChannel: Sendable {
     public let currentlyTypingUsers: Set<ChatUser>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
-    public internal(set) var membership: ChatChannelMember?
+    public let membership: ChatChannelMember?
 
     /// Returns `true`, if the channel is archived.
     public var isArchived: Bool {
@@ -317,7 +317,7 @@ public struct ChatChannel: Sendable {
         isBlocked: Bool? = nil,
         reads: [ChatChannelRead]? = nil,
         members: [ChatChannelMember]? = nil,
-        membership: ChatChannelMember? = nil,
+        membership: ChatChannelMember?? = nil,
         memberCount: Int? = nil,
         watchers: [ChatUser]? = nil,
         watcherCount: Int? = nil,
@@ -328,37 +328,65 @@ public struct ChatChannel: Sendable {
         currentlyTypingUsers: Set<ChatUser>? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
-        .init(
+        // Resolve the coalesced values up front so the type-checker does not
+        // have to evaluate all of them inside the single large initializer call.
+        let newName = name ?? self.name
+        let newImageURL = imageURL ?? self.imageURL
+        let newLastMessageAt = lastMessageAt ?? self.lastMessageAt
+        let newCreatedAt = createdAt ?? self.createdAt
+        let newUpdatedAt = updatedAt ?? self.updatedAt
+        let newDeletedAt = deletedAt ?? self.deletedAt
+        let newTruncatedAt = truncatedAt ?? self.truncatedAt
+        let newIsHidden = isHidden ?? self.isHidden
+        let newCreatedBy = createdBy ?? self.createdBy
+        let newConfig = config ?? self.config
+        let newFilterTags = filterTags ?? self.filterTags
+        let newOwnCapabilities = ownCapabilities ?? self.ownCapabilities
+        let newIsFrozen = isFrozen ?? self.isFrozen
+        let newIsDisabled = isDisabled ?? self.isDisabled
+        let newIsBlocked = isBlocked ?? self.isBlocked
+        let newMembers = members ?? lastActiveMembers
+        let newMembership = membership ?? self.membership
+        let newCurrentlyTypingUsers = currentlyTypingUsers ?? self.currentlyTypingUsers
+        let newWatchers = watchers ?? lastActiveWatchers
+        let newTeam = team ?? self.team
+        let newWatcherCount = watcherCount ?? self.watcherCount
+        let newMemberCount = memberCount ?? self.memberCount
+        let newReads = reads ?? self.reads
+        let newCooldownDuration = cooldownDuration ?? self.cooldownDuration
+        let newExtraData = extraData ?? self.extraData
+        let newPinnedMessages = pinnedMessages ?? self.pinnedMessages
+        return .init(
             cid: cid,
-            name: name ?? self.name,
-            imageURL: imageURL ?? self.imageURL,
-            lastMessageAt: lastMessageAt ?? self.lastMessageAt,
-            createdAt: createdAt ?? self.createdAt,
-            updatedAt: updatedAt ?? self.updatedAt,
-            deletedAt: deletedAt ?? self.deletedAt,
-            truncatedAt: truncatedAt ?? self.truncatedAt,
-            isHidden: isHidden ?? self.isHidden,
-            createdBy: createdBy ?? self.createdBy,
-            config: config ?? self.config,
-            filterTags: filterTags ?? self.filterTags,
-            ownCapabilities: ownCapabilities ?? self.ownCapabilities,
-            isFrozen: isFrozen ?? self.isFrozen,
-            isDisabled: isDisabled ?? self.isDisabled,
-            isBlocked: isBlocked ?? self.isBlocked,
-            lastActiveMembers: members ?? lastActiveMembers,
-            membership: membership ?? self.membership,
-            currentlyTypingUsers: currentlyTypingUsers ?? self.currentlyTypingUsers,
-            lastActiveWatchers: watchers ?? lastActiveWatchers,
-            team: team ?? self.team,
+            name: newName,
+            imageURL: newImageURL,
+            lastMessageAt: newLastMessageAt,
+            createdAt: newCreatedAt,
+            updatedAt: newUpdatedAt,
+            deletedAt: newDeletedAt,
+            truncatedAt: newTruncatedAt,
+            isHidden: newIsHidden,
+            createdBy: newCreatedBy,
+            config: newConfig,
+            filterTags: newFilterTags,
+            ownCapabilities: newOwnCapabilities,
+            isFrozen: newIsFrozen,
+            isDisabled: newIsDisabled,
+            isBlocked: newIsBlocked,
+            lastActiveMembers: newMembers,
+            membership: newMembership,
+            currentlyTypingUsers: newCurrentlyTypingUsers,
+            lastActiveWatchers: newWatchers,
+            team: newTeam,
             unreadCount: unreadCount,
-            watcherCount: watcherCount ?? self.watcherCount,
-            memberCount: memberCount ?? self.memberCount,
-            reads: reads ?? self.reads,
-            cooldownDuration: cooldownDuration ?? self.cooldownDuration,
-            extraData: extraData ?? self.extraData,
+            watcherCount: newWatcherCount,
+            memberCount: newMemberCount,
+            reads: newReads,
+            cooldownDuration: newCooldownDuration,
+            extraData: newExtraData,
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
-            pinnedMessages: pinnedMessages ?? self.pinnedMessages,
+            pinnedMessages: newPinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             draftMessage: draftMessage,

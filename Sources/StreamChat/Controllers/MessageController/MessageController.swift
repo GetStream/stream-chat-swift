@@ -1126,7 +1126,15 @@ extension ChatMessageController {
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO> = BackgroundEntityDatabaseObserver.init
+        ) -> BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+                fetchedResultsControllerType: $3
+            )
+        }
 
         var repliesObserverBuilder: (
             _ database: DatabaseContainer,
