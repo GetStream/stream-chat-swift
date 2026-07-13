@@ -430,3 +430,10 @@ file_path.write_text(text)
 PY
 }
 inject_v1_endpoint_paths
+
+# 7. Force generated OpenAPI function declarations to wrap one parameter per line.
+swiftformat "$OUTPUT_DIR_CHAT" \
+  --rules wrapArguments \
+  --wrapparameters before-first \
+  --wraparguments preserve \
+  --maxwidth 1

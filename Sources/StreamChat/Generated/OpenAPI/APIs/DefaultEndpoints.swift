@@ -14,7 +14,10 @@ enum EndpointPath: Codable {
     case pushPreferences
 
     case members
-    case partialMemberUpdate(userId: UserId, cid: ChannelId)
+    case partialMemberUpdate(
+        userId: UserId,
+        cid: ChannelId
+    )
 
     case threads
     case thread(messageId: MessageId)
@@ -28,7 +31,10 @@ enum EndpointPath: Codable {
     case deleteChannel(String)
     case channelUpdate(String)
     case muteChannel(Bool)
-    case showChannel(String, Bool)
+    case showChannel(
+        String,
+        Bool
+    )
     case truncateChannel(String)
     case markChannelRead(String)
     case markChannelUnread(String)
@@ -36,7 +42,10 @@ enum EndpointPath: Codable {
     case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
-    case uploadChannelAttachment(channelId: String, type: String)
+    case uploadChannelAttachment(
+        channelId: String,
+        type: String
+    )
     case uploadAttachment(String)
 
     case sendMessage(ChannelId)
@@ -48,7 +57,10 @@ enum EndpointPath: Codable {
     case replies(MessageId)
     case reactions(MessageId)
     case addReaction(MessageId)
-    case deleteReaction(MessageId, MessageReactionType)
+    case deleteReaction(
+        MessageId,
+        MessageReactionType
+    )
     case messageAction(MessageId)
     case translateMessage(MessageId)
 
@@ -76,11 +88,21 @@ enum EndpointPath: Codable {
     case polls
     case pollsQuery
     case poll(pollId: String)
-    case pollOption(pollId: String, optionId: String)
+    case pollOption(
+        pollId: String,
+        optionId: String
+    )
     case pollOptions(pollId: String)
     case pollVotes(pollId: String)
-    case pollVoteInMessage(messageId: MessageId, pollId: String)
-    case pollVote(messageId: MessageId, pollId: String, voteId: String)
+    case pollVoteInMessage(
+        messageId: MessageId,
+        pollId: String
+    )
+    case pollVote(
+        messageId: MessageId,
+        pollId: String,
+        voteId: String
+    )
 
     case userGroups
     case userGroupSearch
@@ -96,7 +118,10 @@ enum EndpointPath: Codable {
     case getOG
     case listDevices
     case searchRoles
-    case stopWatchingChannel(type: String, id: String)
+    case stopWatchingChannel(
+        type: String,
+        id: String
+    )
     case unblockUsers
 
     var value: String {
@@ -110,7 +135,10 @@ enum EndpointPath: Codable {
         case .pushPreferences: return "push_preferences"
 
         case .members: return "members"
-        case let .partialMemberUpdate(userId, cid):
+        case let .partialMemberUpdate(
+            userId,
+            cid
+        ):
             return "channels/\(cid.apiPath)/member/\(userId)"
 
         case .threads:
@@ -131,7 +159,10 @@ enum EndpointPath: Codable {
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
         case let .muteChannel(mute): return "moderation/\(mute ? "mute" : "unmute")/channel"
-        case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
+        case let .showChannel(
+            channelId,
+            show
+        ): return "channels/\(channelId)/\(show ? "show" : "hide")"
         case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
@@ -139,7 +170,10 @@ enum EndpointPath: Codable {
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-        case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
+        case let .uploadChannelAttachment(
+            channelId,
+            type
+        ): return "channels/\(channelId)/\(type)"
         case let .uploadAttachment(type): return "uploads/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
@@ -151,7 +185,10 @@ enum EndpointPath: Codable {
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
-        case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
+        case let .deleteReaction(
+            messageId,
+            reaction
+        ): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
         case let .translateMessage(messageId): return "messages/\(messageId)/translate"
 
@@ -172,11 +209,21 @@ enum EndpointPath: Codable {
         case .polls: return "polls"
         case .pollsQuery: return "polls/query"
         case let .poll(pollId: pollId): return "polls/\(pollId)"
-        case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
+        case let .pollOption(
+            pollId: pollId,
+            optionId: optionId
+        ): return "polls/\(pollId)/options/\(optionId)"
         case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
-        case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
-        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
+        case let .pollVoteInMessage(
+            messageId: messageId,
+            pollId: pollId
+        ): return "messages/\(messageId)/polls/\(pollId)/vote"
+        case let .pollVote(
+            messageId: messageId,
+            pollId: pollId,
+            voteId: voteId
+        ): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
         case .userGroups: return "usergroups"
         case .userGroupSearch: return "usergroups/search"
@@ -200,7 +247,10 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case .searchRoles:
             return "/api/v2/roles/search"
-        case let .stopWatchingChannel(type: type, id: id):
+        case let .stopWatchingChannel(
+            type: type,
+            id: id
+        ):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
             return "/api/v2/users/unblock"
@@ -243,25 +293,61 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        path = try container.decode(EndpointPath.self, forKey: .path)
-        method = try container.decode(EndpointMethod.self, forKey: .method)
-        queryItems = try container.decodeIfPresent(Data.self, forKey: .queryItems)
-        requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)
-        requiresToken = try container.decode(Bool.self, forKey: .requiresToken)
-        body = try container.decodeIfPresent(Data.self, forKey: .body)
+        path = try container.decode(
+            EndpointPath.self,
+            forKey: .path
+        )
+        method = try container.decode(
+            EndpointMethod.self,
+            forKey: .method
+        )
+        queryItems = try container.decodeIfPresent(
+            Data.self,
+            forKey: .queryItems
+        )
+        requiresConnectionId = try container.decode(
+            Bool.self,
+            forKey: .requiresConnectionId
+        )
+        requiresToken = try container.decode(
+            Bool.self,
+            forKey: .requiresToken
+        )
+        body = try container.decodeIfPresent(
+            Data.self,
+            forKey: .body
+        )
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(path, forKey: .path)
-        try container.encode(method, forKey: .method)
+        try container.encode(
+            path,
+            forKey: .path
+        )
+        try container.encode(
+            method,
+            forKey: .method
+        )
         if let queryItems = try queryItems?.encodedAsData() {
-            try container.encode(queryItems, forKey: .queryItems)
+            try container.encode(
+                queryItems,
+                forKey: .queryItems
+            )
         }
-        try container.encode(requiresConnectionId, forKey: .requiresConnectionId)
-        try container.encode(requiresToken, forKey: .requiresToken)
+        try container.encode(
+            requiresConnectionId,
+            forKey: .requiresConnectionId
+        )
+        try container.encode(
+            requiresToken,
+            forKey: .requiresToken
+        )
         if let body = try body?.encodedAsData() {
-            try container.encode(body, forKey: .body)
+            try container.encode(
+                body,
+                forKey: .body
+            )
         }
     }
 }
@@ -284,7 +370,10 @@ enum EndpointMethod: String, Codable, Equatable {
 }
 
 extension Endpoint {
-    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
+    static func blockUsers(
+        blockUsersRequest: BlockUsersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<BlockUsersResponse> {
         return .init(
             path: .blockUsers,
             method: .post,
@@ -294,7 +383,10 @@ extension Endpoint {
         )
     }
 
-    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+    static func createDevice(
+        createDeviceRequest: CreateDeviceRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .createDevice,
             method: .post,
@@ -304,7 +396,10 @@ extension Endpoint {
         )
     }
 
-    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+    static func deleteDevice(
+        id: String,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteDevice,
             method: .delete,
@@ -336,7 +431,10 @@ extension Endpoint {
         )
     }
 
-    static func getOG(url: String, requiresConnectionId: Bool = false) -> Endpoint<GetOGResponse> {
+    static func getOG(
+        url: String,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetOGResponse> {
         return .init(
             path: .getOG,
             method: .get,
@@ -358,7 +456,14 @@ extension Endpoint {
         )
     }
 
-    static func searchRoles(query: String, limit: Int?, nameGt: String?, roleType: String?, includeGlobalRoles: Bool?, requiresConnectionId: Bool = false) -> Endpoint<SearchRolesResponse> {
+    static func searchRoles(
+        query: String,
+        limit: Int?,
+        nameGt: String?,
+        roleType: String?,
+        includeGlobalRoles: Bool?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<SearchRolesResponse> {
         return .init(
             path: .searchRoles,
             method: .get,
@@ -374,9 +479,16 @@ extension Endpoint {
         )
     }
 
-    static func stopWatchingChannel(type: String, id: String, requiresConnectionId: Bool = true) -> Endpoint<EmptyResponse> {
+    static func stopWatchingChannel(
+        type: String,
+        id: String,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<EmptyResponse> {
         return .init(
-            path: .stopWatchingChannel(type: type, id: id),
+            path: .stopWatchingChannel(
+                type: type,
+                id: id
+            ),
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -384,7 +496,10 @@ extension Endpoint {
         )
     }
 
-    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<UnblockUsersResponse> {
+    static func unblockUsers(
+        unblockUsersRequest: UnblockUsersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UnblockUsersResponse> {
         return .init(
             path: .unblockUsers,
             method: .post,

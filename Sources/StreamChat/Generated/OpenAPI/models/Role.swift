@@ -16,7 +16,13 @@ public final class Role: Sendable, Codable, JSONEncodable {
     /// Date/time of the last update
     public let updatedAt: Date?
 
-    init(createdAt: Date, custom: Bool, name: String, scopes: [String], updatedAt: Date) {
+    init(
+        createdAt: Date,
+        custom: Bool,
+        name: String,
+        scopes: [String],
+        updatedAt: Date
+    ) {
         self.createdAt = createdAt
         self.custom = custom
         self.name = name
@@ -34,7 +40,10 @@ public final class Role: Sendable, Codable, JSONEncodable {
 }
 
 extension Role: Hashable {
-    public static func == (lhs: Role, rhs: Role) -> Bool {
+    public static func == (
+        lhs: Role,
+        rhs: Role
+    ) -> Bool {
         lhs.createdAt == rhs.createdAt &&
             lhs.custom == rhs.custom &&
             lhs.name == rhs.name &&
