@@ -832,11 +832,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        /// Makes sure to delete the existing draft message if it exists.
-        deleteDraftMessage(in: cid, threadId: parentMessageId)
+        // Reuses the existing draft's id, if there is one, instead of always
+        // deleting and recreating it. This avoids unnecessary relationship
+        // churn (and the resulting channel list observer notification) when
+        // resaving an otherwise-unchanged draft, e.g. opening and closing a
+        // channel without editing its draft.
+        let existingDraftId = existingDraftMessageId(in: cid, threadId: parentMessageId)
+        if existingDraftId == nil {
+            deleteDraftMessage(in: cid, threadId: parentMessageId)
+        }
 
         let createdAt = Date()
-        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        let message = MessageDTO.loadOrCreate(id: existingDraftId ?? .newUniqueId, context: self, cache: nil)
         message.isDraft = true
         message.locallyCreatedAt = createdAt.bridgeDate
         message.createdAt = createdAt.bridgeDate
@@ -1285,6 +1292,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
+    }
+
+    /// The id of the existing draft message for the given channel or thread, if there is one.
+    func existingDraftMessageId(in cid: ChannelId, threadId: MessageId?) -> MessageId? {
+        if let threadId = threadId, let parentMessage = message(id: threadId) {
+            return parentMessage.draftReply?.id
+        }
+        return channel(cid: cid)?.draftMessage?.id
     }
 
     func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?) {
