@@ -18,7 +18,7 @@ final class RolePayloads_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(RolePayload.self, from: json)
+        let payload = try JSONDecoder.stream.decode(Role.self, from: json)
 
         XCTAssertEqual(payload.name, "admin")
         XCTAssertTrue(payload.custom)
@@ -31,25 +31,26 @@ final class RolePayloads_Tests: XCTestCase {
         let json = """
         {
             "name": "admin",
-            "custom": true
+            "custom": true,
+            "scopes": []
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(RolePayload.self, from: json)
-        let model = payload.asModel()
+        let payload = try JSONDecoder.stream.decode(Role.self, from: json)
 
         XCTAssertTrue(payload.custom)
-        XCTAssertTrue(model.isCustom)
     }
 
     func test_rolePayload_withMissingOptionalFields_usesDefaults() throws {
         let json = """
         {
-            "name": "admin"
+            "name": "admin",
+            "custom": false,
+            "scopes": []
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(RolePayload.self, from: json)
+        let payload = try JSONDecoder.stream.decode(Role.self, from: json)
 
         XCTAssertEqual(payload.name, "admin")
         XCTAssertFalse(payload.custom)
@@ -61,18 +62,16 @@ final class RolePayloads_Tests: XCTestCase {
     func test_rolePayload_asModel_mapsAllFields() {
         let createdAt = Date.unique
         let updatedAt = Date.unique
-        let payload = RolePayload(
-            name: "admin",
-            custom: true,
-            scopes: ["user", "channel"],
+        let model = Role(
             createdAt: createdAt,
+            custom: true,
+            name: "admin",
+            scopes: ["user", "channel"],
             updatedAt: updatedAt
         )
 
-        let model = payload.asModel()
-
         XCTAssertEqual(model.name, "admin")
-        XCTAssertTrue(model.isCustom)
+        XCTAssertTrue(model.custom)
         XCTAssertEqual(model.scopes, ["user", "channel"])
         XCTAssertEqual(model.createdAt, createdAt)
         XCTAssertEqual(model.updatedAt, updatedAt)
@@ -81,6 +80,7 @@ final class RolePayloads_Tests: XCTestCase {
     func test_roleListPayload_isDecodedCorrectly() throws {
         let json = """
         {
+            "duration": "1.23ms",
             "roles": [
                 {
                     "name": "admin",
@@ -96,7 +96,7 @@ final class RolePayloads_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(RoleListPayload.self, from: json)
+        let payload = try JSONDecoder.stream.decode(SearchRolesResponse.self, from: json)
 
         XCTAssertEqual(payload.roles.count, 2)
         XCTAssertEqual(payload.roles.map(\.name), ["admin", "moderator"])
@@ -106,11 +106,12 @@ final class RolePayloads_Tests: XCTestCase {
     func test_roleListPayload_whenEmpty_isDecodedCorrectly() throws {
         let json = """
         {
+            "duration": "1.23ms",
             "roles": []
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(RoleListPayload.self, from: json)
+        let payload = try JSONDecoder.stream.decode(SearchRolesResponse.self, from: json)
 
         XCTAssertTrue(payload.roles.isEmpty)
     }

@@ -13,7 +13,15 @@ final class GiphyImages: Sendable, Codable, JSONEncodable {
     let fixedWidthStill: GiphyImageData
     let original: GiphyImageData
 
-    init(fixedHeight: GiphyImageData, fixedHeightDownsampled: GiphyImageData, fixedHeightStill: GiphyImageData, fixedWidth: GiphyImageData, fixedWidthDownsampled: GiphyImageData, fixedWidthStill: GiphyImageData, original: GiphyImageData) {
+    init(
+        fixedHeight: GiphyImageData,
+        fixedHeightDownsampled: GiphyImageData,
+        fixedHeightStill: GiphyImageData,
+        fixedWidth: GiphyImageData,
+        fixedWidthDownsampled: GiphyImageData,
+        fixedWidthStill: GiphyImageData,
+        original: GiphyImageData
+    ) {
         self.fixedHeight = fixedHeight
         self.fixedHeightDownsampled = fixedHeightDownsampled
         self.fixedHeightStill = fixedHeightStill

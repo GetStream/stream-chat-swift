@@ -39,7 +39,31 @@ final class GetOGResponse: Sendable, Codable, JSONEncodable {
     /// Attachment type, could be empty, image, audio or video
     let type: String?
 
-    init(actions: [AttachmentActionPayload]? = nil, assetUrl: String? = nil, authorIcon: String? = nil, authorLink: String? = nil, authorName: String? = nil, color: String? = nil, custom: [String: RawJSON], duration: String, fallback: String? = nil, fields: [AttachmentFieldPayload]? = nil, footer: String? = nil, footerIcon: String? = nil, giphy: GiphyImages? = nil, imageUrl: String? = nil, ogScrapeUrl: String? = nil, originalHeight: Int? = nil, originalWidth: Int? = nil, pretext: String? = nil, text: String? = nil, thumbUrl: String? = nil, title: String? = nil, titleLink: String? = nil, type: String? = nil) {
+    init(
+        actions: [AttachmentActionPayload]? = nil,
+        assetUrl: String? = nil,
+        authorIcon: String? = nil,
+        authorLink: String? = nil,
+        authorName: String? = nil,
+        color: String? = nil,
+        custom: [String: RawJSON],
+        duration: String,
+        fallback: String? = nil,
+        fields: [AttachmentFieldPayload]? = nil,
+        footer: String? = nil,
+        footerIcon: String? = nil,
+        giphy: GiphyImages? = nil,
+        imageUrl: String? = nil,
+        ogScrapeUrl: String? = nil,
+        originalHeight: Int? = nil,
+        originalWidth: Int? = nil,
+        pretext: String? = nil,
+        text: String? = nil,
+        thumbUrl: String? = nil,
+        title: String? = nil,
+        titleLink: String? = nil,
+        type: String? = nil
+    ) {
         self.actions = actions
         self.assetUrl = assetUrl
         self.authorIcon = authorIcon

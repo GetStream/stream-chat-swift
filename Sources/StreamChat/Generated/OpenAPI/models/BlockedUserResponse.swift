@@ -13,7 +13,13 @@ final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
     /// ID of the user who blocked another user
     let userId: String
 
-    init(blockedUser: UserResponse, blockedUserId: String, createdAt: Date, user: UserResponse, userId: String) {
+    init(
+        blockedUser: UserResponse,
+        blockedUserId: String,
+        createdAt: Date,
+        user: UserResponse,
+        userId: String
+    ) {
         self.blockedUser = blockedUser
         self.blockedUserId = blockedUserId
         self.createdAt = createdAt

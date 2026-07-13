@@ -9,7 +9,11 @@ final class AttachmentFieldPayload: Sendable, Codable, JSONEncodable {
     let title: String
     let value: String
 
-    init(short: Bool, title: String, value: String) {
+    init(
+        short: Bool,
+        title: String,
+        value: String
+    ) {
         self.short = short
         self.title = title
         self.value = value

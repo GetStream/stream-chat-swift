@@ -24,7 +24,17 @@ public final class Device: Sendable, Codable, JSONEncodable {
     /// When true the token is for Apple VoIP push notifications
     public let voip: Bool?
 
-    init(createdAt: Date, disabled: Bool? = nil, disabledReason: String? = nil, hardwareId: String? = nil, id: String, pushProvider: String, pushProviderName: String? = nil, userId: String, voip: Bool? = nil) {
+    init(
+        createdAt: Date,
+        disabled: Bool? = nil,
+        disabledReason: String? = nil,
+        hardwareId: String? = nil,
+        id: String,
+        pushProvider: String,
+        pushProviderName: String? = nil,
+        userId: String,
+        voip: Bool? = nil
+    ) {
         self.createdAt = createdAt
         self.disabled = disabled
         self.disabledReason = disabledReason
@@ -50,7 +60,10 @@ public final class Device: Sendable, Codable, JSONEncodable {
 }
 
 extension Device: Hashable {
-    public static func == (lhs: Device, rhs: Device) -> Bool {
+    public static func == (
+        lhs: Device,
+        rhs: Device
+    ) -> Bool {
         lhs.createdAt == rhs.createdAt &&
             lhs.disabled == rhs.disabled &&
             lhs.disabledReason == rhs.disabledReason &&

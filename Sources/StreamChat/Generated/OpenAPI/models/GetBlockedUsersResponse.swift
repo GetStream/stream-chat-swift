@@ -10,7 +10,10 @@ final class GetBlockedUsersResponse: Sendable, Codable, JSONEncodable {
     /// Duration of the request in milliseconds
     let duration: String
 
-    init(blocks: [BlockedUserResponse], duration: String) {
+    init(
+        blocks: [BlockedUserResponse],
+        duration: String
+    ) {
         self.blocks = blocks
         self.duration = duration
     }

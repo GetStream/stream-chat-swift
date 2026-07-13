@@ -13,7 +13,15 @@ public final class AppSettings: Sendable, Codable, JSONEncodable {
     public let name: String
     public let placement: String
 
-    init(asyncUrlEnrichEnabled: Bool, autoTranslationEnabled: Bool, fileUploadConfig: UploadConfig, id: Int, imageUploadConfig: UploadConfig, name: String, placement: String) {
+    init(
+        asyncUrlEnrichEnabled: Bool,
+        autoTranslationEnabled: Bool,
+        fileUploadConfig: UploadConfig,
+        id: Int,
+        imageUploadConfig: UploadConfig,
+        name: String,
+        placement: String
+    ) {
         self.asyncUrlEnrichEnabled = asyncUrlEnrichEnabled
         self.autoTranslationEnabled = autoTranslationEnabled
         self.fileUploadConfig = fileUploadConfig
@@ -35,7 +43,10 @@ public final class AppSettings: Sendable, Codable, JSONEncodable {
 }
 
 extension AppSettings: Hashable {
-    public static func == (lhs: AppSettings, rhs: AppSettings) -> Bool {
+    public static func == (
+        lhs: AppSettings,
+        rhs: AppSettings
+    ) -> Bool {
         lhs.asyncUrlEnrichEnabled == rhs.asyncUrlEnrichEnabled &&
             lhs.autoTranslationEnabled == rhs.autoTranslationEnabled &&
             lhs.fileUploadConfig == rhs.fileUploadConfig &&

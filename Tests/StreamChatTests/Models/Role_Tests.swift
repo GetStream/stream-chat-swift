@@ -11,49 +11,64 @@ final class Role_Tests: XCTestCase {
         let createdAt = Date.unique
         let updatedAt = Date.unique
         let role = Role(
-            name: "admin",
-            isCustom: true,
-            scopes: ["user", "channel"],
             createdAt: createdAt,
+            custom: true,
+            name: "admin",
+            scopes: ["user", "channel"],
             updatedAt: updatedAt
         )
 
         XCTAssertEqual(role.name, "admin")
-        XCTAssertTrue(role.isCustom)
+        XCTAssertTrue(role.custom)
         XCTAssertEqual(role.scopes, ["user", "channel"])
         XCTAssertEqual(role.createdAt, createdAt)
         XCTAssertEqual(role.updatedAt, updatedAt)
     }
 
-    func test_init_usesDefaultValues() {
-        let role = Role(name: "moderator")
+    func test_isCustom_returnsCustom() {
+        let role = Role.dummy(custom: true)
 
-        XCTAssertEqual(role.name, "moderator")
-        XCTAssertFalse(role.isCustom)
-        XCTAssertTrue(role.scopes.isEmpty)
-        XCTAssertNil(role.createdAt)
-        XCTAssertNil(role.updatedAt)
+        XCTAssertTrue(role.custom)
     }
 
     func test_id_equalsName() {
-        let role = Role(name: "admin")
+        let role = Role.dummy(name: "admin")
         XCTAssertEqual(role.id, "admin")
         XCTAssertEqual(role.id, role.name)
     }
 
     func test_equatable_whenSameValues_thenEqual() {
         let createdAt = Date.unique
-        let role1 = Role(name: "admin", isCustom: true, scopes: ["user"], createdAt: createdAt)
-        let role2 = Role(name: "admin", isCustom: true, scopes: ["user"], createdAt: createdAt)
+        let updatedAt = Date.unique
+        let role1 = Role.dummy(createdAt: createdAt, custom: true, name: "admin", scopes: ["user"], updatedAt: updatedAt)
+        let role2 = Role.dummy(createdAt: createdAt, custom: true, name: "admin", scopes: ["user"], updatedAt: updatedAt)
 
         XCTAssertEqual(role1, role2)
     }
 
     func test_equatable_whenDifferentValues_thenNotEqual() {
-        let role = Role(name: "admin")
+        let role = Role.dummy(name: "admin")
 
-        XCTAssertNotEqual(role, Role(name: "moderator"))
-        XCTAssertNotEqual(role, Role(name: "admin", isCustom: true))
-        XCTAssertNotEqual(role, Role(name: "admin", scopes: ["user"]))
+        XCTAssertNotEqual(role, Role.dummy(name: "moderator"))
+        XCTAssertNotEqual(role, Role.dummy(custom: true, name: "admin"))
+        XCTAssertNotEqual(role, Role.dummy(name: "admin", scopes: ["user"]))
+    }
+}
+
+extension Role {
+    static func dummy(
+        createdAt: Date = .unique,
+        custom: Bool = false,
+        name: String = .unique,
+        scopes: [String] = [],
+        updatedAt: Date = .unique
+    ) -> Role {
+        Role(
+            createdAt: createdAt,
+            custom: custom,
+            name: name,
+            scopes: scopes,
+            updatedAt: updatedAt
+        )
     }
 }

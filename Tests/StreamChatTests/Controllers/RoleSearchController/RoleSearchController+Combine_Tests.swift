@@ -53,7 +53,7 @@ final class RoleSearchController_Combine_Tests: iOS13TestCase {
         weak var controller: RoleSearchController? = roleSearchController
         roleSearchController = nil
 
-        let roles = [Role(name: "admin")]
+        let roles = [Role.dummy(name: "admin")]
         controller?.delegateCallback { [controller] in
             $0.controller(controller!, didChangeRoles: roles)
         }

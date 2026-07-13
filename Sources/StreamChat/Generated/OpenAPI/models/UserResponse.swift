@@ -38,7 +38,26 @@ final class UserResponse: Sendable, Codable, JSONEncodable {
     /// Date/time of the last update
     let updatedAt: Date
 
-    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, id: String, image: String? = nil, language: String, lastActive: Date? = nil, name: String? = nil, online: Bool, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String], teamsRole: [String: String]? = nil, updatedAt: Date) {
+    init(
+        avgResponseTime: Int? = nil,
+        banned: Bool,
+        blockedUserIds: [String],
+        createdAt: Date,
+        custom: [String: RawJSON],
+        deactivatedAt: Date? = nil,
+        deletedAt: Date? = nil,
+        id: String,
+        image: String? = nil,
+        language: String,
+        lastActive: Date? = nil,
+        name: String? = nil,
+        online: Bool,
+        revokeTokensIssuedBefore: Date? = nil,
+        role: String,
+        teams: [String],
+        teamsRole: [String: String]? = nil,
+        updatedAt: Date
+    ) {
         self.avgResponseTime = avgResponseTime
         self.banned = banned
         self.blockedUserIds = blockedUserIds
