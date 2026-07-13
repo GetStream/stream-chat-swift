@@ -4,21 +4,20 @@
 
 import Foundation
 
-final class SearchUserGroupsResponse: Sendable, Codable, JSONEncodable {
+final class UserGroupResponse: Sendable, Codable, JSONEncodable {
     let duration: String
-    /// List of matching user groups
-    let userGroups: [UserGroup]
+    let userGroup: UserGroup?
 
     init(
         duration: String,
-        userGroups: [UserGroup]
+        userGroup: UserGroup? = nil
     ) {
         self.duration = duration
-        self.userGroups = userGroups
+        self.userGroup = userGroup
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
-        case userGroups = "user_groups"
+        case userGroup = "user_group"
     }
 }

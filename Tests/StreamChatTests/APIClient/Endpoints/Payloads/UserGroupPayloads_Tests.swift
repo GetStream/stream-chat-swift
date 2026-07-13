@@ -115,7 +115,7 @@ final class UserGroupPayloads_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(GetUserGroupResponse.self, from: json)
+        let payload = try JSONDecoder.stream.decode(UserGroupResponse.self, from: json)
 
         XCTAssertEqual(payload.userGroup?.id, "backendsupport")
     }

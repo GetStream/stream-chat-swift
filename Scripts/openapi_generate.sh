@@ -33,14 +33,12 @@ allowed_endpoints=(
 allowed_models=(
   Action
   AddUserGroupMembersRequest
-  AddUserGroupMembersResponse
   AppResponseFields
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CreateDeviceRequest
   CreateUserGroupRequest
-  CreateUserGroupResponse
   DeviceResponse
   Field
   FileUploadConfig
@@ -53,14 +51,11 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   RemoveUserGroupMembersRequest
-  RemoveUserGroupMembersResponse
   Role
   SearchRolesResponse
-  SearchUserGroupsResponse
   UnblockUsersRequest
   UnblockUsersResponse
   UpdateUserGroupRequest
-  UpdateUserGroupResponse
   UserGroupMember
   UserGroupResponse
   UserResponse
@@ -229,6 +224,12 @@ rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
 rename_generated UserGroupResponse UserGroup
+rename_generated GetUserGroupResponse UserGroupResponse
+rename_generated_type AddUserGroupMembersResponse UserGroupResponse
+rename_generated_type CreateUserGroupResponse UserGroupResponse
+rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
+rename_generated_type UpdateUserGroupResponse UserGroupResponse
+rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 
 rename_generated_type Response EmptyResponse
 

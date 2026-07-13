@@ -36,7 +36,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
     }
 
     func test_searchUserGroups_buildsCorrectly() {
-        let expectedEndpoint = Endpoint<SearchUserGroupsResponse>(
+        let expectedEndpoint = Endpoint<ListUserGroupsResponse>(
             path: .searchUserGroups,
             method: .get,
             queryItems: [
@@ -49,7 +49,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: nil
         )
 
-        let endpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+        let endpoint: Endpoint<ListUserGroupsResponse> = .searchUserGroups(
             query: "backend",
             limit: 5,
             nameGt: nil,
@@ -64,7 +64,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
     }
 
     func test_getUserGroup_buildsCorrectly() {
-        let expectedEndpoint = Endpoint<GetUserGroupResponse>(
+        let expectedEndpoint = Endpoint<UserGroupResponse>(
             path: .getUserGroup(id: "backendsupport"),
             method: .get,
             queryItems: [
@@ -75,7 +75,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: nil
         )
 
-        let endpoint: Endpoint<GetUserGroupResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
+        let endpoint: Endpoint<UserGroupResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/usergroups/backendsupport", endpoint.path.value)
@@ -92,7 +92,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<CreateUserGroupResponse>(
+        let expectedEndpoint = Endpoint<UserGroupResponse>(
             path: .createUserGroup,
             method: .post,
             queryItems: nil,
@@ -101,7 +101,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<CreateUserGroupResponse> = .createUserGroup(createUserGroupRequest: request)
+        let endpoint: Endpoint<UserGroupResponse> = .createUserGroup(createUserGroupRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/usergroups", endpoint.path.value)
@@ -116,7 +116,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<UpdateUserGroupResponse>(
+        let expectedEndpoint = Endpoint<UserGroupResponse>(
             path: .updateUserGroup(id: "backendsupport"),
             method: .put,
             queryItems: nil,
@@ -125,7 +125,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<UpdateUserGroupResponse> = .updateUserGroup(id: "backendsupport", updateUserGroupRequest: request)
+        let endpoint: Endpoint<UserGroupResponse> = .updateUserGroup(id: "backendsupport", updateUserGroupRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/usergroups/backendsupport", endpoint.path.value)
@@ -160,7 +160,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<AddUserGroupMembersResponse>(
+        let expectedEndpoint = Endpoint<UserGroupResponse>(
             path: .addUserGroupMembers(id: "backendsupport"),
             method: .post,
             queryItems: nil,
@@ -169,7 +169,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<AddUserGroupMembersResponse> = .addUserGroupMembers(id: "backendsupport", addUserGroupMembersRequest: request)
+        let endpoint: Endpoint<UserGroupResponse> = .addUserGroupMembers(id: "backendsupport", addUserGroupMembersRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/usergroups/backendsupport/members", endpoint.path.value)
@@ -183,7 +183,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             teamId: "engineering"
         )
 
-        let expectedEndpoint = Endpoint<RemoveUserGroupMembersResponse>(
+        let expectedEndpoint = Endpoint<UserGroupResponse>(
             path: .removeUserGroupMembers(id: "backendsupport"),
             method: .post,
             queryItems: nil,
@@ -192,7 +192,7 @@ final class UserGroupEndpoints_Tests: XCTestCase {
             body: request
         )
 
-        let endpoint: Endpoint<RemoveUserGroupMembersResponse> = .removeUserGroupMembers(id: "backendsupport", removeUserGroupMembersRequest: request)
+        let endpoint: Endpoint<UserGroupResponse> = .removeUserGroupMembers(id: "backendsupport", removeUserGroupMembersRequest: request)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/usergroups/backendsupport/members/delete", endpoint.path.value)

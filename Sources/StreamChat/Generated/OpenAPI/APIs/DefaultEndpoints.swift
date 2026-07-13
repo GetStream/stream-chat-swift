@@ -386,7 +386,7 @@ extension Endpoint {
         id: String,
         addUserGroupMembersRequest: AddUserGroupMembersRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<AddUserGroupMembersResponse> {
+    ) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .addUserGroupMembers(id: id),
             method: .post,
@@ -425,7 +425,7 @@ extension Endpoint {
     static func createUserGroup(
         createUserGroupRequest: CreateUserGroupRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<CreateUserGroupResponse> {
+    ) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .createUserGroup,
             method: .post,
@@ -505,7 +505,7 @@ extension Endpoint {
         id: String,
         teamId: String?,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<GetUserGroupResponse> {
+    ) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .getUserGroup(id: id),
             method: .get,
@@ -552,7 +552,7 @@ extension Endpoint {
         id: String,
         removeUserGroupMembersRequest: RemoveUserGroupMembersRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<RemoveUserGroupMembersResponse> {
+    ) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .removeUserGroupMembers(id: id),
             method: .post,
@@ -592,7 +592,7 @@ extension Endpoint {
         idGt: String?,
         teamId: String?,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<SearchUserGroupsResponse> {
+    ) -> Endpoint<ListUserGroupsResponse> {
         return .init(
             path: .searchUserGroups,
             method: .get,
@@ -642,7 +642,7 @@ extension Endpoint {
         id: String,
         updateUserGroupRequest: UpdateUserGroupRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<UpdateUserGroupResponse> {
+    ) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .updateUserGroup(id: id),
             method: .put,

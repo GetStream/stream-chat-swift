@@ -44,7 +44,7 @@ class UserGroupsRepository: @unchecked Sendable {
         query: UserGroupSearchQuery,
         completion: @escaping @Sendable (Result<[UserGroup], Error>) -> Void
     ) {
-        let endpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+        let endpoint: Endpoint<ListUserGroupsResponse> = .searchUserGroups(
             query: query.query,
             limit: query.limit,
             nameGt: query.nameGreaterThan,

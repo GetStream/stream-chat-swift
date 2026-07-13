@@ -55,7 +55,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
             name: "Backend Support Team"
         )
 
-        let response = CreateUserGroupResponse.dummy(
+        let response = UserGroupResponse.dummy(
             userGroup: .dummy(
                 id: "backendsupport",
                 members: [.dummy(groupId: "backendsupport", userId: "user1")],
@@ -80,7 +80,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
 
     func test_createUserGroup_persistsMemberAppPk() throws {
         let request = CreateUserGroupRequest(id: "backendsupport", name: "Backend Support Team")
-        let response = CreateUserGroupResponse.dummy(
+        let response = UserGroupResponse.dummy(
             userGroup: .dummy(
                 id: "backendsupport",
                 members: [.dummy(appPk: 7, groupId: "backendsupport", userId: "user1")],
@@ -109,10 +109,10 @@ final class UserGroupsRepository_Tests: XCTestCase {
         }
 
         let payload = UserGroup.dummy(id: "backendsupport", name: "Backend Support Team")
-        apiClient.test_simulateResponse(.success(SearchUserGroupsResponse.dummy(userGroups: [payload])))
+        apiClient.test_simulateResponse(.success(ListUserGroupsResponse.dummy(userGroups: [payload])))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+        let expectedEndpoint: Endpoint<ListUserGroupsResponse> = .searchUserGroups(
             query: "backend",
             limit: 10,
             nameGt: nil,
@@ -135,11 +135,11 @@ final class UserGroupsRepository_Tests: XCTestCase {
         let query = UserGroupSearchQuery(query: "backend", limit: 10)
         let payload = UserGroup.dummy(id: "backendsupport", name: "Backend Support Team")
 
-        apiClient.test_mockResponseResult(.success(SearchUserGroupsResponse.dummy(userGroups: [payload])))
+        apiClient.test_mockResponseResult(.success(ListUserGroupsResponse.dummy(userGroups: [payload])))
 
         let userGroups = try await repository.searchUserGroups(query: query)
 
-        let expectedEndpoint: Endpoint<SearchUserGroupsResponse> = .searchUserGroups(
+        let expectedEndpoint: Endpoint<ListUserGroupsResponse> = .searchUserGroups(
             query: "backend",
             limit: 10,
             nameGt: nil,
@@ -151,7 +151,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
     }
 
     func test_loadUserGroup_savesUserGroupToDatabase() throws {
-        let response = GetUserGroupResponse.dummy(
+        let response = UserGroupResponse.dummy(
             userGroup: .dummy(id: "backendsupport", name: "Backend Support Team", teamId: "engineering")
         )
 
@@ -165,7 +165,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<GetUserGroupResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
+        let expectedEndpoint: Endpoint<UserGroupResponse> = .getUserGroup(id: "backendsupport", teamId: "engineering")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertEqual(result?.value?.id, "backendsupport")
 
@@ -182,7 +182,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(GetUserGroupResponse.dummy(userGroup: nil)))
+        apiClient.test_simulateResponse(.success(UserGroupResponse.dummy(userGroup: nil)))
         wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssertTrue(result?.error is ClientError.Unexpected)
@@ -190,7 +190,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
 
     func test_updateUserGroup_savesUserGroupToDatabase() throws {
         let request = UpdateUserGroupRequest(name: "Updated Name")
-        let response = UpdateUserGroupResponse.dummy(
+        let response = UserGroupResponse.dummy(
             userGroup: .dummy(id: "backendsupport", name: "Updated Name")
         )
 
@@ -203,7 +203,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<UpdateUserGroupResponse> = .updateUserGroup(
+        let expectedEndpoint: Endpoint<UserGroupResponse> = .updateUserGroup(
             id: "backendsupport",
             updateUserGroupRequest: request
         )
@@ -238,7 +238,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
 
     func test_addMembers_savesUserGroupToDatabase() throws {
         let request = AddUserGroupMembersRequest(asAdmin: true, memberIds: ["user1"])
-        let response = AddUserGroupMembersResponse.dummy(
+        let response = UserGroupResponse.dummy(
             userGroup: .dummy(
                 id: "backendsupport",
                 members: [.dummy(groupId: "backendsupport", isAdmin: true, userId: "user1")],
@@ -255,7 +255,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<AddUserGroupMembersResponse> = .addUserGroupMembers(
+        let expectedEndpoint: Endpoint<UserGroupResponse> = .addUserGroupMembers(
             id: "backendsupport",
             addUserGroupMembersRequest: request
         )
@@ -267,7 +267,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
 
     func test_removeMembers_savesUserGroupToDatabase() throws {
         let request = RemoveUserGroupMembersRequest(memberIds: ["user1"])
-        let response = RemoveUserGroupMembersResponse.dummy(
+        let response = UserGroupResponse.dummy(
             userGroup: .dummy(id: "backendsupport", members: [], name: "Backend Support Team")
         )
 
@@ -280,7 +280,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(response))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<RemoveUserGroupMembersResponse> = .removeUserGroupMembers(
+        let expectedEndpoint: Endpoint<UserGroupResponse> = .removeUserGroupMembers(
             id: "backendsupport",
             removeUserGroupMembersRequest: request
         )
@@ -317,7 +317,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<GetUserGroupResponse, Error>.failure(testError))
+        apiClient.test_simulateResponse(Result<UserGroupResponse, Error>.failure(testError))
         wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssertEqual(result?.error as? TestError, testError)
