@@ -4,21 +4,21 @@
 
 import Foundation
 
-final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
-    /// List of devices
-    let devices: [Device]
+final class SearchRolesResponse: Sendable, Codable, JSONEncodable {
     let duration: String
+    /// Matching roles, sorted ascending by name
+    let roles: [Role]
 
     init(
-        devices: [Device],
-        duration: String
+        duration: String,
+        roles: [Role]
     ) {
-        self.devices = devices
         self.duration = duration
+        self.roles = roles
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case devices
         case duration
+        case roles
     }
 }

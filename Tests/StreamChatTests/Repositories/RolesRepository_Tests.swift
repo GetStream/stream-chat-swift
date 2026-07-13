@@ -31,20 +31,16 @@ final class RolesRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(RoleListPayload(roles: [])))
+        apiClient.test_simulateResponse(.success(SearchRolesResponse(duration: "1.23ms", roles: [])))
         wait(for: [exp], timeout: defaultTimeout)
 
-        let expectedEndpoint: Endpoint<RoleListPayload> = .searchRoles(query: query)
+        let expectedEndpoint: Endpoint<SearchRolesResponse> = .searchRoles(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
-    func test_searchRoles_mapsPayloadsToDomainModels() {
+    func test_searchRoles_returnsGeneratedRoles() {
         let query = RoleSearchQuery(query: "adm")
-        let payload = RolePayload(
-            name: "admin",
-            custom: true,
-            scopes: ["user"]
-        )
+        let role = Role.dummy(custom: true, name: "admin", scopes: ["user"])
 
         nonisolated(unsafe) var result: Result<[Role], Error>?
         let exp = expectation(description: "completion is called")
@@ -53,7 +49,7 @@ final class RolesRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(RoleListPayload(roles: [payload])))
+        apiClient.test_simulateResponse(.success(SearchRolesResponse(duration: "1.23ms", roles: [role])))
         wait(for: [exp], timeout: defaultTimeout)
 
         guard case .success(let roles) = result else {
@@ -63,7 +59,7 @@ final class RolesRepository_Tests: XCTestCase {
 
         XCTAssertEqual(roles.count, 1)
         XCTAssertEqual(roles.first?.name, "admin")
-        XCTAssertEqual(roles.first?.isCustom, true)
+        XCTAssertEqual(roles.first?.custom, true)
         XCTAssertEqual(roles.first?.scopes, ["user"])
     }
 
@@ -78,21 +74,21 @@ final class RolesRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<RoleListPayload, Error>.failure(testError))
+        apiClient.test_simulateResponse(Result<SearchRolesResponse, Error>.failure(testError))
         wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssertEqual(result?.error as? TestError, testError)
     }
 
-    func test_searchRoles_asyncOverload_mapsPayloadsToDomainModels() async throws {
+    func test_searchRoles_asyncOverload_returnsGeneratedRoles() async throws {
         let query = RoleSearchQuery(query: "adm", limit: 10)
-        let payload = RolePayload(name: "admin", custom: true)
+        let role = Role.dummy(custom: true, name: "admin")
 
-        apiClient.test_mockResponseResult(.success(RoleListPayload(roles: [payload])))
+        apiClient.test_mockResponseResult(.success(SearchRolesResponse(duration: "1.23ms", roles: [role])))
 
         let roles = try await repository.searchRoles(query: query)
 
-        let expectedEndpoint: Endpoint<RoleListPayload> = .searchRoles(query: query)
+        let expectedEndpoint: Endpoint<SearchRolesResponse> = .searchRoles(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertEqual(roles.map(\.name), ["admin"])
     }
@@ -101,7 +97,7 @@ final class RolesRepository_Tests: XCTestCase {
         let query = RoleSearchQuery(query: "adm")
         let testError = TestError()
 
-        apiClient.test_mockResponseResult(Result<RoleListPayload, Error>.failure(testError))
+        apiClient.test_mockResponseResult(Result<SearchRolesResponse, Error>.failure(testError))
 
         await XCTAssertAsyncFailure(try await repository.searchRoles(query: query), testError)
     }

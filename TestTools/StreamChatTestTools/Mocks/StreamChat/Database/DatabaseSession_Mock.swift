@@ -49,7 +49,7 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveCurrentDevice(deviceId)
     }
 
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {
         try throwErrorIfNeeded()
         return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }

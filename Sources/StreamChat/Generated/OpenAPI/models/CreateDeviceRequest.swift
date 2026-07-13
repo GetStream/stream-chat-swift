@@ -34,7 +34,13 @@ final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
     /// When true the token is for Apple VoIP push notifications
     let voipToken: Bool?
 
-    init(hardwareId: String? = nil, id: String, pushProvider: CreateDeviceRequestPushProvider, pushProviderName: String? = nil, voipToken: Bool? = nil) {
+    init(
+        hardwareId: String? = nil,
+        id: String,
+        pushProvider: CreateDeviceRequestPushProvider,
+        pushProviderName: String? = nil,
+        voipToken: Bool? = nil
+    ) {
         self.hardwareId = hardwareId
         self.id = id
         self.pushProvider = pushProvider

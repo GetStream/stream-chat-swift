@@ -21,7 +21,7 @@ final class DeviceDTO_Tests: XCTestCase {
     }
 
     func test_deviceListPayload_isStoredAndLoadedFromDB() throws {
-        let dummyDevices = DeviceListPayload.dummy
+        let dummyDevices = ListDevicesResponse.dummy()
 
         try database.writeSynchronously { (session) in
             // Save a current user to db for testing
@@ -40,5 +40,37 @@ final class DeviceDTO_Tests: XCTestCase {
         let sortedDummyDevices = dummyDevices.devices.sorted(by: { $0.id > $1.id })
         XCTAssertEqual(sortedCurrentUserDevices?.first?.id, sortedDummyDevices.first?.id)
         XCTAssertEqual(sortedCurrentUserDevices?.first?.createdAt, sortedDummyDevices.first?.createdAt)
+    }
+
+    func test_deviceAllFields_areStoredAndLoadedFromDB() throws {
+        let device = Device(
+            createdAt: .unique,
+            disabled: true,
+            disabledReason: "spam",
+            hardwareId: "hw-1",
+            id: .unique,
+            pushProvider: "firebase",
+            pushProviderName: "my-fcm",
+            userId: .unique,
+            voip: true
+        )
+
+        try database.writeSynchronously { (session) in
+            try session.saveCurrentUser(payload: self.dummyCurrentUser)
+            try session.saveCurrentUserDevices([device])
+        }
+
+        let loadedCurrentUser: CurrentChatUser? = try database.viewContext.currentUser?.asModel()
+        let loadedDevice = loadedCurrentUser?.devices.first
+
+        XCTAssertEqual(loadedDevice?.id, device.id)
+        XCTAssertEqual(loadedDevice?.createdAt, device.createdAt)
+        XCTAssertEqual(loadedDevice?.disabled, device.disabled)
+        XCTAssertEqual(loadedDevice?.disabledReason, device.disabledReason)
+        XCTAssertEqual(loadedDevice?.hardwareId, device.hardwareId)
+        XCTAssertEqual(loadedDevice?.pushProvider, device.pushProvider)
+        XCTAssertEqual(loadedDevice?.pushProviderName, device.pushProviderName)
+        XCTAssertEqual(loadedDevice?.userId, device.userId)
+        XCTAssertEqual(loadedDevice?.voip, device.voip)
     }
 }

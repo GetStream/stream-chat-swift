@@ -205,7 +205,7 @@ final class ConnectedUser_Tests: XCTestCase {
     }
     
     private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0, role: UserRole = .admin) -> CurrentUserPayload {
-        let devices = (0..<deviceCount).map { _ in DevicePayload.dummy }
+        let devices = (0..<deviceCount).map { _ in Device.dummy() }
         return CurrentUserPayload.dummy(
             userId: connectedUserId,
             name: name,

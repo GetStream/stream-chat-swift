@@ -11,7 +11,13 @@ final class GiphyImageData: Sendable, Codable, JSONEncodable {
     let url: String
     let width: String
 
-    init(frames: String, height: String, size: String, url: String, width: String) {
+    init(
+        frames: String,
+        height: String,
+        size: String,
+        url: String,
+        width: String
+    ) {
         self.frames = frames
         self.height = height
         self.size = size

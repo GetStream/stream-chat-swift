@@ -29,7 +29,7 @@ final class RoleSearch_Tests: XCTestCase {
     // MARK: - search(text:roleType:)
 
     func test_searchText_whenRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
-        let role = Role(name: "admin", isCustom: true)
+        let role = Role.dummy(custom: true, name: "admin")
         repository.searchRoles_completion_result = .success([role])
 
         let result = try await search.search(text: "adm", roleType: .user)
@@ -59,7 +59,7 @@ final class RoleSearch_Tests: XCTestCase {
 
     func test_searchQuery_whenRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         let query = RoleSearchQuery(query: "adm", limit: 5, roleType: .channel)
-        let roles = [Role(name: "admin"), Role(name: "moderator")]
+        let roles = [Role.dummy(name: "admin"), Role.dummy(name: "moderator")]
         repository.searchRoles_completion_result = .success(roles)
 
         let result = try await search.search(query: query)
@@ -92,7 +92,7 @@ final class RoleSearch_Tests: XCTestCase {
 
     func test_makeRoleSearch_returnsConfiguredRoleSearch() async throws {
         let roleSearch = client.makeRoleSearch()
-        repository.searchRoles_completion_result = .success([Role(name: "admin")])
+        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
 
         let result = try await roleSearch.search(text: "adm")
 

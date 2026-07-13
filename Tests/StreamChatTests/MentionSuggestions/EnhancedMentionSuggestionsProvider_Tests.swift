@@ -21,7 +21,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     }
 
     func test_mentionSuggestions_whenEmptyText_returnsBroadcastsAndDoesNotFetchRolesAndGroups() async throws {
-        client.mockRolesRepository.searchRoles_completion_result = .success([Role(name: "admin")])
+        client.mockRolesRepository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
         client.mockUserGroupsRepository.searchUserGroups_completion_result = .success([makeGroup(id: "g1")])
         let provider = makeProvider()
 
@@ -39,7 +39,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     }
 
     func test_mentionSuggestions_whenText_returnsBroadcastRolesGroupsAndUsers() async throws {
-        client.mockRolesRepository.searchRoles_completion_result = .success([Role(name: "admin")])
+        client.mockRolesRepository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
         client.mockUserGroupsRepository.searchUserGroups_completion_result = .success([makeGroup(id: "g1")])
         let provider = makeProvider()
 

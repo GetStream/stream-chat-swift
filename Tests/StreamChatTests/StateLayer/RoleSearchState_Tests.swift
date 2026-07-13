@@ -27,7 +27,7 @@ final class RoleSearchState_Tests: XCTestCase {
     func test_handleDidFetchQuery_whenQueryMatches_thenRolesAreUpdated() {
         let state = RoleSearchState()
         let query = RoleSearchQuery(query: "adm")
-        let roles = [Role(name: "admin")]
+        let roles = [Role.dummy(name: "admin")]
 
         state.setQuery(query)
         state.handleDidFetchQuery(query, roles: roles)
@@ -39,7 +39,7 @@ final class RoleSearchState_Tests: XCTestCase {
         let state = RoleSearchState()
         let startedQuery = RoleSearchQuery(query: "adm")
         let outdatedQuery = RoleSearchQuery(query: "mod")
-        let roles = [Role(name: "moderator")]
+        let roles = [Role.dummy(name: "moderator")]
 
         // The user started an "adm" search, but results for an outdated "mod" query arrive.
         state.setQuery(startedQuery)
@@ -58,11 +58,11 @@ final class RoleSearchState_Tests: XCTestCase {
         state.setQuery(secondQuery)
 
         // Results from the first (now stale) query should be ignored.
-        state.handleDidFetchQuery(firstQuery, roles: [Role(name: "stale")])
+        state.handleDidFetchQuery(firstQuery, roles: [Role.dummy(name: "stale")])
         XCTAssertTrue(state.roles.isEmpty)
 
         // Results from the most recent query are applied.
-        state.handleDidFetchQuery(secondQuery, roles: [Role(name: "admin")])
+        state.handleDidFetchQuery(secondQuery, roles: [Role.dummy(name: "admin")])
         XCTAssertEqual(["admin"], state.roles.map(\.name))
     }
 }

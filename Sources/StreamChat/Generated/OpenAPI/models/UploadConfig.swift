@@ -11,7 +11,13 @@ public final class UploadConfig: Sendable, Codable, JSONEncodable {
     public let blockedMimeTypes: [String]
     public let sizeLimit: Int
 
-    init(allowedFileExtensions: [String], allowedMimeTypes: [String], blockedFileExtensions: [String], blockedMimeTypes: [String], sizeLimit: Int) {
+    init(
+        allowedFileExtensions: [String],
+        allowedMimeTypes: [String],
+        blockedFileExtensions: [String],
+        blockedMimeTypes: [String],
+        sizeLimit: Int
+    ) {
         self.allowedFileExtensions = allowedFileExtensions
         self.allowedMimeTypes = allowedMimeTypes
         self.blockedFileExtensions = blockedFileExtensions
@@ -29,7 +35,10 @@ public final class UploadConfig: Sendable, Codable, JSONEncodable {
 }
 
 extension UploadConfig: Hashable {
-    public static func == (lhs: UploadConfig, rhs: UploadConfig) -> Bool {
+    public static func == (
+        lhs: UploadConfig,
+        rhs: UploadConfig
+    ) -> Bool {
         lhs.allowedFileExtensions == rhs.allowedFileExtensions &&
             lhs.allowedMimeTypes == rhs.allowedMimeTypes &&
             lhs.blockedFileExtensions == rhs.blockedFileExtensions &&

@@ -197,7 +197,14 @@
     </entity>
     <entity name="DeviceDTO" representedClassName="DeviceDTO" syncable="YES">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="disabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="disabledReason" optional="YES" attributeType="String"/>
+        <attribute name="hardwareId" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="pushProvider" attributeType="String" defaultValueString=""/>
+        <attribute name="pushProviderName" optional="YES" attributeType="String"/>
+        <attribute name="userId" attributeType="String" defaultValueString=""/>
+        <attribute name="voip" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <relationship name="relationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="currentDevice" inverseEntity="CurrentUserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="devices" inverseEntity="CurrentUserDTO"/>
         <uniquenessConstraints>

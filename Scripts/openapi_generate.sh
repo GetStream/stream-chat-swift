@@ -18,6 +18,7 @@ allowed_endpoints=(
     getBlockedUsers
     getOG
     listDevices
+    searchRoles
     stopWatchingChannel
     unblockUsers
 )
@@ -37,6 +38,8 @@ allowed_models=(
   ImageData
   Images
   ListDevicesResponse
+  Role
+  SearchRolesResponse
   UnblockUsersRequest
   UnblockUsersResponse
   UserResponse
@@ -47,6 +50,8 @@ allowed_models=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
+  Device
+  Role
   UploadConfig
 )
 
@@ -164,11 +169,25 @@ prune_models() {
 }
 prune_models
 
+# Relax selected generated stored properties back to optional. Some models are
+#     exposed as public API where a property was historically optional (e.g.
+#     Device.createdAt was Date? before the OpenAPI migration).
+optionalize_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E \
+    -e "s/^(    let $2: [^?]+)$/\1?/" \
+    "$file"
+}
+optionalize_property DeviceResponse createdAt
+optionalize_property Role createdAt
+optionalize_property Role updatedAt
+
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
+rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
@@ -189,6 +208,8 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
+publicize_model Device
+publicize_model Role
 publicize_model UploadConfig
 
 # 4d. Strip the generated Hashable conformance from every model not in
@@ -303,8 +324,6 @@ inject_v1_endpoint_paths() {
     case userGroupMembers(id: String)
     case userGroupMembersDelete(id: String)
 
-    case rolesSearch
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -391,8 +410,6 @@ EOF
         case let .userGroupMembers(id): return "usergroups/\(id)/members"
         case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
 
-        case .rolesSearch: return "roles/search"
-
 EOF
 
   python3 - "$file" "$cases_file" "$values_file" <<'PY'
@@ -413,3 +430,10 @@ file_path.write_text(text)
 PY
 }
 inject_v1_endpoint_paths
+
+# 7. Force generated OpenAPI function declarations to wrap one parameter per line.
+swiftformat "$OUTPUT_DIR_CHAT" \
+  --rules wrapArguments \
+  --wrapparameters before-first \
+  --wraparguments preserve \
+  --maxwidth 1

@@ -758,7 +758,6 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelReadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CurrentUserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CustomDataHashMap_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/DevicePayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/DraftPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/FileUploadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/FlagMessagePayload_Tests.swift,
@@ -1195,6 +1194,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"StreamChatCommonUITests/Appearance+SwiftUI_Tests.swift",
+				StreamChatCommonUITests/AVPlayerLoader/StreamAVPlayerLoader_Tests.swift,
+				StreamChatCommonUITests/AVPlayerLoader/StreamVideoAsset_Tests.swift,
+				StreamChatCommonUITests/AVPlayerLoader/StreamVideoCache_Tests.swift,
 				StreamChatCommonUITests/Formatters/ChatChannelNamer_Tests.swift,
 				StreamChatCommonUITests/Formatters/DefaultAudioPlaybackRateFormatter_Tests.swift,
 				StreamChatCommonUITests/Formatters/DefaultAudioRecordingNameFormatter_Tests.swift,
@@ -1240,6 +1242,11 @@
 				"StreamChatCommonUI/Appearance+Formatters/VideoDurationFormatter.swift",
 				"StreamChatCommonUI/Appearance+Images.swift",
 				"StreamChatCommonUI/Appearance+SwiftUI.swift",
+				StreamChatCommonUI/AVPlayerLoader/AVPlayerProvider.swift,
+				StreamChatCommonUI/AVPlayerLoader/StreamAVPlayerLoader.swift,
+				StreamChatCommonUI/AVPlayerLoader/StreamVideoAsset.swift,
+				StreamChatCommonUI/AVPlayerLoader/StreamVideoCache.swift,
+				StreamChatCommonUI/AVPlayerLoader/VideoAttachmentCachingPolicy.swift,
 				StreamChatCommonUI/Generated/L10n_template.stencil,
 				StreamChatCommonUI/Generated/L10n.swift,
 				StreamChatCommonUI/ImageLoading/ImageDownloading.swift,
@@ -1976,6 +1983,11 @@
 				"StreamChatCommonUI/Appearance+Formatters/VideoDurationFormatter.swift",
 				"StreamChatCommonUI/Appearance+Images.swift",
 				"StreamChatCommonUI/Appearance+SwiftUI.swift",
+				StreamChatCommonUI/AVPlayerLoader/AVPlayerProvider.swift,
+				StreamChatCommonUI/AVPlayerLoader/StreamAVPlayerLoader.swift,
+				StreamChatCommonUI/AVPlayerLoader/StreamVideoAsset.swift,
+				StreamChatCommonUI/AVPlayerLoader/StreamVideoCache.swift,
+				StreamChatCommonUI/AVPlayerLoader/VideoAttachmentCachingPolicy.swift,
 				StreamChatCommonUI/Generated/L10n_template.stencil,
 				StreamChatCommonUI/Generated/L10n.swift,
 				StreamChatCommonUI/ImageLoading/ImageDownloading.swift,
@@ -5442,7 +5454,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.8.0;
+				minimumVersion = 0.9.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {

@@ -137,12 +137,11 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             do {
                 nonisolated(unsafe) var devices = [Device]()
                 let response = try result.get()
-                let devicePayloads = response.devices.map { DevicePayload(id: $0.id, createdAt: $0.createdAt) }
                 self?.database.write({ (session) in
                     // Since this call always return all device, we want' to clear the existing ones
                     // to remove the deleted devices.
                     devices = try session.saveCurrentUserDevices(
-                        devicePayloads,
+                        response.devices,
                         clearExisting: true
                     )
                     .map { try $0.asModel() }
