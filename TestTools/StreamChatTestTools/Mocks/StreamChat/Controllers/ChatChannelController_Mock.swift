@@ -144,6 +144,13 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
         loadPageAroundMessageIdCallCount += 1
     }
 
+    var sendKeystrokeEvent_callCount = 0
+
+    override func sendKeystrokeEvent(parentMessageId: MessageId? = nil, completion: (@MainActor (Error?) -> Void)? = nil) {
+        sendKeystrokeEvent_callCount += 1
+        callback { completion?(nil) }
+    }
+
     var updateDraftMessage_callCount = 0
     var updateDraftMessage_completion: (@MainActor (Result<DraftMessage, Error>) -> Void)?
     var updateDraftMessage_text = ""
