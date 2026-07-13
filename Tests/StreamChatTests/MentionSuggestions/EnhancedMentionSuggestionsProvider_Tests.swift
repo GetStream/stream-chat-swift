@@ -126,7 +126,7 @@ final class EnhancedMentionSuggestionsProvider_Tests: XCTestCase {
     }
 
     private func makeGroup(id: String) -> UserGroup {
-        UserGroup(id: id, name: "Group \(id)", createdAt: .init(), updatedAt: .init())
+        UserGroup.dummy(id: id, name: "Group \(id)")
     }
 
     private func roleNames(from suggestions: [MentionSuggestion]) -> [String] {

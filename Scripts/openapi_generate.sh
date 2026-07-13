@@ -11,37 +11,58 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
+    addUserGroupMembers
     blockUsers
     createDevice
+    createUserGroup
     deleteDevice
+    deleteUserGroup
     getApp
     getBlockedUsers
     getOG
+    getUserGroup
     listDevices
+    listUserGroups
+    removeUserGroupMembers
     searchRoles
+    searchUserGroups
     stopWatchingChannel
     unblockUsers
+    updateUserGroup
 )
 allowed_models=(
   Action
+  AddUserGroupMembersRequest
+  AddUserGroupMembersResponse
   AppResponseFields
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CreateDeviceRequest
+  CreateUserGroupRequest
+  CreateUserGroupResponse
   DeviceResponse
   Field
   FileUploadConfig
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
+  GetUserGroupResponse
   ImageData
   Images
   ListDevicesResponse
+  ListUserGroupsResponse
+  RemoveUserGroupMembersRequest
+  RemoveUserGroupMembersResponse
   Role
   SearchRolesResponse
+  SearchUserGroupsResponse
   UnblockUsersRequest
   UnblockUsersResponse
+  UpdateUserGroupRequest
+  UpdateUserGroupResponse
+  UserGroupMember
+  UserGroupResponse
   UserResponse
 )
 
@@ -53,6 +74,8 @@ allowed_hashable_models=(
   Device
   Role
   UploadConfig
+  UserGroup
+  UserGroupMember
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -172,6 +195,7 @@ prune_models
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration).
+# Remove in the next major.
 optionalize_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   sed -i '' -E \
@@ -181,6 +205,18 @@ optionalize_property() {
 optionalize_property DeviceResponse createdAt
 optionalize_property Role createdAt
 optionalize_property Role updatedAt
+
+# Workaround for non-optional public property being backed with optional property
+# Remove in the next major.
+restore_usergroup_members_optionality() {
+  local file="$OUTPUT_DIR_CHAT/models/UserGroupResponse.swift"
+  perl -0777 -pi -e '
+    s/^    let members: \[UserGroupMember\]\?$/    private let membersOptional: [UserGroupMember]?\n    public var members: [UserGroupMember] { membersOptional ?? [] }/m;
+    s/^        self\.members = members$/        self.membersOptional = members/m;
+    s/^    case members$/    case membersOptional = "members"/m;
+  ' "$file"
+}
+restore_usergroup_members_optionality
 
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
@@ -192,6 +228,7 @@ rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
+rename_generated UserGroupResponse UserGroup
 
 rename_generated_type Response EmptyResponse
 
@@ -211,6 +248,8 @@ publicize_model AppSettings
 publicize_model Device
 publicize_model Role
 publicize_model UploadConfig
+publicize_model UserGroup
+publicize_model UserGroupMember
 
 # 4d. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
@@ -318,12 +357,6 @@ inject_v1_endpoint_paths() {
     case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
-    case userGroups
-    case userGroupSearch
-    case userGroup(id: String)
-    case userGroupMembers(id: String)
-    case userGroupMembersDelete(id: String)
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -403,12 +436,6 @@ EOF
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
-
-        case .userGroups: return "usergroups"
-        case .userGroupSearch: return "usergroups/search"
-        case let .userGroup(id): return "usergroups/\(id)"
-        case let .userGroupMembers(id): return "usergroups/\(id)/members"
-        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
 
 EOF
 

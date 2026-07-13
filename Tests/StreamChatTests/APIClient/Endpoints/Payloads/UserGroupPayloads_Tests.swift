@@ -7,7 +7,7 @@
 import XCTest
 
 final class UserGroupPayloads_Tests: XCTestCase {
-    func test_userGroupPayload_isDecodedCorrectly() throws {
+    func test_userGroup_isDecodedCorrectly() throws {
         let json = """
         {
             "id": "backendsupport",
@@ -16,6 +16,7 @@ final class UserGroupPayloads_Tests: XCTestCase {
             "team_id": "engineering",
             "members": [
                 {
+                    "app_pk": 42,
                     "group_id": "backendsupport",
                     "user_id": "user1",
                     "is_admin": true,
@@ -28,23 +29,62 @@ final class UserGroupPayloads_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(UserGroupPayload.self, from: json)
-        let model = payload.asModel()
+        let payload = try JSONDecoder.stream.decode(UserGroup.self, from: json)
 
         XCTAssertEqual(payload.id, "backendsupport")
         XCTAssertEqual(payload.name, "Backend Support Team")
         XCTAssertEqual(payload.description, "On-call backend support engineers")
         XCTAssertEqual(payload.teamId, "engineering")
-        XCTAssertEqual(payload.members.count, 1)
-        XCTAssertEqual(payload.members.first?.userId, "user1")
-        XCTAssertTrue(payload.members.first?.isAdmin == true)
         XCTAssertEqual(payload.createdBy, "admin-user")
-        XCTAssertEqual(model.members.first?.groupId, "backendsupport")
+        XCTAssertEqual(payload.members.count, 1)
+        XCTAssertEqual(payload.members.first?.groupId, "backendsupport")
+        XCTAssertEqual(payload.members.first?.userId, "user1")
+        XCTAssertEqual(payload.members.first?.isAdmin, true)
+        XCTAssertEqual(payload.members.first?.appPk, 42)
     }
 
-    func test_userGroupListPayload_isDecodedCorrectly() throws {
+    func test_userGroup_withMissingOptionalFields_isDecodedCorrectly() throws {
         let json = """
         {
+            "id": "backendsupport",
+            "name": "Backend Support Team",
+            "created_at": "2020-07-16T15:39:03.010717Z",
+            "updated_at": "2020-08-17T13:15:39.895109Z"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(UserGroup.self, from: json)
+
+        XCTAssertEqual(payload.id, "backendsupport")
+        XCTAssertNil(payload.description)
+        XCTAssertNil(payload.teamId)
+        XCTAssertNil(payload.createdBy)
+        XCTAssertTrue(payload.members.isEmpty)
+    }
+
+    func test_userGroupMember_isDecodedCorrectly() throws {
+        let json = """
+        {
+            "app_pk": 42,
+            "group_id": "backendsupport",
+            "user_id": "user1",
+            "is_admin": true,
+            "created_at": "2020-07-16T15:39:03.010717Z"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(UserGroupMember.self, from: json)
+
+        XCTAssertEqual(payload.appPk, 42)
+        XCTAssertEqual(payload.groupId, "backendsupport")
+        XCTAssertEqual(payload.userId, "user1")
+        XCTAssertTrue(payload.isAdmin)
+    }
+
+    func test_listUserGroupsResponse_isDecodedCorrectly() throws {
+        let json = """
+        {
+            "duration": "1.2ms",
             "user_groups": [
                 {
                     "id": "backendsupport",
@@ -56,19 +96,37 @@ final class UserGroupPayloads_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.stream.decode(UserGroupListPayload.self, from: json)
+        let payload = try JSONDecoder.stream.decode(ListUserGroupsResponse.self, from: json)
 
         XCTAssertEqual(payload.userGroups.count, 1)
         XCTAssertEqual(payload.userGroups.first?.id, "backendsupport")
     }
 
-    func test_createUserGroupRequestBody_encoding() throws {
-        let request = CreateUserGroupRequestBody(
-            id: "backendsupport",
-            name: "Backend Support Team",
+    func test_getUserGroupResponse_isDecodedCorrectly() throws {
+        let json = """
+        {
+            "duration": "1.2ms",
+            "user_group": {
+                "id": "backendsupport",
+                "name": "Backend Support Team",
+                "created_at": "2020-07-16T15:39:03.010717Z",
+                "updated_at": "2020-08-17T13:15:39.895109Z"
+            }
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(GetUserGroupResponse.self, from: json)
+
+        XCTAssertEqual(payload.userGroup?.id, "backendsupport")
+    }
+
+    func test_createUserGroupRequest_encoding() throws {
+        let request = CreateUserGroupRequest(
             description: "On-call backend support engineers",
-            teamId: "engineering",
-            memberIds: ["user1", "user2"]
+            id: "backendsupport",
+            memberIds: ["user1", "user2"],
+            name: "Backend Support Team",
+            teamId: "engineering"
         )
 
         let serializedJSON = try JSONEncoder.stream.encode(request)
@@ -83,129 +141,21 @@ final class UserGroupPayloads_Tests: XCTestCase {
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
 
-    func test_userGroupMemberPayload_isDecodedCorrectly() throws {
-        let json = """
-        {
-            "group_id": "backendsupport",
-            "user_id": "user1",
-            "is_admin": true,
-            "created_at": "2020-07-16T15:39:03.010717Z"
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(UserGroupMemberPayload.self, from: json)
-
-        XCTAssertEqual(payload.groupId, "backendsupport")
-        XCTAssertEqual(payload.userId, "user1")
-        XCTAssertTrue(payload.isAdmin)
-    }
-
-    func test_userGroupMemberPayload_asModel() {
-        let createdAt = Date.unique
-        let payload = UserGroupMemberPayload(
-            groupId: "backendsupport",
-            userId: "user1",
-            isAdmin: true,
-            createdAt: createdAt
-        )
-
-        let model = payload.asModel()
-
-        XCTAssertEqual(model.groupId, "backendsupport")
-        XCTAssertEqual(model.userId, "user1")
-        XCTAssertTrue(model.isAdmin)
-        XCTAssertEqual(model.createdAt, createdAt)
-    }
-
-    func test_userGroupPayload_withMissingOptionalFields_isDecodedCorrectly() throws {
-        let json = """
-        {
-            "id": "backendsupport",
-            "name": "Backend Support Team",
-            "created_at": "2020-07-16T15:39:03.010717Z",
-            "updated_at": "2020-08-17T13:15:39.895109Z"
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(UserGroupPayload.self, from: json)
-
-        XCTAssertEqual(payload.id, "backendsupport")
-        XCTAssertNil(payload.description)
-        XCTAssertNil(payload.teamId)
-        XCTAssertNil(payload.createdBy)
-        XCTAssertTrue(payload.members.isEmpty)
-    }
-
-    func test_userGroupPayload_asModel_mapsAllFieldsIncludingMembers() {
-        let createdAt = Date.unique
-        let updatedAt = Date.unique
-        let memberCreatedAt = Date.unique
-        let payload = UserGroupPayload(
-            id: "backendsupport",
-            name: "Backend Support Team",
-            description: "On-call backend support engineers",
-            teamId: "engineering",
-            members: [
-                UserGroupMemberPayload(
-                    groupId: "backendsupport",
-                    userId: "user1",
-                    isAdmin: true,
-                    createdAt: memberCreatedAt
-                )
-            ],
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            createdBy: "admin-user"
-        )
-
-        let model = payload.asModel()
-
-        XCTAssertEqual(model.id, "backendsupport")
-        XCTAssertEqual(model.name, "Backend Support Team")
-        XCTAssertEqual(model.description, "On-call backend support engineers")
-        XCTAssertEqual(model.teamId, "engineering")
-        XCTAssertEqual(model.createdAt, createdAt)
-        XCTAssertEqual(model.updatedAt, updatedAt)
-        XCTAssertEqual(model.createdBy, "admin-user")
-        XCTAssertEqual(model.members.count, 1)
-        XCTAssertEqual(model.members.first?.userId, "user1")
-        XCTAssertEqual(model.members.first?.isAdmin, true)
-        XCTAssertEqual(model.members.first?.createdAt, memberCreatedAt)
-    }
-
-    func test_userGroupPayloadResponse_isDecodedCorrectly() throws {
-        let json = """
-        {
-            "user_group": {
-                "id": "backendsupport",
-                "name": "Backend Support Team",
-                "created_at": "2020-07-16T15:39:03.010717Z",
-                "updated_at": "2020-08-17T13:15:39.895109Z"
-            }
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(UserGroupPayloadResponse.self, from: json)
-
-        XCTAssertEqual(payload.userGroup.id, "backendsupport")
-    }
-
-    func test_createUserGroupRequestBody_encoding_withMinimalFields() throws {
-        let request = CreateUserGroupRequestBody(name: "Backend Support Team")
+    func test_createUserGroupRequest_encoding_withMinimalFields() throws {
+        let request = CreateUserGroupRequest(name: "Backend Support Team")
 
         let serializedJSON = try JSONEncoder.stream.encode(request)
         let expected: [String: Any] = [
-            "name": "Backend Support Team",
-            "member_ids": []
+            "name": "Backend Support Team"
         ]
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
 
-    func test_updateUserGroupRequestBody_encoding() throws {
-        let request = UpdateUserGroupRequestBody(
-            name: "Updated Name",
+    func test_updateUserGroupRequest_encoding() throws {
+        let request = UpdateUserGroupRequest(
             description: "Updated description",
+            name: "Updated Name",
             teamId: "engineering"
         )
 
@@ -219,10 +169,10 @@ final class UserGroupPayloads_Tests: XCTestCase {
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
 
-    func test_userGroupMembersRequestBody_encoding() throws {
-        let request = UserGroupMembersRequestBody(
-            memberIds: ["user1", "user2"],
+    func test_addUserGroupMembersRequest_encoding() throws {
+        let request = AddUserGroupMembersRequest(
             asAdmin: true,
+            memberIds: ["user1", "user2"],
             teamId: "engineering"
         )
 
@@ -236,8 +186,8 @@ final class UserGroupPayloads_Tests: XCTestCase {
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
 
-    func test_userGroupMembersRequestBody_encoding_withMinimalFields() throws {
-        let request = UserGroupMembersRequestBody(memberIds: ["user1"])
+    func test_removeUserGroupMembersRequest_encoding() throws {
+        let request = RemoveUserGroupMembersRequest(memberIds: ["user1"])
 
         let serializedJSON = try JSONEncoder.stream.encode(request)
         let expected: [String: Any] = [

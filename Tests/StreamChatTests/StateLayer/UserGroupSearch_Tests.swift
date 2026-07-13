@@ -29,12 +29,10 @@ final class UserGroupSearch_Tests: XCTestCase {
     // MARK: - search(text:teamId:)
 
     func test_searchText_whenRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
             name: "Backend Support",
-            teamId: "engineering",
-            createdAt: .unique,
-            updatedAt: .unique
+            teamId: "engineering"
         )
         repository.searchUserGroups_completion_result = .success([userGroup])
 
@@ -66,8 +64,8 @@ final class UserGroupSearch_Tests: XCTestCase {
     func test_searchQuery_whenRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         let query = UserGroupSearchQuery(query: "backend", limit: 5, teamId: "engineering")
         let userGroups = [
-            UserGroup(id: "backendsupport", name: "Backend Support", createdAt: .unique, updatedAt: .unique),
-            UserGroup(id: "backendcore", name: "Backend Core", createdAt: .unique, updatedAt: .unique)
+            UserGroup.dummy(id: "backendsupport", name: "Backend Support"),
+            UserGroup.dummy(id: "backendcore", name: "Backend Core")
         ]
         repository.searchUserGroups_completion_result = .success(userGroups)
 

@@ -104,25 +104,27 @@ enum EndpointPath: Codable {
         voteId: String
     )
 
-    case userGroups
-    case userGroupSearch
-    case userGroup(id: String)
-    case userGroupMembers(id: String)
-    case userGroupMembersDelete(id: String)
-
+    case addUserGroupMembers(id: String)
     case blockUsers
     case createDevice
+    case createUserGroup
     case deleteDevice
+    case deleteUserGroup(id: String)
     case getApp
     case getBlockedUsers
     case getOG
+    case getUserGroup(id: String)
     case listDevices
+    case listUserGroups
+    case removeUserGroupMembers(id: String)
     case searchRoles
+    case searchUserGroups
     case stopWatchingChannel(
         type: String,
         id: String
     )
     case unblockUsers
+    case updateUserGroup(id: String)
 
     var value: String {
         switch self {
@@ -225,28 +227,36 @@ enum EndpointPath: Codable {
             voteId: voteId
         ): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
-        case .userGroups: return "usergroups"
-        case .userGroupSearch: return "usergroups/search"
-        case let .userGroup(id): return "usergroups/\(id)"
-        case let .userGroupMembers(id): return "usergroups/\(id)/members"
-        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
-
+        case let .addUserGroupMembers(id: id):
+            return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
         case .blockUsers:
             return "/api/v2/users/block"
         case .createDevice:
             return "/api/v2/devices"
+        case .createUserGroup:
+            return "/api/v2/usergroups"
         case .deleteDevice:
             return "/api/v2/devices"
+        case let .deleteUserGroup(id: id):
+            return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getApp:
             return "/api/v2/app"
         case .getBlockedUsers:
             return "/api/v2/users/block"
         case .getOG:
             return "/api/v2/og"
+        case let .getUserGroup(id: id):
+            return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .listDevices:
             return "/api/v2/devices"
+        case .listUserGroups:
+            return "/api/v2/usergroups"
+        case let .removeUserGroupMembers(id: id):
+            return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchRoles:
             return "/api/v2/roles/search"
+        case .searchUserGroups:
+            return "/api/v2/usergroups/search"
         case let .stopWatchingChannel(
             type: type,
             id: id
@@ -254,6 +264,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
             return "/api/v2/users/unblock"
+        case let .updateUserGroup(id: id):
+            return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         }
     }
 }
@@ -370,6 +382,20 @@ enum EndpointMethod: String, Codable, Equatable {
 }
 
 extension Endpoint {
+    static func addUserGroupMembers(
+        id: String,
+        addUserGroupMembersRequest: AddUserGroupMembersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<AddUserGroupMembersResponse> {
+        return .init(
+            path: .addUserGroupMembers(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: addUserGroupMembersRequest
+        )
+    }
+
     static func blockUsers(
         blockUsersRequest: BlockUsersRequest,
         requiresConnectionId: Bool = false
@@ -396,6 +422,19 @@ extension Endpoint {
         )
     }
 
+    static func createUserGroup(
+        createUserGroupRequest: CreateUserGroupRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateUserGroupResponse> {
+        return .init(
+            path: .createUserGroup,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createUserGroupRequest
+        )
+    }
+
     static func deleteDevice(
         id: String,
         requiresConnectionId: Bool = false
@@ -405,6 +444,22 @@ extension Endpoint {
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "id": id
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteUserGroup(
+        id: String,
+        teamId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteUserGroup(id: id),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "team_id": teamId
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -446,6 +501,22 @@ extension Endpoint {
         )
     }
 
+    static func getUserGroup(
+        id: String,
+        teamId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetUserGroupResponse> {
+        return .init(
+            path: .getUserGroup(id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "team_id": teamId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func listDevices(requiresConnectionId: Bool = false) -> Endpoint<ListDevicesResponse> {
         return .init(
             path: .listDevices,
@@ -453,6 +524,41 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func listUserGroups(
+        limit: Int?,
+        idGt: String?,
+        createdAtGt: String?,
+        teamId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<ListUserGroupsResponse> {
+        return .init(
+            path: .listUserGroups,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "id_gt": idGt,
+                "created_at_gt": createdAtGt,
+                "team_id": teamId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func removeUserGroupMembers(
+        id: String,
+        removeUserGroupMembersRequest: RemoveUserGroupMembersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<RemoveUserGroupMembersResponse> {
+        return .init(
+            path: .removeUserGroupMembers(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: removeUserGroupMembersRequest
         )
     }
 
@@ -473,6 +579,29 @@ extension Endpoint {
                 "name_gt": nameGt,
                 "role_type": roleType,
                 "include_global_roles": includeGlobalRoles
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func searchUserGroups(
+        query: String,
+        limit: Int?,
+        nameGt: String?,
+        idGt: String?,
+        teamId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<SearchUserGroupsResponse> {
+        return .init(
+            path: .searchUserGroups,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "query": query,
+                "limit": limit,
+                "name_gt": nameGt,
+                "id_gt": idGt,
+                "team_id": teamId
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -506,6 +635,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: unblockUsersRequest
+        )
+    }
+
+    static func updateUserGroup(
+        id: String,
+        updateUserGroupRequest: UpdateUserGroupRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateUserGroupResponse> {
+        return .init(
+            path: .updateUserGroup(id: id),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateUserGroupRequest
         )
     }
 }

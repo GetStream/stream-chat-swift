@@ -62,6 +62,7 @@ private struct StoredUserGroupMember: Codable {
     let userId: UserId
     let isAdmin: Bool
     let createdAt: Date
+    let appPk: Int?
 }
 
 extension UserGroupDTO {
@@ -73,10 +74,11 @@ extension UserGroupDTO {
             }
             return storedMembers.map {
                 UserGroupMember(
+                    appPk: $0.appPk ?? 0,
+                    createdAt: $0.createdAt,
                     groupId: $0.groupId,
-                    userId: $0.userId,
                     isAdmin: $0.isAdmin,
-                    createdAt: $0.createdAt
+                    userId: $0.userId
                 )
             }
         }
@@ -86,7 +88,8 @@ extension UserGroupDTO {
                     groupId: $0.groupId,
                     userId: $0.userId,
                     isAdmin: $0.isAdmin,
-                    createdAt: $0.createdAt
+                    createdAt: $0.createdAt,
+                    appPk: $0.appPk
                 )
             }
             membersData = try? JSONEncoder.default.encode(storedMembers)
@@ -95,21 +98,21 @@ extension UserGroupDTO {
 
     func asModel() -> UserGroup {
         UserGroup(
-            id: id,
-            name: name,
-            description: groupDescription,
-            teamId: teamId,
-            members: members,
             createdAt: createdAt.bridgeDate,
-            updatedAt: updatedAt.bridgeDate,
-            createdBy: createdBy
+            createdBy: createdBy,
+            description: groupDescription,
+            id: id,
+            members: members,
+            name: name,
+            teamId: teamId,
+            updatedAt: updatedAt.bridgeDate
         )
     }
 }
 
 extension NSManagedObjectContext: UserGroupDatabaseSession {
     @discardableResult
-    func saveUserGroup(payload: UserGroupPayload) throws -> UserGroupDTO {
+    func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {
         let dto = UserGroupDTO.loadOrCreate(id: payload.id, context: self)
         dto.id = payload.id
         dto.name = payload.name
@@ -118,7 +121,7 @@ extension NSManagedObjectContext: UserGroupDatabaseSession {
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.createdBy = payload.createdBy
-        dto.members = payload.members.map { $0.asModel() }
+        dto.members = payload.members
         return dto
     }
 
