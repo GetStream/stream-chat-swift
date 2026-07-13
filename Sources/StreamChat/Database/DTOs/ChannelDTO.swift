@@ -192,7 +192,8 @@ extension ChannelDTO {
             KeyPath.string(\ChannelDTO.messages),
             KeyPath.string(\ChannelDTO.members),
             KeyPath.string(\ChannelDTO.reads),
-            KeyPath.string(\ChannelDTO.watchers)
+            KeyPath.string(\ChannelDTO.watchers),
+            KeyPath.string(\ChannelDTO.draftMessage)
         ]
     }
 }
