@@ -60,11 +60,11 @@ final class LRUDiskCache: @unchecked Sendable {
     func store(_ data: Data, forKey key: String, completion: (@Sendable (Error?) -> Void)? = nil) {
         Self.queue.async {
             guard !data.isEmpty else {
-                completion?(LRUDiskCacheError.emptyData)
+                completion?(ClientError.DiskCacheEmptyData())
                 return
             }
             guard data.count <= self.maxSizeInBytes else {
-                completion?(LRUDiskCacheError.entryExceedsSizeLimit)
+                completion?(ClientError.DiskCacheEntryExceedsSizeLimit())
                 return
             }
             let name = Self.storageName(forKey: key)
@@ -128,7 +128,7 @@ final class LRUDiskCache: @unchecked Sendable {
     }
 }
 
-enum LRUDiskCacheError: Error {
-    case emptyData
-    case entryExceedsSizeLimit
+extension ClientError {
+    final class DiskCacheEmptyData: ClientError, @unchecked Sendable {}
+    final class DiskCacheEntryExceedsSizeLimit: ClientError, @unchecked Sendable {}
 }

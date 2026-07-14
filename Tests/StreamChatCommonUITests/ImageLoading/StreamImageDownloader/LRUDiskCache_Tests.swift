@@ -32,7 +32,7 @@ final class LRUDiskCache_Tests: XCTestCase {
         let storeError = store(Data(repeating: 0xab, count: 100), forKey: "big", in: cache)
         let cached = data(forKey: "big", in: cache)
 
-        XCTAssertNotNil(storeError)
+        XCTAssertTrue(storeError is ClientError.DiskCacheEntryExceedsSizeLimit)
         XCTAssertNil(cached)
     }
 

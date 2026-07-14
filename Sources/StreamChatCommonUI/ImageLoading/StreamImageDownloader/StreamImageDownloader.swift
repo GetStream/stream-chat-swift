@@ -173,7 +173,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
                         completion(.success(image))
                     } else {
                         self.diskCache.remove(forKey: sourceKey) {
-                            completion(.failure(StreamImageDownloaderError.decodingFailed))
+                            completion(.failure(ClientError.ImageDecodingFailed()))
                         }
                     }
                 }
@@ -246,11 +246,11 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
                 return
             }
             if let response = response as? HTTPURLResponse, !(200..<300).contains(response.statusCode) {
-                completion(.failure(StreamImageDownloaderError.invalidHTTPStatus(response.statusCode)))
+                completion(.failure(ClientError.ImageDownloadInvalidHTTPStatus("HTTP status code \(response.statusCode)")))
                 return
             }
             guard let data, !data.isEmpty else {
-                completion(.failure(StreamImageDownloaderError.emptyResponse))
+                completion(.failure(ClientError.ImageDownloadEmptyResponse()))
                 return
             }
             completion(.success(data))
@@ -311,8 +311,8 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     }
 }
 
-enum StreamImageDownloaderError: Error {
-    case emptyResponse
-    case invalidHTTPStatus(Int)
-    case decodingFailed
+extension ClientError {
+    final class ImageDecodingFailed: ClientError, @unchecked Sendable {}
+    final class ImageDownloadEmptyResponse: ClientError, @unchecked Sendable {}
+    final class ImageDownloadInvalidHTTPStatus: ClientError, @unchecked Sendable {}
 }
