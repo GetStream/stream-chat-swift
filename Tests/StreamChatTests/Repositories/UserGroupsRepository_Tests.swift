@@ -83,7 +83,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         let response = UserGroupResponse.dummy(
             userGroup: .dummy(
                 id: "backendsupport",
-                members: [.dummy(appPk: 7, groupId: "backendsupport", userId: "user1")],
+                members: [.dummy(groupId: "backendsupport", userId: "user1")],
                 name: "Backend Support Team"
             )
         )
@@ -95,7 +95,7 @@ final class UserGroupsRepository_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         let loadedGroup = database.viewContext.userGroup(id: "backendsupport")?.asModel()
-        XCTAssertEqual(loadedGroup?.members.first?.appPk, 7)
+        XCTAssertEqual(loadedGroup?.members.first?.userId, "user1")
     }
 
     func test_searchUserGroups_mapsPayloadsToDomainModels() {

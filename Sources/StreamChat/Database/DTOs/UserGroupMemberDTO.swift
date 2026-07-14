@@ -8,7 +8,6 @@ import Foundation
 @objc(UserGroupMemberDTO)
 class UserGroupMemberDTO: NSManagedObject {
     @NSManaged var id: String
-    @NSManaged var appPk: Int64
     @NSManaged var createdAt: DBDate
     @NSManaged var groupId: String
     @NSManaged var isAdmin: Bool
@@ -49,7 +48,6 @@ class UserGroupMemberDTO: NSManagedObject {
 
     func asModel() -> UserGroupMember {
         UserGroupMember(
-            appPk: Int(appPk),
             createdAt: createdAt.bridgeDate,
             groupId: groupId,
             isAdmin: isAdmin,

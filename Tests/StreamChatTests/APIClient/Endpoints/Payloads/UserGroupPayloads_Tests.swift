@@ -16,7 +16,6 @@ final class UserGroupPayloads_Tests: XCTestCase {
             "team_id": "engineering",
             "members": [
                 {
-                    "app_pk": 42,
                     "group_id": "backendsupport",
                     "user_id": "user1",
                     "is_admin": true,
@@ -40,7 +39,6 @@ final class UserGroupPayloads_Tests: XCTestCase {
         XCTAssertEqual(payload.members.first?.groupId, "backendsupport")
         XCTAssertEqual(payload.members.first?.userId, "user1")
         XCTAssertEqual(payload.members.first?.isAdmin, true)
-        XCTAssertEqual(payload.members.first?.appPk, 42)
     }
 
     func test_userGroup_withMissingOptionalFields_isDecodedCorrectly() throws {
@@ -65,7 +63,6 @@ final class UserGroupPayloads_Tests: XCTestCase {
     func test_userGroupMember_isDecodedCorrectly() throws {
         let json = """
         {
-            "app_pk": 42,
             "group_id": "backendsupport",
             "user_id": "user1",
             "is_admin": true,
@@ -75,7 +72,6 @@ final class UserGroupPayloads_Tests: XCTestCase {
 
         let payload = try JSONDecoder.stream.decode(UserGroupMember.self, from: json)
 
-        XCTAssertEqual(payload.appPk, 42)
         XCTAssertEqual(payload.groupId, "backendsupport")
         XCTAssertEqual(payload.userId, "user1")
         XCTAssertTrue(payload.isAdmin)

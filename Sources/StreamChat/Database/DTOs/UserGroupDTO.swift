@@ -98,7 +98,6 @@ extension NSManagedObjectContext: UserGroupDatabaseSession {
         let id = UserGroupMemberDTO.createId(groupId: payload.groupId, userId: payload.userId)
         let dto = UserGroupMemberDTO.loadOrCreate(id: id, context: self)
         dto.id = id
-        dto.appPk = Int64(payload.appPk)
         dto.createdAt = payload.createdAt.bridgeDate
         dto.groupId = payload.groupId
         dto.isAdmin = payload.isAdmin

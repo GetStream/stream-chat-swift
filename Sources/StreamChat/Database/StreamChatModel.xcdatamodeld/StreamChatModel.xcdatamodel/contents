@@ -399,7 +399,6 @@
         </uniquenessConstraints>
     </entity>
     <entity name="UserGroupMemberDTO" representedClassName="UserGroupMemberDTO" syncable="YES">
-        <attribute name="appPk" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="groupId" attributeType="String"/>
         <attribute name="id" attributeType="String"/>

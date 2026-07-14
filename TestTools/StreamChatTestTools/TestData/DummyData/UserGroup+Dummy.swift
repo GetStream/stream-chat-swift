@@ -31,14 +31,12 @@ extension UserGroup {
 
 extension UserGroupMember {
     static func dummy(
-        appPk: Int = 0,
         createdAt: Date = .unique,
         groupId: String = .unique,
         isAdmin: Bool = false,
         userId: UserId = .unique
     ) -> UserGroupMember {
         .init(
-            appPk: appPk,
             createdAt: createdAt,
             groupId: groupId,
             isAdmin: isAdmin,
