@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Nuke
 import StreamChat
 import StreamChatUI
 import UIKit
@@ -296,9 +295,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
         let user = users[indexPath.row]
 
-        if let imageURL = user.imageURL {
-            Nuke.loadImage(with: imageURL, into: cell.avatarView)
-        }
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL, with: ImageLoaderOptions())
         cell.avatarView.backgroundColor = view.tintColor
         cell.nameLabel.text = user.name ?? user.id
 

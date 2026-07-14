@@ -4,11 +4,11 @@
 
 import UIKit
 
-/// A thin abstraction over an image downloading pipeline (e.g. Nuke).
+/// A thin abstraction over an image downloading pipeline.
 ///
-/// Each UI SDK provides its own conformance backed by its vendored image
-/// loading library. ``StreamMediaLoader`` uses this protocol internally
-/// so that `StreamChatCommonUI` never depends on Nuke directly.
+/// ``StreamMediaLoader`` uses this protocol internally, with ``StreamImageDownloader``
+/// as the default conformance. A custom implementation can back image loading
+/// with a different pipeline.
 public protocol ImageDownloading: Sendable {
     /// Downloads an image from the given URL.
     ///

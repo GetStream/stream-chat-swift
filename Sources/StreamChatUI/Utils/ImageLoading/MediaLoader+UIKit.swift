@@ -17,11 +17,10 @@ extension MediaLoader {
     ) -> ImageLoadingTask {
         let task = ImageLoadingTask()
         imageView.currentImageLoadingTask?.cancel()
+        imageView.currentImageLoadingTask = nil
+        imageView.image = options.placeholder
 
-        guard let url else {
-            imageView.image = options.placeholder
-            return task
-        }
+        guard let url else { return task }
 
         imageView.currentImageLoadingTask = task
 

@@ -9,7 +9,7 @@ import UIKit
 /// The default ``MediaLoader`` implementation.
 ///
 /// Delegates URL transformation to its ``CDNRequester`` dependency,
-/// image downloading to an ``ImageDownloading`` backend (typically Nuke),
+/// image downloading to an ``ImageDownloading`` backend,
 /// and video preview generation to AVFoundation.
 open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     /// The backend that performs the actual image download and caching.

@@ -74,9 +74,7 @@
 		C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; platformFilter = ios; };
 		C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
-		C1393361275F5D1E00225E7A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1393360275F5D1E00225E7A /* Nuke */; };
 		C1B49B3B282283C100F4E89E /* GDPerformanceView-Swift in Frameworks */ = {isa = PBXBuildFile; productRef = C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */; };
-		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		F86C87E725F907AE0000BCA9 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F86C87E825F907AE0000BCA9 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F86C87F125F907CA0000BCA9 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
@@ -1180,6 +1178,7 @@
 				"StreamChatUITests/Utils/DifferenceKit+Stream_Tests.swift",
 				StreamChatUITests/Utils/ImageResultsMapper_Tests.swift,
 				StreamChatUITests/Utils/ImageSizeCalculator_Tests.swift,
+				StreamChatUITests/Utils/StreamImageProcessor_Tests.swift,
 				StreamChatUITests/Utils/StreamMediaLoader_UIKit_Tests.swift,
 				"StreamChatUITests/Utils/String+Extensions_Tests.swift",
 				StreamChatUITests/Utils/TextViewMentionedUsersHandler_Tests.swift,
@@ -1202,6 +1201,10 @@
 				StreamChatCommonUITests/Formatters/DefaultAudioRecordingNameFormatter_Tests.swift,
 				StreamChatCommonUITests/Formatters/DefaultMarkdownFormatter_Tests.swift,
 				StreamChatCommonUITests/Formatters/DefaultMediaBadgeDurationFormatter_Tests.swift,
+				StreamChatCommonUITests/ImageLoading/StreamImageDownloader/ImageDownsampler_Tests.swift,
+				StreamChatCommonUITests/ImageLoading/StreamImageDownloader/ImageMemoryCache_Tests.swift,
+				StreamChatCommonUITests/ImageLoading/StreamImageDownloader/LRUDiskCache_Tests.swift,
+				StreamChatCommonUITests/ImageLoading/StreamImageDownloader/StreamImageDownloader_Tests.swift,
 				StreamChatCommonUITests/ImageLoading/StreamMediaLoader_Image_Tests.swift,
 				StreamChatCommonUITests/ImageLoading/StreamMediaLoader_Video_Tests.swift,
 				StreamChatCommonUITests/Localization_Tests.swift,
@@ -1253,6 +1256,10 @@
 				"StreamChatCommonUI/ImageLoading/ImageRequestOptions+ImageResize.swift",
 				StreamChatCommonUI/ImageLoading/ImageResize.swift,
 				StreamChatCommonUI/ImageLoading/MediaLoader.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/ImageDownsampler.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/ImageMemoryCache.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/LRUDiskCache.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/StreamImageDownloader.swift,
 				StreamChatCommonUI/ImageLoading/StreamMediaLoader.swift,
 				StreamChatCommonUI/Info.plist,
 				StreamChatCommonUI/Reactions/ChatMessageReactionAppearance.swift,
@@ -1486,63 +1493,6 @@
 				StreamChatUI/StreamDifferenceKit/ElementPath.swift,
 				StreamChatUI/StreamDifferenceKit/Extensions/AppKitExtension.swift,
 				StreamChatUI/StreamDifferenceKit/StagedChangeset.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/Cache.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/DataCache.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/DataCaching.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/ImageCache.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/ImageCaching.swift,
-				StreamChatUI/StreamNuke/Nuke/Decoding/AssetType.swift,
-				StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoderRegistry.swift,
-				"StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoders+Default.swift",
-				"StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoders+Empty.swift",
-				StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoding.swift,
-				StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoders.swift,
-				"StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoders+Default.swift",
-				"StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoders+ImageIO.swift",
-				StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoding.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageContainer.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageRequest.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageResponse.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageTask.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Atomic.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/DataPublisher.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Extensions.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Graphics.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/ImagePublisher.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/ImageRequestKeys.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/LinkedList.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Log.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Operation.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/RateLimiter.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/ResumableData.swift,
-				StreamChatUI/StreamNuke/Nuke/Loading/DataLoader.swift,
-				StreamChatUI/StreamNuke/Nuke/Loading/DataLoading.swift,
-				StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline.swift,
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Cache.swift",
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Configuration.swift",
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Delegate.swift",
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Error.swift",
-				StreamChatUI/StreamNuke/Nuke/Prefetching/ImagePrefetcher.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageDecompression.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessing.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessingOptions.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors.swift,
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Anonymous.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Circle.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Composition.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+CoreImage.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+GaussianBlur.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Resize.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+RoundedCorners.swift",
-				StreamChatUI/StreamNuke/Nuke/Tasks/AsyncPipelineTask.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/AsyncTask.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskFetchOriginalData.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskFetchOriginalImage.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskFetchWithPublisher.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskLoadData.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskLoadImage.swift,
-				StreamChatUI/StreamNuke/NukeExtensions/ImageLoadingOptions.swift,
-				StreamChatUI/StreamNuke/NukeExtensions/ImageViewExtensions.swift,
 				"StreamChatUI/StreamSwiftyGif/NSImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/NSImageView+SwiftyGif.swift",
 				StreamChatUI/StreamSwiftyGif/ObjcAssociatedWeakObject.swift,
@@ -1577,7 +1527,6 @@
 				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
 				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
 				"StreamChatUI/Utils/ImageLoading/MediaLoader+UIKit.swift",
-				StreamChatUI/Utils/ImageLoading/StreamImageDownloader.swift,
 				StreamChatUI/Utils/ImageProcessor/StreamImageProcessor.swift,
 				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
 				StreamChatUI/Utils/KeyboardHandler/DefaultScrollViewKeyboardHandler.swift,
@@ -1834,63 +1783,6 @@
 				StreamChatUI/StreamDifferenceKit/ElementPath.swift,
 				StreamChatUI/StreamDifferenceKit/Extensions/AppKitExtension.swift,
 				StreamChatUI/StreamDifferenceKit/StagedChangeset.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/Cache.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/DataCache.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/DataCaching.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/ImageCache.swift,
-				StreamChatUI/StreamNuke/Nuke/Caching/ImageCaching.swift,
-				StreamChatUI/StreamNuke/Nuke/Decoding/AssetType.swift,
-				StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoderRegistry.swift,
-				"StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoders+Default.swift",
-				"StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoders+Empty.swift",
-				StreamChatUI/StreamNuke/Nuke/Decoding/ImageDecoding.swift,
-				StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoders.swift,
-				"StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoders+Default.swift",
-				"StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoders+ImageIO.swift",
-				StreamChatUI/StreamNuke/Nuke/Encoding/ImageEncoding.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageContainer.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageRequest.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageResponse.swift,
-				StreamChatUI/StreamNuke/Nuke/ImageTask.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Atomic.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/DataPublisher.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Extensions.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Graphics.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/ImagePublisher.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/ImageRequestKeys.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/LinkedList.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Log.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/Operation.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/RateLimiter.swift,
-				StreamChatUI/StreamNuke/Nuke/Internal/ResumableData.swift,
-				StreamChatUI/StreamNuke/Nuke/Loading/DataLoader.swift,
-				StreamChatUI/StreamNuke/Nuke/Loading/DataLoading.swift,
-				StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline.swift,
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Cache.swift",
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Configuration.swift",
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Delegate.swift",
-				"StreamChatUI/StreamNuke/Nuke/Pipeline/ImagePipeline+Error.swift",
-				StreamChatUI/StreamNuke/Nuke/Prefetching/ImagePrefetcher.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageDecompression.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessing.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessingOptions.swift,
-				StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors.swift,
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Anonymous.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Circle.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Composition.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+CoreImage.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+GaussianBlur.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+Resize.swift",
-				"StreamChatUI/StreamNuke/Nuke/Processing/ImageProcessors+RoundedCorners.swift",
-				StreamChatUI/StreamNuke/Nuke/Tasks/AsyncPipelineTask.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/AsyncTask.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskFetchOriginalData.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskFetchOriginalImage.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskFetchWithPublisher.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskLoadData.swift,
-				StreamChatUI/StreamNuke/Nuke/Tasks/TaskLoadImage.swift,
-				StreamChatUI/StreamNuke/NukeExtensions/ImageLoadingOptions.swift,
-				StreamChatUI/StreamNuke/NukeExtensions/ImageViewExtensions.swift,
 				"StreamChatUI/StreamSwiftyGif/NSImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/NSImageView+SwiftyGif.swift",
 				StreamChatUI/StreamSwiftyGif/ObjcAssociatedWeakObject.swift,
@@ -1925,7 +1817,6 @@
 				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
 				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
 				"StreamChatUI/Utils/ImageLoading/MediaLoader+UIKit.swift",
-				StreamChatUI/Utils/ImageLoading/StreamImageDownloader.swift,
 				StreamChatUI/Utils/ImageProcessor/StreamImageProcessor.swift,
 				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
 				StreamChatUI/Utils/KeyboardHandler/DefaultScrollViewKeyboardHandler.swift,
@@ -1994,6 +1885,10 @@
 				"StreamChatCommonUI/ImageLoading/ImageRequestOptions+ImageResize.swift",
 				StreamChatCommonUI/ImageLoading/ImageResize.swift,
 				StreamChatCommonUI/ImageLoading/MediaLoader.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/ImageDownsampler.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/ImageMemoryCache.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/LRUDiskCache.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageDownloader/StreamImageDownloader.swift,
 				StreamChatCommonUI/ImageLoading/StreamMediaLoader.swift,
 				StreamChatCommonUI/Reactions/ChatMessageReactionAppearance.swift,
 				StreamChatCommonUI/Resources/Assets.xcassets,
@@ -2166,7 +2061,6 @@
 				C1B49B3B282283C100F4E89E /* GDPerformanceView-Swift in Frameworks */,
 				ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */,
 				C121EC5D2746AC8C00023E4C /* StreamChat.framework in Frameworks */,
-				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
 				ADCB576628A425D500B81AE8 /* Sentry in Frameworks */,
 				AD4C2CA62EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
@@ -2288,7 +2182,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1393361275F5D1E00225E7A /* Nuke in Frameworks */,
 				F86C87F125F907CA0000BCA9 /* StreamChat.framework in Frameworks */,
 				F86C87F225F907CA0000BCA9 /* StreamChatUI.framework in Frameworks */,
 				824246C72F2CC6000040192C /* StreamChatCommonUI.framework in Frameworks */,
@@ -2503,7 +2396,6 @@
 			);
 			name = DemoApp;
 			packageProductDependencies = (
-				C1BE72722732CA62006EB51E /* Nuke */,
 				ADDFDE2A2779EC8A003B3B07 /* Atlantis */,
 				C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */,
 				ADCB576528A425D500B81AE8 /* Sentry */,
@@ -2802,7 +2694,6 @@
 			);
 			name = Messenger;
 			packageProductDependencies = (
-				C1393360275F5D1E00225E7A /* Nuke */,
 			);
 			productName = MessengerClone;
 			productReference = F86C87B225F906630000BCA9 /* Messenger.app */;
@@ -2930,7 +2821,6 @@
 			);
 			mainGroup = 8AD5EC8522E9A3E8005CFAC9;
 			packageReferences = (
-				C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */,
 				ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */,
 				A3D15D8C27E9D839006B34D7 /* XCRemoteSwiftPackageReference "stream-chat-swift-test-helpers" */,
 				A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
@@ -5489,14 +5379,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kean/Nuke";
-			requirement = {
-				kind = exactVersion;
-				version = 10.3.3;
-			};
-		};
 		E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
@@ -5548,20 +5430,10 @@
 			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
 			productName = Atlantis;
 		};
-		C1393360275F5D1E00225E7A /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
-		};
 		C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */;
 			productName = "GDPerformanceView-Swift";
-		};
-		C1BE72722732CA62006EB51E /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

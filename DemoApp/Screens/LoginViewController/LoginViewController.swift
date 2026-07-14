@@ -2,8 +2,8 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
 class LoginViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
@@ -62,7 +62,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
 
         switch user {
         case let .credentials(userCredentials):
-            Nuke.loadImage(with: userCredentials.avatarURL, into: cell.avatarView)
+            Components.default.mediaLoader.loadImage(into: cell.avatarView, from: userCredentials.avatarURL, with: ImageLoaderOptions())
             cell.avatarView.backgroundColor = .clear
             cell.nameLabel.text = userCredentials.name
             cell.descriptionLabel.text = "Stream test user"
