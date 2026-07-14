@@ -79,6 +79,11 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveUserGroup(payload: payload)
     }
 
+    func saveUserGroupMember(payload: UserGroupMember) throws -> UserGroupMemberDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveUserGroupMember(payload: payload)
+    }
+
     func deleteUserGroup(id: String) {
         underlyingSession.deleteUserGroup(id: id)
     }

@@ -92,7 +92,7 @@ extension MessagePayload {
             mentionedUsers: mentionedUsers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
-            mentionedGroups: Set(mentionedGroups.map { $0.asModel() }),
+            mentionedGroups: Set(mentionedGroups),
             mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
             attachments: attachments,
