@@ -233,7 +233,13 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
             guard let body = endpoint.body else { return }
             try encodeJSONToQueryItems(request: &request, data: body)
         case .post, .patch, .put:
-            if let data = endpoint.body as? Data {
+            if let multipart = endpoint.body as? MultipartFormData {
+                request.setValue(
+                    "multipart/form-data; boundary=\(MultipartFormData.boundary)",
+                    forHTTPHeaderField: "Content-Type"
+                )
+                request.httpBody = multipart.getMultipartFormData()
+            } else if let data = endpoint.body as? Data {
                 request.httpBody = data
             } else {
                 let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))

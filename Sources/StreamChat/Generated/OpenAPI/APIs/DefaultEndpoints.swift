@@ -615,7 +615,7 @@ extension Endpoint {
     static func uploadChannelFile(
         type: String,
         id: String,
-        uploadChannelFileRequest: EmptyBody,
+        uploadChannelFileRequest: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<UploadChannelFileResponse> {
         return .init(
@@ -633,7 +633,7 @@ extension Endpoint {
     static func uploadChannelImage(
         type: String,
         id: String,
-        uploadChannelRequest: EmptyBody,
+        uploadChannelRequest: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<UploadChannelResponse> {
         return .init(
@@ -649,7 +649,7 @@ extension Endpoint {
     }
 
     static func uploadFile(
-        fileUploadRequest: EmptyBody,
+        fileUploadRequest: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<FileUploadResponse> {
         return .init(
@@ -662,7 +662,7 @@ extension Endpoint {
     }
 
     static func uploadImage(
-        imageUploadRequest: EmptyBody,
+        imageUploadRequest: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<ImageUploadResponse> {
         return .init(

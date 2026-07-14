@@ -207,10 +207,10 @@ rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
 
 rename_generated_type Response EmptyResponse
-rename_generated_type FileUploadRequest EmptyBody
-rename_generated_type ImageUploadRequest EmptyBody
-rename_generated_type UploadChannelFileRequest EmptyBody
-rename_generated_type UploadChannelRequest EmptyBody
+rename_generated_type FileUploadRequest MultipartFormData
+rename_generated_type ImageUploadRequest MultipartFormData
+rename_generated_type UploadChannelFileRequest MultipartFormData
+rename_generated_type UploadChannelRequest MultipartFormData
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance

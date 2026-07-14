@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct MultipartFormData {
+struct MultipartFormData: Encodable, Sendable {
     private static let crlf = "\r\n"
     static let boundary: String = String(
         format: "chat-%08x%08x",

@@ -73,22 +73,23 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
+        let multipartFormData = MultipartFormData(
+            fileData,
+            fileName: uploadingState.localFileURL.lastPathComponent,
+            mimeType: uploadingState.file.type.mimeType
+        )
         let type = attachment.id.cid.type.rawValue
         let id = attachment.id.cid.id
 
         if attachment.type == .image {
             uploadAttachment(
-                endpoint: .uploadChannelImage(type: type, id: id, uploadChannelRequest: EmptyBody()),
-                fileData: fileData,
-                uploadingState: uploadingState,
+                endpoint: .uploadChannelImage(type: type, id: id, uploadChannelRequest: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
         } else {
             uploadAttachment(
-                endpoint: .uploadChannelFile(type: type, id: id, uploadChannelFileRequest: EmptyBody()),
-                fileData: fileData,
-                uploadingState: uploadingState,
+                endpoint: .uploadChannelFile(type: type, id: id, uploadChannelFileRequest: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
@@ -116,19 +117,21 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             return completion(.failure(ClientError.Unknown()))
         }
 
+        let multipartFormData = MultipartFormData(
+            fileData,
+            fileName: uploadingState.localFileURL.lastPathComponent,
+            mimeType: uploadingState.file.type.mimeType
+        )
+
         if uploadingState.file.type.isImage {
             uploadAttachment(
-                endpoint: .uploadImage(imageUploadRequest: EmptyBody()),
-                fileData: fileData,
-                uploadingState: uploadingState,
+                endpoint: .uploadImage(imageUploadRequest: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
         } else {
             uploadAttachment(
-                endpoint: .uploadFile(fileUploadRequest: EmptyBody()),
-                fileData: fileData,
-                uploadingState: uploadingState,
+                endpoint: .uploadFile(fileUploadRequest: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
@@ -169,19 +172,11 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
     private func uploadAttachment<ResponsePayload>(
         endpoint: Endpoint<ResponsePayload>,
-        fileData: Data,
-        uploadingState: AttachmentUploadingState,
         progress: (@Sendable (Double) -> Void)? = nil,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        let multipartFormData = MultipartFormData(
-            fileData,
-            fileName: uploadingState.localFileURL.lastPathComponent,
-            mimeType: uploadingState.file.type.mimeType
-        )
-
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
-            var urlRequest: URLRequest
+            let urlRequest: URLRequest
             do {
                 urlRequest = try requestResult.get()
             } catch {
@@ -189,10 +184,6 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
                 completion(.failure(error))
                 return
             }
-
-            let data = multipartFormData.getMultipartFormData()
-            urlRequest.addValue("multipart/form-data; boundary=\(MultipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = data
 
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
