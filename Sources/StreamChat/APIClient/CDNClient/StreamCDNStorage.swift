@@ -73,15 +73,26 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
+        let type = attachment.id.cid.type.rawValue
+        let id = attachment.id.cid.id
 
-        uploadAttachment(
-            endpoint: endpoint,
-            fileData: fileData,
-            uploadingState: uploadingState,
-            progress: options.progress,
-            completion: completion
-        )
+        if attachment.type == .image {
+            uploadAttachment(
+                endpoint: .uploadChannelImage(type: type, id: id, uploadChannelRequest: EmptyBody()),
+                fileData: fileData,
+                uploadingState: uploadingState,
+                progress: options.progress,
+                completion: completion
+            )
+        } else {
+            uploadAttachment(
+                endpoint: .uploadChannelFile(type: type, id: id, uploadChannelFileRequest: EmptyBody()),
+                fileData: fileData,
+                uploadingState: uploadingState,
+                progress: options.progress,
+                completion: completion
+            )
+        }
     }
 
     func uploadAttachment(
@@ -105,16 +116,23 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             return completion(.failure(ClientError.Unknown()))
         }
 
-        let isImage = uploadingState.file.type.isImage
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: isImage ? .image : .file)
-
-        uploadAttachment(
-            endpoint: endpoint,
-            fileData: fileData,
-            uploadingState: uploadingState,
-            progress: options.progress,
-            completion: completion
-        )
+        if uploadingState.file.type.isImage {
+            uploadAttachment(
+                endpoint: .uploadImage(imageUploadRequest: EmptyBody()),
+                fileData: fileData,
+                uploadingState: uploadingState,
+                progress: options.progress,
+                completion: completion
+            )
+        } else {
+            uploadAttachment(
+                endpoint: .uploadFile(fileUploadRequest: EmptyBody()),
+                fileData: fileData,
+                uploadingState: uploadingState,
+                progress: options.progress,
+                completion: completion
+            )
+        }
     }
 
     func deleteAttachment(
@@ -123,11 +141,9 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage
-        let endpoint = Endpoint<EmptyResponse>
-            .deleteAttachment(
-                url: remoteUrl,
-                type: isImage ? .image : .file
-            )
+        let endpoint: Endpoint<EmptyResponse> = isImage
+            ? .deleteImage(url: remoteUrl.absoluteString)
+            : .deleteFile(url: remoteUrl.absoluteString)
 
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest
@@ -186,12 +202,15 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
-                    let response: FileUploadPayload = try decoder.decodeRequestResponse(
+                    let response: FileUploadResponse = try decoder.decodeRequestResponse(
                         data: data,
                         response: response,
                         error: error
                     )
-                    let file = UploadedFile(fileURL: response.fileURL, thumbnailURL: response.thumbURL)
+                    guard let fileURLString = response.file, let fileURL = URL(string: fileURLString) else {
+                        throw ClientError.Unknown("Missing file URL in upload response")
+                    }
+                    let file = UploadedFile(fileURL: fileURL, thumbnailURL: response.thumbUrl.flatMap { URL(string: $0) })
 
                     completion(.success(file))
                 } catch {

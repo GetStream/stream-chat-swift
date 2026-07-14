@@ -13,7 +13,11 @@ CHAT_DIR="$REPO_ROOT/../chat"
 allowed_endpoints=(
     blockUsers
     createDevice
+    deleteChannelFile
+    deleteChannelImage
     deleteDevice
+    deleteFile
+    deleteImage
     getApp
     getBlockedUsers
     getOG
@@ -21,6 +25,10 @@ allowed_endpoints=(
     searchRoles
     stopWatchingChannel
     unblockUsers
+    uploadChannelFile
+    uploadChannelImage
+    uploadFile
+    uploadImage
 )
 allowed_models=(
   Action
@@ -32,16 +40,21 @@ allowed_models=(
   DeviceResponse
   Field
   FileUploadConfig
+  FileUploadResponse
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
   ImageData
   Images
+  ImageSize
+  ImageUploadResponse
   ListDevicesResponse
   Role
   SearchRolesResponse
   UnblockUsersRequest
   UnblockUsersResponse
+  UploadChannelFileResponse
+  UploadChannelResponse
   UserResponse
 )
 
@@ -194,6 +207,10 @@ rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
 
 rename_generated_type Response EmptyResponse
+rename_generated_type FileUploadRequest EmptyBody
+rename_generated_type ImageUploadRequest EmptyBody
+rename_generated_type UploadChannelFileRequest EmptyBody
+rename_generated_type UploadChannelRequest EmptyBody
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -272,8 +289,6 @@ inject_v1_endpoint_paths() {
     case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
-    case uploadChannelAttachment(channelId: String, type: String)
-    case uploadAttachment(String)
 
     case sendMessage(ChannelId)
     case message(MessageId)
@@ -303,9 +318,6 @@ inject_v1_endpoint_paths() {
 
     case callToken(String)
     case createCall(String)
-
-    case deleteFile(String)
-    case deleteImage(String)
 
     case liveLocations
 
@@ -365,8 +377,6 @@ EOF
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-        case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
-        case let .uploadAttachment(type): return "uploads/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
@@ -393,8 +403,6 @@ EOF
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
-        case let .deleteFile(channelId): return "channels/\(channelId)/file"
-        case let .deleteImage(channelId): return "channels/\(channelId)/image"
         case .polls: return "polls"
         case .pollsQuery: return "polls/query"
         case let .poll(pollId: pollId): return "polls/\(pollId)"
