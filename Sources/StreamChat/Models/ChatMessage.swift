@@ -9,7 +9,10 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-public struct ChatMessage: Identifiable, Sendable {
+///
+/// `@unchecked Sendable` is safe here because every stored property is `let`, and the type-erased
+/// `_quotedMessage` is only read through `getValue()`, which the compiler cannot prove.
+public final class ChatMessage: Identifiable, @unchecked Sendable {
     /// A unique identifier of the message.
     public let id: MessageId
 
@@ -320,21 +323,35 @@ public struct ChatMessage: Identifiable, Sendable {
         deletedAt: Date? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatMessage {
-        .init(
+        // Resolve the coalesced values up front so the type-checker does not
+        // have to evaluate all of them inside the single large initializer call.
+        let newText = text ?? self.text
+        let newType = type ?? self.type
+        let newCommand = command ?? self.command
+        let newDeletedAt = deletedAt ?? self.deletedAt
+        let newArguments = arguments ?? self.arguments
+        let newExtraData = extraData ?? self.extraData
+        let newAttachments = attachments ?? allAttachments
+        let newLocalState = state ?? localState
+        let newTranslations = translations ?? self.translations
+        let newOriginalLanguage = originalLanguage ?? self.originalLanguage
+        let newModerationDetails = moderationDetails ?? self.moderationDetails
+        let newReadBy = readBy ?? self.readBy
+        return .init(
             id: id,
             cid: cid,
-            text: text ?? self.text,
-            type: type ?? self.type,
-            command: command ?? self.command,
+            text: newText,
+            type: newType,
+            command: newCommand,
             createdAt: createdAt,
             locallyCreatedAt: locallyCreatedAt,
             updatedAt: updatedAt,
-            deletedAt: deletedAt ?? self.deletedAt,
-            arguments: arguments ?? self.arguments,
+            deletedAt: newDeletedAt,
+            arguments: newArguments,
             parentMessageId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
             replyCount: replyCount,
-            extraData: extraData ?? self.extraData,
+            extraData: newExtraData,
             quotedMessage: quotedMessage,
             isBounced: isBounced,
             isSilent: isSilent,
@@ -350,18 +367,18 @@ public struct ChatMessage: Identifiable, Sendable {
             mentionedGroups: mentionedGroups,
             mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
-            attachments: attachments ?? allAttachments,
+            attachments: newAttachments,
             latestReplies: latestReplies,
-            localState: state ?? localState,
+            localState: newLocalState,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
-            translations: translations ?? self.translations,
-            originalLanguage: originalLanguage ?? self.originalLanguage,
-            moderationDetails: moderationDetails ?? self.moderationDetails,
-            readBy: readBy ?? self.readBy,
+            translations: newTranslations,
+            originalLanguage: newOriginalLanguage,
+            moderationDetails: newModerationDetails,
+            readBy: newReadBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
@@ -623,11 +640,11 @@ public extension ChatMessage {
 }
 
 extension ChatMessage: Hashable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: ChatMessage, rhs: ChatMessage) -> Bool {
         lhs.hasEqualContent(to: rhs) && lhs.hasEqualMetadata(to: rhs)
     }
 
-    private func hasEqualContent(to other: Self) -> Bool {
+    private func hasEqualContent(to other: ChatMessage) -> Bool {
         guard id == other.id else { return false }
         guard localState == other.localState else { return false }
         guard updatedAt == other.updatedAt else { return false }
@@ -648,7 +665,7 @@ extension ChatMessage: Hashable {
         return true
     }
 
-    private func hasEqualMetadata(to other: Self) -> Bool {
+    private func hasEqualMetadata(to other: ChatMessage) -> Bool {
         guard threadParticipantsCount == other.threadParticipantsCount else { return false }
         guard arguments == other.arguments else { return false }
         guard command == other.command else { return false }

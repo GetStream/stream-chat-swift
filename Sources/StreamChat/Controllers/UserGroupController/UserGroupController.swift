@@ -189,7 +189,15 @@ extension UserGroupController {
             _ fetchRequest: NSFetchRequest<UserGroupDTO>,
             _ itemCreator: @escaping (UserGroupDTO) -> UserGroup,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserGroupDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<UserGroup, UserGroupDTO> = BackgroundEntityDatabaseObserver.init
+        ) -> BackgroundEntityDatabaseObserver<UserGroup, UserGroupDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\UserGroup.id, \UserGroupDTO.id),
+                fetchedResultsControllerType: $3
+            )
+        }
     }
 }
 

@@ -360,18 +360,16 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
             members.removeAll(where: { $0.id == notificationRemovedFromChannelEvent.user.id })
             let memberCount = channel?.memberCount ?? 0
 
-            channel = channel?.changing(members: members, memberCount: memberCount - 1)
-            channel?.membership = nil
+            channel = channel?.changing(members: members, membership: .some(nil), memberCount: memberCount - 1)
 
         case let memberAddedEvent as MemberAddedEvent:
             var members = Set(channel?.lastActiveMembers ?? [])
             members.insert(memberAddedEvent.member)
             let memberCount = channel?.memberCount ?? 0
 
-            var membership: ChatChannelMember?
-            if memberAddedEvent.member.id == currentUserId {
-                membership = memberAddedEvent.member
-            }
+            let membership: ChatChannelMember?? = memberAddedEvent.member.id == currentUserId
+                ? .some(memberAddedEvent.member)
+                : nil
             channel = channel?.changing(
                 members: Array(members),
                 membership: membership,
@@ -383,12 +381,8 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
             members.removeAll(where: { $0.id == memberRemovedEvent.user.id })
             let memberCount = channel?.memberCount ?? 0
 
-            var membership: ChatChannelMember? = channel?.membership
-            if memberRemovedEvent.user.id == currentUserId {
-                membership = nil
-            }
-            channel = channel?.changing(members: members, memberCount: memberCount - 1)
-            channel?.membership = membership
+            let membership: ChatChannelMember? = memberRemovedEvent.user.id == currentUserId ? nil : channel?.membership
+            channel = channel?.changing(members: members, membership: .some(membership), memberCount: memberCount - 1)
 
         case let userWatchingEvent as UserWatchingEvent:
             var watchers = channel?.lastActiveWatchers ?? []

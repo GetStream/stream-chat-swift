@@ -6,10 +6,18 @@ import Foundation
 
 // MARK: - JSONDecoder Stream
 
+/// The bytes `JSONEncoder` produces for an empty `[String: RawJSON]` dictionary. Extra data is re-encoded with
+/// this encoder before being persisted, so this is the exact (and by far the most common) representation of
+/// "no custom fields" stored on disk.
+private let emptyRawJSONObjectData = Data("{}".utf8)
+
 extension JSONDecoder {
     /// A convenience method returning RawJSON dictionary.
     func decodeRawJSON(from data: Data?) throws -> [String: RawJSON] {
         guard let data, !data.isEmpty else { return [:] }
+        // Avoid paying for a full `Decodable` pass (container allocation, key iteration, etc.) for the
+        // overwhelmingly common case where an entity simply has no custom fields.
+        if data == emptyRawJSONObjectData { return [:] }
         let rawJSON = try decode([String: RawJSON].self, from: data)
         return rawJSON
     }

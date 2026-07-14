@@ -275,6 +275,7 @@ extension PollVoteListController {
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
+                itemReuseKeyPaths: (\Poll.id, \PollDTO.id),
                 fetchedResultsControllerType: $3
             )
         }

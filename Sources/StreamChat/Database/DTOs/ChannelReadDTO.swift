@@ -7,6 +7,8 @@ import Foundation
 
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
+    /// A composed identifier (`channel cid` + `user id`) used to look up a read without a compound predicate.
+    @NSManaged private(set) var id: String?
     @NSManaged var lastReadAt: DBDate
     @NSManaged var lastReadMessageId: MessageId?
     @NSManaged var unreadMessageCount: Int32
@@ -17,6 +19,10 @@ class ChannelReadDTO: NSManagedObject {
 
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
+
+    static func createId(cid: ChannelId, userId: String) -> String {
+        [cid.rawValue, userId].joined(separator: "/")
+    }
 
     override func willSave() {
         super.willSave()
@@ -53,18 +59,28 @@ class ChannelReadDTO: NSManagedObject {
         load(by: fetchRequest(for: cid, userId: userId), context: context).first
     }
 
+    static func load(id: String, context: NSManagedObjectContext) -> ChannelReadDTO? {
+        load(by: id, context: context).first as? Self
+    }
+
     static func loadOrCreate(
         cid: ChannelId,
         userId: String,
         context: NSManagedObjectContext,
         cache: PreWarmedCache?
     ) -> ChannelReadDTO {
-        let request = fetchRequest(for: cid, userId: userId)
-        if let existing = load(by: request, context: context).first {
+        let readId = createId(cid: cid, userId: userId)
+        if let cached = cache?.model(for: readId, context: context, type: ChannelReadDTO.self) {
+            return cached
+        }
+
+        if let existing = load(id: readId, context: context) {
             return existing
         }
 
+        let request = fetchRequest(id: readId)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.id = readId
         new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context, cache: cache)
         new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
         return new

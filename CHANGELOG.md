@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add additional data to `Device` (`pushProvider`, `pushProviderName`, `userId`, `disabled`, `disabledReason`, `hardwareId`, and `voip`) [#4161](https://github.com/GetStream/stream-chat-swift/pull/4161)
 
+## StreamChatCommonUI
+### ✅ Added
+- Add `StreamAVPlayerLoader` with disk cache support [#4168](https://github.com/GetStream/stream-chat-swift/pull/4168)
+
 # [5.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.6.0)
 _July 03, 2026_
 
@@ -17,6 +21,11 @@ _July 03, 2026_
 - Add support for searching roles [#4139](https://github.com/GetStream/stream-chat-swift/pull/4139)
 - Add highlighting for `@here`, `@channel`, role and group mentions in messages [#4140](https://github.com/GetStream/stream-chat-swift/pull/4140)
 - Add customizable mention suggestion providers [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
+### ⚡️ Performance
+- Improve channel list performance with optimizations in model conversions [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
+- Reduce SDK size by 1 MB (including StreamChatCommonUI) [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
+### 🔄 Changed
+- Convert `ChatChannel` and `ChatMessage` to final immutable classes [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
 ### 🐞 Fixed
 - Fix sending typing events to channels without typing events capability [#4132](https://github.com/GetStream/stream-chat-swift/pull/4132)
 - Fix `typing.stop` being sent unconditionally on every message send [#4146](https://github.com/GetStream/stream-chat-swift/pull/4146)
