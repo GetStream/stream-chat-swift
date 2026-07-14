@@ -7,9 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add additional data to `Device` (`pushProvider`, `pushProviderName`, `userId`, `disabled`, `disabledReason`, `hardwareId`, and `voip`) [#4161](https://github.com/GetStream/stream-chat-swift/pull/4161)
 
+## StreamChatUI
+### 🔄 Changed
+- Replace vendored Nuke image loading with the built-in `StreamImageDownloader` [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
+
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `StreamAVPlayerLoader` with disk cache support [#4168](https://github.com/GetStream/stream-chat-swift/pull/4168)
+- Add `StreamImageDownloader` for downloading and caching images [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
 
 # [5.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.6.0)
 _July 03, 2026_
