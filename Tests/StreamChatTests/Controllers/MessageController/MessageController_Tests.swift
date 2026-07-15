@@ -339,8 +339,10 @@ final class MessageController_Tests: XCTestCase {
         // Create message in that matches controller's `messageId`
         try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: messageLocalText)
 
-        // Assert message is fetched from the database and has correct field values
-        var message = try XCTUnwrap(controller.message)
+        // Assert message is fetched from the database and has correct field values. Reading right
+        // after a synchronous write (outside a controller callback) requires read-your-writes
+        // consistency.
+        var message = try ControllerReadContext.withReadYourWrites { try XCTUnwrap(controller.message) }
         XCTAssertEqual(message.id, messageId)
         XCTAssertEqual(message.text, messageLocalText)
 
@@ -354,8 +356,9 @@ final class MessageController_Tests: XCTestCase {
             try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
         }
 
-        // Assert the controller's `message` is up-to-date
-        message = try XCTUnwrap(controller.message)
+        // Assert the controller's `message` is up-to-date. Reading right after a synchronous write
+        // (outside a controller callback) requires read-your-writes consistency.
+        message = try ControllerReadContext.withReadYourWrites { try XCTUnwrap(controller.message) }
         XCTAssertEqual(message.id, messageId)
         XCTAssertEqual(message.text, messagePayload.text)
     }
@@ -373,8 +376,12 @@ final class MessageController_Tests: XCTestCase {
         // Simulate updater completion call
         env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
 
-        XCTAssertEqual(controller.message?.id, messageId)
-        XCTAssertEqual(controller.replies.count, expectedReplies.count)
+        // Reading right after a synchronous write (outside a controller callback) requires
+        // read-your-writes consistency.
+        ControllerReadContext.withReadYourWrites {
+            XCTAssertEqual(controller.message?.id, messageId)
+            XCTAssertEqual(controller.replies.count, expectedReplies.count)
+        }
     }
 
     // MARK: - Order

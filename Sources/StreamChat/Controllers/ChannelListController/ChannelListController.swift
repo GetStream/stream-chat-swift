@@ -47,7 +47,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public var channels: [ChatChannel] {
         startChannelListObserverIfNeeded()
-        return channelListObserver.itemsNonBlocking
+        return channelListObserver.items
     }
 
     /// The worker used to fetch the remote data and communicate with servers.

@@ -89,7 +89,11 @@ extension DelegateCallable {
     /// A helper function to ensure the delegate callback is performed using the `callback` method.
     func delegateCallback(_ callback: @escaping @MainActor (Delegate) -> Void) {
         self.callback {
-            self.multicastDelegate.invoke(callback)
+            // Delegate callbacks run after the observer's cache has already been refreshed by the
+            // change that triggered them, so reads inside them can stay on the fast non-blocking path.
+            ControllerReadContext.withoutReadYourWrites {
+                self.multicastDelegate.invoke(callback)
+            }
         }
     }
 }

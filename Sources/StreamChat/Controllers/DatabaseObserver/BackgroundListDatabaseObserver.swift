@@ -6,17 +6,13 @@ import CoreData
 import Foundation
 
 class BackgroundListDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO>, @unchecked Sendable {
-    var items: [Item] {
-        rawItems
-    }
-
-    /// A fast, non-blocking variant of ``items`` served from the in-memory cache.
+    /// The observed items.
     ///
-    /// Prefer this on hot read paths (e.g. channel list scrolling) where the blocking cost of
-    /// ``items`` causes stutter. The value is eventually-consistent; use ``items`` when
-    /// read-your-writes is required.
-    var itemsNonBlocking: [Item] {
-        rawItemsNonBlocking
+    /// This serves a fast, non-blocking read from the in-memory cache by default (e.g. during list
+    /// scrolling), and a blocking read-your-writes read while running inside a controller action
+    /// completion. See ``ControllerReadContext``.
+    var items: [Item] {
+        ControllerReadContext.prefersReadYourWrites ? rawItems : rawItemsNonBlocking
     }
 
     init(

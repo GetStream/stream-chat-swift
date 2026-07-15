@@ -8,8 +8,13 @@ import Foundation
 /// Observes changes of a single entity specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
 /// This observation is performed on the background
 class BackgroundEntityDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO>, @unchecked Sendable {
+    /// The observed item.
+    ///
+    /// This serves a fast, non-blocking read from the in-memory cache by default, and a blocking
+    /// read-your-writes read while running inside a controller action completion. See
+    /// ``ControllerReadContext``.
     var item: Item? {
-        rawItems.first
+        ControllerReadContext.prefersReadYourWrites ? rawItems.first : rawItemsNonBlocking.first
     }
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`

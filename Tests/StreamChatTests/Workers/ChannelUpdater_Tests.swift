@@ -652,7 +652,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         // 5 previously-cached messages (FRC does not re-evaluate cached rows when
         // only the parent channel's `oldestMessageAt`/`newestMessageAt` change).
         AssertAsync.willBeEqual(observer.items.count, midPageMessages.count)
-        XCTAssertTrue(observer.items.allSatisfy { $0.id.hasPrefix("mid-") })
+        // Reading right after a synchronous write (outside a controller callback) requires
+        // read-your-writes consistency.
+        ControllerReadContext.withReadYourWrites {
+            XCTAssertTrue(observer.items.allSatisfy { $0.id.hasPrefix("mid-") })
+        }
     }
 
     func test_updateChannelQuery_whenIsJumpingToMessage_whenRequestFails_thenDoesNotDeleteMessages() throws {

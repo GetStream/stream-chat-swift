@@ -328,13 +328,16 @@ extension ChatThreadListController_Tests {
             }, completion: $0)
         }
         
-        // Assert the resulting value is updated
-        XCTAssertEqual(
-            controller.threads.map(\.parentMessageId).sorted(),
-            expectedResult().sorted(),
-            file: file,
-            line: line
-        )
+        // Assert the resulting value is updated. Reading right after a synchronous write (outside a
+        // controller callback) requires read-your-writes consistency.
+        ControllerReadContext.withReadYourWrites {
+            XCTAssertEqual(
+                controller.threads.map(\.parentMessageId).sorted(),
+                expectedResult().sorted(),
+                file: file,
+                line: line
+            )
+        }
     }
 
     private func waitForInitialThreadsUpdate(file: StaticString = #file, line: UInt = #line) {

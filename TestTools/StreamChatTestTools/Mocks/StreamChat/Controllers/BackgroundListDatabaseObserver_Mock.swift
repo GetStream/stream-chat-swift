@@ -21,10 +21,6 @@ final class BackgroundListDatabaseObserver_Mock<Item: Sendable, DTO: NSManagedOb
     override var items: [Item] {
         items_mock ?? super.items
     }
-
-    override var itemsNonBlocking: [Item] {
-        items_mock ?? super.itemsNonBlocking
-    }
 }
 
 extension BackgroundListDatabaseObserver {
