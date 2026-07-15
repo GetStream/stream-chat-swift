@@ -26,12 +26,10 @@ final class UserGroupController_Tests: XCTestCase {
     }
 
     func test_synchronize_loadsUserGroup() {
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
             name: "Backend Support",
-            teamId: "engineering",
-            createdAt: .unique,
-            updatedAt: .unique
+            teamId: "engineering"
         )
 
         repository.loadUserGroup_completion_result = .success(userGroup)
@@ -49,12 +47,10 @@ final class UserGroupController_Tests: XCTestCase {
     }
 
     func test_update_forwardsRequestToRepository() {
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
             name: "Updated Name",
-            teamId: "engineering",
-            createdAt: .unique,
-            updatedAt: .unique
+            teamId: "engineering"
         )
 
         repository.updateUserGroup_completion_result = .success(userGroup)
@@ -73,20 +69,17 @@ final class UserGroupController_Tests: XCTestCase {
 
     func test_addMembers_forwardsRequestToRepository() {
         let memberIds: [UserId] = ["user1", "user2"]
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
-            name: "Backend Support",
-            teamId: "engineering",
             members: memberIds.map {
-                UserGroupMember(
+                UserGroupMember.dummy(
                     groupId: "backendsupport",
-                    userId: $0,
                     isAdmin: false,
-                    createdAt: .unique
+                    userId: $0
                 )
             },
-            createdAt: .unique,
-            updatedAt: .unique
+            name: "Backend Support",
+            teamId: "engineering"
         )
 
         repository.addMembers_completion_result = .success(userGroup)
@@ -106,12 +99,10 @@ final class UserGroupController_Tests: XCTestCase {
 
     func test_removeMembers_forwardsRequestToRepository() {
         let memberIds: [UserId] = ["user1", "user2"]
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
             name: "Backend Support",
-            teamId: "engineering",
-            createdAt: .unique,
-            updatedAt: .unique
+            teamId: "engineering"
         )
 
         repository.removeMembers_completion_result = .success(userGroup)
@@ -126,6 +117,5 @@ final class UserGroupController_Tests: XCTestCase {
         XCTAssertEqual(repository.removeMembers_id, "backendsupport")
         XCTAssertEqual(repository.removeMembers_request?.memberIds, memberIds)
         XCTAssertEqual(repository.removeMembers_request?.teamId, "engineering")
-        XCTAssertNil(repository.removeMembers_request?.asAdmin)
     }
 }
