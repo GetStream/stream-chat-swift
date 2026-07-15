@@ -2,7 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import CoreData
+import Combine
 import Foundation
 
 extension ChatClient {
@@ -47,16 +47,23 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public var channels: [ChatChannel] {
         startChannelListObserverIfNeeded()
-        return channelListObserver.items
+        return channelList.backgroundState { $0.channels }
     }
 
-    /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelListUpdater = self.environment
-        .channelQueryUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
-    
+    /// The state layer object which backs this controller.
+    ///
+    /// All the data and actions come from the state layer which allows sharing the same
+    /// implementation between async-await based APIs and controller based APIs. The controller reads
+    /// from the non-isolated background state (see ``ChannelList/backgroundState(_:)``), which never
+    /// blocks the main thread nor the database queue.
+    let channelList: ChannelList
+
+    /// Combine subscriptions observing the non-isolated background state.
+    ///
+    /// - Note: Mutated only once, on ``ChannelList``'s background state queue, when observing starts
+    ///   (see ``startChannelListObserverIfNeeded()``).
+    private var cancellables = Set<AnyCancellable>()
+
     /// The worker used to update current user data.
     private lazy var currentUserUpdater: CurrentUserUpdater = self.environment
         .currentUserUpdaterBuilder(
@@ -81,35 +88,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        if let updated = worker.loadPredefinedFilter(for: query) {
-            query = updated
-        }
-        return makeChannelListObserver()
-    }()
-
-    private func makeChannelListObserver() -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
-        let observer = environment.createChannelListDatabaseObserver(
-            client.databaseContainer,
-            request,
-            { try $0.asModel() },
-            query.runtimeSortingValues
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
-                $0.controller(self, didChangeChannels: changes)
-            }
-        }
-        return observer
-    }
-
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -122,12 +100,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
 
-    private let filter: (@Sendable (ChatChannel) -> Bool)?
     private let environment: Environment
-    private lazy var channelListLinker: ChannelListLinker = self.environment
-        .channelListLinkerBuilder(
-            query, filter, client.config, client.databaseContainer, worker, client.channelWatcherHandler
-        )
 
     /// Creates a new `ChannelListController`.
     ///
@@ -143,18 +116,37 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ) {
         self.client = client
         self.query = query
-        self.filter = filter
         self.environment = environment
-        self.deliveryCriteriaValidator = environment.deliveryCriteriaValidatorBuilder()
+        deliveryCriteriaValidator = environment.deliveryCriteriaValidatorBuilder()
+        channelList = environment.channelListBuilder(query, filter, client)
         super.init()
     }
 
     override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
-        channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
-        updateChannelList { [weak self] result in
-            self?.callback { completion?(result.error) }
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let pageSize = self.channelList.backgroundState { $0.query.pagination.pageSize }
+                let channels = try await self.channelList.synchronizeBackgroundState()
+                let hasLoadedAll = channels.count < pageSize
+                self.channelList.backgroundState { $0.hasLoadedAllPreviousChannels = hasLoadedAll }
+                // Predefined filters can update the local query representation.
+                let updatedQuery = self.channelList.backgroundState { $0.query }
+                self.callback {
+                    self.hasLoadedAllPreviousChannels = hasLoadedAll
+                    self.query = updatedQuery
+                    self.state = .remoteDataFetched
+                    self.markChannelsAsDeliveredIfNeeded(channels: channels)
+                    completion?(nil)
+                }
+            } catch {
+                self.callback {
+                    self.state = .remoteDataFetchFailed(ClientError(with: error))
+                    completion?(error)
+                }
+            }
         }
     }
 
@@ -178,16 +170,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             return
         }
 
-        let limit = limit ?? query.pagination.pageSize
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { result in
-            switch result {
-            case let .success(updateResult):
-                self.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
-                self.hasLoadedAllPreviousChannels = updateResult.channels.count < limit
-                self.callback { completion?(nil) }
-            case let .failure(error):
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let channels = try await self.channelList.loadMoreBackgroundStateChannels(limit: limit)
+                let hasLoadedAll = self.channelList.backgroundState { $0.hasLoadedAllPreviousChannels }
+                self.callback {
+                    self.hasLoadedAllPreviousChannels = hasLoadedAll
+                    self.markChannelsAsDeliveredIfNeeded(channels: channels)
+                    completion?(nil)
+                }
+            } catch {
                 self.callback { completion?(error) }
             }
         }
@@ -196,40 +189,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Internal
 
     func refreshLoadedChannels(completion: @escaping @Sendable (Result<Set<ChannelId>, Error>) -> Void) {
-        let channelCount = channelListObserver.items.count
-        worker.refreshLoadedChannels(for: query, channelCount: channelCount, completion: completion)
-    }
-
-    // MARK: - Helpers
-
-    private func updateChannelList(
-        _ completion: (@MainActor (Result<ChannelListUpdateResult, Error>) -> Void)? = nil
-    ) {
-        let limit = query.pagination.pageSize
-        worker.update(
-            channelListQuery: query
-        ) { [weak self] result in
-            switch result {
-            case let .success(updateResult):
-                self?.state = .remoteDataFetched
-                self?.hasLoadedAllPreviousChannels = updateResult.channels.count < limit
-                
-                // Mark channels as delivered if synchronization was successful
-                self?.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
-
-                // Predefined filters can update local query representation (query gets backend defined filter and sort which must be set to FRC)
-                if let updatedQuery = updateResult.updatedQuery {
-                    self?.query = updatedQuery
-                    self?.updateChannelListObserver()
-                }
-                
-                self?.callback { completion?(.success(updateResult)) }
-            case let .failure(error):
-                self?.state = .remoteDataFetchFailed(ClientError(with: error))
-                self?.callback { completion?(.failure(error)) }
+        Task { [channelList] in
+            do {
+                let channelIds = try await channelList.refreshLoadedBackgroundStateChannels()
+                completion(.success(channelIds))
+            } catch {
+                completion(.failure(error))
             }
         }
     }
+
+    // MARK: - Helpers
     
     /// Marks channels as delivered if they meet the specified criteria.
     /// - Parameter channels: The channels to evaluate for marking as delivered.
@@ -258,50 +228,79 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
-    /// `channelListObserver` to fetch the local data and start observing the changes. It also changes
-    /// `state` based on the result.
+    /// A reentrancy guard for ``startChannelListObserverIfNeeded()``: delegate callbacks can
+    /// synchronously read ``channels`` (which starts the observer) while the observer is starting.
+    private let isStartingChannelListObserver = AllocatedUnfairLock(false)
+
+    /// If the `state` of the controller is `initialized`, this method builds the state layer's
+    /// non-isolated ``ChannelListObservableState`` (which starts observing the database on a
+    /// background queue) and starts observing its changes.
     ///
     /// It's safe to call this method repeatedly.
     ///
     private func startChannelListObserverIfNeeded() {
         guard state == .initialized else { return }
-        do {
-            try channelListObserver.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        let shouldStart = isStartingChannelListObserver.withLock { isStarting -> Bool in
+            guard !isStarting else { return false }
+            isStarting = true
+            return true
         }
-    }
-    
-    private func updateChannelListObserver() {
-        channelListObserver = makeChannelListObserver()
-        do {
-            try channelListObserver.startObserving()
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to update the channel list observer: \(error)")
+        guard shouldStart else { return }
+
+        // Building the background state starts the database observer and returns the current channels.
+        // The closure runs on the background state's serial queue, so subscriptions are set up there.
+        let initialChannels: [ChatChannel] = channelList.backgroundState { [weak self] channelListState in
+            guard let self else { return channelListState.channels }
+            // Predefined filters are resolved when the background state is created.
+            self.query = channelListState.query
+
+            // `latestChanges` is published after `channels`, therefore reads of `channels` are
+            // guaranteed to be up to date when delegates react to the changes.
+            channelListState.$latestChanges
+                .dropFirst()
+                .sink { [weak self] changes in
+                    guard let self else { return }
+                    self.delegateCallback { [weak self] in
+                        guard let self else {
+                            log.warning("Callback called while self is nil")
+                            return
+                        }
+                        log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
+                        $0.controller(self, didChangeChannels: changes)
+                    }
+                }
+                .store(in: &self.cancellables)
+
+            return channelListState.channels
+        }
+        state = .localDataFetched
+
+        // Report the initial local data as insertions (matches the legacy database observer behavior).
+        // Dispatched asynchronously because this method can run within the `multicastDelegate.didSet`
+        // (invoking the delegate synchronously there would violate exclusive access to the property).
+        let initialChanges: [ListChange<ChatChannel>] = initialChannels
+            .enumerated()
+            .map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.delegateCallback { [weak self] in
+                guard let self else { return }
+                $0.controller(self, didChangeChannels: initialChanges)
+            }
         }
     }
 }
 
 extension ChatChannelListController {
     struct Environment {
-        var channelQueryUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> ChannelListUpdater = ChannelListUpdater.init
-
-        var channelListLinkerBuilder: (
+        var channelListBuilder: (
             _ query: ChannelListQuery,
-            _ filter: (@Sendable (ChatChannel) -> Bool)?,
-            _ clientConfig: ChatClientConfig,
-            _ databaseContainer: DatabaseContainer,
-            _ worker: ChannelListUpdater,
-            _ channelWatcherHandler: ChannelWatcherHandling
-        ) -> ChannelListLinker = ChannelListLinker.init
-        
+            _ dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
+            _ client: ChatClient
+        ) -> ChannelList = { query, dynamicFilter, client in
+            ChannelList(query: query, dynamicFilter: dynamicFilter, client: client)
+        }
+
         var currentUserUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
@@ -310,22 +309,6 @@ extension ChatChannelListController {
         var deliveryCriteriaValidatorBuilder: () -> MessageDeliveryCriteriaValidating = {
             MessageDeliveryCriteriaValidator()
         }
-        
-        var createChannelListDatabaseObserver: (
-            _ database: DatabaseContainer,
-            _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel,
-            _ sort: [SortValue<ChatChannel>]
-        )
-            -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-                BackgroundListDatabaseObserver(
-                    database: $0,
-                    fetchRequest: $1,
-                    itemCreator: $2,
-                    itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
-                    runtimeSorting: $3
-                )
-            }
     }
 }
 

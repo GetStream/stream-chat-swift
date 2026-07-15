@@ -8,8 +8,17 @@ import Foundation
 public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
+    private let query: ChannelListQuery
+    private let dynamicFilter: (@Sendable (ChatChannel) -> Bool)?
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
     let groupKey: String?
+
+    /// A serial queue backing the non-isolated ``ChannelListObservableState`` used by controllers.
+    private let backgroundStateQueue = DispatchQueue(
+        label: "io.getstream.channel-list-background-state",
+        target: .global()
+    )
+    private var _backgroundState: ChannelListObservableState?
 
     init(
         query: ChannelListQuery,
@@ -18,6 +27,8 @@ public class ChannelList: @unchecked Sendable {
         environment: Environment = .init()
     ) {
         self.client = client
+        self.query = query
+        self.dynamicFilter = dynamicFilter
         self.groupKey = query.groupKey
         let channelListUpdater = environment.channelListUpdater(
             client.databaseContainer,
@@ -41,6 +52,36 @@ public class ChannelList: @unchecked Sendable {
 
     /// An observable object representing the current state of the channel list.
     @MainActor public var state: ChannelListState { stateBuilder.state }
+
+    // MARK: - Non-Isolated Background State (Controller Support)
+
+    /// Provides serialized access to the non-isolated ``ChannelListObservableState``.
+    ///
+    /// The state and the `actions` closure both run on ``backgroundStateQueue``, which makes it safe
+    /// to read ``ChannelListObservableState/channels`` and observe changes from non-isolated contexts
+    /// (like ``ChatChannelListController``) without hopping to the main actor or blocking the database queue.
+    @discardableResult
+    func backgroundState<T>(_ actions: (ChannelListObservableState) -> T) -> T {
+        backgroundStateQueue.sync {
+            let state: ChannelListObservableState
+            if let existing = _backgroundState {
+                state = existing
+            } else {
+                state = ChannelListObservableState(
+                    queue: backgroundStateQueue,
+                    query: query,
+                    dynamicFilter: dynamicFilter,
+                    clientConfig: client.config,
+                    channelListUpdater: channelListUpdater,
+                    database: client.databaseContainer,
+                    eventNotificationCenter: client.eventNotificationCenter,
+                    channelWatcherHandler: client.channelWatcherHandler
+                )
+                _backgroundState = state
+            }
+            return actions(state)
+        }
+    }
 
     /// Fetches the most recent state from the server and updates the local store.
     ///
@@ -121,6 +162,72 @@ public class ChannelList: @unchecked Sendable {
 
     @MainActor private func setHasLoadedAllPreviousChannels(_ hasLoadedAllPreviousChannels: Bool) {
         state.hasLoadedAllPreviousChannels = hasLoadedAllPreviousChannels
+    }
+
+    // MARK: - Controller Support
+
+    /// Loads the first page into the non-isolated background state.
+    ///
+    /// - Note: Sync tracking is handled by the owning ``ChatChannelListController`` (which registers
+    ///   itself via `startTrackingChannelListController`), so this method does not track the list.
+    @discardableResult
+    func synchronizeBackgroundState() async throws -> [ChatChannel] {
+        let pageSize = backgroundState { $0.query.pagination.pageSize }
+        return try await loadBackgroundStateChannels(with: Pagination(pageSize: pageSize))
+    }
+
+    /// Loads channels for the specified pagination and updates the non-isolated background state.
+    @discardableResult
+    func loadBackgroundStateChannels(with pagination: Pagination) async throws -> [ChatChannel] {
+        if let groupKey {
+            let paginationState = try await channelListUpdater.paginationState(for: groupKey)
+            let channelGroups = try await channelListUpdater.queryGroupedChannels(
+                groups: [groupKey: .init(limit: pagination.pageSize > 0 ? pagination.pageSize : nil, next: pagination.cursor)],
+                limit: nil,
+                watch: paginationState.watch ?? true,
+                presence: paginationState.presence ?? false
+            )
+            let group = channelGroups.first { $0.groupKey == groupKey }
+            backgroundState { $0.hasLoadedAllPreviousChannels = group?.next == nil }
+            return group?.channels ?? []
+        } else {
+            var query = backgroundState { $0.query }
+            query.pagination = pagination
+            let result = try await channelListUpdater.update(channelListQuery: query)
+            if let updatedQuery = result.updatedQuery {
+                backgroundState { $0.setQuery(updatedQuery) }
+            }
+            return result.channels
+        }
+    }
+
+    /// Loads the next page of channels into the non-isolated background state.
+    @discardableResult
+    func loadMoreBackgroundStateChannels(limit: Int? = nil) async throws -> [ChatChannel] {
+        let (hasLoadedAll, pageSize, count) = backgroundState {
+            ($0.hasLoadedAllPreviousChannels, $0.query.pagination.pageSize, $0.channels.count)
+        }
+        guard !hasLoadedAll else { return [] }
+        let limit = limit ?? pageSize
+        if let groupKey {
+            let paginationState = try await channelListUpdater.paginationState(for: groupKey)
+            guard let cursor = paginationState.next else {
+                backgroundState { $0.hasLoadedAllPreviousChannels = true }
+                return []
+            }
+            return try await loadBackgroundStateChannels(with: Pagination(pageSize: limit, cursor: cursor))
+        } else {
+            let channels = try await loadBackgroundStateChannels(with: Pagination(pageSize: limit, offset: count))
+            backgroundState { $0.hasLoadedAllPreviousChannels = channels.isEmpty || channels.count < limit }
+            return channels
+        }
+    }
+
+    /// Refreshes the channels currently loaded into the non-isolated background state.
+    @discardableResult
+    func refreshLoadedBackgroundStateChannels() async throws -> Set<ChannelId> {
+        let (count, query) = backgroundState { ($0.channels.count, $0.query) }
+        return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
     }
 }
 

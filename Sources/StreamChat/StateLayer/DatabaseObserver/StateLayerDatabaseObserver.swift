@@ -174,6 +174,44 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         })
     }
     
+    /// Starts observing the database and dispatches items and list changes on the given queue.
+    ///
+    /// Unlike ``startObserving(onContextDidChange:)``, the initial `performFetch()` is executed on the
+    /// observed context's own queue, which avoids Core Data threading violations when the observer is
+    /// started from a non-isolated context (e.g. a controller's background queue).
+    ///
+    /// - Parameters:
+    ///   - queue: The dispatch queue on which changes are delivered.
+    ///   - didChange: The callback which is triggered when the observed items change. Runs on `queue`.
+    ///
+    /// - Returns: Returns the current state of items in the local database.
+    func startObserving(
+        on queue: DispatchQueue,
+        didChange: @escaping @Sendable ([Item], [ListChange<Item>]) -> Void
+    ) throws -> [Item] where Item: Sendable {
+        changeAggregator.onDidChange = { [weak self] changes in
+            guard let self else { return }
+            // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait.
+            let items = self.updateItems(changes)
+            queue.async { didChange(items, changes) }
+        }
+        frc.delegate = changeAggregator
+        nonisolated(unsafe) var fetchError: Error?
+        nonisolated(unsafe) var initialItems = [Item]()
+        context.performAndWait {
+            do {
+                try frc.performFetch()
+                initialItems = reuseItems ?? updateItems(nil)
+            } catch {
+                fetchError = error
+            }
+        }
+        if let fetchError {
+            throw fetchError
+        }
+        return initialItems
+    }
+    
     /// Starts observing the database and dispatches changes on the NSManagedObjectContext's queue.
     ///
     /// - Parameter onContextDidChange: The callback which is triggered when the observed item changes. Runs on the ``NSManagedObjectContext``'s queue.

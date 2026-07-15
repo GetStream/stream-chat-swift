@@ -14,7 +14,8 @@ extension ChannelListState {
         private let dynamicFilter: ((ChatChannel) -> Bool)?
         private let eventNotificationCenter: EventNotificationCenter
         private var query: ChannelListQuery
-        private var channelsDidChange: (@Sendable @MainActor ([ChatChannel]) async -> Void)?
+        private var queue: DispatchQueue?
+        private var channelsDidChange: (@Sendable ([ChatChannel], [ListChange<ChatChannel>]) -> Void)?
         
         init(
             query: ChannelListQuery,
@@ -56,14 +57,15 @@ extension ChannelListState {
         }
         
         struct Handlers {
-            let channelsDidChange: @Sendable @MainActor ([ChatChannel]) async -> Void
+            let channelsDidChange: @Sendable ([ChatChannel], [ListChange<ChatChannel>]) -> Void
         }
         
-        func start(with handlers: Handlers) -> [ChatChannel] {
+        func start(on queue: DispatchQueue, with handlers: Handlers) -> [ChatChannel] {
+            self.queue = queue
             channelsDidChange = handlers.channelsDidChange
             do {
                 channelListLinker.start(with: eventNotificationCenter)
-                return try channelListObserver.startObserving(didChange: handlers.channelsDidChange)
+                return try channelListObserver.startObserving(on: queue, didChange: handlers.channelsDidChange)
             } catch {
                 log.error("Failed to start the channel list observer for query: \(query)")
                 return []
@@ -77,9 +79,9 @@ extension ChannelListState {
                 database: database,
                 clientConfig: clientConfig
             )
-            guard let channelsDidChange else { return [] }
+            guard let channelsDidChange, let queue else { return [] }
             do {
-                return try channelListObserver.startObserving(didChange: channelsDidChange)
+                return try channelListObserver.startObserving(on: queue, didChange: channelsDidChange)
             } catch {
                 log.error("Failed to restart the channel list observer after reload for query: \(newQuery)")
                 return []
