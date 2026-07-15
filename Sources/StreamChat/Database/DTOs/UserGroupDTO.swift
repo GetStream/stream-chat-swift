@@ -14,7 +14,7 @@ class UserGroupDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var createdBy: String?
-    @NSManaged var membersData: Data?
+    @NSManaged var memberDTOs: Set<UserGroupMemberDTO>
 
     static func fetchRequest(id: String) -> NSFetchRequest<UserGroupDTO> {
         let request = NSFetchRequest<UserGroupDTO>(entityName: UserGroupDTO.entityName)
@@ -57,59 +57,30 @@ class UserGroupDTO: NSManagedObject {
     }
 }
 
-private struct StoredUserGroupMember: Codable {
-    let groupId: String
-    let userId: UserId
-    let isAdmin: Bool
-    let createdAt: Date
-}
-
 extension UserGroupDTO {
     var members: [UserGroupMember] {
-        get {
-            guard let membersData else { return [] }
-            guard let storedMembers = try? JSONDecoder.default.decode([StoredUserGroupMember].self, from: membersData) else {
-                return []
-            }
-            return storedMembers.map {
-                UserGroupMember(
-                    groupId: $0.groupId,
-                    userId: $0.userId,
-                    isAdmin: $0.isAdmin,
-                    createdAt: $0.createdAt
-                )
-            }
-        }
-        set {
-            let storedMembers = newValue.map {
-                StoredUserGroupMember(
-                    groupId: $0.groupId,
-                    userId: $0.userId,
-                    isAdmin: $0.isAdmin,
-                    createdAt: $0.createdAt
-                )
-            }
-            membersData = try? JSONEncoder.default.encode(storedMembers)
-        }
+        memberDTOs
+            .sorted { $0.userId < $1.userId }
+            .map { $0.asModel() }
     }
 
     func asModel() -> UserGroup {
         UserGroup(
-            id: id,
-            name: name,
-            description: groupDescription,
-            teamId: teamId,
-            members: members,
             createdAt: createdAt.bridgeDate,
-            updatedAt: updatedAt.bridgeDate,
-            createdBy: createdBy
+            createdBy: createdBy,
+            description: groupDescription,
+            id: id,
+            members: members,
+            name: name,
+            teamId: teamId,
+            updatedAt: updatedAt.bridgeDate
         )
     }
 }
 
 extension NSManagedObjectContext: UserGroupDatabaseSession {
     @discardableResult
-    func saveUserGroup(payload: UserGroupPayload) throws -> UserGroupDTO {
+    func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {
         let dto = UserGroupDTO.loadOrCreate(id: payload.id, context: self)
         dto.id = payload.id
         dto.name = payload.name
@@ -118,7 +89,19 @@ extension NSManagedObjectContext: UserGroupDatabaseSession {
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.createdBy = payload.createdBy
-        dto.members = payload.members.map { $0.asModel() }
+        dto.memberDTOs = try Set(payload.members.map { try saveUserGroupMember(payload: $0) })
+        return dto
+    }
+
+    @discardableResult
+    func saveUserGroupMember(payload: UserGroupMember) throws -> UserGroupMemberDTO {
+        let id = UserGroupMemberDTO.createId(groupId: payload.groupId, userId: payload.userId)
+        let dto = UserGroupMemberDTO.loadOrCreate(id: id, context: self)
+        dto.id = id
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.groupId = payload.groupId
+        dto.isAdmin = payload.isAdmin
+        dto.userId = payload.userId
         return dto
     }
 

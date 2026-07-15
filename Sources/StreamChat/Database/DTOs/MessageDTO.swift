@@ -79,7 +79,7 @@ class MessageDTO: NSManagedObject {
     /// The ids of the user groups that were mentioned. Use this property ONLY when creating/updating a message.
     @NSManaged var mentionedGroupIds: [String]
     /// Use this property in case you want to read the user groups mentioned in the message.
-    @NSManaged var mentionedGroups: Set<GroupMentionDTO>
+    @NSManaged var mentionedGroups: Set<UserGroupDTO>
     /// The roles that were mentioned (e.g. `admin`, `moderator`).
     @NSManaged var mentionedRoles: [String]
 
@@ -1035,7 +1035,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.mentionedHere = payload.mentionedHere
         dto.mentionedChannel = payload.mentionedChannel
         dto.mentionedGroupIds = payload.mentionedGroups.map(\.id)
-        dto.mentionedGroups = try Set(payload.mentionedGroups.map { try saveGroupMention(payload: $0) })
+        dto.mentionedGroups = try Set(payload.mentionedGroups.map { try saveUserGroup(payload: $0) })
         dto.mentionedRoles = payload.mentionedRoles
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does

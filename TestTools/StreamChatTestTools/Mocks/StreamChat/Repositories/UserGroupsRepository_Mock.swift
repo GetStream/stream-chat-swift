@@ -17,11 +17,11 @@ final class UserGroupsRepository_Mock: UserGroupsRepository, @unchecked Sendable
     var loadUserGroup_teamId: String?
     var loadUserGroup_completion_result: Result<UserGroup, Error>?
 
-    var createUserGroup_request: CreateUserGroupRequestBody?
+    var createUserGroup_request: CreateUserGroupRequest?
     var createUserGroup_completion_result: Result<UserGroup, Error>?
 
     var updateUserGroup_id: String?
-    var updateUserGroup_request: UpdateUserGroupRequestBody?
+    var updateUserGroup_request: UpdateUserGroupRequest?
     var updateUserGroup_completion_result: Result<UserGroup, Error>?
 
     var deleteUserGroup_id: String?
@@ -29,11 +29,11 @@ final class UserGroupsRepository_Mock: UserGroupsRepository, @unchecked Sendable
     var deleteUserGroup_error: Error?
 
     var addMembers_id: String?
-    var addMembers_request: UserGroupMembersRequestBody?
+    var addMembers_request: AddUserGroupMembersRequest?
     var addMembers_completion_result: Result<UserGroup, Error>?
 
     var removeMembers_id: String?
-    var removeMembers_request: UserGroupMembersRequestBody?
+    var removeMembers_request: RemoveUserGroupMembersRequest?
     var removeMembers_completion_result: Result<UserGroup, Error>?
 
     override init(database: DatabaseContainer, apiClient: APIClient) {
@@ -77,7 +77,7 @@ final class UserGroupsRepository_Mock: UserGroupsRepository, @unchecked Sendable
     }
 
     override func createUserGroup(
-        request: CreateUserGroupRequestBody,
+        request: CreateUserGroupRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
         createUserGroup_request = request
@@ -88,7 +88,7 @@ final class UserGroupsRepository_Mock: UserGroupsRepository, @unchecked Sendable
 
     override func updateUserGroup(
         id: String,
-        request: UpdateUserGroupRequestBody,
+        request: UpdateUserGroupRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
         updateUserGroup_id = id
@@ -110,7 +110,7 @@ final class UserGroupsRepository_Mock: UserGroupsRepository, @unchecked Sendable
 
     override func addMembers(
         id: String,
-        request: UserGroupMembersRequestBody,
+        request: AddUserGroupMembersRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
         addMembers_id = id
@@ -122,7 +122,7 @@ final class UserGroupsRepository_Mock: UserGroupsRepository, @unchecked Sendable
 
     override func removeMembers(
         id: String,
-        request: UserGroupMembersRequestBody,
+        request: RemoveUserGroupMembersRequest,
         completion: @escaping @Sendable (Result<UserGroup, Error>) -> Void
     ) {
         removeMembers_id = id
