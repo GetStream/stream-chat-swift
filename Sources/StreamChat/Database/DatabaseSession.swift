@@ -571,9 +571,13 @@ protocol ThreadReadDatabaseSession {
 }
 
 protocol UserGroupDatabaseSession {
-    /// Saves a user group with the provided payload.
+    /// Saves a user group with the provided model.
     @discardableResult
-    func saveUserGroup(payload: UserGroupPayload) throws -> UserGroupDTO
+    func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO
+
+    /// Saves a user group member with the provided model.
+    @discardableResult
+    func saveUserGroupMember(payload: UserGroupMember) throws -> UserGroupMemberDTO
 
     /// Deletes a user group with the provided identifier.
     func deleteUserGroup(id: String)

@@ -11,34 +11,47 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
+    addUserGroupMembers
     blockUsers
     createDevice
+    createUserGroup
     deleteDevice
+    deleteUserGroup
     getApp
     getBlockedUsers
     getOG
+    getUserGroup
     listDevices
+    listUserGroups
+    removeUserGroupMembers
     searchRoles
+    searchUserGroups
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updateUserGroup
 )
 allowed_models=(
   Action
+  AddUserGroupMembersRequest
   AppResponseFields
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CreateDeviceRequest
+  CreateUserGroupRequest
   DeviceResponse
   Field
   FileUploadConfig
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
+  GetUserGroupResponse
   ImageData
   Images
   ListDevicesResponse
+  ListUserGroupsResponse
+  RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
   UnblockUsersRequest
@@ -46,6 +59,9 @@ allowed_models=(
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateUserGroupRequest
+  UserGroupMember
+  UserGroupResponse
   UserResponse
   WrappedUnreadCountsResponse
 )
@@ -58,6 +74,8 @@ allowed_hashable_models=(
   Device
   Role
   UploadConfig
+  UserGroup
+  UserGroupMember
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -177,6 +195,7 @@ prune_models
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration).
+# Remove in the next major.
 optionalize_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   sed -i '' -E \
@@ -197,6 +216,18 @@ retype_property() {
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
 
+# Workaround for non-optional public property being backed with optional property
+# Remove in the next major.
+restore_usergroup_members_optionality() {
+  local file="$OUTPUT_DIR_CHAT/models/UserGroupResponse.swift"
+  perl -0777 -pi -e '
+    s/^    let members: \[UserGroupMember\]\?$/    private let membersOptional: [UserGroupMember]?\n    public var members: [UserGroupMember] { membersOptional ?? [] }/m;
+    s/^        self\.members = members$/        self.membersOptional = members/m;
+    s/^    case members$/    case membersOptional = "members"/m;
+  ' "$file"
+}
+restore_usergroup_members_optionality
+
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
@@ -211,6 +242,13 @@ rename_generated UnreadCountsChannel UnreadChannel
 rename_generated UnreadCountsChannelType UnreadChannelByType
 rename_generated UnreadCountsThread UnreadThread
 rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
+rename_generated UserGroupResponse UserGroup
+rename_generated GetUserGroupResponse UserGroupResponse
+rename_generated_type AddUserGroupMembersResponse UserGroupResponse
+rename_generated_type CreateUserGroupResponse UserGroupResponse
+rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
+rename_generated_type UpdateUserGroupResponse UserGroupResponse
+rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 
 rename_generated_type Response EmptyResponse
 
@@ -226,11 +264,14 @@ remove_property() {
     s ~ "^let " p ": "                 { n = 0; next }
     s ~ "^self\\." p " = " p "$"       { next }
     s ~ "^case " p "( =|$)"            { next }
+    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
+    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
     s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property UserGroupMember appPk
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -252,6 +293,8 @@ publicize_model UnreadChannel
 publicize_model UnreadChannelByType
 publicize_model UnreadThread
 publicize_model UploadConfig
+publicize_model UserGroup
+publicize_model UserGroupMember
 
 # 4d. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
@@ -358,12 +401,6 @@ inject_v1_endpoint_paths() {
     case pollVoteInMessage(messageId: MessageId, pollId: String)
     case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
-    case userGroups
-    case userGroupSearch
-    case userGroup(id: String)
-    case userGroupMembers(id: String)
-    case userGroupMembersDelete(id: String)
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -442,12 +479,6 @@ EOF
         case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
-
-        case .userGroups: return "usergroups"
-        case .userGroupSearch: return "usergroups/search"
-        case let .userGroup(id): return "usergroups/\(id)"
-        case let .userGroupMembers(id): return "usergroups/\(id)/members"
-        case let .userGroupMembersDelete(id): return "usergroups/\(id)/members/delete"
 
 EOF
 

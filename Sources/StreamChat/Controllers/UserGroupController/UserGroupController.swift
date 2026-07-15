@@ -130,9 +130,9 @@ public extension UserGroupController {
         teamId: String? = nil,
         completion: (@MainActor (Result<UserGroup, Error>) -> Void)? = nil
     ) {
-        let request = UpdateUserGroupRequestBody(
-            name: name,
+        let request = UpdateUserGroupRequest(
             description: description,
+            name: name,
             teamId: teamId ?? self.teamId
         )
 
@@ -150,9 +150,9 @@ public extension UserGroupController {
         teamId: String? = nil,
         completion: (@MainActor (Result<UserGroup, Error>) -> Void)? = nil
     ) {
-        let request = UserGroupMembersRequestBody(
-            memberIds: memberIds,
+        let request = AddUserGroupMembersRequest(
             asAdmin: asAdmin,
+            memberIds: memberIds,
             teamId: teamId ?? self.teamId
         )
 
@@ -169,7 +169,7 @@ public extension UserGroupController {
         teamId: String? = nil,
         completion: (@MainActor (Result<UserGroup, Error>) -> Void)? = nil
     ) {
-        let request = UserGroupMembersRequestBody(
+        let request = RemoveUserGroupMembersRequest(
             memberIds: memberIds,
             teamId: teamId ?? self.teamId
         )

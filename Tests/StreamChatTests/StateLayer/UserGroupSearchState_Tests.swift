@@ -28,7 +28,7 @@ final class UserGroupSearchState_Tests: XCTestCase {
         let state = UserGroupSearchState()
         let query = UserGroupSearchQuery(query: "backend")
         let userGroups = [
-            UserGroup(id: "backendsupport", name: "Backend Support", createdAt: .unique, updatedAt: .unique)
+            UserGroup.dummy(id: "backendsupport", name: "Backend Support")
         ]
 
         state.setQuery(query)
@@ -42,7 +42,7 @@ final class UserGroupSearchState_Tests: XCTestCase {
         let startedQuery = UserGroupSearchQuery(query: "backend")
         let outdatedQuery = UserGroupSearchQuery(query: "front")
         let userGroups = [
-            UserGroup(id: "frontend", name: "Frontend", createdAt: .unique, updatedAt: .unique)
+            UserGroup.dummy(id: "frontend", name: "Frontend")
         ]
 
         // The user started a "backend" search, but results for an outdated "front" query arrive.
@@ -64,14 +64,14 @@ final class UserGroupSearchState_Tests: XCTestCase {
         // Results from the first (now stale) query should be ignored.
         state.handleDidFetchQuery(
             firstQuery,
-            userGroups: [UserGroup(id: "stale", name: "Stale", createdAt: .unique, updatedAt: .unique)]
+            userGroups: [UserGroup.dummy(id: "stale", name: "Stale")]
         )
         XCTAssertTrue(state.userGroups.isEmpty)
 
         // Results from the most recent query are applied.
         state.handleDidFetchQuery(
             secondQuery,
-            userGroups: [UserGroup(id: "fresh", name: "Fresh", createdAt: .unique, updatedAt: .unique)]
+            userGroups: [UserGroup.dummy(id: "fresh", name: "Fresh")]
         )
         XCTAssertEqual(["fresh"], state.userGroups.map(\.id))
     }

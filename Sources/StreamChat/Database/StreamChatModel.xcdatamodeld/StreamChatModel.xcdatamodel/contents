@@ -294,7 +294,7 @@
         <relationship name="draftReply" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="draftOfThread" inverseEntity="MessageDTO"/>
         <relationship name="flaggedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="flaggedMessages" inverseEntity="CurrentUserDTO"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SharedLocationDTO" inverseName="message" inverseEntity="SharedLocationDTO"/>
-        <relationship name="mentionedGroups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GroupMentionDTO" inverseName="messages" inverseEntity="GroupMentionDTO"/>
+        <relationship name="mentionedGroups" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserGroupDTO" inverseName="mentionedInMessages" inverseEntity="UserGroupDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
         <relationship name="moderationDetails" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageModerationDetailsDTO" inverseName="message" inverseEntity="MessageModerationDetailsDTO"/>
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
@@ -379,10 +379,16 @@
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
-    <entity name="GroupMentionDTO" representedClassName="GroupMentionDTO" syncable="YES">
+    <entity name="UserGroupDTO" representedClassName="UserGroupDTO" syncable="YES">
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdBy" optional="YES" attributeType="String"/>
+        <attribute name="groupDescription" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
-        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="mentionedGroups" inverseEntity="MessageDTO"/>
+        <attribute name="teamId" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="memberDTOs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="UserGroupMemberDTO" inverseName="group" inverseEntity="UserGroupMemberDTO"/>
+        <relationship name="mentionedInMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="mentionedGroups" inverseEntity="MessageDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -392,15 +398,13 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="UserGroupDTO" representedClassName="UserGroupDTO" syncable="YES">
+    <entity name="UserGroupMemberDTO" representedClassName="UserGroupMemberDTO" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="createdBy" optional="YES" attributeType="String"/>
-        <attribute name="groupDescription" optional="YES" attributeType="String"/>
+        <attribute name="groupId" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="membersData" optional="YES" attributeType="Binary"/>
-        <attribute name="name" attributeType="String"/>
-        <attribute name="teamId" optional="YES" attributeType="String"/>
-        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="userId" attributeType="String"/>
+        <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserGroupDTO" inverseName="memberDTOs" inverseEntity="UserGroupDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
