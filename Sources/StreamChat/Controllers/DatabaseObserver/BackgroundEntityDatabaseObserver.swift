@@ -27,18 +27,22 @@ class BackgroundEntityDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: Ba
     ///   - database: The `DatabaseContainer` the observer observes.
     ///   - fetchRequest: The `NSFetchRequest` that specifies the elements of the list.
     ///   - itemCreator: A closure the observer uses to convert DTO objects into Model objects.
+    ///   - itemReuseKeyPaths: A pair of keypaths used to reuse the item that `changeAggregator` already built for a change,
+    ///   instead of running `itemCreator` a second time when refreshing the cached snapshot.
     ///   - fetchedResultsControllerType: The `NSFetchedResultsController` subclass the observer uses to create its FRC. You can
     ///    inject your custom subclass if needed, i.e. when testing.
     init(
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         super.init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: [],
             fetchedResultsControllerType: fetchedResultsControllerType
         )

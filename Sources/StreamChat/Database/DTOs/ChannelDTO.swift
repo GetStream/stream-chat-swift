@@ -192,7 +192,8 @@ extension ChannelDTO {
             KeyPath.string(\ChannelDTO.messages),
             KeyPath.string(\ChannelDTO.members),
             KeyPath.string(\ChannelDTO.reads),
-            KeyPath.string(\ChannelDTO.watchers)
+            KeyPath.string(\ChannelDTO.watchers),
+            KeyPath.string(\ChannelDTO.draftMessage)
         ]
     }
 }
@@ -586,16 +587,18 @@ extension ChatChannel {
         }()
 
         let latestMessages: [ChatMessage] = {
-            var messages = channelMessageDTOs
+            // channelMessageDTOs is sorted descending by createdAt, and both bounds below are
+            // simple thresholds, so the first message that fails one of them guarantees every
+            // following (older) message fails too — prefix(while:) can stop there instead of
+            // scanning the rest, and we never build a model we'd discard.
+            let lowerBound = max(
+                dto.oldestMessageAt?.bridgeDate ?? .distantPast,
+                dto.truncatedAt?.bridgeDate ?? .distantPast
+            )
+            return channelMessageDTOs
                 .prefix(clientConfig.localCaching.chatChannel.latestMessagesLimit)
+                .prefix(while: { $0.createdAt.bridgeDate >= lowerBound })
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
-            if let oldest = dto.oldestMessageAt?.bridgeDate {
-                messages = messages.filter { $0.createdAt >= oldest }
-            }
-            if let truncated = dto.truncatedAt?.bridgeDate {
-                messages = messages.filter { $0.createdAt >= truncated }
-            }
-            return messages
         }()
 
         let latestMessageFromUser: ChatMessage? = {
