@@ -7,12 +7,10 @@ import Foundation
 
 extension FileUploadResponse {
     static func dummy(
-        duration: String = "",
         file: String? = nil,
         thumbUrl: String? = nil
     ) -> FileUploadResponse {
         FileUploadResponse(
-            duration: duration,
             file: file,
             thumbUrl: thumbUrl
         )
