@@ -179,12 +179,12 @@ public extension UserGroupListController {
         memberIds: [UserId] = [],
         completion: (@MainActor (Result<UserGroup, Error>) -> Void)? = nil
     ) {
-        let request = CreateUserGroupRequestBody(
-            id: id,
-            name: name,
+        let request = CreateUserGroupRequest(
             description: description,
-            teamId: teamId ?? query.teamId,
-            memberIds: memberIds
+            id: id,
+            memberIds: memberIds,
+            name: name,
+            teamId: teamId ?? query.teamId
         )
 
         userGroupsRepository.createUserGroup(request: request) { [weak self] result in

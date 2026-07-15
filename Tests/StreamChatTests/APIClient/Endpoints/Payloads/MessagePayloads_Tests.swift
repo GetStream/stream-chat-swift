@@ -33,7 +33,7 @@ final class MessagePayload_Tests: XCTestCase {
             "mentioned_users": [],
             "mentioned_here": true,
             "mentioned_channel": true,
-            "mentioned_groups": [{"id": "backendsupport", "name": "Backend Support"}],
+            "mentioned_groups": [{"id": "backendsupport", "name": "Backend Support", "created_at": "2020-07-16T15:39:03.010717Z", "updated_at": "2020-08-17T13:15:39.895109Z"}],
             "mentioned_roles": ["admin"]
         }
         """.data(using: .utf8)!

@@ -51,7 +51,7 @@ extension MessagePayload {
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
-        mentionedGroups: [UserGroupMentionPayload] = [],
+        mentionedGroups: [UserGroup] = [],
         mentionedRoles: [String] = [],
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
