@@ -26,11 +26,8 @@ final class UserGroupListController_Tests: XCTestCase {
     }
 
     func test_synchronize_loadsUserGroups() {
-        let userGroup = UserGroup(
-            id: .unique,
-            name: "Backend Support",
-            createdAt: .unique,
-            updatedAt: .unique
+        let userGroup = UserGroup.dummy(
+            name: "Backend Support"
         )
 
         repository.loadUserGroups_completion_result = .success(
@@ -49,11 +46,9 @@ final class UserGroupListController_Tests: XCTestCase {
     }
 
     func test_searchUserGroups_withText_forwardsRequestToRepository() {
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
-            name: "Backend Support",
-            createdAt: .unique,
-            updatedAt: .unique
+            name: "Backend Support"
         )
 
         repository.searchUserGroups_completion_result = .success([userGroup])
@@ -134,11 +129,10 @@ final class UserGroupListController_Tests: XCTestCase {
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUserGroup(
-                payload: .init(
-                    id: "backendsupport",
-                    name: "Backend Support",
+                payload: .dummy(
                     createdAt: createdAt,
-                    updatedAt: .unique
+                    id: "backendsupport",
+                    name: "Backend Support"
                 )
             )
         }
@@ -157,11 +151,9 @@ final class UserGroupListController_Tests: XCTestCase {
     }
 
     func test_searchUserGroups_withQuery_forwardsRequestToRepository() {
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "backendsupport",
-            name: "Backend Support",
-            createdAt: .unique,
-            updatedAt: .unique
+            name: "Backend Support"
         )
         repository.searchUserGroups_completion_result = .success([userGroup])
 
@@ -190,11 +182,9 @@ final class UserGroupListController_Tests: XCTestCase {
     }
 
     func test_createUserGroup_forwardsRequestToRepository() {
-        let userGroup = UserGroup(
+        let userGroup = UserGroup.dummy(
             id: "newgroup",
-            name: "New Group",
-            createdAt: .unique,
-            updatedAt: .unique
+            name: "New Group"
         )
         repository.createUserGroup_completion_result = .success(userGroup)
 
@@ -219,7 +209,7 @@ final class UserGroupListController_Tests: XCTestCase {
     func test_createUserGroup_whenTeamIdIsNil_fallsBackToQueryTeamId() {
         controller = client.userGroupListController(query: .init(teamId: "engineering"))
         repository.createUserGroup_completion_result = .success(
-            UserGroup(id: "newgroup", name: "New Group", createdAt: .unique, updatedAt: .unique)
+            UserGroup.dummy(id: "newgroup", name: "New Group")
         )
 
         let exp = expectation(description: "create completes")
@@ -232,7 +222,7 @@ final class UserGroupListController_Tests: XCTestCase {
     func test_createUserGroup_whenTeamIdIsProvided_overridesQueryTeamId() {
         controller = client.userGroupListController(query: .init(teamId: "engineering"))
         repository.createUserGroup_completion_result = .success(
-            UserGroup(id: "newgroup", name: "New Group", createdAt: .unique, updatedAt: .unique)
+            UserGroup.dummy(id: "newgroup", name: "New Group")
         )
 
         let exp = expectation(description: "create completes")

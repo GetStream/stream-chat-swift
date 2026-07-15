@@ -432,16 +432,15 @@ final class MessageDTO_Tests: XCTestCase {
         try database.createCurrentUser()
         try database.createChannel(cid: channelId, withMessages: false)
 
+        let backendSupport = UserGroup.dummy(id: "backendsupport", name: "Backend Support")
+        let engineering = UserGroup.dummy(id: "engineering", name: "Engineering")
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: .unique,
             channel: .dummy(cid: channelId),
             mentionedHere: true,
             mentionedChannel: true,
-            mentionedGroups: [
-                .init(id: "backendsupport", name: "Backend Support"),
-                .init(id: "engineering", name: "Engineering")
-            ],
+            mentionedGroups: [backendSupport, engineering],
             mentionedRoles: ["admin"]
         )
 
@@ -457,10 +456,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertTrue(loadedMessage.mentionedChannel)
         XCTAssertEqual(
             loadedMessage.mentionedGroups,
-            [
-                .init(id: "backendsupport", name: "Backend Support"),
-                .init(id: "engineering", name: "Engineering")
-            ]
+            [backendSupport, engineering]
         )
         XCTAssertEqual(loadedMessage.mentionedRoles, ["admin"])
 

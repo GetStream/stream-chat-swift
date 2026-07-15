@@ -118,21 +118,30 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_userGroups_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.userGroups.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.userGroupSearch.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.userGroup(id: "group").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.userGroupMembers(id: "group").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.userGroupMembersDelete(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.listUserGroups.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.searchUserGroups.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getUserGroup(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.createUserGroup.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateUserGroup(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteUserGroup(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.addUserGroupMembers(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.removeUserGroupMembers(id: "group").shouldBeQueuedOffline)
     }
 
     func test_userGroups_value() {
-        XCTAssertEqual(EndpointPath.userGroups.value, "usergroups")
-        XCTAssertEqual(EndpointPath.userGroupSearch.value, "usergroups/search")
-        XCTAssertEqual(EndpointPath.userGroup(id: "backendsupport").value, "usergroups/backendsupport")
-        XCTAssertEqual(EndpointPath.userGroupMembers(id: "backendsupport").value, "usergroups/backendsupport/members")
+        XCTAssertEqual(EndpointPath.listUserGroups.value, "/api/v2/usergroups")
+        XCTAssertEqual(EndpointPath.searchUserGroups.value, "/api/v2/usergroups/search")
+        XCTAssertEqual(EndpointPath.createUserGroup.value, "/api/v2/usergroups")
+        XCTAssertEqual(EndpointPath.getUserGroup(id: "backendsupport").value, "/api/v2/usergroups/backendsupport")
+        XCTAssertEqual(EndpointPath.updateUserGroup(id: "backendsupport").value, "/api/v2/usergroups/backendsupport")
+        XCTAssertEqual(EndpointPath.deleteUserGroup(id: "backendsupport").value, "/api/v2/usergroups/backendsupport")
         XCTAssertEqual(
-            EndpointPath.userGroupMembersDelete(id: "backendsupport").value,
-            "usergroups/backendsupport/members/delete"
+            EndpointPath.addUserGroupMembers(id: "backendsupport").value,
+            "/api/v2/usergroups/backendsupport/members"
+        )
+        XCTAssertEqual(
+            EndpointPath.removeUserGroupMembers(id: "backendsupport").value,
+            "/api/v2/usergroups/backendsupport/members/delete"
         )
     }
 
@@ -189,11 +198,14 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
         assertResultEncodingAndDecoding(.pushPreferences)
         assertResultEncodingAndDecoding(.getApp)
-        assertResultEncodingAndDecoding(.userGroups)
-        assertResultEncodingAndDecoding(.userGroupSearch)
-        assertResultEncodingAndDecoding(.userGroup(id: "group"))
-        assertResultEncodingAndDecoding(.userGroupMembers(id: "group"))
-        assertResultEncodingAndDecoding(.userGroupMembersDelete(id: "group"))
+        assertResultEncodingAndDecoding(.listUserGroups)
+        assertResultEncodingAndDecoding(.searchUserGroups)
+        assertResultEncodingAndDecoding(.createUserGroup)
+        assertResultEncodingAndDecoding(.getUserGroup(id: "group"))
+        assertResultEncodingAndDecoding(.updateUserGroup(id: "group"))
+        assertResultEncodingAndDecoding(.deleteUserGroup(id: "group"))
+        assertResultEncodingAndDecoding(.addUserGroupMembers(id: "group"))
+        assertResultEncodingAndDecoding(.removeUserGroupMembers(id: "group"))
         assertResultEncodingAndDecoding(.searchRoles)
 
         assertResultEncodingAndDecoding(.channels)
