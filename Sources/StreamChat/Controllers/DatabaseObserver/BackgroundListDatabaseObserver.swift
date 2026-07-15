@@ -10,6 +10,15 @@ class BackgroundListDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: Back
         rawItems
     }
 
+    /// A fast, non-blocking variant of ``items`` served from the in-memory cache.
+    ///
+    /// Prefer this on hot read paths (e.g. channel list scrolling) where the blocking cost of
+    /// ``items`` causes stutter. The value is eventually-consistent; use ``items`` when
+    /// read-your-writes is required.
+    var itemsNonBlocking: [Item] {
+        rawItemsNonBlocking
+    }
+
     init(
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,

@@ -25,15 +25,39 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated)
-    private var _items: [Item]?
 
-    /// The items that have been fetched and mapped
+    /// An in-memory cache of the mapped items, kept up to date by the change callbacks.
+    private let cachedItems = AllocatedUnfairLock<[Item]?>(nil)
+
+    /// The items that have been fetched and mapped.
+    ///
+    /// This is the default, blocking read: it hops onto the observed context's queue (via
+    /// `performAndWait`), which drains any pending asynchronous merges and their
+    /// `NSFetchedResultsController` callbacks before returning, so it always reflects the latest
+    /// database state (read-your-writes). On hot paths where this blocking cost is a problem (e.g.
+    /// channel list scrolling), use ``rawItemsNonBlocking`` instead.
     var rawItems: [Item] {
-        nonisolated(unsafe) var rawItems: [Item]!
+        nonisolated(unsafe) var rawItems: [Item] = []
         frc.managedObjectContext.performAndWait {
             // When we already have loaded items, reuse them, otherwise refetch all
-            rawItems = _items ?? updateItems(nil)
+            rawItems = cachedItems.value ?? updateItems(nil)
         }
+        return rawItems
+    }
+
+    /// A fast, non-blocking read served from the in-memory cache.
+    ///
+    /// This never touches the Core Data context, so it stays cheap even while the context is busy
+    /// merging changes (e.g. during scrolling). Because the observed context merges changes
+    /// asynchronously, the returned value is eventually-consistent: a read performed immediately after
+    /// a synchronous write may not yet reflect that write. Use ``rawItems`` when read-your-writes is
+    /// required.
+    var rawItemsNonBlocking: [Item] {
+        if let items = cachedItems.value {
+            return items
+        }
+        // Cache not populated yet (observing not started or initial load pending): fall back to the
+        // blocking load once so callers still get a valid snapshot.
         return rawItems
     }
     
@@ -127,13 +151,13 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     @discardableResult private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
         let items = DatabaseItemConverter.convert(
             dtos: frc.fetchedObjects ?? [],
-            existing: _items ?? [],
+            existing: cachedItems.value ?? [],
             changes: changes,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: sorting
         )
-        _items = items
+        cachedItems.value = items
         return items
     }
 }
