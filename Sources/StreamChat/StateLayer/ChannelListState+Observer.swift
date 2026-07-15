@@ -5,7 +5,7 @@
 import Foundation
 
 extension ChannelListState {
-    final class Observer {
+    final class Observer: @unchecked Sendable {
         private var channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>
         private let clientConfig: ChatClientConfig
         private let channelListLinker: ChannelListLinking
@@ -14,8 +14,8 @@ extension ChannelListState {
         private let dynamicFilter: ((ChatChannel) -> Bool)?
         private let eventNotificationCenter: EventNotificationCenter
         private var query: ChannelListQuery
-        private var channelsDidChange: (@Sendable @MainActor ([ChatChannel]) async -> Void)?
-        
+        private var channelsDidChange: (@Sendable @MainActor ([ChatChannel], [ListChange<ChatChannel>]) -> Void)?
+
         init(
             query: ChannelListQuery,
             dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
@@ -55,10 +55,14 @@ extension ChannelListState {
             }
         }
         
-        struct Handlers {
-            let channelsDidChange: @Sendable @MainActor ([ChatChannel]) async -> Void
+        var items: [ChatChannel] {
+            channelListObserver.items
         }
-        
+
+        struct Handlers {
+            let channelsDidChange: @Sendable @MainActor ([ChatChannel], [ListChange<ChatChannel>]) -> Void
+        }
+
         func start(with handlers: Handlers) -> [ChatChannel] {
             channelsDidChange = handlers.channelsDidChange
             do {

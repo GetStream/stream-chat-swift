@@ -54,14 +54,13 @@ final class ChannelListController_Tests: XCTestCase {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
 
-        // Simulate `synchronize` call
-        controller.synchronize()
-
-        // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(.success([]))
+        // Simulate `synchronize` call (updater returns success by default)
+        let exp = expectation(description: "synchronize completes")
+        controller.synchronize { _ in exp.fulfill() }
+        wait(for: [exp], timeout: defaultTimeout)
 
         // Check if state changed after successful network call.
-        AssertAsync.willBeEqual(controller.state, .remoteDataFetched)
+        XCTAssertEqual(controller.state, .remoteDataFetched)
     }
 
     func test_channelsAccess_changesControllerState() {
@@ -79,12 +78,14 @@ final class ChannelListController_Tests: XCTestCase {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
 
-        // Simulate `synchronize` call
-        controller.synchronize()
-
-        // Simulate failed network call.
+        // Pre-program a failed network call.
         let error = TestError()
-        env.channelListUpdater?.update_completion?(.failure(error))
+        env.channelListUpdater?.update_completion_result = .failure(error)
+
+        // Simulate `synchronize` call
+        let exp = expectation(description: "synchronize completes")
+        controller.synchronize { _ in exp.fulfill() }
+        wait(for: [exp], timeout: defaultTimeout)
 
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -128,16 +129,12 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_synchronize_callsChannelQueryUpdater() {
-        // Simulate `synchronize` calls and catch the completion
+        // Simulate `synchronize` calls and catch the completion (updater returns success by default)
         let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
-
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-
         waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -159,17 +156,16 @@ final class ChannelListController_Tests: XCTestCase {
         query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
 
-        // Simulate `synchronize` calls and catch the completion
+        // Simulate `synchronize` calls and catch the completion (updater returns success by default)
         let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
-
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-
         waitForExpectations(timeout: defaultTimeout)
+
+        // Assert the initial page size is used
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.pagination.pageSize, pageSize)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -183,16 +179,12 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_synchronize_callsChannelQueryUpdater_inOfflineMode() {
-        // Simulate `synchronize` calls and catch the completion
+        // Simulate `synchronize` calls and catch the completion (updater returns success by default)
         let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
-
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-
         waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -210,18 +202,21 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_synchronize_propagatesErrorFromUpdater() {
+        // Pre-program a failed update
+        let testError = TestError()
+        env.channelListUpdater?.update_completion_result = .failure(testError)
+
         // Simulate `synchronize` call and catch the completion
+        let exp = expectation(description: "synchronize completes")
         nonisolated(unsafe) var completionCalledError: Error?
         controller.synchronize {
             completionCalledError = $0
+            exp.fulfill()
         }
-
-        // Simulate failed udpate
-        let testError = TestError()
-        env.channelListUpdater?.update_completion?(.failure(testError))
+        wait(for: [exp], timeout: defaultTimeout)
 
         // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        XCTAssertEqual(completionCalledError as? TestError, testError)
     }
 
     /// This test simulates a bug where the `channels` field was not updated if it wasn't
@@ -238,25 +233,19 @@ final class ChannelListController_Tests: XCTestCase {
             try $0.saveChannel(payload: .dummy(cid: channelId, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
-        // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(.success([]))
-
         // Assert the channels are loaded
         XCTAssertEqual(controller.channels.map(\.cid), [channelId])
     }
 
     // MARK: - Predefined filter resolution
 
-    func test_synchronize_predefinedFilterQuery_createsObserverWithCachedResolvedFilterAndSort() throws {
-        // GIVEN: a controller built with a predefined query (placeholder filter + empty sort)
+    func test_synchronize_predefinedFilterQuery_resolvesCachedFilterAndSort() throws {
+        // GIVEN: the DTO carries server-resolved filter/sort JSON (different from placeholder)
         let predefinedQuery = ChannelListQuery(
             predefinedFilter: "user_per_channel_type_channels",
             filterValues: ["user_id": "r2-d2"]
         )
         query = predefinedQuery
-        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
-
-        // AND: the DTO carries server-resolved filter/sort JSON (different from placeholder)
         let resolvedFilterJSON = #"{"type":"messaging"}"#.data(using: .utf8)!
         let resolvedSortJSON = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
         try client.databaseContainer.writeSynchronously { session in
@@ -265,74 +254,25 @@ final class ChannelListController_Tests: XCTestCase {
             dto.sortJSONData = resolvedSortJSON
         }
 
-        // Snapshot the observer identity after lazy init. The cached predefined filter is applied before observer creation.
-        let observerBefore = ObjectIdentifier(controller.channelListObserver)
-        XCTAssertEqual(controller.query.filter.key, "type")
-        XCTAssertEqual(controller.query.filter.value as? String, "messaging")
-        XCTAssertEqual(controller.query.sort.count, 1)
-        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+        // AND: a controller built with the predefined query (placeholder filter + empty sort)
+        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
 
-        // WHEN: synchronize completes successfully
+        // WHEN: synchronize completes successfully (updater returns success by default)
         let exp = expectation(description: "synchronize completes")
         var receivedError: Error?
         controller.synchronize { error in
             receivedError = error
             exp.fulfill()
         }
-        env.channelListUpdater?.update_completion?(.success([]))
-        waitForExpectations(timeout: defaultTimeout)
+        wait(for: [exp], timeout: defaultTimeout)
 
-        // THEN: no error, query has resolved values, observer is not rebuilt again for the same effective query
+        // THEN: no error, query has resolved values
         XCTAssertNil(receivedError)
         XCTAssertEqual(controller.query.filter.key, "type")
         XCTAssertEqual(controller.query.filter.value as? String, "messaging")
         XCTAssertEqual(controller.query.sort.count, 1)
         XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
         XCTAssertEqual(controller.query.sort.first?.direction, -1)
-        XCTAssertEqual(ObjectIdentifier(controller.channelListObserver), observerBefore)
-    }
-
-    func test_synchronize_predefinedFilterQuery_whenNetworkFails_keepsCachedResolvedFilterAndReportsError() throws {
-        let predefinedQuery = ChannelListQuery(
-            predefinedFilter: "user_per_channel_type_channels",
-            filterValues: ["user_id": "r2-d2"]
-        )
-        query = predefinedQuery
-        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
-        try client.databaseContainer.writeSynchronously { session in
-            let dto = session.saveQuery(query: predefinedQuery)
-            dto.filterJSONData = #"{"type":"messaging"}"#.data(using: .utf8)!
-            dto.sortJSONData = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
-        }
-        _ = controller.channelListObserver
-
-        let error = TestError()
-        let exp = expectation(description: "synchronize completes")
-        var receivedError: Error?
-        controller.synchronize { error in
-            receivedError = error
-            exp.fulfill()
-        }
-        env.channelListUpdater?.update_completion?(.failure(error))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(receivedError as? TestError, error)
-        XCTAssertEqual(controller.query.filter.key, "type")
-        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
-    }
-
-    func test_synchronize_nonPredefinedQuery_doesNotRebuildObserver() {
-        // GIVEN: a controller built with a non-predefined query (default in setUp)
-        let observerBefore = ObjectIdentifier(controller.channelListObserver)
-
-        // WHEN: synchronize completes successfully
-        let exp = expectation(description: "synchronize completes")
-        controller.synchronize { _ in exp.fulfill() }
-        env.channelListUpdater?.update_completion?(.success([]))
-        waitForExpectations(timeout: defaultTimeout)
-
-        // THEN: the observer instance is unchanged
-        XCTAssertEqual(ObjectIdentifier(controller.channelListObserver), observerBefore)
     }
 
     // MARK: - Change propagation tests
@@ -414,7 +354,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+        AssertAsync.willBeEqual(client.mockChannelListUpdater.startWatchingChannels_callCount, 1)
     }
 
     func test_didReceiveEvent_whenMessageNewEvent_shouldLinkChannelToQuery() {
@@ -431,7 +371,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+        AssertAsync.willBeEqual(client.mockChannelListUpdater.startWatchingChannels_callCount, 1)
     }
 
     func test_didReceiveEvent_whenChannelVisibleEvent_shouldLinkChannelToQuery() {
@@ -450,7 +390,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+        AssertAsync.willBeEqual(client.mockChannelListUpdater.startWatchingChannels_callCount, 1)
     }
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() {
@@ -467,7 +407,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+        AssertAsync.willBeEqual(client.mockChannelListUpdater.startWatchingChannels_callCount, 1)
     }
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -495,7 +435,6 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -523,7 +462,6 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -551,7 +489,6 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() {
@@ -572,7 +509,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+        AssertAsync.willBeEqual(client.mockChannelListUpdater.startWatchingChannels_callCount, 1)
     }
 
     func test_didReceiveEvent_whenFilterMatches_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -602,7 +539,6 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenFilterDoesNotMatch_shouldNotLinkChannelToQuery() {
@@ -619,7 +555,6 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterMatches_shouldLinkChannelToQuery() {
@@ -639,7 +574,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+        AssertAsync.willBeEqual(client.mockChannelListUpdater.startWatchingChannels_callCount, 1)
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
@@ -737,11 +672,8 @@ final class ChannelListController_Tests: XCTestCase {
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
-        // Synchronize
+        // Synchronize (updater returns success by default)
         controller.synchronize()
-
-        // Simulate network call response
-        env.channelListUpdater?.update_completion?(.success([]))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -808,20 +740,18 @@ final class ChannelListController_Tests: XCTestCase {
     // MARK: - Channels pagination
 
     func test_loadNextChannels_callsChannelListUpdater() {
-        nonisolated(unsafe) var completionCalled = false
         let limit = 42
+        let exp = expectation(description: "loadNextChannels completes")
         controller.loadNextChannels(limit: limit) { error in
             XCTAssertNil(error)
-            completionCalled = true
+            exp.fulfill()
         }
+        wait(for: [exp], timeout: defaultTimeout)
 
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
-
-        // Assert correct `Pagination` is created
+        // Assert correct `Pagination` is created (offset is driven by the loaded channel count)
         XCTAssertEqual(
-            env!.channelListUpdater?.update_queries.first?.pagination,
-            .init(pageSize: limit, offset: controller.channels.count)
+            env.channelListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: limit, offset: 0)
         )
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -831,51 +761,44 @@ final class ChannelListController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
-        // Simulate successful update
-        env!.channelListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater?.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
     func test_loadNextChannels_callsChannelUpdaterWithError() {
+        // Pre-program a failed update
+        let testError = TestError()
+        env.channelListUpdater?.update_completion_result = .failure(testError)
+
         // Simulate `loadNextChannels` call and catch the completion
+        let exp = expectation(description: "loadNextChannels completes")
         nonisolated(unsafe) var completionCalledError: Error?
         controller.loadNextChannels {
             completionCalledError = $0
+            exp.fulfill()
         }
-
-        // Simulate failed update
-        let testError = TestError()
-        env.channelListUpdater?.update_completion?(.failure(testError))
+        wait(for: [exp], timeout: defaultTimeout)
 
         // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        XCTAssertEqual(completionCalledError as? TestError, testError)
     }
 
     func test_loadNextChannels_defaultPageSize_isCorrect() {
-        nonisolated(unsafe) var completionCalled = false
-
         let pageSize = Int.random(in: 1...42)
         query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
 
+        let exp = expectation(description: "loadNextChannels completes")
         controller.loadNextChannels { error in
             XCTAssertNil(error)
-            completionCalled = true
+            exp.fulfill()
         }
+        wait(for: [exp], timeout: defaultTimeout)
 
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
-
-        // Assert correct `Pagination` is created
+        // Assert correct `Pagination` is created (offset is driven by the loaded channel count)
         XCTAssertEqual(
-            env!.channelListUpdater?.update_queries.first?.pagination,
-            .init(pageSize: pageSize, offset: controller.channels.count)
+            env.channelListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: pageSize, offset: 0)
         )
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -885,176 +808,34 @@ final class ChannelListController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
-        // Simulate successful update
-        env!.channelListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_loadNextChannels_predefinedFilterQuery_appliesResolvedFilterAndRebuildsObserver() throws {
+    func test_loadNextChannels_predefinedFilterQuery_usesResolvedFilterForRequest() throws {
         let predefinedQuery = ChannelListQuery(
             predefinedFilter: "user_per_channel_type_channels",
             filterValues: ["user_id": "r2-d2"]
         )
         query = predefinedQuery
-        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
         try client.databaseContainer.writeSynchronously { session in
             let dto = session.saveQuery(query: predefinedQuery)
             dto.filterJSONData = #"{"type":"messaging"}"#.data(using: .utf8)!
             dto.sortJSONData = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
         }
+        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
 
         let exp = expectation(description: "load next completes")
         controller.loadNextChannels { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
-        env.channelListUpdater?.update_completion?(.success([]))
-        waitForExpectations(timeout: defaultTimeout)
+        wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(controller.query.filter.key, "type")
-        XCTAssertEqual(controller.query.filter.value as? String, "messaging")
-        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
-    }
-
-    // MARK: - Refresh Loaded Channels
-
-    func test_refreshLoadedChannels_whenSucceedsThenControllerSucceeds() {
-        // Simulate synchronize to create all dependencies
-        controller.synchronize()
-
-        // Simulate a regular/full page
-        let channels: [ChatChannel] = (0..<controller.query.pagination.pageSize).map { _ in
-            ChatChannel.mock(cid: .unique)
-        }
-        env.channelListUpdater?.refreshLoadedChannelsResult = .success(Set(channels.map(\.cid)))
-
-        let expectation = self.expectation(description: "Refresh loaded channels")
-        nonisolated(unsafe) var receivedError: Error?
-        controller.refreshLoadedChannels() { result in
-            receivedError = result.error
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertNil(receivedError)
-    }
-
-    func test_refreshLoadedChannels_propagatesErrorFromUpdater() {
-        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
-
-        // Simulate synchronize to create all dependencies
-        controller.synchronize()
-
-        // Simulate a failure
-        let error = ClientError("Something went wrong")
-        env.channelListUpdater?.refreshLoadedChannelsResult = .failure(error)
-
-        let expectation = self.expectation(description: "Reset Query completes")
-        nonisolated(unsafe) var receivedError: Error?
-        controller.refreshLoadedChannels { result in
-            receivedError = result.error
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(receivedError, error)
-    }
-
-    // MARK: - Mark Channels as Delivered
-
-    func test_synchronize_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
-        // GIVEN
-        let currentUserId = UserId.unique
-        try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
-        }
-
-        let message1 = ChatMessage.mock(id: .unique)
-        let message2 = ChatMessage.mock(id: .unique)
-        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
-        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
-        let channels = [channel1, channel2]
-
-        // Configure mock to mark all messages as deliverable
-        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
-
-        // WHEN
-        controller.synchronize()
-        env.channelListUpdater?.update_completion?(.success(channels))
-
-        // THEN
-        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
-
-        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
-        XCTAssertEqual(deliveredMessages?.count, 2)
-        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel2.cid])
-        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message2.id])
-    }
-
-    func test_loadNextChannels_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
-        // GIVEN
-        let currentUserId = UserId.unique
-        try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
-        }
-
-        let message = ChatMessage.mock(id: .unique)
-        let channel = ChatChannel.mock(cid: .unique, latestMessages: [message])
-        let channels = [channel]
-
-        // Configure mock to mark all messages as deliverable
-        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
-
-        // WHEN
-        controller.loadNextChannels()
-        env.channelListUpdater?.update_completion?(.success(channels))
-
-        // THEN
-        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
-
-        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
-        XCTAssertEqual(deliveredMessages?.count, 1)
-        XCTAssertEqual(deliveredMessages?.first?.channelId, channel.cid)
-        XCTAssertEqual(deliveredMessages?.first?.messageId, message.id)
-    }
-
-    func test_markChannelsAsDeliveredIfNeeded_onlyMarksChannelsMeetingDeliveryCriteria() throws {
-        // GIVEN
-        let currentUserId = UserId.unique
-        try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
-        }
-
-        let message1 = ChatMessage.mock(id: .unique)
-        let message2 = ChatMessage.mock(id: .unique)
-        let message3 = ChatMessage.mock(id: .unique)
-        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
-        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
-        let channel3 = ChatChannel.mock(cid: .unique, latestMessages: [message3])
-        let channels = [channel1, channel2, channel3]
-
-        // Configure mock to only mark channel1 and channel3 as deliverable
-        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, channel in
-            channel.cid == channel1.cid || channel.cid == channel3.cid
-        }
-
-        // WHEN
-        controller.synchronize()
-        env.channelListUpdater?.update_completion?(.success(channels))
-
-        // THEN
-        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
-
-        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
-        XCTAssertEqual(deliveredMessages?.count, 2) // Only channel1 and channel3
-        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel3.cid])
-        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message3.id])
+        // The resolved filter/sort are used for the pagination request
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.key, "type")
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.value as? String, "messaging")
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
     }
 
     // MARK: - List Ordering initial value
@@ -1117,17 +898,18 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    // MARK: Synchronize registers active controller
+    // MARK: Synchronize registers active channel list
 
-    func test_synchronize_shouldRegistersActiveController() {
+    func test_synchronize_shouldRegisterActiveChannelList() {
         let client = ChatClient.mock
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
-        controller.synchronize()
+        let exp = expectation(description: "synchronize completes")
+        controller.synchronize { _ in exp.fulfill() }
+        wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssert(controller.client === client)
-        XCTAssert(client.syncRepository.activeChannelListControllers.count == 1)
-        XCTAssert(client.syncRepository.activeChannelListControllers.allObjects.first === controller)
+        XCTAssertEqual(client.syncRepository.activeChannelLists.count, 1)
     }
 
     // MARK: Predicates
@@ -2134,7 +1916,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     private func waitForInitialChannelsUpdate(file: StaticString = #file, line: UInt = #line) {
-        waitForChannelsUpdate {}
+        // Ensure the channel list observer has started so subsequent DB writes are reported.
+        _ = controller.channels
     }
 
     private func writeAndWaitForChannelsUpdates(
@@ -2184,39 +1967,25 @@ private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdater_Spy?
     @Atomic var currentUserUpdater: CurrentUserUpdater_Mock?
     @Atomic var deliveryCriteriaValidator: MessageDeliveryCriteriaValidator_Mock?
-    @Atomic var channelWatcherHandler: ChannelWatcherHandler_Mock?
 
     lazy var environment: ChatChannelListController.Environment =
-        .init(
-            channelQueryUpdaterBuilder: { [unowned self] in
-                self.channelListUpdater = ChannelListUpdater_Spy(
-                    database: $0,
-                    apiClient: $1
+        .init(channelListBuilder: { [unowned self] query, filter, client in
+            let channelListUpdater = ChannelListUpdater_Spy(database: client.databaseContainer, apiClient: client.apiClient)
+            channelListUpdater.update_completion_result = .success([])
+            self.channelListUpdater = channelListUpdater
+            let currentUserUpdater = CurrentUserUpdater_Mock(database: client.databaseContainer, apiClient: client.apiClient)
+            self.currentUserUpdater = currentUserUpdater
+            let deliveryCriteriaValidator = MessageDeliveryCriteriaValidator_Mock()
+            self.deliveryCriteriaValidator = deliveryCriteriaValidator
+            return ChannelList(
+                query: query,
+                dynamicFilter: filter,
+                client: client,
+                environment: .init(
+                    channelListUpdater: { _, _ in channelListUpdater },
+                    currentUserUpdater: { _, _ in currentUserUpdater },
+                    deliveryCriteriaValidator: { deliveryCriteriaValidator }
                 )
-                return self.channelListUpdater!
-            },
-            channelListLinkerBuilder: { [unowned self] query, filter, config, database, worker, _ in
-                self.channelWatcherHandler = ChannelWatcherHandler_Mock()
-                self.channelWatcherHandler?.attemptToWatch_completion_success = true
-                return ChannelListLinker(
-                    query: query,
-                    filter: filter,
-                    clientConfig: config,
-                    databaseContainer: database,
-                    worker: worker,
-                    channelWatcherHandler: self.channelWatcherHandler!
-                )
-            },
-            currentUserUpdaterBuilder: { [unowned self] in
-                self.currentUserUpdater = CurrentUserUpdater_Mock(
-                    database: $0,
-                    apiClient: $1
-                )
-                return self.currentUserUpdater!
-            },
-            deliveryCriteriaValidatorBuilder: { [unowned self] in
-                self.deliveryCriteriaValidator = MessageDeliveryCriteriaValidator_Mock()
-                return self.deliveryCriteriaValidator!
-            }
-        )
+            )
+        })
 }

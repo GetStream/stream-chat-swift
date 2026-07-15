@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 /// The base class for controllers which represent and control a data entity. Not meant to be used directly.
@@ -24,10 +25,13 @@ public class DataController: Controller, @unchecked Sendable {
     public internal(set) var state: State = .initialized {
         didSet {
             callback {
+                self.stateSubject.send(self.state)
                 self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
             }
         }
     }
+
+    let stateSubject = CurrentValueSubject<State, Never>(.initialized)
 
     /// Determines whether the controller can be recovered. A failure fetching remote data can mean that we failed to fetch the data that is present on the server, or
     /// that we failed to synchronize a locally created channel
@@ -58,6 +62,21 @@ public class DataController: Controller, @unchecked Sendable {
 
     /// The delegate use for controller state update callbacks.
     internal var stateMulticastDelegate: MulticastDelegate<DataControllerStateDelegate> = .init()
+
+    /// Runs the async operation and calls the completion with its result on the main actor.
+    func withOnMainCompletion(
+        _ operation: @escaping @Sendable () async throws -> Void,
+        completion: @escaping @MainActor (Result<Void, Error>) -> Void
+    ) {
+        Task {
+            do {
+                try await operation()
+                await completion(.success(()))
+            } catch {
+                await completion(.failure(error))
+            }
+        }
+    }
 }
 
 /// A delegate protocol some Controllers use to propagate the information about controller `state` changes. You can use it to let

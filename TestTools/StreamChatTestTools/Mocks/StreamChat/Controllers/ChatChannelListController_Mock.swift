@@ -9,7 +9,6 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
     let spyState = SpyState()
     var loadNextChannelsIsCalled = false
     var loadNextChannelsCallCount = 0
-    var refreshLoadedChannelsResult: Result<Set<ChannelId>, any Error>?
 
     /// Creates a new mock instance of `ChatChannelListController`.
     static func mock(client: ChatClient? = nil) -> ChatChannelListController_Mock {
@@ -30,11 +29,6 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
     override func loadNextChannels(limit: Int?, completion: (@MainActor (Error?) -> Void)?) {
         loadNextChannelsCallCount += 1
         loadNextChannelsIsCalled = true
-    }
-
-    override func refreshLoadedChannels(completion: @escaping @Sendable (Result<Set<ChannelId>, any Error>) -> Void) {
-        record()
-        refreshLoadedChannelsResult.map(completion)
     }
 }
 

@@ -37,13 +37,7 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
             }
             
             context.localChannelIds.formUnion(syncRepository.activeChannelControllers.allObjects.compactMap(\.cid))
-            context.localChannelIds.formUnion(
-                syncRepository.activeChannelListControllers.allObjects
-                    .map(\.channels)
-                    .flatMap { $0 }
-                    .map(\.cid)
-            )
-            
+
             context.localChannelIds.formUnion(
                 syncRepository.activeLivestreamChats.allObjects.compactMap { try? $0.cid }
             )
@@ -72,26 +66,6 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
 }
 
 final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
-    init(controller: ChatChannelListController, context: SyncContext) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { [weak controller] _, done in
-            guard let controller = controller, controller.canBeRecovered else {
-                done(.continue)
-                return
-            }
-            controller.refreshLoadedChannels { result in
-                switch result {
-                case .success(let channelIds):
-                    log.debug("Synced \(channelIds.count) channels in a channel list controller (\(controller.query.filter)", subsystems: .offlineSupport)
-                    context.synchedChannelIds.formUnion(channelIds)
-                    done(.continue)
-                case .failure(let error):
-                    log.error("Failed refreshing channel list controller (\(controller.query.filter) with error \(error)", subsystems: .offlineSupport)
-                    done(.retry)
-                }
-            }
-        }
-    }
-    
     init(channelList: ChannelList, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelList] _, done in
             guard let channelList else {

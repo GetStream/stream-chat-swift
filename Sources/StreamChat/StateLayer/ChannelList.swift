@@ -7,7 +7,10 @@ import Foundation
 /// An object which represents a list of `ChatChannel`s for the specified  channel query.
 public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
+    private let currentUserUpdater: CurrentUserUpdater
+    private let deliveryCriteriaValidator: MessageDeliveryCriteriaValidating
     private let client: ChatClient
+    let observer: ChannelListState.Observer
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
     let groupKey: String?
 
@@ -24,16 +27,24 @@ public class ChannelList: @unchecked Sendable {
             client.apiClient
         )
         self.channelListUpdater = channelListUpdater
+        currentUserUpdater = environment.currentUserUpdater(
+            client.databaseContainer,
+            client.apiClient
+        )
+        deliveryCriteriaValidator = environment.deliveryCriteriaValidator()
+        let query = channelListUpdater.loadPredefinedFilter(for: query) ?? query
+        let observer = ChannelListState.Observer(
+            query: query,
+            dynamicFilter: dynamicFilter,
+            clientConfig: client.config,
+            channelListUpdater: channelListUpdater,
+            database: client.databaseContainer,
+            eventNotificationCenter: client.eventNotificationCenter,
+            channelWatcherHandler: client.channelWatcherHandler
+        )
+        self.observer = observer
         stateBuilder = StateBuilder {
-            environment.stateBuilder(
-                query,
-                dynamicFilter,
-                client.config,
-                channelListUpdater,
-                client.databaseContainer,
-                client.eventNotificationCenter,
-                client.channelWatcherHandler
-            )
+            environment.stateBuilder(query, observer)
         }
     }
 
@@ -47,10 +58,11 @@ public class ChannelList: @unchecked Sendable {
     /// - Important: Loaded channels in ``ChannelListState/channels`` are reset.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func get() async throws {
+    @discardableResult public func get() async throws -> [ChatChannel] {
         let pagination = Pagination(pageSize: await state.query.pagination.pageSize)
-        try await loadChannels(with: pagination)
+        let channels = try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
+        return channels
     }
 
     // MARK: - Channel List Pagination
@@ -74,7 +86,9 @@ public class ChannelList: @unchecked Sendable {
             )
             let group = channelGroups.first { $0.groupKey == groupKey }
             await setHasLoadedAllPreviousChannels(group?.next == nil)
-            return group?.channels ?? []
+            let channels = group?.channels ?? []
+            await markChannelsAsDeliveredIfNeeded(channels)
+            return channels
         } else {
             var query = await state.query
             query.pagination = pagination
@@ -82,6 +96,7 @@ public class ChannelList: @unchecked Sendable {
             if let updatedQuery = result.updatedQuery {
                 await state.setQuery(updatedQuery)
             }
+            await markChannelsAsDeliveredIfNeeded(result.channels)
             return result.channels
         }
     }
@@ -122,6 +137,25 @@ public class ChannelList: @unchecked Sendable {
     @MainActor private func setHasLoadedAllPreviousChannels(_ hasLoadedAllPreviousChannels: Bool) {
         state.hasLoadedAllPreviousChannels = hasLoadedAllPreviousChannels
     }
+
+    private func markChannelsAsDeliveredIfNeeded(_ channels: [ChatChannel]) async {
+        guard !channels.isEmpty else { return }
+        guard let currentUser = try? await client.databaseContainer.read({ try $0.currentUser?.asModel() }) else { return }
+
+        let deliveries: [MessageDeliveryInfo] = channels.compactMap { channel in
+            guard let message = channel.latestMessages.first else { return nil }
+            guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else { return nil }
+            return MessageDeliveryInfo(channelId: channel.cid, messageId: message.id)
+        }
+
+        guard !deliveries.isEmpty else { return }
+
+        currentUserUpdater.markMessagesAsDelivered(deliveries) { error in
+            if let error {
+                log.error("Failed to mark channels as delivered: \(error)")
+            }
+        }
+    }
 }
 
 extension ChannelList {
@@ -131,24 +165,20 @@ extension ChannelList {
             _ apiClient: APIClient
         ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, apiClient: $1) }
 
+        var currentUserUpdater: @Sendable (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> CurrentUserUpdater = { CurrentUserUpdater(database: $0, apiClient: $1) }
+
+        var deliveryCriteriaValidator: @Sendable () -> MessageDeliveryCriteriaValidating = {
+            MessageDeliveryCriteriaValidator()
+        }
+
         var stateBuilder: @Sendable @MainActor (
             _ query: ChannelListQuery,
-            _ dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
-            _ clientConfig: ChatClientConfig,
-            _ channelListUpdater: ChannelListUpdater,
-            _ database: DatabaseContainer,
-            _ eventNotificationCenter: EventNotificationCenter,
-            _ channelWatcherHandler: ChannelWatcherHandling
+            _ observer: ChannelListState.Observer
         ) -> ChannelListState = { @MainActor in
-            ChannelListState(
-                query: $0,
-                dynamicFilter: $1,
-                clientConfig: $2,
-                channelListUpdater: $3,
-                database: $4,
-                eventNotificationCenter: $5,
-                channelWatcherHandler: $6
-            )
+            ChannelListState(query: $0, observer: $1)
         }
     }
 }

@@ -726,8 +726,57 @@ final class ChannelList_Tests: XCTestCase {
         await XCTAssertEqual(expectedNames, channelList.state.channels.compactMap(\.name))
     }
     
+    // MARK: - Mark Channels as Delivered
+
+    func test_get_whenDeliveryCriteriaPass_thenChannelsAreMarkedAsDelivered() async throws {
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveCurrentUser(payload: .dummy(userId: self.memberId, role: .admin))
+        }
+
+        let message1 = ChatMessage.mock(id: .unique)
+        let message2 = ChatMessage.mock(id: .unique)
+        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
+        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
+
+        env.deliveryCriteriaValidatorMock.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
+        env.channelListUpdaterMock.update_completion_result = .success([channel1, channel2])
+
+        try await channelList.get()
+
+        let deliveredMessages = env.currentUserUpdaterMock.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 2)
+        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel2.cid])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message2.id])
+    }
+
+    func test_get_whenNoCurrentUser_thenNothingIsMarkedAsDelivered() async throws {
+        let channel = ChatChannel.mock(cid: .unique, latestMessages: [.mock(id: .unique)])
+
+        env.deliveryCriteriaValidatorMock.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
+        env.channelListUpdaterMock.update_completion_result = .success([channel])
+
+        try await channelList.get()
+
+        XCTAssertNil(env.currentUserUpdaterMock.markChannelsDelivered_deliveredMessages)
+    }
+
+    func test_get_whenDeliveryCriteriaFail_thenNothingIsMarkedAsDelivered() async throws {
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveCurrentUser(payload: .dummy(userId: self.memberId, role: .admin))
+        }
+
+        let channel = ChatChannel.mock(cid: .unique, latestMessages: [.mock(id: .unique)])
+
+        env.deliveryCriteriaValidatorMock.canMarkMessageAsDeliveredClosure = { _, _, _ in false }
+        env.channelListUpdaterMock.update_completion_result = .success([channel])
+
+        try await channelList.get()
+
+        XCTAssertNil(env.currentUserUpdaterMock.markChannelsDelivered_deliveredMessages)
+    }
+
     // MARK: - Test Data
-    
+
     /// For tests which rely on the channel updater to update the local database.
     @MainActor private func setUpChannelList(
         usesMockedChannelUpdater: Bool,
@@ -796,18 +845,21 @@ extension ChannelList_Tests {
         let client: ChatClient_Mock
         private(set) var channelListUpdater: ChannelListUpdater!
         private(set) var channelListUpdaterMock: ChannelListUpdater_Spy!
-        
+        private(set) var currentUserUpdaterMock: CurrentUserUpdater_Mock!
+        private(set) var deliveryCriteriaValidatorMock: MessageDeliveryCriteriaValidator_Mock!
+
         func cleanUp() {
             client.cleanUp()
             channelListUpdaterMock?.cleanUp()
+            currentUserUpdaterMock?.cleanUp()
         }
-        
+
         init() {
             client = ChatClient_Mock(
                 config: ChatClient_Mock.defaultMockedConfig
             )
         }
-        
+
         func channelListEnvironment(usesMockedUpdater: Bool) -> ChannelList.Environment {
             ChannelList.Environment(
                 channelListUpdater: { [unowned self] in
@@ -820,6 +872,17 @@ extension ChannelList_Tests {
                         apiClient: $1
                     )
                     return usesMockedUpdater ? channelListUpdaterMock : channelListUpdater
+                },
+                currentUserUpdater: { [unowned self] in
+                    currentUserUpdaterMock = CurrentUserUpdater_Mock(
+                        database: $0,
+                        apiClient: $1
+                    )
+                    return currentUserUpdaterMock
+                },
+                deliveryCriteriaValidator: { [unowned self] in
+                    deliveryCriteriaValidatorMock = MessageDeliveryCriteriaValidator_Mock()
+                    return deliveryCriteriaValidatorMock
                 }
             )
         }

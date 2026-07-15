@@ -9,32 +9,19 @@ import Foundation
 @MainActor public final class ChannelListState: ObservableObject {
     private let observer: Observer
     private var handlers: Observer.Handlers {
-        .init(channelsDidChange: { [weak self] in self?.channels = $0 })
+        .init(channelsDidChange: { [weak self] channels, changes in
+            guard let self else { return }
+            self.channels = channels
+            self.channelsDidChangeHandler?(changes)
+        })
     }
 
-    init(
-        query: ChannelListQuery,
-        dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
-        clientConfig: ChatClientConfig,
-        channelListUpdater: ChannelListUpdater,
-        database: DatabaseContainer,
-        eventNotificationCenter: EventNotificationCenter,
-        channelWatcherHandler: ChannelWatcherHandling
-    ) {
-        let query = channelListUpdater.loadPredefinedFilter(for: query) ?? query
+    init(query: ChannelListQuery, observer: Observer) {
         self.query = query
-        observer = Observer(
-            query: query,
-            dynamicFilter: dynamicFilter,
-            clientConfig: clientConfig,
-            channelListUpdater: channelListUpdater,
-            database: database,
-            eventNotificationCenter: eventNotificationCenter,
-            channelWatcherHandler: channelWatcherHandler
-        )
+        self.observer = observer
         channels = observer.start(with: handlers)
     }
-    
+
     /// The query used for filtering the list of channels.
     public internal(set) var query: ChannelListQuery
 
@@ -43,6 +30,13 @@ import Foundation
 
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels: [ChatChannel] = []
+
+    var channelsDidChangeHandler: (@MainActor ([ListChange<ChatChannel>]) -> Void)? {
+        didSet {
+            guard let channelsDidChangeHandler else { return }
+            channelsDidChangeHandler(channels.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) })
+        }
+    }
 
     func setQuery(_ query: ChannelListQuery) {
         self.query = query

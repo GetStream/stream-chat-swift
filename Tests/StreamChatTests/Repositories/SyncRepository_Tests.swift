@@ -134,7 +134,6 @@ class SyncRepository_Tests: XCTestCase {
 
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
-        XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
         // When isLocalStorageEnabled is false, we don't need to run any offline requests related task
@@ -152,7 +151,6 @@ class SyncRepository_Tests: XCTestCase {
 
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
-        XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
         XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
@@ -187,41 +185,7 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
         XCTAssertCall("watch()", on: chat, times: 1)
-        
-        XCTAssertEqual(repository.activeChannelListControllers.count, 0)
-        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
-        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
-    }
 
-    func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController() throws {
-        let cid = ChannelId.unique
-        try prepareForSyncLocalStorage(
-            createUser: true,
-            lastSynchedEventDate: Date().addingTimeInterval(-3600),
-            createChannel: true,
-            cid: cid
-        )
-
-        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        chatListController.state_mock = .remoteDataFetched
-        chatListController.channels_mock = [.mock(cid: cid)]
-        repository.startTrackingChannelListController(chatListController)
-        chatListController.refreshLoadedChannelsResult = .success(Set())
-
-        let eventDate = Date.unique
-        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
-
-        // Should use first event's created at date
-        XCTAssertEqual(lastSyncAtValue, eventDate)
-        // Write: API Response, lastSyncAt
-        XCTAssertEqual(database.writeSessionCounter, 2)
-        XCTAssertEqual(repository.activeChannelControllers.count, 0)
-        XCTAssertEqual(repository.activeChannelListControllers.count, 1)
-        XCTAssertCall(
-            "refreshLoadedChannels(completion:)", on: chatListController,
-            times: 1
-        )
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
         XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
@@ -394,27 +358,6 @@ class SyncRepository_Tests: XCTestCase {
         repository.stopTrackingChannelController(channelController)
     }
     
-    func test_syncLocalEvents_bySkippingAlreadyFetchedChannelIds() throws {
-        let lastSyncDate = Date()
-        let cid = ChannelId.unique
-        try prepareForSyncLocalStorage(
-            createUser: true,
-            lastSynchedEventDate: lastSyncDate,
-            createChannel: true,
-            cid: cid
-        )
-        
-        // One channel list controller which fetches the state for cid
-        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        chatListController.state_mock = .remoteDataFetched
-        chatListController.channels_mock = [.mock(cid: cid)]
-        repository.startTrackingChannelListController(chatListController)
-        chatListController.refreshLoadedChannelsResult = .success(Set([cid]))
-        
-        // If it fails, it means /sync was called but we expect it to be skipped because channel list refresh already refreshed the channel
-        waitForSyncLocalStateRun()
-    }
-
     func test_syncLocalState_isAutomaticSyncOnReconnectEnabled_false_noOperationsRun() throws {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
@@ -449,11 +392,6 @@ class SyncRepository_Tests: XCTestCase {
         )
         repository.startTrackingChat(chat)
 
-        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
-        chatListController.state_mock = .remoteDataFetched
-        chatListController.channels_mock = [.mock(cid: cid)]
-        repository.startTrackingChannelListController(chatListController)
-
         // WHEN: syncLocalState is called
         let expectation = expectation(description: "syncLocalState completion")
         repository.syncLocalState {
@@ -464,8 +402,6 @@ class SyncRepository_Tests: XCTestCase {
         // THEN: No background mode operations should run
         // No /sync API calls should be made
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
-        // No refreshLoadedChannels calls should be made
-        XCTAssertNotCall("refreshLoadedChannels(completion:)", on: chatListController)
         // No watch() calls should be made
         XCTAssertNotCall("watch()", on: chat)
         // Recovery mode operations may still run if isLocalStorageEnabled is true
@@ -614,32 +550,6 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertTrue(repository.activeChannelControllers.allObjects.isEmpty)
     }
 
-    func test_startTrackingChannelListController() {
-        let controller = ChatChannelListController_Mock.mock()
-        repository.startTrackingChannelListController(controller)
-
-        XCTAssertTrue(repository.activeChannelListControllers.allObjects.first === controller)
-    }
-
-    func test_startTrackingChannelListController_whenAlreadyExists_thenDoNotDuplicate() {
-        let controller = ChatChannelListController_Mock.mock()
-        repository.startTrackingChannelListController(controller)
-        repository.startTrackingChannelListController(controller)
-
-        XCTAssertTrue(repository.activeChannelListControllers.allObjects.first === controller)
-        XCTAssertEqual(repository.activeChannelListControllers.allObjects.count, 1)
-    }
-
-    func test_stopTrackingChannelListController() {
-        let controller = ChatChannelListController_Mock.mock()
-        repository.startTrackingChannelListController(controller)
-        XCTAssertEqual(repository.activeChannelListControllers.allObjects.count, 1)
-
-        repository.stopTrackingChannelListController(controller)
-
-        XCTAssertTrue(repository.activeChannelListControllers.allObjects.isEmpty)
-    }
-
     func test_startTrackingLivestreamController() {
         let controller = LivestreamChannelController(
             channelQuery: ChannelQuery(cid: .unique),
@@ -677,24 +587,20 @@ class SyncRepository_Tests: XCTestCase {
 
     func test_removeAllTracked_includesLivestreamControllers() {
         let channelController = ChatChannelController_Mock.mock()
-        let channelListController = ChatChannelListController_Mock.mock()
         let livestreamController = LivestreamChannelController(
             channelQuery: ChannelQuery(cid: .unique),
             client: client
         )
 
         repository.startTrackingChannelController(channelController)
-        repository.startTrackingChannelListController(channelListController)
         repository.startTrackingLivestreamController(livestreamController)
 
         XCTAssertEqual(repository.activeChannelControllers.allObjects.count, 1)
-        XCTAssertEqual(repository.activeChannelListControllers.allObjects.count, 1)
         XCTAssertEqual(repository.activeLivestreamControllers.allObjects.count, 1)
 
         repository.removeAllTracked()
 
         XCTAssertTrue(repository.activeChannelControllers.allObjects.isEmpty)
-        XCTAssertTrue(repository.activeChannelListControllers.allObjects.isEmpty)
         XCTAssertTrue(repository.activeLivestreamControllers.allObjects.isEmpty)
     }
 }

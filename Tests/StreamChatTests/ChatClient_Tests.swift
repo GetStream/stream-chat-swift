@@ -472,10 +472,8 @@ final class ChatClient_Tests: XCTestCase {
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         connectionRepository.disconnectResult = .success(())
         client.syncRepository.startTrackingChannelController(ChannelControllerSpy())
-        client.syncRepository.startTrackingChannelListController(ChatChannelListController_Mock.mock())
 
         XCTAssertEqual(client.syncRepository.activeChannelControllers.count, 1)
-        XCTAssertEqual(client.syncRepository.activeChannelListControllers.count, 1)
 
         // WHEN
         let expectation = self.expectation(description: "logout completes")
@@ -486,7 +484,6 @@ final class ChatClient_Tests: XCTestCase {
 
         // THEN
         XCTAssertEqual(client.syncRepository.activeChannelControllers.count, 0)
-        XCTAssertEqual(client.syncRepository.activeChannelListControllers.count, 0)
     }
 
     func test_apiClient_usesInjectedURLSessionConfiguration() {
