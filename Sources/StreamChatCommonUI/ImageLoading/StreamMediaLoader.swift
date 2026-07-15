@@ -261,6 +261,14 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
     }
 
+    // MARK: - Cache Management
+
+    /// Evicts least-recently-used images from the downloader's in-memory image
+    /// cache until its total cost drops to the given limit in bytes.
+    open func trimImageMemoryCache(toCost limit: Int) {
+        downloader.trimMemoryCache(toCost: limit)
+    }
+
     @objc private func handleMemoryWarning(_ notification: NSNotification) {
         videoPreviewCache.removeAllObjects()
     }

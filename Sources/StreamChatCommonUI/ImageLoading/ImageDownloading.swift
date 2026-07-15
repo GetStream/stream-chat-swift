@@ -21,6 +21,17 @@ public protocol ImageDownloading: Sendable {
         options: ImageDownloadingOptions,
         completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
     )
+
+    /// Evicts least-recently-used images from the in-memory cache until its
+    /// total cost drops to the given limit in bytes.
+    func trimMemoryCache(toCost limit: Int)
+}
+
+// MARK: - Default Implementations
+
+extension ImageDownloading {
+    /// Does nothing by default.
+    public func trimMemoryCache(toCost limit: Int) {}
 }
 
 // MARK: - Options
