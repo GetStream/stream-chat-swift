@@ -68,8 +68,8 @@ final class UserEndpoints_Tests: XCTestCase {
     }
 
     func test_unread_buildsCorrectly() {
-        let expectedEndpoint = Endpoint<CurrentUserUnreadsPayload>(
-            path: .unread,
+        let expectedEndpoint = Endpoint<CurrentUserUnreads>(
+            path: .unreadCounts,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -77,11 +77,11 @@ final class UserEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<CurrentUserUnreadsPayload> = .unreads()
+        let endpoint: Endpoint<CurrentUserUnreads> = .unreadCounts()
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path.value, "unread")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/unread")
     }
 
     func test_pushPreferences_buildsCorrectly() {
