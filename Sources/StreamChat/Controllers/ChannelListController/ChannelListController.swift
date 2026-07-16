@@ -132,7 +132,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     func startChannelListObserverIfNeeded() {
         guard state == .initialized else { return }
         StreamConcurrency.onMain {
-            guard state == .initialized else { return }
+            state = .localDataFetched
             channelList.state.channelsDidChangeHandler = { [weak self] changes in
                 guard let self else { return }
                 channelsChangesSubject.send(changes)
@@ -141,7 +141,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                     $0.controller(self, didChangeChannels: changes)
                 }
             }
-            state = .localDataFetched
         }
     }
 }
