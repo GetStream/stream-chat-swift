@@ -4,8 +4,7 @@
 
 import Foundation
 
-// The properties below mirror the pre-OpenAPI public API. They should be
-// deprecated with `@available(*, deprecated, renamed:)` in the next major version (6).
+// TODO: The properties below mirror the pre-OpenAPI public API. They should be deprecated with `@available(*, deprecated, renamed:)` in the next major version (6).
 
 public extension CurrentUserUnreads {
     /// The total number of unread messages.
