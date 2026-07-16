@@ -22,20 +22,24 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        let value: String
-
-        switch self {
-        case .channelRole: value = "channel_role"
-        case .createdAt: value = "created_at"
-        case .name: value = "name"
-        case .userId: value = "user_id"
-        }
-
-        try container.encode(value)
+        try container.encode(remoteKey)
     }
 }
 
 extension ChannelMemberListSortingKey {
+    var remoteKey: String {
+        switch self {
+        case .channelRole:
+            return "channel_role"
+        case .createdAt:
+            return "created_at"
+        case .name:
+            return "name"
+        case .userId:
+            return "user_id"
+        }
+    }
+
     static var defaultSortDescriptor: NSSortDescriptor {
         let dateKeyPath: KeyPath<MemberDTO, DBDate> = \MemberDTO.memberCreatedAt
         return .init(keyPath: dateKeyPath, ascending: false)

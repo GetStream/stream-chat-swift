@@ -180,6 +180,47 @@ extension NSManagedObjectContext: UserDatabaseSession {
         return dto
     }
 
+    func saveUser(
+        response: UserResponse,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO {
+        let dto = UserDTO.loadOrCreate(id: response.id, context: self, cache: cache)
+
+        dto.name = response.name
+        dto.imageURL = response.image.flatMap(URL.init(string:))
+        dto.isBanned = response.banned
+        dto.isOnline = response.online
+        dto.lastActivityAt = response.lastActive?.bridgeDate
+        dto.userCreatedAt = response.createdAt.bridgeDate
+        dto.userRoleRaw = response.role
+        dto.userUpdatedAt = response.updatedAt.bridgeDate
+        dto.userDeactivatedAt = response.deactivatedAt?.bridgeDate
+        dto.language = response.language.isEmpty ? nil : response.language
+        dto.teamsRole = response.teamsRole
+        if let avgResponseTime = response.avgResponseTime {
+            dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
+        }
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(response.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(response.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.teams = response.teams
+
+        // payloadHash doesn't cover the query
+        if let query = query, let queryDTO = try saveQuery(query: query) {
+            queryDTO.users.insert(dto)
+        }
+        return dto
+    }
+
     @discardableResult
     func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)

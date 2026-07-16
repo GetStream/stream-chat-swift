@@ -167,8 +167,7 @@ public extension ChatChannelMemberController {
         memberUpdater.partialUpdate(
             userId: userId,
             in: cid,
-            updates: MemberUpdatePayload(extraData: extraData),
-            unset: unsetProperties
+            request: UpdateMemberPartialRequest(set: extraData, unset: unsetProperties)
         ) { result in
             self.callback {
                 completion?(result)

@@ -52,11 +52,11 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert members endpoint is called.
-        let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<MembersResponse> = .queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Simulate members response.
-        let payload = ChannelMemberListPayload(members: [
+        let payload = MembersResponse.dummy(members: [
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique))
@@ -94,14 +94,14 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         let dummyChannelPayload = dummyPayload(with: query.cid)
         apiClient.test_simulateResponse(.success(dummyChannelPayload))
 
-        let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<MembersResponse> = .queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync {
             // Assert members endpoint is called.
             Assert.willBeEqual(self.apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
         }
 
         // Simulate members response.
-        let payload = ChannelMemberListPayload(members: [
+        let payload = MembersResponse.dummy(members: [
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique))
@@ -185,12 +185,12 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert members endpoint is called.
-        let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<MembersResponse> = .queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Simulate members response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<ChannelMemberListPayload, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<MembersResponse, Error>.failure(networkError))
 
         // Assert the members network call error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -207,7 +207,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert members endpoint is called.
-        let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<MembersResponse> = .queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Update database to throw the error.
@@ -215,7 +215,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate members response with success.
-        let payload = ChannelMemberListPayload(members: [
+        let payload = MembersResponse.dummy(members: [
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique))

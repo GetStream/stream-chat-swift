@@ -192,6 +192,17 @@ public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStri
     }
     
     var rawChannelValue: String
+    
+    var filterRawValue: String {
+        switch self {
+        case .member:
+            return "channel_member"
+        case .moderator:
+            return "channel_moderator"
+        default:
+            return rawValue
+        }
+    }
 }
 
 public extension MemberRole {

@@ -140,5 +140,21 @@ extension ChannelMemberListQuery {
     }
 }
 
+extension ChannelMemberListQuery {
+    func asQueryMembersPayload() -> QueryMembersPayload {
+        let sort = self.sort.map {
+            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+        }
+        return QueryMembersPayload(
+            filterConditions: filter?.toRawJSONDictionary() ?? [:],
+            id: cid.id,
+            limit: pagination.pageSize,
+            offset: pagination.offset == 0 ? nil : pagination.offset,
+            sort: sort.isEmpty ? nil : sort,
+            type: cid.type.rawValue
+        )
+    }
+}
+
 // Backend expects empty object for "filter_conditions" in case no filter specified.
 private struct EmptyObject: Encodable {}

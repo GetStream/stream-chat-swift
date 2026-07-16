@@ -7,56 +7,36 @@
 import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
-    func test_channelMembers_buildsCorrectly() {
+    func test_queryMembers_buildsCorrectly() {
+        let cid: ChannelId = .unique
         let query = ChannelMemberListQuery(
-            cid: .unique,
+            cid: cid,
             filter: .equal(.id, to: "Luke"),
             sort: [.init(key: .createdAt)]
         )
 
-        let expectedEndpoint = Endpoint<ChannelMemberListPayload>(
-            path: .members,
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["payload": query]
-        )
+        let endpoint: Endpoint<MembersResponse> = .queryMembers(payload: query.asQueryMembersPayload())
 
-        // Build endpoint.
-        let endpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+        XCTAssertEqual("/api/v2/chat/members", endpoint.path.value)
+        XCTAssertEqual(.get, endpoint.method)
 
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("members", endpoint.path.value)
+        let payload = query.asQueryMembersPayload()
+        XCTAssertEqual(cid.id, payload.id)
+        XCTAssertEqual(cid.type.rawValue, payload.type)
+        XCTAssertFalse(payload.filterConditions.isEmpty)
     }
 
-    func test_partialMemberUpdate_buildsCorrectly() {
-        let userId: UserId = "test-user"
+    func test_updateMemberPartial_buildsCorrectly() {
         let cid: ChannelId = .unique
-        let updates = MemberUpdatePayload(extraData: ["is_premium": .bool(true)])
-        let unset: [String] = ["is_cool"]
+        let request = UpdateMemberPartialRequest(set: ["is_premium": .bool(true)], unset: ["is_cool"])
 
-        let body: [String: AnyEncodable] = [
-            "set": AnyEncodable(["is_premium": true]),
-            "unset": AnyEncodable(["is_cool"])
-        ]
-        let expectedEndpoint = Endpoint<PartialMemberUpdateResponse>(
-            path: .partialMemberUpdate(userId: userId, cid: cid),
-            method: .patch,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: body
+        let endpoint: Endpoint<UpdateMemberPartialResponse> = .updateMemberPartial(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateMemberPartialRequest: request
         )
 
-        // Build endpoint.
-        let endpoint: Endpoint<PartialMemberUpdateResponse> = .partialMemberUpdate(
-            userId: userId,
-            cid: cid,
-            updates: updates,
-            unset: unset
-        )
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/member", endpoint.path.value)
+        XCTAssertEqual(.patch, endpoint.method)
     }
 }

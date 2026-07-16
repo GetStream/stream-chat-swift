@@ -23,12 +23,14 @@ allowed_endpoints=(
     getUserGroup
     listDevices
     listUserGroups
+    queryMembers
     removeUserGroupMembers
     searchRoles
     searchUserGroups
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updateMemberPartial
     updateUserGroup
 )
 allowed_models=(
@@ -38,6 +40,8 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
+  ChannelMemberRequest
+  ChannelMemberResponse
   CreateDeviceRequest
   CreateUserGroupRequest
   DeviceResponse
@@ -51,14 +55,19 @@ allowed_models=(
   Images
   ListDevicesResponse
   ListUserGroupsResponse
+  MembersResponse
+  QueryMembersPayload
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
+  SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateMemberPartialRequest
+  UpdateMemberPartialResponse
   UpdateUserGroupRequest
   UserGroupMember
   UserGroupResponse
@@ -332,9 +341,6 @@ inject_v1_endpoint_paths() {
     case search
     case pushPreferences
 
-    case members
-    case partialMemberUpdate(userId: UserId, cid: ChannelId)
-
     case threads
     case thread(messageId: MessageId)
     case markThreadRead(cid: ChannelId)
@@ -410,10 +416,6 @@ EOF
         case .guest: return "guest"
         case .search: return "search"
         case .pushPreferences: return "push_preferences"
-
-        case .members: return "members"
-        case let .partialMemberUpdate(userId, cid):
-            return "channels/\(cid.apiPath)/member/\(userId)"
 
         case .threads:
             return "threads"

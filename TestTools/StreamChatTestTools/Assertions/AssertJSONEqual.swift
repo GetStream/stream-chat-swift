@@ -124,6 +124,12 @@ public func CompareJSONEqual(
                             + "Expression 1 value: \(value), Expression 2 value: \(value2)"
                     )
                 }
+            } else if let jsonObject1 = (value as? String)?.jsonObject, let jsonObject2 = (value2 as? String)?.jsonObject {
+                // Some values embed a serialized JSON object as a string, e.g. the `payload` query item of the
+                // `queryMembers` endpoint: {"payload": "{\"type\":\"messaging\",\"filter_conditions\":{}}"}.
+                // The generated factory bakes that inner string with non-deterministic key order, so compare it
+                // structurally instead of as a raw string.
+                try CompareJSONEqual(jsonObject1, jsonObject2)
             } else if String(describing: value) != String(describing: value2) {
                 // If you get a failure here because your values are arrays, you should
                 // change how you encode the [String: Any] dictionary. Please see
@@ -190,4 +196,13 @@ private func preprocessBoolValues(_ json: inout [String: Any]) {
         }
     }
     json.merge(newKeys, uniquingKeysWith: { _, new in new })
+}
+
+private extension String {
+    /// Parses the string as a JSON object, returning `nil` when it isn't one.
+    var jsonObject: [String: Any]? {
+        guard let data = data(using: .utf8),
+              let object = try? JSONSerialization.jsonObject(with: data) else { return nil }
+        return object as? [String: Any]
+    }
 }
