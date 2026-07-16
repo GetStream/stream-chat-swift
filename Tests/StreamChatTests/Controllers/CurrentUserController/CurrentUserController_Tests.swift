@@ -774,32 +774,31 @@ final class CurrentUserController_Tests: XCTestCase {
         
         // Simulate successful response
         let expectedUnreads = CurrentUserUnreads(
-            totalUnreadMessagesCount: 10,
-            totalUnreadChannelsCount: 5,
-            totalUnreadThreadsCount: 3,
-            totalUnreadCountByTeam: ["Benfica": 3],
-            unreadChannels: [
+            channelType: [
+                UnreadChannelByType(
+                    channelCount: 5,
+                    channelType: .messaging,
+                    unreadCount: 10
+                )
+            ],
+            channels: [
                 UnreadChannel(
                     channelId: .init(type: .messaging, id: "channel1"),
-                    unreadMessagesCount: 5,
-                    lastRead: Date()
-                )
-            ],
-            unreadThreads: [
-                UnreadThread(
-                    parentMessageId: "thread1",
-                    unreadRepliesCount: 3,
                     lastRead: Date(),
-                    lastReadMessageId: "lastRead1"
+                    unreadCount: 5
                 )
             ],
-            unreadChannelsByType: [
-                UnreadChannelByType(
-                    channelType: .messaging,
-                    unreadChannelCount: 5,
-                    unreadMessagesCount: 10
+            threads: [
+                UnreadThread(
+                    lastRead: Date(),
+                    lastReadMessageId: "lastRead1",
+                    parentMessageId: "thread1",
+                    unreadCount: 3
                 )
-            ]
+            ],
+            totalUnreadCount: 10,
+            totalUnreadCountByTeam: ["Benfica": 3],
+            totalUnreadThreadsCount: 3
         )
         
         // Simulate completion with success

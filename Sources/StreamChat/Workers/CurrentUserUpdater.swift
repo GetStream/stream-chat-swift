@@ -191,11 +191,10 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func loadAllUnreads(completion: @escaping (@Sendable (Result<CurrentUserUnreads, Error>) -> Void)) {
-        apiClient.request(endpoint: .unreads()) { result in
+        apiClient.request(endpoint: .unreadCounts()) { result in
             switch result {
             case .success(let response):
-                let unreads = response.asModel()
-                completion(.success(unreads))
+                completion(.success(response))
             case .failure(let error):
                 completion(.failure(error))
             }

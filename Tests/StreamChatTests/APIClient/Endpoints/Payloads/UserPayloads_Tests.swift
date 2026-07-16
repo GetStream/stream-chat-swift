@@ -90,7 +90,7 @@ final class UserPayload_Tests: XCTestCase {
 
     func test_unread_isSerialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "Unread")
-        let payload = try JSONDecoder.default.decode(CurrentUserUnreadsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(CurrentUserUnreads.self, from: json)
         XCTAssertEqual(payload.totalUnreadCount, 1)
         XCTAssertEqual(payload.totalUnreadThreadsCount, 1)
         XCTAssertEqual(payload.channels[0].channelId.rawValue, "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64")
