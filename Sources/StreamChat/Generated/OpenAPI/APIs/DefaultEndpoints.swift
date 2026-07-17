@@ -10,7 +10,6 @@ enum EndpointPath: Codable {
     case users
     case guest
     case search
-    case unread
     case pushPreferences
 
     case members
@@ -124,6 +123,7 @@ enum EndpointPath: Codable {
         id: String
     )
     case unblockUsers
+    case unreadCounts
     case updateUserGroup(id: String)
 
     var value: String {
@@ -133,7 +133,6 @@ enum EndpointPath: Codable {
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .unread: return "unread"
         case .pushPreferences: return "push_preferences"
 
         case .members: return "members"
@@ -264,6 +263,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
             return "/api/v2/users/unblock"
+        case .unreadCounts:
+            return "/api/v2/chat/unread"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         }
@@ -635,6 +636,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: unblockUsersRequest
+        )
+    }
+
+    static func unreadCounts(requiresConnectionId: Bool = false) -> Endpoint<CurrentUserUnreads> {
+        return .init(
+            path: .unreadCounts,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 
