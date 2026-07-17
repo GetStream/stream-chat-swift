@@ -125,7 +125,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
         
         // Assert that local downloads were removed
-        XCTAssertEqual(false, FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path))
+        XCTAssertEqual(false, FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory().path))
     }
     
     func test_removingAllData_whileAnotherWrite() throws {
