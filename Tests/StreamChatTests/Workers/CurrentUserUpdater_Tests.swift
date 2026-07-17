@@ -696,11 +696,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_deleteAllLocalAttachmentDownloads_success() throws {
         let storedFileCount: () -> Int = {
-            let paths = try? FileManager.default.subpathsOfDirectory(atPath: URL.streamAttachmentDownloadsDirectory.path)
+            let paths = try? FileManager.default.subpathsOfDirectory(atPath: URL.streamAttachmentDownloadsDirectory().path)
             return paths?.count ?? 0
         }
-        if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
-            try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+        if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory().path) {
+            try FileManager.default.removeItem(at: URL.streamAttachmentDownloadsDirectory())
         }
         
         let attachmentIds = try (0..<5).map { _ in try setUpDownloadedAttachment(with: .mockFile) }
@@ -869,7 +869,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     private func setUpDownloadedAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
         let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
-        try FileManager.default.createDirectory(at: .streamAttachmentDownloadsDirectory, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: URL.streamAttachmentDownloadsDirectory(), withIntermediateDirectories: true)
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
         try database.writeSynchronously { session in

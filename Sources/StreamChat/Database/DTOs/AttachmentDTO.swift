@@ -219,7 +219,10 @@ private extension AttachmentDTO {
         guard let localDownloadState else { return nil }
         let localFileURL: URL? = {
             guard let localRelativePath, !localRelativePath.isEmpty else { return nil }
-            return URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath)
+            return URL.streamAttachmentLocalStorageURL(
+                forRelativePath: localRelativePath,
+                baseURL: managedObjectContext?.chatClientConfig?.localAttachmentDownloadsFolderURL
+            )
         }()
         let file: AttachmentFile? = {
             // Most attachments contain the attachment file information
