@@ -126,4 +126,33 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         )
         XCTAssertEqual(typeErasedAttachment.attachment(payloadType: Joke.self), jokeAttachment)
     }
+
+    func test_streamAttachmentDownloadsDirectory_usesCustomBaseURL() {
+        let baseURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let downloadsDirectory = URL.streamAttachmentDownloadsDirectory(baseURL: baseURL)
+        let localFileURL = URL.streamAttachmentLocalStorageURL(
+            forRelativePath: "message-id-0/File.txt",
+            baseURL: baseURL
+        )
+
+        XCTAssertEqual(
+            downloadsDirectory,
+            baseURL.appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
+        )
+        XCTAssertEqual(
+            localFileURL.path,
+            downloadsDirectory.appendingPathComponent("message-id-0/File.txt").path
+        )
+    }
+
+    func test_streamAttachmentDownloadsDirectory_defaultsToDocuments() {
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        let downloadsDirectory = URL.streamAttachmentDownloadsDirectory()
+
+        XCTAssertEqual(
+            downloadsDirectory,
+            documents?.appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
+        )
+    }
 }

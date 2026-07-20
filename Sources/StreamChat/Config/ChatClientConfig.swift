@@ -34,6 +34,22 @@ public struct ChatClientConfig: Sendable {
         Self.initLocalStorageFolderURL(groupIdentifier: nil)
     }()
 
+    /// The base folder `ChatClient` uses to store attachments downloaded to local storage.
+    ///
+    /// Downloaded attachments are stored inside a `StreamAttachmentDownloads` subfolder created within this location.
+    /// By default this points to the user's `Documents` directory, which is user-visible when the app enables file
+    /// sharing (`UIFileSharingEnabled` / `LSSupportsOpeningDocumentsInPlace`) and is included in device backups.
+    ///
+    /// Set this to a non-user-visible location such as `Library/Application Support` or `Library/Caches` to keep
+    /// downloaded attachments out of the Files app and, optionally, out of backups. When `nil`, the SDK falls back
+    /// to the default `Documents` directory.
+    ///
+    /// - Important: Relative download paths are resolved against this URL on each launch, so changing it between
+    /// launches means previously downloaded files stored under the old location won't be found.
+    public var localAttachmentDownloadsFolderURL: URL? = {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    }()
+
     static func initLocalStorageFolderURL(groupIdentifier: String?) -> URL? {
         #if os(macOS)
         let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
