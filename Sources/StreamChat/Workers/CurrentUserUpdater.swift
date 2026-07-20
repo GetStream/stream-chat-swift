@@ -202,16 +202,18 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+        let request = UpsertPushPreferencesRequest(preferences: [preference])
+        apiClient.request(endpoint: .updatePushNotificationPreferences(upsertPushPreferencesRequest: request)) { [weak self] result in
             switch result {
             case let .success(response):
-                guard let currentUserPushPref = response.userPreferences.asModel().first else {
+                guard let userPreference = response.userPreferences.values.first else {
                     completion(.failure(ClientError.CurrentUserDoesNotExist()))
                     return
                 }
+                let currentUserPushPref = userPreference.asModel()
                 self?.database.write { session in
                     guard let currentUserDTO = session.currentUser else {
                         log.error("Cannot save push preference: no current user in the database")
@@ -219,10 +221,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     }
                     let savedDTO = try session.savePushPreference(
                         id: currentUserDTO.user.id,
-                        payload: .init(
-                            chatLevel: currentUserPushPref.level.rawValue,
-                            disabledUntil: currentUserPushPref.disabledUntil
-                        )
+                        payload: userPreference
                     )
                     currentUserDTO.pushPreference = savedDTO
                 }

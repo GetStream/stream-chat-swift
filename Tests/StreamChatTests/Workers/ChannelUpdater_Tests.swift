@@ -2491,10 +2491,9 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_setPushPreference_makesCorrectAPICall() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -2502,30 +2501,26 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.setPushPreference(preference, cid: cid) { _ in }
 
         // THEN
-        let expectedEndpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences([preference])
+        let expectedEndpoint: Endpoint<UpsertPushPreferencesResponse> = .updatePushNotificationPreferences(upsertPushPreferencesRequest: .init(preferences: [preference]))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_setPushPreference_successfulResponse_savesToDatabase() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .all,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
-                        chatLevel: "all",
-                        disabledUntil: nil
-                    )
+                    cid.rawValue: ChannelPushPreferencesResponse(chatLevel: "all")
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2544,10 +2539,9 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -2560,7 +2554,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PushPreferencesPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UpsertPushPreferencesResponse, Error>.failure(error))
 
         // THEN
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -2569,16 +2563,15 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_setPushPreference_whenNoChannelPreferences_returnsError() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [:]
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2607,23 +2600,19 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertNotNil(database.viewContext.channel(cid: cid))
         XCTAssertNil(database.viewContext.channel(cid: cid)?.pushPreference)
 
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
-                        chatLevel: "mentions",
-                        disabledUntil: nil
-                    )
+                    cid.rawValue: ChannelPushPreferencesResponse(chatLevel: "mentions")
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2673,23 +2662,19 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Verify channel has the initial push preference
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.pushPreference?.chatLevel, "none")
 
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .all,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
-                        chatLevel: "all",
-                        disabledUntil: nil
-                    )
+                    cid.rawValue: ChannelPushPreferencesResponse(chatLevel: "all")
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN

@@ -1779,10 +1779,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let channelPreference = PushPreferenceRequestPayload(
-            chatLevel: level.rawValue,
-            channelId: channelId.rawValue,
-            disabledUntil: nil,
+        let channelPreference = PushPreferenceInput(
+            channelCid: channelId.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
             removeDisable: true
         )
 
@@ -1808,11 +1807,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let channelPreference = PushPreferenceRequestPayload(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: channelId.rawValue,
-            disabledUntil: date,
-            removeDisable: nil
+        let channelPreference = PushPreferenceInput(
+            channelCid: channelId.rawValue,
+            chatLevel: .all,
+            disabledUntil: date
         )
 
         updater.setPushPreference(channelPreference, cid: channelId) { [weak self] result in

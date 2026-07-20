@@ -726,23 +726,25 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         cid: ChannelId,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+        let request = UpsertPushPreferencesRequest(preferences: [preference])
+        apiClient.request(endpoint: .updatePushNotificationPreferences(upsertPushPreferencesRequest: request)) { [weak self] result in
             switch result {
             case let .success(response):
-                guard let channelPref = response.channelPreferences.asModel()[cid] else {
+                guard let channelPreference = response.userChannelPreferences.values.compactMap({ $0[cid.rawValue] }).first else {
                     completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
                     return
                 }
+                let channelPref = channelPreference.asModel()
                 self?.database.write({
                     let dto = try $0.savePushPreference(
                         id: cid.rawValue,
                         payload: .init(
-                            chatLevel: channelPref.level.rawValue,
-                            disabledUntil: channelPref.disabledUntil
+                            chatLevel: channelPreference.chatLevel,
+                            disabledUntil: channelPreference.disabledUntil
                         )
                     )
                     $0.channel(cid: cid)?.pushPreference = dto

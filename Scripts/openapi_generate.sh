@@ -29,6 +29,7 @@ allowed_endpoints=(
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updatePushNotificationPreferences
     updateUserGroup
 )
 allowed_models=(
@@ -38,6 +39,7 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
+  ChannelPushPreferencesResponse
   CreateDeviceRequest
   CreateUserGroupRequest
   DeviceResponse
@@ -51,6 +53,8 @@ allowed_models=(
   Images
   ListDevicesResponse
   ListUserGroupsResponse
+  PushPreferenceInput
+  PushPreferencesResponse
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
@@ -60,6 +64,8 @@ allowed_models=(
   UnreadCountsChannelType
   UnreadCountsThread
   UpdateUserGroupRequest
+  UpsertPushPreferencesRequest
+  UpsertPushPreferencesResponse
   UserGroupMember
   UserGroupResponse
   UserResponse
@@ -72,6 +78,7 @@ allowed_models=(
 allowed_hashable_models=(
   AppSettings
   Device
+  PushPreferenceInput
   Role
   UploadConfig
   UserGroup
@@ -270,7 +277,15 @@ remove_property() {
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
+remove_property ChannelPushPreferencesResponse chatPreferences
 remove_property CurrentUserUnreads duration
+remove_property PushPreferenceInput chatPreferences
+remove_property PushPreferenceInput feedsPreferences
+remove_property PushPreferencesResponse callLevel
+remove_property PushPreferencesResponse chatPreferences
+remove_property PushPreferencesResponse feedsLevel
+remove_property PushPreferencesResponse feedsPreferences
+remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
 
 # 4c. Expose selected generated models as public API. The class and its stored
@@ -330,7 +345,6 @@ inject_v1_endpoint_paths() {
     case users
     case guest
     case search
-    case pushPreferences
 
     case members
     case partialMemberUpdate(userId: UserId, cid: ChannelId)
@@ -409,7 +423,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .pushPreferences: return "push_preferences"
 
         case .members: return "members"
         case let .partialMemberUpdate(userId, cid):

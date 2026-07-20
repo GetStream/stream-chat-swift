@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum EndpointPath: Codable {
     case connect
@@ -10,7 +11,6 @@ enum EndpointPath: Codable {
     case users
     case guest
     case search
-    case pushPreferences
 
     case members
     case partialMemberUpdate(
@@ -124,6 +124,7 @@ enum EndpointPath: Codable {
     )
     case unblockUsers
     case unreadCounts
+    case updatePushNotificationPreferences
     case updateUserGroup(id: String)
 
     var value: String {
@@ -133,7 +134,6 @@ enum EndpointPath: Codable {
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .pushPreferences: return "push_preferences"
 
         case .members: return "members"
         case let .partialMemberUpdate(
@@ -265,6 +265,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users/unblock"
         case .unreadCounts:
             return "/api/v2/chat/unread"
+        case .updatePushNotificationPreferences:
+            return "/api/v2/push_preferences"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         }
@@ -646,6 +648,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func updatePushNotificationPreferences(
+        upsertPushPreferencesRequest: UpsertPushPreferencesRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpsertPushPreferencesResponse> {
+        return .init(
+            path: .updatePushNotificationPreferences,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: upsertPushPreferencesRequest
         )
     }
 

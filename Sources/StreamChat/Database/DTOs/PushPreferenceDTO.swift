@@ -8,7 +8,7 @@ import Foundation
 @objc(PushPreferenceDTO)
 class PushPreferenceDTO: NSManagedObject {
     @NSManaged var id: String
-    @NSManaged var chatLevel: String
+    @NSManaged var chatLevel: String?
     @NSManaged var disabledUntil: DBDate?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var channel: ChannelDTO?
@@ -41,7 +41,7 @@ extension PushPreference {
         try dto.isNotDeleted()
         
         return PushPreference(
-            level: PushPreferenceLevel(rawValue: dto.chatLevel),
+            level: PushPreferenceLevel(rawValue: dto.chatLevel ?? PushPreferenceLevel.all.rawValue),
             disabledUntil: dto.disabledUntil?.bridgeDate
         )
     }
@@ -50,7 +50,7 @@ extension PushPreference {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO {
         let dto = PushPreferenceDTO.loadOrCreate(id: id, context: self)
         dto.id = id
         dto.chatLevel = payload.chatLevel
