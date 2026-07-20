@@ -4,9 +4,9 @@
 
 import Foundation
 
-final class QueryMembersPayload: Sendable, Codable, JSONEncodable {
+final class QueryMembersPayload: Sendable, Encodable, JSONEncodable {
     /// Filter conditions to apply to the query
-    let filterConditions: [String: RawJSON]
+    let filterConditions: any Encodable & Sendable
     let id: String?
     let limit: Int?
     let members: [ChannelMemberRequest]?
@@ -16,7 +16,7 @@ final class QueryMembersPayload: Sendable, Codable, JSONEncodable {
     let type: String
 
     init(
-        filterConditions: [String: RawJSON],
+        filterConditions: any Encodable & Sendable,
         id: String? = nil,
         limit: Int? = nil,
         members: [ChannelMemberRequest]? = nil,
@@ -41,5 +41,37 @@ final class QueryMembersPayload: Sendable, Codable, JSONEncodable {
         case offset
         case sort
         case type
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(
+            filterConditions,
+            forKey: .filterConditions
+        )
+        try container.encodeIfPresent(
+            id,
+            forKey: .id
+        )
+        try container.encodeIfPresent(
+            limit,
+            forKey: .limit
+        )
+        try container.encodeIfPresent(
+            members,
+            forKey: .members
+        )
+        try container.encodeIfPresent(
+            offset,
+            forKey: .offset
+        )
+        try container.encodeIfPresent(
+            sort,
+            forKey: .sort
+        )
+        try container.encode(
+            type,
+            forKey: .type
+        )
     }
 }

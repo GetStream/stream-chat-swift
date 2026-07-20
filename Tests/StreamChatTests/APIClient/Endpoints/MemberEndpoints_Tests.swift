@@ -7,7 +7,7 @@
 import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
-    func test_queryMembers_buildsCorrectly() {
+    func test_queryMembers_buildsCorrectly() throws {
         let cid: ChannelId = .unique
         let query = ChannelMemberListQuery(
             cid: cid,
@@ -23,7 +23,8 @@ final class MemberEndpoints_Tests: XCTestCase {
         let payload = query.asQueryMembersPayload()
         XCTAssertEqual(cid.id, payload.id)
         XCTAssertEqual(cid.type.rawValue, payload.type)
-        XCTAssertFalse(payload.filterConditions.isEmpty)
+        let filterJSON = try JSONEncoder.default.encode(payload.filterConditions)
+        AssertJSONEqual(filterJSON, ["id": ["$eq": "Luke"]])
     }
 
     func test_updateMemberPartial_buildsCorrectly() {

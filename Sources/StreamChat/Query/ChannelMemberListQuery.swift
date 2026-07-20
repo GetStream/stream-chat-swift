@@ -146,7 +146,7 @@ extension ChannelMemberListQuery {
             SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
         }
         return QueryMembersPayload(
-            filterConditions: filter?.toRawJSONDictionary() ?? [:],
+            filterConditions: filter ?? EmptyObject(),
             id: cid.id,
             limit: pagination.pageSize,
             offset: pagination.offset == 0 ? nil : pagination.offset,
