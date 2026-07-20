@@ -17,14 +17,6 @@ extension FilterKey where Scope == FilterTestScope {
     static var testKeyArrayString: FilterKey<Scope, String> { "test_key_ArrayString" }
     static var testKeyArrayInt: FilterKey<Scope, Int> { "test_key_ArrayInt" }
     static var testKeyArrayDouble: FilterKey<Scope, Double> { "test_key_ArrayDouble" }
-
-    static var testKeyURL: FilterKey<Scope, URL> { "test_key_URL" }
-    static var testKeyChannelId: FilterKey<Scope, ChannelId> { "test_key_ChannelId" }
-    static var testKeyChannelType: FilterKey<Scope, ChannelType> { "test_key_ChannelType" }
-    static var testKeyMemberRole: FilterKey<Scope, MemberRole> { "test_key_MemberRole" }
-    static var testKeyUserRole: FilterKey<Scope, UserRole> { "test_key_UserRole" }
-    static var testKeyAttachmentType: FilterKey<Scope, AttachmentType> { "test_key_AttachmentType" }
-    static var testKeyOptionalTeamId: FilterKey<Scope, TeamId?> { "test_key_OptionalTeamId" }
 }
 
 extension Filter: Equatable {
