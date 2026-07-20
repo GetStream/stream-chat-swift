@@ -740,13 +740,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 }
                 let channelPref = channelPreference.asModel()
                 self?.database.write({
-                    let dto = try $0.savePushPreference(
-                        id: cid.rawValue,
-                        payload: .init(
-                            chatLevel: channelPreference.chatLevel,
-                            disabledUntil: channelPreference.disabledUntil
-                        )
-                    )
+                    let dto = try $0.savePushPreference(id: cid.rawValue, payload: channelPreference)
                     $0.channel(cid: cid)?.pushPreference = dto
                 }, completion: { error in
                     if let error = error {

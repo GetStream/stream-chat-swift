@@ -10,22 +10,22 @@ public struct PushPreference: Equatable, Sendable {
     public let level: PushPreferenceLevel
     /// If provided the notifications will be disabled until the set date.
     public let disabledUntil: Date?
+    /// The chat push notification preferences per mention type.
+    public let chatPreferences: ChatPreferences?
+
+    init(level: PushPreferenceLevel, disabledUntil: Date?, chatPreferences: ChatPreferences? = nil) {
+        self.level = level
+        self.disabledUntil = disabledUntil
+        self.chatPreferences = chatPreferences
+    }
 }
 
 extension PushPreferencesResponse {
     func asModel() -> PushPreference {
         .init(
             level: PushPreferenceLevel(rawValue: chatLevel ?? PushPreferenceLevel.all.rawValue),
-            disabledUntil: disabledUntil
-        )
-    }
-}
-
-extension ChannelPushPreferencesResponse {
-    func asModel() -> PushPreference {
-        .init(
-            level: PushPreferenceLevel(rawValue: chatLevel ?? PushPreferenceLevel.all.rawValue),
-            disabledUntil: disabledUntil
+            disabledUntil: disabledUntil,
+            chatPreferences: chatPreferences
         )
     }
 }

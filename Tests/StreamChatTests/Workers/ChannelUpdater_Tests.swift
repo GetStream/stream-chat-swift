@@ -2517,7 +2517,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: ChannelPushPreferencesResponse(chatLevel: "all")
+                    cid.rawValue: PushPreferencesResponse(chatLevel: "all")
                 ]
             ],
             userPreferences: [:]
@@ -2609,7 +2609,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: ChannelPushPreferencesResponse(chatLevel: "mentions")
+                    cid.rawValue: PushPreferencesResponse(chatLevel: "mentions")
                 ]
             ],
             userPreferences: [:]
@@ -2671,7 +2671,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: ChannelPushPreferencesResponse(chatLevel: "all")
+                    cid.rawValue: PushPreferencesResponse(chatLevel: "all")
                 ]
             ],
             userPreferences: [:]

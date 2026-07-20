@@ -10,6 +10,7 @@ class PushPreferenceDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var chatLevel: String?
     @NSManaged var disabledUntil: DBDate?
+    @NSManaged var chatPreferences: ChatPreferencesDTO?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var channel: ChannelDTO?
 
@@ -42,7 +43,8 @@ extension PushPreference {
         
         return PushPreference(
             level: PushPreferenceLevel(rawValue: dto.chatLevel ?? PushPreferenceLevel.all.rawValue),
-            disabledUntil: dto.disabledUntil?.bridgeDate
+            disabledUntil: dto.disabledUntil?.bridgeDate,
+            chatPreferences: dto.chatPreferences.map { ChatPreferences(fromDTO: $0) }
         )
     }
 }
@@ -55,6 +57,7 @@ extension NSManagedObjectContext {
         dto.id = id
         dto.chatLevel = payload.chatLevel
         dto.disabledUntil = payload.disabledUntil?.bridgeDate
+        dto.chatPreferences = try payload.chatPreferences.map { try saveChatPreferences(id: id, payload: $0) }
         return dto
     }
 }

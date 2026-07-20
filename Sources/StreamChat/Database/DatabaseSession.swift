@@ -80,6 +80,13 @@ protocol CurrentUserDatabaseSession {
     @discardableResult
     func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO
 
+    /// Saves the chat preferences for the given id.
+    /// - Parameters:
+    ///   - id: The channel ID or the currentUser ID.
+    ///   - payload: The chat preferences.
+    @discardableResult
+    func saveChatPreferences(id: String, payload: ChatPreferences) throws -> ChatPreferencesDTO
+
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)
 

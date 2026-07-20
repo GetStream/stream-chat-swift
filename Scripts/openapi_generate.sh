@@ -39,7 +39,7 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
-  ChannelPushPreferencesResponse
+  ChatPreferencesResponse
   CreateDeviceRequest
   CreateUserGroupRequest
   DeviceResponse
@@ -77,6 +77,7 @@ allowed_models=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
+  ChatPreferences
   Device
   PushPreferenceInput
   Role
@@ -240,6 +241,7 @@ restore_usergroup_members_optionality
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
+rename_generated ChatPreferencesResponse ChatPreferences
 rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
@@ -251,6 +253,7 @@ rename_generated UnreadCountsThread UnreadThread
 rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
+rename_generated_type ChannelPushPreferencesResponse PushPreferencesResponse
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
@@ -277,12 +280,10 @@ remove_property() {
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
-remove_property ChannelPushPreferencesResponse chatPreferences
 remove_property CurrentUserUnreads duration
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsPreferences
 remove_property PushPreferencesResponse callLevel
-remove_property PushPreferencesResponse chatPreferences
 remove_property PushPreferencesResponse feedsLevel
 remove_property PushPreferencesResponse feedsPreferences
 remove_property UpsertPushPreferencesResponse duration
@@ -301,6 +302,7 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
+publicize_model ChatPreferences
 publicize_model CurrentUserUnreads
 publicize_model Device
 publicize_model Role

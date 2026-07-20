@@ -160,6 +160,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.savePushPreference(id: id, payload: payload)
     }
 
+    func saveChatPreferences(id: String, payload: ChatPreferences) throws -> ChatPreferencesDTO {
+        try underlyingSession.saveChatPreferences(id: id, payload: payload)
+    }
+
     func createNewMessage(
         in cid: ChannelId,
         messageId: MessageId?,
