@@ -28,6 +28,7 @@ allowed_endpoints=(
     searchUserGroups
     stopWatchingChannel
     unblockUsers
+    unreadCounts
     updateUserGroup
 )
 allowed_models=(
@@ -55,10 +56,14 @@ allowed_models=(
   SearchRolesResponse
   UnblockUsersRequest
   UnblockUsersResponse
+  UnreadCountsChannel
+  UnreadCountsChannelType
+  UnreadCountsThread
   UpdateUserGroupRequest
   UserGroupMember
   UserGroupResponse
   UserResponse
+  WrappedUnreadCountsResponse
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
@@ -200,6 +205,16 @@ optionalize_property() {
 optionalize_property DeviceResponse createdAt
 optionalize_property Role createdAt
 optionalize_property Role updatedAt
+optionalize_property UnreadCountsChannel lastRead
+optionalize_property UnreadCountsThread lastRead
+optionalize_property UnreadCountsThread lastReadMessageId
+
+retype_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E "s/[[:<:]]$2: $3[[:>:]]/$2: $4/g" "$file"
+}
+retype_property UnreadCountsChannel channelId String ChannelId
+retype_property UnreadCountsChannelType channelType String ChannelType
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
@@ -223,6 +238,10 @@ rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
 rename_generated ImageData GiphyImageData
 rename_generated Images GiphyImages
+rename_generated UnreadCountsChannel UnreadChannel
+rename_generated UnreadCountsChannelType UnreadChannelByType
+rename_generated UnreadCountsThread UnreadThread
+rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
@@ -232,6 +251,27 @@ rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 
 rename_generated_type Response EmptyResponse
+
+# Remove a generated property (declaration, doc comment, init param, assignment,
+#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+remove_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v p="$2" '
+    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+    { s = $0; sub(/^[[:space:]]+/, "", s) }
+    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+    s ~ "^let " p ": "                 { n = 0; next }
+    s ~ "^self\\." p " = " p "$"       { next }
+    s ~ "^case " p "( =|$)"            { next }
+    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
+    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
+    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+    { flush(); print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_property CurrentUserUnreads duration
+remove_property UserGroupMember appPk
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -246,8 +286,12 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
+publicize_model CurrentUserUnreads
 publicize_model Device
 publicize_model Role
+publicize_model UnreadChannel
+publicize_model UnreadChannelByType
+publicize_model UnreadThread
 publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
@@ -286,7 +330,6 @@ inject_v1_endpoint_paths() {
     case users
     case guest
     case search
-    case unread
     case pushPreferences
 
     case members
@@ -366,7 +409,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .unread: return "unread"
         case .pushPreferences: return "push_preferences"
 
         case .members: return "members"

@@ -696,11 +696,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_deleteAllLocalAttachmentDownloads_success() throws {
         let storedFileCount: () -> Int = {
-            let paths = try? FileManager.default.subpathsOfDirectory(atPath: URL.streamAttachmentDownloadsDirectory.path)
+            let paths = try? FileManager.default.subpathsOfDirectory(atPath: URL.streamAttachmentDownloadsDirectory().path)
             return paths?.count ?? 0
         }
-        if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
-            try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+        if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory().path) {
+            try FileManager.default.removeItem(at: URL.streamAttachmentDownloadsDirectory())
         }
         
         let attachmentIds = try (0..<5).map { _ in try setUpDownloadedAttachment(with: .mockFile) }
@@ -734,41 +734,41 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Assert request is made to the correct endpoint
         XCTAssertNotNil(apiClient.request_endpoint)
         let endpoint = apiClient.request_endpoint
-        XCTAssertEqual(endpoint?.path.value, "unread")
+        XCTAssertEqual(endpoint?.path.value, "/api/v2/chat/unread")
         XCTAssertEqual(endpoint?.method, .get)
-        
+
         // Create test payload for the response
-        let payload = CurrentUserUnreadsPayload(
-            totalUnreadCount: 10,
-            totalUnreadThreadsCount: 3,
-            totalUnreadCountByTeam: ["Benfica": 3],
-            channels: [
-                CurrentUserChannelUnreadPayload(
-                    channelId: .init(type: .messaging, id: "channel1"),
-                    unreadCount: 5,
-                    lastRead: Date()
-                ),
-                CurrentUserChannelUnreadPayload(
-                    channelId: .init(type: .messaging, id: "channel2"),
-                    unreadCount: 5,
-                    lastRead: Date()
-                )
-            ],
+        let payload = CurrentUserUnreads(
             channelType: [
-                ChannelUnreadByTypePayload(
-                    channelType: .messaging,
+                UnreadChannelByType(
                     channelCount: 2,
+                    channelType: .messaging,
                     unreadCount: 10
                 )
             ],
+            channels: [
+                UnreadChannel(
+                    channelId: .init(type: .messaging, id: "channel1"),
+                    lastRead: Date(),
+                    unreadCount: 5
+                ),
+                UnreadChannel(
+                    channelId: .init(type: .messaging, id: "channel2"),
+                    lastRead: Date(),
+                    unreadCount: 5
+                )
+            ],
             threads: [
-                CurrentUserThreadUnreadPayload(
-                    parentMessageId: "thread1",
+                UnreadThread(
                     lastRead: Date(),
                     lastReadMessageId: "message1",
+                    parentMessageId: "thread1",
                     unreadCount: 3
                 )
-            ]
+            ],
+            totalUnreadCount: 10,
+            totalUnreadCountByTeam: ["Benfica": 3],
+            totalUnreadThreadsCount: 3
         )
         
         // Simulate API response
@@ -795,7 +795,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Simulate API error
         let expectedError = TestError()
-        apiClient.test_simulateResponse(Result<CurrentUserUnreadsPayload, Error>.failure(expectedError))
+        apiClient.test_simulateResponse(Result<CurrentUserUnreads, Error>.failure(expectedError))
         
         // Verify the error is propagated
         XCTAssertEqual(receivedError as? TestError, expectedError)
@@ -869,7 +869,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     private func setUpDownloadedAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
         let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
-        try FileManager.default.createDirectory(at: .streamAttachmentDownloadsDirectory, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: URL.streamAttachmentDownloadsDirectory(), withIntermediateDirectories: true)
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
         try database.writeSynchronously { session in
