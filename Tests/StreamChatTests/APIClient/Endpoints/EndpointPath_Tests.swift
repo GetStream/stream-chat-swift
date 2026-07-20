@@ -84,7 +84,7 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_unread_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.unread.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.unreadCounts.shouldBeQueuedOffline)
     }
 
     func test_pushPreferences_shouldNOTBeQueuedOffline() {

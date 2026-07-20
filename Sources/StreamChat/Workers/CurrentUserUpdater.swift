@@ -159,13 +159,17 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
     
     func deleteAllLocalAttachmentDownloads(completion: @escaping @Sendable (Error?) -> Void) {
+        let downloadsBaseURL = database.chatClientConfig.localAttachmentDownloadsFolderURL
         database.write({ session in
             // Try to delete all the local files even when one of them happens to fail.
             var latestError: Error?
             let attachments = session.allLocallyDownloadedAttachments()
             for attachment in attachments {
                 if let localRelativePath = attachment.localRelativePath {
-                    let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: localRelativePath)
+                    let localURL = URL.streamAttachmentLocalStorageURL(
+                        forRelativePath: localRelativePath,
+                        baseURL: downloadsBaseURL
+                    )
                     if FileManager.default.fileExists(atPath: localURL.path) {
                         do {
                             try FileManager.default.removeItem(at: localURL)
@@ -191,11 +195,10 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func loadAllUnreads(completion: @escaping (@Sendable (Result<CurrentUserUnreads, Error>) -> Void)) {
-        apiClient.request(endpoint: .unreads()) { result in
+        apiClient.request(endpoint: .unreadCounts()) { result in
             switch result {
             case .success(let response):
-                let unreads = response.asModel()
-                completion(.success(unreads))
+                completion(.success(response))
             case .failure(let error):
                 completion(.failure(error))
             }
