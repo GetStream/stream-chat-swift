@@ -295,13 +295,27 @@ remove_property() {
   perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
+remove_property PushPreferenceInput feedsLevel
 remove_property PushPreferenceInput feedsPreferences
 remove_property PushPreference callLevel
 remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
 remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
+
+remove_nested_enum() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v e="$2" '
+    $0 ~ "^    enum " e ":" { skip = 1; next }
+    skip && /^    }$/       { skip = 0; next }
+    skip                    { next }
+    { print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
+remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
