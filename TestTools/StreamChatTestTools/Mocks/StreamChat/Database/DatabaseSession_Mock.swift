@@ -311,6 +311,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveLocation(payload: payload, cache: cache)
     }
 
+    func saveLocation(payload: SharedLocationResponseData, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+        try underlyingSession.saveLocation(payload: payload, cache: cache)
+    }
+
     func pin(message: MessageDTO, pinning: MessagePinning) throws {
         try throwErrorIfNeeded()
         return try underlyingSession.pin(message: message, pinning: pinning)

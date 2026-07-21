@@ -21,6 +21,7 @@ allowed_endpoints=(
     getBlockedUsers
     getOG
     getUserGroup
+    getUserLiveLocations
     listDevices
     listUserGroups
     queryMembers
@@ -30,6 +31,7 @@ allowed_endpoints=(
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updateLiveLocation
     updateMemberPartial
     updateUserGroup
 )
@@ -60,12 +62,15 @@ allowed_models=(
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
+  SharedLocationResponseData
+  SharedLocationsResponse
   SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
   UpdateUserGroupRequest
@@ -259,6 +264,7 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated_type SharedLocationResponse SharedLocationResponseData
 
 rename_generated_type Response EmptyResponse
 
@@ -282,6 +288,9 @@ remove_property() {
 }
 remove_property CurrentUserUnreads duration
 remove_property UserGroupMember appPk
+remove_property SharedLocationResponseData channel
+remove_property SharedLocationResponseData message
+remove_property SharedLocationsResponse duration
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -397,8 +406,6 @@ inject_v1_endpoint_paths() {
     case deleteFile(String)
     case deleteImage(String)
 
-    case liveLocations
-
     case polls
     case pollsQuery
     case poll(pollId: String)
@@ -426,8 +433,6 @@ EOF
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
-
-        case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"

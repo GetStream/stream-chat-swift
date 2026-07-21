@@ -3248,16 +3248,14 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Prepare API response
-        let payload = SharedLocationPayload(
-            channelId: cid.rawValue,
-            messageId: messageId,
-            userId: userId,
+        let payload = SharedLocationResponseData.dummy(
+            channelId: cid,
+            createdByDeviceId: deviceId,
+            endAt: Date().addingTimeInterval(1000),
             latitude: updatedLatitude,
             longitude: updatedLongitude,
-            createdAt: .unique,
-            updatedAt: .unique,
-            endAt: Date().addingTimeInterval(1000),
-            createdByDeviceId: deviceId
+            messageId: messageId,
+            userId: userId
         )
         apiClient.test_mockResponseResult(.success(payload))
 
@@ -3350,7 +3348,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         let testError = TestError()
-        apiClient.test_mockResponseResult(Result<SharedLocationPayload, Error>.failure(testError))
+        apiClient.test_mockResponseResult(Result<SharedLocationResponseData, Error>.failure(testError))
 
         let result = try waitFor {
             messageUpdater.updateLiveLocation(
@@ -3384,16 +3382,14 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Prepare API response
-        let payload = SharedLocationPayload(
-            channelId: cid.rawValue,
-            messageId: messageId,
-            userId: .unique,
+        let payload = SharedLocationResponseData.dummy(
+            channelId: cid,
+            createdByDeviceId: deviceId,
+            endAt: Date(),
             latitude: latitude,
             longitude: longitude,
-            createdAt: .unique,
-            updatedAt: .unique,
-            endAt: Date(),
-            createdByDeviceId: deviceId
+            messageId: messageId,
+            userId: .unique
         )
         apiClient.test_mockResponseResult(.success(payload))
 
@@ -3454,7 +3450,7 @@ final class MessageUpdater_Tests: XCTestCase {
             )
         )
         let testError = TestError()
-        apiClient.test_mockResponseResult(Result<SharedLocationPayload, Error>.failure(testError))
+        apiClient.test_mockResponseResult(Result<SharedLocationResponseData, Error>.failure(testError))
         let result = try waitFor {
             messageUpdater.stopLiveLocationSharing(messageId: messageId, completion: $0)
         }

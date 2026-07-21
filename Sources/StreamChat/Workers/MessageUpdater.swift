@@ -360,20 +360,18 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            guard let currentUser = session.currentUser,
-                  let currentDeviceId = currentUser.currentDevice?.id else {
+            guard session.currentUser?.currentDevice?.id != nil else {
                 completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 return
             }
 
-            let request = LiveLocationUpdateRequestPayload(
-                messageId: messageId,
-                latitude: locationInfo.latitude,
-                longitude: locationInfo.longitude,
-                createdByDeviceId: currentDeviceId
+            let request = UpdateLiveLocationRequest(
+                latitude: Float(locationInfo.latitude),
+                longitude: Float(locationInfo.longitude),
+                messageId: messageId
             )
 
-            let endpoint = Endpoint<SharedLocationPayload>.updateLiveLocation(request: request)
+            let endpoint = Endpoint<SharedLocationResponseData>.updateLiveLocation(updateLiveLocationRequest: request)
             self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
@@ -404,18 +402,12 @@ class MessageUpdater: Worker, @unchecked Sendable {
         }
 
         database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
-                  let currentDeviceId = currentUser.currentDevice?.id else {
+            guard self?.database.backgroundReadOnlyContext.currentUser?.currentDevice?.id != nil else {
                 completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 return
             }
-            let request = StopLiveLocationRequestPayload(
-                messageId: messageId,
-                createdByDeviceId: currentDeviceId
-            )
-            let endpoint = Endpoint<SharedLocationPayload>.stopLiveLocation(
-                request: request
-            )
+            let request = UpdateLiveLocationRequest(endAt: Date(), messageId: messageId)
+            let endpoint = Endpoint<SharedLocationResponseData>.updateLiveLocation(updateLiveLocationRequest: request)
             self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
