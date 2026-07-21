@@ -237,15 +237,15 @@ retype_property UnreadCountsChannelType channelType String ChannelType
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
-restore_usergroup_members_optionality() {
-  local file="$OUTPUT_DIR_CHAT/models/UserGroupResponse.swift"
-  perl -0777 -pi -e '
-    s/^    let members: \[UserGroupMember\]\?$/    private let membersOptional: [UserGroupMember]?\n    public var members: [UserGroupMember] { membersOptional ?? [] }/m;
-    s/^        self\.members = members$/        self.membersOptional = members/m;
-    s/^    case members$/    case membersOptional = "members"/m;
+restore_nonoptional_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  P="$2" T="$3" D="$4" perl -0777 -pi -e '
+    my ($p, $t, $d) = ($ENV{P}, $ENV{T}, $ENV{D});
+    s/^    let \Q$p\E: \Q$t\E\?$/    private let _$p: $t?\n    public var $p: $t { _$p ?? $d }/m;
+    s/^        self\.\Q$p\E = \Q$p\E$/        self._$p = $p/m;
+    s{^    case \Q$p\E( = "[^"]*")?$}{"    case _$p" . (defined $1 ? $1 : " = \"$p\"")}me;
   ' "$file"
 }
-restore_usergroup_members_optionality
 
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
@@ -273,6 +273,10 @@ rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 
 rename_generated_type Response EmptyResponse
+
+retype_property PushPreference chatLevel String PushPreferenceLevel
+restore_nonoptional_property PushPreference chatLevel PushPreferenceLevel .all
+restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to

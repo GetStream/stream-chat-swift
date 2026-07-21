@@ -109,7 +109,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
-        XCTAssertEqual(payload.pushPreference?.chatLevel, loadedCurrentUser.pushPreference?.level.rawValue)
+        XCTAssertEqual(payload.pushPreference?.chatLevel, loadedCurrentUser.pushPreference?.chatLevel)
         XCTAssertNearlySameDate(payload.pushPreference?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
     }
 

@@ -6,22 +6,23 @@ import Foundation
 import StreamCore
 
 public final class PushPreference: Sendable, Codable, JSONEncodable {
-    public let chatLevel: String?
+    private let _chatLevel: PushPreferenceLevel?
+    public var chatLevel: PushPreferenceLevel { _chatLevel ?? .all }
     public let chatPreferences: ChatPreferences?
     public let disabledUntil: Date?
 
     init(
-        chatLevel: String? = nil,
+        chatLevel: PushPreferenceLevel? = nil,
         chatPreferences: ChatPreferences? = nil,
         disabledUntil: Date? = nil
     ) {
-        self.chatLevel = chatLevel
+        self._chatLevel = chatLevel
         self.chatPreferences = chatPreferences
         self.disabledUntil = disabledUntil
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case chatLevel = "chat_level"
+        case _chatLevel = "chat_level"
         case chatPreferences = "chat_preferences"
         case disabledUntil = "disabled_until"
     }
