@@ -213,7 +213,6 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     completion(.failure(ClientError.CurrentUserDoesNotExist()))
                     return
                 }
-                let currentUserPushPref = userPreference.asModel()
                 self?.database.write { session in
                     guard let currentUserDTO = session.currentUser else {
                         log.error("Cannot save push preference: no current user in the database")
@@ -225,7 +224,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     )
                     currentUserDTO.pushPreference = savedDTO
                 }
-                completion(.success(currentUserPushPref))
+                completion(.success(userPreference))
             case let .failure(error):
                 completion(.failure(error))
             }

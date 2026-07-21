@@ -42,9 +42,9 @@ extension PushPreference {
         try dto.isNotDeleted()
         
         return PushPreference(
-            level: PushPreferenceLevel(rawValue: dto.chatLevel ?? PushPreferenceLevel.all.rawValue),
-            disabledUntil: dto.disabledUntil?.bridgeDate,
-            chatPreferences: dto.chatPreferences.map { ChatPreferences(fromDTO: $0) }
+            chatLevel: dto.chatLevel ?? PushPreferenceLevel.all.rawValue,
+            chatPreferences: dto.chatPreferences.map { ChatPreferences(fromDTO: $0) },
+            disabledUntil: dto.disabledUntil?.bridgeDate
         )
     }
 }
@@ -52,7 +52,7 @@ extension PushPreference {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreference) throws -> PushPreferenceDTO {
         let dto = PushPreferenceDTO.loadOrCreate(id: id, context: self)
         dto.id = id
         dto.chatLevel = payload.chatLevel

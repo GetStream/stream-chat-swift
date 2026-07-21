@@ -79,6 +79,7 @@ allowed_hashable_models=(
   AppSettings
   ChatPreferences
   Device
+  PushPreference
   PushPreferenceInput
   Role
   UploadConfig
@@ -242,6 +243,7 @@ restore_usergroup_members_optionality
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
 rename_generated ChatPreferencesResponse ChatPreferences
+rename_generated PushPreferencesResponse PushPreference
 rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
@@ -253,7 +255,7 @@ rename_generated UnreadCountsThread UnreadThread
 rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
-rename_generated_type ChannelPushPreferencesResponse PushPreferencesResponse
+rename_generated_type ChannelPushPreferencesResponse PushPreference
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
@@ -279,13 +281,15 @@ remove_property() {
     s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsPreferences
-remove_property PushPreferencesResponse callLevel
-remove_property PushPreferencesResponse feedsLevel
-remove_property PushPreferencesResponse feedsPreferences
+remove_property PushPreference callLevel
+remove_property PushPreference feedsLevel
+remove_property PushPreference feedsPreferences
 remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
 
@@ -305,6 +309,7 @@ publicize_model AppSettings
 publicize_model ChatPreferences
 publicize_model CurrentUserUnreads
 publicize_model Device
+publicize_model PushPreference
 publicize_model Role
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType

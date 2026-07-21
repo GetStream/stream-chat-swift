@@ -163,7 +163,7 @@ extension XCTestCase {
         truncatedAt: Date? = nil,
         cooldownDuration: Int? = nil,
         channelReads: [ChannelReadPayload]? = nil,
-        pushPreference: PushPreferencesResponse? = nil
+        pushPreference: PushPreference? = nil
     ) -> ChannelPayload {
         var payloadMessages: [MessagePayload] = []
         if let messages = messages {

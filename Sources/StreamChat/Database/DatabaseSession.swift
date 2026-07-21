@@ -78,7 +78,7 @@ protocol CurrentUserDatabaseSession {
     ///   - id: The channel ID or the currentUser ID.
     ///   - payload: The push preference.
     @discardableResult
-    func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO
+    func savePushPreference(id: String, payload: PushPreference) throws -> PushPreferenceDTO
 
     /// Saves the chat preferences for the given id.
     /// - Parameters:

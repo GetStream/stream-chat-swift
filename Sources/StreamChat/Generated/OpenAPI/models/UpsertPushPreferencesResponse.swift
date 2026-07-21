@@ -7,13 +7,13 @@ import StreamCore
 
 final class UpsertPushPreferencesResponse: Sendable, Codable, JSONEncodable {
     /// The channel specific push notification preferences, only returned for channels you've edited.
-    let userChannelPreferences: [String: [String: PushPreferencesResponse]]
+    let userChannelPreferences: [String: [String: PushPreference]]
     /// The user preferences, always returned regardless if you edited it
-    let userPreferences: [String: PushPreferencesResponse]
+    let userPreferences: [String: PushPreference]
 
     init(
-        userChannelPreferences: [String: [String: PushPreferencesResponse]],
-        userPreferences: [String: PushPreferencesResponse]
+        userChannelPreferences: [String: [String: PushPreference]],
+        userPreferences: [String: PushPreference]
     ) {
         self.userChannelPreferences = userChannelPreferences
         self.userPreferences = userPreferences

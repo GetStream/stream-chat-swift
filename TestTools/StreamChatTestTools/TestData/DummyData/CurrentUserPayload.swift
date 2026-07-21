@@ -27,7 +27,7 @@ extension CurrentUserPayload {
         teams: [TeamId] = [],
         language: String? = nil,
         mutedChannels: [MutedChannelPayload] = [],
-        pushPreference: PushPreferencesResponse? = nil
+        pushPreference: PushPreference? = nil
     ) -> CurrentUserPayload {
         .init(
             id: userId,
@@ -61,7 +61,7 @@ extension CurrentUserPayload {
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
         privacySettings: UserPrivacySettingsPayload? = nil,
-        pushPreference: PushPreferencesResponse? = nil
+        pushPreference: PushPreference? = nil
     ) -> CurrentUserPayload {
         .init(
             id: userPayload.id,

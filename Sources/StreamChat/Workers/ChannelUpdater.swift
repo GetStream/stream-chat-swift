@@ -738,7 +738,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
                     return
                 }
-                let channelPref = channelPreference.asModel()
                 self?.database.write({
                     let dto = try $0.savePushPreference(id: cid.rawValue, payload: channelPreference)
                     $0.channel(cid: cid)?.pushPreference = dto
@@ -746,7 +745,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     if let error = error {
                         completion(.failure(error))
                     } else {
-                        completion(.success(channelPref))
+                        completion(.success(channelPreference))
                     }
                 })
             case let .failure(error):

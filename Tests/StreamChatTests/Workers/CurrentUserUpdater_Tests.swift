@@ -912,7 +912,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencesResponse(chatLevel: "all")
+                "userId": PushPreference(chatLevel: "all")
             ]
         )
 
@@ -972,7 +972,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencesResponse(chatLevel: "all")
+                "userId": PushPreference(chatLevel: "all")
             ]
         )
 
