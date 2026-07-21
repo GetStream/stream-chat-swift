@@ -102,6 +102,11 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveUser(payload: payload, query: query, cache: cache)
     }
 
+    func saveUser(response: UserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveUser(response: response, query: query, cache: cache)
+    }
+
     func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
         underlyingSession.saveUsers(payload: payload, query: query)
     }
@@ -439,6 +444,20 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
+    }
+
+    func saveMember(
+        response: ChannelMemberResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MemberDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveMember(response: response, channelId: channelId, query: query, cache: cache)
+    }
+
+    func saveMembers(response: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+        underlyingSession.saveMembers(response: response, channelId: channelId, query: query)
     }
 
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {

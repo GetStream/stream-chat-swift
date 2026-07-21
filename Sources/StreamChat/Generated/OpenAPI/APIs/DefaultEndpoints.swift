@@ -12,12 +12,6 @@ enum EndpointPath: Codable {
     case search
     case pushPreferences
 
-    case members
-    case partialMemberUpdate(
-        userId: UserId,
-        cid: ChannelId
-    )
-
     case threads
     case thread(messageId: MessageId)
     case markThreadRead(cid: ChannelId)
@@ -115,6 +109,7 @@ enum EndpointPath: Codable {
     case getUserGroup(id: String)
     case listDevices
     case listUserGroups
+    case queryMembers
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
@@ -124,6 +119,10 @@ enum EndpointPath: Codable {
     )
     case unblockUsers
     case unreadCounts
+    case updateMemberPartial(
+        type: String,
+        id: String
+    )
     case updateUserGroup(id: String)
 
     var value: String {
@@ -134,13 +133,6 @@ enum EndpointPath: Codable {
         case .guest: return "guest"
         case .search: return "search"
         case .pushPreferences: return "push_preferences"
-
-        case .members: return "members"
-        case let .partialMemberUpdate(
-            userId,
-            cid
-        ):
-            return "channels/\(cid.apiPath)/member/\(userId)"
 
         case .threads:
             return "threads"
@@ -250,6 +242,8 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case .listUserGroups:
             return "/api/v2/usergroups"
+        case .queryMembers:
+            return "/api/v2/chat/members"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchRoles:
@@ -265,6 +259,11 @@ enum EndpointPath: Codable {
             return "/api/v2/users/unblock"
         case .unreadCounts:
             return "/api/v2/chat/unread"
+        case let .updateMemberPartial(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/member"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         }
@@ -549,6 +548,24 @@ extension Endpoint {
         )
     }
 
+    static func queryMembers(
+        payload: QueryMembersPayload?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MembersResponse> {
+        return .init(
+            path: .queryMembers,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func removeUserGroupMembers(
         id: String,
         removeUserGroupMembersRequest: RemoveUserGroupMembersRequest,
@@ -646,6 +663,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func updateMemberPartial(
+        type: String,
+        id: String,
+        updateMemberPartialRequest: UpdateMemberPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateMemberPartialResponse> {
+        return .init(
+            path: .updateMemberPartial(
+                type: type,
+                id: id
+            ),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateMemberPartialRequest
         )
     }
 

@@ -34,21 +34,6 @@ struct QueryPollsRequestBody: Encodable {
     }
 }
 
-struct SortParamRequest: Encodable {
-    var direction: Int?
-    var field: String?
-
-    init(direction: Int? = nil, field: String? = nil) {
-        self.direction = direction
-        self.field = field
-    }
-    
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case direction
-        case field
-    }
-}
-
 struct QueryPollVotesRequestBody: Encodable {
     let pollId: String
     var limit: Int?
