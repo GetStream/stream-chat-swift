@@ -28,6 +28,11 @@ protocol UserDatabaseSession {
     @discardableResult
     func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
 
+    /// Saves the provided response to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
+    /// if the save fails.
+    @discardableResult
+    func saveUser(response: UserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
+
     /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
     @discardableResult
     func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO]
@@ -461,6 +466,23 @@ protocol MemberDatabaseSession {
         query: ChannelMemberListQuery?
     ) -> [MemberDTO]
 
+    /// Creates a new `MemberDTO` object in the database with the given `response` in the channel with `channelId`.
+    @discardableResult
+    func saveMember(
+        response: ChannelMemberResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MemberDTO
+
+    /// Creates new `MemberDTO` objects in the database with the given `response` in the channel with `channelId`.
+    @discardableResult
+    func saveMembers(
+        response: MembersResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) -> [MemberDTO]
+
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
@@ -758,11 +780,24 @@ extension DatabaseSession {
     }
 
     @discardableResult
+    func saveUser(response: UserResponse) throws -> UserDTO {
+        try saveUser(response: response, query: nil, cache: nil)
+    }
+
+    @discardableResult
     func saveMember(
         payload: MemberPayload,
         channelId: ChannelId
     ) throws -> MemberDTO {
         try saveMember(payload: payload, channelId: channelId, query: nil, cache: nil)
+    }
+
+    @discardableResult
+    func saveMember(
+        response: ChannelMemberResponse,
+        channelId: ChannelId
+    ) throws -> MemberDTO {
+        try saveMember(response: response, channelId: channelId, query: nil, cache: nil)
     }
 
     // MARK: - Event

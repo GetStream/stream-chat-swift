@@ -155,8 +155,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await chat.archive(), expectedTestError)
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(["archived": .bool(true)], env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     func test_archive_whenChannelUpdaterSucceeds_thenArchivingSucceeds() async throws {
@@ -169,8 +169,8 @@ final class Chat_Tests: XCTestCase {
         try await chat.archive()
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(["archived": .bool(true)], env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     func test_unarchive_whenCurrentUserIdIsNotSet_thenUnarchivingFails() async throws {
@@ -186,8 +186,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await chat.unarchive(), expectedTestError)
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(["archived"], env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(["archived"], env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     func test_unarchive_whenChannelUpdaterSucceeds_thenUnarchivingSucceeds() async throws {
@@ -200,8 +200,8 @@ final class Chat_Tests: XCTestCase {
         try await chat.unarchive()
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(["archived"], env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(["archived"], env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     // MARK: - Deleting the Channel
@@ -1790,8 +1790,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await chat.pin(), expectedTestError)
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(["pinned": .bool(true)], env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     func test_pin_whenChannelUpdaterSucceeds_thenPinningSucceeds() async throws {
@@ -1804,8 +1804,8 @@ final class Chat_Tests: XCTestCase {
         try await chat.pin()
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(["pinned": .bool(true)], env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     func test_unpin_whenCurrentUserIdIsNotSet_thenUnpinningFails() async throws {
@@ -1821,8 +1821,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await chat.unpin(), expectedTestError)
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     func test_unpin_whenChannelUpdaterSucceeds_thenUnpiningSucceeds() async throws {
@@ -1835,8 +1835,8 @@ final class Chat_Tests: XCTestCase {
         try await chat.unpin()
         XCTAssertEqual(channelId, env.memberUpdaterMock.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdaterMock.partialUpdate_userId)
-        XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_updates)
+        XCTAssertEqual(["pinned"], env.memberUpdaterMock.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdaterMock.partialUpdate_request?.set)
     }
     
     // MARK: - Throttling and Slow Mode

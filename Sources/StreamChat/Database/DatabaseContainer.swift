@@ -332,9 +332,12 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                     }
                 }
                 
-                if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
+                let downloadsDirectory = URL.streamAttachmentDownloadsDirectory(
+                    baseURL: self?.chatClientConfig.localAttachmentDownloadsFolderURL
+                )
+                if FileManager.default.fileExists(atPath: downloadsDirectory.path) {
                     do {
-                        try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
+                        try FileManager.default.removeItem(at: downloadsDirectory)
                     } catch {
                         log.debug("Failed to remove local downloads", subsystems: .database)
                     }

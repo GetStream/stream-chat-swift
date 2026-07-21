@@ -23,12 +23,14 @@ allowed_endpoints=(
     getUserGroup
     listDevices
     listUserGroups
+    queryMembers
     removeUserGroupMembers
     searchRoles
     searchUserGroups
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updateMemberPartial
     updatePushNotificationPreferences
     updateUserGroup
 )
@@ -39,6 +41,8 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
+  ChannelMemberRequest
+  ChannelMemberResponse
   ChatPreferencesResponse
   CreateDeviceRequest
   CreateUserGroupRequest
@@ -53,16 +57,21 @@ allowed_models=(
   Images
   ListDevicesResponse
   ListUserGroupsResponse
+  MembersResponse
   PushPreferenceInput
   PushPreferencesResponse
+  QueryMembersPayload
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
+  SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateMemberPartialRequest
+  UpdateMemberPartialResponse
   UpdateUserGroupRequest
   UpsertPushPreferencesRequest
   UpsertPushPreferencesResponse
@@ -122,6 +131,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
 ( cd "$CHAT_DIR" ; make openapi ; \
   ./build/chat-manager openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
+    --opt encodable_filter_conditions=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
@@ -353,9 +363,6 @@ inject_v1_endpoint_paths() {
     case guest
     case search
 
-    case members
-    case partialMemberUpdate(userId: UserId, cid: ChannelId)
-
     case threads
     case thread(messageId: MessageId)
     case markThreadRead(cid: ChannelId)
@@ -430,10 +437,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-
-        case .members: return "members"
-        case let .partialMemberUpdate(userId, cid):
-            return "channels/\(cid.apiPath)/member/\(userId)"
 
         case .threads:
             return "threads"

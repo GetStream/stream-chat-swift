@@ -141,15 +141,13 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     func test_partialUpdate_makesCorrectAPICall() {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
-        let updates = MemberUpdatePayload(extraData: ["key": .string("value")])
-        let unset: [String] = ["field1"]
+        let request = UpdateMemberPartialRequest(set: ["key": .string("value")], unset: ["field1"])
 
         // Simulate `partialUpdate` call
         updater.partialUpdate(
             userId: userId,
             in: cid,
-            updates: updates,
-            unset: unset,
+            request: request,
             completion: { _ in }
         )
 
@@ -157,11 +155,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         XCTAssertEqual(
             apiClient.request_endpoint,
             AnyEndpoint(
-                .partialMemberUpdate(
-                    userId: userId,
-                    cid: cid,
-                    updates: updates,
-                    unset: unset
+                .updateMemberPartial(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    updateMemberPartialRequest: request
                 )
             )
         )
@@ -169,26 +166,25 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_partialUpdate_propagatesSuccessfulResponse() {
         let cid: ChannelId = .unique
-        let memberPayload: MemberPayload = .dummy()
+        let memberResponse: ChannelMemberResponse = .dummy()
 
         // Simulate `partialUpdate` call
         nonisolated(unsafe) var completionResult: Result<ChatChannelMember, Error>?
         updater.partialUpdate(
             userId: .unique,
             in: cid,
-            updates: nil,
-            unset: nil
+            request: UpdateMemberPartialRequest()
         ) { result in
             completionResult = result
         }
 
         // Simulate API response with success
-        let response = PartialMemberUpdateResponse(channelMember: memberPayload)
-        apiClient.test_simulateResponse(Result<PartialMemberUpdateResponse, Error>.success(response))
+        let response = UpdateMemberPartialResponse.dummy(channelMember: memberResponse)
+        apiClient.test_simulateResponse(Result<UpdateMemberPartialResponse, Error>.success(response))
 
         // Assert completion is called with the member
         AssertAsync {
-            Assert.willBeTrue(completionResult?.value?.id == memberPayload.userId)
+            Assert.willBeTrue(completionResult?.value?.id == memberResponse.userId)
         }
     }
 
@@ -198,15 +194,14 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.partialUpdate(
             userId: .unique,
             in: .unique,
-            updates: nil,
-            unset: nil
+            request: UpdateMemberPartialRequest()
         ) { result in
             completionResult = result
         }
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UpdateMemberPartialResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync {
@@ -228,12 +223,12 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         try database.createMember(userId: anotherUserId, cid: cid)
         
         let pinnedDate = Date()
-        let apiResponse = PartialMemberUpdateResponse(
+        let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
+                pinnedAt: pinnedDate,
                 user: .dummy(
                     userId: userId
-                ),
-                pinnedAt: pinnedDate
+                )
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -244,11 +239,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         XCTAssertEqual(
             apiClient.request_endpoint,
             AnyEndpoint(
-                .partialMemberUpdate(
-                    userId: userId,
-                    cid: cid,
-                    updates: MemberUpdatePayload(pinned: true),
-                    unset: nil
+                .updateMemberPartial(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: ["pinned": .bool(true)], unset: nil)
                 )
             )
         )
@@ -264,7 +258,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let error = TestError()
         
-        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<UpdateMemberPartialResponse, Error>.failure(error))
         let resultingError = try waitFor { done in
             updater.pinMemberChannel(true, userId: userId, cid: cid, completion: done)
         }
@@ -281,12 +275,12 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         try database.createMember(userId: userId, cid: cid)
         try database.createMember(userId: anotherUserId, cid: cid)
         
-        let apiResponse = PartialMemberUpdateResponse(
+        let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
+                pinnedAt: nil,
                 user: .dummy(
                     userId: userId
-                ),
-                pinnedAt: nil
+                )
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -297,11 +291,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         XCTAssertEqual(
             apiClient.request_endpoint,
             AnyEndpoint(
-                .partialMemberUpdate(
-                    userId: userId,
-                    cid: cid,
-                    updates: nil,
-                    unset: ["pinned"]
+                .updateMemberPartial(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: nil, unset: ["pinned"])
                 )
             )
         )
@@ -317,7 +310,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let error = TestError()
         
-        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<UpdateMemberPartialResponse, Error>.failure(error))
         let resultingError = try waitFor { done in
             updater.pinMemberChannel(false, userId: userId, cid: cid, completion: done)
         }
@@ -337,12 +330,12 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         try database.createMember(userId: anotherUserId, cid: cid)
         
         let archivedDate = Date()
-        let apiResponse = PartialMemberUpdateResponse(
+        let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
+                archivedAt: archivedDate,
                 user: .dummy(
                     userId: userId
-                ),
-                archivedAt: archivedDate
+                )
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -353,11 +346,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         XCTAssertEqual(
             apiClient.request_endpoint,
             AnyEndpoint(
-                .partialMemberUpdate(
-                    userId: userId,
-                    cid: cid,
-                    updates: MemberUpdatePayload(archived: true),
-                    unset: nil
+                .updateMemberPartial(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: ["archived": .bool(true)], unset: nil)
                 )
             )
         )
@@ -373,7 +365,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let error = TestError()
         
-        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<UpdateMemberPartialResponse, Error>.failure(error))
         let resultingError = try waitFor { done in
             updater.archiveMemberChannel(true, userId: userId, cid: cid, completion: done)
         }
@@ -390,12 +382,12 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         try database.createMember(userId: userId, cid: cid, archivedAt: Date())
         try database.createMember(userId: anotherUserId, cid: cid)
         
-        let apiResponse = PartialMemberUpdateResponse(
+        let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
+                archivedAt: nil,
                 user: .dummy(
                     userId: userId
-                ),
-                archivedAt: nil
+                )
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -406,11 +398,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         XCTAssertEqual(
             apiClient.request_endpoint,
             AnyEndpoint(
-                .partialMemberUpdate(
-                    userId: userId,
-                    cid: cid,
-                    updates: nil,
-                    unset: ["archived"]
+                .updateMemberPartial(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: nil, unset: ["archived"])
                 )
             )
         )
@@ -426,7 +417,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let error = TestError()
         
-        apiClient.test_mockResponseResult(Result<PartialMemberUpdateResponse, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<UpdateMemberPartialResponse, Error>.failure(error))
         let resultingError = try waitFor { done in
             updater.archiveMemberChannel(false, userId: userId, cid: cid, completion: done)
         }

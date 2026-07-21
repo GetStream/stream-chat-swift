@@ -15,22 +15,24 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
     func partialUpdate(
         userId: UserId,
         in cid: ChannelId,
-        updates: MemberUpdatePayload?,
-        unset: [String]?,
+        request: UpdateMemberPartialRequest,
         completion: @escaping (@Sendable (Result<ChatChannelMember, Error>) -> Void)
     ) {
         apiClient.request(
-            endpoint: .partialMemberUpdate(
-                userId: userId,
-                cid: cid,
-                updates: updates,
-                unset: unset
+            endpoint: .updateMemberPartial(
+                type: cid.type.rawValue,
+                id: cid.id,
+                updateMemberPartialRequest: request
             )
         ) { result in
             switch result {
             case .success(let response):
+                guard let channelMember = response.channelMember else {
+                    completion(.failure(ClientError.Unknown()))
+                    return
+                }
                 self.database.write { session in
-                    let member = try session.saveMember(payload: response.channelMember, channelId: cid).asModel()
+                    let member = try session.saveMember(response: channelMember, channelId: cid).asModel()
                     completion(.success(member))
                 }
             case .failure(let error):
@@ -48,8 +50,10 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         partialUpdate(
             userId: userId,
             in: cid,
-            updates: isPinned ? MemberUpdatePayload(pinned: true) : nil,
-            unset: isPinned ? nil : [MemberUpdatePayload.CodingKeys.pinned.rawValue],
+            request: UpdateMemberPartialRequest(
+                set: isPinned ? ["pinned": .bool(true)] : nil,
+                unset: isPinned ? nil : ["pinned"]
+            ),
             completion: { completion($0.error) }
         )
     }
@@ -75,8 +79,10 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         partialUpdate(
             userId: userId,
             in: cid,
-            updates: isArchived ? MemberUpdatePayload(archived: true) : nil,
-            unset: isArchived ? nil : [MemberUpdatePayload.CodingKeys.archived.rawValue],
+            request: UpdateMemberPartialRequest(
+                set: isArchived ? ["archived": .bool(true)] : nil,
+                unset: isArchived ? nil : ["archived"]
+            ),
             completion: { completion($0.error) }
         )
     }

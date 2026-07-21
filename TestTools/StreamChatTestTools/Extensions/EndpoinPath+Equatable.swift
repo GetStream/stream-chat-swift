@@ -12,7 +12,8 @@ extension EndpointPath: Equatable {
         case (.sync, .sync): return true
         case (.users, .users): return true
         case (.guest, .guest): return true
-        case (.members, .members): return true
+        case (.queryMembers, .queryMembers): return true
+        case let (.updateMemberPartial(type1, id1), .updateMemberPartial(type2, id2)): return type1 == type2 && id1 == id2
         case (.search, .search): return true
         case (.createDevice, .createDevice): return true
         case (.deleteDevice, .deleteDevice): return true

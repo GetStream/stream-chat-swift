@@ -158,14 +158,14 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(path, "/api/v2/push_preferences")
     }
 
-    func test_partialMemberUpdate_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.partialMemberUpdate(userId: "1", cid: .unique).shouldBeQueuedOffline)
+    func test_updateMemberPartial_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.updateMemberPartial(type: "messaging", id: "1").shouldBeQueuedOffline)
     }
 
-    func test_partialMemberUpdate_value() {
+    func test_updateMemberPartial_value() {
         let cid = ChannelId.unique
-        let path = EndpointPath.partialMemberUpdate(userId: "1", cid: cid).value
-        XCTAssertEqual(path, "channels/\(cid.apiPath)/member/1")
+        let path = EndpointPath.updateMemberPartial(type: cid.type.rawValue, id: cid.id).value
+        XCTAssertEqual(path, "/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/member")
     }
 
     func test_drafts_shouldNOTBeQueuedOffline() {
@@ -188,8 +188,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.sync)
         assertResultEncodingAndDecoding(.users)
         assertResultEncodingAndDecoding(.guest)
-        assertResultEncodingAndDecoding(.members)
-        assertResultEncodingAndDecoding(.partialMemberUpdate(userId: "1", cid: .init(type: .messaging, id: "2")))
+        assertResultEncodingAndDecoding(.queryMembers)
+        assertResultEncodingAndDecoding(.updateMemberPartial(type: "messaging", id: "2"))
         assertResultEncodingAndDecoding(.search)
         assertResultEncodingAndDecoding(.createDevice)
         assertResultEncodingAndDecoding(.deleteDevice)

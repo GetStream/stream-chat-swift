@@ -17,14 +17,14 @@ class ChannelMemberListUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
+            let membersEndpoint: Endpoint<MembersResponse> = .queryMembers(payload: query.asQueryMembersPayload())
             self?.apiClient.request(endpoint: membersEndpoint) { [weak self] membersResult in
                 switch membersResult {
-                case let .success(memberListPayload):
+                case let .success(response):
                     nonisolated(unsafe) var members = [ChatChannelMember]()
                     self?.database.write({ session in
                         members = try session.saveMembers(
-                            payload: memberListPayload,
+                            response: response,
                             channelId: query.cid,
                             query: query
                         )
