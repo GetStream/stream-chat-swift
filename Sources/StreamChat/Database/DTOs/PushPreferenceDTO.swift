@@ -8,7 +8,7 @@ import Foundation
 @objc(PushPreferenceDTO)
 class PushPreferenceDTO: NSManagedObject {
     @NSManaged var id: String
-    @NSManaged var chatLevel: String?
+    @NSManaged var chatLevel: String
     @NSManaged var disabledUntil: DBDate?
     @NSManaged var chatPreferences: ChatPreferencesDTO?
     @NSManaged var currentUser: CurrentUserDTO?
@@ -42,7 +42,7 @@ extension PushPreference {
         try dto.isNotDeleted()
         
         return PushPreference(
-            chatLevel: dto.chatLevel.map { PushPreferenceLevel(rawValue: $0) },
+            chatLevel: PushPreferenceLevel(rawValue: dto.chatLevel),
             chatPreferences: dto.chatPreferences.map { ChatPreferences(fromDTO: $0) },
             disabledUntil: dto.disabledUntil?.bridgeDate
         )

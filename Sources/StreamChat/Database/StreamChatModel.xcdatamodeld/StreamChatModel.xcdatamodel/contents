@@ -511,7 +511,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="PushPreferenceDTO" representedClassName="PushPreferenceDTO" syncable="YES">
-        <attribute name="chatLevel" optional="YES" attributeType="String"/>
+        <attribute name="chatLevel" attributeType="String"/>
         <attribute name="disabledUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="pushPreference" inverseEntity="ChannelDTO"/>
