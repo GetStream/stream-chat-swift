@@ -87,6 +87,7 @@ allowed_hashable_models=(
   AppSettings
   Device
   Role
+  SharedLocation
   UploadConfig
   UserGroup
   UserGroupMember
@@ -230,6 +231,12 @@ retype_property() {
 }
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
+retype_property SharedLocationResponseData channelCid String ChannelId
+retype_property SharedLocationResponseData createdByDeviceId String DeviceId
+retype_property SharedLocationResponseData latitude Float Double
+retype_property SharedLocationResponseData longitude Float Double
+retype_property SharedLocationResponseData messageId String MessageId
+retype_property SharedLocationResponseData userId String UserId
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
@@ -264,7 +271,8 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
-rename_generated_type SharedLocationResponse SharedLocationResponseData
+rename_generated SharedLocationResponseData SharedLocation
+rename_generated_type SharedLocationResponse SharedLocation
 
 rename_generated_type Response EmptyResponse
 
@@ -288,8 +296,8 @@ remove_property() {
 }
 remove_property CurrentUserUnreads duration
 remove_property UserGroupMember appPk
-remove_property SharedLocationResponseData channel
-remove_property SharedLocationResponseData message
+remove_property SharedLocation channel
+remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
 
 # 4c. Expose selected generated models as public API. The class and its stored
@@ -308,6 +316,7 @@ publicize_model AppSettings
 publicize_model CurrentUserUnreads
 publicize_model Device
 publicize_model Role
+publicize_model SharedLocation
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType
 publicize_model UnreadThread

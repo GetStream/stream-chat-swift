@@ -105,7 +105,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveLocation(payload: SharedLocationResponseData, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+    func saveLocation(payload: SharedLocation, cache: PreWarmedCache?) throws -> SharedLocationDTO {
         let locationDTO = SharedLocationDTO.loadOrCreate(
             messageId: payload.messageId,
             context: self,
@@ -113,10 +113,10 @@ extension NSManagedObjectContext {
         )
 
         locationDTO.messageId = payload.messageId
-        locationDTO.channelId = payload.channelCid
+        locationDTO.channelId = payload.channelCid.rawValue
         locationDTO.deviceId = payload.createdByDeviceId
-        locationDTO.latitude = Double(payload.latitude)
-        locationDTO.longitude = Double(payload.longitude)
+        locationDTO.latitude = payload.latitude
+        locationDTO.longitude = payload.longitude
         locationDTO.endAt = payload.endAt?.bridgeDate
         locationDTO.userId = payload.userId
         locationDTO.updatedAt = payload.updatedAt.bridgeDate

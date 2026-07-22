@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension SharedLocationResponseData {
+extension SharedLocation {
     static func dummy(
         channelId: ChannelId = .unique,
         createdAt: Date = .unique,
@@ -16,14 +16,14 @@ extension SharedLocationResponseData {
         messageId: String = .unique,
         updatedAt: Date = .unique,
         userId: UserId = .unique
-    ) -> SharedLocationResponseData {
+    ) -> SharedLocation {
         .init(
-            channelCid: channelId.rawValue,
+            channelCid: channelId,
             createdAt: createdAt,
             createdByDeviceId: createdByDeviceId,
             endAt: endAt,
-            latitude: Float(latitude),
-            longitude: Float(longitude),
+            latitude: latitude,
+            longitude: longitude,
             messageId: messageId,
             updatedAt: updatedAt,
             userId: userId
@@ -33,7 +33,7 @@ extension SharedLocationResponseData {
 
 extension SharedLocationsResponse {
     static func dummy(
-        activeLiveLocations: [SharedLocationResponseData] = []
+        activeLiveLocations: [SharedLocation] = []
     ) -> SharedLocationsResponse {
         .init(
             activeLiveLocations: activeLiveLocations

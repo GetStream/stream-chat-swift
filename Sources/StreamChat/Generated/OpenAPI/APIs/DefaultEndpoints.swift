@@ -681,7 +681,7 @@ extension Endpoint {
     static func updateLiveLocation(
         updateLiveLocationRequest: UpdateLiveLocationRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<SharedLocationResponseData> {
+    ) -> Endpoint<SharedLocation> {
         return .init(
             path: .updateLiveLocation,
             method: .put,

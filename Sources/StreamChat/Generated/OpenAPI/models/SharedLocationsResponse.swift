@@ -5,10 +5,10 @@
 import Foundation
 
 final class SharedLocationsResponse: Sendable, Codable, JSONEncodable {
-    let activeLiveLocations: [SharedLocationResponseData]
+    let activeLiveLocations: [SharedLocation]
 
     init(
-        activeLiveLocations: [SharedLocationResponseData]
+        activeLiveLocations: [SharedLocation]
     ) {
         self.activeLiveLocations = activeLiveLocations
     }

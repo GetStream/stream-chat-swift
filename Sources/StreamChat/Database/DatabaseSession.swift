@@ -743,7 +743,7 @@ protocol LocationDatabaseSession {
 
     /// Saves the provided location response to the DB.
     @discardableResult
-    func saveLocation(payload: SharedLocationResponseData, cache: PreWarmedCache?) throws -> SharedLocationDTO
+    func saveLocation(payload: SharedLocation, cache: PreWarmedCache?) throws -> SharedLocationDTO
 }
 
 protocol DatabaseSession: UserDatabaseSession,

@@ -371,7 +371,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 messageId: messageId
             )
 
-            let endpoint = Endpoint<SharedLocationResponseData>.updateLiveLocation(updateLiveLocationRequest: request)
+            let endpoint = Endpoint<SharedLocation>.updateLiveLocation(updateLiveLocationRequest: request)
             self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
@@ -407,7 +407,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
             let request = UpdateLiveLocationRequest(endAt: Date(), messageId: messageId)
-            let endpoint = Endpoint<SharedLocationResponseData>.updateLiveLocation(updateLiveLocationRequest: request)
+            let endpoint = Endpoint<SharedLocation>.updateLiveLocation(updateLiveLocationRequest: request)
             self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
