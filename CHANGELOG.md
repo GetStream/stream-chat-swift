@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4178](https://github.com/GetStream/stream-chat-swift/pull/4178)
+
 ### 🔄 Changed
 
 # [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
@@ -12,10 +16,6 @@ _July 22, 2026_
 ### ✅ Added
 - Add `ChatClientConfig.localAttachmentDownloadsFolderURL` to configure where attachment downloads are stored [#4174](https://github.com/GetStream/stream-chat-swift/pull/4174)
 - Add additional data to `Device` (`pushProvider`, `pushProviderName`, `userId`, `disabled`, `disabledReason`, `hardwareId`, and `voip`) [#4161](https://github.com/GetStream/stream-chat-swift/pull/4161)
-
-## StreamChatUI
-### 🐞 Fixed
-- Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#0000](https://github.com/GetStream/stream-chat-swift/pull/0000)
 
 ## StreamChatCommonUI
 ### ✅ Added
