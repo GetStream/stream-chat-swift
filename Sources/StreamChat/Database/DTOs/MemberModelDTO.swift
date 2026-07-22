@@ -152,6 +152,59 @@ extension NSManagedObjectContext {
 
         return dto
     }
+    
+    func saveMember(
+        response: ChannelMemberResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MemberDTO {
+        guard let userId = response.userId ?? response.user?.id else {
+            throw ClientError("Member payload is missing a user id")
+        }
+        let dto = MemberDTO.loadOrCreate(userId: userId, channelId: channelId, context: self, cache: cache)
+
+        // Save user-part of member first
+        if let userResponse = response.user {
+            dto.user = try saveUser(response: userResponse)
+        }
+
+        // Save member specific data
+        let role = MemberRole(rawChannelValue: response.channelRole)
+        dto.channelRoleRaw = role.rawChannelValue
+
+        dto.memberCreatedAt = response.createdAt.bridgeDate
+        dto.memberUpdatedAt = response.updatedAt.bridgeDate
+        dto.isBanned = response.banned
+        dto.isShadowBanned = response.shadowBanned
+        dto.banExpiresAt = response.banExpires?.bridgeDate
+        dto.isInvited = response.invited ?? false
+        dto.inviteAcceptedAt = response.inviteAcceptedAt?.bridgeDate
+        dto.inviteRejectedAt = response.inviteRejectedAt?.bridgeDate
+        dto.archivedAt = response.archivedAt?.bridgeDate
+        dto.pinnedAt = response.pinnedAt?.bridgeDate
+        dto.notificationsMuted = response.notificationsMuted
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(response.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for channel member with id: <\(response.userId ?? "")>. Error: \(error)"
+            )
+            dto.extraData = nil
+        }
+
+        if let query = query {
+            let queryDTO = try saveQuery(query)
+            queryDTO.members.insert(dto)
+        }
+
+        if let channelDTO = channel(cid: channelId) {
+            channelDTO.members.insert(dto)
+        }
+
+        return dto
+    }
 
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
@@ -169,6 +222,20 @@ extension NSManagedObjectContext {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.members.compactMapLoggingError {
             try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
+        }
+    }
+    
+    func saveMembers(response: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+        // If it is the first page of the members list, make sure to clear the members from local cache
+        // which are not in the remote response anymore.
+        let isFirstPage = query?.pagination.offset == 0
+        if let queryHash = query?.queryHash, isFirstPage {
+            let queryDTO = ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
+            queryDTO?.members = []
+        }
+
+        return response.members.compactMapLoggingError {
+            try saveMember(response: $0, channelId: channelId, query: query, cache: nil)
         }
     }
 }
