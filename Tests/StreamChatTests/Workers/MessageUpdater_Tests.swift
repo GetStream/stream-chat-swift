@@ -3241,9 +3241,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: Date().addingTimeInterval(1000),
                 latitude: initialLatitude,
-                longitude: initialLongitude,
-                endAt: Date().addingTimeInterval(1000)
+                longitude: initialLongitude
             )
         )
 
@@ -3290,9 +3290,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: .distantPast,
                 latitude: 1,
-                longitude: 1,
-                endAt: .distantPast
+                longitude: 1
             )
         )
         let result = try waitFor {
@@ -3315,9 +3315,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: Date().addingTimeInterval(1000),
                 latitude: 2,
-                longitude: 3,
-                endAt: Date().addingTimeInterval(1000)
+                longitude: 3
             )
         )
         let result = try waitFor {
@@ -3341,9 +3341,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: Date().addingTimeInterval(1000),
                 latitude: 2,
-                longitude: 3,
-                endAt: Date().addingTimeInterval(1000)
+                longitude: 3
             )
         )
 
@@ -3375,9 +3375,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: endAt,
                 latitude: latitude,
-                longitude: longitude,
-                endAt: endAt
+                longitude: longitude
             )
         )
 
@@ -3420,9 +3420,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: Date().addingTimeInterval(1000),
                 latitude: 2,
-                longitude: 3,
-                endAt: Date().addingTimeInterval(1000)
+                longitude: 3
             )
         )
         let result = try waitFor {
@@ -3444,9 +3444,9 @@ final class MessageUpdater_Tests: XCTestCase {
             id: messageId,
             cid: cid,
             location: .dummy(
+                endAt: originalEndAt,
                 latitude: 2,
-                longitude: 3,
-                endAt: originalEndAt
+                longitude: 3
             )
         )
         let testError = TestError()
