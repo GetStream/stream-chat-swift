@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `PushPreference.chatPreferences` with detailed push notification preferences [#4175](https://github.com/GetStream/stream-chat-swift/pull/4175)
 
 # [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
 _July 22, 2026_
@@ -12,7 +14,6 @@ _July 22, 2026_
 ### ✅ Added
 - Add `ChatClientConfig.localAttachmentDownloadsFolderURL` to configure where attachment downloads are stored [#4174](https://github.com/GetStream/stream-chat-swift/pull/4174)
 - Add additional data to `Device` (`pushProvider`, `pushProviderName`, `userId`, `disabled`, `disabledReason`, `hardwareId`, and `voip`) [#4161](https://github.com/GetStream/stream-chat-swift/pull/4161)
-- Add `PushPreference.chatPreferences` with detailed push notification preferences [#4175](https://github.com/GetStream/stream-chat-swift/pull/4175)
 
 ## StreamChatCommonUI
 ### ✅ Added
