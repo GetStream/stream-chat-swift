@@ -21,6 +21,7 @@ allowed_endpoints=(
     getBlockedUsers
     getOG
     getUserGroup
+    getUserLiveLocations
     listDevices
     listUserGroups
     queryMembers
@@ -30,6 +31,7 @@ allowed_endpoints=(
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updateLiveLocation
     updateMemberPartial
     updatePushNotificationPreferences
     updateUserGroup
@@ -64,12 +66,15 @@ allowed_models=(
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
+  SharedLocationResponseData
+  SharedLocationsResponse
   SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
   UpdateUserGroupRequest
@@ -91,6 +96,7 @@ allowed_hashable_models=(
   PushPreference
   PushPreferenceInput
   Role
+  SharedLocation
   UploadConfig
   UserGroup
   UserGroupMember
@@ -234,6 +240,12 @@ retype_property() {
 }
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
+retype_property SharedLocationResponseData channelCid String ChannelId
+retype_property SharedLocationResponseData createdByDeviceId String DeviceId
+retype_property SharedLocationResponseData latitude Float Double
+retype_property SharedLocationResponseData longitude Float Double
+retype_property SharedLocationResponseData messageId String MessageId
+retype_property SharedLocationResponseData userId String UserId
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
@@ -271,6 +283,8 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated SharedLocationResponseData SharedLocation
+rename_generated_type SharedLocationResponse SharedLocation
 
 rename_generated_type Response EmptyResponse
 
@@ -308,6 +322,9 @@ remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
 remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
+remove_property SharedLocation channel
+remove_property SharedLocation message
+remove_property SharedLocationsResponse duration
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -339,6 +356,7 @@ publicize_model CurrentUserUnreads
 publicize_model Device
 publicize_model PushPreference
 publicize_model Role
+publicize_model SharedLocation
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType
 publicize_model UnreadThread
@@ -436,8 +454,6 @@ inject_v1_endpoint_paths() {
     case deleteFile(String)
     case deleteImage(String)
 
-    case liveLocations
-
     case polls
     case pollsQuery
     case poll(pollId: String)
@@ -464,8 +480,6 @@ EOF
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
-
-        case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"

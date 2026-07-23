@@ -311,7 +311,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+    func saveLocation(payload: SharedLocation, cache: PreWarmedCache?) throws -> SharedLocationDTO {
         try underlyingSession.saveLocation(payload: payload, cache: cache)
     }
 

@@ -5646,16 +5646,12 @@ final class ChannelController_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: existingMessageId,
                     authorUserId: userId,
-                    sharedLocation: .init(
-                        channelId: self.channelId.rawValue,
-                        messageId: existingMessageId,
-                        userId: .unique,
+                    sharedLocation: .dummy(
+                        channelId: self.channelId,
+                        endAt: .distantFuture,
                         latitude: location.latitude,
                         longitude: location.longitude,
-                        createdAt: .unique,
-                        updatedAt: .unique,
-                        endAt: .distantFuture,
-                        createdByDeviceId: .unique
+                        messageId: existingMessageId
                     )
                 ),
                 for: self.channelId,

@@ -76,8 +76,6 @@ enum EndpointPath: Codable {
     case deleteFile(String)
     case deleteImage(String)
 
-    case liveLocations
-
     case polls
     case pollsQuery
     case poll(pollId: String)
@@ -107,6 +105,7 @@ enum EndpointPath: Codable {
     case getBlockedUsers
     case getOG
     case getUserGroup(id: String)
+    case getUserLiveLocations
     case listDevices
     case listUserGroups
     case queryMembers
@@ -119,6 +118,7 @@ enum EndpointPath: Codable {
     )
     case unblockUsers
     case unreadCounts
+    case updateLiveLocation
     case updateMemberPartial(
         type: String,
         id: String
@@ -142,8 +142,6 @@ enum EndpointPath: Codable {
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
-
-        case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
@@ -238,6 +236,8 @@ enum EndpointPath: Codable {
             return "/api/v2/og"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
+        case .getUserLiveLocations:
+            return "/api/v2/users/live_locations"
         case .listDevices:
             return "/api/v2/devices"
         case .listUserGroups:
@@ -259,6 +259,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users/unblock"
         case .unreadCounts:
             return "/api/v2/chat/unread"
+        case .updateLiveLocation:
+            return "/api/v2/users/live_locations"
         case let .updateMemberPartial(
             type: type,
             id: id
@@ -519,6 +521,16 @@ extension Endpoint {
         )
     }
 
+    static func getUserLiveLocations(requiresConnectionId: Bool = false) -> Endpoint<SharedLocationsResponse> {
+        return .init(
+            path: .getUserLiveLocations,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func listDevices(requiresConnectionId: Bool = false) -> Endpoint<ListDevicesResponse> {
         return .init(
             path: .listDevices,
@@ -665,6 +677,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func updateLiveLocation(
+        updateLiveLocationRequest: UpdateLiveLocationRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<SharedLocation> {
+        return .init(
+            path: .updateLiveLocation,
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateLiveLocationRequest
         )
     }
 
