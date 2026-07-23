@@ -291,7 +291,7 @@ extension DatabaseContainer {
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
         reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
-        location: SharedLocationPayload? = nil,
+        location: SharedLocation? = nil,
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
         numberOfReplies: Int = 0,

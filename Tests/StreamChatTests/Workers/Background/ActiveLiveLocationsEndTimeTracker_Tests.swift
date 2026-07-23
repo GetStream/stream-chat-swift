@@ -48,16 +48,12 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId,
-                userId: currentUserId,
+            location: .dummy(
+                channelId: cid,
+                endAt: endAt,
                 latitude: 10.0,
                 longitude: 20.0,
-                createdAt: Date(),
-                updatedAt: Date(),
-                endAt: endAt,
-                createdByDeviceId: .unique
+                messageId: messageId
             )
         )
 
@@ -83,16 +79,12 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId1,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId1,
-                userId: currentUserId,
+            location: .dummy(
+                channelId: cid,
+                endAt: endAt,
                 latitude: 10.0,
                 longitude: 20.0,
-                createdAt: Date(),
-                updatedAt: Date(),
-                endAt: endAt,
-                createdByDeviceId: .unique
+                messageId: messageId1
             )
         )
 
@@ -101,16 +93,12 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId2,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId2,
-                userId: currentUserId,
+            location: .dummy(
+                channelId: cid,
+                endAt: endAt,
                 latitude: 30.0,
                 longitude: 40.0,
-                createdAt: Date(),
-                updatedAt: Date(),
-                endAt: endAt,
-                createdByDeviceId: .unique
+                messageId: messageId2
             )
         )
 
@@ -138,16 +126,12 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId,
-                userId: currentUserId,
+            location: .dummy(
+                channelId: cid,
+                endAt: endAt,
                 latitude: 10.0,
                 longitude: 20.0,
-                createdAt: Date(),
-                updatedAt: updatedAt,
-                endAt: endAt,
-                createdByDeviceId: .unique
+                messageId: messageId
             )
         )
 
@@ -182,16 +166,12 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId,
-                userId: currentUserId,
+            location: .dummy(
+                channelId: cid,
+                endAt: nil, // No end time
                 latitude: 10.0,
                 longitude: 20.0,
-                createdAt: Date(),
-                updatedAt: Date(),
-                endAt: nil, // No end time
-                createdByDeviceId: .unique
+                messageId: messageId
             )
         )
 
@@ -214,16 +194,12 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId,
-                userId: currentUserId,
+            location: .dummy(
+                channelId: cid,
+                endAt: endAt,
                 latitude: 10.0,
                 longitude: 20.0,
-                createdAt: Date(),
-                updatedAt: Date(),
-                endAt: endAt,
-                createdByDeviceId: .unique
+                messageId: messageId
             )
         )
 
