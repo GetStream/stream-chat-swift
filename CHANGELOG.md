@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
+_July 22, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `ChatClientConfig.localAttachmentDownloadsFolderURL` to configure where attachment downloads are stored [#4174](https://github.com/GetStream/stream-chat-swift/pull/4174)

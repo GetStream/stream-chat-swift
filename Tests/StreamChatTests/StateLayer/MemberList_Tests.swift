@@ -61,7 +61,7 @@ final class MemberList_Tests: XCTestCase {
         try await setUpMemberList(usesMockedUpdater: false)
         await XCTAssertEqual(10, memberList.state.members.count)
         
-        let nextPayload = makeMemberListPayload(count: 3, offset: 0)
+        let nextPayload = makeMembersResponse(count: 3, offset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
         try await memberList.get()
         
@@ -74,7 +74,7 @@ final class MemberList_Tests: XCTestCase {
         try await setUpMemberList(usesMockedUpdater: false)
         await XCTAssertEqual(0, memberList.state.members.count)
         
-        let nextPayload = makeMemberListPayload(count: 3, offset: 0)
+        let nextPayload = makeMembersResponse(count: 3, offset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
         try await memberList.get()
         
@@ -88,7 +88,7 @@ final class MemberList_Tests: XCTestCase {
         try await createChannel()
         try await setUpMemberList(usesMockedUpdater: false)
         
-        let apiResult = makeMemberListPayload(count: 10, offset: 0)
+        let apiResult = makeMembersResponse(count: 10, offset: 0)
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         let pagination = Pagination(pageSize: 10)
         let result = try await memberList.loadMembers(with: pagination)
@@ -109,11 +109,11 @@ final class MemberList_Tests: XCTestCase {
             )
         }
         
-        let apiResult = makeMemberListPayload(count: 3, offset: 5)
+        let apiResult = makeMembersResponse(count: 3, offset: 5)
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         let result = try await memberList.loadMoreMembers(limit: 3)
         XCTAssertEqual(apiResult.members.map(\.user?.id), result.map(\.id))
-        let allExpectedIds = (initialPayload.members + apiResult.members).map(\.user?.id)
+        let allExpectedIds = initialPayload.members.map(\.user?.id) + apiResult.members.map(\.user?.id)
         await XCTAssertEqual(allExpectedIds, memberList.state.members.map(\.id))
     }
     
@@ -122,14 +122,14 @@ final class MemberList_Tests: XCTestCase {
         try await setUpMemberList(usesMockedUpdater: false)
         
         // Fetch 10 members
-        let payload1 = makeMemberListPayload(count: 10, offset: 0, memberNameCreator: { _ in "Name" })
+        let payload1 = makeMembersResponse(count: 10, offset: 0, memberNameCreator: { _ in "Name" })
         let payload1Ids = payload1.members.compactMap(\.user?.id)
         env.client.mockAPIClient.test_mockResponseResult(.success(payload1))
         let fetchedIds1 = try await memberList.loadMembers(with: Pagination(pageSize: 10)).map(\.id)
         XCTAssertEqual(payload1Ids, fetchedIds1)
         
         // Fetch 10 more
-        let payload2 = makeMemberListPayload(count: 10, offset: 10, memberNameCreator: { _ in "Name" })
+        let payload2 = makeMembersResponse(count: 10, offset: 10, memberNameCreator: { _ in "Name" })
         let payload2Ids = payload2.members.compactMap(\.user?.id)
         env.client.mockAPIClient.test_mockResponseResult(.success(payload2))
         let fetchedIds2 = try await memberList.loadMoreMembers(limit: 10).map(\.id)
@@ -189,6 +189,30 @@ final class MemberList_Tests: XCTestCase {
                 )
             }
         return ChannelMemberListPayload(members: members)
+    }
+
+    private func makeMembersResponse(
+        count: Int,
+        offset: Int,
+        memberNameCreator: ((Int) -> String?)? = nil
+    ) -> MembersResponse {
+        let members = (0..<count)
+            .map { $0 + offset }
+            .map { index in
+                let name: String?
+                if let memberNameCreator {
+                    name = memberNameCreator(index)
+                } else {
+                    name = String(format: "%03d", index)
+                }
+                return ChannelMemberResponse.dummy(
+                    user: .dummy(
+                        name: name,
+                        userId: String(format: "%03d", index)
+                    )
+                )
+            }
+        return MembersResponse.dummy(members: members)
     }
 }
 

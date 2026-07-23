@@ -2091,8 +2091,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(resultingError)
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(["archived": .bool(true)], env.memberUpdater!.partialUpdate_request?.set)
     }
     
     func test_unarchive_callsChannelUpdater() throws {
@@ -2113,8 +2113,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(resultingError)
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(["archived"], env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(["archived"], env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.set)
     }
     
     func test_archive_propagatesErrorFromUpdater() throws {
@@ -2130,8 +2130,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(expectedError, resultingError as? TestError, resultingError?.localizedDescription ?? "")
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(archived: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(["archived": .bool(true)], env.memberUpdater!.partialUpdate_request?.set)
     }
     
     func test_unarchive_propagatesErrorFromUpdater() throws {
@@ -2147,8 +2147,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(expectedError, resultingError as? TestError, resultingError?.localizedDescription ?? "")
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(["archived"], env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(["archived"], env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.set)
     }
 
     // MARK: - Deleting channel
@@ -5108,8 +5108,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(resultingError)
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(["pinned": .bool(true)], env.memberUpdater!.partialUpdate_request?.set)
     }
     
     func test_unpin_callsChannelUpdater() throws {
@@ -5130,8 +5130,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(resultingError)
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.set)
     }
     
     func test_pin_propagatesErrorFromUpdater() throws {
@@ -5147,8 +5147,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(expectedError, resultingError as? TestError, resultingError?.localizedDescription ?? "")
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(MemberUpdatePayload(pinned: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(["pinned": .bool(true)], env.memberUpdater!.partialUpdate_request?.set)
     }
     
     func test_unpin_propagatesErrorFromUpdater() throws {
@@ -5164,8 +5164,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(expectedError, resultingError as? TestError, resultingError?.localizedDescription ?? "")
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
-        XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(["pinned"], env.memberUpdater!.partialUpdate_request?.unset)
+        XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_request?.set)
     }
 
     // MARK: - UploadAttachment
