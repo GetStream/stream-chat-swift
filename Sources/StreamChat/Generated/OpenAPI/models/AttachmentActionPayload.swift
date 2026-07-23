@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class AttachmentActionPayload: Sendable, Codable, JSONEncodable {
     let name: String

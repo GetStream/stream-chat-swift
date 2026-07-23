@@ -3,14 +3,15 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class UserGroup: Sendable, Codable, JSONEncodable {
     public let createdAt: Date
     public let createdBy: String?
     public let description: String?
     public let id: String
-    private let membersOptional: [UserGroupMember]?
-    public var members: [UserGroupMember] { membersOptional ?? [] }
+    private let _members: [UserGroupMember]?
+    public var members: [UserGroupMember] { _members ?? [] }
     public let name: String
     public let teamId: String?
     public let updatedAt: Date
@@ -29,7 +30,7 @@ public final class UserGroup: Sendable, Codable, JSONEncodable {
         self.createdBy = createdBy
         self.description = description
         self.id = id
-        self.membersOptional = members
+        self._members = members
         self.name = name
         self.teamId = teamId
         self.updatedAt = updatedAt
@@ -40,7 +41,7 @@ public final class UserGroup: Sendable, Codable, JSONEncodable {
         case createdBy = "created_by"
         case description
         case id
-        case membersOptional = "members"
+        case _members = "members"
         case name
         case teamId = "team_id"
         case updatedAt = "updated_at"

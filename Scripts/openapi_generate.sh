@@ -33,6 +33,7 @@ allowed_endpoints=(
     unreadCounts
     updateLiveLocation
     updateMemberPartial
+    updatePushNotificationPreferences
     updateUserGroup
 )
 allowed_models=(
@@ -44,6 +45,7 @@ allowed_models=(
   BlockUsersResponse
   ChannelMemberRequest
   ChannelMemberResponse
+  ChatPreferencesResponse
   CreateDeviceRequest
   CreateUserGroupRequest
   DeviceResponse
@@ -58,6 +60,8 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
+  PushPreferenceInput
+  PushPreferencesResponse
   QueryMembersPayload
   RemoveUserGroupMembersRequest
   Role
@@ -74,6 +78,8 @@ allowed_models=(
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
   UpdateUserGroupRequest
+  UpsertPushPreferencesRequest
+  UpsertPushPreferencesResponse
   UserGroupMember
   UserGroupResponse
   UserResponse
@@ -85,7 +91,10 @@ allowed_models=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
+  ChatPreferences
   Device
+  PushPreference
+  PushPreferenceInput
   Role
   SharedLocation
   UploadConfig
@@ -240,21 +249,23 @@ retype_property SharedLocationResponseData userId String UserId
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
-restore_usergroup_members_optionality() {
-  local file="$OUTPUT_DIR_CHAT/models/UserGroupResponse.swift"
-  perl -0777 -pi -e '
-    s/^    let members: \[UserGroupMember\]\?$/    private let membersOptional: [UserGroupMember]?\n    public var members: [UserGroupMember] { membersOptional ?? [] }/m;
-    s/^        self\.members = members$/        self.membersOptional = members/m;
-    s/^    case members$/    case membersOptional = "members"/m;
+restore_nonoptional_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  P="$2" T="$3" D="$4" perl -0777 -pi -e '
+    my ($p, $t, $d) = ($ENV{P}, $ENV{T}, $ENV{D});
+    s/^    let \Q$p\E: \Q$t\E\?$/    private let _$p: $t?\n    public var $p: $t { _$p ?? $d }/m;
+    s/^        self\.\Q$p\E = \Q$p\E$/        self._$p = $p/m;
+    s{^    case \Q$p\E( = "[^"]*")?$}{"    case _$p" . (defined $1 ? $1 : " = \"$p\"")}me;
   ' "$file"
 }
-restore_usergroup_members_optionality
 
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
+rename_generated ChatPreferencesResponse ChatPreferences
+rename_generated PushPreferencesResponse PushPreference
 rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
@@ -266,6 +277,7 @@ rename_generated UnreadCountsThread UnreadThread
 rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
+rename_generated_type ChannelPushPreferencesResponse PushPreference
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
@@ -275,6 +287,10 @@ rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 
 rename_generated_type Response EmptyResponse
+
+retype_property PushPreference chatLevel String PushPreferenceLevel
+restore_nonoptional_property PushPreference chatLevel PushPreferenceLevel .all
+restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -293,12 +309,34 @@ remove_property() {
     s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property PushPreferenceInput callLevel
+remove_property PushPreferenceInput chatPreferences
+remove_property PushPreferenceInput feedsLevel
+remove_property PushPreferenceInput feedsPreferences
+remove_property PushPreference callLevel
+remove_property PushPreference feedsLevel
+remove_property PushPreference feedsPreferences
+remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
 remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
+
+remove_nested_enum() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v e="$2" '
+    $0 ~ "^    enum " e ":" { skip = 1; next }
+    skip && /^    }$/       { skip = 0; next }
+    skip                    { next }
+    { print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
+remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -313,8 +351,10 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
+publicize_model ChatPreferences
 publicize_model CurrentUserUnreads
 publicize_model Device
+publicize_model PushPreference
 publicize_model Role
 publicize_model SharedLocation
 publicize_model UnreadChannel
@@ -358,7 +398,6 @@ inject_v1_endpoint_paths() {
     case users
     case guest
     case search
-    case pushPreferences
 
     case threads
     case thread(messageId: MessageId)
@@ -432,7 +471,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .pushPreferences: return "push_preferences"
 
         case .threads:
             return "threads"
