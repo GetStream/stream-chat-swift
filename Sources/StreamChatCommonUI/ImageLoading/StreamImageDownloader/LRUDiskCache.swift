@@ -7,12 +7,11 @@ import Foundation
 import StreamChat
 
 /// A thread-safe, size-bounded disk cache with least-recently-used (LRU) eviction.
-/// All instances serialize file operations on a shared queue and treat the directory
-/// contents as authoritative, so multiple retained image loaders cannot hold stale indexes.
-/// Completion handlers are always called asynchronously on the shared background queue.
+/// All instances serialize file operations on a shared queue. Completion handlers are always called asynchronously on the shared background queue.
 final class LRUDiskCache: @unchecked Sendable {
     let maxSizeInBytes: Int
     let directory: URL
+    private var trackedSize: Int?
 
     private static let queue = DispatchQueue(label: "io.getstream.StreamChatCommonUI.LRUDiskCache", qos: .utility)
 
@@ -52,7 +51,9 @@ final class LRUDiskCache: @unchecked Sendable {
 
             let now = Date()
             try? FileManager.default.setAttributes([.modificationDate: now], ofItemAtPath: url.path)
-            self.evictFilesIfNeeded(protecting: url)
+            if self.trackedSize == nil || self.trackedSize! > self.maxSizeInBytes {
+                self.evictFilesIfNeeded(protecting: url)
+            }
             completion(data)
         }
     }
@@ -74,7 +75,11 @@ final class LRUDiskCache: @unchecked Sendable {
                 try FileManager.default.createDirectory(at: self.directory, withIntermediateDirectories: true)
                 try data.write(to: destination, options: .atomic)
                 try? FileManager.default.setAttributes([.modificationDate: Date()], ofItemAtPath: destination.path)
-                self.evictFilesIfNeeded(protecting: destination)
+                if let trackedSize = self.trackedSize, trackedSize + data.count <= self.maxSizeInBytes {
+                    self.trackedSize = trackedSize + data.count
+                } else {
+                    self.evictFilesIfNeeded(protecting: destination)
+                }
                 completion?(nil)
             } catch {
                 log.error("Failed to store data in disk cache: \(error)")
@@ -87,6 +92,7 @@ final class LRUDiskCache: @unchecked Sendable {
         Self.queue.async {
             let name = Self.storageName(forKey: key)
             try? FileManager.default.removeItem(at: self.directory.appendingPathComponent(name))
+            self.trackedSize = nil
             completion?()
         }
     }
@@ -94,6 +100,7 @@ final class LRUDiskCache: @unchecked Sendable {
     func removeAll(completion: (@Sendable () -> Void)? = nil) {
         Self.queue.async {
             try? FileManager.default.removeItem(at: self.directory)
+            self.trackedSize = nil
             completion?()
         }
     }
@@ -121,8 +128,10 @@ final class LRUDiskCache: @unchecked Sendable {
             try? FileManager.default.removeItem(at: entry.url)
             totalSize -= entry.size
         }
+        trackedSize = totalSize
     }
 
+    /// File-system safe name for key.
     private static func storageName(forKey key: String) -> String {
         SHA256.hash(data: Data(key.utf8)).map { String(format: "%02x", $0) }.joined()
     }

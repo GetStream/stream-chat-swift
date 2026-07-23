@@ -27,16 +27,22 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     /// shared serial queue; decoding there would serialize decodes and block file I/O.
     private static let decodeQueue = DispatchQueue.global(qos: .userInitiated)
 
-    /// Creates an image loader with the given on-disk cache capacity.
+    /// Creates an image loader with the given in-memory and on-disk cache capacities.
     ///
-    /// - Parameter diskCacheSize: The disk cache capacity in bytes. Values less than
-    ///   or equal to zero disable disk caching. The default capacity is 150 MB.
-    public convenience init(diskCacheSize: Int = 150 * 1024 * 1024) {
+    /// - Parameters:
+    ///   - memoryCacheSize: The in-memory cache capacity in bytes. Values less than or
+    ///     equal to zero disable in-memory caching. The default capacity is 50 MB.
+    ///   - diskCacheSize: The disk cache capacity in bytes. Values less than or equal to
+    ///     zero disable disk caching. The default capacity is 150 MB.
+    public convenience init(
+        memoryCacheSize: Int = 50 * 1024 * 1024,
+        diskCacheSize: Int = 150 * 1024 * 1024
+    ) {
         let configuration = URLSessionConfiguration.default
         configuration.urlCache = nil
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         self.init(
-            memoryCostLimit: Self.defaultMemoryCostLimit(),
+            memoryCostLimit: max(0, memoryCacheSize),
             diskSizeLimit: max(0, diskCacheSize),
             diskDirectory: Self.defaultDiskDirectory(),
             urlSession: URLSession(configuration: configuration),
@@ -286,7 +292,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     }
 
     private static func makeImage(from data: Data, resize: CGSize?, scale: CGFloat) -> DownloadedImage? {
-        if ImageDownsampler.isGIF(data) {
+        if data.isGIF {
             guard let image = UIImage(data: data) else { return nil }
             return DownloadedImage(image: image, animatedImageData: data)
         }
@@ -295,14 +301,6 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     }
 
     // MARK: - Defaults
-
-    /// A memory cost limit based on the device's physical memory, capped at 512 MB.
-    private static func defaultMemoryCostLimit() -> Int {
-        let physicalMemory = ProcessInfo.processInfo.physicalMemory
-        let ratio = physicalMemory <= 536_870_912 /* 512 MB */ ? 0.1 : 0.2
-        let limit = min(536_870_912, physicalMemory / UInt64(1 / ratio))
-        return Int(limit)
-    }
 
     private static func defaultDiskDirectory() -> URL {
         let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first

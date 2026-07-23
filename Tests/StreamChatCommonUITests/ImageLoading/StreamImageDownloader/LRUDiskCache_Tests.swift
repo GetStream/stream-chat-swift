@@ -146,6 +146,16 @@ final class LRUDiskCache_Tests: XCTestCase {
         XCTAssertNotNil(c, "just stored -> survives")
     }
 
+    func test_store_manySmallEntries_staysWithinLimit() throws {
+        let cache = LRUDiskCache(directory: directory, maxSizeInBytes: 250)
+
+        for index in 0..<10 {
+            store(Data(repeating: UInt8(index), count: 100), forKey: "key-\(index)", in: cache)
+        }
+
+        XCTAssertLessThanOrEqual(try cacheSize(), 250)
+    }
+
     func test_store_overwritingExistingKey_replacesContents() {
         let cache = LRUDiskCache(directory: directory, maxSizeInBytes: 1_000_000)
         store(Data(repeating: 0x01, count: 100), forKey: "image", in: cache)

@@ -4,6 +4,7 @@
 
 import ImageIO
 import UIKit
+import UniformTypeIdentifiers
 
 /// Stateless ImageIO helpers for decoding and downscaling images.
 ///
@@ -40,14 +41,6 @@ enum ImageDownsampler {
         }
         let outputScale = resize == nil ? 1 : scale
         return UIImage(cgImage: cgImage, scale: outputScale, orientation: .up)
-    }
-
-    /// Detects a GIF by its `"GIF"` magic bytes so animated data can be passed through
-    /// untouched (rendering is handled by SwiftyGif in the UI SDKs).
-    static func isGIF(_ data: Data) -> Bool {
-        guard data.count >= 3 else { return false }
-        let start = data.startIndex
-        return data[start] == 0x47 && data[start + 1] == 0x49 && data[start + 2] == 0x46
     }
 
     // MARK: - Private
@@ -87,6 +80,22 @@ enum ImageDownsampler {
             return true
         default:
             return false
+        }
+    }
+}
+
+extension Data {
+    /// Whether the data is a GIF, so animated data can be passed through untouched
+    /// (rendering is handled by SwiftyGif in the UI SDKs).
+    var isGIF: Bool {
+        guard let source = CGImageSourceCreateWithData(self as CFData, nil),
+              let uti = CGImageSourceGetType(source) as String? else {
+            return false
+        }
+        if #available(iOS 14, *) {
+            return uti == UTType.gif.identifier
+        } else {
+            return uti == "com.compuserve.gif"
         }
     }
 }

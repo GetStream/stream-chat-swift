@@ -10,13 +10,13 @@ import XCTest
 final class ImageDownsampler_Tests: XCTestCase {
     // MARK: - isGIF
 
-    func test_isGIF_detectsGIFMagicBytes() {
-        XCTAssertTrue(ImageDownsampler.isGIF(gifData()))
+    func test_isGIF_detectsGIF() {
+        XCTAssertTrue(gifData().isGIF)
     }
 
     func test_isGIF_returnsFalseForNonGIF() {
-        XCTAssertFalse(ImageDownsampler.isGIF(pngData(width: 8, height: 8)))
-        XCTAssertFalse(ImageDownsampler.isGIF(Data([0x00, 0x01])))
+        XCTAssertFalse(pngData(width: 8, height: 8).isGIF)
+        XCTAssertFalse(Data([0x00, 0x01]).isGIF)
     }
 
     // MARK: - decode
