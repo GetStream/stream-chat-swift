@@ -774,7 +774,10 @@ class MessageUpdater: Worker {
         completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         let attachmentId = attachment.id
-        let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
+        let localURL = URL.streamAttachmentLocalStorageURL(
+            forRelativePath: attachment.relativeStoragePath,
+            baseURL: database.chatClientConfig.localAttachmentDownloadsFolderURL
+        )
         apiClient.downloadFile(
             from: attachment.remoteURL,
             to: localURL,

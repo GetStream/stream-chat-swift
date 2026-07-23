@@ -218,13 +218,22 @@ extension AttachmentFile {
 
 extension URL {
     /// The directory URL for attachment downloads.
-    static var streamAttachmentDownloadsDirectory: URL {
-        (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory)
-            .appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
+    ///
+    /// - Parameter baseURL: The base folder the downloads directory is created within. When `nil`, the user's
+    ///   `Documents` directory is used.
+    static func streamAttachmentDownloadsDirectory(baseURL: URL? = nil) -> URL {
+        let base = baseURL
+            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
+        return base.appendingPathComponent("StreamAttachmentDownloads", isDirectory: true)
     }
-    
-    static func streamAttachmentLocalStorageURL(forRelativePath path: String) -> URL {
-        URL(fileURLWithPath: path, isDirectory: false, relativeTo: .streamAttachmentDownloadsDirectory).standardizedFileURL
+
+    static func streamAttachmentLocalStorageURL(forRelativePath path: String, baseURL: URL? = nil) -> URL {
+        URL(
+            fileURLWithPath: path,
+            isDirectory: false,
+            relativeTo: streamAttachmentDownloadsDirectory(baseURL: baseURL)
+        ).standardizedFileURL
     }
 }
 
