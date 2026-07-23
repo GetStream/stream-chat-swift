@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum EndpointPath: Codable {
     case connect
@@ -10,7 +11,6 @@ enum EndpointPath: Codable {
     case users
     case guest
     case search
-    case pushPreferences
 
     case threads
     case thread(messageId: MessageId)
@@ -125,6 +125,7 @@ enum EndpointPath: Codable {
         type: String,
         id: String
     )
+    case updatePushNotificationPreferences
     case updateUserGroup(id: String)
     case uploadChannelFile(
         type: String,
@@ -144,7 +145,6 @@ enum EndpointPath: Codable {
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .pushPreferences: return "push_preferences"
 
         case .threads:
             return "threads"
@@ -285,6 +285,8 @@ enum EndpointPath: Codable {
             id: id
         ):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/member"
+        case .updatePushNotificationPreferences:
+            return "/api/v2/push_preferences"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case let .uploadChannelFile(
@@ -809,6 +811,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateMemberPartialRequest
+        )
+    }
+
+    static func updatePushNotificationPreferences(
+        upsertPushPreferencesRequest: UpsertPushPreferencesRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpsertPushPreferencesResponse> {
+        return .init(
+            path: .updatePushNotificationPreferences,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: upsertPushPreferencesRequest
         )
     }
 

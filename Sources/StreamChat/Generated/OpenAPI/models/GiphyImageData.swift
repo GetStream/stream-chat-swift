@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class GiphyImageData: Sendable, Codable, JSONEncodable {
     let frames: String

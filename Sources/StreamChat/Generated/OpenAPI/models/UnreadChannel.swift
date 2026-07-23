@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class UnreadChannel: Sendable, Codable, JSONEncodable {
     public let channelId: ChannelId

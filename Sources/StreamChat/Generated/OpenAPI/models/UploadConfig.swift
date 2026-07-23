@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class UploadConfig: Sendable, Codable, JSONEncodable {
     public let allowedFileExtensions: [String]

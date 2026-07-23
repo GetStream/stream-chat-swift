@@ -1,0 +1,19 @@
+//
+// Copyright © 2026 Stream.io Inc. All rights reserved.
+//
+
+import Foundation
+import StreamCore
+
+final class UpsertPushPreferencesRequest: Sendable, Codable, JSONEncodable {
+    /// A list of push preferences for channels, calls, or the user.
+    let preferences: [PushPreferenceInput]
+
+    init(preferences: [PushPreferenceInput]) {
+        self.preferences = preferences
+    }
+
+    enum CodingKeys: String, CodingKey, CaseIterable {
+        case preferences
+    }
+}
