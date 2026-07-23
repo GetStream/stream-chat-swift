@@ -4,7 +4,6 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
-import StreamCore
 import XCTest
 
 final class StreamCDNStorage_Tests: XCTestCase {
