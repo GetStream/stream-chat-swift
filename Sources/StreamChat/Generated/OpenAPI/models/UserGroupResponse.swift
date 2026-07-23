@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UserGroupResponse: Sendable, Codable, JSONEncodable {
     let duration: String

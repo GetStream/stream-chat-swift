@@ -76,7 +76,7 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_pushPreferences_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updatePushNotificationPreferences.shouldBeQueuedOffline)
     }
 
     func test_getApp_shouldNOTBeQueuedOffline() {
@@ -154,8 +154,8 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_pushPreferences_value() {
-        let path = EndpointPath.pushPreferences.value
-        XCTAssertEqual(path, "push_preferences")
+        let path = EndpointPath.updatePushNotificationPreferences.value
+        XCTAssertEqual(path, "/api/v2/push_preferences")
     }
 
     func test_updateMemberPartial_shouldNOTBeQueuedOffline() {
@@ -196,7 +196,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.listDevices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
-        assertResultEncodingAndDecoding(.pushPreferences)
+        assertResultEncodingAndDecoding(.updatePushNotificationPreferences)
         assertResultEncodingAndDecoding(.getApp)
         assertResultEncodingAndDecoding(.listUserGroups)
         assertResultEncodingAndDecoding(.searchUserGroups)

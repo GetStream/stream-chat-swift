@@ -5724,10 +5724,9 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = channelId
         let level: PushPreferenceLevel = .mentions
-        let expectedPreference = PushPreferenceRequestPayload(
-            chatLevel: level.rawValue,
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let expectedPreference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -5743,7 +5742,7 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let level: PushPreferenceLevel = .all
         let expectedPreference = PushPreference(
-            level: .all,
+            chatLevel: .all,
             disabledUntil: nil
         )
 
@@ -5784,11 +5783,10 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = channelId
         let date = Date().addingTimeInterval(3600)
-        let expectedPreference = PushPreferenceRequestPayload(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: cid.rawValue,
-            disabledUntil: date,
-            removeDisable: nil
+        let expectedPreference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .all,
+            disabledUntil: date
         )
 
         // WHEN
@@ -5803,7 +5801,7 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
         let expectedPreference = PushPreference(
-            level: .all,
+            chatLevel: .all,
             disabledUntil: date
         )
 

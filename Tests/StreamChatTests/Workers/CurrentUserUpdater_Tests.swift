@@ -889,18 +889,13 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_makesCorrectAPICall() throws {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
 
         // WHEN
         currentUserUpdater.setPushPreference(preference) { _ in }
 
         // THEN
-        let expectedEndpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences([preference])
+        let expectedEndpoint: Endpoint<UpsertPushPreferencesResponse> = .updatePushNotificationPreferences(upsertPushPreferencesRequest: .init(preferences: [preference]))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -912,21 +907,13 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
 
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)
 
-        let response = PushPreferencesPayloadResponse(
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencePayload(
-                    chatLevel: "all",
-                    disabledUntil: nil
-                )
-            ],
-            channelPreferences: [:]
+                "userId": PushPreference(chatLevel: "all")
+            ]
         )
 
         // WHEN
@@ -946,23 +933,47 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertNil(PushPreferenceDTO.load(id: "currentUserId", context: database.viewContext))
     }
 
+    func test_savePushPreference_persistsAndClearsChatPreferences() throws {
+        // GIVEN
+        let userId: UserId = .unique
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            let dto = try session.savePushPreference(
+                id: userId,
+                payload: .init(chatLevel: "all", chatPreferences: .init(channelMentions: "all", threadReplies: "none"))
+            )
+            session.currentUser?.pushPreference = dto
+        }
+
+        // THEN — chat preferences are persisted
+        let saved: PushPreference? = try database.readSynchronously { session in
+            try session.currentUser?.asModel().pushPreference
+        }
+        XCTAssertEqual(saved?.chatPreferences?.channelMentions, "all")
+        XCTAssertEqual(saved?.chatPreferences?.threadReplies, "none")
+
+        // WHEN — re-saving without chat preferences
+        try database.writeSynchronously { session in
+            let dto = try session.savePushPreference(id: userId, payload: .init(chatLevel: "all"))
+            session.currentUser?.pushPreference = dto
+        }
+
+        // THEN — the persisted chat preferences are cleared
+        let cleared: PushPreference? = try database.readSynchronously { session in
+            try session.currentUser?.asModel().pushPreference
+        }
+        XCTAssertNil(cleared?.chatPreferences)
+    }
+
     func test_setPushPreference_successfulResponse_whenNoCurrentUser_doesNotCrashOrSave() throws {
         // GIVEN — no current user seeded in the database
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)
 
-        let response = PushPreferencesPayloadResponse(
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencePayload(
-                    chatLevel: "all",
-                    disabledUntil: nil
-                )
-            ],
-            channelPreferences: [:]
+                "userId": PushPreference(chatLevel: "all")
+            ]
         )
 
         // WHEN
@@ -979,12 +990,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
 
         // WHEN
         nonisolated(unsafe) var completionError: Error?
@@ -995,7 +1001,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PushPreferencesPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UpsertPushPreferencesResponse, Error>.failure(error))
 
         // THEN
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -1003,16 +1009,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_whenNoUserPreferences_returnsError() {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [:]
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
+            userPreferences: [:]
         )
 
         // WHEN

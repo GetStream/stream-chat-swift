@@ -3,11 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `PushPreference.chatPreferences` with detailed push notification preferences [#4175](https://github.com/GetStream/stream-chat-swift/pull/4175)
+
 ## StreamChatUI
 ### 🐞 Fixed
-- Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4178](https://github.com/GetStream/stream-chat-swift/pull/4178)
-
-### 🔄 Changed
+- Fix `ChatMessageContentView` overwriting a Markdown link's real href (e.g. `[https://text-link.com](https://real-link.com)`) [#4178](https://github.com/GetStream/stream-chat-swift/pull/4178)
 
 # [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
 _July 22, 2026_

@@ -5,7 +5,7 @@
 import Foundation
 
 /// The scope level of the push notifications.
-public struct PushPreferenceLevel: RawRepresentable, Equatable, ExpressibleByStringLiteral, Sendable {
+public struct PushPreferenceLevel: RawRepresentable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -29,4 +29,17 @@ public struct PushPreferenceLevel: RawRepresentable, Equatable, ExpressibleByStr
     public static let directMentions: PushPreferenceLevel = "direct_mentions"
     /// All push notifications will be delivered.
     public static let all: PushPreferenceLevel = "all"
+}
+
+extension PushPreferenceLevel: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try? container.decode(String.self)
+        self.init(rawValue: rawValue ?? Self.all.rawValue)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
 }
