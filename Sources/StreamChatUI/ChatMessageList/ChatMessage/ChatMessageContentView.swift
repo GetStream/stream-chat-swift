@@ -628,23 +628,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             // Link Detection (Must be after Markdown)
             if let attributedText = textView?.attributedText {
                 let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
-                linkDetector.links(in: mutableAttributedText.string).forEach { textLink in
-                    // Skip ranges that already have a link, e.g. one set by Markdown parsing.
-                    // Otherwise, when a Markdown link's display text itself looks like a URL
-                    // (e.g. `[https://text-link.com](https://real-link.com)`), the detector
-                    // below - which has no concept of Markdown link syntax and only sees the
-                    // rendered display text - clobbers the real href with one built from the
-                    // display text.
-                    var alreadyLinked = false
-                    mutableAttributedText.enumerateAttribute(.link, in: textLink.range) { value, _, stop in
-                        if value != nil {
-                            alreadyLinked = true
-                            stop.pointee = true
-                        }
-                    }
-                    guard !alreadyLinked else { return }
-                    mutableAttributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
-                }
+                mutableAttributedText.addLinks(detectedBy: linkDetector)
                 textView?.attributedText = mutableAttributedText
             }
         }
