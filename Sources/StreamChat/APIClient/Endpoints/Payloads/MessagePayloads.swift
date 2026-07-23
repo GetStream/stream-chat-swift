@@ -127,7 +127,7 @@ final class MessagePayload: Decodable, Sendable {
     
     let poll: PollPayload?
     let draft: DraftPayload?
-    let location: SharedLocationPayload?
+    let location: SharedLocation?
     let reminder: ReminderPayload?
     let member: MemberInfoPayload?
     let deletedForMe: Bool?
@@ -204,7 +204,7 @@ final class MessagePayload: Decodable, Sendable {
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        location = try container.decodeIfPresent(SharedLocationPayload.self, forKey: .location)
+        location = try container.decodeIfPresent(SharedLocation.self, forKey: .location)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
@@ -256,7 +256,7 @@ final class MessagePayload: Decodable, Sendable {
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
         reminder: ReminderPayload? = nil,
-        location: SharedLocationPayload? = nil,
+        location: SharedLocation? = nil,
         member: MemberInfoPayload? = nil,
         deletedForMe: Bool? = nil,
         campaignId: String? = nil
