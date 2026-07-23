@@ -15,7 +15,11 @@ allowed_endpoints=(
     blockUsers
     createDevice
     createUserGroup
+    deleteChannelFile
+    deleteChannelImage
     deleteDevice
+    deleteFile
+    deleteImage
     deleteUserGroup
     getApp
     getBlockedUsers
@@ -35,6 +39,10 @@ allowed_endpoints=(
     updateMemberPartial
     updatePushNotificationPreferences
     updateUserGroup
+    uploadChannelFile
+    uploadChannelImage
+    uploadFile
+    uploadImage
 )
 allowed_models=(
   Action
@@ -51,12 +59,15 @@ allowed_models=(
   DeviceResponse
   Field
   FileUploadConfig
+  FileUploadResponse
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
   GetUserGroupResponse
   ImageData
   Images
+  ImageSize
+  ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
@@ -78,6 +89,8 @@ allowed_models=(
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
   UpdateUserGroupRequest
+  UploadChannelFileResponse
+  UploadChannelResponse
   UpsertPushPreferencesRequest
   UpsertPushPreferencesResponse
   UserGroupMember
@@ -287,6 +300,28 @@ rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 
 rename_generated_type Response EmptyResponse
+rename_generated_type FileUploadRequest MultipartFormData
+rename_generated_type ImageUploadRequest MultipartFormData
+rename_generated_type UploadChannelFileRequest MultipartFormData
+rename_generated_type UploadChannelRequest MultipartFormData
+
+# Remove a generated property (declaration, doc comment, init param, assignment,
+#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+remove_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v p="$2" '
+    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+    { s = $0; sub(/^[[:space:]]+/, "", s) }
+    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+    s ~ "^let " p ": "                 { n = 0; next }
+    s ~ "^self\\." p " = " p "$"       { next }
+    s ~ "^case " p "( =|$)"            { next }
+    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+    { flush(); print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_property FileUploadResponse duration
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
 restore_nonoptional_property PushPreference chatLevel PushPreferenceLevel .all
@@ -419,8 +454,6 @@ inject_v1_endpoint_paths() {
     case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
-    case uploadChannelAttachment(channelId: String, type: String)
-    case uploadAttachment(String)
 
     case sendMessage(ChannelId)
     case message(MessageId)
@@ -450,9 +483,6 @@ inject_v1_endpoint_paths() {
 
     case callToken(String)
     case createCall(String)
-
-    case deleteFile(String)
-    case deleteImage(String)
 
     case polls
     case pollsQuery
@@ -496,8 +526,6 @@ EOF
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-        case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
-        case let .uploadAttachment(type): return "uploads/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
@@ -524,8 +552,6 @@ EOF
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
-        case let .deleteFile(channelId): return "channels/\(channelId)/file"
-        case let .deleteImage(channelId): return "channels/\(channelId)/image"
         case .polls: return "polls"
         case .pollsQuery: return "polls/query"
         case let .poll(pollId: pollId): return "polls/\(pollId)"

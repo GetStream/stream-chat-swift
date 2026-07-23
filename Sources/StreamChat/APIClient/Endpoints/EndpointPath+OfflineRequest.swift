@@ -29,6 +29,8 @@ extension EndpointPath {
              .createDevice,
              .createUserGroup,
              .deleteChannel,
+             .deleteChannelFile,
+             .deleteChannelImage,
              .deleteDevice,
              .deleteFile,
              .deleteImage,
@@ -87,8 +89,10 @@ extension EndpointPath {
              .updateMemberPartial,
              .updatePushNotificationPreferences,
              .updateUserGroup,
-             .uploadAttachment,
-             .uploadChannelAttachment,
+             .uploadChannelFile,
+             .uploadChannelImage,
+             .uploadFile,
+             .uploadImage,
              .users:
             return false
         }

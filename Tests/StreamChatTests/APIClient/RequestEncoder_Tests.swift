@@ -379,6 +379,30 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(sentBody, bodyAsData)
     }
 
+    func test_encodingRequestBodyAsMultipartFormData_POST() throws {
+        // Prepare a POST endpoint with a multipart form-data body
+        let multipart = MultipartFormData(Data("file-bytes".utf8), fileName: "photo.jpg", mimeType: "image/jpeg")
+        let endpoint = Endpoint<Data>(
+            path: .uploadImage,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: false,
+            body: multipart
+        )
+
+        // Encode the request and wait for the result
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+
+        // Check the multipart body and Content-Type header are set
+        let sentBody = try XCTUnwrap(request.httpBody)
+        XCTAssertEqual(sentBody, multipart.getMultipartFormData())
+        XCTAssertEqual(
+            request.value(forHTTPHeaderField: "Content-Type"),
+            "multipart/form-data; boundary=\(MultipartFormData.boundary)"
+        )
+    }
+
     func test_encodingRequestWithoutBody_POST() throws {
         // Our backend expects all POST requests will have a body, even if empty
         // nil body is not acceptable (causes invalid json - 400 error)
