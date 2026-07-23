@@ -281,7 +281,6 @@ Compatibility & distribution
 
 ### Commits
 
-- Start commit subject lines with a capital letter.
 - Do not end commit subject lines with a period.
 - Keep the subject line concise (ideally under 72 characters); put additional context in the body separated by a blank line.
 
