@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An uploaded file.
 public struct UploadedFile: Sendable, Decodable {
@@ -174,8 +175,8 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
                 return
             }
 
-            let data = multipartFormData.getMultipartFormData()
-            urlRequest.addValue("multipart/form-data; boundary=\(MultipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
+            let data = multipartFormData.encode()
+            urlRequest.addValue("multipart/form-data; boundary=\(multipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = data
 
             guard let self = self else {

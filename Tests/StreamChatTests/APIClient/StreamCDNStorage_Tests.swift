@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+import StreamCore
 import XCTest
 
 final class StreamCDNStorage_Tests: XCTestCase {
@@ -311,10 +312,10 @@ final class StreamCDNStorage_Tests: XCTestCase {
             method: .post,
             path: "/" + uniquePath,
             headers: [
-                "Content-Type": "multipart/form-data; boundary=\(MultipartFormData.boundary)"
+                "Content-Type": "multipart/form-data; boundary=\(multipartFormData.boundary)"
             ],
             queryParameters: ["item": uniqueQueryItem],
-            body: multipartFormData.getMultipartFormData()
+            body: multipartFormData.encode()
         )
     }
     
