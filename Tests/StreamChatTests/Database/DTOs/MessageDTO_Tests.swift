@@ -3996,16 +3996,12 @@ final class MessageDTO_Tests: XCTestCase {
                 let messagePayload: MessagePayload = .dummy(
                     messageId: id,
                     authorUserId: userId,
-                    sharedLocation: .init(
-                        channelId: channelId.rawValue,
-                        messageId: id,
-                        userId: .unique,
+                    sharedLocation: .dummy(
+                        channelId: channelId,
+                        endAt: isActive ? .distantFuture : .distantPast,
                         latitude: 50,
                         longitude: 10,
-                        createdAt: .unique,
-                        updatedAt: .unique,
-                        endAt: isActive ? .distantFuture : .distantPast,
-                        createdByDeviceId: .unique
+                        messageId: id
                     )
                 )
 
@@ -4056,16 +4052,11 @@ final class MessageDTO_Tests: XCTestCase {
             let sentMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
-                    messageId: .unique,
-                    userId: .unique,
-                    latitude: 50,
-                    longitude: 10,
-                    createdAt: .unique,
-                    updatedAt: .unique,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     endAt: .distantFuture, // Active location
-                    createdByDeviceId: .unique
+                    latitude: 50,
+                    longitude: 10
                 )
             )
 
@@ -4082,16 +4073,11 @@ final class MessageDTO_Tests: XCTestCase {
             let pendingSendMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
-                    messageId: .unique,
-                    userId: .unique,
-                    latitude: 51,
-                    longitude: 11,
-                    createdAt: .unique,
-                    updatedAt: .unique,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     endAt: .distantFuture,
-                    createdByDeviceId: .unique
+                    latitude: 51,
+                    longitude: 11
                 )
             )
 
@@ -4107,16 +4093,11 @@ final class MessageDTO_Tests: XCTestCase {
             let sendingFailedMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
-                    messageId: .unique,
-                    userId: .unique,
-                    latitude: 52,
-                    longitude: 12,
-                    createdAt: .unique,
-                    updatedAt: .unique,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     endAt: .distantFuture,
-                    createdByDeviceId: .unique
+                    latitude: 52,
+                    longitude: 12
                 )
             )
 
@@ -4132,16 +4113,11 @@ final class MessageDTO_Tests: XCTestCase {
             let pendingSyncMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
-                    messageId: .unique,
-                    userId: .unique,
-                    latitude: 53,
-                    longitude: 13,
-                    createdAt: .unique,
-                    updatedAt: .unique,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     endAt: .distantFuture,
-                    createdByDeviceId: .unique
+                    latitude: 53,
+                    longitude: 13
                 )
             )
 
