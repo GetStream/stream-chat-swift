@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `ChatClientConfig.localAttachmentDownloadsFolderURL` to configure where attachment downloads are stored [#4180](https://github.com/GetStream/stream-chat-swift/pull/4180)
 
-### 🔄 Changed
 
 # [4.101.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.2)
 _July 03, 2026_
