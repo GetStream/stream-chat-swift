@@ -292,12 +292,16 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     }
 
     private static func makeImage(from data: Data, resize: CGSize?, scale: CGFloat) -> DownloadedImage? {
-        if data.isGIF {
+        switch ImageDownsampler.decode(data, resize: resize, scale: scale) {
+        case let .image(image):
+            return DownloadedImage(image: image)
+        case .animated:
+            // Animated data is passed through untouched; SwiftyGif renders it in the UI SDKs.
             guard let image = UIImage(data: data) else { return nil }
             return DownloadedImage(image: image, animatedImageData: data)
+        case nil:
+            return nil
         }
-        guard let image = ImageDownsampler.decode(data, resize: resize, scale: scale) else { return nil }
-        return DownloadedImage(image: image)
     }
 
     // MARK: - Defaults

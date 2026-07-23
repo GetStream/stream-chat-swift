@@ -8,48 +8,55 @@ import UIKit
 import XCTest
 
 final class ImageDownsampler_Tests: XCTestCase {
-    // MARK: - isGIF
+    // MARK: - decode result
 
-    func test_isGIF_detectsGIF() {
-        XCTAssertTrue(gifData().isGIF)
+    func test_decode_forGIF_returnsAnimated() throws {
+        guard case .animated = try XCTUnwrap(ImageDownsampler.decode(gifData(), resize: nil, scale: 1)) else {
+            return XCTFail("Expected .animated")
+        }
     }
 
-    func test_isGIF_returnsFalseForNonGIF() {
-        XCTAssertFalse(pngData(width: 8, height: 8).isGIF)
-        XCTAssertFalse(Data([0x00, 0x01]).isGIF)
+    func test_decode_forStillImage_returnsStill() throws {
+        guard case .image = try XCTUnwrap(ImageDownsampler.decode(pngData(width: 8, height: 8), resize: nil, scale: 1)) else {
+            return XCTFail("Expected .image")
+        }
+    }
+
+    func test_decode_forInvalidData_returnsNil() {
+        XCTAssertNil(ImageDownsampler.decode(Data([0x00, 0x01]), resize: nil, scale: 1))
     }
 
     // MARK: - decode
 
     func test_decode_withoutResize_returnsFullSize() throws {
-        let image = try XCTUnwrap(ImageDownsampler.decode(pngData(width: 100, height: 60), resize: nil, scale: 1))
+        let image = try XCTUnwrap(decodedStill(pngData(width: 100, height: 60), resize: nil, scale: 1))
         XCTAssertEqual(image.cgImage?.width, 100)
         XCTAssertEqual(image.cgImage?.height, 60)
     }
 
     func test_decode_withResize_downscalesToFillTarget() throws {
         // Square source, square target → exact fit.
-        let image = try XCTUnwrap(ImageDownsampler.decode(pngData(width: 200, height: 200), resize: CGSize(width: 50, height: 50), scale: 1))
+        let image = try XCTUnwrap(decodedStill(pngData(width: 200, height: 200), resize: CGSize(width: 50, height: 50), scale: 1))
         XCTAssertEqual(image.cgImage?.width, 50)
         XCTAssertEqual(image.cgImage?.height, 50)
     }
 
     func test_decode_aspectFill_landscapeSourceCoversTarget() throws {
         // 200x100 into a 50x50 box: aspect-fill scale = 0.5 → 100x50 (covers the box).
-        let image = try XCTUnwrap(ImageDownsampler.decode(pngData(width: 200, height: 100), resize: CGSize(width: 50, height: 50), scale: 1))
+        let image = try XCTUnwrap(decodedStill(pngData(width: 200, height: 100), resize: CGSize(width: 50, height: 50), scale: 1))
         XCTAssertEqual(image.cgImage?.width, 100)
         XCTAssertEqual(image.cgImage?.height, 50)
     }
 
     func test_decode_doesNotUpscaleSmallImages() throws {
-        let image = try XCTUnwrap(ImageDownsampler.decode(pngData(width: 30, height: 30), resize: CGSize(width: 100, height: 100), scale: 1))
+        let image = try XCTUnwrap(decodedStill(pngData(width: 30, height: 30), resize: CGSize(width: 100, height: 100), scale: 1))
         XCTAssertEqual(image.cgImage?.width, 30)
         XCTAssertEqual(image.cgImage?.height, 30)
     }
 
     func test_decode_appliesDisplayScaleToResizedOutput() throws {
         // Target 50pt at scale 2 → 100px; source is large enough to downscale to it.
-        let image = try XCTUnwrap(ImageDownsampler.decode(pngData(width: 400, height: 400), resize: CGSize(width: 50, height: 50), scale: 2))
+        let image = try XCTUnwrap(decodedStill(pngData(width: 400, height: 400), resize: CGSize(width: 50, height: 50), scale: 2))
         XCTAssertEqual(image.cgImage?.width, 100)
         XCTAssertEqual(image.scale, 2)
         XCTAssertEqual(image.size.width, 50, accuracy: 0.5)
@@ -64,7 +71,7 @@ final class ImageDownsampler_Tests: XCTestCase {
         ]
         for testCase in cases {
             let data = orientedJPEGData(width: 120, height: 60, orientation: testCase.orientation)
-            let image = try XCTUnwrap(ImageDownsampler.decode(data, resize: nil, scale: 1))
+            let image = try XCTUnwrap(decodedStill(data, resize: nil, scale: 1))
             let expected = testCase.swaps ? CGSize(width: 60, height: 120) : CGSize(width: 120, height: 60)
             XCTAssertEqual(image.size, expected, "orientation \(testCase.orientation.rawValue)")
             XCTAssertEqual(image.imageOrientation, .up, "orientation \(testCase.orientation.rawValue)")
@@ -74,12 +81,19 @@ final class ImageDownsampler_Tests: XCTestCase {
     func test_decode_resize_usesOrientedDimensionsForAspectFill() throws {
         // 120x60 buffer tagged .right → displays as 60x120 (portrait); resized output stays portrait.
         let data = orientedJPEGData(width: 120, height: 60, orientation: .right)
-        let image = try XCTUnwrap(ImageDownsampler.decode(data, resize: CGSize(width: 30, height: 30), scale: 1))
+        let image = try XCTUnwrap(decodedStill(data, resize: CGSize(width: 30, height: 30), scale: 1))
         XCTAssertGreaterThan(image.size.height, image.size.width)
         XCTAssertEqual(image.imageOrientation, .up)
     }
 
     // MARK: - Helpers
+
+    private func decodedStill(_ data: Data, resize: CGSize?, scale: CGFloat) -> UIImage? {
+        guard case let .image(image)? = ImageDownsampler.decode(data, resize: resize, scale: scale) else {
+            return nil
+        }
+        return image
+    }
 
     private func renderedImage(width: Int, height: Int) -> UIImage {
         let format = UIGraphicsImageRendererFormat()

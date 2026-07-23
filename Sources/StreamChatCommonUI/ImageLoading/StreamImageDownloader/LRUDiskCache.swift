@@ -51,7 +51,7 @@ final class LRUDiskCache: @unchecked Sendable {
 
             let now = Date()
             try? FileManager.default.setAttributes([.modificationDate: now], ofItemAtPath: url.path)
-            if self.trackedSize == nil || self.trackedSize! > self.maxSizeInBytes {
+            if self.trackedSize == nil || self.trackedSize ?? 0 > self.maxSizeInBytes {
                 self.evictFilesIfNeeded(protecting: url)
             }
             completion(data)

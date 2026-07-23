@@ -12,7 +12,12 @@ import UniformTypeIdentifiers
 /// orientation into the output pixels, so JPEG/HEIC photos carrying a portrait or
 /// landscape orientation tag are decoded upright and sized from their display size.
 enum ImageDownsampler {
-    /// Decodes image data into a ready-to-display `UIImage`.
+    enum DecodedImage {
+        case image(UIImage)
+        case animated
+    }
+
+    /// Decodes image data into a still image, or reports that it is animated (GIF).
     ///
     /// - Parameters:
     ///   - data: The encoded image bytes.
@@ -21,9 +26,12 @@ enum ImageDownsampler {
     ///     image is decoded at full size.
     ///   - scale: The display scale used to convert `resize` points to pixels and to wrap
     ///     the resized output so its point size matches the requested size.
-    static func decode(_ data: Data, resize: CGSize?, scale: CGFloat) -> UIImage? {
+    static func decode(_ data: Data, resize: CGSize?, scale: CGFloat) -> DecodedImage? {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil) else {
-            return UIImage(data: data)
+            return UIImage(data: data).map(DecodedImage.image)
+        }
+        if isGIF(source) {
+            return .animated
         }
 
         var options: [CFString: Any] = [
@@ -37,13 +45,22 @@ enum ImageDownsampler {
         }
 
         guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
-            return UIImage(data: data)
+            return UIImage(data: data).map(DecodedImage.image)
         }
         let outputScale = resize == nil ? 1 : scale
-        return UIImage(cgImage: cgImage, scale: outputScale, orientation: .up)
+        return .image(UIImage(cgImage: cgImage, scale: outputScale, orientation: .up))
     }
 
     // MARK: - Private
+
+    private static func isGIF(_ source: CGImageSource) -> Bool {
+        guard let uti = CGImageSourceGetType(source) as String? else { return false }
+        if #available(iOS 14, *) {
+            return uti == UTType.gif.identifier
+        } else {
+            return uti == "com.compuserve.gif"
+        }
+    }
 
     private static func maxPixelSize(source: CGImageSource, targetPoints: CGSize, scale: CGFloat) -> Int? {
         guard let displaySize = sourcePixelSize(source: source),
@@ -80,22 +97,6 @@ enum ImageDownsampler {
             return true
         default:
             return false
-        }
-    }
-}
-
-extension Data {
-    /// Whether the data is a GIF, so animated data can be passed through untouched
-    /// (rendering is handled by SwiftyGif in the UI SDKs).
-    var isGIF: Bool {
-        guard let source = CGImageSourceCreateWithData(self as CFData, nil),
-              let uti = CGImageSourceGetType(source) as String? else {
-            return false
-        }
-        if #available(iOS 14, *) {
-            return uti == UTType.gif.identifier
-        } else {
-            return uti == "com.compuserve.gif"
         }
     }
 }
