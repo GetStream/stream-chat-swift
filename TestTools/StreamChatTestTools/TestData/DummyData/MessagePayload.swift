@@ -56,7 +56,7 @@ extension MessagePayload {
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
-        sharedLocation: SharedLocationPayload? = nil,
+        sharedLocation: SharedLocation? = nil,
         member: MemberInfoPayload? = nil,
         deletedForMe: Bool? = nil,
         campaignId: String? = nil

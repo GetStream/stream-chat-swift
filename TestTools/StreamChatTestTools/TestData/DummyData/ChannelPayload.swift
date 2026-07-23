@@ -20,7 +20,7 @@ extension ChannelPayload {
         channelReads: [ChannelReadPayload] = [],
         isHidden: Bool? = nil,
         draft: DraftPayload? = nil,
-        activeLiveLocations: [SharedLocationPayload] = [],
+        activeLiveLocations: [SharedLocation] = [],
         pushPreference: PushPreferencePayload? = nil
     ) -> Self {
         .init(
