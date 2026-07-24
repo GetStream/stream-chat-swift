@@ -33,7 +33,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.9.0")
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.10.1")
     ],
     targets: [
         .target(

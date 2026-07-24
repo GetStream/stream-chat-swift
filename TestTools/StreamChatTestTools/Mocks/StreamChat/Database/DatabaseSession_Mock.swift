@@ -161,8 +161,12 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteCurrentUser()
     }
 
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreference) throws -> PushPreferenceDTO {
         try underlyingSession.savePushPreference(id: id, payload: payload)
+    }
+
+    func saveChatPreferences(id: String, payload: ChatPreferences) throws -> ChatPreferencesDTO {
+        try underlyingSession.saveChatPreferences(id: id, payload: payload)
     }
 
     func createNewMessage(

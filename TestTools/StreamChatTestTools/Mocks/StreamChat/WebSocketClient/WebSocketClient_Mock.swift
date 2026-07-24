@@ -36,7 +36,7 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     ) {
         var environment = WebSocketClient.Environment.mock
         if let pingController = pingController {
-            environment.createPingController = { _, _, _ in pingController }
+            environment.createPingController = { _, _, _, _ in pingController }
         }
 
         if let webSocketEngine = webSocketEngine {

@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `PushPreference.chatPreferences` with detailed push notification preferences [#4175](https://github.com/GetStream/stream-chat-swift/pull/4175)
+
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `StreamImageDownloader` for downloading and caching images [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)

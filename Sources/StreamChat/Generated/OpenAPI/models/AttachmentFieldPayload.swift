@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class AttachmentFieldPayload: Sendable, Codable, JSONEncodable {
     let short: Bool

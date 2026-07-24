@@ -726,31 +726,26 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         cid: ChannelId,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+        let request = UpsertPushPreferencesRequest(preferences: [preference])
+        apiClient.request(endpoint: .updatePushNotificationPreferences(upsertPushPreferencesRequest: request)) { [weak self] result in
             switch result {
             case let .success(response):
-                guard let channelPref = response.channelPreferences.asModel()[cid] else {
+                guard let channelPreference = response.userChannelPreferences.values.compactMap({ $0[cid.rawValue] }).first else {
                     completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
                     return
                 }
                 self?.database.write({
-                    let dto = try $0.savePushPreference(
-                        id: cid.rawValue,
-                        payload: .init(
-                            chatLevel: channelPref.level.rawValue,
-                            disabledUntil: channelPref.disabledUntil
-                        )
-                    )
+                    let dto = try $0.savePushPreference(id: cid.rawValue, payload: channelPreference)
                     $0.channel(cid: cid)?.pushPreference = dto
                 }, completion: { error in
                     if let error = error {
                         completion(.failure(error))
                     } else {
-                        completion(.success(channelPref))
+                        completion(.success(channelPreference))
                     }
                 })
             case let .failure(error):
@@ -809,13 +804,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
     
     func deleteFile(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteFile(cid: cid, url: url), completion: {
+        apiClient.request(endpoint: .deleteChannelFile(type: cid.type.rawValue, id: cid.id, url: url), completion: {
             completion?($0.error)
         })
     }
     
     func deleteImage(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
+        apiClient.request(endpoint: .deleteChannelImage(type: cid.type.rawValue, id: cid.id, url: url), completion: {
             completion?($0.error)
         })
     }

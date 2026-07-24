@@ -29,6 +29,8 @@ extension EndpointPath {
              .createDevice,
              .createUserGroup,
              .deleteChannel,
+             .deleteChannelFile,
+             .deleteChannelImage,
              .deleteDevice,
              .deleteFile,
              .deleteImage,
@@ -64,7 +66,6 @@ extension EndpointPath {
              .pollVote,
              .pollVoteInMessage,
              .pollVotes,
-             .pushPreferences,
              .queryMembers,
              .reactions,
              .reminder,
@@ -86,9 +87,12 @@ extension EndpointPath {
              .updateChannel,
              .updateLiveLocation,
              .updateMemberPartial,
+             .updatePushNotificationPreferences,
              .updateUserGroup,
-             .uploadAttachment,
-             .uploadChannelAttachment,
+             .uploadChannelFile,
+             .uploadChannelImage,
+             .uploadFile,
+             .uploadImage,
              .users:
             return false
         }

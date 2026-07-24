@@ -85,37 +85,29 @@ final class UserEndpoints_Tests: XCTestCase {
     }
 
     func test_pushPreferences_buildsCorrectly() {
-        let preferences: [PushPreferenceRequestPayload] = [
-            .init(
-                chatLevel: "mentions",
-                channelId: nil,
-                disabledUntil: nil,
-                removeDisable: true
-            ),
-            .init(
-                chatLevel: "all",
-                channelId: "messaging:test-channel",
-                disabledUntil: Date(timeIntervalSince1970: 1_609_459_200),
-                removeDisable: nil
+        let request = UpsertPushPreferencesRequest(preferences: [
+            PushPreferenceInput(chatLevel: .mentions, removeDisable: true),
+            PushPreferenceInput(
+                channelCid: "messaging:test-channel",
+                chatLevel: .all,
+                disabledUntil: Date(timeIntervalSince1970: 1_609_459_200)
             )
-        ]
+        ])
 
-        let expectedEndpoint = Endpoint<PushPreferencesPayloadResponse>(
-            path: .pushPreferences,
+        let expectedEndpoint = Endpoint<UpsertPushPreferencesResponse>(
+            path: .updatePushNotificationPreferences,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "preferences": AnyEncodable(preferences)
-            ]
+            body: request
         )
 
         // Build endpoint
-        let endpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences(preferences)
+        let endpoint: Endpoint<UpsertPushPreferencesResponse> = .updatePushNotificationPreferences(upsertPushPreferencesRequest: request)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path.value, "push_preferences")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/push_preferences")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertFalse(endpoint.requiresConnectionId)
     }

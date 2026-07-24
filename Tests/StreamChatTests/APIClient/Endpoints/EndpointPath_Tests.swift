@@ -50,6 +50,18 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.getOG.shouldBeQueuedOffline)
     }
 
+    func test_getOG_buildsGeneratedEndpoint() {
+        let endpoint: Endpoint<GetOGResponse> = .getOG(url: "https://getstream.io")
+
+        XCTAssertEqual(endpoint.path.value, "/api/v2/og")
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNil(endpoint.body)
+
+        let queryItems = endpoint.queryItems as? [String: String?]
+        XCTAssertEqual(queryItems?["url"] ?? nil, "https://getstream.io")
+    }
+
     func test_threads_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.threads.shouldBeQueuedOffline)
         XCTAssertFalse(EndpointPath.thread(messageId: "1").shouldBeQueuedOffline)
@@ -76,7 +88,7 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_pushPreferences_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updatePushNotificationPreferences.shouldBeQueuedOffline)
     }
 
     func test_getApp_shouldNOTBeQueuedOffline() {
@@ -154,8 +166,8 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_pushPreferences_value() {
-        let path = EndpointPath.pushPreferences.value
-        XCTAssertEqual(path, "push_preferences")
+        let path = EndpointPath.updatePushNotificationPreferences.value
+        XCTAssertEqual(path, "/api/v2/push_preferences")
     }
 
     func test_updateMemberPartial_shouldNOTBeQueuedOffline() {
@@ -196,7 +208,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.listDevices)
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
-        assertResultEncodingAndDecoding(.pushPreferences)
+        assertResultEncodingAndDecoding(.updatePushNotificationPreferences)
         assertResultEncodingAndDecoding(.getApp)
         assertResultEncodingAndDecoding(.listUserGroups)
         assertResultEncodingAndDecoding(.searchUserGroups)
@@ -222,7 +234,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
         assertResultEncodingAndDecoding(.stopWatchingChannel(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
-        assertResultEncodingAndDecoding(.uploadChannelAttachment(channelId: "channel_id", type: "file"))
+        assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
 
         assertResultEncodingAndDecoding(.sendMessage(ChannelId(type: .messaging, id: "the_id")))
         assertResultEncodingAndDecoding(.message("message_idm"))
