@@ -804,13 +804,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
     
     func deleteFile(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteFile(cid: cid, url: url), completion: {
+        apiClient.request(endpoint: .deleteChannelFile(type: cid.type.rawValue, id: cid.id, url: url), completion: {
             completion?($0.error)
         })
     }
     
     func deleteImage(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
+        apiClient.request(endpoint: .deleteChannelImage(type: cid.type.rawValue, id: cid.id, url: url), completion: {
             completion?($0.error)
         })
     }
