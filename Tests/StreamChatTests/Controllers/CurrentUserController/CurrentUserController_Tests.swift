@@ -855,10 +855,8 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_setPushPreference_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let level: PushPreferenceLevel = .mentions
-        let expectedPreference = PushPreferenceRequestPayload(
-            chatLevel: level.rawValue,
-            channelId: nil,
-            disabledUntil: nil,
+        let expectedPreference = PushPreferenceInput(
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -873,7 +871,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // GIVEN
         let level: PushPreferenceLevel = .all
         let expectedPreference = PushPreference(
-            level: .all,
+            chatLevel: .all,
             disabledUntil: nil
         )
 
@@ -913,11 +911,9 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
-        let expectedPreference = PushPreferenceRequestPayload(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: nil,
-            disabledUntil: date,
-            removeDisable: nil
+        let expectedPreference = PushPreferenceInput(
+            chatLevel: .all,
+            disabledUntil: date
         )
 
         // WHEN
@@ -931,7 +927,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
         let expectedPreference = PushPreference(
-            level: .all,
+            chatLevel: .all,
             disabledUntil: date
         )
 

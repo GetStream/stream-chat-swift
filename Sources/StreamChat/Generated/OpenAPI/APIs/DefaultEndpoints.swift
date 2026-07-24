@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum EndpointPath: Codable {
     case connect
@@ -10,7 +11,6 @@ enum EndpointPath: Codable {
     case users
     case guest
     case search
-    case pushPreferences
 
     case threads
     case thread(messageId: MessageId)
@@ -35,11 +35,6 @@ enum EndpointPath: Codable {
     case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
-    case uploadChannelAttachment(
-        channelId: String,
-        type: String
-    )
-    case uploadAttachment(String)
 
     case sendMessage(ChannelId)
     case message(MessageId)
@@ -73,9 +68,6 @@ enum EndpointPath: Codable {
     case callToken(String)
     case createCall(String)
 
-    case deleteFile(String)
-    case deleteImage(String)
-
     case polls
     case pollsQuery
     case poll(pollId: String)
@@ -99,7 +91,17 @@ enum EndpointPath: Codable {
     case blockUsers
     case createDevice
     case createUserGroup
+    case deleteChannelFile(
+        type: String,
+        id: String
+    )
+    case deleteChannelImage(
+        type: String,
+        id: String
+    )
     case deleteDevice
+    case deleteFile
+    case deleteImage
     case deleteUserGroup(id: String)
     case getApp
     case getBlockedUsers
@@ -123,7 +125,18 @@ enum EndpointPath: Codable {
         type: String,
         id: String
     )
+    case updatePushNotificationPreferences
     case updateUserGroup(id: String)
+    case uploadChannelFile(
+        type: String,
+        id: String
+    )
+    case uploadChannelImage(
+        type: String,
+        id: String
+    )
+    case uploadFile
+    case uploadImage
 
     var value: String {
         switch self {
@@ -132,7 +145,6 @@ enum EndpointPath: Codable {
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .pushPreferences: return "push_preferences"
 
         case .threads:
             return "threads"
@@ -161,11 +173,6 @@ enum EndpointPath: Codable {
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-        case let .uploadChannelAttachment(
-            channelId,
-            type
-        ): return "channels/\(channelId)/\(type)"
-        case let .uploadAttachment(type): return "uploads/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
@@ -195,8 +202,6 @@ enum EndpointPath: Codable {
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
-        case let .deleteFile(channelId): return "channels/\(channelId)/file"
-        case let .deleteImage(channelId): return "channels/\(channelId)/image"
         case .polls: return "polls"
         case .pollsQuery: return "polls/query"
         case let .poll(pollId: pollId): return "polls/\(pollId)"
@@ -224,8 +229,22 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case .createUserGroup:
             return "/api/v2/usergroups"
+        case let .deleteChannelFile(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/file"
+        case let .deleteChannelImage(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/image"
         case .deleteDevice:
             return "/api/v2/devices"
+        case .deleteFile:
+            return "/api/v2/uploads/file"
+        case .deleteImage:
+            return "/api/v2/uploads/image"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getApp:
@@ -266,8 +285,24 @@ enum EndpointPath: Codable {
             id: id
         ):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/member"
+        case .updatePushNotificationPreferences:
+            return "/api/v2/push_preferences"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
+        case let .uploadChannelFile(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/file"
+        case let .uploadChannelImage(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/image"
+        case .uploadFile:
+            return "/api/v2/uploads/file"
+        case .uploadImage:
+            return "/api/v2/uploads/image"
         }
     }
 }
@@ -437,6 +472,46 @@ extension Endpoint {
         )
     }
 
+    static func deleteChannelFile(
+        type: String,
+        id: String,
+        url: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteChannelFile(
+                type: type,
+                id: id
+            ),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteChannelImage(
+        type: String,
+        id: String,
+        url: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteChannelImage(
+                type: type,
+                id: id
+            ),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func deleteDevice(
         id: String,
         requiresConnectionId: Bool = false
@@ -446,6 +521,36 @@ extension Endpoint {
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "id": id
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteFile(
+        url: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteFile,
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteImage(
+        url: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteImage,
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "url": url
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -709,6 +814,19 @@ extension Endpoint {
         )
     }
 
+    static func updatePushNotificationPreferences(
+        upsertPushPreferencesRequest: UpsertPushPreferencesRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpsertPushPreferencesResponse> {
+        return .init(
+            path: .updatePushNotificationPreferences,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: upsertPushPreferencesRequest
+        )
+    }
+
     static func updateUserGroup(
         id: String,
         updateUserGroupRequest: UpdateUserGroupRequest,
@@ -720,6 +838,68 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateUserGroupRequest
+        )
+    }
+
+    static func uploadChannelFile(
+        type: String,
+        id: String,
+        uploadChannelFileRequest: MultipartFormData,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UploadChannelFileResponse> {
+        return .init(
+            path: .uploadChannelFile(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: uploadChannelFileRequest
+        )
+    }
+
+    static func uploadChannelImage(
+        type: String,
+        id: String,
+        uploadChannelRequest: MultipartFormData,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UploadChannelResponse> {
+        return .init(
+            path: .uploadChannelImage(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: uploadChannelRequest
+        )
+    }
+
+    static func uploadFile(
+        fileUploadRequest: MultipartFormData,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<FileUploadResponse> {
+        return .init(
+            path: .uploadFile,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: fileUploadRequest
+        )
+    }
+
+    static func uploadImage(
+        imageUploadRequest: MultipartFormData,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<ImageUploadResponse> {
+        return .init(
+            path: .uploadImage,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: imageUploadRequest
         )
     }
 }

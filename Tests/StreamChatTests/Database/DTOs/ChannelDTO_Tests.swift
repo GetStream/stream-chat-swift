@@ -483,7 +483,7 @@ final class ChannelDTO_Tests: XCTestCase {
             
             // Push Preference
             Assert.willNotBeNil(payload.pushPreference)
-            Assert.willBeEqual(payload.pushPreference?.chatLevel, loadedChannel.pushPreference?.level.rawValue)
+            Assert.willBeEqual(payload.pushPreference?.chatLevel, loadedChannel.pushPreference?.chatLevel)
             Assert.willBeEqual(
                 payload.pushPreference?.disabledUntil?.timeIntervalSince1970,
                 loadedChannel.pushPreference?.disabledUntil?.timeIntervalSince1970

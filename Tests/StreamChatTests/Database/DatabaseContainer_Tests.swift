@@ -378,7 +378,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             let mutedUserId = UserId.unique
             let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
             session.currentUser?.mutedUsers = Set([mutedUserDTO])
-            try session.savePushPreference(id: "currentUserId", payload: .init(chatLevel: "mentions", disabledUntil: nil))
+            try session.savePushPreference(id: "currentUserId", payload: .init(chatLevel: "mentions", chatPreferences: .init(channelMentions: "all"), disabledUntil: nil))
             try session.saveUserGroup(payload: .dummy(members: [.dummy()]))
             session.saveThreadList(
                 payload: ThreadListPayload(

@@ -154,7 +154,7 @@ struct ChannelPayload {
 
     let activeLiveLocations: [SharedLocation]
     
-    let pushPreference: PushPreferencePayload?
+    let pushPreference: PushPreference?
 }
 
 extension ChannelPayload {
@@ -199,7 +199,7 @@ extension ChannelPayload: Decodable {
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
             draft: try container.decodeIfPresent(DraftPayload.self, forKey: .draft),
             activeLiveLocations: try container.decodeArrayIfPresentIgnoringFailures([SharedLocation].self, forKey: .activeLiveLocations) ?? [],
-            pushPreference: try container.decodeIfPresent(PushPreferencePayload.self, forKey: .pushPreference)
+            pushPreference: try container.decodeIfPresent(PushPreference.self, forKey: .pushPreference)
         )
     }
 }
