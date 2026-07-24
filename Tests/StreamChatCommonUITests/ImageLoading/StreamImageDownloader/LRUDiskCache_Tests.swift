@@ -36,6 +36,16 @@ final class LRUDiskCache_Tests: XCTestCase {
         XCTAssertNil(cached)
     }
 
+    func test_storeData_whenEntryExceedsHalfOfMaxSize_rejectsEntry() {
+        let cache = LRUDiskCache(directory: directory, maxSizeInBytes: 100)
+
+        let storeError = store(Data(repeating: 0xab, count: 60), forKey: "big", in: cache)
+        let cached = data(forKey: "big", in: cache)
+
+        XCTAssertTrue(storeError is ClientError.DiskCacheEntryExceedsSizeLimit)
+        XCTAssertNil(cached)
+    }
+
     func test_data_whenCacheIsDisabled_doesNotReadOrRemoveSharedEntry() {
         let enabled = LRUDiskCache(directory: directory, maxSizeInBytes: 1000)
         let disabled = LRUDiskCache(directory: directory, maxSizeInBytes: 0)
@@ -75,21 +85,23 @@ final class LRUDiskCache_Tests: XCTestCase {
     func test_store_acrossInstances_enforcesSharedDirectoryLimit() throws {
         let first = LRUDiskCache(directory: directory, maxSizeInBytes: 100)
         let second = LRUDiskCache(directory: directory, maxSizeInBytes: 100)
-        store(Data(repeating: 0x01, count: 60), forKey: "a", in: first)
-        store(Data(repeating: 0x02, count: 60), forKey: "b", in: second)
+        store(Data(repeating: 0x01, count: 40), forKey: "a", in: first)
+        store(Data(repeating: 0x02, count: 40), forKey: "b", in: first)
+        store(Data(repeating: 0x03, count: 40), forKey: "c", in: second)
 
-        store(Data(repeating: 0x03, count: 60), forKey: "c", in: first)
+        store(Data(repeating: 0x04, count: 40), forKey: "d", in: first)
 
         XCTAssertLessThanOrEqual(try cacheSize(), 100)
     }
 
     func test_data_firstAccess_trimsExistingDirectoryToConfiguredLimit() throws {
         let seed = LRUDiskCache(directory: directory, maxSizeInBytes: 1000)
-        store(Data(repeating: 0x01, count: 60), forKey: "a", in: seed)
-        store(Data(repeating: 0x02, count: 60), forKey: "b", in: seed)
+        store(Data(repeating: 0x01, count: 40), forKey: "a", in: seed)
+        store(Data(repeating: 0x02, count: 40), forKey: "b", in: seed)
+        store(Data(repeating: 0x03, count: 40), forKey: "c", in: seed)
         let cache = LRUDiskCache(directory: directory, maxSizeInBytes: 100)
 
-        _ = data(forKey: "b", in: cache)
+        _ = data(forKey: "c", in: cache)
 
         XCTAssertLessThanOrEqual(try cacheSize(), 100)
     }

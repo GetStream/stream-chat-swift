@@ -295,7 +295,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
         let user = users[indexPath.row]
 
-        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL, with: ImageLoaderOptions())
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL)
         cell.avatarView.backgroundColor = view.tintColor
         cell.nameLabel.text = user.name ?? user.id
 

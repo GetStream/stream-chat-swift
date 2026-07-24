@@ -11,9 +11,16 @@ import StreamChat
 final class LRUDiskCache: @unchecked Sendable {
     let maxSizeInBytes: Int
     let directory: URL
+    /// The maximum size of a single entry, as a fraction of ``maxSizeInBytes``. Prevents one
+    /// large file from evicting the entire cache.
+    private let entryCostLimit = 0.5
     private var trackedSize: Int?
 
-    private static let queue = DispatchQueue(label: "io.getstream.StreamChatCommonUI.LRUDiskCache", qos: .utility)
+    private var entrySizeLimit: Int {
+        Int(Double(maxSizeInBytes) * entryCostLimit)
+    }
+
+    private let queue = DispatchQueue(label: "io.getstream.StreamChatCommonUI.LRUDiskCache", qos: .userInitiated)
 
     init(directory: URL, maxSizeInBytes: Int) {
         self.directory = directory
@@ -30,7 +37,7 @@ final class LRUDiskCache: @unchecked Sendable {
     }
 
     func data(forKey key: String, completion: @escaping @Sendable (Data?) -> Void) {
-        Self.queue.async {
+        queue.async {
             guard self.maxSizeInBytes > 0 else {
                 completion(nil)
                 return
@@ -43,7 +50,7 @@ final class LRUDiskCache: @unchecked Sendable {
                 completion(nil)
                 return
             }
-            guard data.count <= self.maxSizeInBytes else {
+            guard data.count <= self.entrySizeLimit else {
                 try? FileManager.default.removeItem(at: url)
                 completion(nil)
                 return
@@ -59,12 +66,12 @@ final class LRUDiskCache: @unchecked Sendable {
     }
 
     func store(_ data: Data, forKey key: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        Self.queue.async {
+        queue.async {
             guard !data.isEmpty else {
                 completion?(ClientError.DiskCacheEmptyData())
                 return
             }
-            guard data.count <= self.maxSizeInBytes else {
+            guard data.count <= self.entrySizeLimit else {
                 completion?(ClientError.DiskCacheEntryExceedsSizeLimit())
                 return
             }
@@ -89,7 +96,7 @@ final class LRUDiskCache: @unchecked Sendable {
     }
 
     func remove(forKey key: String, completion: (@Sendable () -> Void)? = nil) {
-        Self.queue.async {
+        queue.async {
             let name = Self.storageName(forKey: key)
             try? FileManager.default.removeItem(at: self.directory.appendingPathComponent(name))
             self.trackedSize = nil
@@ -98,7 +105,7 @@ final class LRUDiskCache: @unchecked Sendable {
     }
 
     func removeAll(completion: (@Sendable () -> Void)? = nil) {
-        Self.queue.async {
+        queue.async {
             try? FileManager.default.removeItem(at: self.directory)
             self.trackedSize = nil
             completion?()

@@ -28,7 +28,7 @@ final class ImageMemoryCache: @unchecked Sendable {
     let costLimit: Int
     /// The maximum cost of a single entry, as a fraction of ``costLimit``. Prevents one
     /// large image from evicting the entire cache.
-    private let entryCostLimit = 0.1
+    private let entryCostLimit = 0.5
 
     private let state = AllocatedUnfairLock(State())
 
