@@ -65,6 +65,14 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             textView?.text = "This message is from a shadow banned user"
         }
 
+        /// If the system message is flagged as a warning in its extra data, render
+        /// it in yellow between two warning emojis.
+        /// (Demo App only feature to QA extra data in system messages)
+        if content?.isWarningSystemMessage == true, let text = content?.text {
+            textView?.textColor = .systemYellow
+            textView?.text = "⚠️ \(text) ⚠️"
+        }
+
         /// If automatic translation is added, do not show manual translation
         /// (Demo App only feature to test LLC manual translation)
         if layoutOptions?.contains(.translation) == false,
