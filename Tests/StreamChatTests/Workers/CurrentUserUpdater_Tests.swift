@@ -912,7 +912,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreference(chatLevel: "all")
+                "userId": PushPreference(level: "all")
             ]
         )
 
@@ -933,38 +933,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertNil(PushPreferenceDTO.load(id: "currentUserId", context: database.viewContext))
     }
 
-    func test_savePushPreference_persistsAndClearsChatPreferences() throws {
-        // GIVEN
-        let userId: UserId = .unique
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            let dto = try session.savePushPreference(
-                id: userId,
-                payload: .init(chatLevel: "all", chatPreferences: .init(channelMentions: "all", threadReplies: "none"))
-            )
-            session.currentUser?.pushPreference = dto
-        }
-
-        // THEN — chat preferences are persisted
-        let saved: PushPreference? = try database.readSynchronously { session in
-            try session.currentUser?.asModel().pushPreference
-        }
-        XCTAssertEqual(saved?.chatPreferences?.channelMentions, "all")
-        XCTAssertEqual(saved?.chatPreferences?.threadReplies, "none")
-
-        // WHEN — re-saving without chat preferences
-        try database.writeSynchronously { session in
-            let dto = try session.savePushPreference(id: userId, payload: .init(chatLevel: "all"))
-            session.currentUser?.pushPreference = dto
-        }
-
-        // THEN — the persisted chat preferences are cleared
-        let cleared: PushPreference? = try database.readSynchronously { session in
-            try session.currentUser?.asModel().pushPreference
-        }
-        XCTAssertNil(cleared?.chatPreferences)
-    }
-
     func test_setPushPreference_successfulResponse_whenNoCurrentUser_doesNotCrashOrSave() throws {
         // GIVEN — no current user seeded in the database
         let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)
@@ -972,7 +940,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreference(chatLevel: "all")
+                "userId": PushPreference(level: "all")
             ]
         )
 
