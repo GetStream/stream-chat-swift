@@ -24,16 +24,17 @@ final class ImageMemoryCache: @unchecked Sendable {
         var clock: UInt64 = 0
     }
 
-    /// The maximum total cost, in bytes, of the decoded images kept in memory.
-    let costLimit: Int
-    /// The maximum cost of a single entry, as a fraction of ``costLimit``. Prevents one
-    /// large image from evicting the entire cache.
-    private let entryCostLimit = 0.5
+    /// The maximum total size, in bytes, of the decoded images kept in memory.
+    let maxSizeInBytes: Int
+
+    private var entrySizeLimit: Int {
+        Int(Double(maxSizeInBytes) * 0.5)
+    }
 
     private let state = AllocatedUnfairLock(State())
 
-    init(costLimit: Int) {
-        self.costLimit = costLimit
+    init(maxSizeInBytes: Int) {
+        self.maxSizeInBytes = maxSizeInBytes
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleMemoryWarning),
@@ -64,7 +65,7 @@ final class ImageMemoryCache: @unchecked Sendable {
 
     func store(_ image: DownloadedImage, forKey key: String) {
         let cost = Self.cost(of: image)
-        guard cost <= Int(Double(costLimit) * entryCostLimit) else { return }
+        guard cost <= entrySizeLimit else { return }
         state.withLock { state in
             if let existing = state.entries[key] {
                 state.totalCost -= existing.cost
@@ -72,7 +73,7 @@ final class ImageMemoryCache: @unchecked Sendable {
             state.clock &+= 1
             state.entries[key] = Entry(image: image, cost: cost, lastUsedAt: state.clock)
             state.totalCost += cost
-            Self.evict(&state, toCost: costLimit)
+            Self.evict(&state, toCost: maxSizeInBytes)
         }
     }
 
@@ -118,6 +119,6 @@ final class ImageMemoryCache: @unchecked Sendable {
     }
 
     @objc private func handleDidEnterBackground() {
-        trim(toCost: Int(Double(costLimit) * 0.1))
+        trim(toCost: Int(Double(maxSizeInBytes) * 0.1))
     }
 }

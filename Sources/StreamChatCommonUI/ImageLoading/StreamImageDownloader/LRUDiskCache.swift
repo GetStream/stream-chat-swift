@@ -11,13 +11,10 @@ import StreamChat
 final class LRUDiskCache: @unchecked Sendable {
     let maxSizeInBytes: Int
     let directory: URL
-    /// The maximum size of a single entry, as a fraction of ``maxSizeInBytes``. Prevents one
-    /// large file from evicting the entire cache.
-    private let entryCostLimit = 0.5
     private var trackedSize: Int?
 
     private var entrySizeLimit: Int {
-        Int(Double(maxSizeInBytes) * entryCostLimit)
+        Int(Double(maxSizeInBytes) * 0.5)
     }
 
     private let queue = DispatchQueue(label: "io.getstream.StreamChatCommonUI.LRUDiskCache", qos: .userInitiated)

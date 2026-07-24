@@ -57,7 +57,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         urlSession: URLSession,
         displayScale: CGFloat
     ) {
-        memoryCache = ImageMemoryCache(costLimit: memoryCostLimit)
+        memoryCache = ImageMemoryCache(maxSizeInBytes: memoryCostLimit)
         diskCache = LRUDiskCache(directory: diskDirectory, maxSizeInBytes: diskSizeLimit)
         self.urlSession = urlSession
         self.displayScale = max(1, displayScale)

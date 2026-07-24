@@ -8,7 +8,7 @@ import XCTest
 
 final class ImageMemoryCache_Tests: XCTestCase {
     func test_store_thenImage_returnsStoredImage() {
-        let cache = ImageMemoryCache(costLimit: .max)
+        let cache = ImageMemoryCache(maxSizeInBytes: .max)
         let image = DownloadedImage(image: solidImage(side: 32))
 
         cache.store(image, forKey: "a")
@@ -18,7 +18,7 @@ final class ImageMemoryCache_Tests: XCTestCase {
     }
 
     func test_removeAll_clearsCache() {
-        let cache = ImageMemoryCache(costLimit: .max)
+        let cache = ImageMemoryCache(maxSizeInBytes: .max)
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "a")
 
         cache.removeAll()
@@ -29,7 +29,7 @@ final class ImageMemoryCache_Tests: XCTestCase {
 
     func test_trim_evictsLeastRecentlyUsedFirst() {
         let unit = probeUnitCost()
-        let cache = ImageMemoryCache(costLimit: .max)
+        let cache = ImageMemoryCache(maxSizeInBytes: .max)
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "a")
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "b")
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "c")
@@ -46,7 +46,7 @@ final class ImageMemoryCache_Tests: XCTestCase {
     }
 
     func test_trim_toZero_removesEverything() {
-        let cache = ImageMemoryCache(costLimit: .max)
+        let cache = ImageMemoryCache(maxSizeInBytes: .max)
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "a")
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "b")
 
@@ -57,20 +57,20 @@ final class ImageMemoryCache_Tests: XCTestCase {
         XCTAssertEqual(cache.totalCost, 0)
     }
 
-    func test_store_rejectsEntryLargerThanTenPercentOfLimit() {
+    func test_store_rejectsEntryLargerThanHalfOfLimit() {
         let unit = probeUnitCost()
-        // 10% of the limit is below a single entry's cost, so it must not be cached.
-        let cache = ImageMemoryCache(costLimit: unit * 5)
+        // Half of the limit is below a single entry's cost, so it must not be cached.
+        let cache = ImageMemoryCache(maxSizeInBytes: unit)
 
         cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "a")
 
         XCTAssertNil(cache.image(forKey: "a"))
     }
 
-    func test_store_overCostLimit_evictsOldestEntries() {
+    func test_store_overMaxSize_evictsOldestEntries() {
         let unit = probeUnitCost()
-        // Room for ~10 entries (each entry is within the 10% per-entry limit).
-        let cache = ImageMemoryCache(costLimit: unit * 20)
+        // Room for ~20 entries (each entry is within the per-entry limit).
+        let cache = ImageMemoryCache(maxSizeInBytes: unit * 20)
 
         for index in 0..<25 {
             cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "key-\(index)")
@@ -81,24 +81,24 @@ final class ImageMemoryCache_Tests: XCTestCase {
         XCTAssertNotNil(cache.image(forKey: "key-24"), "The newest entry should be retained")
     }
 
-    func test_didEnterBackground_trimsToTenPercentOfCostLimit() {
+    func test_didEnterBackground_trimsToTenPercentOfMaxSize() {
         let unit = probeUnitCost()
-        let costLimit = unit * 20
-        let cache = ImageMemoryCache(costLimit: costLimit)
+        let maxSizeInBytes = unit * 20
+        let cache = ImageMemoryCache(maxSizeInBytes: maxSizeInBytes)
         for index in 0..<15 {
             cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "key-\(index)")
         }
 
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
 
-        XCTAssertLessThanOrEqual(cache.totalCost, costLimit / 10)
+        XCTAssertLessThanOrEqual(cache.totalCost, maxSizeInBytes / 10)
     }
 
     // MARK: - Helpers
 
     /// The cost of a single test image, measured against an unbounded cache.
     private func probeUnitCost() -> Int {
-        let probe = ImageMemoryCache(costLimit: .max)
+        let probe = ImageMemoryCache(maxSizeInBytes: .max)
         probe.store(DownloadedImage(image: solidImage(side: 32)), forKey: "probe")
         return probe.totalCost
     }
