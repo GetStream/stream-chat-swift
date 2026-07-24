@@ -396,10 +396,10 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Check the multipart body and Content-Type header are set
         let sentBody = try XCTUnwrap(request.httpBody)
-        XCTAssertEqual(sentBody, multipart.getMultipartFormData())
+        XCTAssertEqual(sentBody, multipart.encode())
         XCTAssertEqual(
             request.value(forHTTPHeaderField: "Content-Type"),
-            "multipart/form-data; boundary=\(MultipartFormData.boundary)"
+            "multipart/form-data; boundary=\(multipart.boundary)"
         )
     }
 

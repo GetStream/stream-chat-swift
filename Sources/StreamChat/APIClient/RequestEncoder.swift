@@ -235,10 +235,10 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
         case .post, .patch, .put:
             if let multipart = endpoint.body as? MultipartFormData {
                 request.setValue(
-                    "multipart/form-data; boundary=\(MultipartFormData.boundary)",
+                    "multipart/form-data; boundary=\(multipart.boundary)",
                     forHTTPHeaderField: "Content-Type"
                 )
-                request.httpBody = multipart.getMultipartFormData()
+                request.httpBody = multipart.encode()
             } else if let data = endpoint.body as? Data {
                 request.httpBody = data
             } else {
