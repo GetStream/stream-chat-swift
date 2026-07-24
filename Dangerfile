@@ -42,5 +42,6 @@ if !has_qaed_label && (has_ready_for_qa_label || has_ticked_qa_checkbox)
   warn("The changes should be manually QAed before the Pull Request will be merged")
 end
 
-# Check all commits have correct format. Disable the length rule, since it's hardcoded to 50 and GitHub has the limit 80
-commit_lint.check(disable: [:subject_length])
+# Check all commits have correct format. Disable the length rule, since it's hardcoded to 50 and GitHub has the limit 80.
+# Also disable the capital-letter rule, since we don't require capitalized commit subjects.
+commit_lint.check(disable: [:subject_length, :subject_cap])

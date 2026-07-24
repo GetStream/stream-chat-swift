@@ -53,7 +53,6 @@ allowed_models=(
   BlockUsersResponse
   ChannelMemberRequest
   ChannelMemberResponse
-  ChatPreferencesResponse
   CreateDeviceRequest
   CreateUserGroupRequest
   DeviceResponse
@@ -104,7 +103,6 @@ allowed_models=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
-  ChatPreferences
   Device
   PushPreference
   PushPreferenceInput
@@ -272,12 +270,24 @@ restore_nonoptional_property() {
   ' "$file"
 }
 
+rename_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  O="$2" N="$3" perl -0777 -pi -e '
+    my ($o, $n) = ($ENV{O}, $ENV{N});
+    s/^(\s*(?:public )?let )\Q$o\E:/$1$n:/mg;
+    s/([(,]\s*)\Q$o\E:/$1$n:/g;
+    s/^(\s*self\.)\Q$o\E = \Q$o\E$/$1$n = $n/mg;
+    s{^(\s*)case \Q$o\E( = "[^"]*")?$}{"$1case $n" . (defined $2 ? $2 : " = \"$o\"")}mge;
+    s/(lhs\.)\Q$o\E( == rhs\.)\Q$o\E/${1}$n${2}$n/g;
+    s/(hasher\.combine\()\Q$o\E(\))/$1$n$2/g;
+  ' "$file"
+}
+
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
-rename_generated ChatPreferencesResponse ChatPreferences
 rename_generated PushPreferencesResponse PushPreference
 rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
@@ -324,7 +334,8 @@ remove_property() {
 remove_property FileUploadResponse duration
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
-restore_nonoptional_property PushPreference chatLevel PushPreferenceLevel .all
+rename_property PushPreference chatLevel level
+restore_nonoptional_property PushPreference level PushPreferenceLevel .all
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
@@ -353,6 +364,7 @@ remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsLevel
 remove_property PushPreferenceInput feedsPreferences
 remove_property PushPreference callLevel
+remove_property PushPreference chatPreferences
 remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
 remove_property UpsertPushPreferencesResponse duration
@@ -386,7 +398,6 @@ publicize_model() {
     "$file"
 }
 publicize_model AppSettings
-publicize_model ChatPreferences
 publicize_model CurrentUserUnreads
 publicize_model Device
 publicize_model PushPreference

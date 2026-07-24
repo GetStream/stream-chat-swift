@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `PushPreference.chatPreferences` with detailed push notification preferences [#4175](https://github.com/GetStream/stream-chat-swift/pull/4175)
+- Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
 ## StreamChatCommonUI
 ### ✅ Added
