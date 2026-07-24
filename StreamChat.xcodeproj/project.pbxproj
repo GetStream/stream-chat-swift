@@ -5450,8 +5450,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "multipart-encodable";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.1;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
