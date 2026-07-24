@@ -38,6 +38,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var truncateChannel_skipPush: Bool?
     @Atomic var truncateChannel_hardDelete: Bool?
     @Atomic var truncateChannel_systemMessage: String?
+    @Atomic var truncateChannel_systemMessageModel: SystemMessage?
     @Atomic var truncateChannel_completion: ((Error?) -> Void)?
     @Atomic var truncateChannel_completion_result: Result<Void, Error>?
 
@@ -55,6 +56,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var addMembers_userIds: Set<UserId>?
     @Atomic var addMembers_memberInfos: [MemberInfo]?
     @Atomic var addMembers_message: String?
+    @Atomic var addMembers_systemMessage: SystemMessage?
     @Atomic var addMembers_hideHistory: Bool?
     @Atomic var addMembers_hideHistoryBefore: Date?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
@@ -78,6 +80,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
     @Atomic var removeMembers_message: String?
+    @Atomic var removeMembers_systemMessage: SystemMessage?
     @Atomic var removeMembers_completion: ((Error?) -> Void)?
     @Atomic var removeMembers_completion_result: Result<Void, Error>?
 
@@ -206,6 +209,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         truncateChannel_skipPush = nil
         truncateChannel_hardDelete = nil
         truncateChannel_systemMessage = nil
+        truncateChannel_systemMessageModel = nil
         truncateChannel_completion = nil
         truncateChannel_completion_result = nil
 
@@ -221,6 +225,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         addMembers_currentUserId = nil
         addMembers_cid = nil
         addMembers_message = nil
+        addMembers_systemMessage = nil
         addMembers_userIds = nil
         addMembers_hideHistory = nil
         addMembers_hideHistoryBefore = nil
@@ -244,6 +249,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         removeMembers_currentUserId = nil
         removeMembers_cid = nil
         removeMembers_message = nil
+        removeMembers_systemMessage = nil
         removeMembers_userIds = nil
         removeMembers_completion = nil
         removeMembers_completion_result = nil
@@ -391,13 +397,14 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         cid: ChannelId,
         skipPush: Bool = false,
         hardDelete: Bool = true,
-        systemMessage: String? = nil,
+        systemMessage: SystemMessage? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         truncateChannel_cid = cid
         truncateChannel_skipPush = skipPush
         truncateChannel_hardDelete = hardDelete
-        truncateChannel_systemMessage = systemMessage
+        truncateChannel_systemMessage = systemMessage?.text
+        truncateChannel_systemMessageModel = systemMessage
         truncateChannel_completion = completion
         truncateChannel_completion_result?.invoke(with: completion)
     }
@@ -465,7 +472,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         currentUserId: UserId?,
         cid: ChannelId,
         members: [MemberInfo],
-        message: String?,
+        systemMessage: SystemMessage?,
         hideHistory: Bool,
         hideHistoryBefore: Date? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -474,7 +481,8 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         addMembers_cid = cid
         addMembers_userIds = Set(members.map(\.userId))
         addMembers_memberInfos = members
-        addMembers_message = message
+        addMembers_message = systemMessage?.text
+        addMembers_systemMessage = systemMessage
         addMembers_hideHistory = hideHistory
         addMembers_hideHistoryBefore = hideHistoryBefore
         addMembers_completion = completion
@@ -485,7 +493,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         currentUserId: UserId?,
         cid: ChannelId,
         userIds: Set<UserId>,
-        message: String?,
+        systemMessage: SystemMessage?,
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -493,7 +501,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
             currentUserId: currentUserId,
             cid: cid,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
-            message: message,
+            systemMessage: systemMessage,
             hideHistory: hideHistory,
             completion: completion
         )
@@ -534,13 +542,14 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         currentUserId: UserId?,
         cid: ChannelId,
         userIds: Set<UserId>,
-        message: String?,
+        systemMessage: SystemMessage?,
         completion: ((Error?) -> Void)? = nil
     ) {
         removeMembers_currentUserId = currentUserId
         removeMembers_cid = cid
         removeMembers_userIds = userIds
-        removeMembers_message = message
+        removeMembers_message = systemMessage?.text
+        removeMembers_systemMessage = systemMessage
         removeMembers_completion = completion
         removeMembers_completion_result?.invoke(with: completion)
     }
