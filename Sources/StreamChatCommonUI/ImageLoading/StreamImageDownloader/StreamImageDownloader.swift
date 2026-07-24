@@ -19,9 +19,10 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     private let memoryCache: ImageMemoryCache
     private let diskCache: LRUDiskCache
     private let urlSession: URLSession
-    private let displayScale: CGFloat
     private let inFlightImages: AllocatedUnfairLock<[String: [ImageCompletion]]>
     private let inFlightSources: AllocatedUnfairLock<[String: [SourceCompletion]]>
+
+    static let displayScale: CGFloat = UITraitCollection.current.displayScale
 
     /// Decoding runs on a concurrent queue because disk cache completions arrive on a
     /// shared serial queue; decoding there would serialize decodes and block file I/O.
@@ -45,8 +46,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
             memoryCostLimit: max(0, memoryCacheSize),
             diskSizeLimit: max(0, diskCacheSize),
             diskDirectory: Self.defaultDiskDirectory(),
-            urlSession: URLSession(configuration: configuration),
-            displayScale: StreamConcurrency.onMain { UITraitCollection.current.displayScale }
+            urlSession: URLSession(configuration: configuration)
         )
     }
 
@@ -54,13 +54,11 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         memoryCostLimit: Int,
         diskSizeLimit: Int,
         diskDirectory: URL,
-        urlSession: URLSession,
-        displayScale: CGFloat
+        urlSession: URLSession
     ) {
         memoryCache = ImageMemoryCache(maxSizeInBytes: memoryCostLimit)
         diskCache = LRUDiskCache(directory: diskDirectory, maxSizeInBytes: diskSizeLimit)
         self.urlSession = urlSession
-        self.displayScale = max(1, displayScale)
         inFlightImages = AllocatedUnfairLock([:])
         inFlightSources = AllocatedUnfairLock([:])
     }
@@ -196,7 +194,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         completion: @escaping @Sendable (DownloadedImage?) -> Void
     ) {
         Self.decodeQueue.async {
-            guard let image = Self.makeImage(from: data, resize: resize, scale: self.displayScale) else {
+            guard let image = Self.makeImage(from: data, resize: resize, scale: Self.displayScale) else {
                 completion(nil)
                 return
             }
@@ -269,8 +267,8 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         guard let resize = options.resize, resize != .zero else {
             return base
         }
-        let width = String(Double(resize.width * displayScale).bitPattern, radix: 16)
-        let height = String(Double(resize.height * displayScale).bitPattern, radix: 16)
+        let width = String(Double(resize.width * Self.displayScale).bitPattern, radix: 16)
+        let height = String(Double(resize.height * Self.displayScale).bitPattern, radix: 16)
         return "\(base)#stream-resize-v1=\(width)x\(height)"
     }
 

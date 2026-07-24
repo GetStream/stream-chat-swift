@@ -168,7 +168,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
             options: ImageDownloadingOptions(resize: CGSize(width: 100, height: 100))
         )
 
-        XCTAssertEqual(try result.get().image.cgImage?.width, 100)
+        XCTAssertEqual(try result.get().image.cgImage?.width, Int((100 * StreamImageDownloader.displayScale).rounded()))
         XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1)
     }
 
@@ -226,7 +226,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
 
         let received = try? downloadSynchronously(url: url, options: ImageDownloadingOptions(resize: CGSize(width: 50, height: 50)))?.get()
 
-        XCTAssertEqual(received?.image.cgImage?.width, 50)
+        XCTAssertEqual(received?.image.cgImage?.width, Int((50 * StreamImageDownloader.displayScale).rounded()))
     }
 
     func test_downloadImage_forwardsHeaders() {
@@ -283,8 +283,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
             memoryCostLimit: 50 * 1024 * 1024,
             diskSizeLimit: 50 * 1024 * 1024,
             diskDirectory: diskDirectory,
-            urlSession: URLSession(configuration: configuration),
-            displayScale: 1
+            urlSession: URLSession(configuration: configuration)
         )
     }
 
