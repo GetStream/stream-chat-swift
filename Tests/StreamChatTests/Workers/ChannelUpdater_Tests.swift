@@ -2517,7 +2517,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreference(chatLevel: "all")
+                    cid.rawValue: PushPreference(level: "all")
                 ]
             ],
             userPreferences: [:]
@@ -2609,7 +2609,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreference(chatLevel: "mentions")
+                    cid.rawValue: PushPreference(level: "mentions")
                 ]
             ],
             userPreferences: [:]
@@ -2652,7 +2652,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             let pushPreferenceDTO = try session.savePushPreference(
                 id: cid.rawValue,
                 payload: .init(
-                    chatLevel: "none",
+                    level: "none",
                     disabledUntil: nil
                 )
             )
@@ -2671,7 +2671,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreference(chatLevel: "all")
+                    cid.rawValue: PushPreference(level: "all")
                 ]
             ],
             userPreferences: [:]
