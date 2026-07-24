@@ -92,7 +92,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
 
         load(url: url, key: key, options: options) { result in
             let completions = self.inFlightImages.withLock { $0.removeValue(forKey: key) ?? [] }
-            StreamConcurrency.onMain {
+            DispatchQueue.main.async {
                 for completion in completions {
                     completion(result)
                 }
@@ -119,7 +119,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     public func removeAllImagesFromDiskCache(completion: (@MainActor @Sendable () -> Void)? = nil) {
         diskCache.removeAll {
             guard let completion else { return }
-            StreamConcurrency.onMain { completion() }
+            DispatchQueue.main.async { completion() }
         }
     }
 
