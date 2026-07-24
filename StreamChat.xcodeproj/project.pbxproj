@@ -891,6 +891,7 @@
 				StreamChatTests/DataController_Tests.swift,
 				StreamChatTests/EntityChange_Tests.swift,
 				StreamChatTests/Errors/ClientError_Tests.swift,
+				StreamChatTests/Extensions/AttributedString_Links_Tests.swift,
 				StreamChatTests/Extensions/URL_EnrichedURL_Tests.swift,
 				StreamChatTests/ListChange_Tests.swift,
 				StreamChatTests/ListChangeAggregator_Tests.swift,

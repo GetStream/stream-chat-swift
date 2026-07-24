@@ -628,9 +628,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             // Link Detection (Must be after Markdown)
             if let attributedText = textView?.attributedText {
                 let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
-                linkDetector.links(in: mutableAttributedText.string).forEach { textLink in
-                    mutableAttributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
-                }
+                mutableAttributedText.addLinks(detectedBy: linkDetector)
                 textView?.attributedText = mutableAttributedText
             }
         }

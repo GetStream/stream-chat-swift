@@ -606,6 +606,60 @@ import XCTest
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_linkDetection_whenMarkdownLinkDisplayTextLooksLikeAURL_usesTheHrefFromMarkdown() throws {
+        let realURL = URL(string: "https://real-link.com")!
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "[https://text-link.com](https://real-link.com)",
+            author: me,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(message: message, channel: .mock(cid: .unique))
+        // Adding to a hierarchy triggers the initial `updateContent()` call.
+        UIView().addSubview(view)
+
+        let attributedText = try XCTUnwrap(view.textView?.attributedText)
+        var foundLink: URL?
+        attributedText.enumerateAttribute(.link, in: NSRange(location: 0, length: attributedText.length)) { value, _, _ in
+            if let url = value as? URL {
+                foundLink = url
+            }
+        }
+
+        XCTAssertEqual(foundLink, realURL)
+    }
+
+    func test_linkDetection_whenPlainTextURLHasNoMarkdownLink_stillDetectsIt() throws {
+        let detectedURL = URL(string: "https://getstream.io")!
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "visit https://getstream.io now",
+            author: me,
+            createdAt: createdAt,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(message: message, channel: .mock(cid: .unique))
+        // Adding to a hierarchy triggers the initial `updateContent()` call.
+        UIView().addSubview(view)
+
+        let attributedText = try XCTUnwrap(view.textView?.attributedText)
+        var foundLink: URL?
+        attributedText.enumerateAttribute(.link, in: NSRange(location: 0, length: attributedText.length)) { value, _, _ in
+            if let url = value as? URL {
+                foundLink = url
+            }
+        }
+
+        XCTAssertEqual(foundLink, detectedURL)
+    }
+
     func test_appearance_whenMessageHasOnlyOneImage_masksAllTopCorners() throws {
         class CustomBubbleView: ChatMessageBubbleView {
             override func updateContent() {
