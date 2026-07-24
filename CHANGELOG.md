@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4177](https://github.com/GetStream/stream-chat-swift/pull/4177)
 - Add `PushPreference.chatPreferences` with detailed push notification preferences [#4175](https://github.com/GetStream/stream-chat-swift/pull/4175)
 
 # [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
