@@ -162,22 +162,6 @@
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
-    <entity name="ChatPreferencesDTO" representedClassName="ChatPreferencesDTO" syncable="YES">
-        <attribute name="channelMentions" optional="YES" attributeType="String"/>
-        <attribute name="defaultPreference" optional="YES" attributeType="String"/>
-        <attribute name="directMentions" optional="YES" attributeType="String"/>
-        <attribute name="groupMentions" optional="YES" attributeType="String"/>
-        <attribute name="hereMentions" optional="YES" attributeType="String"/>
-        <attribute name="id" attributeType="String"/>
-        <attribute name="roleMentions" optional="YES" attributeType="String"/>
-        <attribute name="threadReplies" optional="YES" attributeType="String"/>
-        <relationship name="pushPreference" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PushPreferenceDTO" inverseName="chatPreferences" inverseEntity="PushPreferenceDTO"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="id"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
-    </entity>
     <entity name="CommandDTO" representedClassName="CommandDTO" syncable="YES">
         <attribute name="args" attributeType="String" defaultValueString=""/>
         <attribute name="desc" attributeType="String" defaultValueString=""/>
@@ -515,7 +499,6 @@
         <attribute name="disabledUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="String"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="pushPreference" inverseEntity="ChannelDTO"/>
-        <relationship name="chatPreferences" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChatPreferencesDTO" inverseName="pushPreference" inverseEntity="ChatPreferencesDTO"/>
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="pushPreference" inverseEntity="CurrentUserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>

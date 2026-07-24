@@ -871,7 +871,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // GIVEN
         let level: PushPreferenceLevel = .all
         let expectedPreference = PushPreference(
-            chatLevel: .all,
+            level: .all,
             disabledUntil: nil
         )
 
@@ -927,7 +927,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
         let expectedPreference = PushPreference(
-            chatLevel: .all,
+            level: .all,
             disabledUntil: date
         )
 
