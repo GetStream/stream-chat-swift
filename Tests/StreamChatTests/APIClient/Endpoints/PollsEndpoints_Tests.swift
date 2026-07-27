@@ -8,59 +8,143 @@ import Foundation
 import XCTest
 
 final class PollsEndpoints_Tests: XCTestCase {
-    func test_createPoll_buildsV2Endpoint() {
-        let endpoint: Endpoint<PollResponse> = .createPoll(createPollRequest: .init(name: "Lunch"))
-        
+    func test_createPoll() throws {
+        let request = CreatePollRequest(
+            allowAnswers: true,
+            allowUserSuggestedOptions: true,
+            description: "Desc",
+            enforceUniqueVote: false,
+            id: "test",
+            isClosed: false,
+            maxVotesAllowed: 1,
+            name: "test"
+        )
+        let endpoint = Endpoint<PollResponse>.createPoll(createPollRequest: request)
+
+        let expectedBody: [String: Any] = [
+            "name": "test",
+            "allow_answers": true,
+            "allow_user_suggested_options": true,
+            "description": "Desc",
+            "enforce_unique_vote": false,
+            "id": "test",
+            "is_closed": false,
+            "max_votes_allowed": 1
+        ]
+        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(endpoint.method, .post)
         XCTAssertEqual(endpoint.path.value, "/api/v2/polls")
-        XCTAssertEqual(endpoint.method, .post)
-        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
+        AssertDictionary(body, expectedBody)
     }
-    
-    func test_queryPollVotes_buildsV2Endpoint() {
-        let pollId = "123"
-        let endpoint: Endpoint<PollVotesResponse> = .queryPollVotes(
-            pollId: pollId,
+
+    func test_deletePoll() {
+        let endpoint = Endpoint<EmptyResponse>.deletePoll(pollId: "test", userId: nil)
+
+        XCTAssertEqual(endpoint.method, .delete)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/polls/test")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
+    }
+
+    func test_updatePollPartial() throws {
+        let request = UpdatePollPartialRequest(set: ["name": .string("test_updated")])
+        let endpoint = Endpoint<PollResponse>.updatePollPartial(
+            pollId: "test",
+            updatePollPartialRequest: request
+        )
+
+        let expectedBody: [String: Any] = [
+            "set": [
+                "name": "test_updated"
+            ]
+        ]
+        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(endpoint.method, .patch)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/polls/test")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
+        AssertDictionary(body, expectedBody)
+    }
+
+    func test_createPollOption() throws {
+        let request = CreatePollOptionRequest(text: "sample")
+        let endpoint = Endpoint<PollOptionResponse>.createPollOption(
+            pollId: "test",
+            createPollOptionRequest: request
+        )
+
+        let expectedBody: [String: Any] = ["text": "sample"]
+        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/polls/test/options")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
+        AssertDictionary(body, expectedBody)
+    }
+
+    func test_queryPollVotes() throws {
+        let request = QueryPollVotesRequest(limit: 30, prev: "10")
+        let endpoint = Endpoint<PollVotesResponse>.queryPollVotes(
+            pollId: "test",
             userId: nil,
-            queryPollVotesRequest: .init()
+            queryPollVotesRequest: request
         )
-        
-        XCTAssertEqual(endpoint.path.value, "/api/v2/polls/\(pollId)/votes")
+
+        let expectedBody: [String: Any] = ["limit": 30, "prev": "10"]
+        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
+
         XCTAssertEqual(endpoint.method, .post)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/polls/test/votes")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
+        AssertDictionary(body, expectedBody)
     }
-    
-    func test_castPollVote_buildsV2Endpoint() {
-        let messageId: MessageId = .unique
-        let pollId = "123"
-        let endpoint: Endpoint<PollVoteResponse> = .castPollVote(
-            messageId: messageId,
-            pollId: pollId,
-            castPollVoteRequest: .init(vote: .init(optionId: "1"))
+
+    func test_castPollVote() throws {
+        let request = CastPollVoteRequest(
+            vote: .init(answerText: "test", optionId: "option")
         )
-        
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote")
+        let endpoint = Endpoint<PollVoteResponse>.castPollVote(
+            messageId: "message_id",
+            pollId: "test",
+            castPollVoteRequest: request
+        )
+
+        let expectedBody: [String: Any] = [
+            "vote": ["answer_text": "test", "option_id": "option"]
+        ]
+        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
+
         XCTAssertEqual(endpoint.method, .post)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message_id/polls/test/vote")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
+        AssertDictionary(body, expectedBody)
     }
-    
-    func test_deletePollVote_buildsV2Endpoint() {
-        let messageId: MessageId = .unique
-        let pollId = "123"
-        let voteId = "456"
-        let endpoint: Endpoint<PollVoteResponse> = .deletePollVote(
-            messageId: messageId,
-            pollId: pollId,
-            voteId: voteId,
+
+    func test_removePollVote() {
+        let endpoint = Endpoint<PollVoteResponse>.deletePollVote(
+            messageId: "message_id",
+            pollId: "test",
+            voteId: "vote",
             userId: nil
         )
-        
-        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote/\(voteId)")
+
         XCTAssertEqual(endpoint.method, .delete)
-    }
-    
-    func test_deletePoll_buildsV2Endpoint() {
-        let pollId = "123"
-        let endpoint: Endpoint<EmptyResponse> = .deletePoll(pollId: pollId, userId: nil)
-        
-        XCTAssertEqual(endpoint.path.value, "/api/v2/polls/\(pollId)")
-        XCTAssertEqual(endpoint.method, .delete)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message_id/polls/test/vote/vote")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.requiresToken, true)
+        XCTAssertNil(endpoint.queryItems)
     }
 }
