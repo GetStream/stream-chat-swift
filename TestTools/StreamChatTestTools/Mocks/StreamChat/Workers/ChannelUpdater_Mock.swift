@@ -434,7 +434,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil

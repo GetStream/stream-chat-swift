@@ -78,30 +78,23 @@ enum EndpointPath: Codable {
 
     case liveLocations
 
-    case polls
-    case pollsQuery
-    case poll(pollId: String)
-    case pollOption(
-        pollId: String,
-        optionId: String
-    )
-    case pollOptions(pollId: String)
-    case pollVotes(pollId: String)
-    case pollVoteInMessage(
-        messageId: MessageId,
+    case addUserGroupMembers(id: String)
+    case blockUsers
+    case castPollVote(
+        messageId: String,
         pollId: String
     )
-    case pollVote(
-        messageId: MessageId,
+    case createDevice
+    case createPoll
+    case createPollOption(pollId: String)
+    case createUserGroup
+    case deleteDevice
+    case deletePoll(pollId: String)
+    case deletePollVote(
+        messageId: String,
         pollId: String,
         voteId: String
     )
-
-    case addUserGroupMembers(id: String)
-    case blockUsers
-    case createDevice
-    case createUserGroup
-    case deleteDevice
     case deleteUserGroup(id: String)
     case getApp
     case getBlockedUsers
@@ -110,6 +103,7 @@ enum EndpointPath: Codable {
     case listDevices
     case listUserGroups
     case queryMembers
+    case queryPollVotes(pollId: String)
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
@@ -123,6 +117,7 @@ enum EndpointPath: Codable {
         type: String,
         id: String
     )
+    case updatePollPartial(pollId: String)
     case updateUserGroup(id: String)
 
     var value: String {
@@ -199,35 +194,34 @@ enum EndpointPath: Codable {
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
-        case .polls: return "polls"
-        case .pollsQuery: return "polls/query"
-        case let .poll(pollId: pollId): return "polls/\(pollId)"
-        case let .pollOption(
-            pollId: pollId,
-            optionId: optionId
-        ): return "polls/\(pollId)/options/\(optionId)"
-        case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
-        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
-        case let .pollVoteInMessage(
-            messageId: messageId,
-            pollId: pollId
-        ): return "messages/\(messageId)/polls/\(pollId)/vote"
-        case let .pollVote(
-            messageId: messageId,
-            pollId: pollId,
-            voteId: voteId
-        ): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
         case .blockUsers:
             return "/api/v2/users/block"
+        case let .castPollVote(
+            messageId: messageId,
+            pollId: pollId
+        ):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote"
         case .createDevice:
             return "/api/v2/devices"
+        case .createPoll:
+            return "/api/v2/polls"
+        case let .createPollOption(pollId: pollId):
+            return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/options"
         case .createUserGroup:
             return "/api/v2/usergroups"
         case .deleteDevice:
             return "/api/v2/devices"
+        case let .deletePoll(pollId: pollId):
+            return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
+        case let .deletePollVote(
+            messageId: messageId,
+            pollId: pollId,
+            voteId: voteId
+        ):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote/\(APIHelper.escapedPathItem(voteId))"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getApp:
@@ -244,6 +238,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups"
         case .queryMembers:
             return "/api/v2/chat/members"
+        case let .queryPollVotes(pollId: pollId):
+            return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchRoles:
@@ -264,6 +260,8 @@ enum EndpointPath: Codable {
             id: id
         ):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/member"
+        case let .updatePollPartial(pollId: pollId):
+            return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         }
@@ -409,6 +407,24 @@ extension Endpoint {
         )
     }
 
+    static func castPollVote(
+        messageId: String,
+        pollId: String,
+        castPollVoteRequest: CastPollVoteRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<PollVoteResponse> {
+        return .init(
+            path: .castPollVote(
+                messageId: messageId,
+                pollId: pollId
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: castPollVoteRequest
+        )
+    }
+
     static func createDevice(
         createDeviceRequest: CreateDeviceRequest,
         requiresConnectionId: Bool = false
@@ -419,6 +435,33 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createDeviceRequest
+        )
+    }
+
+    static func createPoll(
+        createPollRequest: CreatePollRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<PollResponse> {
+        return .init(
+            path: .createPoll,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createPollRequest
+        )
+    }
+
+    static func createPollOption(
+        pollId: String,
+        createPollOptionRequest: CreatePollOptionRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<PollOptionResponse> {
+        return .init(
+            path: .createPollOption(pollId: pollId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createPollOptionRequest
         )
     }
 
@@ -444,6 +487,44 @@ extension Endpoint {
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "id": id
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deletePoll(
+        pollId: String,
+        userId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deletePoll(pollId: pollId),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "user_id": userId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deletePollVote(
+        messageId: String,
+        pollId: String,
+        voteId: String,
+        userId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<PollVoteResponse> {
+        return .init(
+            path: .deletePollVote(
+                messageId: messageId,
+                pollId: pollId,
+                voteId: voteId
+            ),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "user_id": userId
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -566,6 +647,23 @@ extension Endpoint {
         )
     }
 
+    static func queryPollVotes(
+        pollId: String,
+        userId: String?,
+        queryPollVotesRequest: QueryPollVotesRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<PollVotesResponse> {
+        return .init(
+            path: .queryPollVotes(pollId: pollId),
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "user_id": userId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: queryPollVotesRequest
+        )
+    }
+
     static func removeUserGroupMembers(
         id: String,
         removeUserGroupMembersRequest: RemoveUserGroupMembersRequest,
@@ -681,6 +779,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateMemberPartialRequest
+        )
+    }
+
+    static func updatePollPartial(
+        pollId: String,
+        updatePollPartialRequest: UpdatePollPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<PollResponse> {
+        return .init(
+            path: .updatePollPartial(pollId: pollId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updatePollPartialRequest
         )
     }
 

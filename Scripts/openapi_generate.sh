@@ -13,9 +13,14 @@ CHAT_DIR="$REPO_ROOT/../chat"
 allowed_endpoints=(
     addUserGroupMembers
     blockUsers
+    castPollVote
     createDevice
+    createPoll
+    createPollOption
     createUserGroup
     deleteDevice
+    deletePoll
+    deletePollVote
     deleteUserGroup
     getApp
     getBlockedUsers
@@ -24,6 +29,7 @@ allowed_endpoints=(
     listDevices
     listUserGroups
     queryMembers
+    queryPollVotes
     removeUserGroupMembers
     searchRoles
     searchUserGroups
@@ -31,6 +37,7 @@ allowed_endpoints=(
     unblockUsers
     unreadCounts
     updateMemberPartial
+    updatePollPartial
     updateUserGroup
 )
 allowed_models=(
@@ -40,9 +47,12 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
+  CastPollVoteRequest
   ChannelMemberRequest
   ChannelMemberResponse
   CreateDeviceRequest
+  CreatePollOptionRequest
+  CreatePollRequest
   CreateUserGroupRequest
   DeviceResponse
   Field
@@ -56,7 +66,16 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
+  PollOptionInput
+  PollOptionResponse
+  PollOptionResponseData
+  PollResponse
+  PollResponseData
+  PollVoteResponse
+  PollVoteResponseData
+  PollVotesResponse
   QueryMembersPayload
+  QueryPollVotesRequest
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
@@ -68,10 +87,12 @@ allowed_models=(
   UnreadCountsThread
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
+  UpdatePollPartialRequest
   UpdateUserGroupRequest
   UserGroupMember
   UserGroupResponse
   UserResponse
+  VoteData
   WrappedUnreadCountsResponse
 )
 
@@ -281,6 +302,10 @@ remove_property() {
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property PollOptionResponse duration
+remove_property PollResponse duration
+remove_property PollVoteResponse duration
+remove_property PollVotesResponse duration
 remove_property UserGroupMember appPk
 
 # 4c. Expose selected generated models as public API. The class and its stored
@@ -399,15 +424,6 @@ inject_v1_endpoint_paths() {
 
     case liveLocations
 
-    case polls
-    case pollsQuery
-    case poll(pollId: String)
-    case pollOption(pollId: String, optionId: String)
-    case pollOptions(pollId: String)
-    case pollVotes(pollId: String)
-    case pollVoteInMessage(messageId: MessageId, pollId: String)
-    case pollVote(messageId: MessageId, pollId: String, voteId: String)
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -474,14 +490,6 @@ EOF
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
-        case .polls: return "polls"
-        case .pollsQuery: return "polls/query"
-        case let .poll(pollId: pollId): return "polls/\(pollId)"
-        case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
-        case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
-        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
-        case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
-        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
 EOF
 

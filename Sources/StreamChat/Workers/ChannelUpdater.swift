@@ -404,7 +404,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
-        poll: PollPayload? = nil,
+        poll: PollResponseData? = nil,
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON],
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil

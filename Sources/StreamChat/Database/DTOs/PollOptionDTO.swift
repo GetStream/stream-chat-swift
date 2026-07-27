@@ -100,6 +100,26 @@ extension NSManagedObjectContext {
         }
         return dto
     }
+
+    func savePollOption(
+        response: PollOptionResponseData,
+        pollId: String,
+        cache: PreWarmedCache?
+    ) throws -> PollOptionDTO {
+        let dto = PollOptionDTO.loadOrCreate(
+            pollId: pollId,
+            optionId: response.id,
+            context: self,
+            cache: cache
+        )
+        dto.text = response.text
+        if !response.custom.isEmpty {
+            dto.custom = try JSONEncoder.default.encode(response.custom)
+        } else {
+            dto.custom = nil
+        }
+        return dto
+    }
     
     func option(id: String, pollId: String) throws -> PollOptionDTO? {
         PollOptionDTO.load(optionId: id, context: self)

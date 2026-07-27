@@ -4,57 +4,6 @@
 
 import Foundation
 
-struct PollPayloadResponse: Decodable {
-    let duration: String
-    let poll: PollPayload
-
-    init(duration: String, poll: PollPayload) {
-        self.duration = duration
-        self.poll = poll
-    }
-    
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
-        case poll
-    }
-}
-
-struct PollsListPayloadResponse: Decodable {
-    let duration: String
-    let polls: [PollPayload]
-    var next: String?
-    var prev: String?
-
-    init(duration: String, polls: [PollPayload], next: String? = nil, prev: String? = nil) {
-        self.duration = duration
-        self.polls = polls
-        self.next = next
-        self.prev = prev
-    }
-    
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
-        case polls
-        case next
-        case prev
-    }
-}
-
-struct PollOptionResponse: Decodable {
-    let duration: String
-    let pollOption: PollOptionPayload
-
-    init(duration: String, pollOption: PollOptionPayload) {
-        self.duration = duration
-        self.pollOption = pollOption
-    }
-    
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
-        case pollOption = "poll_option"
-    }
-}
-
 struct PollOptionPayload: Decodable {
     let id: String
     let text: String
@@ -70,21 +19,6 @@ struct PollOptionPayload: Decodable {
         case id
         case text
         case custom
-    }
-}
-
-struct PollVotePayloadResponse: Decodable {
-    var duration: String
-    var vote: PollVotePayload?
-
-    init(duration: String, vote: PollVotePayload? = nil) {
-        self.duration = duration
-        self.vote = vote
-    }
-    
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
-        case vote
     }
 }
 

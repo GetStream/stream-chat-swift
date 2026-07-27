@@ -488,6 +488,109 @@ extension XCTestCase {
             user: user
         )
     }
+
+    func dummyPollResponseData(
+        allowAnswers: Bool = false,
+        allowUserSuggestedOptions: Bool = true,
+        answersCount: Int = 0,
+        createdAt: Date = Date(),
+        createdBy: UserResponse? = .dummy(userId: .unique),
+        createdById: String = .unique,
+        custom: [String: RawJSON] = [:],
+        description: String = "",
+        enforceUniqueVote: Bool = false,
+        id: String = .unique,
+        isClosed: Bool? = nil,
+        latestAnswers: [PollVoteResponseData] = [],
+        latestVotesByOption: [String: [PollVoteResponseData]] = [:],
+        maxVotesAllowed: Int? = nil,
+        name: String = "Test Poll",
+        options: [PollOptionResponseData] = [],
+        ownVotes: [PollVoteResponseData] = [],
+        updatedAt: Date = Date(),
+        voteCount: Int = 0,
+        voteCountsByOption: [String: Int] = [:],
+        votingVisibility: String = ""
+    ) -> PollResponseData {
+        .init(
+            allowAnswers: allowAnswers,
+            allowUserSuggestedOptions: allowUserSuggestedOptions,
+            answersCount: answersCount,
+            createdAt: createdAt,
+            createdBy: createdBy,
+            createdById: createdBy?.id ?? createdById,
+            custom: custom,
+            description: description,
+            enforceUniqueVote: enforceUniqueVote,
+            id: id,
+            isClosed: isClosed,
+            latestAnswers: latestAnswers,
+            latestVotesByOption: latestVotesByOption,
+            maxVotesAllowed: maxVotesAllowed,
+            name: name,
+            options: options,
+            ownVotes: ownVotes,
+            updatedAt: updatedAt,
+            voteCount: voteCount,
+            voteCountsByOption: voteCountsByOption,
+            votingVisibility: votingVisibility
+        )
+    }
+
+    func dummyPollOptionResponseData(
+        custom: [String: RawJSON] = [:],
+        id: String = .unique,
+        text: String = "Test Option"
+    ) -> PollOptionResponseData {
+        .init(
+            custom: custom,
+            id: id,
+            text: text
+        )
+    }
+
+    func dummyPollVoteResponseData(
+        answerText: String? = nil,
+        createdAt: Date = Date(),
+        id: String = .unique,
+        isAnswer: Bool? = false,
+        optionId: String = "",
+        pollId: String = .unique,
+        updatedAt: Date = Date(),
+        user: UserResponse? = .dummy(userId: .unique),
+        userId: String? = .unique
+    ) -> PollVoteResponseData {
+        .init(
+            answerText: answerText,
+            createdAt: createdAt,
+            id: id,
+            isAnswer: isAnswer,
+            optionId: optionId,
+            pollId: pollId,
+            updatedAt: updatedAt,
+            user: user,
+            userId: userId
+        )
+    }
+}
+
+extension PollVoteResponse {
+    static func dummy(
+        poll: PollResponseData? = nil,
+        vote: PollVoteResponseData? = nil
+    ) -> PollVoteResponse {
+        .init(poll: poll, vote: vote)
+    }
+}
+
+extension PollVotesResponse {
+    static func dummy(
+        next: String? = nil,
+        prev: String? = nil,
+        votes: [PollVoteResponseData] = []
+    ) -> PollVotesResponse {
+        .init(next: next, prev: prev, votes: votes)
+    }
 }
 
 private extension MemberPayload {

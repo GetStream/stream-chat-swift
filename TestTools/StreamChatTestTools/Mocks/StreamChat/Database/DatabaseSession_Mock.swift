@@ -182,7 +182,7 @@ class DatabaseSession_Mock: DatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]
@@ -604,6 +604,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.savePoll(payload: payload, cache: cache)
     }
     
+    func savePoll(response: PollResponseData, cache: PreWarmedCache?) throws -> PollDTO {
+        try underlyingSession.savePoll(response: response, cache: cache)
+    }
+    
     func savePollVotes(
         payload: PollVoteListResponse,
         query: PollVoteListQuery?,
@@ -612,12 +616,28 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.savePollVotes(payload: payload, query: query, cache: cache)
     }
     
+    func savePollVotes(
+        response: PollVotesResponse,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> [PollVoteDTO] {
+        try underlyingSession.savePollVotes(response: response, query: query, cache: cache)
+    }
+    
     func savePollVote(
         payload: PollVotePayload,
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO {
         try underlyingSession.savePollVote(payload: payload, query: query, cache: cache)
+    }
+    
+    func savePollVote(
+        response: PollVoteResponseData,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> PollVoteDTO {
+        try underlyingSession.savePollVote(response: response, query: query, cache: cache)
     }
     
     func savePollVote(

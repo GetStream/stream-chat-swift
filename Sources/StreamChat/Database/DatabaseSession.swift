@@ -122,7 +122,7 @@ protocol MessageDatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
@@ -299,7 +299,7 @@ extension MessageDatabaseSession {
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
-        pollPayload: PollPayload? = nil,
+        pollPayload: PollResponseData? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
@@ -679,6 +679,23 @@ protocol PollDatabaseSession {
         query: PollVoteListQuery?
     ) throws -> PollVoteDTO
     
+    @discardableResult
+    func savePoll(response: PollResponseData, cache: PreWarmedCache?) throws -> PollDTO
+
+    @discardableResult
+    func savePollVotes(
+        response: PollVotesResponse,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> [PollVoteDTO]
+
+    @discardableResult
+    func savePollVote(
+        response: PollVoteResponseData,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> PollVoteDTO
+
     /// Retrieves a poll by its ID.
     /// - Parameter id: The ID of the poll to retrieve.
     /// - Returns: A `PollDTO` representing the poll, or `nil` if the poll is not found.

@@ -243,6 +243,93 @@ extension NSManagedObjectContext {
         return pollDto
     }
     
+    @discardableResult
+    func savePoll(response: PollResponseData, cache: PreWarmedCache?) throws -> PollDTO {
+        let pollDto = PollDTO.loadOrCreate(pollId: response.id, context: self, cache: cache)
+
+        pollDto.allowAnswers = response.allowAnswers
+        pollDto.allowUserSuggestedOptions = response.allowUserSuggestedOptions
+        pollDto.answersCount = response.answersCount
+        pollDto.createdAt = response.createdAt.bridgeDate
+        pollDto.pollDescription = response.description
+        pollDto.enforceUniqueVote = response.enforceUniqueVote
+        pollDto.name = response.name
+        pollDto.updatedAt = response.updatedAt.bridgeDate
+        pollDto.voteCount = response.voteCount
+        pollDto.voteCountsByOption = response.voteCountsByOption
+        pollDto.isClosed = response.isClosed ?? false
+        if let maxVotesAllowed = response.maxVotesAllowed {
+            pollDto.maxVotesAllowed = NSNumber(value: maxVotesAllowed)
+        }
+        pollDto.votingVisibility = response.votingVisibility
+
+        if !response.custom.isEmpty {
+            pollDto.custom = try JSONEncoder.default.encode(response.custom)
+        } else {
+            pollDto.custom = nil
+        }
+
+        if let userResponse = response.createdBy {
+            pollDto.createdBy = try saveUser(response: userResponse, query: nil, cache: cache)
+        } else {
+            pollDto.createdBy = UserDTO.loadOrCreate(id: response.createdById, context: self, cache: cache)
+        }
+        pollDto.options = try NSOrderedSet(
+            array: response.options.map { optionResponse in
+                let optionDto = try savePollOption(
+                    response: optionResponse,
+                    pollId: response.id,
+                    cache: cache
+                )
+                optionDto.poll = pollDto
+                return optionDto
+            }
+        )
+        pollDto.latestVotesByOption = try Set(
+            response.latestVotesByOption.map { optionId, votesByOption in
+                let optionDto = PollOptionDTO.loadOrCreate(
+                    pollId: response.id,
+                    optionId: optionId,
+                    context: self,
+                    cache: cache
+                )
+                optionDto.poll = pollDto
+                optionDto.latestVotes = Set(
+                    try votesByOption.map { vote in
+                        let voteDto = try savePollVote(response: vote, query: nil, cache: cache)
+                        voteDto.option = optionDto
+                        voteDto.poll = pollDto
+                        return voteDto
+                    }
+                )
+
+                return optionDto
+            }
+        )
+
+        pollDto.latestVotes
+            .filter { $0.isAnswer }
+            .forEach {
+                pollDto.latestVotes.remove($0)
+            }
+        try response.latestAnswers.forEach { answer in
+            let answerDto = try savePollVote(response: answer, query: nil, cache: cache)
+            answerDto.poll = pollDto
+        }
+
+        pollDto.latestVotes
+            .filter { !$0.isAnswer }
+            .forEach {
+                pollDto.latestVotes.remove($0)
+            }
+        try response.ownVotes.forEach { vote in
+            let voteDto = try savePollVote(response: vote, query: nil, cache: cache)
+            voteDto.poll = pollDto
+        }
+
+        return pollDto
+    }
+
     func poll(id: String) throws -> PollDTO? {
         PollDTO.load(pollId: id, context: self)
     }

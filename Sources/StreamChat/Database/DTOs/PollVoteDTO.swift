@@ -211,6 +211,64 @@ extension NSManagedObjectContext {
         return dto
     }
     
+    @discardableResult
+    func savePollVotes(response: PollVotesResponse, query: PollVoteListQuery?, cache: PreWarmedCache?) -> [PollVoteDTO] {
+        let isFirstPage = query?.pagination.cursor == nil && query?.pagination.offset == 0
+        if let filterHash = query?.queryHash, isFirstPage {
+            let queryDTO = PollVoteListQueryDTO.load(filterHash: filterHash, context: self)
+            queryDTO?.votes = []
+        }
+
+        return response.votes.compactMapLoggingError {
+            try savePollVote(response: $0, query: query, cache: cache)
+        }
+    }
+
+    @discardableResult
+    func savePollVote(
+        response: PollVoteResponseData,
+        query: PollVoteListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> PollVoteDTO {
+        guard let poll = try poll(id: response.pollId) else {
+            throw ClientError.PollDoesNotExist(pollId: response.pollId)
+        }
+
+        var option: PollOptionDTO?
+        if !response.optionId.isEmpty {
+            option = try? self.option(id: response.optionId, pollId: response.pollId)
+        }
+
+        var user: UserDTO?
+        if let userResponse = response.user {
+            user = try saveUser(response: userResponse, query: nil, cache: cache)
+        }
+        let dto = PollVoteDTO.loadOrCreate(
+            voteId: response.id,
+            poll: poll,
+            option: option,
+            user: user,
+            context: self,
+            cache: cache
+        )
+        dto.option = option
+        dto.poll = poll
+        dto.user = user
+        dto.createdAt = response.createdAt.bridgeDate
+        dto.updatedAt = response.updatedAt.bridgeDate
+        dto.pollId = response.pollId
+        dto.isAnswer = response.isAnswer ?? false
+        dto.answerText = response.answerText
+        dto.optionId = option?.id
+
+        if let query = query {
+            let queryDTO = try saveQuery(query: query)
+            queryDTO?.votes.insert(dto)
+        }
+
+        return dto
+    }
+
     func pollVotes(for userId: String, pollId: String) throws -> [PollVoteDTO] {
         let request = NSFetchRequest<PollVoteDTO>(entityName: PollVoteDTO.entityName)
         PollVoteDTO.applyPrefetchingState(to: request)

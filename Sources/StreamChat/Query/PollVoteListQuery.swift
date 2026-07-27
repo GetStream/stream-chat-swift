@@ -103,4 +103,14 @@ extension PollVoteListQuery {
             filter?.filterHash
         ].compactMap { $0 }.joined(separator: "-")
     }
+
+    func toRequest() -> QueryPollVotesRequest {
+        QueryPollVotesRequest(
+            filter: filter,
+            limit: pagination.pageSize,
+            next: pagination.cursor,
+            prev: nil,
+            sort: sorting.map { SortParamRequest(direction: $0.direction, field: $0.key.rawValue) }
+        )
+    }
 }

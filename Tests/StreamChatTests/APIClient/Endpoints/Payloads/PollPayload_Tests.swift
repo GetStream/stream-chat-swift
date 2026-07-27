@@ -8,7 +8,7 @@ import XCTest
 final class PollPayload_Tests: XCTestCase {
     func test_decodingPollPayload() throws {
         let url = XCTestCase.mockData(fromJSONFile: "Poll")
-        let payload = try JSONDecoder.default.decode(PollPayloadResponse.self, from: url).poll
+        let payload = try JSONDecoder.default.decode(PollResponse.self, from: url).poll
 
         XCTAssertEqual(payload.id, "7fd88eb3-fc05-4e89-89af-36c6d8995dda")
         XCTAssertEqual(payload.name, "test")
@@ -19,12 +19,12 @@ final class PollPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.allowUserSuggestedOptions, false)
         XCTAssertEqual(payload.allowAnswers, false)
         XCTAssertEqual(payload.voteCount, 0)
-        XCTAssertEqual(payload.options[0]?.id, "option1")
-        XCTAssertEqual(payload.options[0]?.text, "option1 text")
+        XCTAssertEqual(payload.options[0].id, "option1")
+        XCTAssertEqual(payload.options[0].text, "option1 text")
         XCTAssertEqual(payload.answersCount, 0)
-        XCTAssertNil(payload.voteCountsByOption)
-        XCTAssertTrue(payload.latestVotesByOption?.isEmpty == true)
-        XCTAssertEqual(payload.ownVotes?.count, 1)
+        XCTAssertTrue(payload.voteCountsByOption.isEmpty)
+        XCTAssertTrue(payload.latestVotesByOption.isEmpty)
+        XCTAssertEqual(payload.ownVotes.count, 1)
         XCTAssertEqual(payload.createdById, "luke_skywalker")
         XCTAssertNotNil(payload.createdBy)
     }

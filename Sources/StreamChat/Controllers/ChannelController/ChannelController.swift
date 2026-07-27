@@ -1849,7 +1849,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
-        poll: PollPayload?,
+        poll: PollResponseData?,
         completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.

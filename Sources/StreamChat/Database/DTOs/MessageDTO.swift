@@ -698,7 +698,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
@@ -753,7 +753,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let poll {
-            message.poll = try? savePoll(payload: poll, cache: nil)
+            message.poll = try? savePoll(response: poll, cache: nil)
         }
 
         if let location {
