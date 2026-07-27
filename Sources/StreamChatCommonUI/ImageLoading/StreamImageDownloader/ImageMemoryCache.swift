@@ -40,12 +40,6 @@ final class ImageMemoryCache: @unchecked Sendable {
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleDidEnterBackground),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
     }
 
     deinit {
@@ -115,9 +109,5 @@ final class ImageMemoryCache: @unchecked Sendable {
 
     @objc private func handleMemoryWarning() {
         removeAll()
-    }
-
-    @objc private func handleDidEnterBackground() {
-        trim(toCost: Int(Double(maxSizeInBytes) * 0.1))
     }
 }

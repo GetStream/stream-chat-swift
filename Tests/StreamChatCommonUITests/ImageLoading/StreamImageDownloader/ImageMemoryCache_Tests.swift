@@ -81,17 +81,17 @@ final class ImageMemoryCache_Tests: XCTestCase {
         XCTAssertNotNil(cache.image(forKey: "key-24"), "The newest entry should be retained")
     }
 
-    func test_didEnterBackground_trimsToTenPercentOfMaxSize() {
+    func test_didEnterBackground_keepsCachedImages() {
         let unit = probeUnitCost()
-        let maxSizeInBytes = unit * 20
-        let cache = ImageMemoryCache(maxSizeInBytes: maxSizeInBytes)
+        let cache = ImageMemoryCache(maxSizeInBytes: unit * 20)
         for index in 0..<15 {
             cache.store(DownloadedImage(image: solidImage(side: 32)), forKey: "key-\(index)")
         }
+        let costBeforeBackgrounding = cache.totalCost
 
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
 
-        XCTAssertLessThanOrEqual(cache.totalCost, maxSizeInBytes / 10)
+        XCTAssertEqual(cache.totalCost, costBeforeBackgrounding)
     }
 
     // MARK: - Helpers
