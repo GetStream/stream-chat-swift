@@ -138,7 +138,6 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     ) {
         let resize = options.resize
         let sourceKey = sourceKey(url: url, options: options)
-
         loadSourceData(url: url, sourceKey: sourceKey, headers: options.headers) { result in
             switch result {
             case let .success(data):
@@ -187,7 +186,6 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
             return true
         }
         guard isFirstRequest else { return }
-
         fetch(url: url, headers: headers) { result in
             let completions = self.inFlightSources.withLock { $0.removeValue(forKey: sourceKey) ?? [] }
             for completion in completions {
