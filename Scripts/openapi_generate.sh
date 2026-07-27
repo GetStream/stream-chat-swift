@@ -18,14 +18,19 @@ allowed_endpoints=(
     createPoll
     createPollOption
     createUserGroup
+    deleteChannelFile
+    deleteChannelImage
     deleteDevice
     deletePoll
     deletePollVote
+    deleteFile
+    deleteImage
     deleteUserGroup
     getApp
     getBlockedUsers
     getOG
     getUserGroup
+    getUserLiveLocations
     listDevices
     listUserGroups
     queryMembers
@@ -36,9 +41,15 @@ allowed_endpoints=(
     stopWatchingChannel
     unblockUsers
     unreadCounts
+    updateLiveLocation
     updateMemberPartial
     updatePollPartial
+    updatePushNotificationPreferences
     updateUserGroup
+    uploadChannelFile
+    uploadChannelImage
+    uploadFile
+    uploadImage
 )
 allowed_models=(
   Action
@@ -57,12 +68,15 @@ allowed_models=(
   DeviceResponse
   Field
   FileUploadConfig
+  FileUploadResponse
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
   GetUserGroupResponse
   ImageData
   Images
+  ImageSize
+  ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
@@ -74,21 +88,30 @@ allowed_models=(
   PollVoteResponse
   PollVoteResponseData
   PollVotesResponse
+  PushPreferenceInput
+  PushPreferencesResponse
   QueryMembersPayload
   QueryPollVotesRequest
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
+  SharedLocationResponseData
+  SharedLocationsResponse
   SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
   UpdatePollPartialRequest
   UpdateUserGroupRequest
+  UploadChannelFileResponse
+  UploadChannelResponse
+  UpsertPushPreferencesRequest
+  UpsertPushPreferencesResponse
   UserGroupMember
   UserGroupResponse
   UserResponse
@@ -102,7 +125,10 @@ allowed_models=(
 allowed_hashable_models=(
   AppSettings
   Device
+  PushPreference
+  PushPreferenceInput
   Role
+  SharedLocation
   UploadConfig
   UserGroup
   UserGroupMember
@@ -246,24 +272,44 @@ retype_property() {
 }
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
+retype_property SharedLocationResponseData channelCid String ChannelId
+retype_property SharedLocationResponseData createdByDeviceId String DeviceId
+retype_property SharedLocationResponseData latitude Float Double
+retype_property SharedLocationResponseData longitude Float Double
+retype_property SharedLocationResponseData messageId String MessageId
+retype_property SharedLocationResponseData userId String UserId
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
-restore_usergroup_members_optionality() {
-  local file="$OUTPUT_DIR_CHAT/models/UserGroupResponse.swift"
-  perl -0777 -pi -e '
-    s/^    let members: \[UserGroupMember\]\?$/    private let membersOptional: [UserGroupMember]?\n    public var members: [UserGroupMember] { membersOptional ?? [] }/m;
-    s/^        self\.members = members$/        self.membersOptional = members/m;
-    s/^    case members$/    case membersOptional = "members"/m;
+restore_nonoptional_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  P="$2" T="$3" D="$4" perl -0777 -pi -e '
+    my ($p, $t, $d) = ($ENV{P}, $ENV{T}, $ENV{D});
+    s/^    let \Q$p\E: \Q$t\E\?$/    private let _$p: $t?\n    public var $p: $t { _$p ?? $d }/m;
+    s/^        self\.\Q$p\E = \Q$p\E$/        self._$p = $p/m;
+    s{^    case \Q$p\E( = "[^"]*")?$}{"    case _$p" . (defined $1 ? $1 : " = \"$p\"")}me;
   ' "$file"
 }
-restore_usergroup_members_optionality
+
+rename_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  O="$2" N="$3" perl -0777 -pi -e '
+    my ($o, $n) = ($ENV{O}, $ENV{N});
+    s/^(\s*(?:public )?let )\Q$o\E:/$1$n:/mg;
+    s/([(,]\s*)\Q$o\E:/$1$n:/g;
+    s/^(\s*self\.)\Q$o\E = \Q$o\E$/$1$n = $n/mg;
+    s{^(\s*)case \Q$o\E( = "[^"]*")?$}{"$1case $n" . (defined $2 ? $2 : " = \"$o\"")}mge;
+    s/(lhs\.)\Q$o\E( == rhs\.)\Q$o\E/${1}$n${2}$n/g;
+    s/(hasher\.combine\()\Q$o\E(\))/$1$n$2/g;
+  ' "$file"
+}
 
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
+rename_generated PushPreferencesResponse PushPreference
 rename_generated DeviceResponse Device
 rename_generated Field AttachmentFieldPayload
 rename_generated FileUploadConfig UploadConfig
@@ -275,13 +321,43 @@ rename_generated UnreadCountsThread UnreadThread
 rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
+rename_generated_type ChannelPushPreferencesResponse PushPreference
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated SharedLocationResponseData SharedLocation
+rename_generated_type SharedLocationResponse SharedLocation
 
 rename_generated_type Response EmptyResponse
+rename_generated_type FileUploadRequest MultipartFormData
+rename_generated_type ImageUploadRequest MultipartFormData
+rename_generated_type UploadChannelFileRequest MultipartFormData
+rename_generated_type UploadChannelRequest MultipartFormData
+
+# Remove a generated property (declaration, doc comment, init param, assignment,
+#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+remove_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v p="$2" '
+    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+    { s = $0; sub(/^[[:space:]]+/, "", s) }
+    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+    s ~ "^let " p ": "                 { n = 0; next }
+    s ~ "^self\\." p " = " p "$"       { next }
+    s ~ "^case " p "( =|$)"            { next }
+    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+    { flush(); print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_property FileUploadResponse duration
+
+retype_property PushPreference chatLevel String PushPreferenceLevel
+rename_property PushPreference chatLevel level
+restore_nonoptional_property PushPreference level PushPreferenceLevel .all
+restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -300,13 +376,39 @@ remove_property() {
     s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
 remove_property PollOptionResponse duration
 remove_property PollResponse duration
 remove_property PollVoteResponse duration
 remove_property PollVotesResponse duration
+remove_property PushPreferenceInput callLevel
+remove_property PushPreferenceInput chatPreferences
+remove_property PushPreferenceInput feedsLevel
+remove_property PushPreferenceInput feedsPreferences
+remove_property PushPreference callLevel
+remove_property PushPreference chatPreferences
+remove_property PushPreference feedsLevel
+remove_property PushPreference feedsPreferences
+remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
+remove_property SharedLocation channel
+remove_property SharedLocation message
+remove_property SharedLocationsResponse duration
+
+remove_nested_enum() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v e="$2" '
+    $0 ~ "^    enum " e ":" { skip = 1; next }
+    skip && /^    }$/       { skip = 0; next }
+    skip                    { next }
+    { print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
+remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -323,7 +425,9 @@ publicize_model() {
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
 publicize_model Device
+publicize_model PushPreference
 publicize_model Role
+publicize_model SharedLocation
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType
 publicize_model UnreadThread
@@ -365,7 +469,6 @@ inject_v1_endpoint_paths() {
     case users
     case guest
     case search
-    case pushPreferences
 
     case threads
     case thread(messageId: MessageId)
@@ -387,8 +490,6 @@ inject_v1_endpoint_paths() {
     case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
-    case uploadChannelAttachment(channelId: String, type: String)
-    case uploadAttachment(String)
 
     case sendMessage(ChannelId)
     case message(MessageId)
@@ -421,8 +522,15 @@ inject_v1_endpoint_paths() {
 
     case deleteFile(String)
     case deleteImage(String)
-
     case liveLocations
+    case polls
+    case pollsQuery
+    case poll(pollId: String)
+    case pollOption(pollId: String, optionId: String)
+    case pollOptions(pollId: String)
+    case pollVotes(pollId: String)
+    case pollVoteInMessage(messageId: MessageId, pollId: String)
+    case pollVote(messageId: MessageId, pollId: String, voteId: String)
 
 EOF
 
@@ -432,7 +540,6 @@ EOF
         case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
-        case .pushPreferences: return "push_preferences"
 
         case .threads:
             return "threads"
@@ -442,8 +549,6 @@ EOF
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
-
-        case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
@@ -460,8 +565,6 @@ EOF
         case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-        case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
-        case let .uploadAttachment(type): return "uploads/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
@@ -490,6 +593,14 @@ EOF
         case let .createCall(queryString): return "channels/\(queryString)/call"
         case let .deleteFile(channelId): return "channels/\(channelId)/file"
         case let .deleteImage(channelId): return "channels/\(channelId)/image"
+        case .polls: return "polls"
+        case .pollsQuery: return "polls/query"
+        case let .poll(pollId: pollId): return "polls/\(pollId)"
+        case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
+        case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
+        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
+        case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
+        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
 EOF
 

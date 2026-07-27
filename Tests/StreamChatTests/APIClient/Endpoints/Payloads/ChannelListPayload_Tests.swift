@@ -575,7 +575,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
         XCTAssertEqual(payload.activeLiveLocations.count, 1)
         XCTAssertNotNil(payload.pushPreference)
-        XCTAssertEqual(payload.pushPreference?.chatLevel, "all")
+        XCTAssertEqual(payload.pushPreference?.level, "all")
         XCTAssertNil(payload.pushPreference?.disabledUntil)
     }
 

@@ -2285,6 +2285,22 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
+    func test_truncateChannel_withSystemMessage_passesExtraDataToChannelUpdater() {
+        let systemMessage = SystemMessage(text: "Channel truncated", extraData: ["warning": .bool(true)])
+
+        // Simulate `truncateChannel` call with a system message carrying extra data
+        controller.truncateChannel(systemMessage: systemMessage) { error in
+            XCTAssertNil(error)
+        }
+
+        // Assert the system message with its extra data is passed to the updater
+        XCTAssertEqual(env.channelUpdater?.truncateChannel_systemMessageModel, systemMessage)
+        XCTAssertEqual(env.channelUpdater?.truncateChannel_systemMessageModel?.extraData, ["warning": .bool(true)])
+
+        // Simulate successful update
+        env.channelUpdater?.truncateChannel_completion?(nil)
+    }
+
     func test_truncateChannel_callsChannelUpdaterWithError() {
         // Simulate `truncateChannel` call and catch the completion
         nonisolated(unsafe) var completionCalledError: Error?
@@ -3649,6 +3665,23 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.addMembers_completion?(nil)
     }
 
+    func test_addMembers_withSystemMessage_passesExtraDataToChannelUpdater() {
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
+        let systemMessage = SystemMessage(text: "Someone joined", extraData: ["warning": .bool(true)])
+
+        // Simulate `addMembers` call with a system message carrying extra data
+        controller.addMembers(members, systemMessage: systemMessage) { error in
+            XCTAssertNil(error)
+        }
+
+        // Assert the system message with its extra data is passed to the updater
+        XCTAssertEqual(env.channelUpdater!.addMembers_systemMessage, systemMessage)
+        XCTAssertEqual(env.channelUpdater!.addMembers_systemMessage?.extraData, ["warning": .bool(true)])
+
+        // Simulate successful update
+        env.channelUpdater!.addMembers_completion?(nil)
+    }
+
     // MARK: - Inviting members
 
     func test_inviteMembers_callsChannelUpdater() {
@@ -3861,6 +3894,23 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_removeMembers_withSystemMessage_passesExtraDataToChannelUpdater() {
+        let members: Set<UserId> = [.unique]
+        let systemMessage = SystemMessage(text: "Someone left", extraData: ["warning": .bool(true)])
+
+        // Simulate `removeMembers` call with a system message carrying extra data
+        controller.removeMembers(userIds: members, systemMessage: systemMessage) { error in
+            XCTAssertNil(error)
+        }
+
+        // Assert the system message with its extra data is passed to the updater
+        XCTAssertEqual(env.channelUpdater!.removeMembers_systemMessage, systemMessage)
+        XCTAssertEqual(env.channelUpdater!.removeMembers_systemMessage?.extraData, ["warning": .bool(true)])
+
+        // Simulate successful update
+        env.channelUpdater!.removeMembers_completion?(nil)
     }
 
     func test_removeMembers_propagatesErrorFromUpdater() {
@@ -5646,16 +5696,12 @@ final class ChannelController_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: existingMessageId,
                     authorUserId: userId,
-                    sharedLocation: .init(
-                        channelId: self.channelId.rawValue,
-                        messageId: existingMessageId,
-                        userId: .unique,
+                    sharedLocation: .dummy(
+                        channelId: self.channelId,
+                        endAt: .distantFuture,
                         latitude: location.latitude,
                         longitude: location.longitude,
-                        createdAt: .unique,
-                        updatedAt: .unique,
-                        endAt: .distantFuture,
-                        createdByDeviceId: .unique
+                        messageId: existingMessageId
                     )
                 ),
                 for: self.channelId,
@@ -5728,10 +5774,9 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = channelId
         let level: PushPreferenceLevel = .mentions
-        let expectedPreference = PushPreferenceRequestPayload(
-            chatLevel: level.rawValue,
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let expectedPreference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -5788,11 +5833,10 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = channelId
         let date = Date().addingTimeInterval(3600)
-        let expectedPreference = PushPreferenceRequestPayload(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: cid.rawValue,
-            disabledUntil: date,
-            removeDisable: nil
+        let expectedPreference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .all,
+            disabledUntil: date
         )
 
         // WHEN

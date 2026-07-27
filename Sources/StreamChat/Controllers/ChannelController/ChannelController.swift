@@ -461,6 +461,31 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         systemMessage: String? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
+        truncateChannel(
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            systemMessage: systemMessage.map { SystemMessage(text: $0) },
+            completion: completion
+        )
+    }
+
+    /// Truncates the channel this controller manages.
+    ///
+    /// Removes all of the messages of the channel but doesn't affect the channel data or members.
+    ///
+    /// - Parameters:
+    ///   - skipPush: If true, skips sending push notification to channel members.
+    ///   - hardDelete: If true, messages are deleted instead of hiding.
+    ///   - systemMessage: A system message to be added via truncation, supporting extra data.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    ///
+    public func truncateChannel(
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        systemMessage: SystemMessage?,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1170,6 +1195,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         message: String? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
+        addMembers(
+            members,
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore,
+            systemMessage: message.map { SystemMessage(text: $0) },
+            completion: completion
+        )
+    }
+
+    /// Add users to the channel as members with additional data.
+    ///
+    /// - Parameters:
+    ///   - members: An array of `MemberInfo` objects, each representing a member to be added to the channel.
+    ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
+    ///   - systemMessage: Optional system message sent when adding members, supporting extra data.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    public func addMembers(
+        _ members: [MemberInfo],
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil,
+        systemMessage: SystemMessage?,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
@@ -1179,7 +1230,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             currentUserId: client.currentUserId,
             cid: cid,
             members: members,
-            message: message,
+            systemMessage: systemMessage,
             hideHistory: hideHistory,
             hideHistoryBefore: hideHistoryBefore
         ) { error in
@@ -1209,7 +1260,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             userIds.map { .init(userId: $0, extraData: nil) },
             hideHistory: hideHistory,
             hideHistoryBefore: hideHistoryBefore,
-            message: message,
+            systemMessage: message.map { SystemMessage(text: $0) },
+            completion: completion
+        )
+    }
+
+    /// Add users to the channel as members.
+    ///
+    /// - Parameters:
+    ///   - userIds: User ids that will be added to a channel.
+    ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
+    ///   - systemMessage: Optional system message sent when adding members, supporting extra data.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    public func addMembers(
+        userIds: Set<UserId>,
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil,
+        systemMessage: SystemMessage?,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        addMembers(
+            userIds.map { .init(userId: $0, extraData: nil) },
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore,
+            systemMessage: systemMessage,
             completion: completion
         )
     }
@@ -1227,6 +1303,26 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         message: String? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
+        removeMembers(
+            userIds: userIds,
+            systemMessage: message.map { SystemMessage(text: $0) },
+            completion: completion
+        )
+    }
+
+    /// Remove users to the channel as members.
+    ///
+    /// - Parameters:
+    ///   - userIds: User ids that will be removed from a channel.
+    ///   - systemMessage: Optional system message sent when removing members, supporting extra data.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    public func removeMembers(
+        userIds: Set<UserId>,
+        systemMessage: SystemMessage?,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1237,7 +1333,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             currentUserId: client.currentUserId,
             cid: cid,
             userIds: userIds,
-            message: message
+            systemMessage: systemMessage
         ) { error in
             self.callback {
                 completion?(error)
@@ -1779,10 +1875,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let channelPreference = PushPreferenceRequestPayload(
-            chatLevel: level.rawValue,
-            channelId: channelId.rawValue,
-            disabledUntil: nil,
+        let channelPreference = PushPreferenceInput(
+            channelCid: channelId.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
             removeDisable: true
         )
 
@@ -1808,11 +1903,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let channelPreference = PushPreferenceRequestPayload(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: channelId.rawValue,
-            disabledUntil: date,
-            removeDisable: nil
+        let channelPreference = PushPreferenceInput(
+            channelCid: channelId.rawValue,
+            chatLevel: .all,
+            disabledUntil: date
         )
 
         updater.setPushPreference(channelPreference, cid: channelId) { [weak self] result in

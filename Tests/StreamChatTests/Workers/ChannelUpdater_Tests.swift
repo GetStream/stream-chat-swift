@@ -1302,7 +1302,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             cid: channelID,
             skipPush: skipPush,
             hardDelete: hardDelete,
-            systemMessage: systemMessage
+            systemMessage: SystemMessage(text: systemMessage)
         )
 
         // THEN
@@ -1329,6 +1329,26 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
     }
 
+    func test_truncateChannel_makesCorrectAPICallWithSystemMessageExtraData() throws {
+        try channelUpdater.database.createCurrentUser(id: .unique)
+        let systemMessage = SystemMessage(text: "System message", extraData: ["warning": .bool(true)])
+
+        // Simulate `truncateChannel` call with a system message carrying extra data
+        channelUpdater.truncateChannel(cid: .unique, systemMessage: systemMessage)
+
+        // Assert the truncate message payload carries the system message text and extra data
+        AssertAsync { [unowned self] in
+            Assert.willBeEqual(
+                (self.apiClient.request_endpoint?.body?.encodable as? ChannelTruncateRequestPayload)?.message?.text,
+                systemMessage.text
+            )
+            Assert.willBeEqual(
+                (self.apiClient.request_endpoint?.body?.encodable as? ChannelTruncateRequestPayload)?.message?.extraData,
+                systemMessage.extraData
+            )
+        }
+    }
+
     func test_truncateChannel_failsAPICallWithMessageWhenNoCurrentUser() throws {
         // GIVEN
         let expectation = expectation(description: "When no current user is provided, truncate channel with system message fails")
@@ -1343,7 +1363,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             cid: channelID,
             skipPush: skipPush,
             hardDelete: hardDelete,
-            systemMessage: systemMessage
+            systemMessage: SystemMessage(text: systemMessage)
         ) { error in
             // THEN
             XCTAssertNotNil(error)
@@ -1574,7 +1594,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             currentUserId: senderId,
             cid: channelID,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
-            message: message,
+            systemMessage: SystemMessage(text: message),
             hideHistory: false
         )
         
@@ -1597,7 +1617,42 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
-    
+
+    func test_addMembersWithSystemMessageExtraData_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        let systemMessage = SystemMessage(text: "Someone joined the channel", extraData: ["warning": .bool(true)])
+        let senderId: String = .unique
+
+        // Simulate `addMembers` call with a system message carrying extra data
+        channelUpdater.addMembers(
+            currentUserId: senderId,
+            cid: channelID,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            systemMessage: systemMessage,
+            hideHistory: false
+        )
+
+        let body = apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let messageId = (body?["message"]?.encodable as? MessageRequestBody)?.id ?? .newUniqueId
+
+        // Assert the message payload contains the system message extra data
+        let messageRequestBody = MessageRequestBody(
+            id: messageId,
+            user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
+            text: systemMessage.text,
+            type: nil,
+            extraData: ["warning": .bool(true)]
+        )
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfoRequest(userId: $0, extraData: nil) },
+            hideHistory: false,
+            messagePayload: messageRequestBody
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
     func test_addMembersWithHideHistoryBefore_makesCorrectAPICall() {
         let channelID = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
@@ -1865,7 +1920,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             currentUserId: senderId,
             cid: channelID,
             userIds: userIds,
-            message: message
+            systemMessage: SystemMessage(text: message)
         )
         
         let body = apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
@@ -1878,6 +1933,39 @@ final class ChannelUpdater_Tests: XCTestCase {
             text: message,
             type: nil,
             extraData: [:]
+        )
+        let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(
+            cid: channelID,
+            userIds: userIds,
+            messagePayload: messageRequestBody
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_removeMembersWithSystemMessageExtraData_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        let systemMessage = SystemMessage(text: "Someone left the channel", extraData: ["warning": .bool(true)])
+        let senderId: String = .unique
+
+        // Simulate `removeMembers` call with a system message carrying extra data
+        channelUpdater.removeMembers(
+            currentUserId: senderId,
+            cid: channelID,
+            userIds: userIds,
+            systemMessage: systemMessage
+        )
+
+        let body = apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let messageId = (body?["message"]?.encodable as? MessageRequestBody)?.id ?? .newUniqueId
+
+        // Assert the message payload contains the system message extra data
+        let messageRequestBody = MessageRequestBody(
+            id: messageId,
+            user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
+            text: systemMessage.text,
+            type: nil,
+            extraData: ["warning": .bool(true)]
         )
         let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(
             cid: channelID,
@@ -2491,10 +2579,9 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_setPushPreference_makesCorrectAPICall() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -2502,30 +2589,26 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.setPushPreference(preference, cid: cid) { _ in }
 
         // THEN
-        let expectedEndpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences([preference])
+        let expectedEndpoint: Endpoint<UpsertPushPreferencesResponse> = .updatePushNotificationPreferences(upsertPushPreferencesRequest: .init(preferences: [preference]))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_setPushPreference_successfulResponse_savesToDatabase() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .all,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
-                        chatLevel: "all",
-                        disabledUntil: nil
-                    )
+                    cid.rawValue: PushPreference(level: "all")
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2544,10 +2627,9 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
@@ -2560,7 +2642,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PushPreferencesPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UpsertPushPreferencesResponse, Error>.failure(error))
 
         // THEN
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -2569,16 +2651,15 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_setPushPreference_whenNoChannelPreferences_returnsError() {
         // GIVEN
         let cid: ChannelId = .unique
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [:]
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2607,23 +2688,19 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertNotNil(database.viewContext.channel(cid: cid))
         XCTAssertNil(database.viewContext.channel(cid: cid)?.pushPreference)
 
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .mentions,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
-                        chatLevel: "mentions",
-                        disabledUntil: nil
-                    )
+                    cid.rawValue: PushPreference(level: "mentions")
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2663,7 +2740,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             let pushPreferenceDTO = try session.savePushPreference(
                 id: cid.rawValue,
                 payload: .init(
-                    chatLevel: "none",
+                    level: "none",
                     disabledUntil: nil
                 )
             )
@@ -2673,23 +2750,19 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Verify channel has the initial push preference
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.pushPreference?.chatLevel, "none")
 
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: cid.rawValue,
-            disabledUntil: nil,
+        let preference = PushPreferenceInput(
+            channelCid: cid.rawValue,
+            chatLevel: .all,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
-                        chatLevel: "all",
-                        disabledUntil: nil
-                    )
+                    cid.rawValue: PushPreference(level: "all")
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN

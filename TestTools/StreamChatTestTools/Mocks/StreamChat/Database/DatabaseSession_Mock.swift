@@ -161,7 +161,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteCurrentUser()
     }
 
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreference) throws -> PushPreferenceDTO {
         try underlyingSession.savePushPreference(id: id, payload: payload)
     }
 
@@ -307,7 +307,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+    func saveLocation(payload: SharedLocation, cache: PreWarmedCache?) throws -> SharedLocationDTO {
         try underlyingSession.saveLocation(payload: payload, cache: cache)
     }
 

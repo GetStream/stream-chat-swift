@@ -19,7 +19,7 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
     /// Blocked user ids.
     let blockedUserIds: Set<UserId>
     /// Push preference for the user.
-    let pushPreference: PushPreferencePayload?
+    let pushPreference: PushPreference?
 
     init(
         id: String,
@@ -43,7 +43,7 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
         unreadCount: UnreadCountPayload? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil,
         blockedUserIds: Set<UserId> = [],
-        pushPreference: PushPreferencePayload?
+        pushPreference: PushPreference?
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
@@ -80,7 +80,7 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
         unreadCount = try? UnreadCountPayload(from: decoder)
         privacySettings = try container.decodeIfPresent(UserPrivacySettingsPayload.self, forKey: .privacySettings)
         blockedUserIds = try container.decodeIfPresent(Set<UserId>.self, forKey: .blockedUserIds) ?? []
-        pushPreference = try container.decodeIfPresent(PushPreferencePayload.self, forKey: .pushPreference)
+        pushPreference = try container.decodeIfPresent(PushPreference.self, forKey: .pushPreference)
 
         try super.init(from: decoder)
     }

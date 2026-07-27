@@ -367,7 +367,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
-            try session.saveLocation(payload: .dummy(latitude: 10, longitude: 10), cache: nil)
+            try session.saveLocation(payload: SharedLocation.dummy(latitude: 10, longitude: 10), cache: nil)
             try session.saveCurrentDevice("123")
             try session.saveChannelMute(payload: .init(
                 mutedChannel: .dummy(cid: cid),
@@ -378,7 +378,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             let mutedUserId = UserId.unique
             let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
             session.currentUser?.mutedUsers = Set([mutedUserDTO])
-            try session.savePushPreference(id: "currentUserId", payload: .init(chatLevel: "mentions", disabledUntil: nil))
+            try session.savePushPreference(id: "currentUserId", payload: .init(level: "mentions", disabledUntil: nil))
             try session.saveUserGroup(payload: .dummy(members: [.dummy()]))
             session.saveThreadList(
                 payload: ThreadListPayload(

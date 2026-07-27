@@ -73,15 +73,27 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
-
-        uploadAttachment(
-            endpoint: endpoint,
-            fileData: fileData,
-            uploadingState: uploadingState,
-            progress: options.progress,
-            completion: completion
+        let multipartFormData = MultipartFormData(
+            fileData,
+            fileName: uploadingState.localFileURL.lastPathComponent,
+            mimeType: uploadingState.file.type.mimeType
         )
+        let type = attachment.id.cid.type.rawValue
+        let id = attachment.id.cid.id
+
+        if attachment.type == .image {
+            uploadAttachment(
+                endpoint: .uploadChannelImage(type: type, id: id, uploadChannelRequest: multipartFormData),
+                progress: options.progress,
+                completion: completion
+            )
+        } else {
+            uploadAttachment(
+                endpoint: .uploadChannelFile(type: type, id: id, uploadChannelFileRequest: multipartFormData),
+                progress: options.progress,
+                completion: completion
+            )
+        }
     }
 
     func uploadAttachment(
@@ -105,16 +117,25 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             return completion(.failure(ClientError.Unknown()))
         }
 
-        let isImage = uploadingState.file.type.isImage
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: isImage ? .image : .file)
-
-        uploadAttachment(
-            endpoint: endpoint,
-            fileData: fileData,
-            uploadingState: uploadingState,
-            progress: options.progress,
-            completion: completion
+        let multipartFormData = MultipartFormData(
+            fileData,
+            fileName: uploadingState.localFileURL.lastPathComponent,
+            mimeType: uploadingState.file.type.mimeType
         )
+
+        if uploadingState.file.type.isImage {
+            uploadAttachment(
+                endpoint: .uploadImage(imageUploadRequest: multipartFormData),
+                progress: options.progress,
+                completion: completion
+            )
+        } else {
+            uploadAttachment(
+                endpoint: .uploadFile(fileUploadRequest: multipartFormData),
+                progress: options.progress,
+                completion: completion
+            )
+        }
     }
 
     func deleteAttachment(
@@ -123,11 +144,9 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage
-        let endpoint = Endpoint<EmptyResponse>
-            .deleteAttachment(
-                url: remoteUrl,
-                type: isImage ? .image : .file
-            )
+        let endpoint: Endpoint<EmptyResponse> = isImage
+            ? .deleteImage(url: remoteUrl.absoluteString)
+            : .deleteFile(url: remoteUrl.absoluteString)
 
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest
@@ -153,19 +172,11 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
     private func uploadAttachment<ResponsePayload>(
         endpoint: Endpoint<ResponsePayload>,
-        fileData: Data,
-        uploadingState: AttachmentUploadingState,
         progress: (@Sendable (Double) -> Void)? = nil,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        let multipartFormData = MultipartFormData(
-            fileData,
-            fileName: uploadingState.localFileURL.lastPathComponent,
-            mimeType: uploadingState.file.type.mimeType
-        )
-
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
-            var urlRequest: URLRequest
+            let urlRequest: URLRequest
             do {
                 urlRequest = try requestResult.get()
             } catch {
@@ -173,10 +184,6 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
                 completion(.failure(error))
                 return
             }
-
-            let data = multipartFormData.getMultipartFormData()
-            urlRequest.addValue("multipart/form-data; boundary=\(MultipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = data
 
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
@@ -186,12 +193,15 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
-                    let response: FileUploadPayload = try decoder.decodeRequestResponse(
+                    let response: FileUploadResponse = try decoder.decodeRequestResponse(
                         data: data,
                         response: response,
                         error: error
                     )
-                    let file = UploadedFile(fileURL: response.fileURL, thumbnailURL: response.thumbURL)
+                    guard let fileURLString = response.file, let fileURL = URL(string: fileURLString) else {
+                        throw ClientError.Unknown("Missing file URL in upload response")
+                    }
+                    let file = UploadedFile(fileURL: fileURL, thumbnailURL: response.thumbUrl.flatMap { URL(string: $0) })
 
                     completion(.success(file))
                 } catch {

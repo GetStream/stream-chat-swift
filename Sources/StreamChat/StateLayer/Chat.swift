@@ -238,12 +238,37 @@ public class Chat: @unchecked Sendable {
         hideHistory: Bool = false,
         hideHistoryBefore: Date? = nil
     ) async throws {
+        try await addMembers(
+            members,
+            systemMessage: systemMessage.map { SystemMessage(text: $0) },
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
+        )
+    }
+
+    /// Adds given users as members.
+    ///
+    /// - Note: You can only add up to 100 members at once.
+    ///
+    /// - Parameters:
+    ///   - members: An array of member data that will be added to the channel.
+    ///   - systemMessage: A system message to be added after adding members, supporting extra data.
+    ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func addMembers(
+        _ members: [MemberInfo],
+        systemMessage: SystemMessage?,
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil
+    ) async throws {
         let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(
             currentUserId: currentUserId,
             cid: cid,
             members: members,
-            message: systemMessage,
+            systemMessage: systemMessage,
             hideHistory: hideHistory,
             hideHistoryBefore: hideHistoryBefore
         )
@@ -268,6 +293,31 @@ public class Chat: @unchecked Sendable {
     ) async throws {
         try await addMembers(
             members.map { .init(userId: $0, extraData: nil) },
+            systemMessage: systemMessage.map { SystemMessage(text: $0) },
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
+        )
+    }
+
+    /// Adds given users as members.
+    ///
+    /// - Note: You can only add up to 100 members at once.
+    ///
+    /// - Parameters:
+    ///   - members: An array of user ids that will be added to the channel.
+    ///   - systemMessage: A system message to be added after adding members, supporting extra data.
+    ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func addMembers(
+        _ members: [UserId],
+        systemMessage: SystemMessage?,
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil
+    ) async throws {
+        try await addMembers(
+            members.map { .init(userId: $0, extraData: nil) },
             systemMessage: systemMessage,
             hideHistory: hideHistory,
             hideHistoryBefore: hideHistoryBefore
@@ -282,12 +332,23 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func removeMembers(_ members: [UserId], systemMessage: String? = nil) async throws {
+        try await removeMembers(members, systemMessage: systemMessage.map { SystemMessage(text: $0) })
+    }
+
+    /// Removes given users from the channel.
+    ///
+    /// - Parameters:
+    ///   - members: An array of user ids that will be removed from the channel.
+    ///   - systemMessage: A system message to be added after removing members, supporting extra data.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func removeMembers(_ members: [UserId], systemMessage: SystemMessage?) async throws {
         let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(
             currentUserId: currentUserId,
             cid: cid,
             userIds: Set(members),
-            message: systemMessage
+            systemMessage: systemMessage
         )
     }
     
@@ -1351,6 +1412,30 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func truncate(
         systemMessage: String? = nil,
+        hardDelete: Bool = true,
+        skipPush: Bool = false
+    ) async throws {
+        try await truncate(
+            systemMessage: systemMessage.map { SystemMessage(text: $0) },
+            hardDelete: hardDelete,
+            skipPush: skipPush
+        )
+    }
+
+    /// Truncates messages from the channel.
+    ///
+    /// Truncating the channel removes all of the messages but does not affect the channel data or channel members.
+    ///
+    /// - SeeAlso: If you want to delete both channel and message data then use the ``delete()`` method instead.
+    ///
+    /// - Parameters:
+    ///   - systemMessage: A system message to be added after truncating the channel, supporting extra data.
+    ///   - hardDelete: If true, messages are deleted, otherwise messages are hidden. The default value is set to true.
+    ///   - skipPush: If true, push notification is not sent to channel members, otherwise push notification is sent. The default value is set to false.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func truncate(
+        systemMessage: SystemMessage?,
         hardDelete: Bool = true,
         skipPush: Bool = false
     ) async throws {

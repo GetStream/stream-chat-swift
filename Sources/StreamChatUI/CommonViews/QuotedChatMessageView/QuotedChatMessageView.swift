@@ -207,10 +207,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             ]
         )
 
-        linkDetector.links(in: text).forEach { textLink in
-            attributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
-        }
-
+        attributedText.addLinks(detectedBy: linkDetector)
         textView.attributedText = attributedText
     }
 

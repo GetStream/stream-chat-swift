@@ -50,10 +50,10 @@ extension PushPreference {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreference) throws -> PushPreferenceDTO {
         let dto = PushPreferenceDTO.loadOrCreate(id: id, context: self)
         dto.id = id
-        dto.chatLevel = payload.chatLevel
+        dto.chatLevel = payload.level.rawValue
         dto.disabledUntil = payload.disabledUntil?.bridgeDate
         return dto
     }

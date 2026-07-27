@@ -5,6 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
+- Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
+
+# [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
+_July 22, 2026_
+
+## StreamChat
+### ✅ Added
 - Add `ChatClientConfig.localAttachmentDownloadsFolderURL` to configure where attachment downloads are stored [#4174](https://github.com/GetStream/stream-chat-swift/pull/4174)
 - Add additional data to `Device` (`pushProvider`, `pushProviderName`, `userId`, `disabled`, `disabledReason`, `hardwareId`, and `voip`) [#4161](https://github.com/GetStream/stream-chat-swift/pull/4161)
 

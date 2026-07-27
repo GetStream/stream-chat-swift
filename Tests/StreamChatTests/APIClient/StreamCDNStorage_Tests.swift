@@ -17,9 +17,10 @@ final class StreamCDNStorage_Tests: XCTestCase {
 
         // Create a test endpoint
         let attachmentId = AttachmentId.unique
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(
-            with: attachmentId.cid,
-            type: .image
+        let expectedEndpoint: Endpoint<UploadChannelResponse> = .uploadChannelImage(
+            type: attachmentId.cid.type.rawValue,
+            id: attachmentId.cid.id,
+            uploadChannelRequest: MultipartFormData(Data(), fileName: "")
         )
 
         // Simulate file uploading
@@ -37,7 +38,9 @@ final class StreamCDNStorage_Tests: XCTestCase {
         )
 
         // Check the encoder is called with the correct endpoint
-        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+        let endpoint = builder.encoder.encodeRequest_endpoints.first
+        XCTAssertEqual(endpoint?.path.value, expectedEndpoint.path.value)
+        XCTAssertEqual(endpoint?.method, expectedEndpoint.method)
     }
     
     func test_standaloneUploadFileEncoderIsCalledWithEndpoint() throws {
@@ -49,7 +52,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         builder.encoder.encodeRequest = .success(request)
 
         // Create a test endpoint
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .image)
+        let expectedEndpoint: Endpoint<ImageUploadResponse> = .uploadImage(imageUploadRequest: MultipartFormData(Data(), fileName: ""))
 
         // Simulate file uploading
         client.uploadAttachment(
@@ -59,7 +62,9 @@ final class StreamCDNStorage_Tests: XCTestCase {
         )
 
         // Check the encoder is called with the correct endpoint
-        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+        let endpoint = builder.encoder.encodeRequest_endpoints.first
+        XCTAssertEqual(endpoint?.path.value, expectedEndpoint.path.value)
+        XCTAssertEqual(endpoint?.method, expectedEndpoint.method)
     }
 
     func test_uploadFileEncoderFailingToEncode() throws {
@@ -122,7 +127,9 @@ final class StreamCDNStorage_Tests: XCTestCase {
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
         // to the encoder, and the outgoing data).
-        let payload = FileUploadPayload(fileURL: .unique(), thumbURL: .unique())
+        let fileURL = URL.unique()
+        let thumbnailURL = URL.unique()
+        let payload = FileUploadResponse.dummy(file: fileURL.absoluteString, thumbUrl: thumbnailURL.absoluteString)
         decoder.decodeRequestResponse = .success(payload)
 
         // Create a request and wait for the completion block
@@ -145,9 +152,29 @@ final class StreamCDNStorage_Tests: XCTestCase {
         XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
 
         // Check the outgoing data is from the decoder
-        XCTAssertEqual(try result.get().fileURL, payload.fileURL)
+        XCTAssertEqual(try result.get().fileURL, fileURL)
+        XCTAssertEqual(try result.get().thumbnailURL, thumbnailURL)
         // Default Stream CDN does not carry an attachment back; the SDK uses the original attachment.
         XCTAssertNil(try result.get().attachment)
+    }
+
+    func test_uploadFileResponse_withoutFile_fails() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+        let testRequest = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(testRequest)
+        builder.decoder.decodeRequestResponse = .success(FileUploadResponse.dummy())
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 200)
+
+        let result: Result<UploadedFile, Error> = try waitFor {
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
+                options: .init(),
+                completion: $0
+            )
+        }
+
+        XCTAssertTrue(result.error is ClientError.Unknown)
     }
     
     func test_standaloneUploadFileSuccess() throws {
@@ -164,7 +191,8 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let mockResponseData = try JSONEncoder.stream.encode(["file": url])
         URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
         
-        let response = FileUploadPayload(fileURL: .unique(), thumbURL: .unique())
+        let responseURL = URL.unique()
+        let response = FileUploadResponse.dummy(file: responseURL.absoluteString, thumbUrl: URL.unique().absoluteString)
         decoder.decodeRequestResponse = .success(response)
 
         // Create a request and wait for the completion block
@@ -180,7 +208,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         XCTAssertEqual(decoder.decodeRequestResponse_data, mockResponseData)
         XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
 
-        XCTAssertEqual(try result.get().fileURL, response.fileURL)
+        XCTAssertEqual(try result.get().fileURL, responseURL)
     }
 
     func test_uploadFileFailure() throws {
@@ -271,22 +299,6 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let builder = TestBuilder()
         let client = builder.make()
 
-        let attachment = AnyChatMessageAttachment.dummy(
-            uploadingState: .init(
-                localFileURL: .localYodaImage,
-                state: .pendingUpload,
-                file: .init(type: .jpeg, size: 0, mimeType: nil)
-            )
-        )
-
-        let uploadingState = try XCTUnwrap(attachment.uploadingState)
-
-        let multipartFormData = MultipartFormData(
-            try Data(contentsOf: .localYodaImage),
-            fileName: uploadingState.localFileURL.lastPathComponent,
-            mimeType: uploadingState.file.type.mimeType
-        )
-
         let uniquePath: String = .unique
         let uniqueQueryItem: String = .unique
         var testRequest = URLRequest(url: URL(string: "test://test.test/\(uniquePath)?item=\(uniqueQueryItem)")!)
@@ -306,15 +318,14 @@ final class StreamCDNStorage_Tests: XCTestCase {
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
-        // Check a network request is made with the values from `testRequest`
+        // The multipart body/`Content-Type` are built by `RequestEncoder` (see RequestEncoder_Tests);
+        // here we just verify the encoder's request is dispatched to the network.
         AssertNetworkRequest(
             method: .post,
             path: "/" + uniquePath,
-            headers: [
-                "Content-Type": "multipart/form-data; boundary=\(MultipartFormData.boundary)"
-            ],
+            headers: nil,
             queryParameters: ["item": uniqueQueryItem],
-            body: multipartFormData.getMultipartFormData()
+            body: nil
         )
     }
     
@@ -330,7 +341,11 @@ final class StreamCDNStorage_Tests: XCTestCase {
 
         // Create test values
         let remoteURL = URL.unique()
-        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .file)
+        let testEndpoint: Endpoint<EmptyResponse> = .init(
+            path: .deleteFile,
+            method: .delete,
+            queryItems: ["url": remoteURL.absoluteString]
+        )
 
         // Simulate file deletion
         client.deleteAttachment(
@@ -485,7 +500,11 @@ final class StreamCDNStorage_Tests: XCTestCase {
         builder.encoder.encodeRequest = .success(request)
 
         let remoteURL = URL(string: "https://cdn.example.com/photo.jpg")!
-        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
+        let testEndpoint: Endpoint<EmptyResponse> = .init(
+            path: .deleteImage,
+            method: .delete,
+            queryItems: ["url": remoteURL.absoluteString]
+        )
 
         client.deleteAttachment(
             remoteUrl: remoteURL,
@@ -505,7 +524,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
 
         let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
         URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 200, responseBody: mockResponseData)
-        let payload = FileUploadPayload(fileURL: .unique(), thumbURL: nil)
+        let payload = FileUploadResponse.dummy(file: URL.unique().absoluteString)
         builder.decoder.decodeRequestResponse = .success(payload)
 
         var progressCalled = false
@@ -538,7 +557,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
 
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .image)
+        let expectedEndpoint: Endpoint<ImageUploadResponse> = .uploadImage(imageUploadRequest: MultipartFormData(Data(), fileName: ""))
 
         client.uploadAttachment(
             localUrl: .localYodaImage,
@@ -546,7 +565,9 @@ final class StreamCDNStorage_Tests: XCTestCase {
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
-        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+        let endpoint = builder.encoder.encodeRequest_endpoints.first
+        XCTAssertEqual(endpoint?.path.value, expectedEndpoint.path.value)
+        XCTAssertEqual(endpoint?.method, expectedEndpoint.method)
     }
 
     func test_uploadAttachmentLocalUrl_nonImageFile_usesFileEndpoint() throws {
@@ -556,7 +577,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
 
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .file)
+        let expectedEndpoint: Endpoint<FileUploadResponse> = .uploadFile(fileUploadRequest: MultipartFormData(Data(), fileName: ""))
 
         let tempDir = NSTemporaryDirectory()
         let tempFile = URL(fileURLWithPath: tempDir).appendingPathComponent("test-\(UUID().uuidString).pdf")
@@ -569,7 +590,9 @@ final class StreamCDNStorage_Tests: XCTestCase {
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
-        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+        let endpoint = builder.encoder.encodeRequest_endpoints.first
+        XCTAssertEqual(endpoint?.path.value, expectedEndpoint.path.value)
+        XCTAssertEqual(endpoint?.method, expectedEndpoint.method)
     }
 
     func test_deleteAttachmentFailure() throws {

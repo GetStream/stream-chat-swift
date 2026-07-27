@@ -761,16 +761,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 throw ClientError.CurrentUserDoesNotHaveDeviceRegistered()
             }
             message.location = try? saveLocation(
-                payload: .init(
-                    channelId: cid.rawValue,
-                    messageId: id,
-                    userId: currentUserDTO.user.id,
+                payload: SharedLocation(
+                    channelCid: cid,
+                    createdAt: Date(),
+                    createdByDeviceId: deviceId,
+                    endAt: location.endAt,
                     latitude: location.latitude,
                     longitude: location.longitude,
-                    createdAt: Date(),
+                    messageId: id,
                     updatedAt: Date(),
-                    endAt: location.endAt,
-                    createdByDeviceId: deviceId
+                    userId: currentUserDTO.user.id
                 ),
                 cache: nil
             )

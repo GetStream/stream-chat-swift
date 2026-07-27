@@ -72,7 +72,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                 deliveryReceipts: .init(enabled: false)
             )),
             pushPreference: .init(
-                chatLevel: "mentions",
+                level: "mentions",
                 disabledUntil: Date().addingTimeInterval(3600)
             )
         )
@@ -109,7 +109,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
-        XCTAssertEqual(payload.pushPreference?.chatLevel, loadedCurrentUser.pushPreference?.level.rawValue)
+        XCTAssertEqual(payload.pushPreference?.level, loadedCurrentUser.pushPreference?.level)
         XCTAssertNearlySameDate(payload.pushPreference?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
     }
 

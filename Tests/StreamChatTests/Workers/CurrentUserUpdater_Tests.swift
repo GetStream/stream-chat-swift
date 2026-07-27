@@ -809,17 +809,17 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // THEN
         let endpoint = apiClient.request_endpoint
-        XCTAssertEqual(endpoint?.path.value, "users/live_locations")
+        XCTAssertEqual(endpoint?.path.value, "/api/v2/users/live_locations")
         XCTAssertEqual(endpoint?.method, .get)
     }
     
     func test_loadActiveLiveLocations_successfulResponse_savesToDBAndReturnsModels() throws {
         // GIVEN
         let payloads = [
-            SharedLocationPayload.dummy(latitude: 10, longitude: 20, endAt: Date().addingTimeInterval(100)),
-            SharedLocationPayload.dummy(latitude: 30, longitude: 40, endAt: Date().addingTimeInterval(200))
+            SharedLocation.dummy(endAt: Date().addingTimeInterval(100), latitude: 10, longitude: 20),
+            SharedLocation.dummy(endAt: Date().addingTimeInterval(200), latitude: 30, longitude: 40)
         ]
-        let response = ActiveLiveLocationsResponsePayload(locations: payloads)
+        let response = SharedLocationsResponse.dummy(activeLiveLocations: payloads)
         nonisolated(unsafe) var result: Result<[SharedLocation], Error>?
         
         // WHEN
@@ -837,7 +837,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(sharedLocations?.count, payloads.count)
         for (model, payload) in zip(sharedLocations ?? [], payloads) {
             XCTAssertEqual(model.messageId, payload.messageId)
-            XCTAssertEqual(model.channelId.rawValue, payload.channelId)
+            XCTAssertEqual(model.channelId, payload.channelCid)
             XCTAssertEqual(model.latitude, payload.latitude)
             XCTAssertEqual(model.longitude, payload.longitude)
             XCTAssertEqual(model.endAt?.timeIntervalSince1970, payload.endAt?.timeIntervalSince1970)
@@ -854,7 +854,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         currentUserUpdater.loadActiveLiveLocations {
             result = $0
         }
-        apiClient.test_simulateResponse(Result<ActiveLiveLocationsResponsePayload, Error>.failure(expectedError))
+        apiClient.test_simulateResponse(Result<SharedLocationsResponse, Error>.failure(expectedError))
         
         // THEN
         switch result {
@@ -889,18 +889,13 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_makesCorrectAPICall() throws {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
 
         // WHEN
         currentUserUpdater.setPushPreference(preference) { _ in }
 
         // THEN
-        let expectedEndpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences([preference])
+        let expectedEndpoint: Endpoint<UpsertPushPreferencesResponse> = .updatePushNotificationPreferences(upsertPushPreferencesRequest: .init(preferences: [preference]))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -912,21 +907,13 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
 
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)
 
-        let response = PushPreferencesPayloadResponse(
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencePayload(
-                    chatLevel: "all",
-                    disabledUntil: nil
-                )
-            ],
-            channelPreferences: [:]
+                "userId": PushPreference(level: "all")
+            ]
         )
 
         // WHEN
@@ -948,21 +935,13 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_successfulResponse_whenNoCurrentUser_doesNotCrashOrSave() throws {
         // GIVEN — no current user seeded in the database
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "all",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .all, removeDisable: true)
 
-        let response = PushPreferencesPayloadResponse(
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencePayload(
-                    chatLevel: "all",
-                    disabledUntil: nil
-                )
-            ],
-            channelPreferences: [:]
+                "userId": PushPreference(level: "all")
+            ]
         )
 
         // WHEN
@@ -979,12 +958,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
 
         // WHEN
         nonisolated(unsafe) var completionError: Error?
@@ -995,7 +969,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PushPreferencesPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UpsertPushPreferencesResponse, Error>.failure(error))
 
         // THEN
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -1003,16 +977,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_whenNoUserPreferences_returnsError() {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
-            chatLevel: "mentions",
-            channelId: nil,
-            disabledUntil: nil,
-            removeDisable: true
-        )
+        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
 
-        let response = PushPreferencesPayloadResponse(
-            userPreferences: [:],
-            channelPreferences: [:]
+        let response = UpsertPushPreferencesResponse(
+            userChannelPreferences: [:],
+            userPreferences: [:]
         )
 
         // WHEN

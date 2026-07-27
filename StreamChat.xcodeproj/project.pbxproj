@@ -739,13 +739,11 @@
 				StreamChatTests/APIClient/CDNClient/StreamCDNRequester_Tests.swift,
 				StreamChatTests/APIClient/ChatRemoteNotificationHandler_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/AttachmentEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ChannelEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/DeviceEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/DraftEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Endpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/EndpointPath_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/FileEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/GuestEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/MemberEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/MessageEndpoints_Tests.swift,
@@ -759,7 +757,6 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/CurrentUserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CustomDataHashMap_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/DraftPayloads_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/FileUploadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/FlagMessagePayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/FlagUserPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/GuestUserTokenPayload_Tests.swift,
@@ -894,6 +891,7 @@
 				StreamChatTests/DataController_Tests.swift,
 				StreamChatTests/EntityChange_Tests.swift,
 				StreamChatTests/Errors/ClientError_Tests.swift,
+				StreamChatTests/Extensions/AttributedString_Links_Tests.swift,
 				StreamChatTests/Extensions/URL_EnrichedURL_Tests.swift,
 				StreamChatTests/ListChange_Tests.swift,
 				StreamChatTests/ListChangeAggregator_Tests.swift,
@@ -5454,7 +5452,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.0;
+				minimumVersion = 0.10.1;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {

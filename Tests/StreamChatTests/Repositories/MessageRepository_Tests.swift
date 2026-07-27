@@ -767,32 +767,24 @@ final class MessageRepositoryTests: XCTestCase {
             id: messageId1,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId1,
-                userId: .unique,
+            location: .dummy(
+                channelId: cid,
+                endAt: .distantFuture,
                 latitude: 1,
                 longitude: 1,
-                createdAt: .unique,
-                updatedAt: .unique,
-                endAt: .distantFuture,
-                createdByDeviceId: .unique
+                messageId: messageId1
             )
         )
         try database.createMessage(
             id: messageId2,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
-                messageId: messageId2,
-                userId: .unique,
+            location: .dummy(
+                channelId: cid,
+                endAt: .distantFuture,
                 latitude: 1,
                 longitude: 1,
-                createdAt: .unique,
-                updatedAt: .unique,
-                endAt: .distantFuture,
-                createdByDeviceId: .unique
+                messageId: messageId2
             )
         )
         

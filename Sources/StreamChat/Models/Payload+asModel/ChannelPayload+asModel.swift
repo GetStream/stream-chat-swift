@@ -69,7 +69,7 @@ extension ChannelPayload {
             muteDetails: nil,
             draftMessage: nil,
             activeLiveLocations: [],
-            pushPreference: pushPreference?.asModel()
+            pushPreference: pushPreference
         )
     }
 }

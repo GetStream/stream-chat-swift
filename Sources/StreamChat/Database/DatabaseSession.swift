@@ -81,9 +81,9 @@ protocol CurrentUserDatabaseSession {
     /// Saves the push preference for the given id.
     /// - Parameters:
     ///   - id: The channel ID or the currentUser ID.
-    ///   - payload: The push preference payload.
+    ///   - payload: The push preference.
     @discardableResult
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO
+    func savePushPreference(id: String, payload: PushPreference) throws -> PushPreferenceDTO
 
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)
@@ -754,9 +754,9 @@ protocol PollDatabaseSession {
 }
 
 protocol LocationDatabaseSession {
-    /// Saves the provided location payload to the DB.
+    /// Saves the provided location response to the DB.
     @discardableResult
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO
+    func saveLocation(payload: SharedLocation, cache: PreWarmedCache?) throws -> SharedLocationDTO
 }
 
 protocol DatabaseSession: UserDatabaseSession,
