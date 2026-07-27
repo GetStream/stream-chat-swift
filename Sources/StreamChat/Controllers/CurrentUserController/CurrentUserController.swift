@@ -38,44 +38,10 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     }
 
     /// The observer for the active live location messages.
-    private var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var activeLiveLocationMessagesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>?
 
     /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                $0.currentUserController(self, didChangeCurrentUser: change)
-            }
-
-            /// Only when we have access to the currentUserId is when we should
-            /// create the observer for the active live location messages.
-            if self?.activeLiveLocationMessagesObserver == nil {
-                let observer = self?.createActiveLiveLocationMessagesObserver()
-                self?.activeLiveLocationMessagesObserver = observer
-                try? observer?.startObserving()
-                observer?.onDidChange = { [weak self, weak observer] _ in
-                    self?.delegateCallback { [weak self, weak observer] in
-                        guard let self = self else { return }
-                        let messages = Array(observer?.items ?? [])
-                        self.isSharingLiveLocation = !messages.isEmpty
-                        $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
-                    }
-                }
-            }
-        }
-        .onFieldChange(\.unreadCount) { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
-            }
-        }
 
     /// A flag to indicate whether the current user is sharing his live location.
     private var isSharingLiveLocation = false {
@@ -140,7 +106,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     private var draftListQuery = DraftListQuery()
 
     /// Use for observing the current user's draft messages changes.
-    private var draftMessagesObserver: BackgroundListDatabaseObserver<DraftMessage, MessageDTO>?
+    private var draftMessagesObserver: StateLayerDatabaseObserver<ListResult, DraftMessage, MessageDTO>?
 
     /// The repository for draft messages.
     private var draftMessagesRepository: DraftMessagesRepository
@@ -207,7 +173,16 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         guard state == .initialized else { return }
 
         do {
-            try currentUserObserver.startObserving()
+            try currentUserObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                guard let self else { return }
+                self.delegateCallback {
+                    $0.currentUserController(self, didChangeCurrentUser: change)
+                }
+                self.startActiveLiveLocationMessagesObserverIfNeeded()
+                self.delegateCallback {
+                    $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.fieldChange(\.unreadCount).unreadCount)
+                }
+            })
             state = .localDataFetched
         } catch {
             log.error("""
@@ -597,30 +572,26 @@ extension CurrentChatUserController {
         var currentUserObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
-            _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser,
-            _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = {
-            BackgroundEntityDatabaseObserver(
+            _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser
+        ) -> StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\CurrentChatUser.id, \CurrentUserDTO.user.id),
-                fetchedResultsControllerType: $3
+                entityItemReuseKeyPaths: (\CurrentChatUser.id, \CurrentUserDTO.user.id)
             )
         }
 
         var currentUserActiveLiveLocationMessagesObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
-            _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
-            .init(
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage
+        ) -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                fetchedResultsControllerType: $3
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
         }
         
@@ -628,8 +599,13 @@ extension CurrentChatUserController {
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> DraftMessage
-        ) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> = {
-            .init(database: $0, fetchRequest: $1, itemCreator: $2, itemReuseKeyPaths: (\DraftMessage.id, \MessageDTO.id))
+        ) -> StateLayerDatabaseObserver<ListResult, DraftMessage, MessageDTO> = {
+            StateLayerDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\DraftMessage.id, \MessageDTO.id)
+            )
         }
 
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
@@ -652,16 +628,15 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension CurrentChatUserController {
-    func createUserObserver() -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> {
+    func createUserObserver() -> StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
             client.databaseContainer,
             CurrentUserDTO.defaultFetchRequest,
-            { try $0.asModel() },
-            NSFetchedResultsController<CurrentUserDTO>.self
+            { try $0.asModel() }
         )
     }
 
-    func createActiveLiveLocationMessagesObserver() -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO>? {
+    func createActiveLiveLocationMessagesObserver() -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>? {
         guard let currentUserId = client.currentUserId else {
             return nil
         }
@@ -671,8 +646,7 @@ private extension CurrentChatUserController {
                 currentUserId: currentUserId,
                 channelId: nil
             ),
-            { try $0.asModel() },
-            NSFetchedResultsController<MessageDTO>.self
+            { try $0.asModel() }
         )
     }
     
@@ -690,21 +664,37 @@ private extension CurrentChatUserController {
     }
 
     @discardableResult
-    private func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> {
+    private func createDraftMessagesObserver(query: DraftListQuery) -> StateLayerDatabaseObserver<ListResult, DraftMessage, MessageDTO> {
         let observer = environment.draftMessagesObserverBuilder(
             client.databaseContainer,
             MessageDTO.draftMessagesFetchRequest(query: query),
             { DraftMessage(try $0.asModel()) }
         )
-        observer.onDidChange = { [weak self] _ in
+        _ = try? observer.startObserving(emitInitialChanges: true, didChange: { [weak self] _, _ in
             guard let self = self else { return }
             self.delegateCallback {
                 $0.currentUserController(self, didChangeDraftMessages: self.draftMessages)
             }
-        }
-        try? observer.startObserving()
+        })
         draftMessagesObserver = observer
         return observer
+    }
+
+    func startActiveLiveLocationMessagesObserverIfNeeded() {
+        guard activeLiveLocationMessagesObserver == nil,
+              let observer = createActiveLiveLocationMessagesObserver()
+        else {
+            return
+        }
+        activeLiveLocationMessagesObserver = observer
+        _ = try? observer.startObserving(emitInitialChanges: true, didChange: { [weak self, weak observer] _, _ in
+            self?.delegateCallback { [weak self, weak observer] in
+                guard let self else { return }
+                let messages = observer?.items ?? []
+                self.isSharingLiveLocation = !messages.isEmpty
+                $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
+            }
+        })
     }
 }
 

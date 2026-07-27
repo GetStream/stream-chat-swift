@@ -60,24 +60,13 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         }
     }
 
-    private(set) lazy var threadListObserver: BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
+    private(set) lazy var threadListObserver: StateLayerDatabaseObserver<ListResult, ChatThread, ThreadDTO> = {
         let request = ThreadDTO.threadListFetchRequest(query: query)
-        let observer = self.environment.createThreadListDatabaseObserver(
+        return self.environment.createThreadListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    return
-                }
-                $0.controller(self, didChangeThreads: changes)
-            }
-        }
-
-        return observer
     }()
 
     var _basePublishers: Any?
@@ -165,7 +154,12 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     private func startThreadListObserverIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try threadListObserver.startObserving()
+            try threadListObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else { return }
+                    $0.controller(self, didChangeThreads: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -194,8 +188,8 @@ extension ChatThreadListController {
             _ fetchRequest: NSFetchRequest<ThreadDTO>,
             _ itemCreator: @escaping (ThreadDTO) throws -> ChatThread
         )
-            -> BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
-                BackgroundListDatabaseObserver(
+            -> StateLayerDatabaseObserver<ListResult, ChatThread, ThreadDTO> = {
+                StateLayerDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,

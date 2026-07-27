@@ -52,23 +52,14 @@ public class UserGroupListController: DataController, DelegateCallable, DataStor
         }
     }
 
-    private(set) lazy var userGroupsObserver: BackgroundListDatabaseObserver<UserGroup, UserGroupDTO> = {
+    private(set) lazy var userGroupsObserver: StateLayerDatabaseObserver<ListResult, UserGroup, UserGroupDTO> = {
         let request = UserGroupDTO.userGroupsFetchRequest(query: self.query)
 
-        let observer = self.environment.createUserGroupListDatabaseObserver(
+        return self.environment.createUserGroupListDatabaseObserver(
             client.databaseContainer,
             request,
             { $0.asModel() }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self else { return }
-                $0.controller(self, didChangeUserGroups: changes)
-            }
-        }
-
-        return observer
     }()
 
     var _basePublishers: Any?
@@ -111,7 +102,12 @@ public class UserGroupListController: DataController, DelegateCallable, DataStor
     private func startUserGroupsObserverIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try userGroupsObserver.startObserving()
+            try userGroupsObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else { return }
+                    $0.controller(self, didChangeUserGroups: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -214,8 +210,8 @@ extension UserGroupListController {
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserGroupDTO>,
             _ itemCreator: @escaping (UserGroupDTO) -> UserGroup
-        ) -> BackgroundListDatabaseObserver<UserGroup, UserGroupDTO> = {
-            BackgroundListDatabaseObserver(
+        ) -> StateLayerDatabaseObserver<ListResult, UserGroup, UserGroupDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,

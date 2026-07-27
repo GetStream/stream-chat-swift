@@ -75,12 +75,20 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         )
 
     /// Used for observing the database for changes.
-    private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var messagesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>?
 
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try messagesObserver?.startObserving()
+            try messagesObserver?.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.controller(self, didChangeMessages: changes)
+                }
+            })
 
             state = .localDataFetched
         } catch {
@@ -90,7 +98,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     private func setMessagesObserver() {
-        let observer = BackgroundListDatabaseObserver(
+        let observer = StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>(
             database: client.databaseContainer,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: lastQuery ?? query
@@ -98,16 +106,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             itemCreator: { try $0.asModel() as ChatMessage },
             itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
         )
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                $0.controller(self, didChangeMessages: changes)
-            }
-        }
-
         messagesObserver = observer
     }
 

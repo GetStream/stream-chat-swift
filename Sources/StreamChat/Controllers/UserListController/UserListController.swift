@@ -56,27 +56,14 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var userListObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
+    private(set) lazy var userListObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO> = {
         let request = UserDTO.userListFetchRequest(query: self.query)
 
-        let observer = self.environment.createUserListDabaseObserver(
+        return self.environment.createUserListDabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controller(self, didChangeUsers: changes)
-            }
-        }
-
-        return observer
     }()
 
     var _basePublishers: Any?
@@ -122,7 +109,15 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     private func startUserListObserverIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try userListObserver.startObserving()
+            try userListObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.controller(self, didChangeUsers: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -165,8 +160,8 @@ extension ChatUserListController {
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser
         )
-            -> BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
-                BackgroundListDatabaseObserver(
+            -> StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO> = {
+                StateLayerDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,

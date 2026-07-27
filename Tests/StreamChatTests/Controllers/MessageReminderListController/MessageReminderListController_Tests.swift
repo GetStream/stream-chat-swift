@@ -238,14 +238,14 @@ extension MessageReminderListController_Tests {
     func makeController(
         query: MessageReminderListQuery = .init(),
         repository: RemindersRepository? = nil,
-        observer: BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO>? = nil
+        observer: StateLayerDatabaseObserver<ListResult, MessageReminder, MessageReminderDTO>? = nil
     ) -> MessageReminderListController {
         MessageReminderListController(
             query: query,
             client: client,
             environment: .init(
                 createMessageReminderListDatabaseObserver: { database, fetchRequest, itemCreator in
-                    observer ?? BackgroundListDatabaseObserver(
+                    observer ?? StateLayerDatabaseObserver(
                         database: database,
                         fetchRequest: fetchRequest,
                         itemCreator: itemCreator,

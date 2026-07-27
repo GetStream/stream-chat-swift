@@ -181,8 +181,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
-    private var channelObserver: BackgroundEntityDatabaseObserver<ChatChannel, ChannelDTO>?
-    private var messagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var channelObserver: StateLayerDatabaseObserver<EntityResult, ChatChannel, ChannelDTO>?
+    private var messagesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>?
 
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
@@ -2021,7 +2021,16 @@ private extension ChatChannelController {
         setChannelObserver()
 
         do {
-            try channelObserver?.startObserving()
+            try channelObserver?.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.channelController(self, didUpdateChannel: change)
+                    $0.channelController(self, didChangeTypingUsers: change.fieldChange(\.currentlyTypingUsers).item)
+                }
+            })
             return nil
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
@@ -2033,7 +2042,13 @@ private extension ChatChannelController {
         setMessagesObserver()
 
         do {
-            try messagesObserver?.startObserving()
+            try messagesObserver?.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else { return }
+                    log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
+                    $0.channelController(self, didUpdateMessages: changes)
+                }
+            })
             return nil
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
@@ -2070,33 +2085,14 @@ private extension ChatChannelController {
                 return nil
             }
 
-            let observer = BackgroundEntityDatabaseObserver(
+            return StateLayerDatabaseObserver<EntityResult, ChatChannel, ChannelDTO>(
                 database: self.client.databaseContainer,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: {
                     try $0.asModel() as ChatChannel
                 },
-                itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid)
-            ).onChange { [weak self] change in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    $0.channelController(self, didUpdateChannel: change)
-                }
-            }
-            .onFieldChange(\.currentlyTypingUsers) { [weak self] change in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    $0.channelController(self, didChangeTypingUsers: change.item)
-                }
-            }
-
-            return observer
+                entityItemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid)
+            )
         }()
     }
 
@@ -2110,7 +2106,7 @@ private extension ChatChannelController {
             let sortAscending = self.messageOrdering == .topToBottom ? false : true
             let shouldShowShadowedMessages = client.config.shouldShowShadowedMessages
             let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
-            let observer = BackgroundListDatabaseObserver(
+            return StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>(
                 database: client.databaseContainer,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
@@ -2123,15 +2119,6 @@ private extension ChatChannelController {
                 },
                 itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
-            observer.onDidChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else { return }
-                    log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
-
-                    $0.channelController(self, didUpdateMessages: changes)
-                }
-            }
-            return observer
         }()
     }
 

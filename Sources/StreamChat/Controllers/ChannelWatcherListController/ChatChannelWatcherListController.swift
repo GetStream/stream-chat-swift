@@ -55,7 +55,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     }
 
     /// The observer used to observe the changes in the database.
-    private lazy var watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO> = createWatchersObserver()
+    private lazy var watchersObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO> = createWatchersObserver()
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
@@ -97,32 +97,27 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         }
     }
 
-    private func createWatchersObserver() -> BackgroundListDatabaseObserver<ChatUser, UserDTO> {
-        let observer = environment.watcherListObserverBuilder(
+    private func createWatchersObserver() -> StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO> {
+        environment.watcherListObserverBuilder(
             client.databaseContainer,
             UserDTO.watcherFetchRequest(cid: query.cid),
-            { try $0.asModel() as ChatUser },
-            NSFetchedResultsController<UserDTO>.self
+            { try $0.asModel() as ChatUser }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                $0.channelWatcherListController(self, didChangeWatchers: changes)
-            }
-        }
-
-        return observer
     }
 
     private func startObservingIfNeeded() {
         guard state == .initialized else { return }
 
         do {
-            try watchersObserver.startObserving()
+            try watchersObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.channelWatcherListController(self, didChangeWatchers: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
@@ -144,15 +139,13 @@ extension ChatChannelWatcherListController {
         var watcherListObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
-            _ controllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> BackgroundListDatabaseObserver<ChatUser, UserDTO> = {
-            BackgroundListDatabaseObserver(
+            _ itemCreator: @escaping (UserDTO) throws -> ChatUser
+        ) -> StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
-                fetchedResultsControllerType: $3
+                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
             )
         }
     }

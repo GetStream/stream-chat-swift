@@ -396,20 +396,23 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique
         )
+        let initialRepliesChange = try prepareRepliesChangeExpectation(count: 2)
         try saveReplies(with: [reply1, reply2])
-        try waitForRepliesChange(count: 2)
+        wait(for: [initialRepliesChange], timeout: defaultTimeout)
 
         // Set top-to-bottom ordering
+        let topToBottomRepliesChange = try prepareRepliesChangeExpectation(count: 2)
         controller.listOrdering = .topToBottom
-        try waitForRepliesChange(count: 2)
+        wait(for: [topToBottomRepliesChange], timeout: defaultTimeout)
         
         // Check the order of replies is correct
         let topToBottomIds = [reply1, reply2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.replies.map(\.id), topToBottomIds)
 
         // Set bottom-to-top ordering
+        let bottomToTopRepliesChange = try prepareRepliesChangeExpectation(count: 2)
         controller.listOrdering = .bottomToTop
-        try waitForRepliesChange(count: 2)
+        wait(for: [bottomToTopRepliesChange], timeout: defaultTimeout)
 
         // Check the order of replies is correct
         let bottomToTopIds = [reply1, reply2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -555,8 +558,9 @@ final class MessageController_Tests: XCTestCase {
             isShadowed: true
         )
 
+        let repliesChange = try prepareRepliesChangeExpectation(count: 1)
         try saveReplies(with: [nonShadowedReply, shadowedReply])
-        try waitForRepliesChange(count: 1)
+        wait(for: [repliesChange], timeout: defaultTimeout)
         
         // only non-shadowed reply should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id]))
@@ -683,8 +687,9 @@ final class MessageController_Tests: XCTestCase {
 
         // Add reply to DB
         let replyId = MessageId.unique
+        let repliesChange = try prepareRepliesChangeExpectation(count: 1)
         try saveReplies(with: [replyId])
-        try waitForRepliesChange(count: 1)
+        wait(for: [repliesChange], timeout: defaultTimeout)
 
         let model: ChatMessage? = try client.databaseContainer.readSynchronously { session in
             guard let reply = session.message(id: replyId) else { return nil }
@@ -1336,21 +1341,9 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25))
     }
 
-    func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_fetchWithoutParemeter() {
+    func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_fetchWithoutParemeter() throws {
+        try saveReplies(with: ["first message", "last message", "last message only local"])
         _ = controller.replies
-        env.repliesObserver.items_mock = [
-            .mock(
-                id: "first message", cid: .unique, text: .unique, author: .unique
-            ),
-            .mock(
-                id: "last message", cid: .unique, text: .unique, author: .unique
-            ),
-            // The last message used for pagination, needs to be in the server as well,
-            // so this one should not be used
-            .mock(
-                id: "last message only local", cid: .unique, text: .unique, author: .unique, localState: .pendingSync
-            )
-        ]
 
         controller.loadPreviousReplies(
             limit: 21,
@@ -2557,13 +2550,18 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func waitForRepliesChange(count: Int) throws {
+        let expectation = try prepareRepliesChangeExpectation(count: count)
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+
+    private func prepareRepliesChangeExpectation(count: Int) throws -> XCTestExpectation {
         let delegate = try XCTUnwrap(controller.delegate as? TestDelegate)
         let expectation = XCTestExpectation(description: "RepliesChange")
         StreamConcurrency.onMain {
             delegate.didChangeRepliesExpectation = expectation
             delegate.didChangeRepliesExpectedCount = count
         }
-        wait(for: [expectation], timeout: defaultTimeout)
+        return expectation
     }
 
     // MARK: - Update Message
@@ -2629,7 +2627,7 @@ final class MessageController_Tests: XCTestCase {
 
     // MARK: - Stop Live Location Tests
 
-    func test_stopLiveLocationSharing_callsMessageUpdater_withCorrectValues() {
+    func test_stopLiveLocationSharing_callsMessageUpdater_withCorrectValues() throws {
         // Save message with live location
         let latitude = 51.5074
         let longitude = -0.1278
@@ -2644,11 +2642,16 @@ final class MessageController_Tests: XCTestCase {
             createdAt: .unique,
             endAt: .distantFuture
         )
-        _ = controller.message
-        env.messageObserver.item_mock = .mock(
+        try client.databaseContainer.createMessage(
             id: messageId,
-            sharedLocation: sharedLocation
+            cid: cid,
+            location: .dummy(
+                latitude: latitude,
+                longitude: longitude,
+                endAt: .distantFuture
+            )
         )
+        _ = controller.message
 
         // When
         controller.stopLiveLocationSharing()
@@ -2660,14 +2663,11 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.stopLiveLocationSharing_messageId, messageId)
     }
 
-    func test_stopLiveLocationSharing_whenNoLiveLocationAttachment_completesWithError() {
+    func test_stopLiveLocationSharing_whenNoLiveLocationAttachment_completesWithError() throws {
         // Given
-        // Create a mock message without live location attachment
+        // Create a message without a live location attachment.
+        try client.databaseContainer.createMessage(id: messageId, cid: cid)
         _ = controller.message
-        env.messageObserver.item_mock = .mock(
-            id: messageId,
-            sharedLocation: nil
-        )
 
         // When
         let exp = expectation(description: "stopLiveLocationSharing")
@@ -2685,28 +2685,20 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertTrue(receivedError is ClientError.MessageDoesNotHaveLiveLocationAttachment)
     }
 
-    func test_stopLiveLocationSharing_whenLiveLocationAlreadyStopped_completesWithError() {
+    func test_stopLiveLocationSharing_whenLiveLocationAlreadyStopped_completesWithError() throws {
         // Given
         let latitude = 51.5074
         let longitude = -0.1278
-        let sharedLocation = SharedLocation(
-            messageId: messageId,
-            channelId: .unique,
-            userId: .unique,
-            createdByDeviceId: .unique,
-            latitude: latitude,
-            longitude: longitude,
-            updatedAt: .unique,
-            createdAt: .unique,
-            endAt: .distantPast
-        )
-
-        // Save message with live location
-        _ = controller.message
-        env.messageObserver.item_mock = .mock(
+        try client.databaseContainer.createMessage(
             id: messageId,
-            sharedLocation: sharedLocation
+            cid: cid,
+            location: .dummy(
+                latitude: latitude,
+                longitude: longitude,
+                endAt: .distantPast
+            )
         )
+        _ = controller.message
 
         // When
         let exp = expectation(description: "stopLiveLocationSharing")
@@ -2765,33 +2757,9 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
 private class TestEnvironment {
     var replyMessagesPaginationStateHandler: MessagesPaginationStateHandler_Mock!
     var messageUpdater: MessageUpdater_Mock!
-    var messageObserver: BackgroundEntityDatabaseObserver_Mock<ChatMessage, MessageDTO>!
-    var repliesObserver: BackgroundListDatabaseObserver_Mock<ChatMessage, MessageDTO>!
-
-    var messageObserver_synchronizeError: Error?
 
     lazy var controllerEnvironment: ChatMessageController
         .Environment = .init(
-            messageObserverBuilder: { [unowned self] in
-                self.messageObserver = .init(
-                    database: $0,
-                    fetchRequest: $1,
-                    itemCreator: $2,
-                    fetchedResultsControllerType: $3
-                )
-                self.messageObserver.synchronizeError = self.messageObserver_synchronizeError
-                return self.messageObserver!
-            },
-            repliesObserverBuilder: { [unowned self] in
-                self.repliesObserver = .init(
-                    database: $0,
-                    fetchRequest: $1,
-                    itemCreator: $2,
-                    itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                    fetchedResultsControllerType: $3
-                )
-                return self.repliesObserver!
-            },
             messageUpdaterBuilder: { [unowned self] in
                 self.messageUpdater = MessageUpdater_Mock(
                     isLocalStorageEnabled: $0,

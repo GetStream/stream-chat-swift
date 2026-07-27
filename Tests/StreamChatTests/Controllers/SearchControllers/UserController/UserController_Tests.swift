@@ -94,24 +94,6 @@ final class UserController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
-        // Update observer to throw the error.
-        let observerError = TestError()
-        env.userObserverSynchronizeError = observerError
-
-        // Simulate `synchronize` call.
-        nonisolated(unsafe) var synchronizeError: Error?
-        controller.synchronize { error in
-            synchronizeError = error
-        }
-
-        // Assert controller is in `localDataFetchFailed` state.
-        XCTAssertEqual(controller.state, .localDataFetchFailed(ClientError(with: observerError)))
-
-        // Assert error from observer is forwarded.
-        AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
-    }
-
     func test_synchronize_changesState_and_propagatesUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
         nonisolated(unsafe) var synchronizeError: Error?
@@ -129,17 +111,6 @@ final class UserController_Tests: XCTestCase {
             // Assert error from updater is forwarded.
             Assert.willBeEqual(synchronizeError as? TestError, updaterError)
         }
-    }
-
-    func test_synchronize_doesNotInvokeUpdater_ifObserverFails() {
-        // Update observer to throw the error.
-        env.userObserverSynchronizeError = TestError()
-
-        // Simulate `synchronize` call.
-        controller.synchronize()
-
-        // Assert updater in not called.
-        XCTAssertNil(env.userUpdater?.loadUser_userId)
     }
 
     func test_synchronize_callsUserUpdater_ifObserverSucceeds() {
@@ -233,10 +204,7 @@ final class UserController_Tests: XCTestCase {
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
 
-        // Update observer to throw the error
-        env.userObserver?.synchronizeError = TestError()
-
-        // Set `delegate` / call `synchronize` / access `user` again
+        // Access user again.
         _ = controller.user
 
         // Assert controllers stays in `localDataFetched`
@@ -683,9 +651,6 @@ final class UserController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var userUpdater: UserUpdater_Mock?
-    @Atomic var userObserver: BackgroundEntityDatabaseObserver_Mock<ChatUser, UserDTO>?
-    @Atomic var userObserverSynchronizeError: Error?
-
     lazy var environment: ChatUserController.Environment = .init(
         userUpdaterBuilder: { [unowned self] in
             self.userUpdater = .init(
@@ -693,16 +658,6 @@ private class TestEnvironment {
                 apiClient: $1
             )
             return self.userUpdater!
-        },
-        userObserverBuilder: { [unowned self] in
-            self.userObserver = .init(
-                database: $0,
-                fetchRequest: $1,
-                itemCreator: $2,
-                fetchedResultsControllerType: $3
-            )
-            self.userObserver?.synchronizeError = self.userObserverSynchronizeError
-            return self.userObserver!
         }
     )
 }

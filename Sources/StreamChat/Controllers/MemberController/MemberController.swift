@@ -66,16 +66,6 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
 
     /// The observer used to track the user changes in the database.
     private lazy var memberObserver = createMemberObserver()
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.memberController(self, didUpdateMember: change)
-            }
-        }
 
     private let environment: Environment
 
@@ -127,12 +117,11 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
         )
     }
 
-    private func createMemberObserver() -> BackgroundEntityDatabaseObserver<ChatChannelMember, MemberDTO> {
+    private func createMemberObserver() -> StateLayerDatabaseObserver<EntityResult, ChatChannelMember, MemberDTO> {
         environment.memberObserverBuilder(
             client.databaseContainer,
             MemberDTO.member(userId, in: cid),
-            { try $0.asModel() },
-            NSFetchedResultsController<MemberDTO>.self
+            { try $0.asModel() }
         )
     }
 
@@ -140,7 +129,15 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
         guard state == .initialized else { return }
 
         do {
-            try memberObserver.startObserving()
+            try memberObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.memberController(self, didUpdateMember: change)
+                }
+            })
             state = .localDataFetched
         } catch {
             log.error("Observing member with id <\(userId)> failed: \(error). Accessing `member` will always return `nil`")
@@ -252,15 +249,13 @@ extension ChatChannelMemberController {
         var memberObserverBuilder: (
             _ databaseContainer: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember,
-            _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<ChatChannelMember, MemberDTO> = {
-            BackgroundEntityDatabaseObserver(
+            _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember
+        ) -> StateLayerDatabaseObserver<EntityResult, ChatChannelMember, MemberDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id),
-                fetchedResultsControllerType: $3
+                entityItemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id)
             )
         }
     }

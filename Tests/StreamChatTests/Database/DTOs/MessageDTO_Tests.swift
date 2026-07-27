@@ -231,7 +231,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(1, observer.items.count)
     }
 
-    func test_saveMessage_whenMessageNotInParentReplies_shouldReportChangesInFRC() throws {
+    func test_saveMessage_whenMessageNotInParentReplies_shouldNotReportEqualModelChanges() throws {
         let channelPayload: ChannelPayload = .dummy(
             channel: .dummy()
         )
@@ -268,7 +268,8 @@ final class MessageDTO_Tests: XCTestCase {
             parentMessage.replies.insert(reply)
         }
 
-        let exp = expectation(description: "FRC should report changes")
+        let exp = expectation(description: "FRC should not report changes for an equal model")
+        exp.isInverted = true
         var changes: [ListChange<ChatMessage>] = []
         let observer = try createMessagesFRC(for: channelPayload) { newChanges in
             changes += newChanges
@@ -291,7 +292,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         let parentMessage = try XCTUnwrap(database.viewContext.message(id: parentId))
         XCTAssertEqual(parentMessage.replies.count, 2)
-        XCTAssertEqual(changes.count, 1)
+        XCTAssertEqual(changes.count, 0)
         XCTAssertEqual(1, observer.items.count)
     }
 

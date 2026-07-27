@@ -66,27 +66,14 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var messageRemindersObserver: BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO> = {
+    private(set) lazy var messageRemindersObserver: StateLayerDatabaseObserver<ListResult, MessageReminder, MessageReminderDTO> = {
         let request = MessageReminderDTO.remindersFetchRequest(query: query)
 
-        let observer = self.environment.createMessageReminderListDatabaseObserver(
+        return self.environment.createMessageReminderListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controller(self, didChangeReminders: changes)
-            }
-        }
-
-        return observer
     }()
 
     var _basePublishers: Any?
@@ -142,7 +129,15 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
     private func startMessageRemindersObserverIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try messageRemindersObserver.startObserving()
+            try messageRemindersObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.controller(self, didChangeReminders: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -188,8 +183,8 @@ extension MessageReminderListController {
             _ fetchRequest: NSFetchRequest<MessageReminderDTO>,
             _ itemCreator: @escaping (MessageReminderDTO) throws -> MessageReminder
         )
-            -> BackgroundListDatabaseObserver<MessageReminder, MessageReminderDTO> = {
-                BackgroundListDatabaseObserver(
+            -> StateLayerDatabaseObserver<ListResult, MessageReminder, MessageReminderDTO> = {
+                StateLayerDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,

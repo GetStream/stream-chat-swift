@@ -53,12 +53,6 @@ public class UserGroupController: DataController, DelegateCallable, DataStorePro
     }
 
     private lazy var userGroupObserver = createUserGroupObserver()
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self else { return }
-                $0.userGroupController(self, didUpdateUserGroup: change)
-            }
-        }
 
     var _basePublishers: Any?
     var basePublishers: BasePublishers {
@@ -100,12 +94,11 @@ public class UserGroupController: DataController, DelegateCallable, DataStorePro
         }
     }
 
-    private func createUserGroupObserver() -> BackgroundEntityDatabaseObserver<UserGroup, UserGroupDTO> {
+    private func createUserGroupObserver() -> StateLayerDatabaseObserver<EntityResult, UserGroup, UserGroupDTO> {
         environment.userGroupObserverBuilder(
             client.databaseContainer,
             UserGroupDTO.fetchRequest(id: userGroupId),
-            { $0.asModel() },
-            NSFetchedResultsController<UserGroupDTO>.self
+            { $0.asModel() }
         )
     }
 
@@ -113,7 +106,12 @@ public class UserGroupController: DataController, DelegateCallable, DataStorePro
         guard state == .initialized else { return }
 
         do {
-            try userGroupObserver.startObserving()
+            try userGroupObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                self?.delegateCallback { [weak self] in
+                    guard let self else { return }
+                    $0.userGroupController(self, didUpdateUserGroup: change)
+                }
+            })
             state = .localDataFetched
         } catch {
             log.error("Observing user group with id <\(userGroupId)> failed: \(error). Accessing `userGroup` will always return `nil`")
@@ -187,15 +185,13 @@ extension UserGroupController {
         var userGroupObserverBuilder: (
             _ databaseContainer: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserGroupDTO>,
-            _ itemCreator: @escaping (UserGroupDTO) -> UserGroup,
-            _ fetchedResultsControllerType: NSFetchedResultsController<UserGroupDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<UserGroup, UserGroupDTO> = {
-            BackgroundEntityDatabaseObserver(
+            _ itemCreator: @escaping (UserGroupDTO) -> UserGroup
+        ) -> StateLayerDatabaseObserver<EntityResult, UserGroup, UserGroupDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\UserGroup.id, \UserGroupDTO.id),
-                fetchedResultsControllerType: $3
+                entityItemReuseKeyPaths: (\UserGroup.id, \UserGroupDTO.id)
             )
         }
     }

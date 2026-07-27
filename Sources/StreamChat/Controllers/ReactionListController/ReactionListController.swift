@@ -62,27 +62,14 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var reactionListObserver: BackgroundListDatabaseObserver<ChatMessageReaction, MessageReactionDTO> = {
+    private(set) lazy var reactionListObserver: StateLayerDatabaseObserver<ListResult, ChatMessageReaction, MessageReactionDTO> = {
         let request = MessageReactionDTO.reactionListFetchRequest(query: query)
 
-        let observer = self.environment.createReactionListDatabaseObserver(
+        return self.environment.createReactionListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controller(self, didChangeReactions: changes)
-            }
-        }
-
-        return observer
     }()
 
     var _basePublishers: Any?
@@ -129,7 +116,15 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
     private func startReactionListObserverIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try reactionListObserver.startObserving()
+            try reactionListObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.controller(self, didChangeReactions: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -170,8 +165,8 @@ extension ChatReactionListController {
             _ fetchRequest: NSFetchRequest<MessageReactionDTO>,
             _ itemCreator: @escaping (MessageReactionDTO) throws -> ChatMessageReaction
         )
-            -> BackgroundListDatabaseObserver<ChatMessageReaction, MessageReactionDTO> = {
-                BackgroundListDatabaseObserver(
+            -> StateLayerDatabaseObserver<ListResult, ChatMessageReaction, MessageReactionDTO> = {
+                StateLayerDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,

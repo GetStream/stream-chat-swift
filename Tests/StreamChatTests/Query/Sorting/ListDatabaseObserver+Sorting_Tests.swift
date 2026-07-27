@@ -27,7 +27,8 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
     var database: DatabaseContainer_Spy!
     var query: ChannelListQuery!
-    var observer: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO>!
+    var observer: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>!
+    @Atomic var onDidChange: (([ListChange<ChatChannel>]) -> Void)?
 
     override func tearDown() {
         super.tearDown()
@@ -52,7 +53,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
         try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onDidChange = { changes in
+        onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -90,7 +91,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
         try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onDidChange = { changes in
+        onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -126,7 +127,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
         try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onDidChange = { changes in
+        onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -156,7 +157,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "Observer notifies")
         expectation.expectedFulfillmentCount = 2
-        observer.onDidChange = { _ in
+        onDidChange = { _ in
             expectation.fulfill()
         }
 
@@ -197,7 +198,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
         try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onDidChange = { changes in
+        onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -251,7 +252,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
         createObserver(with: sorting, isBackground: isBackground)
         try startObservingAndWaitForInitialUpdate()
 
-        observer.onDidChange = { changes in
+        onDidChange = { changes in
             expectation.fulfill()
             XCTAssertEqual(changes.count, self.bulkChannels.count)
             XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
@@ -304,7 +305,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
         createObserver(with: sorting, isBackground: isBackground)
         try startObservingAndWaitForInitialUpdate()
 
-        observer.onDidChange = { changes in
+        onDidChange = { changes in
             expectation.fulfill()
             XCTAssertEqual(changes.count, self.bulkChannels.count)
             XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
@@ -320,6 +321,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
     // MARK: - Helpers
 
     private func createObserver(with sorting: [Sorting<ChannelListSortingKey>], isBackground: Bool) {
+        _ = isBackground
         database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "StreamChatModel",
@@ -329,7 +331,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
 
         let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: ChatClientConfig(apiKeyString: "1234"))
 
-        observer = BackgroundListDatabaseObserver(
+        observer = StateLayerDatabaseObserver(
             database: database,
             fetchRequest: request,
             itemCreator: { try $0.asModel() },
@@ -373,7 +375,11 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
     }
 
     private func startObservingAndWaitForInitialUpdate(file: StaticString = #file, line: UInt = #line) throws {
-        try observer.startObservingAndWaitForInitialUpdate(on: self, file: file, line: line)
+        _ = file
+        _ = line
+        try observer.startObserving(onContextDidChange: { [weak self] _, changes in
+            self?.onDidChange?(changes)
+        })
     }
 }
 

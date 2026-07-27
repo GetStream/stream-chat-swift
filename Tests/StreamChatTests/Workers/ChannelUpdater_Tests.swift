@@ -606,7 +606,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Same observer the UIKit `ChatChannelController` and the state-layer `Chat`
         // use for the active page. Wiring it here lets us assert the FRC actually
         // drops out-of-bounds messages after a mid-page jump.
-        let observer = BackgroundListDatabaseObserver<ChatMessage, MessageDTO>(
+        let observer = StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>(
             database: database,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: cid,
@@ -614,9 +614,10 @@ final class ChannelUpdater_Tests: XCTestCase {
                 sortAscending: false,
                 shouldShowShadowedMessages: false
             ),
-            itemCreator: { try $0.asModel() }
+            itemCreator: { try $0.asModel() },
+            itemReuseKeyPaths: nil
         )
-        try observer.startObserving()
+        _ = try observer.startObserving(didChange: { _ in })
         AssertAsync.willBeEqual(observer.items.count, 5)
 
         // Simulate a mid-page jump that lands on messages much older than the cached

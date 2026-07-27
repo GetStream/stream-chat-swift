@@ -209,6 +209,35 @@ final class ChatThreadListController_Tests: XCTestCase {
         XCTAssertEqual(delegate.threads.map(\.title), ["1", "2", "3"])
     }
 
+    @MainActor func test_observer_emitsInitialInsertChanges() throws {
+        let threadId = MessageId.unique
+        try client.databaseContainer.writeSynchronously { session in
+            session.saveThreadList(payload: .init(threads: [
+                .dummy(parentMessageId: threadId)
+            ], next: nil))
+        }
+
+        final class Delegate: ChatThreadListControllerDelegate {
+            let expectation = XCTestExpectation(description: "Initial thread change")
+            var changes = [ListChange<ChatThread>]()
+
+            func controller(_ controller: ChatThreadListController, didChangeThreads changes: [ListChange<ChatThread>]) {
+                self.changes = changes
+                expectation.fulfill()
+            }
+        }
+
+        let delegate = Delegate()
+        controller.delegate = delegate
+
+        wait(for: [delegate.expectation], timeout: defaultTimeout)
+        guard case let .insert(thread, index) = try XCTUnwrap(delegate.changes.first) else {
+            return XCTFail("Expected an initial thread insertion")
+        }
+        XCTAssertEqual(thread.parentMessageId, threadId)
+        XCTAssertEqual(index, IndexPath(item: 0, section: 0))
+    }
+
     // MARK: - Filter Predicate Tests
 
     func test_filterPredicate_channelDisabled_returnsExpectedResults() throws {
@@ -274,7 +303,7 @@ extension ChatThreadListController_Tests {
     func makeController(
         query: ThreadListQuery = .init(watch: true),
         repository: ThreadsRepository? = nil,
-        observer: BackgroundListDatabaseObserver<ChatThread, ThreadDTO>? = nil
+        observer: StateLayerDatabaseObserver<ListResult, ChatThread, ThreadDTO>? = nil
     ) -> ChatThreadListController {
         ChatThreadListController(
             query: query,
@@ -284,7 +313,7 @@ extension ChatThreadListController_Tests {
                     self.repositoryMock
                 },
                 createThreadListDatabaseObserver: { database, fetchRequest, itemCreator in
-                    observer ?? BackgroundListDatabaseObserver(
+                    observer ?? StateLayerDatabaseObserver(
                         database: database,
                         fetchRequest: fetchRequest,
                         itemCreator: itemCreator,

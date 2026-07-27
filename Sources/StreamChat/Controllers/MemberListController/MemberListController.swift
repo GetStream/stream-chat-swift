@@ -96,31 +96,27 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         )
     }
 
-    private func createMemberListObserver() -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> {
-        let observer = environment.memberListObserverBuilder(
+    private func createMemberListObserver() -> StateLayerDatabaseObserver<ListResult, ChatChannelMember, MemberDTO> {
+        environment.memberListObserverBuilder(
             client.databaseContainer,
             MemberDTO.members(matching: query),
             { try $0.asModel() }
         )
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.memberListController(self, didChangeMembers: changes)
-            }
-        }
-
-        return observer
     }
 
     private func startObservingIfNeeded() {
         guard state == .initialized else { return }
 
         do {
-            try memberListObserver.startObserving()
+            try memberListObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.memberListController(self, didChangeMembers: changes)
+                }
+            })
             state = .localDataFetched
         } catch {
             log.error("Observing members matching <\(query)> failed: \(error). Accessing `members` will always return `[]`.")
@@ -163,8 +159,8 @@ extension ChatChannelMemberListController {
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) throws -> ChatChannelMember
-        ) -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> = {
-            BackgroundListDatabaseObserver(
+        ) -> StateLayerDatabaseObserver<ListResult, ChatChannelMember, MemberDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,

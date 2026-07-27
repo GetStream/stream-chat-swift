@@ -86,51 +86,27 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var pollVotesObserver: BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
+    private(set) lazy var pollVotesObserver: StateLayerDatabaseObserver<ListResult, PollVote, PollVoteDTO> = {
         let request = PollVoteDTO.pollVoteListFetchRequest(query: query)
 
-        let observer = self.environment.createPollListDatabaseObserver(
+        return self.environment.createPollListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() }
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    return
-                }
-
-                $0.controller(self, didChangeVotes: changes)
-            }
-        }
-
-        return observer
     }()
 
     /// Used for observing the poll for changes.
-    private lazy var pollObserver: BackgroundEntityDatabaseObserver<Poll, PollDTO>? = { [weak self] in
+    private lazy var pollObserver: StateLayerDatabaseObserver<EntityResult, Poll, PollDTO>? = { [weak self] in
         guard let self = self else {
             return nil
         }
         
-        let observer = environment.pollObserverBuilder(
+        return environment.pollObserverBuilder(
             self.client.databaseContainer,
             PollDTO.fetchRequest(for: query.pollId),
-            { try $0.asModel() as Poll },
-            NSFetchedResultsController<PollDTO>.self
+            { try $0.asModel() as Poll }
         )
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] delegate in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                delegate.controller(self, didUpdatePoll: change.item)
-            }
-        }
-
-        return observer
     }()
 
     var _basePublishers: Any?
@@ -210,8 +186,21 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try pollVotesObserver.startObserving()
-            try pollObserver?.startObserving()
+            try pollVotesObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self else { return }
+                    $0.controller(self, didChangeVotes: changes)
+                }
+            })
+            try pollObserver?.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                self?.delegateCallback { [weak self] delegate in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    delegate.controller(self, didUpdatePoll: change.item)
+                }
+            })
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -256,8 +245,8 @@ extension PollVoteListController {
             _ fetchRequest: NSFetchRequest<PollVoteDTO>,
             _ itemCreator: @escaping (PollVoteDTO) throws -> PollVote
         )
-            -> BackgroundListDatabaseObserver<PollVote, PollVoteDTO> = {
-                BackgroundListDatabaseObserver(
+            -> StateLayerDatabaseObserver<ListResult, PollVote, PollVoteDTO> = {
+                StateLayerDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,
@@ -268,15 +257,13 @@ extension PollVoteListController {
         var pollObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<PollDTO>,
-            _ itemCreator: @escaping (PollDTO) throws -> Poll,
-            _ fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<Poll, PollDTO> = {
-            BackgroundEntityDatabaseObserver(
+            _ itemCreator: @escaping (PollDTO) throws -> Poll
+        ) -> StateLayerDatabaseObserver<EntityResult, Poll, PollDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\Poll.id, \PollDTO.id),
-                fetchedResultsControllerType: $3
+                entityItemReuseKeyPaths: (\Poll.id, \PollDTO.id)
             )
         }
     }

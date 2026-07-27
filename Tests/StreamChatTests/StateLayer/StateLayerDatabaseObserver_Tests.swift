@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -25,6 +26,21 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
 
     // MARK: Observing a Single Entity
+
+    func test_startObserving_withEmitInitialChangesFirst_emitsInitialChange() async throws {
+        try await client.mockDatabaseContainer.write { session in
+            try session.saveChannel(payload: self.makeChannelPayload(name: "channel"))
+        }
+
+        let expectation = XCTestExpectation(description: "Initial change")
+        let observer = makeChannelObserver()
+        _ = try observer.startObserving(
+            emitInitialChanges: true,
+            didChange: { _, _ in expectation.fulfill() }
+        )
+
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
+    }
     
     func test_entityDidChangeCount_whenInserting_thenSingleDidChange() async throws {
         let expectation = XCTestExpectation()
@@ -106,7 +122,62 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     // MARK: Observing List
-    
+
+    func test_listItems_returnsOnlyCachedState_beforeObserving() throws {
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(
+                NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+            )
+            item.testId = "id"
+        }
+
+        let fetchRequest = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
+        let observer = StateLayerDatabaseObserver<ListResult, String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            itemReuseKeyPaths: nil
+        )
+
+        XCTAssertEqual([], observer.items)
+    }
+
+    func test_listItems_areSafeToReadConcurrently_afterInitialFetch() throws {
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(
+                NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+            )
+            item.testId = "id"
+        }
+
+        let fetchRequest = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
+        let observer = StateLayerDatabaseObserver<ListResult, String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            itemReuseKeyPaths: nil
+        )
+        XCTAssertEqual(["id"], try observer.startObserving(onContextDidChange: { _, _ in }))
+
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            XCTAssertEqual(["id"], observer.items)
+        }
+    }
+
     func test_listDidChangeCount_whenInserting_thenSingleDidChange() async throws {
         let firstPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
@@ -202,7 +273,178 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(expectedIds, observer.items.map(\.id))
         XCTAssertEqual(2, changeCount)
     }
-    
+
+    func test_listDidNotChange_whenUpdatedItemIsEqualToCachedItem() async throws {
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+        let fetchRequest = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(
+                NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+            )
+            item.testId = "id"
+            item.testValue = "initial"
+        }
+
+        let observer = StateLayerDatabaseObserver<ListResult, String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            itemReuseKeyPaths: nil
+        )
+        let didChange = XCTestExpectation(description: "Equal update is not reported")
+        didChange.isInverted = true
+        XCTAssertEqual(["id"], try observer.startObserving(onContextDidChange: { _, _ in
+            didChange.fulfill()
+        }))
+
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let request = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+            request.predicate = NSPredicate(format: "testId == %@", "id")
+            try XCTUnwrap(context.fetch(request).first).testValue = "updated"
+        }
+
+        await fulfillment(of: [didChange], timeout: 0.2)
+        XCTAssertEqual(["id"], observer.items)
+    }
+
+    func test_listDidChange_whenUpdatedItemDiffersFromCachedItem() async throws {
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+        let fetchRequest = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(
+                NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+            )
+            item.testId = "id"
+            item.testValue = "initial"
+        }
+
+        let observer = StateLayerDatabaseObserver<ListResult, String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testValue ?? "" },
+            itemReuseKeyPaths: nil
+        )
+        let didChange = XCTestExpectation(description: "Different update is reported")
+        var receivedChanges = [ListChange<String>]()
+        XCTAssertEqual(["initial"], try observer.startObserving(onContextDidChange: { _, changes in
+            receivedChanges = changes
+            didChange.fulfill()
+        }))
+
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let request = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+            request.predicate = NSPredicate(format: "testId == %@", "id")
+            try XCTUnwrap(context.fetch(request).first).testValue = "updated"
+        }
+
+        await fulfillment(of: [didChange], timeout: defaultTimeout)
+        XCTAssertEqual([.update("updated", index: IndexPath(item: 0, section: 0))], receivedChanges)
+        XCTAssertEqual(["updated"], observer.items)
+    }
+
+    func test_listItems_areCleared_whenRemovingAllData() async throws {
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+        let fetchRequest = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(
+                NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+            )
+            item.testId = "id"
+        }
+
+        let observer = StateLayerDatabaseObserver<ListResult, String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId },
+            itemReuseKeyPaths: nil
+        )
+        XCTAssertEqual(["id"], try observer.startObserving(onContextDidChange: { _, _ in }))
+        XCTAssertEqual(["id"], observer.items)
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            database.removeAllData { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+
+        XCTAssertEqual([], observer.items)
+    }
+
+    func test_listUpdate_isReported_whenRuntimeSortingReordersCachedItems() async throws {
+        let database = DatabaseContainer_Spy(
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
+            modelName: "TestDataModel",
+            bundle: .testTools
+        )
+        let fetchRequest = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            for (id, value) in [("a", "1"), ("b", "2")] {
+                let item = try XCTUnwrap(
+                    NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+                )
+                item.testId = id
+                item.testValue = value
+            }
+        }
+
+        // FRC order is by testId ascending ([a, b]); runtime sorting orders by value descending ([b, a]),
+        // so the cached list is stored in a different order than the change's index space.
+        let observer = StateLayerDatabaseObserver<ListResult, RuntimeSortedItem, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { RuntimeSortedItem(id: $0.testId, value: $0.testValue ?? "") },
+            itemReuseKeyPaths: (\RuntimeSortedItem.id, \TestManagedObject.testId),
+            runtimeSorting: [SortValue(keyPath: \RuntimeSortedItem.value, isAscending: false)]
+        )
+        let didChange = XCTestExpectation(description: "Update is reported")
+        var receivedChanges = [ListChange<RuntimeSortedItem>]()
+        let started = try observer.startObserving(onContextDidChange: { _, changes in
+            receivedChanges = changes
+            didChange.fulfill()
+        })
+        XCTAssertEqual(["b", "a"], started.map(\.id))
+
+        // Updating "a" to the same value as "b" would collide with the cached item at the change's
+        // index if the cache were indexed by position instead of identity, dropping this real update.
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let request = NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")
+            request.predicate = NSPredicate(format: "testId == %@", "a")
+            try XCTUnwrap(context.fetch(request).first).testValue = "2"
+        }
+
+        await fulfillment(of: [didChange], timeout: defaultTimeout)
+        XCTAssertTrue(receivedChanges.contains { change in
+            if case let .update(item, _) = change { return item.id == "a" } else { return false }
+        })
+    }
+
     // MARK: - Reusing Existing Items
     
     func test_reuseChannels_whenSomeChange_thenOthersAreReused() async throws {
@@ -458,5 +700,16 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
 private extension XCTestCase {
     func waitForDuplicateCallbacks(nanoseconds: UInt64 = 50000) async throws {
         try await Task.sleep(nanoseconds: nanoseconds)
+    }
+}
+
+/// Carries a stable `id` while comparing equal on `value` only, so a runtime-sorted list can hold two
+/// items that are equal by content but distinct by identity.
+private struct RuntimeSortedItem: Equatable {
+    let id: String
+    let value: String
+
+    static func == (lhs: RuntimeSortedItem, rhs: RuntimeSortedItem) -> Bool {
+        lhs.value == rhs.value
     }
 }

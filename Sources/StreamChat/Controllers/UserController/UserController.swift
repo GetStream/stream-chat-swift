@@ -50,15 +50,6 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
 
     /// The observer used to track the user changes in the database.
     private lazy var userObserver = createUserObserver()
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                $0.userController(self, didUpdateUser: change)
-            }
-        }
 
     private let environment: Environment
 
@@ -112,12 +103,11 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         )
     }
 
-    private func createUserObserver() -> BackgroundEntityDatabaseObserver<ChatUser, UserDTO> {
+    private func createUserObserver() -> StateLayerDatabaseObserver<EntityResult, ChatUser, UserDTO> {
         environment.userObserverBuilder(
             client.databaseContainer,
             UserDTO.user(withID: userId),
-            { try $0.asModel() },
-            NSFetchedResultsController<UserDTO>.self
+            { try $0.asModel() }
         )
     }
 
@@ -125,7 +115,15 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         guard state == .initialized else { return }
 
         do {
-            try userObserver.startObserving()
+            try userObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.userController(self, didUpdateUser: change)
+                }
+            })
             state = .localDataFetched
         } catch {
             log.error("Observing user with id <\(userId)> failed: \(error). Accessing `user` will always return `nil`")
@@ -222,15 +220,13 @@ extension ChatUserController {
         var userObserverBuilder: (
             _ databaseContainer: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
-            _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<ChatUser, UserDTO> = {
-            BackgroundEntityDatabaseObserver(
+            _ itemCreator: @escaping (UserDTO) throws -> ChatUser
+        ) -> StateLayerDatabaseObserver<EntityResult, ChatUser, UserDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
-                fetchedResultsControllerType: $3
+                entityItemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
             )
         }
     }

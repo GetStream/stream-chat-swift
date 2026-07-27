@@ -5,6 +5,10 @@
 @preconcurrency import CoreData
 import Foundation
 
+extension Notification.Name {
+    static let databaseContainerDidReset = Notification.Name("io.getstream.database-container-did-reset")
+}
+
 /// Convenience subclass of `NSPersistentContainer` allowing easier setup of the database stack.
 class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     enum Kind: Equatable {
@@ -27,23 +31,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         return context
     }()
 
-    /// This is the same thing as `viewContext` only it doesn’t run on main thread.
-    /// It’s just an optimization for removing as much as possible from the main thread.
-    ///
-    /// Updating DTOs from this context will lead to issues.
-    /// Use `writableContext` to mutate database entities.
-    ///
-    /// Use this context to observe non-time sensitive changes.
-    /// If you need a time sensitive context, use `viewContext` instead.
-    lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
-        let context = newBackgroundContext()
-        context.automaticallyMergesChangesFromParent = true
-        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.setChatClientConfig(chatClientConfig)
-        return context
-    }()
-    
-    /// An immediately reacting NSManagedObjectContext for the chat state layer.
+    /// An immediately reacting NSManagedObjectContext for background read-only work.
     ///
     /// Chat state layer requires that the context is refreshed when a write happens. Otherwise database observers are too slow to react.
     ///
@@ -52,12 +40,12 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// try await chat.loadMessages()
     /// let messages = chat.state.messages
     /// ```
-    private(set) lazy var stateLayerContext: NSManagedObjectContext = {
+    private(set) lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
-        // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
+        // Context is merged manually since automatically is too slow for reacting to changes needed by observers.
         context.automaticallyMergesChangesFromParent = false
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        stateLayerContextRefreshObservers = [
+        backgroundReadOnlyContextRefreshObservers = [
             context.observeChanges(in: writableContext),
             context.observeChanges(in: viewContext)
         ]
@@ -65,7 +53,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         return context
     }()
 
-    private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
+    private var backgroundReadOnlyContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
 
     let chatClientConfig: ChatClientConfig
@@ -73,7 +61,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     static let cachedModels = AllocatedUnfairLock([String: NSManagedObjectModel]())
 
     /// All `NSManagedObjectContext`s this container owns.
-    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
+    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
 
     /// Creates a new `DatabaseContainer` instance.
     ///
@@ -148,7 +136,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     }
 
     deinit {
-        stateLayerContextRefreshObservers.forEach { observer in
+        backgroundReadOnlyContextRefreshObservers.forEach { observer in
             NotificationCenter.default.removeObserver(observer)
         }
         if let observer = loggerNotificationObserver {
@@ -264,7 +252,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     
     func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T) async throws -> T where T: Sendable {
         try await withCheckedThrowingContinuation { continuation in
-            read(from: stateLayerContext, actions) { result in
+            read(from: backgroundReadOnlyContext, actions) { result in
                 continuation.resume(with: result)
             }
         }
@@ -324,14 +312,15 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             if let writableContext = self?.writableContext, let allContext = self?.allContext {
                 writableContext.invalidateCurrentUserCache()
                 writableContext.reset()
-                
+
                 for context in allContext where context != writableContext {
                     context.performAndWait {
                         context.invalidateCurrentUserCache()
                         context.reset()
                     }
                 }
-                
+                NotificationCenter.default.post(name: .databaseContainerDidReset, object: self)
+
                 let downloadsDirectory = URL.streamAttachmentDownloadsDirectory(
                     baseURL: self?.chatClientConfig.localAttachmentDownloadsFolderURL
                 )

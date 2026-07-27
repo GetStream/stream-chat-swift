@@ -85,7 +85,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
                 setRepliesObserver()
 
                 do {
-                    try repliesObserver?.startObserving()
+                    try startRepliesObserver()
                 } catch {
                     log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
                     state = .localDataFetchFailed(ClientError(with: error))
@@ -167,20 +167,10 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The observer used to listen to message updates
     private lazy var messageObserver = createMessageObserver()
-        .onChange { [weak self] change in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.messageController(self, didChangeMessage: change)
-            }
-        }
 
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
-    private var repliesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var repliesObserver: StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO>?
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
@@ -251,8 +241,16 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     internal func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try messageObserver.startObserving()
-            try repliesObserver?.startObserving()
+            try messageObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, change in
+                self?.delegateCallback { [weak self] in
+                    guard let self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+                    $0.messageController(self, didChangeMessage: change)
+                }
+            })
+            try startRepliesObserver()
             reactions = Array(messageObserver.item?.latestReactions.sorted(by: { $0.updatedAt > $1.updatedAt }) ?? [])
 
             state = .localDataFetched
@@ -1124,30 +1122,26 @@ extension ChatMessageController {
         var messageObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
-            _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO> = {
-            BackgroundEntityDatabaseObserver(
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage
+        ) -> StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                fetchedResultsControllerType: $3
+                entityItemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
         }
 
         var repliesObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
-            _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
-            .init(
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage
+        ) -> StateLayerDatabaseObserver<ListResult, ChatMessage, MessageDTO> = {
+            StateLayerDatabaseObserver(
                 database: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
-                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                fetchedResultsControllerType: $3
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
         }
 
@@ -1163,15 +1157,12 @@ extension ChatMessageController {
 // MARK: - Private
 
 private extension ChatMessageController {
-    func createMessageObserver() -> BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO> {
-        let observer = environment.messageObserverBuilder(
+    func createMessageObserver() -> StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO> {
+        environment.messageObserverBuilder(
             client.databaseContainer,
             MessageDTO.message(withID: messageId),
-            { try $0.asModel() },
-            NSFetchedResultsController<MessageDTO>.self
+            { try $0.asModel() }
         )
-
-        return observer
     }
 
     func setRepliesObserver() {
@@ -1187,21 +1178,22 @@ private extension ChatMessageController {
                 sortAscending: sortAscending,
                 shouldShowShadowedMessages: shouldShowShadowedMessages
             ),
-            { try $0.asModel() as ChatMessage },
-            NSFetchedResultsController<MessageDTO>.self
+            { try $0.asModel() as ChatMessage }
         )
-        observer.onDidChange = { [weak self] changes in
+        repliesObserver = observer
+    }
+
+    func startRepliesObserver() throws {
+        try repliesObserver?.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
             self?.delegateCallback { [weak self] in
-                guard let self = self else {
+                guard let self else {
                     log.warning("Callback called while self is nil")
                     return
                 }
                 log.debug("didChangeReplies: \(changes.map(\.debugDescription))")
                 $0.messageController(self, didChangeReplies: changes)
             }
-        }
-
-        repliesObserver = observer
+        })
     }
 }
 

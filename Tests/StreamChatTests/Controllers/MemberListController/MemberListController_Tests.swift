@@ -99,24 +99,6 @@ final class MemberListController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
-        // Update observer to throw the error.
-        let observerError = TestError()
-        env.memberListObserverSynchronizeError = observerError
-
-        // Simulate `synchronize` call.
-        nonisolated(unsafe) var synchronizeError: Error?
-        controller.synchronize { error in
-            synchronizeError = error
-        }
-
-        // Assert controller is in `localDataFetchFailed` state.
-        XCTAssertEqual(controller.state, .localDataFetchFailed(ClientError(with: observerError)))
-
-        // Assert error from observer is forwarded.
-        AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
-    }
-
     func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
         nonisolated(unsafe) var synchronizeError: Error?
@@ -134,17 +116,6 @@ final class MemberListController_Tests: XCTestCase {
             // Assert error from updater is forwarded.
             Assert.willBeEqual(synchronizeError as? TestError, updaterError)
         }
-    }
-
-    func test_synchronize_doesNotInvokeUpdater_ifObserverFails() {
-        // Update observer to throw the error.
-        env.memberListObserverSynchronizeError = TestError()
-
-        // Simulate `synchronize` call.
-        controller.synchronize()
-
-        // Assert updater in not called.
-        XCTAssertNil(env.memberListUpdater?.load_query)
     }
 
     func test_synchronize_callsUserUpdater_ifObserverSucceeds() {
@@ -191,10 +162,7 @@ final class MemberListController_Tests: XCTestCase {
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
 
-        // Update observer to throw the error
-        env.memberListObserver?.synchronizeError = TestError()
-
-        // Set `delegate` / call `synchronize` / access `member` again
+        // Access members again.
         _ = controller.members
 
         // Assert controllers stays in `localDataFetched`
@@ -432,9 +400,6 @@ final class MemberListController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var memberListUpdater: ChannelMemberListUpdater_Mock?
-    @Atomic var memberListObserver: BackgroundListDatabaseObserver_Mock<ChatChannelMember, MemberDTO>?
-    @Atomic var memberListObserverSynchronizeError: Error?
-
     lazy var environment: ChatChannelMemberListController.Environment = .init(
         memberListUpdaterBuilder: { [unowned self] in
             self.memberListUpdater = .init(
@@ -442,16 +407,6 @@ private class TestEnvironment {
                 apiClient: $1
             )
             return self.memberListUpdater!
-        },
-        memberListObserverBuilder: { [unowned self] in
-            self.memberListObserver = .init(
-                database: $0,
-                fetchRequest: $1,
-                itemCreator: $2,
-                itemReuseKeyPaths: (\ChatChannelMember.id, \MemberDTO.id)
-            )
-            self.memberListObserver?.synchronizeError = self.memberListObserverSynchronizeError
-            return self.memberListObserver!
         }
     )
 }

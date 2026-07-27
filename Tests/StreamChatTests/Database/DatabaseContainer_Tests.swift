@@ -254,6 +254,13 @@ final class DatabaseContainer_Tests: XCTestCase {
             XCTAssertEqual(database.backgroundReadOnlyContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
         }
     }
+
+    func test_backgroundReadOnlyContext_isImmediatelyRefreshed_andIsOnlyIncludedOnce() {
+        let database = DatabaseContainer_Spy(kind: .inMemory)
+
+        XCTAssertEqual(3, database.allContext.count)
+        XCTAssertEqual(1, database.allContext.filter { $0 === database.backgroundReadOnlyContext }.count)
+    }
     
     func test_storingMicrosecondsDate() throws {
         let expectedCreatedAt = Date(timeIntervalSinceReferenceDate: 0.000123123)

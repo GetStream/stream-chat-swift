@@ -42,23 +42,18 @@ final class CurrentUserController_Tests: XCTestCase {
 
     // MARK: - currentUser tests
 
-    func test_currentUser_startsObserving_returnsCurrentUserObserverItem() {
+    func test_currentUser_startsObserving_returnsCachedCurrentUser() throws {
         let expectedId = UserId.unique
-        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique, threads: .unique)
-
-        env.currentUserObserverItem = .mock(currentUserId: expectedId, unreadCount: expectedUnreadCount)
+        try client.databaseContainer.createCurrentUser(id: expectedId)
 
         XCTAssertEqual(controller.currentUser?.id, expectedId)
-        XCTAssertTrue(env.currentUserObserver.startObservingCalled)
     }
 
     // MARK: - Synchronize tests
 
-    func test_synchronize_localDataIsAvailable() {
+    func test_synchronize_localDataIsAvailable() throws {
         let expectedId = UserId.unique
-        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique, threads: .unique)
-
-        env.currentUserObserverItem = .mock(currentUserId: expectedId, unreadCount: expectedUnreadCount)
+        try client.databaseContainer.createCurrentUser(id: expectedId)
 
         let expectation = self.expectation(description: "synchronize called")
 
@@ -76,36 +71,14 @@ final class CurrentUserController_Tests: XCTestCase {
         // Assert user is correct
         XCTAssertEqual(controller.currentUser?.id, expectedId)
 
-        // Assert unread-count is correct
-        XCTAssertEqual(controller.unreadCount, expectedUnreadCount)
-
         waitForExpectations(timeout: defaultTimeout, handler: nil)
     }
 
-    func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
-        // Update observer to throw the error.
-        let observerError = TestError()
-        env.currentUserObserverStartUpdatingError = observerError
-
-        // Simulate `synchronize` call.
-        nonisolated(unsafe) var synchronizeError: Error?
-        controller.synchronize { error in
-            synchronizeError = error
-        }
-
-        // Assert controller is in `localDataFetchFailed` state.
-        XCTAssertEqual(controller.state, .localDataFetchFailed(ClientError(with: observerError)))
-
-        // Assert error from observer is forwarded.
-        AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
-    }
-
-    func test_synchronize_changesControllerState() {
+    func test_synchronize_changesControllerState() throws {
         // Check if controller has initialized state initially.
         XCTAssertEqual(controller.state, .initialized)
 
-        // Simulate current user
-        env.currentUserObserverItem = .mock(currentUserId: .unique)
+        try client.databaseContainer.createCurrentUser()
 
         nonisolated(unsafe) var synchronizeCalled = false
         controller.synchronize { error in
@@ -122,12 +95,11 @@ final class CurrentUserController_Tests: XCTestCase {
         }
     }
 
-    func test_synchronize_changesControllerStateOnError() {
+    func test_synchronize_changesControllerStateOnError() throws {
         // Check if controller has initialized state initially.
         XCTAssertEqual(controller.state, .initialized)
 
-        // Simulate current user
-        env.currentUserObserverItem = .mock(currentUserId: .unique)
+        try client.databaseContainer.createCurrentUser()
 
         nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { error in
@@ -968,19 +940,10 @@ final class CurrentUserController_Tests: XCTestCase {
 }
 
 private class TestEnvironment {
-    var currentUserObserver: BackgroundEntityDatabaseObserver_Mock<CurrentChatUser, CurrentUserDTO>!
-    var currentUserObserverItem: CurrentChatUser?
-    var currentUserObserverStartUpdatingError: Error?
-
     var currentUserUpdater: CurrentUserUpdater_Mock!
 
     lazy var currentUserControllerEnvironment: CurrentChatUserController
-        .Environment = .init(currentUserObserverBuilder: { [unowned self] in
-            self.currentUserObserver = .init(database: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
-            self.currentUserObserver.synchronizeError = self.currentUserObserverStartUpdatingError
-            self.currentUserObserver.item_mock = self.currentUserObserverItem
-            return self.currentUserObserver!
-        }, currentUserUpdaterBuilder: { [unowned self] db, client in
+        .Environment = .init(currentUserUpdaterBuilder: { [unowned self] db, client in
             self.currentUserUpdater = CurrentUserUpdater_Mock(database: db, apiClient: client)
             return self.currentUserUpdater!
         })

@@ -81,33 +81,21 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
+    private(set) lazy var channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO> = {
         if let updated = worker.loadPredefinedFilter(for: query) {
             query = updated
         }
         return makeChannelListObserver()
     }()
 
-    private func makeChannelListObserver() -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> {
+    private func makeChannelListObserver() -> StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO> {
         let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
-        let observer = environment.createChannelListDatabaseObserver(
+        return environment.createChannelListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() },
             query.runtimeSortingValues
         )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
-                $0.controller(self, didChangeChannels: changes)
-            }
-        }
-        return observer
     }
 
     var _basePublishers: Any?
@@ -267,7 +255,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func startChannelListObserverIfNeeded() {
         guard state == .initialized else { return }
         do {
-            try channelListObserver.startObserving()
+            try startObservingChannelList()
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -278,11 +266,24 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func updateChannelListObserver() {
         channelListObserver = makeChannelListObserver()
         do {
-            try channelListObserver.startObserving()
+            try startObservingChannelList()
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
             log.error("Failed to update the channel list observer: \(error)")
         }
+    }
+
+    private func startObservingChannelList() throws {
+        try channelListObserver.startObserving(emitInitialChanges: true, didChange: { [weak self] _, changes in
+            self?.delegateCallback { [weak self] in
+                guard let self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+                log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
+                $0.controller(self, didChangeChannels: changes)
+            }
+        })
     }
 }
 
@@ -317,8 +318,8 @@ extension ChatChannelListController {
             _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel,
             _ sort: [SortValue<ChatChannel>]
         )
-            -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-                BackgroundListDatabaseObserver(
+            -> StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO> = {
+                StateLayerDatabaseObserver(
                     database: $0,
                     fetchRequest: $1,
                     itemCreator: $2,
