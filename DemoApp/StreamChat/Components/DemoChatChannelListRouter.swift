@@ -673,6 +673,41 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     channelController.createSystemMessage(text: message)
                 }
             }),
+            .init(title: "Add member with warning message", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
+                    guard let id = id, !id.isEmpty else {
+                        self.rootViewController.presentAlert(title: "User ID is not valid")
+                        return
+                    }
+                    channelController.addMembers(
+                        [MemberInfo(userId: id, extraData: nil)],
+                        systemMessage: .warning(text: "\(id) was added to the channel")
+                    ) { error in
+                        guard let error else { return }
+                        self.rootViewController.presentAlert(
+                            title: "Couldn't add user \(id) to channel \(cid)",
+                            message: "\(error)"
+                        )
+                    }
+                }
+            }),
+            .init(title: "Remove member with warning message", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.removeMembers(
+                            userIds: [member.id],
+                            systemMessage: .warning(text: "\(member.id) was removed from the channel")
+                        ) { [unowned self] error in
+                            guard let error else { return }
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't remove user \(member.id) from channel \(cid)",
+                                message: "\(error)"
+                            )
+                        }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
             .init(title: "Send message without url enriching", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {

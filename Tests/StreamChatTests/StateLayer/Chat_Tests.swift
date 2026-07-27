@@ -393,7 +393,7 @@ final class Chat_Tests: XCTestCase {
         // Call with both hideHistory and hideHistoryBefore
         try await chat.addMembers(
             members,
-            systemMessage: nil,
+            systemMessage: nil as String?,
             hideHistory: true,
             hideHistoryBefore: hideHistoryBefore
         )
@@ -429,6 +429,28 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
+    func test_addMembers_withSystemMessageExtraData_passesSystemMessageToChannelUpdater() async throws {
+        env.channelUpdaterMock.addMembers_completion_result = .success(())
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
+        let systemMessage = SystemMessage(text: "My system message", extraData: ["warning": .bool(true)])
+
+        try await chat.addMembers(members, systemMessage: systemMessage)
+
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.addMembers_systemMessage)
+        XCTAssertEqual(["warning": .bool(true)], env.channelUpdaterMock.addMembers_systemMessage?.extraData)
+    }
+
+    func test_removeMembers_withSystemMessageExtraData_passesSystemMessageToChannelUpdater() async throws {
+        env.channelUpdaterMock.removeMembers_completion_result = .success(())
+        let memberIds: [UserId] = [.unique]
+        let systemMessage = SystemMessage(text: "My system message", extraData: ["warning": .bool(true)])
+
+        try await chat.removeMembers(memberIds, systemMessage: systemMessage)
+
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.removeMembers_systemMessage)
+        XCTAssertEqual(["warning": .bool(true)], env.channelUpdaterMock.removeMembers_systemMessage?.extraData)
+    }
+
     func test_loadMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         
@@ -1912,7 +1934,17 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
         XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
     }
-    
+
+    func test_truncate_withSystemMessageExtraData_passesSystemMessageToChannelUpdater() async throws {
+        env.channelUpdaterMock.truncateChannel_completion_result = .success(())
+        let systemMessage = SystemMessage(text: "Channel truncated", extraData: ["warning": .bool(true)])
+
+        try await chat.truncate(systemMessage: systemMessage)
+
+        XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessageModel)
+        XCTAssertEqual(["warning": .bool(true)], env.channelUpdaterMock.truncateChannel_systemMessageModel?.extraData)
+    }
+
     func test_truncate_whenChannelUpdaterFails_thenTruncateActionSucceeds() async throws {
         env.channelUpdaterMock.truncateChannel_completion_result = .failure(expectedTestError)
         
