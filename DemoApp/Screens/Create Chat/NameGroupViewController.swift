@@ -153,7 +153,7 @@ extension NameGroupViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: UserCell.reuseIdentifier) as? UserCell else { return UITableViewCell() }
         let user = selectedUsers[indexPath.row]
 
-        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL, with: ImageLoaderOptions())
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL)
 
         cell.nameLabel.text = user.name
         cell.premiumImageView.isHidden = true

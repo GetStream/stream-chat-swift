@@ -164,8 +164,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             .mediaLoader
             .loadImage(
                 into: imageView,
-                from: currentUserController.currentUser?.imageURL,
-                with: ImageLoaderOptions()
+                from: currentUserController.currentUser?.imageURL
             )
 
         if let typingIndicatorsEnabled = currentUserController.currentUser?.privacySettings.typingIndicators?.enabled {

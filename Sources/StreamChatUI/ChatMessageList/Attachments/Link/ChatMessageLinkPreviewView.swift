@@ -143,8 +143,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
 
         components.mediaLoader.loadImage(
             into: imagePreview,
-            from: payload?.previewURL,
-            with: ImageLoaderOptions()
+            from: payload?.previewURL
         )
         imagePreview.isHidden = isImageHidden
 

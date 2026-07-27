@@ -55,7 +55,7 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
         }
 
         let member = members[indexPath.row]
-        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: member.imageURL, with: ImageLoaderOptions())
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: member.imageURL)
         cell.nameLabel.text = member.name ?? member.id
         if let roles = member.teamsRole {
             cell.detailsLabel.text = roles.map { "\($0.key): \($0.value.rawValue)" }.joined(separator: ", ")

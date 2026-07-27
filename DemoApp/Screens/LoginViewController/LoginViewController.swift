@@ -62,7 +62,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
 
         switch user {
         case let .credentials(userCredentials):
-            Components.default.mediaLoader.loadImage(into: cell.avatarView, from: userCredentials.avatarURL, with: ImageLoaderOptions())
+            Components.default.mediaLoader.loadImage(into: cell.avatarView, from: userCredentials.avatarURL)
             cell.avatarView.backgroundColor = .clear
             cell.nameLabel.text = userCredentials.name
             cell.descriptionLabel.text = "Stream test user"
