@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChatCommonUI
-import StreamCore
 import UIKit
 import XCTest
 
@@ -14,7 +13,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        StreamImageDownloaderStubURLProtocol.reset()
+        StreamImageDownloaderURLProtocolMock.reset()
         cacheDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent("StreamImageDownloader_Tests", isDirectory: true)
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -29,7 +28,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
         urlCache = nil
         try? FileManager.default.removeItem(at: cacheDirectory)
         cacheDirectory = nil
-        StreamImageDownloaderStubURLProtocol.reset()
+        StreamImageDownloaderURLProtocolMock.reset()
         try super.tearDownWithError()
     }
 
@@ -49,14 +48,14 @@ final class StreamImageDownloader_Tests: XCTestCase {
         XCTAssertEqual(configuration.urlCache?.diskCapacity, 4 * 1024 * 1024)
     }
 
-    func test_downloadImage_downloadsAndDecodesImage() {
+    func test_downloadImage_downloadsAndDecodesImage() async throws {
         let url = URL(string: "https://example.com/a.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 40, height: 40))
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 40, height: 40))
 
-        let received = downloadSynchronously(url: url, options: ImageDownloadingOptions())
+        let received = try await download(url: url, options: ImageDownloadingOptions())
 
-        XCTAssertNotNil(try? received?.get())
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1)
+        XCTAssertNotNil(received.image.cgImage)
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.requestCount(for: url), 1)
     }
 
     @MainActor
@@ -68,7 +67,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
         sut.downloadImage(url: url, options: ImageDownloadingOptions()) { result = $0 }
 
         XCTAssertNotNil(result, "A cached image must complete synchronously")
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 0)
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.requestCount(for: url), 0)
     }
 
     @MainActor
@@ -86,7 +85,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
         sut.downloadImage(url: reloadedURL, options: ImageDownloadingOptions(cachingKey: cachingKey)) { result = $0 }
 
         XCTAssertNotNil(try? result?.get(), "A re-signed URL should hit the cache seeded under the caching key")
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: reloadedURL), 0)
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.requestCount(for: reloadedURL), 0)
     }
 
     func test_memoryCache_distinguishesFractionalResizeDimensions() {
@@ -123,7 +122,7 @@ final class StreamImageDownloader_Tests: XCTestCase {
 
     func test_downloadImage_coalescesConcurrentRequests() {
         let url = URL(string: "https://example.com/dedup.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 40, height: 40), delay: 0.05)
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 40, height: 40), delay: 0.05)
 
         let expectation = expectation(description: "all completions")
         expectation.expectedFulfillmentCount = 10
@@ -132,12 +131,12 @@ final class StreamImageDownloader_Tests: XCTestCase {
         }
         wait(for: [expectation], timeout: 5)
 
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1, "Concurrent requests should share a single download")
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.requestCount(for: url), 1, "Concurrent requests should share a single download")
     }
 
     func test_downloadImage_differentResizeVariants_shareSourceDownload() {
         let url = URL(string: "https://example.com/variants.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 400, height: 400), delay: 0.05)
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 400, height: 400), delay: 0.05)
         let expectation = expectation(description: "both variants")
         expectation.expectedFulfillmentCount = 2
 
@@ -151,15 +150,15 @@ final class StreamImageDownloader_Tests: XCTestCase {
         ) { _ in expectation.fulfill() }
 
         wait(for: [expectation], timeout: 5)
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1)
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.requestCount(for: url), 1)
     }
 
-    func test_downloadImage_storesTheResponseInTheURLCacheWithItsCacheHeaders() async {
+    func test_downloadImage_storesTheResponseInTheURLCacheWithItsCacheHeaders() async throws {
         let url = URL(string: "https://example.com/cacheable.png")!
         let data = pngData(width: 40, height: 40)
-        StreamImageDownloaderStubURLProtocol.stub(url, data: data, headers: ["Cache-Control": "max-age=3600"])
+        StreamImageDownloaderURLProtocolMock.stub(url, data: data, headers: ["Cache-Control": "max-age=3600"])
 
-        _ = await download(url: url, options: ImageDownloadingOptions())
+        _ = try await download(url: url, options: ImageDownloadingOptions())
 
         let cached = urlCache.cachedResponse(for: URLRequest(url: url))
         XCTAssertEqual(cached?.data, data)
@@ -171,11 +170,12 @@ final class StreamImageDownloader_Tests: XCTestCase {
 
     func test_downloadImage_whenDownloadedDataIsInvalid_fails() async {
         let url = URL(string: "https://example.com/invalid.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: Data([0x00]))
+        StreamImageDownloaderURLProtocolMock.stub(url, data: Data([0x00]))
 
-        let result = await download(url: url, options: ImageDownloadingOptions())
-
-        XCTAssertThrowsError(try result.get())
+        do {
+            _ = try await download(url: url, options: ImageDownloadingOptions())
+            XCTFail("Expected invalid image data to throw")
+        } catch {}
     }
 
     func test_removeAllImagesFromDiskCache_clearsTheURLCache() {
@@ -184,67 +184,57 @@ final class StreamImageDownloader_Tests: XCTestCase {
         XCTAssertEqual(urlCache.removeAllCachedResponsesCallCount, 1)
     }
 
-    func test_downloadImage_passesThroughGIFData() {
+    func test_downloadImage_passesThroughGIFData() async throws {
         let url = URL(string: "https://example.com/anim.gif")!
         let gif = gifData()
-        StreamImageDownloaderStubURLProtocol.stub(url, data: gif)
+        StreamImageDownloaderURLProtocolMock.stub(url, data: gif)
 
-        let received = try? downloadSynchronously(url: url, options: ImageDownloadingOptions())?.get()
+        let received = try await download(url: url, options: ImageDownloadingOptions())
 
-        XCTAssertEqual(received?.animatedImageData, gif)
+        XCTAssertEqual(received.animatedImageData, gif)
     }
 
-    func test_downloadImage_appliesResize() {
+    func test_downloadImage_appliesResize() async throws {
         let url = URL(string: "https://example.com/big.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 400, height: 400))
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 400, height: 400))
 
-        let received = try? downloadSynchronously(url: url, options: ImageDownloadingOptions(resize: CGSize(width: 50, height: 50)))?.get()
+        let received = try await download(url: url, options: ImageDownloadingOptions(resize: CGSize(width: 50, height: 50)))
 
-        XCTAssertEqual(received?.image.cgImage?.width, Int((50 * StreamImageDownloader.displayScale).rounded()))
+        XCTAssertEqual(received.image.cgImage?.width, Int((50 * StreamImageDownloader.displayScale).rounded()))
     }
 
-    func test_downloadImage_forwardsHeaders() {
+    func test_downloadImage_forwardsHeaders() async throws {
         let url = URL(string: "https://example.com/headers.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 20, height: 20))
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 20, height: 20))
 
-        _ = downloadSynchronously(url: url, options: ImageDownloadingOptions(headers: ["Authorization": "Bearer token"]))
+        _ = try await download(url: url, options: ImageDownloadingOptions(headers: ["Authorization": "Bearer token"]))
 
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.headers(for: url)?["Authorization"], "Bearer token")
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.headers(for: url)?["Authorization"], "Bearer token")
     }
 
-    func test_downloadImage_failsOnHTTPError() {
+    func test_downloadImage_failsOnHTTPError() async {
         let url = URL(string: "https://example.com/error.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, statusCode: 500, data: nil)
+        StreamImageDownloaderURLProtocolMock.stub(url, statusCode: 500, data: nil)
 
-        let received = downloadSynchronously(url: url, options: ImageDownloadingOptions())
-
-        XCTAssertThrowsError(try received?.get())
+        do {
+            _ = try await download(url: url, options: ImageDownloadingOptions())
+            XCTFail("Expected the download to fail")
+        } catch {}
     }
 
     // MARK: - Helpers
 
-    private func downloadSynchronously(url: URL, options: ImageDownloadingOptions) -> Result<DownloadedImage, Error>? {
-        let expectation = expectation(description: "download \(url)")
-        let result = AllocatedUnfairLock<Result<DownloadedImage, Error>?>(nil)
-        sut.downloadImage(url: url, options: options) {
-            result.value = $0
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 5)
-        return result.value
-    }
-
-    private func download(url: URL, options: ImageDownloadingOptions) async -> Result<DownloadedImage, Error> {
-        await withCheckedContinuation { continuation in
+    private func download(url: URL, options: ImageDownloadingOptions) async throws -> DownloadedImage {
+        try await withCheckedThrowingContinuation { continuation in
             sut.downloadImage(url: url, options: options) {
-                continuation.resume(returning: $0)
+                continuation.resume(with: $0)
             }
         }
     }
 
     private func makeLoader() -> StreamImageDownloader {
         let configuration = URLSessionConfiguration.default
-        configuration.protocolClasses = [StreamImageDownloaderStubURLProtocol.self]
+        configuration.protocolClasses = [StreamImageDownloaderURLProtocolMock.self]
         configuration.urlCache = urlCache
         return StreamImageDownloader(
             memoryCostLimit: 50 * 1024 * 1024,
@@ -290,9 +280,9 @@ private final class RecordingURLCache: URLCache, @unchecked Sendable {
     }
 }
 
-// MARK: - URLProtocol stub
+// MARK: - URLProtocol mock
 
-private final class StreamImageDownloaderStubURLProtocol: URLProtocol {
+private final class StreamImageDownloaderURLProtocolMock: URLProtocol {
     private struct Stub {
         let statusCode: Int
         let data: Data?
