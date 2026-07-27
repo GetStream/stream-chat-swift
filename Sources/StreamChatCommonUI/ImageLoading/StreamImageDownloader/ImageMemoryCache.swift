@@ -9,8 +9,7 @@ import UIKit
 ///
 /// Thread-safe via a single ``AllocatedUnfairLock``. Eviction is least-recently-used:
 /// a lookup refreshes an entry's recency and inserting past the cost limit removes the
-/// oldest entries first. Recency uses a monotonic counter, and eviction sorts on it —
-/// the same simple dictionary-based approach used by ``LRUDiskCache`` (no linked list).
+/// oldest entries first.
 final class ImageMemoryCache: @unchecked Sendable {
     private struct Entry {
         let image: DownloadedImage

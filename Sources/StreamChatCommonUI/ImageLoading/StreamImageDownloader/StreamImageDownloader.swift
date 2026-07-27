@@ -9,23 +9,20 @@ import UIKit
 /// The default image loading pipeline used by the Stream UI SDKs.
 ///
 /// Downloads images over `URLSession`, downscales them to the requested size, and caches
-/// the result both in memory and on disk (both least-recently-used). Concurrent requests
-/// for the same image are coalesced into a single download. Conforms to ``ImageDownloading``
-/// so it can back ``StreamMediaLoader``.
+/// the decoded result in a least-recently-used in-memory cache. The original image data is
+/// cached on disk by the session's `URLCache`, which honors the HTTP caching headers of the
+/// response, so expired images are revalidated instead of being served indefinitely.
+/// Concurrent requests for the same image are coalesced into a single download.
 public final class StreamImageDownloader: ImageDownloading, Sendable {
     private typealias ImageCompletion = @MainActor (Result<DownloadedImage, Error>) -> Void
     private typealias SourceCompletion = @Sendable (Result<Data, Error>) -> Void
 
     private let memoryCache: ImageMemoryCache
-    private let diskCache: LRUDiskCache
-    private let urlSession: URLSession
+    let urlSession: URLSession
     private let inFlightImages: AllocatedUnfairLock<[String: [ImageCompletion]]>
     private let inFlightSources: AllocatedUnfairLock<[String: [SourceCompletion]]>
 
     static let displayScale: CGFloat = UITraitCollection.current.displayScale
-
-    /// Decoding runs on a concurrent queue because disk cache completions arrive on a
-    /// shared serial queue; decoding there would serialize decodes and block file I/O.
     private static let decodeQueue = DispatchQueue.global(qos: .userInitiated)
 
     /// Creates an image loader with the given in-memory and on-disk cache capacities.
@@ -40,24 +37,27 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         diskCacheSize: Int = 150 * 1024 * 1024
     ) {
         let configuration = URLSessionConfiguration.default
-        configuration.urlCache = nil
-        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.urlCache = {
+            guard diskCacheSize > 0 else { return nil }
+            let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+                ?? URL(fileURLWithPath: NSTemporaryDirectory())
+            return URLCache(
+                memoryCapacity: 0,
+                diskCapacity: diskCacheSize,
+                directory: base.appendingPathComponent("io.getstream.StreamImageDownloader", isDirectory: true)
+            )
+        }()
         self.init(
             memoryCostLimit: max(0, memoryCacheSize),
-            diskSizeLimit: max(0, diskCacheSize),
-            diskDirectory: Self.defaultDiskDirectory(),
             urlSession: URLSession(configuration: configuration)
         )
     }
 
     init(
         memoryCostLimit: Int,
-        diskSizeLimit: Int,
-        diskDirectory: URL,
         urlSession: URLSession
     ) {
         memoryCache = ImageMemoryCache(maxSizeInBytes: memoryCostLimit)
-        diskCache = LRUDiskCache(directory: diskDirectory, maxSizeInBytes: diskSizeLimit)
         self.urlSession = urlSession
         inFlightImages = AllocatedUnfairLock([:])
         inFlightSources = AllocatedUnfairLock([:])
@@ -102,28 +102,23 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
 
     // MARK: - Cache Management
 
-    /// Removes every image from the in-memory cache. The disk cache is left intact.
-    public func removeAllImagesFromMemoryCache() {
-        memoryCache.removeAll()
-    }
-
     /// Evicts least-recently-used images from the in-memory cache until its total cost
     /// drops to the given limit in bytes.
     public func trimMemoryCache(toCost limit: Int) {
         memoryCache.trim(toCost: limit)
     }
 
-    /// Removes every image from the on-disk cache. The in-memory cache is left intact.
-    ///
-    /// - Parameter completion: Called on the main actor after the cache has been cleared.
-    public func removeAllImagesFromDiskCache(completion: (@MainActor @Sendable () -> Void)? = nil) {
-        diskCache.removeAll {
-            guard let completion else { return }
-            DispatchQueue.main.async { completion() }
-        }
+    /// Removes every image from the in-memory cache. The disk cache is left intact.
+    public func removeAllImagesFromMemoryCache() {
+        memoryCache.removeAll()
     }
 
-    // MARK: - Internal (test seam)
+    /// Removes every image from the on-disk cache. The in-memory cache is left intact.
+    public func removeAllImagesFromDiskCache() {
+        urlSession.configuration.urlCache?.removeAllCachedResponses()
+    }
+
+    // MARK: - Internal
 
     func store(_ image: DownloadedImage, for url: URL, options: ImageDownloadingOptions) {
         memoryCache.store(image, forKey: cacheKey(url: url, options: options))
@@ -144,41 +139,14 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         let resize = options.resize
         let sourceKey = sourceKey(url: url, options: options)
 
-        diskCache.data(forKey: sourceKey) { data in
-            guard let data else {
-                self.download(url: url, key: key, sourceKey: sourceKey, resize: resize, headers: options.headers, completion: completion)
-                return
-            }
-            self.decode(data, resize: resize, key: key) { image in
-                if let image {
-                    completion(.success(image))
-                } else {
-                    self.diskCache.remove(forKey: sourceKey) {
-                        self.download(url: url, key: key, sourceKey: sourceKey, resize: resize, headers: options.headers, completion: completion)
-                    }
-                }
-            }
-        }
-    }
-
-    private func download(
-        url: URL,
-        key: String,
-        sourceKey: String,
-        resize: CGSize?,
-        headers: [String: String]?,
-        completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
-    ) {
-        loadSourceData(url: url, sourceKey: sourceKey, headers: headers) { result in
+        loadSourceData(url: url, sourceKey: sourceKey, headers: options.headers) { result in
             switch result {
             case let .success(data):
                 self.decode(data, resize: resize, key: key) { image in
                     if let image {
                         completion(.success(image))
                     } else {
-                        self.diskCache.remove(forKey: sourceKey) {
-                            completion(.failure(ClientError.ImageDecodingFailed()))
-                        }
+                        completion(.failure(ClientError.ImageDecodingFailed()))
                     }
                 }
             case let .failure(error):
@@ -221,18 +189,9 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         guard isFirstRequest else { return }
 
         fetch(url: url, headers: headers) { result in
-            let deliver: @Sendable () -> Void = {
-                let completions = self.inFlightSources.withLock { $0.removeValue(forKey: sourceKey) ?? [] }
-                for completion in completions {
-                    completion(result)
-                }
-            }
-            switch result {
-            case let .success(data):
-                // Persist before delivering so a reload finds the data on disk.
-                self.diskCache.store(data, forKey: sourceKey) { _ in deliver() }
-            case .failure:
-                deliver()
+            let completions = self.inFlightSources.withLock { $0.removeValue(forKey: sourceKey) ?? [] }
+            for completion in completions {
+                completion(result)
             }
         }
     }
@@ -300,14 +259,6 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         case nil:
             return nil
         }
-    }
-
-    // MARK: - Defaults
-
-    private static func defaultDiskDirectory() -> URL {
-        let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-            ?? URL(fileURLWithPath: NSTemporaryDirectory())
-        return base.appendingPathComponent("io.getstream.StreamImageDownloader", isDirectory: true)
     }
 }
 

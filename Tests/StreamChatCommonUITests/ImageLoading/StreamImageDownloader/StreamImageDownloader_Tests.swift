@@ -2,38 +2,51 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import CryptoKit
 @testable import StreamChatCommonUI
 import StreamCore
 import UIKit
 import XCTest
 
 final class StreamImageDownloader_Tests: XCTestCase {
-    private var diskDirectory: URL!
+    private var cacheDirectory: URL!
+    private var urlCache: RecordingURLCache!
     private var sut: StreamImageDownloader!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         StreamImageDownloaderStubURLProtocol.reset()
-        diskDirectory = FileManager.default.temporaryDirectory
+        cacheDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent("StreamImageDownloader_Tests", isDirectory: true)
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        urlCache = RecordingURLCache(memoryCapacity: 0, diskCapacity: 50 * 1024 * 1024, directory: cacheDirectory)
 
         sut = makeLoader()
     }
 
     override func tearDownWithError() throws {
         sut = nil
-        try? FileManager.default.removeItem(at: diskDirectory)
-        diskDirectory = nil
+        urlCache.removeAllCachedResponses()
+        urlCache = nil
+        try? FileManager.default.removeItem(at: cacheDirectory)
+        cacheDirectory = nil
         StreamImageDownloaderStubURLProtocol.reset()
         try super.tearDownWithError()
     }
 
-    func test_init_acceptsDiskCacheSizeWithoutOtherConfiguration() {
+    func test_init_withZeroDiskCacheSize_disablesTheURLCache() {
         let loader = StreamImageDownloader(diskCacheSize: 0)
 
-        XCTAssertNotNil(loader)
+        XCTAssertNil(loader.urlSession.configuration.urlCache)
+    }
+
+    func test_init_configuresAnHTTPDiskCacheHonouringCacheHeaders() {
+        let loader = StreamImageDownloader(diskCacheSize: 4 * 1024 * 1024)
+
+        let configuration = loader.urlSession.configuration
+        // The default policy is what makes URLSession honour max-age and revalidate with ETags.
+        XCTAssertEqual(configuration.requestCachePolicy, .useProtocolCachePolicy)
+        XCTAssertEqual(configuration.urlCache?.memoryCapacity, 0)
+        XCTAssertEqual(configuration.urlCache?.diskCapacity, 4 * 1024 * 1024)
     }
 
     func test_downloadImage_downloadsAndDecodesImage() {
@@ -141,73 +154,34 @@ final class StreamImageDownloader_Tests: XCTestCase {
         XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1)
     }
 
-    func test_downloadImage_servedFromDiskCacheWithoutNetwork() throws {
-        let url = URL(string: "https://example.com/disk.png")!
-        // Pre-seed the disk cache with the file the loader would look up (no stub → network would fail).
-        try FileManager.default.createDirectory(at: diskDirectory, withIntermediateDirectories: true)
-        try pngData(width: 40, height: 40).write(to: diskDirectory.appendingPathComponent(sha256Hex(url.absoluteString)))
+    func test_downloadImage_storesTheResponseInTheURLCacheWithItsCacheHeaders() async {
+        let url = URL(string: "https://example.com/cacheable.png")!
+        let data = pngData(width: 40, height: 40)
+        StreamImageDownloaderStubURLProtocol.stub(url, data: data, headers: ["Cache-Control": "max-age=3600"])
 
-        let received = downloadSynchronously(url: url, options: ImageDownloadingOptions())
+        _ = await download(url: url, options: ImageDownloadingOptions())
 
-        XCTAssertNotNil(try? received?.get())
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 0)
-    }
-
-    func test_downloadImage_afterLoaderIsRecreated_usesOriginalDataForNewResizeVariant() async throws {
-        let url = URL(string: "https://example.com/persisted.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 400, height: 400))
-        _ = await download(
-            url: url,
-            options: ImageDownloadingOptions(resize: CGSize(width: 50, height: 50))
+        let cached = urlCache.cachedResponse(for: URLRequest(url: url))
+        XCTAssertEqual(cached?.data, data)
+        XCTAssertEqual(
+            (cached?.response as? HTTPURLResponse)?.value(forHTTPHeaderField: "Cache-Control"),
+            "max-age=3600"
         )
-        let reloaded = makeLoader()
-
-        let result = await download(
-            using: reloaded,
-            url: url,
-            options: ImageDownloadingOptions(resize: CGSize(width: 100, height: 100))
-        )
-
-        XCTAssertEqual(try result.get().image.cgImage?.width, Int((100 * StreamImageDownloader.displayScale).rounded()))
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1)
     }
 
-    func test_downloadImage_whenDiskEntryIsCorrupt_removesItAndRefetches() async throws {
-        let url = URL(string: "https://example.com/corrupt.png")!
-        try FileManager.default.createDirectory(at: diskDirectory, withIntermediateDirectories: true)
-        try Data([0x00]).write(to: diskDirectory.appendingPathComponent(sha256Hex(url.absoluteString)))
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 40, height: 40))
-
-        let result = await download(url: url, options: ImageDownloadingOptions())
-
-        XCTAssertNotNil(try result.get().image.cgImage)
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 1)
-    }
-
-    func test_downloadImage_whenDownloadedDataIsInvalid_doesNotPersistIt() async {
+    func test_downloadImage_whenDownloadedDataIsInvalid_fails() async {
         let url = URL(string: "https://example.com/invalid.png")!
         StreamImageDownloaderStubURLProtocol.stub(url, data: Data([0x00]))
 
         let result = await download(url: url, options: ImageDownloadingOptions())
 
         XCTAssertThrowsError(try result.get())
-        XCTAssertFalse(FileManager.default.fileExists(
-            atPath: diskDirectory.appendingPathComponent(sha256Hex(url.absoluteString)).path
-        ))
     }
 
-    func test_removeAllImagesFromDiskCache_forcesNetworkAfterMemoryClear() async {
-        let url = URL(string: "https://example.com/clear-disk.png")!
-        StreamImageDownloaderStubURLProtocol.stub(url, data: pngData(width: 40, height: 40))
-        _ = await download(url: url, options: ImageDownloadingOptions())
+    func test_removeAllImagesFromDiskCache_clearsTheURLCache() {
+        sut.removeAllImagesFromDiskCache()
 
-        sut.removeAllImagesFromMemoryCache()
-        await withCheckedContinuation { continuation in
-            sut.removeAllImagesFromDiskCache { continuation.resume() }
-        }
-        _ = await download(url: url, options: ImageDownloadingOptions())
-
-        XCTAssertEqual(StreamImageDownloaderStubURLProtocol.requestCount(for: url), 2)
+        XCTAssertEqual(urlCache.removeAllCachedResponsesCallCount, 1)
     }
 
     func test_downloadImage_passesThroughGIFData() {
@@ -261,34 +235,21 @@ final class StreamImageDownloader_Tests: XCTestCase {
     }
 
     private func download(url: URL, options: ImageDownloadingOptions) async -> Result<DownloadedImage, Error> {
-        await download(using: sut, url: url, options: options)
-    }
-
-    private func download(
-        using loader: StreamImageDownloader,
-        url: URL,
-        options: ImageDownloadingOptions
-    ) async -> Result<DownloadedImage, Error> {
         await withCheckedContinuation { continuation in
-            loader.downloadImage(url: url, options: options) {
+            sut.downloadImage(url: url, options: options) {
                 continuation.resume(returning: $0)
             }
         }
     }
 
     private func makeLoader() -> StreamImageDownloader {
-        let configuration = URLSessionConfiguration.ephemeral
+        let configuration = URLSessionConfiguration.default
         configuration.protocolClasses = [StreamImageDownloaderStubURLProtocol.self]
+        configuration.urlCache = urlCache
         return StreamImageDownloader(
             memoryCostLimit: 50 * 1024 * 1024,
-            diskSizeLimit: 50 * 1024 * 1024,
-            diskDirectory: diskDirectory,
             urlSession: URLSession(configuration: configuration)
         )
-    }
-
-    private func sha256Hex(_ string: String) -> String {
-        SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 
     private func renderedImage(width: Int, height: Int) -> UIImage {
@@ -315,12 +276,27 @@ final class StreamImageDownloader_Tests: XCTestCase {
     }
 }
 
+// MARK: - URLCache spy
+
+/// `URLCache` clears its storage on its own queue, so a lookup right after
+/// `removeAllCachedResponses()` can still report the entry. Recording the call keeps the
+/// assertion about what the downloader does rather than about Foundation's timing.
+private final class RecordingURLCache: URLCache, @unchecked Sendable {
+    private(set) var removeAllCachedResponsesCallCount = 0
+
+    override func removeAllCachedResponses() {
+        removeAllCachedResponsesCallCount += 1
+        super.removeAllCachedResponses()
+    }
+}
+
 // MARK: - URLProtocol stub
 
 private final class StreamImageDownloaderStubURLProtocol: URLProtocol {
     private struct Stub {
         let statusCode: Int
         let data: Data?
+        let headers: [String: String]?
         let delay: TimeInterval
     }
 
@@ -337,9 +313,15 @@ private final class StreamImageDownloaderStubURLProtocol: URLProtocol {
         lock.unlock()
     }
 
-    static func stub(_ url: URL, statusCode: Int = 200, data: Data?, delay: TimeInterval = 0) {
+    static func stub(
+        _ url: URL,
+        statusCode: Int = 200,
+        data: Data?,
+        headers: [String: String]? = nil,
+        delay: TimeInterval = 0
+    ) {
         lock.lock()
-        stubs[url] = Stub(statusCode: statusCode, data: data, delay: delay)
+        stubs[url] = Stub(statusCode: statusCode, data: data, headers: headers, delay: delay)
         lock.unlock()
     }
 
@@ -377,8 +359,8 @@ private final class StreamImageDownloaderStubURLProtocol: URLProtocol {
             client?.urlProtocol(self, didFailWithError: URLError(.fileDoesNotExist))
             return
         }
-        if let response = HTTPURLResponse(url: url, statusCode: stub.statusCode, httpVersion: nil, headerFields: nil) {
-            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        if let response = HTTPURLResponse(url: url, statusCode: stub.statusCode, httpVersion: "HTTP/1.1", headerFields: stub.headers) {
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
         }
         if let data = stub.data {
             client?.urlProtocol(self, didLoad: data)
