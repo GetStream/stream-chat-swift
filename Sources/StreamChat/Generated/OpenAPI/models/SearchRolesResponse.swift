@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class SearchRolesResponse: Sendable, Codable, JSONEncodable {
     let duration: String

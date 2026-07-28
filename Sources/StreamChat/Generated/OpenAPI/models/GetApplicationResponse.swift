@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class GetApplicationResponse: Sendable, Codable, JSONEncodable {
     let app: AppSettings

@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class UserResponse: Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?

@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
     enum CreateDeviceRequestPushProvider: String, Sendable, Codable, CaseIterable {

@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class GiphyImages: Sendable, Codable, JSONEncodable {
     let fixedHeight: GiphyImageData
