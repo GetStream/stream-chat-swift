@@ -34,7 +34,7 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
     let status: String?
     /// Date/time of the last update
     let updatedAt: Date
-    let user: UserResponse?
+    let user: UserPayload?
     let userId: String?
 
     init(
@@ -56,7 +56,7 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
         shadowBanned: Bool,
         status: String? = nil,
         updatedAt: Date,
-        user: UserResponse? = nil,
+        user: UserPayload? = nil,
         userId: String? = nil
     ) {
         self.archivedAt = archivedAt

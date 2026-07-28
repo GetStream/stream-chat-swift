@@ -21,8 +21,8 @@ extension UserPayload {
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
-            teams: Set(teams),
-            language: language.flatMap { TranslationLanguage(languageCode: $0) },
+            teams: Set(teams ?? []),
+            language: language.flatMap { $0.languageCode.isEmpty ? nil : $0 },
             avgResponseTime: avgResponseTime,
             extraData: extraData
         )

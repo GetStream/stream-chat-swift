@@ -12,7 +12,7 @@ public final class UnreadChannel: Sendable, Codable, JSONEncodable {
 
     init(
         channelId: ChannelId,
-        lastRead: Date,
+        lastRead: Date? = nil,
         unreadCount: Int
     ) {
         self.channelId = channelId

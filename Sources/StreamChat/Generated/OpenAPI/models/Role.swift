@@ -18,11 +18,11 @@ public final class Role: Sendable, Codable, JSONEncodable {
     public let updatedAt: Date?
 
     init(
-        createdAt: Date,
+        createdAt: Date? = nil,
         custom: Bool,
         name: String,
         scopes: [String],
-        updatedAt: Date
+        updatedAt: Date? = nil
     ) {
         self.createdAt = createdAt
         self.custom = custom

@@ -81,7 +81,6 @@ final class DatabaseSession_Tests: XCTestCase {
             deactivatedAt: nil,
             lastActiveAt: .unique,
             isOnline: true,
-            isInvisible: true,
             isBanned: true,
             language: nil,
             extraData: [:]

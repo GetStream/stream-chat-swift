@@ -8,13 +8,13 @@ final class ChannelMemberRequest: Sendable, Codable, JSONEncodable {
     /// Role of the member in the channel
     let channelRole: String?
     let custom: [String: RawJSON]?
-    let user: UserResponse?
+    let user: UserPayload?
     let userId: String
 
     init(
         channelRole: String? = nil,
         custom: [String: RawJSON]? = nil,
-        user: UserResponse? = nil,
+        user: UserPayload? = nil,
         userId: String
     ) {
         self.channelRole = channelRole

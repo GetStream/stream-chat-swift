@@ -6,19 +6,19 @@ import Foundation
 import StreamCore
 
 final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
-    let blockedUser: UserResponse
+    let blockedUser: UserPayload
     /// ID of the user who got blocked
     let blockedUserId: String
     let createdAt: Date
-    let user: UserResponse
+    let user: UserPayload
     /// ID of the user who blocked another user
     let userId: String
 
     init(
-        blockedUser: UserResponse,
+        blockedUser: UserPayload,
         blockedUserId: String,
         createdAt: Date,
-        user: UserResponse,
+        user: UserPayload,
         userId: String
     ) {
         self.blockedUser = blockedUser

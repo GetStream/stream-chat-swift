@@ -207,8 +207,8 @@ final class MemberList_Tests: XCTestCase {
                 }
                 return ChannelMemberResponse.dummy(
                     user: .dummy(
-                        name: name,
-                        userId: String(format: "%03d", index)
+                        userId: String(format: "%03d", index),
+                        name: name
                     )
                 )
             }

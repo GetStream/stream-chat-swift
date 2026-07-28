@@ -23,7 +23,6 @@ extension MutedUserPayload {
                 deactivatedAt: nil,
                 lastActiveAt: .unique,
                 isOnline: true,
-                isInvisible: true,
                 isBanned: true,
                 teams: [],
                 language: nil,

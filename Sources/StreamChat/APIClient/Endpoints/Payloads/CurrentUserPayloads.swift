@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing the incoming current user JSON payload.
-final class CurrentUserPayload: UserPayload, @unchecked Sendable {
+final class CurrentUserPayload: UserPayload {
     /// A list of devices.
     let devices: [Device]
     /// Muted users.
@@ -16,8 +16,8 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
     let unreadCount: UnreadCountPayload?
     /// The current privacy settings of the user.
     let privacySettings: UserPrivacySettingsPayload?
-    /// Blocked user ids.
-    let blockedUserIds: Set<UserId>
+    /// Whether the user is invisible to others. Only the own user carries it.
+    let isInvisible: Bool
     /// Push preference for the user.
     let pushPreference: PushPreference?
 
@@ -50,25 +50,25 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
         self.mutedChannels = mutedChannels
         self.unreadCount = unreadCount
         self.privacySettings = privacySettings
-        self.blockedUserIds = blockedUserIds
+        self.isInvisible = isInvisible
         self.pushPreference = pushPreference
 
         super.init(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            role: role,
-            teamsRole: teamsRole,
+            banned: isBanned,
+            blockedUserIds: Array(blockedUserIds),
             createdAt: createdAt,
-            updatedAt: updatedAt,
+            custom: extraData,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: isInvisible,
-            isBanned: isBanned,
+            id: id,
+            image: imageURL?.absoluteString,
+            language: language.map(TranslationLanguage.init(languageCode:)),
+            lastActive: lastActiveAt,
+            name: name,
+            online: isOnline,
+            role: role,
             teams: teams,
-            language: language,
-            extraData: extraData
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
         )
     }
 
@@ -79,7 +79,7 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .mutedChannels) ?? []
         unreadCount = try? UnreadCountPayload(from: decoder)
         privacySettings = try container.decodeIfPresent(UserPrivacySettingsPayload.self, forKey: .privacySettings)
-        blockedUserIds = try container.decodeIfPresent(Set<UserId>.self, forKey: .blockedUserIds) ?? []
+        isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         pushPreference = try container.decodeIfPresent(PushPreference.self, forKey: .pushPreference)
 
         try super.init(from: decoder)

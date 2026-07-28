@@ -12,8 +12,8 @@ public final class UnreadThread: Sendable, Codable, JSONEncodable {
     public let unreadCount: Int
 
     init(
-        lastRead: Date,
-        lastReadMessageId: String,
+        lastRead: Date? = nil,
+        lastReadMessageId: String? = nil,
         parentMessageId: String,
         unreadCount: Int
     ) {

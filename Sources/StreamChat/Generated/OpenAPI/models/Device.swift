@@ -26,7 +26,7 @@ public final class Device: Sendable, Codable, JSONEncodable {
     public let voip: Bool?
 
     init(
-        createdAt: Date,
+        createdAt: Date? = nil,
         disabled: Bool? = nil,
         disabledReason: String? = nil,
         hardwareId: String? = nil,

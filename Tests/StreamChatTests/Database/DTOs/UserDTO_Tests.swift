@@ -66,7 +66,6 @@ final class UserDTO_Tests: XCTestCase {
             deactivatedAt: nil,
             lastActiveAt: .unique,
             isOnline: true,
-            isInvisible: true,
             isBanned: true,
             teams: [],
             language: nil,
@@ -107,9 +106,9 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedUserModel.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedUserModel.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserModel.lastActiveAt)
-            Assert.willBeEqual(payload.teams.sorted(), loadedUserModel.teams.sorted())
+            Assert.willBeEqual(payload.teams?.sorted(), loadedUserModel.teams.sorted())
             Assert.willBeEqual(payload.extraData, loadedUserModel.extraData)
-            Assert.willBeEqual(payload.language, loadedUserModel.language!.languageCode)
+            Assert.willBeEqual(payload.language?.languageCode, loadedUserModel.language!.languageCode)
         }
     }
 

@@ -166,7 +166,7 @@ extension NSManagedObjectContext {
 
         // Save user-part of member first
         if let userResponse = response.user {
-            dto.user = try saveUser(response: userResponse)
+            dto.user = try saveUser(payload: userResponse)
         }
 
         // Save member specific data
