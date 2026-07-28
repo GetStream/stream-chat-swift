@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
     let blockedUser: UserResponse

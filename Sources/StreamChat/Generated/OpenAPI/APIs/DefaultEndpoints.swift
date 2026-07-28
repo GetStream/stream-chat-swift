@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 enum EndpointPath: Codable {
     case connect
@@ -844,7 +843,7 @@ extension Endpoint {
     static func uploadChannelFile(
         type: String,
         id: String,
-        uploadChannelFileRequest: MultipartFormData,
+        multipartFormData: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<UploadChannelFileResponse> {
         return .init(
@@ -855,14 +854,14 @@ extension Endpoint {
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
-            body: uploadChannelFileRequest
+            body: multipartFormData
         )
     }
 
     static func uploadChannelImage(
         type: String,
         id: String,
-        uploadChannelRequest: MultipartFormData,
+        multipartFormData: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<UploadChannelResponse> {
         return .init(
@@ -873,12 +872,12 @@ extension Endpoint {
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
-            body: uploadChannelRequest
+            body: multipartFormData
         )
     }
 
     static func uploadFile(
-        fileUploadRequest: MultipartFormData,
+        multipartFormData: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<FileUploadResponse> {
         return .init(
@@ -886,12 +885,12 @@ extension Endpoint {
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
-            body: fileUploadRequest
+            body: multipartFormData
         )
     }
 
     static func uploadImage(
-        imageUploadRequest: MultipartFormData,
+        multipartFormData: MultipartFormData,
         requiresConnectionId: Bool = false
     ) -> Endpoint<ImageUploadResponse> {
         return .init(
@@ -899,7 +898,7 @@ extension Endpoint {
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
-            body: imageUploadRequest
+            body: multipartFormData
         )
     }
 }

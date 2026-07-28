@@ -3,13 +3,12 @@
 //
 
 import Foundation
-import StreamCore
 
 final class PushPreferenceInput: Sendable, Codable, JSONEncodable {
     enum PushPreferenceInputChatLevel: String, Sendable, Codable, CaseIterable {
+        case `default`
         case all
         case allMentions = "all_mentions"
-        case `default`
         case directMentions = "direct_mentions"
         case mentions
         case none

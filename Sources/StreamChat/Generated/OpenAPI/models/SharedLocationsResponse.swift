@@ -7,9 +7,7 @@ import Foundation
 final class SharedLocationsResponse: Sendable, Codable, JSONEncodable {
     let activeLiveLocations: [SharedLocation]
 
-    init(
-        activeLiveLocations: [SharedLocation]
-    ) {
+    init(activeLiveLocations: [SharedLocation]) {
         self.activeLiveLocations = activeLiveLocations
     }
 

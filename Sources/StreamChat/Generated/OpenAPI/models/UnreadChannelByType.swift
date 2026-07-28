@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 public final class UnreadChannelByType: Sendable, Codable, JSONEncodable {
     public let channelCount: Int

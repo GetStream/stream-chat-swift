@@ -20,7 +20,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<UploadChannelResponse> = .uploadChannelImage(
             type: attachmentId.cid.type.rawValue,
             id: attachmentId.cid.id,
-            uploadChannelRequest: MultipartFormData(Data(), fileName: "")
+            multipartFormData: MultipartFormData(Data(), fileName: "")
         )
 
         // Simulate file uploading
@@ -52,7 +52,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         builder.encoder.encodeRequest = .success(request)
 
         // Create a test endpoint
-        let expectedEndpoint: Endpoint<ImageUploadResponse> = .uploadImage(imageUploadRequest: MultipartFormData(Data(), fileName: ""))
+        let expectedEndpoint: Endpoint<ImageUploadResponse> = .uploadImage(multipartFormData: MultipartFormData(Data(), fileName: ""))
 
         // Simulate file uploading
         client.uploadAttachment(
@@ -557,7 +557,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
 
-        let expectedEndpoint: Endpoint<ImageUploadResponse> = .uploadImage(imageUploadRequest: MultipartFormData(Data(), fileName: ""))
+        let expectedEndpoint: Endpoint<ImageUploadResponse> = .uploadImage(multipartFormData: MultipartFormData(Data(), fileName: ""))
 
         client.uploadAttachment(
             localUrl: .localYodaImage,
@@ -577,7 +577,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
 
-        let expectedEndpoint: Endpoint<FileUploadResponse> = .uploadFile(fileUploadRequest: MultipartFormData(Data(), fileName: ""))
+        let expectedEndpoint: Endpoint<FileUploadResponse> = .uploadFile(multipartFormData: MultipartFormData(Data(), fileName: ""))
 
         let tempDir = NSTemporaryDirectory()
         let tempFile = URL(fileURLWithPath: tempDir).appendingPathComponent("test-\(UUID().uuidString).pdf")

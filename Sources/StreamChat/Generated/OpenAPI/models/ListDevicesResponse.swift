@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
     /// List of devices
