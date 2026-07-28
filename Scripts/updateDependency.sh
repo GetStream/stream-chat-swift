@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: ./updateDependency.sh 10.3.3 Dependencies/Nuke Sources/StreamNuke Sources
+# Usage: ./updateDependency.sh 5.4.2 Dependencies/SwiftyGif Sources/StreamChatUI/StreamSwiftyGif SwiftyGif
 #
 # This script gets the source code of a dependency of a given library, and copies it to our codebase
 
@@ -20,10 +20,7 @@ sources_directory=$4
 
 dependency_url=""
 
-# Nuke
-if [[ $dependency_directory == *"Nuke"* ]]; then
-	dependency_url="git@github.com:kean/Nuke.git"
-elif [[ $dependency_directory == *"SwiftyGif"* ]]; then
+if [[ $dependency_directory == *"SwiftyGif"* ]]; then
 	dependency_url="git@github.com:kirualex/SwiftyGif.git"
 elif [[ $dependency_directory == *"DifferenceKit"* ]]; then
 	dependency_url="git@github.com:ra1028/DifferenceKit.git"

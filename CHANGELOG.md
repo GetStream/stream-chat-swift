@@ -8,9 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
+## StreamChatCommonUI
+### ✅ Added
+- Add `StreamImageDownloader` for downloading and caching images [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
+
+## StreamChatUI
+### 🔄 Changed
+- Replace vendored Nuke image loading with the built-in `StreamImageDownloader` [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
 
 # [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
 _July 22, 2026_

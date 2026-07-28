@@ -20,11 +20,23 @@ public protocol ImageProcessor: Sendable {
     func scale(image: UIImage, to size: CGSize) -> UIImage
 }
 
-/// This class provides resizing operations for `UIImage`. It internally uses `Nuke` porcessors to implement operations on images.
+/// This class provides resizing operations for `UIImage`.
 open class StreamImageProcessor: ImageProcessor, @unchecked Sendable {
     open func crop(image: UIImage, to size: CGSize) -> UIImage? {
-        let imageProccessor = ImageProcessors.Resize(size: size, crop: true)
-        return imageProccessor.process(image)
+        guard size.width > 0, size.height > 0,
+              image.size.width > 0, image.size.height > 0 else {
+            return nil
+        }
+        // Aspect-fill: scale so the image covers the target, then center-crop to it.
+        let scale = max(size.width / image.size.width, size.height / image.size.height)
+        let scaledSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let origin = CGPoint(
+            x: (size.width - scaledSize.width) / 2,
+            y: (size.height - scaledSize.height) / 2
+        )
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            image.draw(in: CGRect(origin: origin, size: scaledSize))
+        }
     }
 
     open func scale(image: UIImage, to size: CGSize) -> UIImage {
@@ -48,48 +60,5 @@ open class StreamImageProcessor: ImageProcessor, @unchecked Sendable {
         }
 
         return scaledImage
-    }
-}
-
-/// Extension of `Nuke`'s `ImageProcessors`
-extension ImageProcessors {
-    /// Scales an image to a specified size.
-    /// The getting of the size is offloaded via closure after the image is loaded.
-    /// The View has time to layout and provide non-zero size.
-    public struct LateResize: ImageProcessing {
-        private var size: CGSize {
-            var size: CGSize = .zero
-            DispatchQueue.main.sync { size = sizeProvider() }
-            return size
-        }
-
-        private let id: String
-        private let sizeProvider: @Sendable () -> CGSize
-
-        /// Initializes the processor with size providing closure.
-        /// - Parameters:
-        ///   - id: Image identifier.
-        ///   - sizeProvider: Closure to obtain size after the image is loaded.
-        public init(id: String, sizeProvider: @escaping @Sendable () -> CGSize) {
-            self.id = id
-            self.sizeProvider = sizeProvider
-        }
-
-        public func process(_ image: PlatformImage) -> PlatformImage? {
-            let size = self.size
-            guard size != .zero else { return image }
-
-            return ImageProcessors.Resize(
-                size: size,
-                unit: .points,
-                contentMode: .aspectFill,
-                upscale: false
-            )
-            .process(image)
-        }
-
-        public var identifier: String {
-            "com.github.kean/nuke/lateResize?id=\(id)"
-        }
     }
 }

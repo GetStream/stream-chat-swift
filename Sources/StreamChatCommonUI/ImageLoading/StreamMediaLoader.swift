@@ -9,7 +9,7 @@ import UIKit
 /// The default ``MediaLoader`` implementation.
 ///
 /// Delegates URL transformation to its ``CDNRequester`` dependency,
-/// image downloading to an ``ImageDownloading`` backend (typically Nuke),
+/// image downloading to an ``ImageDownloading`` backend,
 /// and video preview generation to AVFoundation.
 open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     /// The backend that performs the actual image download and caching.
@@ -259,6 +259,14 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                 })
             }
         }
+    }
+
+    // MARK: - Cache Management
+
+    /// Evicts least-recently-used images from the downloader's in-memory image
+    /// cache until its total cost drops to the given limit in bytes.
+    open func trimImageMemoryCache(toCost limit: Int) {
+        downloader.trimMemoryCache(toCost: limit)
     }
 
     @objc private func handleMemoryWarning(_ notification: NSNotification) {

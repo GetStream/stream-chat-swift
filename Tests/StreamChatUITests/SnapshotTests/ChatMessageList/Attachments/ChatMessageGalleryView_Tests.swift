@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -139,17 +140,16 @@ import XCTest
         let url = TestImages.yoda.url
         let cachingKey = "cached-yoda"
         let image = try XCTUnwrap(UIImage(data: Data(contentsOf: url)))
-        let request = ImageRequest(
-            urlRequest: URLRequest(url: url),
-            processors: [],
-            userInfo: [.imageIdKey: cachingKey]
+        let imageLoader = StreamImageDownloader(diskCacheSize: 0)
+        imageLoader.store(
+            DownloadedImage(image: image),
+            for: url,
+            options: ImageDownloadingOptions(cachingKey: cachingKey)
         )
-        ImagePipeline.shared.cache[request] = ImageContainer(image: image)
-        defer { ImagePipeline.shared.cache[request] = nil }
 
         var components = Components.mock
         components.mediaLoader = StreamMediaLoader(
-            downloader: StreamImageDownloader(),
+            downloader: imageLoader,
             cdnRequester: StaticCachingKeyCDNRequester(cachingKey: cachingKey)
         )
         let preview = ChatMessageGalleryView.ImagePreview().withoutAutoresizingMaskConstraints

@@ -92,6 +92,19 @@ public protocol MediaLoader: AnyObject, Sendable {
         options: DownloadFileRequestOptions,
         completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
     )
+
+    // MARK: - Cache Management
+
+    /// Evicts least-recently-used images from the loader's in-memory image
+    /// cache until its total cost drops to the given limit in bytes.
+    func trimImageMemoryCache(toCost limit: Int)
+}
+
+// MARK: - Default Implementations
+
+extension MediaLoader {
+    /// Does nothing by default.
+    public func trimImageMemoryCache(toCost limit: Int) {}
 }
 
 // MARK: - Convenience Extensions

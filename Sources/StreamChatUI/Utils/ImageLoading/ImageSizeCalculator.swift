@@ -8,6 +8,9 @@ import UIKit
 ///  resolution. In case the original resolution is already below the maximum, it uses the
 ///  original resolution and converts it to points.
 struct ImageSizeCalculator {
+    /// The current screen scale, captured once.
+    private static let screenScale: CGFloat = UITraitCollection.current.displayScale
+
     /// Calculates the image size in points given the original resolution and the max desirable
     ///  resolution. In case the original resolution is already below the maximum, it uses the
     ///  original resolution and converts it to points.
@@ -23,7 +26,7 @@ struct ImageSizeCalculator {
         originalHeightInPixels: Double,
         maxResolutionTotalPixels: Double
     ) -> CGSize {
-        let scale = Screen.scale
+        let scale = Self.screenScale
 
         let originalResolutionTotalPixels = originalWidthInPixels * originalHeightInPixels
         guard originalResolutionTotalPixels > maxResolutionTotalPixels else {

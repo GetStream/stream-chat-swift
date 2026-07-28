@@ -173,6 +173,14 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
     func test_init_setsDownloader() {
         XCTAssertTrue(sut.downloader is MockImageDownloader)
     }
+
+    // MARK: - trimImageMemoryCache
+
+    func test_trimImageMemoryCache_forwardsToDownloader() {
+        sut.trimImageMemoryCache(toCost: 1024)
+
+        XCTAssertEqual(downloader.trimmedCosts, [1024])
+    }
 }
 
 // MARK: - Mocks
@@ -196,6 +204,7 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
     var resultsByURL: [URL: Result<DownloadedImage, Error>] = [:]
     var lastURL: URL?
     var lastOptions: ImageDownloadingOptions?
+    var trimmedCosts: [Int] = []
 
     func downloadImage(
         url: URL,
@@ -208,6 +217,10 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
         DispatchQueue.main.async {
             completion(resolvedResult)
         }
+    }
+
+    func trimMemoryCache(toCost limit: Int) {
+        trimmedCosts.append(limit)
     }
 }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: ./removePublicDeclarations.sh Sources/StreamNuke
+# Usage: ./removePublicDeclarations.sh Sources/StreamChatUI/StreamSwiftyGif
 #
 # This script would iterate over the files on a particular directory, and perform basic replacement operations.
 # It heavily relies on 'sed':
@@ -24,20 +24,6 @@ do
 	replaceDeclaration 'public internal(set) ' '' $f 
 	replaceDeclaration 'open ' '' $f
 	replaceDeclaration 'public ' '' $f
-
-	# Nuke
-	if [[ $directory == *"Nuke"* ]]; then
-		replaceDeclaration 'var log' 'var nukeLog' $f
-		replaceDeclaration 'log =' 'nukeLog =' $f
-		replaceDeclaration 'signpost(log' 'signpost(nukeLog' $f
-		replaceDeclaration ' Cache(' ' NukeCache(' $f
-		replaceDeclaration ' Cache<' ' NukeCache<' $f
-		
-		# Remove Cancellable interface duplicate
-		if [[ $f == *"DataLoader"* && `head -10 $f` == *"protocol Cancellable"* ]]; then
-			`sed -i '' -e '7,11d' $f`
-		fi
-	fi
 
 	# DiffernceKit
 	if [[ $directory == *"DifferenceKit"* ]]; then
