@@ -12,16 +12,15 @@ extension MediaLoader {
     @MainActor public func loadImage(
         into imageView: UIImageView,
         from url: URL?,
-        with options: ImageLoaderOptions,
+        with options: ImageLoaderOptions = .init(),
         completion: (@MainActor (Result<UIImage, Error>) -> Void)? = nil
     ) -> ImageLoadingTask {
         let task = ImageLoadingTask()
         imageView.currentImageLoadingTask?.cancel()
+        imageView.currentImageLoadingTask = nil
+        imageView.image = options.placeholder
 
-        guard let url else {
-            imageView.image = options.placeholder
-            return task
-        }
+        guard let url else { return task }
 
         imageView.currentImageLoadingTask = task
 

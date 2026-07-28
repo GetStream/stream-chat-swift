@@ -9,7 +9,6 @@ ignore:
   - "**/*_Vendor.swift"
   - "**/Generated/*.swift"
   - "Sources/StreamChat/StreamStarscream"
-  - "Sources/StreamChatUI/StreamNuke"
   - "Sources/StreamChatUI/StreamSwiftyGif"
   - "StreamChatUITestsApp"
   - "StreamChatUITestsAppUITests"

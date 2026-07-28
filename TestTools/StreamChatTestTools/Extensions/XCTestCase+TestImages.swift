@@ -5,7 +5,7 @@
 import XCTest
 
 public extension XCTestCase {
-    /// A set of test images and their URL that can be used for testing. These images are also preloaded in Nuke cache.
+    /// A set of test images and their URL that can be used for testing.
     enum TestImages {
         public static let vader: (url: URL, image: UIImage) = {
             getImage(withName: "vader")

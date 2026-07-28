@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Nuke
 import StreamChat
 import StreamChatUI
 import UIKit
@@ -170,9 +169,7 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
 
         let user = users[indexPath.row]
 
-        if let imageURL = user.imageURL {
-            Nuke.loadImage(with: imageURL, into: cell.avatarView)
-        }
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL)
         cell.avatarView.backgroundColor = view.tintColor
         cell.nameLabel.text = user.name
 
@@ -232,9 +229,7 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
 
         let user = selectedUsers[indexPath.row]
 
-        if let imageURL = user.imageURL {
-            Nuke.loadImage(with: imageURL, into: cell.avatarView)
-        }
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: user.imageURL)
         cell.avatarView.backgroundColor = .clear
         cell.nameLabel.text = user.name
 

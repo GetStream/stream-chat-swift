@@ -2,8 +2,8 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
 typealias UserCell = NameGroupViewController.UserCell
@@ -55,9 +55,7 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
         }
 
         let member = members[indexPath.row]
-        if let imageURL = member.imageURL {
-            Nuke.loadImage(with: imageURL, into: cell.avatarView)
-        }
+        Components.default.mediaLoader.loadImage(into: cell.avatarView, from: member.imageURL)
         cell.nameLabel.text = member.name ?? member.id
         if let roles = member.teamsRole {
             cell.detailsLabel.text = roles.map { "\($0.key): \($0.value.rawValue)" }.joined(separator: ", ")
