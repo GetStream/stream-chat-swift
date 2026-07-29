@@ -23,7 +23,6 @@ final class MissingEventsPayload_Tests: XCTestCase {
             deactivatedAt: nil,
             lastActiveAt: "2020-09-07T12:25:41.501574Z".toDate(),
             isOnline: true,
-            isInvisible: false,
             isBanned: false,
             language: nil,
             extraData: [:]
@@ -58,7 +57,6 @@ final class MissingEventsPayload_Tests: XCTestCase {
         XCTAssertEqual(messageUser.lastActiveAt, expectedUser.lastActiveAt)
         XCTAssertEqual(messageUser.isBanned, expectedUser.isBanned)
         XCTAssertEqual(messageUser.isOnline, expectedUser.isOnline)
-        XCTAssertEqual(messageUser.isInvisible, expectedUser.isInvisible)
         XCTAssertEqual(messageUser.extraData, expectedUser.extraData)
 
         let eventUser = try XCTUnwrap(event.user)
@@ -69,7 +67,6 @@ final class MissingEventsPayload_Tests: XCTestCase {
         XCTAssertEqual(eventUser.lastActiveAt, expectedUser.lastActiveAt)
         XCTAssertEqual(eventUser.isBanned, expectedUser.isBanned)
         XCTAssertEqual(eventUser.isOnline, expectedUser.isOnline)
-        XCTAssertEqual(eventUser.isInvisible, expectedUser.isInvisible)
         XCTAssertEqual(eventUser.extraData, expectedUser.extraData)
     }
 

@@ -230,13 +230,16 @@ prune_models
 
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
-#     Device.createdAt was Date? before the OpenAPI migration).
+#     Device.createdAt was Date? before the OpenAPI migration). The memberwise init
+#     parameter is relaxed too.
 # Remove in the next major.
 optionalize_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E \
-    -e "s/^(    let $2: [^?]+)$/\1?/" \
-    "$file"
+  P="$2" perl -0777 -pi -e '
+    my $p = $ENV{P};
+    s/^(    let \Q$p\E: [^?\n]+)$/$1?/m;
+    s/([(,]\s*)\Q$p\E: ([^,)\n]+)(?=[,)])/${1}$p: $2? = nil/;
+  ' "$file"
 }
 optionalize_property DeviceResponse createdAt
 optionalize_property Role createdAt
@@ -247,7 +250,10 @@ optionalize_property UnreadCountsThread lastReadMessageId
 
 retype_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E "s/[[:<:]]$2: $3[[:>:]]/$2: $4/g" "$file"
+  P="$2" O="$3" N="$4" perl -0777 -pi -e '
+    my ($p, $o, $n) = ($ENV{P}, $ENV{O}, $ENV{N});
+    s/(?<!\w)\Q$p\E: \Q$o\E(?!\w)/$p: $n/g;
+  ' "$file"
 }
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
@@ -300,6 +306,7 @@ rename_generated UnreadCountsThread UnreadThread
 rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
+rename_generated UserResponse UserPayload
 rename_generated_type ChannelPushPreferencesResponse PushPreference
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
@@ -333,6 +340,10 @@ retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
+
+optionalize_property UserPayload banned
+optionalize_property UserPayload language
+optionalize_property UserPayload teams
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -405,6 +416,16 @@ publicize_model UnreadThread
 publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
+
+# Drop `final` from a generated model so hand-written payloads can subclass it.
+unfinalize_model() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E \
+    -e 's/^final class /class /' \
+    -e 's/^(class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
+    "$file"
+}
+unfinalize_model UserPayload
 
 # 4d. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
@@ -600,3 +621,29 @@ swiftformat "$OUTPUT_DIR_CHAT" \
   --wrapparameters before-first \
   --wraparguments preserve \
   --maxwidth 1
+
+# 8. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
+#    body, where a `required` initializer is allowed.
+splice_generated_decoders() {
+  local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
+  python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
+import pathlib
+import re
+import sys
+
+generated = pathlib.Path(sys.argv[1])
+models_dir = pathlib.Path(sys.argv[2])
+blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=re.M)
+
+for name, body in zip(blocks[1::2], blocks[2::2]):
+    path = models_dir / f"{name}.swift"
+    lines = path.read_text().splitlines(keepends=True)
+    closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
+    lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
+    path.write_text("".join(lines))
+
+generated.unlink()
+PY
+}
+sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
+splice_generated_decoders

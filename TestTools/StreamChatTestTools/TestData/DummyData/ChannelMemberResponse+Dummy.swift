@@ -16,7 +16,7 @@ extension ChannelMemberResponse {
         pinnedAt: Date? = nil,
         shadowBanned: Bool = false,
         updatedAt: Date = .unique,
-        user: UserResponse = .dummy(userId: .unique)
+        user: UserPayload = .dummy(userId: .unique)
     ) -> ChannelMemberResponse {
         .init(
             archivedAt: archivedAt,

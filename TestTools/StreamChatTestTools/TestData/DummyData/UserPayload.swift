@@ -32,7 +32,6 @@ extension UserPayload {
             deactivatedAt: deactivatedAt,
             lastActiveAt: .unique,
             isOnline: isOnline,
-            isInvisible: true,
             isBanned: isBanned,
             teams: teams,
             language: language,

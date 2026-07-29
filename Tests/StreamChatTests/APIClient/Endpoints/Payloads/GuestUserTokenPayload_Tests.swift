@@ -31,7 +31,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
             payload.user.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.user.role, .guest)
+        XCTAssertEqual(payload.user.role, "guest")
         XCTAssertTrue(payload.user.isOnline)
     }
 
@@ -48,7 +48,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.user.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.user.extraData, ["company": .string("getstream.io")])
-        XCTAssertEqual(payload.user.role, .guest)
+        XCTAssertEqual(payload.user.role, "guest")
         XCTAssertTrue(payload.user.isOnline)
     }
 

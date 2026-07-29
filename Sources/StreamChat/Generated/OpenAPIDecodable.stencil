@@ -1,0 +1,28 @@
+{% for type in types.classes %}
+// sourcery:decoder:{{ type.name }}
+{% for variable in type.storedVariables where variable.name == "custom" %}
+    class var customExcludedKeys: Set<String> {
+        Set(CodingKeys.allCases.map(\.rawValue)){% if argument.v1CodingKeys %}
+            .union({{ argument.v1CodingKeys }}.allCases.map(\.rawValue)){% endif %}
+    }
+
+{% endfor %}
+    {% if not type.isFinal %}required {% endif %}init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+{% for variable in type.storedVariables %}
+{% if variable.name == "custom" %}
+        if let decoded = try container.decodeIfPresent({{ variable.typeName.name }}.self, forKey: .custom) {
+            custom = decoded
+        } else {
+            var flattened = try [String: RawJSON](from: decoder)
+            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
+            custom = flattened
+        }
+{% elif variable.isOptional %}
+        {{ variable.name }} = try container.decodeIfPresent({{ variable.typeName.unwrappedTypeName }}.self, forKey: .{{ variable.name }})
+{% else %}
+        {{ variable.name }} = try container.decode({{ variable.typeName.name }}.self, forKey: .{{ variable.name }})
+{% endif %}
+{% endfor %}
+    }
+{% endfor %}

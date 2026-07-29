@@ -415,7 +415,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.createdBy!.lastActiveAt, loadedChannel.createdBy?.lastActiveAt)
             Assert.willBeEqual(payload.channel.createdBy!.isOnline, loadedChannel.createdBy?.isOnline)
             Assert.willBeEqual(payload.channel.createdBy!.isBanned, loadedChannel.createdBy?.isBanned)
-            Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel.createdBy?.userRole)
+            Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel.createdBy?.userRole.rawValue)
             Assert.willBeEqual(payload.channel.createdBy!.extraData, loadedChannel.createdBy?.extraData)
 
             // Members
@@ -429,7 +429,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.members[0].user!.lastActiveAt, loadedChannel.lastActiveMembers.first?.lastActiveAt)
             Assert.willBeEqual(payload.members[0].user!.isOnline, loadedChannel.lastActiveMembers.first?.isOnline)
             Assert.willBeEqual(payload.members[0].user!.isBanned, loadedChannel.lastActiveMembers.first?.isBanned)
-            Assert.willBeEqual(payload.members[0].user!.role, loadedChannel.lastActiveMembers.first?.userRole)
+            Assert.willBeEqual(payload.members[0].user!.role, loadedChannel.lastActiveMembers.first?.userRole.rawValue)
             Assert.willBeEqual(payload.members[0].user!.extraData, loadedChannel.lastActiveMembers.first?.extraData)
 
             // Membership
@@ -470,7 +470,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].user.lastActiveAt, loadedChannel.latestMessages.first?.author.lastActiveAt)
             Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel.latestMessages.first?.author.isOnline)
             Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel.latestMessages.first?.author.isBanned)
-            Assert.willBeEqual(payload.messages[0].user.role, loadedChannel.latestMessages.first?.author.userRole)
+            Assert.willBeEqual(payload.messages[0].user.role, loadedChannel.latestMessages.first?.author.userRole.rawValue)
             Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel.latestMessages.first?.author.extraData)
 
             // Read

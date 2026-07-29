@@ -24,9 +24,9 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.role, .user)
+        XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.teams?.count, 3)
         XCTAssertEqual(payload.language, "pt")
     }
 
@@ -38,9 +38,9 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertNil(payload.deactivatedAt)
-        XCTAssertEqual(payload.role, .user)
+        XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.teams?.count, 3)
         XCTAssertEqual(payload.language, "pt")
 
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
@@ -61,9 +61,9 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
-        XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.teams?.count, 3)
         XCTAssertEqual(payload.language, "pt")
-        XCTAssertEqual(payload.role, .guest)
+        XCTAssertEqual(payload.role, "guest")
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teamsRole, ["ios": "guest"])
     }
@@ -83,8 +83,8 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=deactivated-waterfall-5&amp;name=Deactivated+waterfall")!
         )
-        XCTAssertEqual(payload.teams.count, 3)
-        XCTAssertEqual(payload.role, .user)
+        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
     }
 
@@ -105,6 +105,43 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.threads[0].parentMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
     }
     
+    // MARK: - v1 / v2 extra data compatibility
+
+    private var expectedCustomExtraData: [String: RawJSON] {
+        [
+            "secret_note": .string("Anakin is Vader!"),
+            "good_movies_count": .number(3),
+            "awesome": .bool(true),
+            "nested_stuff": .dictionary([
+                "how_many_times": .number(42),
+                "small": .number(0.001),
+                "colors": .array([.string("blue"), .string("yellow"), .number(42)])
+            ])
+        ]
+    }
+
+    func test_userPayload_whenExtraDataIsFlattened_isDecoded() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "UserPayloadWithCustom")
+
+        let response = try JSONDecoder.default.decode(UserPayload.self, from: json)
+
+        XCTAssertEqual(response.id, "bitter-cloud-0")
+        XCTAssertEqual(response.role, "guest")
+        XCTAssertEqual(response.teams, ["RED", "GREEN", "BLUE"])
+        XCTAssertEqual(response.extraData, expectedCustomExtraData)
+    }
+
+    func test_userPayload_whenExtraDataIsNestedInCustom_isDecoded() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "UserPayloadWithNestedCustom")
+
+        let response = try JSONDecoder.default.decode(UserPayload.self, from: json)
+
+        XCTAssertEqual(response.id, "bitter-cloud-0")
+        XCTAssertEqual(response.role, "guest")
+        XCTAssertEqual(response.teams, ["RED", "GREEN", "BLUE"])
+        XCTAssertEqual(response.extraData, expectedCustomExtraData)
+    }
+
     // MARK: - UserPayload.asModel() Tests
     
     func test_userPayload_asModel_convertsAllPropertiesCorrectly() {
@@ -136,7 +173,6 @@ final class UserPayload_Tests: XCTestCase {
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             isOnline: isOnline,
-            isInvisible: false,
             isBanned: isBanned,
             teams: teams,
             language: language,
@@ -185,7 +221,6 @@ final class UserPayload_Tests: XCTestCase {
             deactivatedAt: nil,
             lastActiveAt: nil,
             isOnline: false,
-            isInvisible: true,
             isBanned: true,
             teams: [],
             language: nil,
@@ -283,7 +318,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         )
         let user = payload.user
         XCTAssertEqual(user.id, "luke_skywalker")
-        XCTAssertEqual(user.role, .user)
+        XCTAssertEqual(user.role, "user")
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
         XCTAssertEqual(user.updatedAt, "2021-01-11T10:36:24.488391Z".toDate())
         XCTAssertEqual(user.lastActiveAt, "2021-01-08T19:16:54.380686Z".toDate())
@@ -293,7 +328,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         let expectedImage = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
         XCTAssertEqual(user.imageURL?.absoluteString, expectedImage)
         XCTAssertEqual(user.extraData, ["secret_note": .string("Anaking is Vader!")])
-        XCTAssertEqual(user.teams.count, 3)
+        XCTAssertEqual(user.teams?.count, 3)
     }
 
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {

@@ -222,7 +222,6 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
             deactivatedAt: Date(timeIntervalSince1970: 3),
             lastActiveAt: Date(timeIntervalSince1970: 3),
             isOnline: true,
-            isInvisible: true,
             isBanned: false,
             teams: [],
             language: nil,
