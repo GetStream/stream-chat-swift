@@ -4,6 +4,9 @@
 
 import Foundation
 
+// Extra glue for reducing the git diff: the generated model's properties are
+// slightly different from the previously hand-written UserPayload and the
+// convenience init is widely used. Keep for now and clean up gradually.
 extension UserPayload {
     var extraData: [String: RawJSON] { custom }
 
