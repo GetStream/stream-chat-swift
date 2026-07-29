@@ -68,7 +68,7 @@ final class CreatePollRequestBody: Sendable, Codable, JSONEncodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case allowAnswers = "allow_answers"
         case allowUserSuggestedOptions = "allow_user_suggested_options"
-        case custom = "Custom"
+        case custom
         case description
         case enforceUniqueVote = "enforce_unique_vote"
         case id

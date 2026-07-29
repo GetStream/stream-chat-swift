@@ -18,7 +18,7 @@ final class CreatePollOptionRequestBody: Sendable, Codable, JSONEncodable {
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom = "Custom"
+        case custom
         case text
     }
 }
