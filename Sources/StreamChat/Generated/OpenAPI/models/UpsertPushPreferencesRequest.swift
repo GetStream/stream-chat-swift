@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class UpsertPushPreferencesRequest: Sendable, Codable, JSONEncodable {
     /// A list of push preferences for channels, calls, or the user.

@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class UpsertPushPreferencesResponse: Sendable, Codable, JSONEncodable {
     /// The channel specific push notification preferences, only returned for channels you've edited.

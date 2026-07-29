@@ -83,13 +83,13 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
         if attachment.type == .image {
             uploadAttachment(
-                endpoint: .uploadChannelImage(type: type, id: id, uploadChannelRequest: multipartFormData),
+                endpoint: .uploadChannelImage(type: type, id: id, multipartFormData: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
         } else {
             uploadAttachment(
-                endpoint: .uploadChannelFile(type: type, id: id, uploadChannelFileRequest: multipartFormData),
+                endpoint: .uploadChannelFile(type: type, id: id, multipartFormData: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
@@ -125,13 +125,13 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
         if uploadingState.file.type.isImage {
             uploadAttachment(
-                endpoint: .uploadImage(imageUploadRequest: multipartFormData),
+                endpoint: .uploadImage(multipartFormData: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )
         } else {
             uploadAttachment(
-                endpoint: .uploadFile(fileUploadRequest: multipartFormData),
+                endpoint: .uploadFile(multipartFormData: multipartFormData),
                 progress: options.progress,
                 completion: completion
             )

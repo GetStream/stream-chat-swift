@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 public final class CurrentUserUnreads: Sendable, Codable, JSONEncodable {
     public let channelType: [UnreadChannelByType]

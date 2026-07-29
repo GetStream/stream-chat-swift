@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 public final class UserGroupMember: Sendable, Codable, JSONEncodable {
     public let createdAt: Date

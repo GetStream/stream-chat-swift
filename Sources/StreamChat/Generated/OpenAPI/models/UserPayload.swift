@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 class UserPayload: @unchecked Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?

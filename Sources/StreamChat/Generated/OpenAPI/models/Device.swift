@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 public final class Device: Sendable, Codable, JSONEncodable {
     /// Date/time of creation

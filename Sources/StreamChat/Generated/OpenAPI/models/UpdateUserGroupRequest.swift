@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamCore
 
 final class UpdateUserGroupRequest: Sendable, Codable, JSONEncodable {
     /// The new description for the group

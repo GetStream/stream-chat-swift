@@ -317,10 +317,6 @@ rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 
 rename_generated_type Response EmptyResponse
-rename_generated_type FileUploadRequest MultipartFormData
-rename_generated_type ImageUploadRequest MultipartFormData
-rename_generated_type UploadChannelFileRequest MultipartFormData
-rename_generated_type UploadChannelRequest MultipartFormData
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -450,6 +446,11 @@ strip_hashable_conformance() {
   done
 }
 strip_hashable_conformance
+
+strip_streamcore_imports() {
+  find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' '/^import StreamCore$/d' {} +
+}
+strip_streamcore_imports
 
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
