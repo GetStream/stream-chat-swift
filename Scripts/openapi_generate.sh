@@ -13,11 +13,16 @@ CHAT_DIR="$REPO_ROOT/../chat"
 allowed_endpoints=(
     addUserGroupMembers
     blockUsers
+    castPollVote
     createDevice
+    createPoll
+    createPollOption
     createUserGroup
     deleteChannelFile
     deleteChannelImage
     deleteDevice
+    deletePoll
+    deletePollVote
     deleteFile
     deleteImage
     deleteUserGroup
@@ -29,6 +34,7 @@ allowed_endpoints=(
     listDevices
     listUserGroups
     queryMembers
+    queryPollVotes
     removeUserGroupMembers
     searchRoles
     searchUserGroups
@@ -37,6 +43,7 @@ allowed_endpoints=(
     unreadCounts
     updateLiveLocation
     updateMemberPartial
+    updatePollPartial
     updatePushNotificationPreferences
     updateUserGroup
     uploadChannelFile
@@ -51,9 +58,12 @@ allowed_models=(
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
+  CastPollVoteRequest
   ChannelMemberRequest
   ChannelMemberResponse
   CreateDeviceRequest
+  CreatePollOptionRequest
+  CreatePollRequest
   CreateUserGroupRequest
   DeviceResponse
   Field
@@ -70,9 +80,18 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
+  PollOptionInput
+  PollOptionResponse
+  PollOptionResponseData
+  PollResponse
+  PollResponseData
+  PollVoteResponse
+  PollVoteResponseData
+  PollVotesResponse
   PushPreferenceInput
   PushPreferencesResponse
   QueryMembersPayload
+  QueryPollVotesRequest
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
@@ -87,6 +106,7 @@ allowed_models=(
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
+  UpdatePollPartialRequest
   UpdateUserGroupRequest
   UploadChannelFileResponse
   UploadChannelResponse
@@ -95,6 +115,7 @@ allowed_models=(
   UserGroupMember
   UserGroupResponse
   UserResponse
+  VoteData
   WrappedUnreadCountsResponse
 )
 
@@ -242,6 +263,14 @@ optionalize_property() {
   ' "$file"
 }
 optionalize_property DeviceResponse createdAt
+optionalize_property PollOptionResponseData custom
+optionalize_property PollResponseData custom
+optionalize_property PollResponseData latestAnswers
+optionalize_property PollResponseData latestVotesByOption
+optionalize_property PollResponseData ownVotes
+optionalize_property PollResponseData voteCountsByOption
+optionalize_property PollResponseData votingVisibility
+optionalize_property PollVoteResponseData optionId
 optionalize_property Role createdAt
 optionalize_property Role updatedAt
 optionalize_property UnreadCountsChannel lastRead
@@ -255,6 +284,10 @@ retype_property() {
     s/(?<!\w)\Q$p\E: \Q$o\E(?!\w)/$p: $n/g;
   ' "$file"
 }
+retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVoteResponseData?]"
+retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
+retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
+retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
 retype_property SharedLocationResponseData channelCid String ChannelId
@@ -315,6 +348,19 @@ rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
+rename_generated CastPollVoteRequest CastPollVoteRequestBody
+rename_generated CreatePollOptionRequest CreatePollOptionRequestBody
+rename_generated CreatePollRequest CreatePollRequestBody
+rename_generated PollOptionInput PollOptionRequestBody
+rename_generated PollOptionResponseData PollOptionPayload
+rename_generated PollResponse PollPayloadResponse
+rename_generated PollResponseData PollPayload
+rename_generated PollVoteResponse PollVotePayloadResponse
+rename_generated PollVoteResponseData PollVotePayload
+rename_generated PollVotesResponse PollVoteListResponse
+rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
+rename_generated UpdatePollPartialRequest UpdatePollPartialRequestBody
+rename_generated VoteData VoteDataRequestBody
 
 rename_generated_type Response EmptyResponse
 
@@ -517,15 +563,6 @@ inject_v1_endpoint_paths() {
     case callToken(String)
     case createCall(String)
 
-    case polls
-    case pollsQuery
-    case poll(pollId: String)
-    case pollOption(pollId: String, optionId: String)
-    case pollOptions(pollId: String)
-    case pollVotes(pollId: String)
-    case pollVoteInMessage(messageId: MessageId, pollId: String)
-    case pollVote(messageId: MessageId, pollId: String, voteId: String)
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -585,14 +622,6 @@ EOF
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
-        case .polls: return "polls"
-        case .pollsQuery: return "polls/query"
-        case let .poll(pollId: pollId): return "polls/\(pollId)"
-        case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
-        case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
-        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
-        case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
-        case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
 
 EOF
 
