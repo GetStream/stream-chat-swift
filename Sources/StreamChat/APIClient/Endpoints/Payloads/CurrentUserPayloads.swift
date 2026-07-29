@@ -6,8 +6,6 @@ import Foundation
 
 /// An object describing the incoming current user JSON payload.
 final class CurrentUserPayload: UserPayload, @unchecked Sendable {
-    /// A list of blocked user ids.
-    let blockedUserIds: [UserId]?
     /// A list of devices.
     let devices: [Device]
     /// Muted users.
@@ -18,6 +16,8 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
     let unreadCount: UnreadCountPayload?
     /// The current privacy settings of the user.
     let privacySettings: UserPrivacySettingsPayload?
+    /// Blocked user ids.
+    let blockedUserIds: Set<UserId>
     /// Whether the user is invisible to others. Only the own user carries it.
     let isInvisible: Bool
     /// Push preference for the user.
@@ -47,12 +47,12 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
         blockedUserIds: Set<UserId> = [],
         pushPreference: PushPreference?
     ) {
-        self.blockedUserIds = Array(blockedUserIds)
         self.devices = devices
         self.mutedUsers = mutedUsers
         self.mutedChannels = mutedChannels
         self.unreadCount = unreadCount
         self.privacySettings = privacySettings
+        self.blockedUserIds = blockedUserIds
         self.isInvisible = isInvisible
         self.pushPreference = pushPreference
 
@@ -76,12 +76,12 @@ final class CurrentUserPayload: UserPayload, @unchecked Sendable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
-        blockedUserIds = try container.decodeIfPresent([UserId].self, forKey: .blockedUserIds)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutedUsers) ?? []
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .mutedChannels) ?? []
         unreadCount = try? UnreadCountPayload(from: decoder)
         privacySettings = try container.decodeIfPresent(UserPrivacySettingsPayload.self, forKey: .privacySettings)
+        blockedUserIds = try container.decodeIfPresent(Set<UserId>.self, forKey: .blockedUserIds) ?? []
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         pushPreference = try container.decodeIfPresent(PushPreference.self, forKey: .pushPreference)
 
