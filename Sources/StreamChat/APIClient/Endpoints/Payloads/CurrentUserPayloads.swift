@@ -5,7 +5,9 @@
 import Foundation
 
 /// An object describing the incoming current user JSON payload.
-final class CurrentUserPayload: UserPayload {
+final class CurrentUserPayload: UserPayload, @unchecked Sendable {
+    /// A list of blocked user ids.
+    let blockedUserIds: [UserId]?
     /// A list of devices.
     let devices: [Device]
     /// Muted users.
@@ -45,6 +47,7 @@ final class CurrentUserPayload: UserPayload {
         blockedUserIds: Set<UserId> = [],
         pushPreference: PushPreference?
     ) {
+        self.blockedUserIds = Array(blockedUserIds)
         self.devices = devices
         self.mutedUsers = mutedUsers
         self.mutedChannels = mutedChannels
@@ -55,25 +58,25 @@ final class CurrentUserPayload: UserPayload {
 
         super.init(
             banned: isBanned,
-            blockedUserIds: Array(blockedUserIds),
             createdAt: createdAt,
             custom: extraData,
             deactivatedAt: deactivatedAt,
             id: id,
             image: imageURL?.absoluteString,
-            language: language.map(TranslationLanguage.init(languageCode:)),
+            language: language,
             lastActive: lastActiveAt,
             name: name,
             online: isOnline,
-            role: role,
+            role: role.rawValue,
             teams: teams,
-            teamsRole: teamsRole,
+            teamsRole: teamsRole?.mapValues(\.rawValue),
             updatedAt: updatedAt
         )
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
+        blockedUserIds = try container.decodeIfPresent([UserId].self, forKey: .blockedUserIds)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutedUsers) ?? []
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .mutedChannels) ?? []

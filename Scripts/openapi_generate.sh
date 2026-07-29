@@ -342,13 +342,8 @@ restore_nonoptional_property PushPreference level PushPreferenceLevel .all
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
 optionalize_property UserPayload banned
-optionalize_property UserPayload blockedUserIds
 optionalize_property UserPayload language
 optionalize_property UserPayload teams
-
-retype_property UserPayload language String TranslationLanguage
-retype_property UserPayload role String UserRole
-retype_property UserPayload teamsRole "[String: String]" "[String: UserRole]"
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to

@@ -152,11 +152,11 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.isOnline = payload.isOnline
         dto.lastActivityAt = payload.lastActiveAt?.bridgeDate
         dto.userCreatedAt = payload.createdAt.bridgeDate
-        dto.userRoleRaw = payload.role.rawValue
+        dto.userRoleRaw = payload.role
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
-        dto.language = payload.language.flatMap { $0.languageCode.isEmpty ? nil : $0.languageCode }
-        dto.teamsRole = payload.teamsRole?.mapValues { $0.rawValue }
+        dto.language = payload.language.flatMap { $0.isEmpty ? nil : $0 }
+        dto.teamsRole = payload.teamsRole
         if let avgResponseTime = payload.avgResponseTime {
             dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
         }

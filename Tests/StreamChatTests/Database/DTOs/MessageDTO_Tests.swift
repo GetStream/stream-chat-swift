@@ -582,7 +582,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
         XCTAssertEqual(channelPayload.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
         XCTAssertEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
-        XCTAssertEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
+        XCTAssertEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole.rawValue)
         XCTAssertEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
 
         // Assert the message was saved correctly

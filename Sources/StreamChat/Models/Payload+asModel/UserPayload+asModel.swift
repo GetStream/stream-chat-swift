@@ -15,14 +15,14 @@ extension UserPayload {
             isOnline: isOnline,
             isBanned: isBanned,
             isFlaggedByCurrentUser: false,
-            userRole: role,
-            teamsRole: teamsRole,
+            userRole: UserRole(rawValue: role),
+            teamsRole: teamsRole?.mapValues { UserRole(rawValue: $0) },
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: Set(teams ?? []),
-            language: language.flatMap { $0.languageCode.isEmpty ? nil : $0 },
+            language: language.flatMap { $0.isEmpty ? nil : TranslationLanguage(languageCode: $0) },
             avgResponseTime: avgResponseTime,
             extraData: extraData
         )

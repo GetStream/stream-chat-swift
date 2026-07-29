@@ -33,7 +33,7 @@ final class MemberPayload_Tests: XCTestCase {
             payload.user!.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.user!.role, .user)
+        XCTAssertEqual(payload.user!.role, "user")
         XCTAssertEqual(payload.user!.isOnline, true)
     }
 

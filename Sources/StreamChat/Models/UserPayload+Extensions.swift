@@ -40,13 +40,13 @@ extension UserPayload {
             deactivatedAt: deactivatedAt,
             id: id,
             image: imageURL?.absoluteString,
-            language: language.map(TranslationLanguage.init(languageCode:)),
+            language: language,
             lastActive: lastActiveAt,
             name: name,
             online: isOnline,
-            role: role,
+            role: role.rawValue,
             teams: teams,
-            teamsRole: teamsRole,
+            teamsRole: teamsRole?.mapValues(\.rawValue),
             updatedAt: updatedAt
         )
     }

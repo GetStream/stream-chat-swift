@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct TranslationLanguage: Hashable, Sendable, Codable {
+public struct TranslationLanguage: Hashable, Sendable {
     public let languageCode: String
 
     public init(languageCode: String) {
@@ -15,15 +15,6 @@ public struct TranslationLanguage: Hashable, Sendable, Codable {
         guard let languageCode = locale.languageCode else { return nil }
         let regionCode = locale.regionCode ?? ""
         self.init(languageCode: languageCode + (regionCode.isEmpty ? "" : "-\(regionCode)"))
-    }
-
-    public init(from decoder: Decoder) throws {
-        try self.init(languageCode: decoder.singleValueContainer().decode(String.self))
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(languageCode)
     }
 }
 
