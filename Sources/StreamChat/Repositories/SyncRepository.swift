@@ -445,7 +445,11 @@ class SyncRepository: @unchecked Sendable {
                     "Fallback refreshed \(refreshedIds.count) watched channel(s). Updating lastSyncAt to \(lastSyncAt)",
                     subsystems: .offlineSupport
                 )
-                self?.updateLastSyncAt(with: lastSyncAt) { error in
+                guard let self else {
+                    completion(.failure(.couldNotUpdateUserValue(ClientError("SyncRepository deallocated"))))
+                    return
+                }
+                self.updateLastSyncAt(with: lastSyncAt) { error in
                     if let error {
                         completion(.failure(error))
                     } else {
@@ -478,7 +482,11 @@ class SyncRepository: @unchecked Sendable {
             }
             var nextAccumulated = accumulated
             nextAccumulated.formUnion(batch)
-            self?.startWatchingChannelsInBatches(remaining, accumulated: nextAccumulated, completion: completion)
+            guard let self else {
+                completion(.failure(.failedFetchingChannels))
+                return
+            }
+            self.startWatchingChannelsInBatches(remaining, accumulated: nextAccumulated, completion: completion)
         }
     }
 
