@@ -53,6 +53,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         queryGroupedChannels_result = nil
         markAllRead_completion = nil
 
+        startWatchingChannels_callCount = 0
         startWatchingChannels_cids.removeAll()
         startWatchingChannels_completion = nil
         startWatchingChannels_completion_success = false
