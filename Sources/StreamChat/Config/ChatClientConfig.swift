@@ -179,6 +179,14 @@ public struct ChatClientConfig: Sendable {
     /// - SeeAlso: Query option``QueryOptions/watch`` used by ``ChannelListQuery`` and ``ChannelQuery``.
     public var isAutomaticSyncOnReconnectEnabled = true
 
+    /// The maximum number of events that may be replayed from a single `/sync` response.
+    ///
+    /// When a `/sync` payload exceeds this count (or the backend returns HTTP 400 for too many events),
+    /// the SDK skips event replay and refreshes actively watched channels via `queryChannels` instead.
+    ///
+    /// Defaults to `250`.
+    public var syncEventReplayMaximumEventCount: Int = 250
+
     /// When enabled, the per-channel unread count is tracked locally for channels where server-side
     /// read events are disabled (i.e. ``ChannelConfig/readEventsEnabled`` is `false`, typical for
     /// livestream channels).

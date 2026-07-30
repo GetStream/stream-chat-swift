@@ -160,7 +160,8 @@ extension ChatClient {
                 eventNotificationCenter: $2,
                 database: $3,
                 apiClient: $4,
-                channelListUpdater: $5
+                channelListUpdater: $5,
+                eventReplayPolicy: SyncEventReplayPolicy(maximumEventCount: $0.syncEventReplayMaximumEventCount)
             )
         }
 
