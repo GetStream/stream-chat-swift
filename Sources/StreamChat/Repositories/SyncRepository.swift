@@ -289,6 +289,10 @@ class SyncRepository: @unchecked Sendable {
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
         guard lastSyncAt.numberOfDaysUntilNow < Constants.maximumDaysSinceLastSync else {
+            log.info(
+                "Skipping `/sync` because lastSyncAt (\(lastSyncAt)) is older than \(Constants.maximumDaysSinceLastSync) days",
+                subsystems: .offlineSupport
+            )
             updateLastSyncAt(with: Date()) { error in
                 if let error = error {
                     completion(.failure(error))
@@ -358,7 +362,10 @@ class SyncRepository: @unchecked Sendable {
         alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
-        log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
+        log.info(
+            "Synching events for \(channelIds.count) channel(s) since \(date). replayThreshold=\(eventReplayPolicy.maximumEventCount) alreadySyncedExcluded=\(alreadySyncedChannelIds.count)",
+            subsystems: .offlineSupport
+        )
 
         guard !channelIds.isEmpty else {
             completion(.success([]))
@@ -371,9 +378,14 @@ class SyncRepository: @unchecked Sendable {
             case let .success(payload):
                 guard let self else { return }
                 let eventCount = payload.eventPayloads.count
-                if eventCount > self.eventReplayPolicy.maximumEventCount {
+                let maximumEventCount = self.eventReplayPolicy.maximumEventCount
+                log.info(
+                    "Received `/sync` payload with \(eventCount) event(s). replayThreshold=\(maximumEventCount)",
+                    subsystems: .offlineSupport
+                )
+                if eventCount > maximumEventCount {
                     log.info(
-                        "Skipping event replay; count \(eventCount) exceeds \(self.eventReplayPolicy.maximumEventCount). Refreshing watched channels instead.",
+                        "Skipping event replay; count \(eventCount) exceeds \(maximumEventCount). Refreshing watched channels instead.",
                         subsystems: .offlineSupport
                     )
                     self.handleSyncEventReplayFallback(
@@ -422,9 +434,17 @@ class SyncRepository: @unchecked Sendable {
         alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
+        log.info(
+            "Running `/sync` fallback via queryChannels. excludingAlreadySynced=\(alreadySyncedChannelIds.count)",
+            subsystems: .offlineSupport
+        )
         refreshActiveWatchedChannels(excluding: alreadySyncedChannelIds) { [weak self] result in
             switch result {
             case let .success(refreshedIds):
+                log.info(
+                    "Fallback refreshed \(refreshedIds.count) watched channel(s). Updating lastSyncAt to \(lastSyncAt)",
+                    subsystems: .offlineSupport
+                )
                 self?.updateLastSyncAt(with: lastSyncAt) { error in
                     if let error {
                         completion(.failure(error))
@@ -433,6 +453,7 @@ class SyncRepository: @unchecked Sendable {
                     }
                 }
             case let .failure(error):
+                log.error("Fallback queryChannels failed: \(error)", subsystems: .offlineSupport)
                 completion(.failure(error))
             }
         }
