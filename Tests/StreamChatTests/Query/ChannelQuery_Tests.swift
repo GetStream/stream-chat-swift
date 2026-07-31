@@ -89,4 +89,44 @@ final class ChannelQuery_Tests: XCTestCase {
         ))
         XCTAssertEqual(query.apiPath, "custom_type/id")
     }
+
+    func test_channelQuery_encodesMemberCustomInclude() throws {
+        var query = ChannelQuery(cid: .unique, pageSize: 25)
+        query.options = [.state]
+        query.memberCustomInclude = ["badge", "tier"]
+
+        let encodedJSON = try JSONEncoder.default.encode(query)
+        AssertJSONEqual(encodedJSON, [
+            "state": true,
+            "messages": ["limit": 25],
+            "member_custom_include": ["badge", "tier"] as NSArray
+        ])
+    }
+
+    func test_channelQuery_omitsMemberCustomIncludeWhenNilOrEmpty() throws {
+        var query = ChannelQuery(cid: .unique, pageSize: 25)
+        query.options = [.state]
+        query.memberCustomInclude = nil
+
+        var encodedJSON = try JSONEncoder.default.encode(query)
+        AssertJSONEqual(encodedJSON, [
+            "state": true,
+            "messages": ["limit": 25]
+        ])
+
+        query.memberCustomInclude = []
+        encodedJSON = try JSONEncoder.default.encode(query)
+        AssertJSONEqual(encodedJSON, [
+            "state": true,
+            "messages": ["limit": 25]
+        ])
+    }
+
+    func test_channelQuery_preservesMemberCustomIncludeWhenCopyingCid() {
+        var original = ChannelQuery(cid: .unique)
+        original.memberCustomInclude = ["badge"]
+
+        let copied = ChannelQuery(cid: .unique, channelQuery: original)
+        XCTAssertEqual(copied.memberCustomInclude, ["badge"])
+    }
 }

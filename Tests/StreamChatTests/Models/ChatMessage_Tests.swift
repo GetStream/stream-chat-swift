@@ -660,7 +660,7 @@ final class ChatMessage_Tests: XCTestCase {
             attachments: [
                 .dummy(id: .init(cid: .unique, messageId: .unique, index: 0))
             ],
-            channelRole: .moderator
+            member: .init(channelRole: .moderator, notificationsMuted: true)
         )
 
         // Test changing only some fields
@@ -681,6 +681,8 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(partiallyChangedMessage.allAttachments, originalMessage.allAttachments)
         XCTAssertEqual(partiallyChangedMessage.translations, originalMessage.translations)
         XCTAssertEqual(partiallyChangedMessage.originalLanguage, originalMessage.originalLanguage)
+        XCTAssertEqual(partiallyChangedMessage.member?.channelRole, .moderator)
+        XCTAssertEqual(partiallyChangedMessage.member?.notificationsMuted, true)
         XCTAssertEqual(partiallyChangedMessage.channelRole, .moderator)
         XCTAssertNil(partiallyChangedMessage.moderationDetails)
 

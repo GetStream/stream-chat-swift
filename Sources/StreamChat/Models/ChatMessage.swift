@@ -203,9 +203,41 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
 
     /// The location information of the message.
     public let sharedLocation: SharedLocation?
-    
+
+    /// Slim channel-member information for the message author, when present on the payload.
+    ///
+    /// Projected custom keys requested via `member_custom_include` are available on
+    /// ``MemberInfo/extraData``.
+    public let member: MemberInfo?
+
     /// The role of the member in the channel.
-    public let channelRole: MemberRole?
+    @available(*, deprecated, message: "Use `member?.channelRole` instead.")
+    public var channelRole: MemberRole? { member?.channelRole }
+
+    /// Slim channel-member information attached to a message (`message.member` on the wire).
+    ///
+    /// This is not a full ``ChatChannelMember``. When `member_custom_include` is requested,
+    /// selected keys from the author's channel-member custom data are available on ``extraData``.
+    public struct MemberInfo: Hashable, Sendable {
+        /// The role of the message author in the channel.
+        public let channelRole: MemberRole?
+        /// Whether the message author has muted notifications for the channel.
+        public let notificationsMuted: Bool
+        /// Custom data projected from the author's channel membership via `member_custom_include`.
+        ///
+        /// Only requested keys are present; missing keys are not an error.
+        public let extraData: [String: RawJSON]
+
+        public init(
+            channelRole: MemberRole? = nil,
+            notificationsMuted: Bool = false,
+            extraData: [String: RawJSON] = [:]
+        ) {
+            self.channelRole = channelRole
+            self.notificationsMuted = notificationsMuted
+            self.extraData = extraData
+        }
+    }
 
     init(
         id: MessageId,
@@ -254,7 +286,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         draftReply: DraftMessage?,
         reminder: MessageReminderInfo?,
         sharedLocation: SharedLocation?,
-        channelRole: MemberRole?
+        member: MemberInfo? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -303,7 +335,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         self.draftReply = draftReply
         self.sharedLocation = sharedLocation
         self.reminder = reminder
-        self.channelRole = channelRole
+        self.member = member
     }
 
     /// Returns a new `ChatMessage` with the provided data changed.
@@ -384,7 +416,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            channelRole: channelRole
+            member: member
         )
     }
 
@@ -504,7 +536,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            channelRole: channelRole
+            member: member
         )
     }
 }
@@ -682,6 +714,7 @@ extension ChatMessage: Hashable {
         guard mentionedChannel == other.mentionedChannel else { return false }
         guard mentionedGroups == other.mentionedGroups else { return false }
         guard mentionedRoles == other.mentionedRoles else { return false }
+        guard member == other.member else { return false }
         return true
     }
 

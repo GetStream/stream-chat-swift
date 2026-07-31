@@ -465,10 +465,50 @@ public struct Command: Codable, Hashable, Sendable {
     }
 }
 
+/// Slim channel-member info attached to a message payload (`message.member`).
+///
+/// This is not a full channel member. When `member_custom_include` is requested, selected
+/// keys from the author's channel-member `custom` are projected as **inline** fields on this
+/// object (v1 API shape) and collected into ``extraData``.
 struct MemberInfoPayload: Codable, Hashable {
-    let channelRole: MemberRole?
-    
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey, CaseIterable {
         case channelRole = "channel_role"
+        case notificationsMuted = "notifications_muted"
+    }
+
+    let channelRole: MemberRole?
+    let notificationsMuted: Bool
+    /// Projected channel-member custom keys requested via `member_custom_include`.
+    let extraData: [String: RawJSON]
+
+    init(
+        channelRole: MemberRole? = nil,
+        notificationsMuted: Bool = false,
+        extraData: [String: RawJSON] = [:]
+    ) {
+        self.channelRole = channelRole
+        self.notificationsMuted = notificationsMuted
+        self.extraData = extraData
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        channelRole = try container.decodeIfPresent(MemberRole.self, forKey: .channelRole)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
+
+        do {
+            var payload = try [String: RawJSON](from: decoder)
+            payload.removeValues(forKeys: CodingKeys.allCases.map(\.rawValue))
+            extraData = payload
+        } catch {
+            extraData = [:]
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(channelRole, forKey: .channelRole)
+        try container.encode(notificationsMuted, forKey: .notificationsMuted)
+        try extraData.encode(to: encoder)
     }
 }

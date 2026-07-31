@@ -132,6 +132,39 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.moderation?.platformCircumvented, false)
         XCTAssertEqual(payload.deletedForMe, true)
         XCTAssertEqual(payload.member?.channelRole, .moderator)
+        XCTAssertEqual(payload.member?.notificationsMuted, false)
+        XCTAssertEqual(payload.member?.extraData, [:])
+    }
+
+    func test_memberInfoPayload_decodesV1InlineCustomKeys() throws {
+        let json = """
+        {
+            "channel_role": "channel_member",
+            "notifications_muted": false,
+            "badge": { "tier": "gold" }
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
+
+        XCTAssertEqual(payload.channelRole, .member)
+        XCTAssertEqual(payload.notificationsMuted, false)
+        XCTAssertEqual(payload.extraData, ["badge": .dictionary(["tier": .string("gold")])])
+    }
+
+    func test_memberInfoPayload_knownFieldsAreNotInExtraData() throws {
+        let json = """
+        {
+            "channel_role": "moderator",
+            "notifications_muted": true
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
+
+        XCTAssertEqual(payload.channelRole, .moderator)
+        XCTAssertEqual(payload.notificationsMuted, true)
+        XCTAssertEqual(payload.extraData, [:])
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
