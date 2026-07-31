@@ -175,7 +175,7 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
                 return
             }
 
-            let channelIdsToSync = Array(channelIds.prefix(100))
+            let channelIdsToSync = Array(channelIds.prefix(SyncRepository.Constants.maximumChannelIdsPerRequest))
             log.info(
                 "Calling `/sync` for \(channelIdsToSync.count) channel(s) since \(context.lastSyncAt)",
                 subsystems: .offlineSupport

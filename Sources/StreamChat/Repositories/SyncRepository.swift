@@ -33,7 +33,7 @@ struct SyncEventReplayPolicy: Sendable {
 /// This class is in charge of the synchronization of our local storage with the remote.
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
 class SyncRepository: @unchecked Sendable {
-    private enum Constants {
+    enum Constants {
         static let maximumDaysSinceLastSync = 30
         static let maximumChannelIdsPerRequest = 100
     }
@@ -321,8 +321,8 @@ class SyncRepository: @unchecked Sendable {
         channelIds.formUnion(activeChannelControllers.allObjects.compactMap(\.cid))
         channelIds.formUnion(activeLivestreamControllers.allObjects.compactMap(\.cid))
         channelIds.formUnion(activeLivestreamChats.allObjects.compactMap { try? $0.cid })
-
         let chats = activeChats.allObjects
+
         let finish: @Sendable (Set<ChannelId>) -> Void = { [weak self] ids in
             guard let self else {
                 completion(.success([]))
