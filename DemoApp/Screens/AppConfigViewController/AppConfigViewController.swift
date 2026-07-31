@@ -213,7 +213,6 @@ class AppConfigViewController: UITableViewController {
         case shouldShowShadowedMessages
         case isChannelAutomaticFilteringEnabled
         case isLocalUnreadCountEnabled
-        case syncEventReplayMaximumEventCount
     }
 
     enum UserConfigOption: String, CaseIterable {
@@ -395,9 +394,6 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalUnreadCountEnabled) { [weak self] newValue in
                 self?.chatClientConfig.isLocalUnreadCountEnabled = newValue
             }
-        case .syncEventReplayMaximumEventCount:
-            cell.detailTextLabel?.text = "\(chatClientConfig.syncEventReplayMaximumEventCount)"
-            cell.accessoryType = .disclosureIndicator
         }
     }
 
@@ -412,8 +408,6 @@ class AppConfigViewController: UITableViewController {
             showBaseURLInputAlert()
         case .reconnectionTimeout:
             pushReconnectionTimeoutSelectorVC()
-        case .syncEventReplayMaximumEventCount:
-            pushSyncEventReplayMaximumEventCountSelectorVC()
         default:
             break
         }
@@ -644,24 +638,6 @@ class AppConfigViewController: UITableViewController {
         selectorViewController.didChangeSelectedOptions = { [weak self] options in
             guard let selectedOption = options.first else { return }
             self?.chatClientConfig.reconnectionTimeout = selectedOption
-            self?.tableView.reloadData()
-        }
-
-        navigationController?.pushViewController(selectorViewController, animated: true)
-    }
-
-    private func pushSyncEventReplayMaximumEventCountSelectorVC() {
-        let selectorViewController = OptionsSelectorViewController<Int>(
-            options: [0, 1, 10, 50, 250, 500],
-            initialSelectedOptions: [chatClientConfig.syncEventReplayMaximumEventCount],
-            allowsMultipleSelection: false,
-            optionFormatter: { option in
-                "\(option)"
-            }
-        )
-        selectorViewController.didChangeSelectedOptions = { [weak self] options in
-            guard let selectedOption = options.first else { return }
-            self?.chatClientConfig.syncEventReplayMaximumEventCount = selectedOption
             self?.tableView.reloadData()
         }
 

@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `ChatClientConfig.syncEventReplayMaximumEventCount` to configure when oversized `/sync` payloads skip event replay [#4189](https://github.com/GetStream/stream-chat-swift/pull/4189)
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
