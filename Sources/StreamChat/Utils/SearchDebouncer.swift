@@ -22,11 +22,19 @@ final class SearchDebouncer: @unchecked Sendable {
     ///
     /// Cancels any previously scheduled work and bumps the generation so in-flight
     /// work can detect it is stale via `isStale()`.
+    ///
+    /// - Returns: `true` when work was scheduled (or run immediately); `false` when
+    ///   the query is below ``SearchDebouncePolicy/minimumCharacterCount`` and was skipped.
     @discardableResult
     func schedule(
         queryLength: Int,
         execute work: @escaping @Sendable (_ isStale: @escaping @Sendable () -> Bool) -> Void
-    ) -> UInt {
+    ) -> Bool {
+        guard policy.shouldPerformSearch(forQueryLength: queryLength) else {
+            cancel()
+            return false
+        }
+
         lock.lock()
         job?.cancel()
         generation &+= 1
@@ -43,7 +51,7 @@ final class SearchDebouncer: @unchecked Sendable {
 
         if interval == 0 {
             work(isStale)
-            return currentGeneration
+            return true
         }
 
         let newJob = DispatchWorkItem { [weak self] in
@@ -59,7 +67,7 @@ final class SearchDebouncer: @unchecked Sendable {
         job = newJob
         lock.unlock()
         queue.asyncAfter(deadline: .now() + interval, execute: newJob)
-        return currentGeneration
+        return true
     }
 
     /// Cancels pending debounced work and invalidates in-flight generations.

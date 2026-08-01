@@ -108,6 +108,11 @@ public class MessageSearch: @unchecked Sendable {
 
     private func search(query: MessageSearchQuery, queryLength: Int) async throws -> [ChatMessage] {
         searchTask?.cancel()
+        guard debouncePolicy.shouldPerformSearch(forQueryLength: queryLength) else {
+            searchTask = nil
+            return await state.messages
+        }
+
         let debouncePolicy = debouncePolicy
         let filterHash = explicitFilterHash
         let task = Task { [weak self, debouncePolicy, filterHash] in

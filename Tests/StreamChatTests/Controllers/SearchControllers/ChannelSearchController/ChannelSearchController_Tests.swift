@@ -67,4 +67,17 @@ final class ChannelSearchController_Tests: XCTestCase {
         }
         wait(for: [expectation], timeout: defaultTimeout)
     }
+
+    func test_search_belowMinimumCharacterCount_doesNotCreateController() {
+        controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
+
+        let expectation = expectation(description: "Completion called when search is skipped")
+        controller.search(text: "ab") { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertNil(controller.channelListController)
+    }
 }

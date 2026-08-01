@@ -74,6 +74,11 @@ public class UserSearch: @unchecked Sendable {
 
     private func search(query: UserListQuery, queryLength: Int) async throws -> [ChatUser] {
         searchTask?.cancel()
+        guard debouncePolicy.shouldPerformSearch(forQueryLength: queryLength) else {
+            searchTask = nil
+            return await state.users
+        }
+
         let debouncePolicy = debouncePolicy
         let limit = query.pagination?.pageSize ?? .usersPageSize
         let pagination = Pagination(pageSize: limit, offset: 0)

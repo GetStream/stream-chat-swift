@@ -11,10 +11,11 @@ final class SearchDebouncer_Tests: XCTestCase {
         let debouncer = SearchDebouncer(policy: .constant(0), queue: .main)
         var executed = false
 
-        debouncer.schedule(queryLength: 1) { _ in
+        let scheduled = debouncer.schedule(queryLength: 1) { _ in
             executed = true
         }
 
+        XCTAssertTrue(scheduled)
         XCTAssertTrue(executed)
     }
 
@@ -53,6 +54,25 @@ final class SearchDebouncer_Tests: XCTestCase {
         }
         debouncer.cancel()
 
+        wait(for: [expectation], timeout: 0.4)
+    }
+
+    func test_schedule_belowMinimumCharacterCount_skipsAndCancelsPending() {
+        let debouncer = SearchDebouncer(
+            policy: .constant(0.2, minimumCharacterCount: 3),
+            queue: .main
+        )
+        let expectation = expectation(description: "Pending work is cancelled by short query")
+        expectation.isInverted = true
+
+        debouncer.schedule(queryLength: 3) { _ in
+            expectation.fulfill()
+        }
+        let scheduled = debouncer.schedule(queryLength: 1) { _ in
+            XCTFail("Work below the minimum character count should not run")
+        }
+
+        XCTAssertFalse(scheduled)
         wait(for: [expectation], timeout: 0.4)
     }
 }

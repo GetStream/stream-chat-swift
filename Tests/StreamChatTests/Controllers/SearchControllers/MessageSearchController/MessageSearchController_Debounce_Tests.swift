@@ -82,6 +82,40 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
         controller.search(text: "a")
         XCTAssertNotNil(env.messageUpdater?.search_query)
     }
+
+    func test_search_belowMinimumCharacterCount_doesNotFireRequest() {
+        controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
+
+        let expectation = expectation(description: "Completion called when search is skipped")
+        controller.search(text: "ab") { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertNil(env.messageUpdater?.search_query)
+    }
+
+    func test_search_belowMinimumCharacterCount_cancelsPendingDebouncedSearch() {
+        controller.debouncePolicy = SearchDebouncePolicy(
+            thresholds: [.init(maximumCharacterCount: .max, interval: 0.2)],
+            minimumCharacterCount: 3
+        )
+
+        controller.search(text: "abc")
+        controller.search(text: "ab")
+
+        XCTAssertNil(env.messageUpdater?.search_query)
+
+        let expectation = expectation(description: "Pending search above minimum does not fire")
+        expectation.isInverted = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            if self.env.messageUpdater?.search_query != nil {
+                expectation.fulfill()
+            }
+        }
+        wait(for: [expectation], timeout: 0.5)
+    }
 }
 
 private class TestEnvironment {

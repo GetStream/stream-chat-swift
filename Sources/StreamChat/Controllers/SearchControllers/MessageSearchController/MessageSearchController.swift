@@ -232,9 +232,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         queryLength: Int,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
-        searchDebouncer.schedule(queryLength: queryLength) { [weak self] isStale in
+        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isStale in
             guard let self, !isStale() else { return }
             self.executeSearch(query: query, isStale: isStale, completion: completion)
+        }
+        if !scheduled {
+            callback { completion?(nil) }
         }
     }
 
