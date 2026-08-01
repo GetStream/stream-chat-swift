@@ -9,6 +9,15 @@ import UIKit
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelSearchVC: ChatChannelListSearchVC {
+    /// The `ChatChannelSearchController` instance used to perform debounced channel searches.
+    public lazy var channelSearchController: ChatChannelSearchController = {
+        let searchController = controller.client.channelSearchController()
+        searchController.didCreateChannelListController = { [weak self] listController in
+            self?.replaceChannelListController(listController)
+        }
+        return searchController
+    }()
+
     /// The closure that is triggered whenever a channel is selected from the search result.
     public var didSelectChannel: (@MainActor (ChatChannel) -> Void)?
 
@@ -19,18 +28,9 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     }
 
     override open func loadSearchResults(with text: String) {
-        guard let currentUserId = controller.client.currentUserId else { return }
-
-        var searchChannelsQuery = ChannelListQuery(
-            filter: .and([
-                .autocomplete(.name, text: text),
-                .containMembers(userIds: [currentUserId])
-            ])
-        )
-        // Do not watch the query when searching.
-        searchChannelsQuery.options = []
-
-        replaceQuery(searchChannelsQuery)
+        // Ensure the lazy controller (and its creation callback) is set up.
+        _ = channelSearchController
+        channelSearchController.search(text: text)
     }
 
     override open func loadMoreSearchResults() {

@@ -10,6 +10,10 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     /// The component responsible to debounce search requests.
+    ///
+    /// - Important: Search debouncing is now handled by the LLC search controllers.
+    /// This property is no longer used by the SDK.
+    @available(*, deprecated, message: "Search debouncing is now handled by search controllers. This property is ignored.")
     public var debouncer = Debouncer(0.3, queue: .main)
 
     /// The current active search text.
@@ -70,10 +74,8 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
         }
 
         currentSearchText = text
-
-        debouncer.execute { [weak self] in
-            self?.loadSearchResults(with: text)
-        }
+        // Debouncing is handled by LLC search controllers.
+        loadSearchResults(with: text)
     }
 
     // MARK: - Required Implementations
@@ -120,6 +122,7 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     // MARK: - Deinit
 
     deinit {
+        // Keep invalidating the deprecated UI debouncer in case a custom subclass still uses it.
         StreamConcurrency.onMain {
             debouncer.invalidate()
         }

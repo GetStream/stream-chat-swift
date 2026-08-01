@@ -25,6 +25,8 @@ import XCTest
 
         vc = ChatChannelSearchVC()
         vc.controller = mockedChannelListController
+        // Keep search synchronous in unit tests.
+        vc.channelSearchController.debouncePolicy = .constant(0)
         vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
     }
 
