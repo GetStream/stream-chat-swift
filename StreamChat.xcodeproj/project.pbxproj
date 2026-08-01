@@ -1000,6 +1000,7 @@
 				StreamChatTests/Utils/MulticastDelegate_Tests.swift,
 				StreamChatTests/Utils/Operations/AsyncOperation_Tests.swift,
 				StreamChatTests/Utils/RepeatingTimer_Tests.swift,
+				StreamChatTests/Utils/AsyncSearchDebouncer_Tests.swift,
 				StreamChatTests/Utils/SearchDebouncePolicy_Tests.swift,
 				StreamChatTests/Utils/SearchDebouncer_Tests.swift,
 				StreamChatTests/Utils/TextLinkDetector_Tests.swift,

@@ -62,44 +62,38 @@ final class UserSearch_Tests: XCTestCase {
     }
     
     func test_searchOrder_whenSendingMultipleRequests_thenIrrelevantResultsAreIgnored() async throws {
-        let expectation = XCTestExpectation()
-        var counter = 0
-        env.userListUpdaterMock.fetch_query_called = { _ in
-            counter += 1
-            guard counter == 2 else { return }
-            expectation.fulfill()
-        }
-        
         // Search for "nam"
-        async let result1 = try await userSearch.search(term: "nam")
+        async let result1 = userSearch.search(term: "nam")
         let expectation1 = XCTestExpectation()
         env.userListUpdaterMock.fetch_query_called = { _ in
             expectation1.fulfill()
         }
 
         await fulfillment(of: [expectation1], timeout: defaultTimeout)
-        
-        // Search for "name"
-        async let result2 = try await userSearch.search(term: "name")
+
+        // Search for "name" — cancels the in-flight "nam" search
+        async let result2 = userSearch.search(term: "name")
         let expectation2 = XCTestExpectation()
         env.userListUpdaterMock.fetch_query_called = { _ in
             expectation2.fulfill()
         }
 
         await fulfillment(of: [expectation2], timeout: defaultTimeout)
-        
+
         XCTAssertEqual(2, env.userListUpdaterMock.fetch_completions.count)
-        
-        // First one delayed, second one finishes
+
         let secondResult = makeUsers(name: "name", count: 5, offset: 0)
         env.userListUpdaterMock.fetch_completions[1](.success(secondResult))
-        
-        // The first requests finishes
+
+        // Completing the cancelled request must not overwrite state.
         let firstResult = makeUsers(name: "nam", count: 10, offset: 0)
         env.userListUpdaterMock.fetch_completions[0](.success(firstResult))
-        
-        _ = try await result1.count
-        
+
+        do {
+            _ = try await result1
+            XCTFail("Superseded search should throw CancellationError")
+        } catch is CancellationError {}
+
         XCTAssertEqual(5, try await result2.count)
         await XCTAssertEqual(secondResult.users.map(\.id), userSearch.state.users.map(\.id))
     }

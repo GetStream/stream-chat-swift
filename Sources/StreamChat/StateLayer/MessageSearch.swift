@@ -11,14 +11,18 @@ import Foundation
 public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
+    private let searchDebouncer: AsyncSearchDebouncer
     /// The debounce policy used for search requests.
     ///
     /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
-    var debouncePolicy: SearchDebouncePolicy = .default
+    var debouncePolicy: SearchDebouncePolicy {
+        get { searchDebouncer.policy }
+        set { searchDebouncer.policy = newValue }
+    }
+
     @MainActor private var stateBuilder: StateBuilder<MessageSearchState>
-    private var searchTask: Task<[ChatMessage], Error>?
     let explicitFilterHash = UUID().uuidString
-    
+
     init(client: ChatClient, environment: Environment = .init()) {
         authenticationRepository = client.authenticationRepository
         messageUpdater = environment.messageUpdaterBuilder(
@@ -27,6 +31,7 @@ public class MessageSearch: @unchecked Sendable {
             client.databaseContainer,
             client.apiClient
         )
+        searchDebouncer = AsyncSearchDebouncer(policy: .default)
         stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer) }
     }
     
@@ -48,8 +53,7 @@ public class MessageSearch: @unchecked Sendable {
     @discardableResult public func search(text: String, sort: [Sorting<MessageSearchSortingKey>]? = nil) async throws -> [ChatMessage] {
         // Clear results when there is no text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            searchTask?.cancel()
-            searchTask = nil
+            searchDebouncer.cancel()
             if let query = await state.query {
                 try await messageUpdater.clearSearchResults(for: query)
                 await state.set(query: nil, cursor: nil)
@@ -107,21 +111,9 @@ public class MessageSearch: @unchecked Sendable {
     // MARK: - Private
 
     private func search(query: MessageSearchQuery, queryLength: Int) async throws -> [ChatMessage] {
-        searchTask?.cancel()
-        guard debouncePolicy.shouldPerformSearch(forQueryLength: queryLength) else {
-            searchTask = nil
-            return await state.messages
-        }
-
-        let debouncePolicy = debouncePolicy
         let filterHash = explicitFilterHash
-        let task = Task { [weak self, debouncePolicy, filterHash] in
+        let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self, filterHash] in
             guard let self else { throw ClientError("MessageSearch was deallocated") }
-            let interval = debouncePolicy.interval(forQueryLength: queryLength)
-            if interval > 0 {
-                try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
-            }
-            try Task.checkCancellation()
 
             var query = query
             query.filterHash = filterHash
@@ -130,8 +122,10 @@ public class MessageSearch: @unchecked Sendable {
             await self.state.set(query: query, cursor: result.payload.next)
             return result.models
         }
-        searchTask = task
-        return try await task.value
+        if let result {
+            return result
+        }
+        return await state.messages
     }
     
     private func currentUserId() throws -> UserId {

@@ -11,17 +11,21 @@ import Foundation
 public class UserSearch: @unchecked Sendable {
     @MainActor private var stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
+    private let searchDebouncer: AsyncSearchDebouncer
     /// The debounce policy used for search requests.
     ///
     /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
-    var debouncePolicy: SearchDebouncePolicy = .default
-    private var searchTask: Task<[ChatUser], Error>?
-    
+    var debouncePolicy: SearchDebouncePolicy {
+        get { searchDebouncer.policy }
+        set { searchDebouncer.policy = newValue }
+    }
+
     init(client: ChatClient, environment: Environment = .init()) {
         userListUpdater = environment.userListUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
+        searchDebouncer = AsyncSearchDebouncer(policy: .default)
         stateBuilder = StateBuilder { UserSearchState() }
     }
     
@@ -73,26 +77,16 @@ public class UserSearch: @unchecked Sendable {
     // MARK: - Private
 
     private func search(query: UserListQuery, queryLength: Int) async throws -> [ChatUser] {
-        searchTask?.cancel()
-        guard debouncePolicy.shouldPerformSearch(forQueryLength: queryLength) else {
-            searchTask = nil
-            return await state.users
-        }
-
-        let debouncePolicy = debouncePolicy
         let limit = query.pagination?.pageSize ?? .usersPageSize
         let pagination = Pagination(pageSize: limit, offset: 0)
-        let task = Task { [weak self, debouncePolicy] in
+        let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
             guard let self else { throw ClientError("UserSearch was deallocated") }
-            let interval = debouncePolicy.interval(forQueryLength: queryLength)
-            if interval > 0 {
-                try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
-            }
-            try Task.checkCancellation()
             return try await self.performSearch(query: query, pagination: pagination)
         }
-        searchTask = task
-        return try await task.value
+        if let result {
+            return result
+        }
+        return await state.users
     }
     
     private func performSearch(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
