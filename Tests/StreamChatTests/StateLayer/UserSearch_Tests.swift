@@ -18,6 +18,8 @@ final class UserSearch_Tests: XCTestCase {
             client: env.client,
             environment: env.userListEnvironment
         )
+        // Keep search synchronous in unit tests unless a test opts into debouncing.
+        userSearch.debouncePolicy = .constant(0)
         // Explicitly load the state
         _ = userSearch.state
     }

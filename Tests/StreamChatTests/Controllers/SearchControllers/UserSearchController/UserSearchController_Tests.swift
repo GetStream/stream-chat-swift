@@ -29,6 +29,8 @@ final class UserSearchController_Tests: XCTestCase {
             pageSize: 10
         )
         controller = ChatUserSearchController(client: client, environment: env.environment)
+        // Keep search synchronous in unit tests unless a test opts into debouncing.
+        controller.debouncePolicy = .constant(0)
     }
 
     override func tearDown() {

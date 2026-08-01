@@ -19,15 +19,29 @@ public extension ChatClient {
 
 /// `ChatMessageSearchController` is a controller class which allows observing a list of messages based on the provided query.
 ///
+/// Search requests are debounced according to ``debouncePolicy``.
+/// Scheduling a new search cancels any pending debounced work and ignores results from
+/// previously in-flight requests.
+///
 /// - Note: For an async-await alternative of the `ChatMessageSearchController`, please check ``MessageSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatMessageSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     private let environment: Environment
+    private let searchDebouncer: SearchDebouncer
+
+    /// The debounce policy used for search requests.
+    ///
+    /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
+    var debouncePolicy: SearchDebouncePolicy {
+        get { searchDebouncer.policy }
+        set { searchDebouncer.policy = newValue }
+    }
 
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
+        searchDebouncer = SearchDebouncer(policy: .default)
 
         super.init()
 
@@ -35,6 +49,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     deinit {
+        searchDebouncer.cancel()
         let query = self.query
         client.databaseContainer.write { session in
             session.deleteQuery(query)
@@ -160,10 +175,15 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             return
         }
 
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let lastQuery = lastQuery {
-            messageUpdater.clearSearchResults(for: lastQuery) { error in
-                self.nextPageCursor = nil
-                self.callback { completion?(error) }
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            searchDebouncer.cancel()
+            if let lastQuery {
+                messageUpdater.clearSearchResults(for: lastQuery) { error in
+                    self.nextPageCursor = nil
+                    self.callback { completion?(error) }
+                }
+            } else {
+                callback { completion?(nil) }
             }
             return
         }
@@ -175,7 +195,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             sort: sortOrder
         )
 
-        search(query: query, completion: completion)
+        scheduleSearch(query: query, queryLength: text.count, completion: completion)
     }
 
     private func resetMessagesObserver() {
@@ -200,6 +220,29 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
+        scheduleSearch(
+            query: query,
+            queryLength: SearchQueryLength.fromFilter(query.messageFilter),
+            completion: completion
+        )
+    }
+
+    private func scheduleSearch(
+        query: MessageSearchQuery,
+        queryLength: Int,
+        completion: (@MainActor (_ error: Error?) -> Void)?
+    ) {
+        searchDebouncer.schedule(queryLength: queryLength) { [weak self] isStale in
+            guard let self, !isStale() else { return }
+            self.executeSearch(query: query, isStale: isStale, completion: completion)
+        }
+    }
+
+    private func executeSearch(
+        query: MessageSearchQuery,
+        isStale: @escaping @Sendable () -> Bool,
+        completion: (@MainActor (_ error: Error?) -> Void)?
+    ) {
         var query = query
         query.filterHash = explicitFilterHash
 
@@ -208,7 +251,9 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         // To respect sorting the user passed, we must reset messagesObserver
         resetMessagesObserver()
 
-        messageUpdater.search(query: query, policy: .replace) { result in
+        messageUpdater.search(query: query, policy: .replace) { [weak self] result in
+            guard let self, !isStale() else { return }
+
             if case let .success(response) = result {
                 self.updateNextPageCursor(with: response.payload)
             }

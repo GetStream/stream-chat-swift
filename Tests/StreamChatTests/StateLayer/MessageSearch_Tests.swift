@@ -110,6 +110,8 @@ final class MessageSearch_Tests: XCTestCase {
             client: env.client,
             environment: env.messageSearchEnvironment(usesMockedMessageUpdater: usesMockedMessageUpdater)
         )
+        // Keep search synchronous in unit tests unless a test opts into debouncing.
+        messageSearch.debouncePolicy = .constant(0)
         if loadState {
             _ = messageSearch.state
         }

@@ -25,6 +25,8 @@ final class MessageSearchController_Tests: XCTestCase {
             messageFilter: .queryText("")
         )
         controller = ChatMessageSearchController(client: client, environment: env.environment)
+        // Keep search synchronous in unit tests unless a test opts into debouncing.
+        controller.debouncePolicy = .constant(0)
         // Message search requires a current user
         client.authenticationRepository.setMockToken()
     }
