@@ -16,10 +16,10 @@ import Foundation
 /// `work` is invoked only if its generation is still current. Call `isCurrent` again after
 /// every async boundary (network, DB) before mutating state.
 ///
-/// Thread safety: `policy`, pending work, and generation are guarded by `lock`.
-/// `@unchecked Sendable` relies on that lock for cross-isolation use.
+/// Thread safety: pending work and generation are guarded by `lock`; `policy` is
+/// immutable. `@unchecked Sendable` relies on that lock for cross-isolation use.
 final class SearchDebouncer: @unchecked Sendable {
-    var policy: SearchDebouncePolicy
+    let policy: SearchDebouncePolicy
     private let queue: DispatchQueue
     private var job: DispatchWorkItem?
     private var generation: UInt = 0

@@ -6,26 +6,22 @@ import Foundation
 
 /// An object which represents a list of `ChatUser` for the specified search query.
 ///
-/// Search requests are debounced according to ``debouncePolicy``.
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Calling ``search(term:)`` or ``search(query:)`` again cancels the previous in-flight search.
 public class UserSearch: @unchecked Sendable {
     @MainActor private var stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
     private let searchDebouncer: AsyncSearchDebouncer
-    /// The debounce policy used for search requests.
-    ///
-    /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
-    var debouncePolicy: SearchDebouncePolicy {
-        get { searchDebouncer.policy }
-        set { searchDebouncer.policy = newValue }
-    }
-
-    init(client: ChatClient, environment: Environment = .init()) {
+    init(
+        client: ChatClient,
+        environment: Environment = .init(),
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         userListUpdater = environment.userListUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
-        searchDebouncer = AsyncSearchDebouncer(policy: .default)
+        searchDebouncer = AsyncSearchDebouncer(policy: debouncePolicy)
         stateBuilder = StateBuilder { UserSearchState() }
     }
     

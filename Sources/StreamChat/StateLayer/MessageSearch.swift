@@ -6,24 +6,20 @@ import Foundation
 
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
 ///
-/// Search requests are debounced according to ``debouncePolicy``.
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Calling ``search(text:sort:)`` or ``search(query:)`` again cancels the previous in-flight search.
 public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
     private let searchDebouncer: AsyncSearchDebouncer
-    /// The debounce policy used for search requests.
-    ///
-    /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
-    var debouncePolicy: SearchDebouncePolicy {
-        get { searchDebouncer.policy }
-        set { searchDebouncer.policy = newValue }
-    }
-
     @MainActor private var stateBuilder: StateBuilder<MessageSearchState>
     let explicitFilterHash = UUID().uuidString
 
-    init(client: ChatClient, environment: Environment = .init()) {
+    init(
+        client: ChatClient,
+        environment: Environment = .init(),
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         authenticationRepository = client.authenticationRepository
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
@@ -31,7 +27,7 @@ public class MessageSearch: @unchecked Sendable {
             client.databaseContainer,
             client.apiClient
         )
-        searchDebouncer = AsyncSearchDebouncer(policy: .default)
+        searchDebouncer = AsyncSearchDebouncer(policy: debouncePolicy)
         stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer) }
     }
     

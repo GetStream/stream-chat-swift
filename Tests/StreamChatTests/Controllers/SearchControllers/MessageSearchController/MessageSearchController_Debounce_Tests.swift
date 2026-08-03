@@ -16,8 +16,15 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
         env = .init()
         client = ChatClient.mock
         client.authenticationRepository.setMockToken()
-        controller = ChatMessageSearchController(client: client, environment: env.environment)
-        controller.debouncePolicy = .constant(0.15)
+        controller = makeController(debouncePolicy: .constant(0.15))
+    }
+
+    private func makeController(debouncePolicy: SearchDebouncePolicy) -> ChatMessageSearchController {
+        ChatMessageSearchController(
+            client: client,
+            environment: env.environment,
+            debouncePolicy: debouncePolicy
+        )
     }
 
     override func tearDown() {
@@ -78,7 +85,7 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
     }
 
     func test_debouncePolicy_canBeOverriddenPerController() {
-        controller.debouncePolicy = .constant(0)
+        controller = makeController(debouncePolicy: .constant(0))
         controller.search(text: "a")
         XCTAssertNotNil(env.messageUpdater?.search_query)
     }
@@ -120,7 +127,7 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
     }
 
     func test_search_withCustomQueryContainingShortSearchText_respectsMinimumCharacterCount() {
-        controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
+        controller = makeController(debouncePolicy: .constant(0, minimumCharacterCount: 3))
         let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [.unique]),
             messageFilter: .and([
@@ -135,7 +142,7 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
     }
 
     func test_search_belowMinimumCharacterCount_doesNotFireRequest() {
-        controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
+        controller = makeController(debouncePolicy: .constant(0, minimumCharacterCount: 3))
 
         let expectation = expectation(description: "Completion called when search is skipped")
         controller.search(text: "ab") { error in
@@ -148,9 +155,11 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
     }
 
     func test_search_belowMinimumCharacterCount_cancelsPendingDebouncedSearch() {
-        controller.debouncePolicy = SearchDebouncePolicy(
-            thresholds: [.init(maximumCharacterCount: .max, interval: 0.2)],
-            minimumCharacterCount: 3
+        controller = makeController(
+            debouncePolicy: SearchDebouncePolicy(
+                thresholds: [.init(maximumCharacterCount: .max, interval: 0.2)],
+                minimumCharacterCount: 3
+            )
         )
 
         controller.search(text: "abc")

@@ -12,10 +12,10 @@ import Foundation
 /// synchronized; the owner must not overlap them. `@unchecked Sendable` relies
 /// on that external serialization invariant.
 final class AsyncSearchDebouncer: @unchecked Sendable {
-    var policy: SearchDebouncePolicy
+    let policy: SearchDebouncePolicy
     private var currentTask: CancellableTask?
 
-    init(policy: SearchDebouncePolicy = .default) {
+    init(policy: SearchDebouncePolicy) {
         self.policy = policy
     }
 

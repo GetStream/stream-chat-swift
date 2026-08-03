@@ -15,20 +15,12 @@ public extension ChatClient {
 
 /// `ChatChannelSearchController` searches channels by name.
 ///
-/// Search requests are debounced according to ``debouncePolicy``.
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Scheduling a new search cancels any pending debounced work and ignores results from
 /// previously in-flight requests.
 public class ChatChannelSearchController: DataController, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-
-    /// The debounce policy used for search requests.
-    ///
-    /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
-    var debouncePolicy: SearchDebouncePolicy {
-        get { searchDebouncer.policy }
-        set { searchDebouncer.policy = newValue }
-    }
 
     /// Called when a new channel list controller has been created for a search, before remote data is fetched.
     public var didCreateChannelListController: (@MainActor (ChatChannelListController) -> Void)?
@@ -43,9 +35,9 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
 
     private let searchDebouncer: SearchDebouncer
 
-    init(client: ChatClient) {
+    init(client: ChatClient, debouncePolicy: SearchDebouncePolicy = .default) {
         self.client = client
-        searchDebouncer = SearchDebouncer(policy: .default)
+        searchDebouncer = SearchDebouncer(policy: debouncePolicy)
         super.init()
     }
 

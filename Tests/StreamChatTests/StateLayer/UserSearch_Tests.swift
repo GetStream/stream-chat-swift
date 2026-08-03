@@ -16,10 +16,10 @@ final class UserSearch_Tests: XCTestCase {
         testError = TestError()
         userSearch = UserSearch(
             client: env.client,
-            environment: env.userListEnvironment
+            environment: env.userListEnvironment,
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
         )
-        // Keep search synchronous in unit tests unless a test opts into debouncing.
-        userSearch.debouncePolicy = .constant(0)
         // Explicitly load the state
         _ = userSearch.state
     }

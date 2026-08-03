@@ -14,9 +14,8 @@ final class ChannelSearchController_Tests: XCTestCase {
         super.setUp()
         client = .mock()
         client.currentUserId_mock = .unique
-        controller = client.channelSearchController()
-        // Keep search synchronous in unit tests unless a test opts into debouncing.
-        controller.debouncePolicy = .constant(0)
+        // Keep search synchronous unless a test opts into debouncing.
+        controller = makeController(debouncePolicy: .constant(0))
     }
 
     override func tearDown() {
@@ -26,6 +25,10 @@ final class ChannelSearchController_Tests: XCTestCase {
             Assert.canBeReleased(&client)
         }
         super.tearDown()
+    }
+
+    private func makeController(debouncePolicy: SearchDebouncePolicy) -> ChatChannelSearchController {
+        ChatChannelSearchController(client: client, debouncePolicy: debouncePolicy)
     }
 
     func test_search_createsChannelListController() {
@@ -38,7 +41,7 @@ final class ChannelSearchController_Tests: XCTestCase {
     }
 
     func test_search_emptyText_clearsResultsImmediately() {
-        controller.debouncePolicy = .constant(0.2)
+        controller = makeController(debouncePolicy: .constant(0.2))
         controller.search(text: "a")
         controller.search(text: "")
 
@@ -46,7 +49,7 @@ final class ChannelSearchController_Tests: XCTestCase {
     }
 
     func test_search_respectsDebouncePolicy() {
-        controller.debouncePolicy = .constant(0.15)
+        controller = makeController(debouncePolicy: .constant(0.15))
         controller.search(text: "general")
 
         XCTAssertNil(controller.channelListController)
@@ -69,7 +72,7 @@ final class ChannelSearchController_Tests: XCTestCase {
     }
 
     func test_search_belowMinimumCharacterCount_doesNotCreateController() {
-        controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
+        controller = makeController(debouncePolicy: .constant(0, minimumCharacterCount: 3))
 
         let expectation = expectation(description: "Completion called when search is skipped")
         controller.search(text: "ab") { error in
@@ -79,5 +82,35 @@ final class ChannelSearchController_Tests: XCTestCase {
 
         wait(for: [expectation], timeout: defaultTimeout)
         XCTAssertNil(controller.channelListController)
+    }
+
+    func test_clearResults_cancelsPendingDebouncedSearch() {
+        controller = makeController(debouncePolicy: .constant(0.15))
+        controller.search(text: "general")
+        controller.clearResults()
+
+        let expectation = expectation(description: "Cancelled search does not create a controller")
+        expectation.isInverted = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            if self.controller.channelListController != nil {
+                expectation.fulfill()
+            }
+        }
+        wait(for: [expectation], timeout: 0.4)
+    }
+
+    func test_channelSearchController_usesTheDefaultDebouncePolicy() {
+        controller = client.channelSearchController()
+
+        // The default policy debounces 3 character queries by 300ms, so nothing happens yet.
+        controller.search(text: "abc")
+        XCTAssertNil(controller.channelListController)
+
+        let expectation = expectation(description: "Default debounced search fires")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            XCTAssertNotNil(self.controller.channelListController)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 }

@@ -19,7 +19,7 @@ public extension ChatClient {
 
 /// `ChatMessageSearchController` is a controller class which allows observing a list of messages based on the provided query.
 ///
-/// Search requests are debounced according to ``debouncePolicy``.
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Scheduling a new search cancels any pending debounced work and ignores results from
 /// previously in-flight requests.
 ///
@@ -30,18 +30,14 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     private let environment: Environment
     private let searchDebouncer: SearchDebouncer
 
-    /// The debounce policy used for search requests.
-    ///
-    /// Defaults to ``SearchDebouncePolicy/default`` (500ms for 1–2 characters, 300ms for 3+).
-    var debouncePolicy: SearchDebouncePolicy {
-        get { searchDebouncer.policy }
-        set { searchDebouncer.policy = newValue }
-    }
-
-    init(client: ChatClient, environment: Environment = .init()) {
+    init(
+        client: ChatClient,
+        environment: Environment = .init(),
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         self.client = client
         self.environment = environment
-        searchDebouncer = SearchDebouncer(policy: .default)
+        searchDebouncer = SearchDebouncer(policy: debouncePolicy)
 
         super.init()
 

@@ -108,10 +108,10 @@ final class MessageSearch_Tests: XCTestCase {
     @MainActor private func setUpMessageSearch(usesMockedMessageUpdater: Bool, loadState: Bool = true) {
         messageSearch = MessageSearch(
             client: env.client,
-            environment: env.messageSearchEnvironment(usesMockedMessageUpdater: usesMockedMessageUpdater)
+            environment: env.messageSearchEnvironment(usesMockedMessageUpdater: usesMockedMessageUpdater),
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
         )
-        // Keep search synchronous in unit tests unless a test opts into debouncing.
-        messageSearch.debouncePolicy = .constant(0)
         if loadState {
             _ = messageSearch.state
         }
