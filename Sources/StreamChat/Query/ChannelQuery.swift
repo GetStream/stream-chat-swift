@@ -29,7 +29,7 @@ public struct ChannelQuery: Encodable, Sendable {
     /// Top-level keys of the message author's channel-member `custom` to project onto `message.member`.
     ///
     /// When `nil` or empty, the option is omitted and the response is unchanged.
-    public var memberCustomInclude: [String]? = nil
+    public var memberCustomInclude: [String]?
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload?
     /// A pagination for members for the channel to be retrieved.
