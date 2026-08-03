@@ -215,16 +215,23 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// - Warning: Make sure the `query` text is not empty. Empty queries will result in 400 errors from backend.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still discards its response either way.
+    ///
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        scheduleSearch(
-            query: query,
-            queryLength: SearchQueryLength.fromFilter(query.messageFilter),
-            completion: completion
-        )
+        guard let queryLength = SearchQueryLength.fromFilter(query.messageFilter) else {
+            searchDebouncer.perform { [weak self] isCurrent in
+                self?.executeSearch(query: query, isCurrent: isCurrent, completion: completion)
+            }
+            return
+        }
+        scheduleSearch(query: query, queryLength: queryLength, completion: completion)
     }
 
     private func scheduleSearch(

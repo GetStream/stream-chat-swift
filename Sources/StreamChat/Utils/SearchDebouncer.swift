@@ -5,10 +5,16 @@
 import Foundation
 
 /// Schedules search work using a ``SearchDebouncePolicy`` and invalidates in-flight
-/// generations when a newer search is scheduled.
+/// generations when a newer search starts.
 ///
-/// `work` is invoked only if this schedule is still current after the debounce interval.
-/// Call `isCurrent` again after every async boundary (network, DB) before mutating state.
+/// Text-driven searches go through ``schedule(queryLength:execute:)`` and are debounced.
+/// Programmatic, query-driven searches go through ``perform(execute:)`` and run right
+/// away, but still take part in generation tracking so a later search can discard their
+/// response. Follow-up requests that belong to the latest search (pagination) use
+/// ``currentGenerationCheck()`` so they neither wait nor invalidate the search they extend.
+///
+/// `work` is invoked only if its generation is still current. Call `isCurrent` again after
+/// every async boundary (network, DB) before mutating state.
 ///
 /// Thread safety: `policy`, pending work, and generation are guarded by `lock`.
 /// `@unchecked Sendable` relies on that lock for cross-isolation use.
@@ -48,21 +54,7 @@ final class SearchDebouncer: @unchecked Sendable {
         let interval = policy.interval(forQueryLength: queryLength)
         lock.unlock()
 
-        let isCurrent: @Sendable () -> Bool = { [weak self] in
-            guard let self else { return false }
-            self.lock.lock()
-            defer { self.lock.unlock() }
-            return self.generation == currentGeneration
-        }
-
-        let invokeWork = { [weak self] in
-            guard let self else { return }
-            self.lock.lock()
-            let isCurrentGeneration = self.generation == currentGeneration
-            self.lock.unlock()
-            guard isCurrentGeneration else { return }
-            work(isCurrent)
-        }
+        let invokeWork = makeWorkInvocation(generation: currentGeneration, work: work)
 
         if interval == 0 {
             invokeWork()
@@ -77,6 +69,36 @@ final class SearchDebouncer: @unchecked Sendable {
         return true
     }
 
+    /// Runs `work` immediately, superseding any pending debounced work.
+    ///
+    /// Use for programmatic searches, which are not typed character by character and so
+    /// have nothing to debounce. The work still gets a generation, so a later search can
+    /// discard its response.
+    func perform(
+        execute work: @escaping @Sendable (_ isCurrent: @escaping @Sendable () -> Bool) -> Void
+    ) {
+        lock.lock()
+        job?.cancel()
+        job = nil
+        generation &+= 1
+        let currentGeneration = generation
+        lock.unlock()
+
+        makeWorkInvocation(generation: currentGeneration, work: work)()
+    }
+
+    /// Returns a check for the generation that is current right now, without starting a new one.
+    ///
+    /// Use for follow-up requests that belong to the latest search, such as pagination: they
+    /// must be discarded when a newer search starts, but must not invalidate the search they
+    /// are extending.
+    func currentGenerationCheck() -> @Sendable () -> Bool {
+        lock.lock()
+        let currentGeneration = generation
+        lock.unlock()
+        return isCurrentCheck(for: currentGeneration)
+    }
+
     /// Cancels pending debounced work and invalidates in-flight generations.
     func cancel() {
         lock.lock()
@@ -88,5 +110,25 @@ final class SearchDebouncer: @unchecked Sendable {
 
     deinit {
         job?.cancel()
+    }
+
+    private func makeWorkInvocation(
+        generation: UInt,
+        work: @escaping @Sendable (_ isCurrent: @escaping @Sendable () -> Bool) -> Void
+    ) -> @Sendable () -> Void {
+        let isCurrent = isCurrentCheck(for: generation)
+        return {
+            guard isCurrent() else { return }
+            work(isCurrent)
+        }
+    }
+
+    private func isCurrentCheck(for generation: UInt) -> @Sendable () -> Bool {
+        { [weak self] in
+            guard let self else { return false }
+            self.lock.lock()
+            defer { self.lock.unlock() }
+            return self.generation == generation
+        }
     }
 }

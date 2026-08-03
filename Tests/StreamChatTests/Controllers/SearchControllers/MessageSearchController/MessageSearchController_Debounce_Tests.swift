@@ -83,6 +83,57 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
         XCTAssertNotNil(env.messageUpdater?.search_query)
     }
 
+    func test_search_withQueryWithoutSearchText_isNotDebounced() {
+        let query = MessageSearchQuery(
+            channelFilter: .containMembers(userIds: [.unique]),
+            messageFilter: .withAttachments([.image])
+        )
+
+        controller.search(query: query)
+
+        // A query with no search text is not typed character by character, so it runs right
+        // away even though the controller has a non-zero debounce interval.
+        XCTAssertNotNil(env.messageUpdater?.search_query)
+    }
+
+    func test_search_withCustomQueryContainingSearchText_isDebounced() {
+        // A custom query that combines a text search with other filters is still typed
+        // character by character, so it must be debounced on the search text length.
+        let query = MessageSearchQuery(
+            channelFilter: .containMembers(userIds: [.unique]),
+            messageFilter: .and([
+                .autocomplete(.text, text: "ab"),
+                .withAttachments([.image])
+            ])
+        )
+
+        controller.search(query: query)
+
+        XCTAssertNil(env.messageUpdater?.search_query)
+
+        let expectation = expectation(description: "Debounced custom query fires")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            XCTAssertNotNil(self.env.messageUpdater?.search_query)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+
+    func test_search_withCustomQueryContainingShortSearchText_respectsMinimumCharacterCount() {
+        controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
+        let query = MessageSearchQuery(
+            channelFilter: .containMembers(userIds: [.unique]),
+            messageFilter: .and([
+                .autocomplete(.text, text: "ab"),
+                .withAttachments([.image])
+            ])
+        )
+
+        controller.search(query: query)
+
+        XCTAssertNil(env.messageUpdater?.search_query)
+    }
+
     func test_search_belowMinimumCharacterCount_doesNotFireRequest() {
         controller.debouncePolicy = .constant(0, minimumCharacterCount: 3)
 

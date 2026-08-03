@@ -75,13 +75,21 @@ public class MessageSearch: @unchecked Sendable {
     ///
     /// - Parameter query: The search query specifying filters, sorting and pagination.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still cancels it either way.
+    ///
     /// - Throws: An error while communicating with the Stream API. Throws `CancellationError` when superseded by a newer search.
     /// - Returns: An array of paginated chat messages matching to the query.
     @discardableResult public func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
-        try await search(
-            query: query,
-            queryLength: SearchQueryLength.fromFilter(query.messageFilter)
-        )
+        if let queryLength = SearchQueryLength.fromFilter(query.messageFilter) {
+            return try await search(query: query, queryLength: queryLength)
+        }
+        return try await searchDebouncer.perform { [weak self] in
+            guard let self else { throw ClientError("MessageSearch was deallocated") }
+            return try await self.performSearch(query: query)
+        }
     }
     
     /// Searches for more messages matching with the last search query.
@@ -111,21 +119,23 @@ public class MessageSearch: @unchecked Sendable {
     // MARK: - Private
 
     private func search(query: MessageSearchQuery, queryLength: Int) async throws -> [ChatMessage] {
-        let filterHash = explicitFilterHash
-        let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self, filterHash] in
+        let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
             guard let self else { throw ClientError("MessageSearch was deallocated") }
-
-            var query = query
-            query.filterHash = filterHash
-            let result = try await self.messageUpdater.search(query: query, policy: .replace)
-            try Task.checkCancellation()
-            await self.state.set(query: query, cursor: result.payload.next)
-            return result.models
+            return try await self.performSearch(query: query)
         }
         if let result {
             return result
         }
         return await state.messages
+    }
+
+    private func performSearch(query: MessageSearchQuery) async throws -> [ChatMessage] {
+        var query = query
+        query.filterHash = explicitFilterHash
+        let result = try await messageUpdater.search(query: query, policy: .replace)
+        try Task.checkCancellation()
+        await state.set(query: query, cursor: result.payload.next)
+        return result.models
     }
     
     private func currentUserId() throws -> UserId {

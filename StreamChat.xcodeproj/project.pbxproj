@@ -1003,6 +1003,7 @@
 				StreamChatTests/Utils/AsyncSearchDebouncer_Tests.swift,
 				StreamChatTests/Utils/SearchDebouncePolicy_Tests.swift,
 				StreamChatTests/Utils/SearchDebouncer_Tests.swift,
+				StreamChatTests/Utils/SearchQueryLength_Tests.swift,
 				StreamChatTests/Utils/TextLinkDetector_Tests.swift,
 				StreamChatTests/Utils/ThreadSafeWeakCollection_Tests.swift,
 				StreamChatTests/WebSocketClient/ChannelDeliveryTracker_Tests.swift,

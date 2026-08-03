@@ -36,9 +36,28 @@ final class AsyncSearchDebouncer: @unchecked Sendable {
             return nil
         }
 
-        let policy = policy
+        return try await start(after: policy.interval(forQueryLength: queryLength), operation: operation)
+    }
+
+    /// Runs `operation` immediately, cancelling any pending or in-flight work.
+    ///
+    /// Use for programmatic searches, which are not typed character by character and so
+    /// have nothing to debounce. The work is still cancelled by a later search.
+    ///
+    /// - Throws: `CancellationError` when superseded by a newer search or cancelled
+    ///   via ``cancel()``.
+    func perform<Success: Sendable>(
+        operation: @escaping @Sendable () async throws -> Success
+    ) async throws -> Success {
+        cancel()
+        return try await start(after: 0, operation: operation)
+    }
+
+    private func start<Success: Sendable>(
+        after interval: TimeInterval,
+        operation: @escaping @Sendable () async throws -> Success
+    ) async throws -> Success {
         let task = Task<Success, Error> {
-            let interval = policy.interval(forQueryLength: queryLength)
             if interval > 0 {
                 try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
             }

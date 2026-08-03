@@ -98,16 +98,23 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///
     /// - Note: Currently, no local data will be searched, only remote data will be queried.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.query`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still discards its response either way.
+    ///
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: UserListQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        scheduleFetch(
-            query,
-            queryLength: SearchQueryLength.fromFilter(query.filter),
-            completion: completion
-        )
+        guard let queryLength = SearchQueryLength.fromFilter(query.filter) else {
+            searchDebouncer.perform { [weak self] isCurrent in
+                self?.fetch(query, isCurrent: isCurrent, completion: completion)
+            }
+            return
+        }
+        scheduleFetch(query, queryLength: queryLength, completion: completion)
     }
 
     /// Loads next users from backend.
@@ -131,8 +138,9 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         var updatedQuery = lastQuery
         updatedQuery.pagination = Pagination(pageSize: limit, offset: userArray.count)
 
-        // Pagination should not be debounced.
-        fetch(updatedQuery, isCurrent: { true }, completion: completion)
+        // Pagination extends the latest search: it is not debounced, and it must not
+        // invalidate the search it extends — but a newer search discards its response.
+        fetch(updatedQuery, isCurrent: searchDebouncer.currentGenerationCheck(), completion: completion)
     }
 
     /// Clears the current search results.

@@ -50,13 +50,22 @@ public class UserSearch: @unchecked Sendable {
     ///
     /// - Parameter query: The user list query used for searching.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.query`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still cancels it either way.
+    ///
     /// - Throws: An error while communicating with the Stream API. Throws `CancellationError` when superseded by a newer search.
     /// - Returns: An array of users for the query.
     @discardableResult public func search(query: UserListQuery) async throws -> [ChatUser] {
-        try await search(
-            query: query,
-            queryLength: SearchQueryLength.fromFilter(query.filter)
-        )
+        if let queryLength = SearchQueryLength.fromFilter(query.filter) {
+            return try await search(query: query, queryLength: queryLength)
+        }
+        let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize, offset: 0)
+        return try await searchDebouncer.perform { [weak self] in
+            guard let self else { throw ClientError("UserSearch was deallocated") }
+            return try await self.performSearch(query: query, pagination: pagination)
+        }
     }
     
     /// Searches for more users with the specified query and updates ``UserSearchState/users``.
@@ -77,8 +86,7 @@ public class UserSearch: @unchecked Sendable {
     // MARK: - Private
 
     private func search(query: UserListQuery, queryLength: Int) async throws -> [ChatUser] {
-        let limit = query.pagination?.pageSize ?? .usersPageSize
-        let pagination = Pagination(pageSize: limit, offset: 0)
+        let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize, offset: 0)
         let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
             guard let self else { throw ClientError("UserSearch was deallocated") }
             return try await self.performSearch(query: query, pagination: pagination)
