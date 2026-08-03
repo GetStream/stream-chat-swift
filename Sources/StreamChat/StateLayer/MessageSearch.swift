@@ -49,7 +49,7 @@ public class MessageSearch: @unchecked Sendable {
     @discardableResult public func search(text: String, sort: [Sorting<MessageSearchSortingKey>]? = nil) async throws -> [ChatMessage] {
         // Clear results when there is no text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            searchDebouncer.cancel()
+            await searchDebouncer.cancel()
             if let query = await state.query {
                 try await messageUpdater.clearSearchResults(for: query)
                 await state.set(query: nil, cursor: nil)

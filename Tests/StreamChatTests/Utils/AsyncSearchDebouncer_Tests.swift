@@ -57,7 +57,7 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
         }
 
         try await Task.sleep(nanoseconds: 10_000_000)
-        debouncer.cancel()
+        await debouncer.cancel()
 
         do {
             _ = try await result
