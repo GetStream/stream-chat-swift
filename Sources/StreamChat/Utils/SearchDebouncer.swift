@@ -16,14 +16,24 @@ import Foundation
 /// `work` is invoked only if its generation is still current. Call `isCurrent` again after
 /// every async boundary (network, DB) before mutating state.
 ///
-/// Thread safety: pending work and generation are guarded by `lock`; `policy` is
-/// immutable. `@unchecked Sendable` relies on that lock for cross-isolation use.
+/// Thread safety: `policy` is immutable; pending work and the generation counter are
+/// guarded by `lock`, one critical section per operation. `@unchecked Sendable` relies on
+/// that lock for cross-isolation use.
+///
+/// - Note: This is deliberately a lock-guarded class rather than an actor. Its callers are
+/// the synchronous, callback-based search controllers, so an actor would force every
+/// keystroke through `Task { await … }`. Two such tasks have no guaranteed order of entry
+/// into the actor, which would let an older keystroke claim the newer generation and win —
+/// the exact opposite of what a debouncer must guarantee. Assigning the generation
+/// synchronously, in the caller's own order, is the property that makes this correct. The
+/// async equivalent for the state layer is ``AsyncSearchDebouncer``, which is an actor
+/// because its callers already `await`.
 final class SearchDebouncer: @unchecked Sendable {
     let policy: SearchDebouncePolicy
     private let queue: DispatchQueue
+    private let lock = NSLock()
     private var job: DispatchWorkItem?
     private var generation: UInt = 0
-    private let lock = NSLock()
 
     init(policy: SearchDebouncePolicy, queue: DispatchQueue = .main) {
         self.policy = policy
@@ -47,25 +57,18 @@ final class SearchDebouncer: @unchecked Sendable {
             return false
         }
 
-        lock.lock()
-        job?.cancel()
-        generation &+= 1
-        let currentGeneration = generation
         let interval = policy.interval(forQueryLength: queryLength)
-        lock.unlock()
+        let start: @Sendable () -> Void = withLock {
+            let invokeWork = startNewGeneration(work: work)
+            guard interval > 0 else { return invokeWork }
 
-        let invokeWork = makeWorkInvocation(generation: currentGeneration, work: work)
-
-        if interval == 0 {
-            invokeWork()
-            return true
+            let newJob = DispatchWorkItem(block: invokeWork)
+            job = newJob
+            let queue = self.queue
+            return { queue.asyncAfter(deadline: .now() + interval, execute: newJob) }
         }
-
-        let newJob = DispatchWorkItem(block: invokeWork)
-        lock.lock()
-        job = newJob
-        lock.unlock()
-        queue.asyncAfter(deadline: .now() + interval, execute: newJob)
+        // Dispatched or invoked outside the critical section.
+        start()
         return true
     }
 
@@ -77,14 +80,8 @@ final class SearchDebouncer: @unchecked Sendable {
     func perform(
         execute work: @escaping @Sendable (_ isCurrent: @escaping @Sendable () -> Bool) -> Void
     ) {
-        lock.lock()
-        job?.cancel()
-        job = nil
-        generation &+= 1
-        let currentGeneration = generation
-        lock.unlock()
-
-        makeWorkInvocation(generation: currentGeneration, work: work)()
+        let invokeWork = withLock { startNewGeneration(work: work) }
+        invokeWork()
     }
 
     /// Returns a check for the generation that is current right now, without starting a new one.
@@ -93,29 +90,34 @@ final class SearchDebouncer: @unchecked Sendable {
     /// must be discarded when a newer search starts, but must not invalidate the search they
     /// are extending.
     func currentGenerationCheck() -> @Sendable () -> Bool {
-        lock.lock()
-        let currentGeneration = generation
-        lock.unlock()
-        return isCurrentCheck(for: currentGeneration)
+        withLock { isCurrentCheck(for: generation) }
     }
 
     /// Cancels pending debounced work and invalidates in-flight generations.
     func cancel() {
-        lock.lock()
-        job?.cancel()
-        job = nil
-        generation &+= 1
-        lock.unlock()
+        withLock {
+            job?.cancel()
+            job = nil
+            generation &+= 1
+        }
     }
 
     deinit {
         job?.cancel()
     }
 
-    private func makeWorkInvocation(
-        generation: UInt,
+    // MARK: - Private
+
+    /// Cancels pending work, claims the next generation, and returns the invocation for it.
+    ///
+    /// - Important: Must be called while holding `lock`. Returns the work rather than running
+    /// it, so callers invoke it outside the critical section.
+    private func startNewGeneration(
         work: @escaping @Sendable (_ isCurrent: @escaping @Sendable () -> Bool) -> Void
     ) -> @Sendable () -> Void {
+        job?.cancel()
+        job = nil
+        generation &+= 1
         let isCurrent = isCurrentCheck(for: generation)
         return {
             guard isCurrent() else { return }
@@ -126,9 +128,13 @@ final class SearchDebouncer: @unchecked Sendable {
     private func isCurrentCheck(for generation: UInt) -> @Sendable () -> Bool {
         { [weak self] in
             guard let self else { return false }
-            self.lock.lock()
-            defer { self.lock.unlock() }
-            return self.generation == generation
+            return self.withLock { self.generation == generation }
         }
+    }
+
+    private func withLock<T>(_ body: () -> T) -> T {
+        lock.lock()
+        defer { lock.unlock() }
+        return body()
     }
 }
