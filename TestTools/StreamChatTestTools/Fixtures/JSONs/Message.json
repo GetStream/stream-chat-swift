@@ -60,8 +60,7 @@
         "show_in_channel": true,
         "parent_id": "3294-4c0c-9a62-c9d0928bf733",
         "member": {
-            "channel_role": "moderator",
-            "notifications_muted": false
+            "channel_role": "moderator"
         },
         "channel" : {
             "id" : "channel-ex7-63",
