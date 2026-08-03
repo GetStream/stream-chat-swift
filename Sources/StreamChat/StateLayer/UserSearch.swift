@@ -95,6 +95,11 @@ public class UserSearch: @unchecked Sendable {
     
     private func performSearch(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
         let query = query.withPagination(pagination)
+        // A superseded search must not publish its query. `state.query` is what
+        // `handleDidFetchQuery` compares against and what `loadMoreUsers` paginates, so a
+        // stale write here would make the winning search discard its own results and would
+        // paginate the wrong query.
+        try Task.checkCancellation()
         await state.setQuery(query)
         let users = try await userListUpdater.fetch(userListQuery: query, pagination: pagination)
         try Task.checkCancellation()
