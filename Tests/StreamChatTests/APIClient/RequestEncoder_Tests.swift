@@ -337,6 +337,36 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(urlComponenets.queryItems?["stringValue"], testStringValue)
     }
 
+    func test_encodingRequestURL_normalizesBaseURLAndEndpointPathSlashes() throws {
+        let testCases = [
+            (baseURL: "https://example.com", endpointPath: "path", expectedURL: "https://example.com/path"),
+            (baseURL: "https://example.com/", endpointPath: "path", expectedURL: "https://example.com/path"),
+            (baseURL: "https://example.com", endpointPath: "/path", expectedURL: "https://example.com/path"),
+            (baseURL: "https://example.com/", endpointPath: "/path", expectedURL: "https://example.com/path"),
+            (baseURL: "https://example.com/", endpointPath: "//path", expectedURL: "https://example.com/path")
+        ]
+
+        for testCase in testCases {
+            let encoder = DefaultRequestEncoder(
+                baseURL: try XCTUnwrap(URL(string: testCase.baseURL)),
+                apiKey: apiKey
+            )
+            let endpoint = Endpoint<Data>(
+                path: .custom(testCase.endpointPath),
+                method: .get,
+                requiresConnectionId: false,
+                requiresToken: false
+            )
+
+            let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+
+            XCTAssertEqual(
+                request.url?.absoluteString,
+                "\(testCase.expectedURL)?api_key=\(apiKey.apiKeyString)"
+            )
+        }
+    }
+
     func test_encodingRequestBody_POST() throws {
         // Prepare a POST endpoint with JSON body
         let endpoint = Endpoint<Data>(
