@@ -132,7 +132,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         updatedQuery.pagination = Pagination(pageSize: limit, offset: userArray.count)
 
         // Pagination should not be debounced.
-        fetch(updatedQuery, isStale: { false }, completion: completion)
+        fetch(updatedQuery, isCurrent: { true }, completion: completion)
     }
 
     /// Clears the current search results.
@@ -148,9 +148,8 @@ private extension ChatUserSearchController {
         queryLength: Int,
         completion: (@MainActor (Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isStale in
-            guard let self, !isStale() else { return }
-            self.fetch(query, isStale: isStale, completion: completion)
+        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isCurrent in
+            self?.fetch(query, isCurrent: isCurrent, completion: completion)
         }
         if !scheduled {
             callback { completion?(nil) }
@@ -161,11 +160,12 @@ private extension ChatUserSearchController {
     ///
     /// - Parameters:
     ///   - query: The query to fetch.
-    ///   - isStale: Returns whether a newer search has superseded this request.
+    ///   - isCurrent: Returns whether this request is still the latest scheduled search.
+    ///     Call again after every async boundary before mutating state.
     ///   - completion: The completion that is triggered when the query is processed.
     func fetch(
         _ query: UserListQuery,
-        isStale: @escaping @Sendable () -> Bool,
+        isCurrent: @escaping @Sendable () -> Bool,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         // TODO: Remove with the next major
@@ -175,12 +175,12 @@ private extension ChatUserSearchController {
         setLocalDataFetchedStateIfNeeded()
 
         userQueryUpdater.fetch(userListQuery: query) { [weak self] result in
-            guard let self, !isStale() else { return }
+            guard let self, isCurrent() else { return }
 
             switch result {
             case let .success(page):
                 self.save(page: page) { [weak self] loadedUsers in
-                    guard let self, !isStale() else { return }
+                    guard let self, isCurrent() else { return }
 
                     let listChanges = self.prepareListChanges(
                         loadedPage: loadedUsers,

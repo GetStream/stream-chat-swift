@@ -78,8 +78,8 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
             return
         }
 
-        let scheduled = searchDebouncer.schedule(queryLength: trimmed.count) { [weak self] isStale in
-            guard let self, !isStale() else { return }
+        let scheduled = searchDebouncer.schedule(queryLength: trimmed.count) { [weak self] isCurrent in
+            guard let self else { return }
 
             var query = ChannelListQuery(
                 filter: .and([
@@ -98,7 +98,7 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
             }
 
             controller.synchronize { [weak self] error in
-                guard let self, !isStale() else { return }
+                guard let self, isCurrent() else { return }
                 self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
                 self.callback { completion?(error) }
             }

@@ -6,6 +6,11 @@ import Foundation
 
 /// Schedules async search work using a ``SearchDebouncePolicy`` and cancels
 /// previously scheduled or in-flight work when a newer search is scheduled.
+///
+/// Thread safety: intended for single-flight use from one search owner
+/// (``MessageSearch`` / ``UserSearch``). Concurrent `schedule` calls are not
+/// synchronized; the owner must not overlap them. `@unchecked Sendable` relies
+/// on that external serialization invariant.
 final class AsyncSearchDebouncer: @unchecked Sendable {
     var policy: SearchDebouncePolicy
     private var currentTask: CancellableTask?

@@ -31,8 +31,8 @@ final class SearchDebouncer_Tests: XCTestCase {
             executionCount += 1
             XCTFail("First scheduled work should be cancelled")
         }
-        debouncer.schedule(queryLength: 3) { isStale in
-            XCTAssertFalse(isStale())
+        debouncer.schedule(queryLength: 3) { isCurrent in
+            XCTAssertTrue(isCurrent())
             executionCount += 1
             expectation.fulfill()
         }

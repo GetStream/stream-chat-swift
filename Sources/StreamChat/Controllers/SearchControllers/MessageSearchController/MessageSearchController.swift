@@ -232,9 +232,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         queryLength: Int,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isStale in
-            guard let self, !isStale() else { return }
-            self.executeSearch(query: query, isStale: isStale, completion: completion)
+        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isCurrent in
+            self?.executeSearch(query: query, isCurrent: isCurrent, completion: completion)
         }
         if !scheduled {
             callback { completion?(nil) }
@@ -243,7 +242,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
     private func executeSearch(
         query: MessageSearchQuery,
-        isStale: @escaping @Sendable () -> Bool,
+        isCurrent: @escaping @Sendable () -> Bool,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
         var query = query
@@ -255,7 +254,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         resetMessagesObserver()
 
         messageUpdater.search(query: query, policy: .replace) { [weak self] result in
-            guard let self, !isStale() else { return }
+            guard let self, isCurrent() else { return }
 
             if case let .success(response) = result {
                 self.updateNextPageCursor(with: response.payload)
