@@ -14,7 +14,14 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     /// - Important: Search debouncing is now handled by the LLC search controllers.
     /// This property is no longer used by the SDK.
     @available(*, deprecated, message: "Search debouncing is now handled by search controllers. This property is ignored.")
-    public var debouncer = Debouncer(0.3, queue: .main)
+    public var debouncer: Debouncer {
+        get { _debouncer }
+        set { _debouncer = newValue }
+    }
+
+    /// Non-deprecated backing store, so the SDK can keep invalidating the debouncer on
+    /// `deinit` for custom subclasses that still use it without warning on every build.
+    private var _debouncer = Debouncer(0.3, queue: .main)
 
     /// The current active search text.
     public var currentSearchText: String = ""
@@ -137,8 +144,9 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
 
     deinit {
         // Keep invalidating the deprecated UI debouncer in case a custom subclass still uses it.
+        // Goes through the non-deprecated backing store to avoid warning on every build.
         StreamConcurrency.onMain {
-            debouncer.invalidate()
+            _debouncer.invalidate()
         }
     }
 }
