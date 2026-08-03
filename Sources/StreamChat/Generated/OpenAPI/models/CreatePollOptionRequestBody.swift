@@ -5,6 +5,7 @@
 import Foundation
 
 final class CreatePollOptionRequestBody: Sendable, Codable, JSONEncodable {
+    /// Custom data for this object
     let custom: [String: RawJSON]?
     /// Option text
     let text: String

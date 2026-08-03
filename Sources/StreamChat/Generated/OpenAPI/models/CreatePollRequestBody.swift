@@ -24,6 +24,7 @@ final class CreatePollRequestBody: Sendable, Codable, JSONEncodable {
     /// Indicates whether users can suggest user defined answers
     let allowAnswers: Bool?
     let allowUserSuggestedOptions: Bool?
+    /// Custom data for this object
     let custom: [String: RawJSON]?
     /// A description of the poll
     let description: String?

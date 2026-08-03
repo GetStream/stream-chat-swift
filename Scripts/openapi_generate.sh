@@ -322,14 +322,6 @@ rename_property() {
   ' "$file"
 }
 
-rename_coding_key() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  P="$2" K="$3" perl -0777 -pi -e '
-    my ($p, $k) = ($ENV{P}, $ENV{K});
-    s{^(\s*)case \Q$p\E( = "[^"]*")?$}{"$1case $p" . ($k eq $p ? "" : " = \"$k\"")}me;
-  ' "$file"
-}
-
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
@@ -399,10 +391,6 @@ optionalize_property UserPayload banned
 optionalize_property UserPayload language
 optionalize_property UserPayload teams
 
-# CHA-4436
-rename_coding_key CreatePollOptionRequestBody custom custom
-rename_coding_key CreatePollRequestBody custom custom
-
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
 #     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
@@ -434,6 +422,7 @@ remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
 remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
+remove_property UserPayload blockedUserIds
 remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
