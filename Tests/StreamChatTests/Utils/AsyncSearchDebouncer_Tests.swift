@@ -88,4 +88,34 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
             XCTFail("Superseded search should throw CancellationError")
         } catch is CancellationError {}
     }
+
+    func test_schedule_whenCallingTaskIsCancelled_cancelsTheSearch() async throws {
+        let debouncer = AsyncSearchDebouncer(policy: .constant(0))
+        let started = expectation(description: "Search operation started")
+        let observedCancellation = expectation(description: "Search operation observed cancellation")
+
+        let task = Task {
+            try await debouncer.schedule(queryLength: 3) {
+                started.fulfill()
+                do {
+                    // Long enough that the cancellation lands while the search is suspended.
+                    try await Task.sleep(nanoseconds: 5_000_000_000)
+                } catch {
+                    observedCancellation.fulfill()
+                    throw error
+                }
+                XCTFail("Search should not run to completion after the caller was cancelled")
+                return "finished"
+            }
+        }
+
+        await fulfillment(of: [started], timeout: defaultTimeout)
+        task.cancel()
+
+        await fulfillment(of: [observedCancellation], timeout: defaultTimeout)
+        do {
+            _ = try await task.value
+            XCTFail("Cancelled search should throw CancellationError")
+        } catch is CancellationError {}
+    }
 }

@@ -36,7 +36,7 @@ actor AsyncSearchDebouncer {
         guard let task = startDebounced(queryLength: queryLength, operation: operation) else {
             return nil
         }
-        return try await task.value
+        return try await awaitingValue(of: task)
     }
 
     /// Runs `operation` immediately, cancelling any pending or in-flight work.
@@ -49,7 +49,7 @@ actor AsyncSearchDebouncer {
     func perform<Success: Sendable>(
         operation: @escaping @Sendable () async throws -> Success
     ) async throws -> Success {
-        try await start(after: 0, operation: operation).value
+        try await awaitingValue(of: start(after: 0, operation: operation))
     }
 
     /// Cancels pending debounced work and in-flight search tasks.
@@ -59,6 +59,21 @@ actor AsyncSearchDebouncer {
     }
 
     // MARK: - Private
+
+    /// Awaits `task`, forwarding cancellation of the calling task to it.
+    ///
+    /// The search runs in an unstructured task so a later search can cancel it, which also
+    /// detaches it from the caller's cancellation. Without this bridge, cancelling the task
+    /// that started the search would leave the search running to completion.
+    private nonisolated func awaitingValue<Success: Sendable>(
+        of task: Task<Success, Error>
+    ) async throws -> Success {
+        try await withTaskCancellationHandler {
+            try await task.value
+        } onCancel: {
+            task.cancel()
+        }
+    }
 
     /// Cancels the previous task and claims the new one.
     ///
