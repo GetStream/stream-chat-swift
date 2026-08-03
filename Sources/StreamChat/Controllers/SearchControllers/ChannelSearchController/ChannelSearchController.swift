@@ -64,9 +64,7 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
     ) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty {
-            searchDebouncer.cancel()
-            channelListController = nil
-            state = .localDataFetched
+            clearResults()
             callback { completion?(nil) }
             return
         }
@@ -106,6 +104,17 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
         if !scheduled {
             callback { completion?(nil) }
         }
+    }
+
+    /// Cancels any pending or in-flight search and clears the current results.
+    ///
+    /// Call this when the search UI is cleared or dismissed. Without it, a search that was
+    /// already debounced still reaches the backend after the user emptied the search field,
+    /// and its results are installed into ``channelListController``.
+    public func clearResults() {
+        searchDebouncer.cancel()
+        channelListController = nil
+        state = .localDataFetched
     }
 
     /// Loads the next page of channels for the current search.

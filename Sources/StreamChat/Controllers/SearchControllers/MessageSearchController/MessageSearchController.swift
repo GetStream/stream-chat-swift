@@ -176,15 +176,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
 
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            searchDebouncer.cancel()
-            if let lastQuery {
-                messageUpdater.clearSearchResults(for: lastQuery) { error in
-                    self.nextPageCursor = nil
-                    self.callback { completion?(error) }
-                }
-            } else {
-                callback { completion?(nil) }
-            }
+            clearResults(completion: completion)
             return
         }
 
@@ -196,6 +188,24 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         )
 
         scheduleSearch(query: query, queryLength: text.count, completion: completion)
+    }
+
+    /// Cancels any pending or in-flight search and clears the current search results.
+    ///
+    /// Call this when the search UI is cleared or dismissed. Without it, a search that was
+    /// already debounced still reaches the backend after the user emptied the search field.
+    ///
+    /// - Parameter completion: Called when the local search results have been cleared.
+    public func clearResults(completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
+        searchDebouncer.cancel()
+        guard let lastQuery else {
+            callback { completion?(nil) }
+            return
+        }
+        messageUpdater.clearSearchResults(for: lastQuery) { error in
+            self.nextPageCursor = nil
+            self.callback { completion?(error) }
+        }
     }
 
     private func resetMessagesObserver() {

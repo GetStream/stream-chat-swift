@@ -69,11 +69,18 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating
 
     open func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text, !text.isEmpty, text != currentSearchText else {
+        let text = searchController.searchBar.text ?? ""
+        guard text != currentSearchText else { return }
+
+        currentSearchText = text
+
+        // An emptied search field must cancel the search that is already debounced,
+        // otherwise it still reaches the backend and installs its results.
+        guard !text.isEmpty else {
+            cancelSearch()
             return
         }
 
-        currentSearchText = text
         // Debouncing is handled by LLC search controllers.
         loadSearchResults(with: text)
     }
@@ -97,8 +104,15 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     open func loadMoreSearchResults() {
         fatalError("This function should be implemented by a subclass.")
     }
-    
+
     // swiftlint:enable unavailable_function
+
+    /// Cancels any pending or in-flight search and clears the current results.
+    ///
+    /// Called when the search field is emptied. The default implementation does nothing;
+    /// subclasses should cancel their search controller so a search that was already
+    /// debounced does not reach the backend after the user cleared the field.
+    open func cancelSearch() {}
 
     // MARK: - State Handling
 

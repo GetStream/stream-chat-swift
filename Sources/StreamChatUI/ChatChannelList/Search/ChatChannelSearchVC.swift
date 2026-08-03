@@ -28,13 +28,15 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     }
 
     override open func loadSearchResults(with text: String) {
-        // Ensure the lazy controller (and its creation callback) is set up.
-        _ = channelSearchController
         channelSearchController.search(text: text)
     }
 
     override open func loadMoreSearchResults() {
         loadMoreChannels()
+    }
+
+    override open func cancelSearch() {
+        channelSearchController.clearResults()
     }
 
     // MARK: - Collection View Implementations
