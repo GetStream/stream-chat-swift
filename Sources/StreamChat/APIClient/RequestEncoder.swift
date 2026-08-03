@@ -222,8 +222,10 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
         guard var url = urlComponents.url else {
             throw ClientError.InvalidURL("URL can't be created using components: \(urlComponents)")
         }
+        
+        let endpointPath = String(endpoint.path.value.drop(while: { $0 == "/" }))
+        url = url.appendingPathComponent(endpointPath)
 
-        url = url.appendingPathComponent(endpoint.path.value)
         return url
     }
 

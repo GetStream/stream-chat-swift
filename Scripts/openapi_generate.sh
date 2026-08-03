@@ -461,6 +461,7 @@ inject_v1_endpoint_paths() {
   trap 'rm -f "$cases_file" "$values_file"' RETURN
 
   cat > "$cases_file" <<'EOF'
+    case custom(String)
     case connect
     case sync
     case users
@@ -529,6 +530,7 @@ inject_v1_endpoint_paths() {
 EOF
 
   cat > "$values_file" <<'EOF'
+        case let .custom(path): return path
         case .connect: return "connect"
         case .sync: return "sync"
         case .users: return "users"

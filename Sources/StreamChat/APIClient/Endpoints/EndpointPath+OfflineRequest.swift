@@ -24,6 +24,7 @@ extension EndpointPath {
              .channels,
              .channelUpdate,
              .connect,
+             .custom,
              .createCall,
              .createChannel,
              .createDevice,
