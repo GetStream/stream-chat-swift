@@ -7,7 +7,9 @@ import Foundation
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
-/// Calling ``search(text:sort:)`` or ``search(query:)`` again cancels the previous in-flight search.
+/// Calling ``search(text:sort:)`` or ``search(query:)`` again cancels the previous in-flight
+/// search. The superseded call returns the current results rather than throwing, so typing
+/// does not surface an error per keystroke.
 public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
@@ -44,8 +46,9 @@ public class MessageSearch: @unchecked Sendable {
     ///   - text: A string to search for (which is a full text search).
     ///   - sort: Optional sort order for search results. When `nil`, defaults to newest first (createdAt descending).
     ///
-    /// - Throws: An error while communicating with the Stream API. Throws `CancellationError` when superseded by a newer search.
-    /// - Returns: An array of paginated chat messages matching to the search term.
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of paginated chat messages matching to the search term. When a newer
+    /// search supersedes this one, the current ``MessageSearchState/messages`` are returned.
     @discardableResult public func search(text: String, sort: [Sorting<MessageSearchSortingKey>]? = nil) async throws -> [ChatMessage] {
         // Clear results when there is no text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -76,16 +79,21 @@ public class MessageSearch: @unchecked Sendable {
     /// with no search text is not typed character by character, so it runs right away — a
     /// later search still cancels it either way.
     ///
-    /// - Throws: An error while communicating with the Stream API. Throws `CancellationError` when superseded by a newer search.
-    /// - Returns: An array of paginated chat messages matching to the query.
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of paginated chat messages matching to the query. When a newer
+    /// search supersedes this one, the current ``MessageSearchState/messages`` are returned.
     @discardableResult public func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
         if let queryLength = SearchQueryLength.fromFilter(query.messageFilter) {
             return try await search(query: query, queryLength: queryLength)
         }
-        return try await searchDebouncer.perform { [weak self] in
+        let result = try await searchDebouncer.perform { [weak self] in
             guard let self else { throw ClientError("MessageSearch was deallocated") }
             return try await self.performSearch(query: query)
         }
+        if let result {
+            return result
+        }
+        return await state.messages
     }
     
     /// Searches for more messages matching with the last search query.

@@ -24,11 +24,12 @@ actor AsyncSearchDebouncer {
 
     /// Runs `operation` after the policy-derived debounce for `queryLength`.
     ///
-    /// Cancels any previously scheduled or in-flight work. Returns `nil` when the
-    /// query is below ``SearchDebouncePolicy/minimumCharacterCount``.
+    /// Cancels any previously scheduled or in-flight work.
     ///
-    /// - Throws: `CancellationError` when superseded by a newer search or cancelled
-    ///   via ``cancel()``.
+    /// - Returns: The operation's result, or `nil` when no result was produced: the query was
+    ///   below ``SearchDebouncePolicy/minimumCharacterCount``, or this search was superseded
+    ///   by a newer one, or it was cancelled via ``cancel()``.
+    /// - Throws: `CancellationError` only when the calling task itself is cancelled.
     func schedule<Success: Sendable>(
         queryLength: Int,
         operation: @escaping @Sendable () async throws -> Success
@@ -44,11 +45,12 @@ actor AsyncSearchDebouncer {
     /// Use for programmatic searches, which are not typed character by character and so
     /// have nothing to debounce. The work is still cancelled by a later search.
     ///
-    /// - Throws: `CancellationError` when superseded by a newer search or cancelled
-    ///   via ``cancel()``.
+    /// - Returns: The operation's result, or `nil` when this search was superseded by a newer
+    ///   one or cancelled via ``cancel()``.
+    /// - Throws: `CancellationError` only when the calling task itself is cancelled.
     func perform<Success: Sendable>(
         operation: @escaping @Sendable () async throws -> Success
-    ) async throws -> Success {
+    ) async throws -> Success? {
         try await awaitingValue(of: start(after: 0, operation: operation))
     }
 
@@ -65,13 +67,25 @@ actor AsyncSearchDebouncer {
     /// The search runs in an unstructured task so a later search can cancel it, which also
     /// detaches it from the caller's cancellation. Without this bridge, cancelling the task
     /// that started the search would leave the search running to completion.
+    ///
+    /// Being superseded is a normal outcome of typing, not a failure, so it surfaces as `nil`
+    /// rather than an error. Only a caller that cancels its own task gets `CancellationError`,
+    /// which `Task.isCancelled` distinguishes: it reflects the calling task, so it is `true`
+    /// for the caller's own cancellation and `false` when a newer search cancelled this one.
     private nonisolated func awaitingValue<Success: Sendable>(
         of task: Task<Success, Error>
-    ) async throws -> Success {
-        try await withTaskCancellationHandler {
-            try await task.value
-        } onCancel: {
-            task.cancel()
+    ) async throws -> Success? {
+        do {
+            return try await withTaskCancellationHandler {
+                try await task.value
+            } onCancel: {
+                task.cancel()
+            }
+        } catch is CancellationError {
+            if Task.isCancelled {
+                throw CancellationError()
+            }
+            return nil
         }
     }
 

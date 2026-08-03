@@ -38,10 +38,8 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
             return "second"
         }
 
-        do {
-            _ = try await first
-            XCTFail("Superseded search should throw CancellationError")
-        } catch is CancellationError {}
+        let firstResult = try await first
+        XCTAssertNil(firstResult, "A superseded search returns nil instead of throwing")
 
         let secondResult = try await second
         XCTAssertEqual(secondResult, "second")
@@ -59,10 +57,8 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
         try await Task.sleep(nanoseconds: 10_000_000)
         await debouncer.cancel()
 
-        do {
-            _ = try await result
-            XCTFail("Cancelled search should throw CancellationError")
-        } catch is CancellationError {}
+        let value = try await result
+        XCTAssertNil(value, "A cancelled search returns nil instead of throwing")
     }
 
     func test_schedule_belowMinimumCharacterCount_skipsAndCancelsPending() async throws {
@@ -83,10 +79,8 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
         }
 
         XCTAssertNil(skipped)
-        do {
-            _ = try await first
-            XCTFail("Superseded search should throw CancellationError")
-        } catch is CancellationError {}
+        let firstResult = try await first
+        XCTAssertNil(firstResult, "A superseded search returns nil instead of throwing")
     }
 
     func test_schedule_whenCallingTaskIsCancelled_cancelsTheSearch() async throws {

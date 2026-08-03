@@ -8,6 +8,8 @@ import Foundation
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Calling ``search(term:)`` or ``search(query:)`` again cancels the previous in-flight search.
+/// The superseded call returns the current results rather than throwing, so typing does not
+/// surface an error per keystroke.
 public class UserSearch: @unchecked Sendable {
     @MainActor private var stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
@@ -36,8 +38,9 @@ public class UserSearch: @unchecked Sendable {
     ///
     /// - Parameter term: The search term for searching users. If `nil` or empty, all users are returned.
     ///
-    /// - Throws: An error while communicating with the Stream API. Throws `CancellationError` when superseded by a newer search.
-    /// - Returns: An array of users for the search term.
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of users for the search term. When a newer search supersedes this
+    /// one, the current ``UserSearchState/users`` are returned.
     @discardableResult public func search(term: String?) async throws -> [ChatUser] {
         try await search(query: .search(term: term), queryLength: term?.count ?? 0)
     }
@@ -51,17 +54,22 @@ public class UserSearch: @unchecked Sendable {
     /// with no search text is not typed character by character, so it runs right away — a
     /// later search still cancels it either way.
     ///
-    /// - Throws: An error while communicating with the Stream API. Throws `CancellationError` when superseded by a newer search.
-    /// - Returns: An array of users for the query.
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of users for the query. When a newer search supersedes this one,
+    /// the current ``UserSearchState/users`` are returned.
     @discardableResult public func search(query: UserListQuery) async throws -> [ChatUser] {
         if let queryLength = SearchQueryLength.fromFilter(query.filter) {
             return try await search(query: query, queryLength: queryLength)
         }
         let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize, offset: 0)
-        return try await searchDebouncer.perform { [weak self] in
+        let result = try await searchDebouncer.perform { [weak self] in
             guard let self else { throw ClientError("UserSearch was deallocated") }
             return try await self.performSearch(query: query, pagination: pagination)
         }
+        if let result {
+            return result
+        }
+        return await state.users
     }
     
     /// Searches for more users with the specified query and updates ``UserSearchState/users``.

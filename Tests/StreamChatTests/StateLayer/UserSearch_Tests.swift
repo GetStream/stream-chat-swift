@@ -89,10 +89,10 @@ final class UserSearch_Tests: XCTestCase {
         let firstResult = makeUsers(name: "nam", count: 10, offset: 0)
         env.userListUpdaterMock.fetch_completions[0](.success(firstResult))
 
-        do {
-            _ = try await result1
-            XCTFail("Superseded search should throw CancellationError")
-        } catch is CancellationError {}
+        // The superseded search resolves without an error, so typing does not surface one
+        // per keystroke. Its own results are dropped in favour of the newer search.
+        let supersededResult = try await result1
+        XCTAssertEqual(secondResult.users.map(\.id), supersededResult.map(\.id))
 
         XCTAssertEqual(5, try await result2.count)
         await XCTAssertEqual(secondResult.users.map(\.id), userSearch.state.users.map(\.id))
