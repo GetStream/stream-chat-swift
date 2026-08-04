@@ -77,7 +77,6 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
             return
         }
 
-        // Debouncing is handled by LLC search controllers.
         loadSearchResults(with: text)
     }
 
