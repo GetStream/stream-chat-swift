@@ -12,8 +12,9 @@ import Foundation
 /// query is more selective. Queries shorter than ``minimumCharacterCount`` are
 /// not searched at all.
 ///
-/// The SDK always uses ``default``. The initializers exist so tests can inject a policy
-/// through the internal search controller factories.
+/// The SDK's search controllers always use ``default``. The UI layer reaches the same
+/// thresholds through ``Debouncer/search(queue:)`` rather than naming this type, so the
+/// thresholds stay an implementation detail.
 struct SearchDebouncePolicy: Equatable, Sendable {
     /// A debounce rule that applies up to a given query length.
     struct Threshold: Equatable, Sendable {

@@ -9,15 +9,6 @@ import UIKit
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelSearchVC: ChatChannelListSearchVC {
-    /// The `ChatChannelSearchController` instance used to perform debounced channel searches.
-    public lazy var channelSearchController: ChatChannelSearchController = {
-        let searchController = controller.client.channelSearchController()
-        searchController.didCreateChannelListController = { [weak self] listController in
-            self?.replaceChannelListController(listController)
-        }
-        return searchController
-    }()
-
     /// The closure that is triggered whenever a channel is selected from the search result.
     public var didSelectChannel: (@MainActor (ChatChannel) -> Void)?
 
@@ -28,7 +19,22 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     }
 
     override open func loadSearchResults(with text: String) {
-        channelSearchController.search(text: text)
+        // Debounced here rather than in a search controller: the channel list is rendered from a
+        // `ChatChannelListController`, which this replaces outright on every search.
+        debouncer.execute(queryLength: text.count) { [weak self] in
+            guard let self, let currentUserId = controller.client.currentUserId else { return }
+
+            var searchChannelsQuery = ChannelListQuery(
+                filter: .and([
+                    .autocomplete(.name, text: text),
+                    .containMembers(userIds: [currentUserId])
+                ])
+            )
+            // Do not watch the query when searching.
+            searchChannelsQuery.options = []
+
+            replaceQuery(searchChannelsQuery)
+        }
     }
 
     override open func loadMoreSearchResults() {
@@ -36,7 +42,7 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     }
 
     override open func cancelSearch() {
-        channelSearchController.clearResults()
+        debouncer.invalidate()
     }
 
     // MARK: - Collection View Implementations

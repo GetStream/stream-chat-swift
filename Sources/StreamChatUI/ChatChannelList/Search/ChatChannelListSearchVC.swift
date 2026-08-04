@@ -11,17 +11,12 @@ import UIKit
 open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     /// The component responsible to debounce search requests.
     ///
-    /// - Important: Search debouncing is now handled by the LLC search controllers.
-    /// This property is no longer used by the SDK.
-    @available(*, deprecated, message: "Search debouncing is now handled by search controllers. This property is ignored.")
-    public var debouncer: Debouncer {
-        get { _debouncer }
-        set { _debouncer = newValue }
-    }
-
-    /// Non-deprecated backing store, so the SDK can keep invalidating the debouncer on
-    /// `deinit` for custom subclasses that still use it without warning on every build.
-    private var _debouncer = Debouncer(0.3, queue: .main)
+    /// Waits as long as the SDK's search controllers do, based on the length of the query:
+    /// 500ms for the short, low selectivity queries of 1-2 characters and 300ms for 3 or more.
+    ///
+    /// - Note: Only used by subclasses that debounce in the UI layer. A subclass backed by an
+    /// LLC search controller does not need it, because the controller debounces already.
+    public var debouncer = Debouncer.search(queue: .main)
 
     /// The current active search text.
     public var currentSearchText: String = ""
@@ -143,10 +138,8 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     // MARK: - Deinit
 
     deinit {
-        // Keep invalidating the deprecated UI debouncer in case a custom subclass still uses it.
-        // Goes through the non-deprecated backing store to avoid warning on every build.
         StreamConcurrency.onMain {
-            _debouncer.invalidate()
+            debouncer.invalidate()
         }
     }
 }

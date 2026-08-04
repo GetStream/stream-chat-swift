@@ -25,6 +25,8 @@ import XCTest
 
         vc = ChatChannelSearchVC()
         vc.controller = mockedChannelListController
+        // Keep search synchronous unless a test opts into debouncing.
+        vc.debouncer = Debouncer(policy: .constant(0), queue: .main)
         vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
     }
 
@@ -102,6 +104,38 @@ import XCTest
             "(name AUTOCOMPLETE Dummy) AND (members IN [\"\(currentUserId)\"])"
         )
         XCTAssertTrue(vc.controller.query.options.isEmpty)
+    }
+
+    func test_loadSearchResults_isDebounced() {
+        vc.debouncer = Debouncer(policy: .default, queue: .main)
+
+        vc.loadSearchResults(with: "Dummy")
+
+        // The default policy waits 300ms for a 5 character query.
+        XCTAssert(vc.controller === mockedChannelListController)
+
+        let expectation = expectation(description: "Debounced search replaces the query")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            XCTAssert(self.vc.controller !== self.mockedChannelListController)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+
+    func test_cancelSearch_cancelsPendingDebouncedSearch() {
+        vc.debouncer = Debouncer(policy: .default, queue: .main)
+
+        vc.loadSearchResults(with: "Dummy")
+        vc.cancelSearch()
+
+        let expectation = expectation(description: "Cancelled search does not replace the query")
+        expectation.isInverted = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            if self.vc.controller !== self.mockedChannelListController {
+                expectation.fulfill()
+            }
+        }
+        wait(for: [expectation], timeout: 0.6)
     }
 
     func test_loadMoreSearchResults() {

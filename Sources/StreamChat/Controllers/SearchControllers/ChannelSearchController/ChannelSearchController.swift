@@ -22,9 +22,6 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
-    /// Called when a new channel list controller has been created for a search, before remote data is fetched.
-    public var didCreateChannelListController: (@MainActor (ChatChannelListController) -> Void)?
-
     /// The channel list controller backing the latest search results.
     public private(set) var channelListController: ChatChannelListController?
 
@@ -83,9 +80,6 @@ public class ChatChannelSearchController: DataController, @unchecked Sendable {
             let controller = self.client.channelListController(query: query)
             self.channelListController = controller
             self.state = .localDataFetched
-            self.callback {
-                self.didCreateChannelListController?(controller)
-            }
 
             controller.synchronize { [weak self] error in
                 guard let self, isCurrent() else { return }
