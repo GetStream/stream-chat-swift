@@ -136,14 +136,26 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     
     var groupKey: String?
 
+    /// An identity that replaces the filter-derived hash.
+    ///
+    /// Search sets this to a value that is stable for the lifetime of the searching object, so
+    /// that every search reuses a single `ChannelListQueryDTO` instead of leaving one behind per
+    /// search text. It is not encoded into the request, so it does not affect what the backend
+    /// returns.
+    var explicitQueryHash: String?
+
     /// The stable identity used for locating / linking the corresponding `ChannelListQueryDTO`.
     ///
-    /// For grouped queries the hash is the `groupKey` (grouped channels ignore filter and sort).
-    /// For predefined-filter queries it is derived from the predefined filter name plus
-    /// `filterValues` and `sortValues` (keys sorted to keep the hash deterministic). For
-    /// traditional queries it falls back to `filter.filterHash`, leaving existing on-disk
-    /// hashes unchanged.
+    /// An `explicitQueryHash` wins over everything else, since it exists precisely to decouple
+    /// the local identity from the filter. For grouped queries the hash is the `groupKey`
+    /// (grouped channels ignore filter and sort). For predefined-filter queries it is derived
+    /// from the predefined filter name plus `filterValues` and `sortValues` (keys sorted to keep
+    /// the hash deterministic). For traditional queries it falls back to `filter.filterHash`,
+    /// leaving existing on-disk hashes unchanged.
     var queryHash: String {
+        if let explicitQueryHash {
+            return explicitQueryHash
+        }
         if let groupKey {
             return groupKey
         }
@@ -161,6 +173,16 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
 }
 
 extension ChannelListQuery {
+    /// A query that matches the search results linked to `explicitQueryHash`.
+    ///
+    /// The filter is a placeholder: search results are located by the explicit hash, so this is
+    /// the query to use for reading or discarding them regardless of the text they were found with.
+    static func searchResults(explicitQueryHash: String) -> ChannelListQuery {
+        var query = ChannelListQuery(filter: .exists(.cid))
+        query.explicitQueryHash = explicitQueryHash
+        return query
+    }
+
     /// Whether `filter` and `sort` match `other` for purposes of deciding whether the local
     /// observer needs to be rebuilt after a predefined-filter resolution.
     func isFilterEqual(to other: ChannelListQuery) -> Bool {

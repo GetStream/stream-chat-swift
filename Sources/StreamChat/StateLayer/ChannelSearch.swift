@@ -17,6 +17,12 @@ public class ChannelSearch: @unchecked Sendable {
     private let searchDebouncer: AsyncSearchDebouncer
     @MainActor private var stateBuilder: StateBuilder<ChannelSearchState>
 
+    /// The local identity of the results this object observes.
+    ///
+    /// It is stable for the lifetime of the search, so consecutive searches replace each other in
+    /// one place instead of leaving a query behind in the database per search text.
+    private let explicitQueryHash = UUID().uuidString
+
     init(
         client: ChatClient,
         debouncePolicy: SearchDebouncePolicy = .default,
@@ -26,6 +32,13 @@ public class ChannelSearch: @unchecked Sendable {
         self.environment = environment
         searchDebouncer = AsyncSearchDebouncer(policy: debouncePolicy)
         stateBuilder = StateBuilder { ChannelSearchState() }
+    }
+
+    deinit {
+        let query = ChannelListQuery.searchResults(explicitQueryHash: explicitQueryHash)
+        client.databaseContainer.write { session in
+            session.delete(query: query)
+        }
     }
 
     // MARK: - Accessing the State
@@ -56,7 +69,7 @@ public class ChannelSearch: @unchecked Sendable {
             throw ClientError.CurrentUserDoesNotExist("For channel search, a current user must be logged in")
         }
 
-        let query = Self.makeQuery(text: trimmed, currentUserId: currentUserId)
+        let query = makeQuery(text: trimmed, currentUserId: currentUserId)
         let result = try await searchDebouncer.schedule(queryLength: trimmed.count) { [weak self] in
             guard let self else { throw ClientError("ChannelSearch was deallocated") }
             return try await self.performSearch(query: query)
@@ -86,7 +99,7 @@ public class ChannelSearch: @unchecked Sendable {
 
     // MARK: - Private
 
-    private static func makeQuery(text: String, currentUserId: UserId) -> ChannelListQuery {
+    private func makeQuery(text: String, currentUserId: UserId) -> ChannelListQuery {
         var query = ChannelListQuery(
             filter: .and([
                 .autocomplete(.name, text: text),
@@ -95,6 +108,7 @@ public class ChannelSearch: @unchecked Sendable {
         )
         // Do not start watching any of the searched channels.
         query.options = []
+        query.explicitQueryHash = explicitQueryHash
         return query
     }
 
