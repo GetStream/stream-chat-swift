@@ -7,6 +7,19 @@ import Foundation
 
 /// Represents a list of channel search results.
 @MainActor public final class ChannelSearchState: ObservableObject {
+    private var cancellables = Set<AnyCancellable>()
+    private let observer: Observer
+
+    init(database: DatabaseContainer, clientConfig: ChatClientConfig) {
+        observer = Observer(database: database, clientConfig: clientConfig)
+        observer.start(
+            with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })
+        )
+        $query
+            .assign(to: \.query, on: observer)
+            .store(in: &cancellables)
+    }
+
     /// The last initiated search query.
     ///
     /// - Note: If searching fails, this property points to the failing query.
@@ -15,44 +28,16 @@ import Foundation
     /// An array of search results for the specified query.
     @Published public internal(set) var channels: [ChatChannel] = []
 
-    /// The channel list backing the current results, used for pagination.
-    var channelList: ChannelList?
+    // MARK: - Mutating the State
 
-    /// `ChannelListQuery` is not `Equatable`, so staleness is decided on its hash.
-    private var queryHash: String?
-}
-
-extension ChannelSearchState {
-    /// Updates the query to point to the last query the user started.
+    /// Points the results at the last query the user started.
     func setQuery(_ query: ChannelListQuery?) {
         self.query = query
-        queryHash = query?.queryHash
     }
 
-    /// Clears the results and the channel list backing them.
+    /// Stops observing and clears the results.
     func clear() {
-        setQuery(nil)
+        query = nil
         channels = []
-        channelList = nil
-    }
-
-    /// Updates the state with the results of the completed query.
-    ///
-    /// Results from an outdated query are discarded so the state always
-    /// reflects the most recently initiated search.
-    func handleDidFetchQuery(
-        _ completedQuery: ChannelListQuery,
-        channelList: ChannelList,
-        channels: [ChatChannel]
-    ) {
-        guard queryHash == completedQuery.queryHash else { return }
-        self.channelList = channelList
-        self.channels = channels
-    }
-
-    /// Appends a loaded page to the results.
-    func handleDidLoadMore(_ completedQuery: ChannelListQuery, channels: [ChatChannel]) {
-        guard queryHash == completedQuery.queryHash else { return }
-        self.channels = channels
     }
 }

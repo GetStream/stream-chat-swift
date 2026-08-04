@@ -10,10 +10,13 @@ import Foundation
 /// ``search(text:)`` again cancels the previous in-flight search. The superseded call returns
 /// the current results rather than throwing, so typing does not surface an error per keystroke.
 ///
+/// Results stay live: once a search has run, changes to the matching channels (a new message,
+/// a name change, a member update) are published through ``ChannelSearchState/channels``.
+///
 /// - Note: For a delegate based alternative, please check ``ChatChannelSearchController``.
 public class ChannelSearch: @unchecked Sendable {
     private let client: ChatClient
-    private let environment: Environment
+    private let channelListUpdater: ChannelListUpdater
     private let searchDebouncer: AsyncSearchDebouncer
     @MainActor private var stateBuilder: StateBuilder<ChannelSearchState>
 
@@ -29,9 +32,12 @@ public class ChannelSearch: @unchecked Sendable {
         environment: Environment = .init()
     ) {
         self.client = client
-        self.environment = environment
+        channelListUpdater = environment.channelListUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
         searchDebouncer = AsyncSearchDebouncer(policy: debouncePolicy)
-        stateBuilder = StateBuilder { ChannelSearchState() }
+        stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer, client.config) }
     }
 
     deinit {
@@ -61,7 +67,7 @@ public class ChannelSearch: @unchecked Sendable {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             await searchDebouncer.cancel()
-            await state.clear()
+            try await clearResults()
             return []
         }
 
@@ -85,16 +91,20 @@ public class ChannelSearch: @unchecked Sendable {
     /// - Parameter limit: The limit for the page size.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: The full list of loaded channels, including the new page.
+    /// - Returns: The next page of channels matching the last search. A page smaller than the
+    /// limit means the last page has been loaded.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
-        guard let channelList = await state.channelList, let query = await state.query else {
+        guard let query = await state.query else {
             throw ClientError("Call search() before calling for next page")
         }
-        try await channelList.loadMoreChannels(limit: limit)
+        var nextPageQuery = query
+        nextPageQuery.pagination = Pagination(
+            pageSize: limit ?? query.pagination.pageSize,
+            offset: await state.channels.count
+        )
+        let result = try await channelListUpdater.update(channelListQuery: nextPageQuery)
         try Task.checkCancellation()
-        let channels = await channelList.state.channels
-        await state.handleDidLoadMore(query, channels: channels)
-        return channels
+        return result.channels
     }
 
     // MARK: - Private
@@ -113,26 +123,39 @@ public class ChannelSearch: @unchecked Sendable {
     }
 
     private func performSearch(query: ChannelListQuery) async throws -> [ChatChannel] {
-        // A superseded search must not publish its query: `state.query` is what the result
-        // handlers compare against and what pagination continues from.
+        // A superseded search must not publish its query: `state.query` is what the observer
+        // follows and what pagination continues from.
         try Task.checkCancellation()
         await state.setQuery(query)
-        let channelList = environment.channelListBuilder(query, client)
-        try await channelList.get()
+        let result = try await channelListUpdater.update(channelListQuery: query)
         try Task.checkCancellation()
-        let channels = await channelList.state.channels
-        await state.handleDidFetchQuery(query, channelList: channelList, channels: channels)
-        return channels
+        return result.channels
+    }
+
+    private func clearResults() async throws {
+        let query = ChannelListQuery.searchResults(explicitQueryHash: explicitQueryHash)
+        try await client.databaseContainer.write { session in
+            // Only the link between the query and its results is removed, the channels stay cached.
+            session.channelListQuery(query)?.channels.removeAll()
+        }
+        await state.clear()
     }
 }
 
 extension ChannelSearch {
-    struct Environment {
-        var channelListBuilder: (
-            _ query: ChannelListQuery,
-            _ client: ChatClient
-        ) -> ChannelList = { query, client in
-            client.makeChannelList(with: query)
+    struct Environment: Sendable {
+        var channelListUpdaterBuilder: @Sendable (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelListUpdater = {
+            ChannelListUpdater(database: $0, apiClient: $1)
+        }
+
+        var stateBuilder: @Sendable @MainActor (
+            _ database: DatabaseContainer,
+            _ clientConfig: ChatClientConfig
+        ) -> ChannelSearchState = { @MainActor in
+            ChannelSearchState(database: $0, clientConfig: $1)
         }
     }
 }

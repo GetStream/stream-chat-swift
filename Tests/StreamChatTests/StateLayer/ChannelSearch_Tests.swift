@@ -32,9 +32,6 @@ final class ChannelSearch_Tests: XCTestCase {
     func test_search_fetchesTheMatchingChannelList() async throws {
         try await channelSearch.search(text: "gen")
 
-        // Channel contents come from the channel list's database observer, which ChannelList
-        // already covers. What matters here is that the search drove exactly one fetch.
-        XCTAssertEqual(1, env.builtQueries.count)
         XCTAssertEqual(1, env.channelListUpdaterSpy.update_queries.count)
     }
 
@@ -53,9 +50,21 @@ final class ChannelSearch_Tests: XCTestCase {
         }
     }
 
+    func test_search_alwaysQueriesTheFirstPage() async throws {
+        // An initial fetch is what makes the updater replace the previously linked results.
+        try await channelSearch.search(text: "gen")
+        try await channelSearch.search(text: "general")
+
+        let paginations = env.channelListUpdaterSpy.update_queries.map(\.pagination)
+        XCTAssertEqual(2, paginations.count)
+        XCTAssertEqual(2, paginations.filter { $0.offset == 0 && $0.cursor == nil }.count)
+    }
+
     func test_search_whenTextIsEmpty_thenStateIsCleared() async throws {
         try await channelSearch.search(text: "general")
-        await MainActor.run { XCTAssertNotNil(channelSearch.state.query) }
+        let searchQuery = try await MainActor.run { try XCTUnwrap(channelSearch.state.query) }
+        try writeChannel(cid: .unique, name: "general", query: searchQuery)
+        try await waitForChannels { !$0.isEmpty }
 
         let result = try await channelSearch.search(text: "  ")
 
@@ -75,6 +84,32 @@ final class ChannelSearch_Tests: XCTestCase {
         )
     }
 
+    // MARK: - Results
+
+    func test_channels_reportsChannelsLinkedToTheSearchQuery() async throws {
+        try await channelSearch.search(text: "general")
+        let searchQuery = try await MainActor.run { try XCTUnwrap(channelSearch.state.query) }
+
+        let cid = ChannelId.unique
+        try writeChannel(cid: cid, name: "general", query: searchQuery)
+
+        try await waitForChannels { $0.map(\.cid) == [cid] }
+    }
+
+    func test_channels_areUpdatedWhenALinkedChannelChanges() async throws {
+        try await channelSearch.search(text: "general")
+        let searchQuery = try await MainActor.run { try XCTUnwrap(channelSearch.state.query) }
+
+        let cid = ChannelId.unique
+        try writeChannel(cid: cid, name: "general", query: searchQuery)
+        try await waitForChannels { $0.map(\.cid) == [cid] }
+
+        // The channel is updated without being re-linked to the query.
+        try writeChannel(cid: cid, name: "general channel", query: nil)
+
+        try await waitForChannels { $0.first?.name == "general channel" }
+    }
+
     // MARK: - Debouncing
 
     func test_search_whenTypingRapidly_thenOnlyTheLastSearchIsPerformed() async throws {
@@ -86,8 +121,9 @@ final class ChannelSearch_Tests: XCTestCase {
 
         _ = try await (first, second)
 
-        XCTAssertEqual(1, env.builtQueries.count)
-        XCTAssertTrue(env.builtQueries[0].filter.filterHash.contains("general"))
+        let queries = env.channelListUpdaterSpy.update_queries
+        XCTAssertEqual(1, queries.count)
+        XCTAssertTrue(queries[0].filter.filterHash.contains("general"))
     }
 
     func test_search_whenSuperseded_thenItReturnsCurrentResultsWithoutThrowing() async throws {
@@ -111,13 +147,51 @@ final class ChannelSearch_Tests: XCTestCase {
             expectedErrorHandler: { $0 is ClientError }
         )
     }
+
+    func test_loadMoreChannels_paginatesTheCurrentSearchQuery() async throws {
+        try await channelSearch.search(text: "general")
+        let searchQuery = try await MainActor.run { try XCTUnwrap(channelSearch.state.query) }
+        try writeChannel(cid: .unique, name: "general", query: searchQuery)
+        try await waitForChannels { $0.count == 1 }
+
+        try await channelSearch.loadMoreChannels(limit: 10)
+
+        let paginationQuery = try XCTUnwrap(env.channelListUpdaterSpy.update_queries.last)
+        XCTAssertEqual(searchQuery.queryHash, paginationQuery.queryHash)
+        XCTAssertEqual(10, paginationQuery.pagination.pageSize)
+        XCTAssertEqual(1, paginationQuery.pagination.offset)
+    }
+
+    // MARK: - Helpers
+
+    private func writeChannel(cid: ChannelId, name: String, query: ChannelListQuery?) throws {
+        try env.client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    name: name,
+                    members: [.dummy(user: .dummy(userId: self.currentUserId))]
+                ),
+                query: query,
+                cache: nil
+            )
+        }
+    }
+
+    private func waitForChannels(until condition: @escaping ([ChatChannel]) -> Bool) async throws {
+        let deadline = Date().addingTimeInterval(defaultTimeout)
+        while Date() < deadline {
+            if await MainActor.run(body: { condition(channelSearch.state.channels) }) { return }
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        XCTFail("Timed out waiting for the channels to match the expected state")
+    }
 }
 
 extension ChannelSearch_Tests {
     final class TestEnvironment {
         let client: ChatClient_Mock
         private(set) var channelListUpdaterSpy: ChannelListUpdater_Spy!
-        private(set) var builtQueries: [ChannelListQuery] = []
 
         init() {
             client = ChatClient_Mock(config: ChatClient_Mock.defaultMockedConfig)
@@ -132,24 +206,14 @@ extension ChannelSearch_Tests {
             let search = ChannelSearch(
                 client: client,
                 debouncePolicy: debouncePolicy,
-                environment: .init(channelListBuilder: { [unowned self] query, client in
-                    builtQueries.append(query)
-                    return ChannelList(
-                        query: query,
-                        dynamicFilter: nil,
-                        client: client,
-                        environment: .init(
-                            channelListUpdater: { [unowned self] database, apiClient in
-                                channelListUpdaterSpy = ChannelListUpdater_Spy(
-                                    database: database,
-                                    apiClient: apiClient
-                                )
-                                channelListUpdaterSpy.update_completion_result = .success([])
-                                return channelListUpdaterSpy
-                            }
-                        )
-                    )
-                })
+                environment: .init(
+                    channelListUpdaterBuilder: { [unowned self] database, apiClient in
+                        let updater = ChannelListUpdater_Spy(database: database, apiClient: apiClient)
+                        updater.update_completion_result = .success([])
+                        channelListUpdaterSpy = updater
+                        return updater
+                    }
+                )
             )
             _ = search.state
             return search
