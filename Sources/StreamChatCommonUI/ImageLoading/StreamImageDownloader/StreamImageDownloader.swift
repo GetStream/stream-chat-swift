@@ -251,7 +251,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         case let .image(image):
             return DownloadedImage(image: image)
         case .animated:
-            // Animated data is passed through untouched; SwiftyGif renders it in the UI SDKs.
+            // Animated data is passed through untouched; `StreamAnimatedImageView` renders it in the UI SDKs.
             guard let image = UIImage(data: data) else { return nil }
             return DownloadedImage(image: image, animatedImageData: data)
         case nil:

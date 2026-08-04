@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: ./updateDependency.sh 5.4.2 Dependencies/SwiftyGif Sources/StreamChatUI/StreamSwiftyGif SwiftyGif
+# Usage: ./updateDependency.sh 1.3.0 Dependencies/DifferenceKit Sources/StreamChatUI/StreamDifferenceKit Sources
 #
 # This script gets the source code of a dependency of a given library, and copies it to our codebase
 
@@ -20,9 +20,7 @@ sources_directory=$4
 
 dependency_url=""
 
-if [[ $dependency_directory == *"SwiftyGif"* ]]; then
-	dependency_url="git@github.com:kirualex/SwiftyGif.git"
-elif [[ $dependency_directory == *"DifferenceKit"* ]]; then
+if [[ $dependency_directory == *"DifferenceKit"* ]]; then
 	dependency_url="git@github.com:ra1028/DifferenceKit.git"
 else
 	echo "→ Unknown dependency at $dependency_directory"

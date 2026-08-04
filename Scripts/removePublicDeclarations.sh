@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: ./removePublicDeclarations.sh Sources/StreamChatUI/StreamSwiftyGif
+# Usage: ./removePublicDeclarations.sh Sources/StreamChatUI/StreamDifferenceKit
 #
 # This script would iterate over the files on a particular directory, and perform basic replacement operations.
 # It heavily relies on 'sed':
