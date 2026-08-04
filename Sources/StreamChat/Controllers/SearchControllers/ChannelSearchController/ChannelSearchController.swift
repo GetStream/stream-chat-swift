@@ -133,7 +133,7 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
         // Do not watch the query when searching.
         query.options = []
 
-        scheduleSearch(query: query, queryLength: trimmed.count, completion: completion)
+        scheduleSearch(query: query, completion: completion)
     }
 
     /// Searches channels for the given query.
@@ -155,12 +155,7 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     ) {
         startObserversIfNeeded()
 
-        guard let queryLength = SearchQueryLength.fromFilter(query.filter) else {
-            searchDebouncer.cancel()
-            executeSearch(query: query, completion: completion)
-            return
-        }
-        scheduleSearch(query: query, queryLength: queryLength, completion: completion)
+        scheduleSearch(query: query, completion: completion)
     }
 
     /// Cancels any pending search and clears the current search results.
@@ -217,10 +212,9 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
 
     private func scheduleSearch(
         query: ChannelListQuery,
-        queryLength: Int,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
+        let scheduled = searchDebouncer.schedule(filter: query.filter) { [weak self] in
             self?.executeSearch(query: query, completion: completion)
         }
         if !scheduled {

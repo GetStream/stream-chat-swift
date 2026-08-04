@@ -40,6 +40,25 @@ actor AsyncSearchDebouncer {
         return try await awaitingValue(of: task)
     }
 
+    /// Runs `operation` for a query, debouncing it on the length of the query's search text.
+    ///
+    /// A filter holding no search text runs `operation` right away, since a query the user is not
+    /// typing into has nothing to debounce.
+    ///
+    /// - Returns: The operation's result, or `nil` when no result was produced: the query was
+    ///   below ``SearchDebouncePolicy/minimumCharacterCount``, or this search was superseded
+    ///   by a newer one, or it was cancelled via ``cancel()``.
+    /// - Throws: `CancellationError` only when the calling task itself is cancelled.
+    func schedule<Scope: FilterScope, Success: Sendable>(
+        filter: Filter<Scope>?,
+        operation: @escaping @Sendable () async throws -> Success
+    ) async throws -> Success? {
+        guard let queryLength = SearchQueryLength.fromFilter(filter) else {
+            return try await perform(operation: operation)
+        }
+        return try await schedule(queryLength: queryLength, operation: operation)
+    }
+
     /// Runs `operation` immediately, cancelling any pending or in-flight work.
     ///
     /// Use for programmatic searches, which are not typed character by character and so

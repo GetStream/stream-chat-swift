@@ -64,7 +64,7 @@ public class MessageSearch: @unchecked Sendable {
             messageFilter: .autocomplete(.text, text: text),
             sort: sortOrder
         )
-        return try await search(query: query, queryLength: text.count)
+        return try await search(query: query)
     }
     
     /// Searches for messages with the specified query and updates ``MessageSearchState/messages``.
@@ -80,10 +80,7 @@ public class MessageSearch: @unchecked Sendable {
     /// - Returns: An array of paginated chat messages matching to the query. When a newer
     /// search supersedes this one, the current ``MessageSearchState/messages`` are returned.
     @discardableResult public func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
-        if let queryLength = SearchQueryLength.fromFilter(query.messageFilter) {
-            return try await search(query: query, queryLength: queryLength)
-        }
-        let result = try await searchDebouncer.perform { [weak self] in
+        let result = try await searchDebouncer.schedule(filter: query.messageFilter) { [weak self] in
             guard let self else { throw ClientError("MessageSearch was deallocated") }
             return try await self.performSearch(query: query)
         }
@@ -118,17 +115,6 @@ public class MessageSearch: @unchecked Sendable {
     }
     
     // MARK: - Private
-
-    private func search(query: MessageSearchQuery, queryLength: Int) async throws -> [ChatMessage] {
-        let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
-            guard let self else { throw ClientError("MessageSearch was deallocated") }
-            return try await self.performSearch(query: query)
-        }
-        if let result {
-            return result
-        }
-        return await state.messages
-    }
 
     private func performSearch(query: MessageSearchQuery) async throws -> [ChatMessage] {
         var query = query

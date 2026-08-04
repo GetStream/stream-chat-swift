@@ -83,6 +83,29 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
         XCTAssertNil(firstResult, "A superseded search returns nil instead of throwing")
     }
 
+    func test_scheduleFilter_withSearchText_isDebouncedOnItsLength() async throws {
+        let debouncer = AsyncSearchDebouncer(policy: .constant(0.2, minimumCharacterCount: 3))
+
+        let skipped = try await debouncer.schedule(filter: Filter<UserListFilterScope>.autocomplete(.name, text: "ab")) {
+            XCTFail("Work below the minimum character count should not run")
+            return "skipped"
+        }
+
+        XCTAssertNil(skipped)
+    }
+
+    func test_scheduleFilter_withoutSearchText_runsImmediately() async throws {
+        let debouncer = AsyncSearchDebouncer(policy: .constant(5))
+        let startedAt = Date()
+
+        let result = try await debouncer.schedule(filter: Filter<UserListFilterScope>.equal(.id, to: .unique)) {
+            "result"
+        }
+
+        XCTAssertEqual("result", result)
+        XCTAssertLessThan(Date().timeIntervalSince(startedAt), 1)
+    }
+
     func test_schedule_whenCallingTaskIsCancelled_cancelsTheSearch() async throws {
         let debouncer = AsyncSearchDebouncer(policy: .constant(0))
         let started = expectation(description: "Search operation started")

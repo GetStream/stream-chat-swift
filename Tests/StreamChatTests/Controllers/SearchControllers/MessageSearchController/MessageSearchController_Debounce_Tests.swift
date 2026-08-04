@@ -126,21 +126,6 @@ final class MessageSearchController_Debounce_Tests: XCTestCase {
         wait(for: [expectation], timeout: defaultTimeout)
     }
 
-    func test_search_withCustomQueryContainingShortSearchText_respectsMinimumCharacterCount() {
-        controller = makeController(debouncePolicy: .constant(0, minimumCharacterCount: 3))
-        let query = MessageSearchQuery(
-            channelFilter: .containMembers(userIds: [.unique]),
-            messageFilter: .and([
-                .autocomplete(.text, text: "ab"),
-                .withAttachments([.image])
-            ])
-        )
-
-        controller.search(query: query)
-
-        XCTAssertNil(env.messageUpdater?.search_query)
-    }
-
     func test_search_belowMinimumCharacterCount_doesNotFireRequest() {
         controller = makeController(debouncePolicy: .constant(0, minimumCharacterCount: 3))
 

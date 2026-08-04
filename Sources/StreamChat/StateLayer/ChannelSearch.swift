@@ -76,7 +76,7 @@ public class ChannelSearch: @unchecked Sendable {
         }
 
         let query = makeQuery(text: trimmed, currentUserId: currentUserId)
-        let result = try await searchDebouncer.schedule(queryLength: trimmed.count) { [weak self] in
+        let result = try await searchDebouncer.schedule(filter: query.filter) { [weak self] in
             guard let self else { throw ClientError("ChannelSearch was deallocated") }
             return try await self.performSearch(query: query)
         }

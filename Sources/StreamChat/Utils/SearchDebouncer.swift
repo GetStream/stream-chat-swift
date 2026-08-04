@@ -7,8 +7,8 @@ import Foundation
 /// Schedules search work using a ``SearchDebouncePolicy``, cancelling work that has not run yet
 /// when a newer search is scheduled.
 ///
-/// Only text searches are debounced. A programmatic, query-driven search is not typed character
-/// by character, so callers run it right away and use ``cancel()`` to drop the pending work it
+/// Only text searches are debounced. A query with no text-search operator is not typed character
+/// by character, so ``schedule(filter:execute:)`` runs it right away, dropping the pending work it
 /// supersedes.
 ///
 /// A request that is already in flight when a newer search starts is left alone. Search requests
@@ -60,6 +60,26 @@ final class SearchDebouncer: @unchecked Sendable {
         }
         queue.asyncAfter(deadline: .now() + interval, execute: newJob)
         return true
+    }
+
+    /// Schedules `work` for a query, debouncing it on the length of the query's search text.
+    ///
+    /// A filter holding no search text runs `work` right away, since a query the user is not
+    /// typing into has nothing to debounce.
+    ///
+    /// - Returns: `true` when work was scheduled (or run immediately); `false` when
+    ///   the query is below ``SearchDebouncePolicy/minimumCharacterCount`` and was skipped.
+    @discardableResult
+    func schedule<Scope: FilterScope>(
+        filter: Filter<Scope>?,
+        execute work: @escaping @Sendable () -> Void
+    ) -> Bool {
+        guard let queryLength = SearchQueryLength.fromFilter(filter) else {
+            cancel()
+            work()
+            return true
+        }
+        return schedule(queryLength: queryLength, execute: work)
     }
 
     /// Cancels work that was scheduled but has not run yet.

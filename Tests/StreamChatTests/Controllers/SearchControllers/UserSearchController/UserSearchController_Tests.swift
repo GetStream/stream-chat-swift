@@ -86,6 +86,26 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.first, .search(term: searchTerm))
     }
 
+    func test_searchWithTerm_isDebouncedOnTheTermLength() {
+        controller = ChatUserSearchController(
+            client: client,
+            environment: env.environment,
+            debouncePolicy: .constant(0.15)
+        )
+        let searchTerm = "test"
+
+        controller.search(term: searchTerm)
+
+        XCTAssertTrue(env.userListUpdater?.fetch_queries.isEmpty ?? true)
+
+        let expectation = expectation(description: "Debounced search fires")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            XCTAssertEqual(self.env.userListUpdater?.fetch_queries.first, .search(term: searchTerm))
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+
     @MainActor func test_searchWithTerm_whenNewSearchSucceeds() throws {
         // Set the delegate
         let delegate = TestDelegate()

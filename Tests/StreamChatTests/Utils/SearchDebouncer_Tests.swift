@@ -74,4 +74,37 @@ final class SearchDebouncer_Tests: XCTestCase {
         XCTAssertFalse(scheduled)
         wait(for: [expectation], timeout: 0.4)
     }
+
+    func test_scheduleFilter_withSearchText_isDebouncedOnItsLength() {
+        let debouncer = SearchDebouncer(
+            policy: .constant(0.2, minimumCharacterCount: 3),
+            queue: .main
+        )
+        let expectation = expectation(description: "Work below the minimum character count does not run")
+        expectation.isInverted = true
+
+        let scheduled = debouncer.schedule(filter: Filter<UserListFilterScope>.autocomplete(.name, text: "ab")) {
+            expectation.fulfill()
+        }
+
+        XCTAssertFalse(scheduled)
+        wait(for: [expectation], timeout: 0.4)
+    }
+
+    func test_scheduleFilter_withoutSearchText_executesImmediatelyAndCancelsPending() {
+        let debouncer = SearchDebouncer(policy: .constant(0.2), queue: .main)
+        let expectation = expectation(description: "Pending text search is cancelled")
+        expectation.isInverted = true
+        var executed = false
+
+        debouncer.schedule(filter: Filter<UserListFilterScope>.autocomplete(.name, text: "abc")) {
+            expectation.fulfill()
+        }
+        debouncer.schedule(filter: Filter<UserListFilterScope>.equal(.id, to: .unique)) {
+            executed = true
+        }
+
+        XCTAssertTrue(executed)
+        wait(for: [expectation], timeout: 0.4)
+    }
 }

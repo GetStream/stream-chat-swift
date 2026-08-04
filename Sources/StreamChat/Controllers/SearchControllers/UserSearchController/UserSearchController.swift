@@ -82,8 +82,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(term: String?, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        let queryLength = term?.count ?? 0
-        scheduleFetch(.search(term: term), queryLength: queryLength, completion: completion)
+        scheduleFetch(.search(term: term), completion: completion)
     }
 
     /// Searches users for the given query.
@@ -102,12 +101,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: UserListQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        guard let queryLength = SearchQueryLength.fromFilter(query.filter) else {
-            searchDebouncer.cancel()
-            fetch(query, completion: completion)
-            return
-        }
-        scheduleFetch(query, queryLength: queryLength, completion: completion)
+        scheduleFetch(query, completion: completion)
     }
 
     /// Loads next users from backend.
@@ -145,10 +139,9 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
 private extension ChatUserSearchController {
     func scheduleFetch(
         _ query: UserListQuery,
-        queryLength: Int,
         completion: (@MainActor (Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
+        let scheduled = searchDebouncer.schedule(filter: query.filter) { [weak self] in
             self?.fetch(query, completion: completion)
         }
         if !scheduled {

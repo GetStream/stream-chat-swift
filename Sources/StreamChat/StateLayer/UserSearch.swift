@@ -40,7 +40,7 @@ public class UserSearch: @unchecked Sendable {
     /// - Returns: An array of users for the search term. When a newer search supersedes this
     /// one, the current ``UserSearchState/users`` are returned.
     @discardableResult public func search(term: String?) async throws -> [ChatUser] {
-        try await search(query: .search(term: term), queryLength: term?.count ?? 0)
+        try await search(query: .search(term: term))
     }
     
     /// Searches for users with the specified query and updates ``UserSearchState/users``.
@@ -56,11 +56,8 @@ public class UserSearch: @unchecked Sendable {
     /// - Returns: An array of users for the query. When a newer search supersedes this one,
     /// the current ``UserSearchState/users`` are returned.
     @discardableResult public func search(query: UserListQuery) async throws -> [ChatUser] {
-        if let queryLength = SearchQueryLength.fromFilter(query.filter) {
-            return try await search(query: query, queryLength: queryLength)
-        }
         let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize, offset: 0)
-        let result = try await searchDebouncer.perform { [weak self] in
+        let result = try await searchDebouncer.schedule(filter: query.filter) { [weak self] in
             guard let self else { throw ClientError("UserSearch was deallocated") }
             return try await self.performSearch(query: query, pagination: pagination)
         }
@@ -87,18 +84,6 @@ public class UserSearch: @unchecked Sendable {
     
     // MARK: - Private
 
-    private func search(query: UserListQuery, queryLength: Int) async throws -> [ChatUser] {
-        let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize, offset: 0)
-        let result = try await searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
-            guard let self else { throw ClientError("UserSearch was deallocated") }
-            return try await self.performSearch(query: query, pagination: pagination)
-        }
-        if let result {
-            return result
-        }
-        return await state.users
-    }
-    
     private func performSearch(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
         let query = query.withPagination(pagination)
         // A superseded search must not publish its query. `state.query` is what

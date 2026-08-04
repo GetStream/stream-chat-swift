@@ -182,7 +182,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             sort: sortOrder
         )
 
-        scheduleSearch(query: query, queryLength: text.count, completion: completion)
+        scheduleSearch(query: query, completion: completion)
     }
 
     /// Cancels any pending search and clears the current search results.
@@ -228,20 +228,14 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        guard let queryLength = SearchQueryLength.fromFilter(query.messageFilter) else {
-            searchDebouncer.cancel()
-            executeSearch(query: query, completion: completion)
-            return
-        }
-        scheduleSearch(query: query, queryLength: queryLength, completion: completion)
+        scheduleSearch(query: query, completion: completion)
     }
 
     private func scheduleSearch(
         query: MessageSearchQuery,
-        queryLength: Int,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
+        let scheduled = searchDebouncer.schedule(filter: query.messageFilter) { [weak self] in
             self?.executeSearch(query: query, completion: completion)
         }
         if !scheduled {
