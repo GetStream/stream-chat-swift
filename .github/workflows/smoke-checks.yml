@@ -146,6 +146,9 @@ jobs:
     needs:
       - guard
       - build-test-app-and-frameworks
+    permissions:
+      contents: write # to push the snapshots branch
+      pull-requests: write
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
