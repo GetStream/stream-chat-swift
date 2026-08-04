@@ -20,8 +20,7 @@ public extension ChatClient {
 /// `ChatMessageSearchController` is a controller class which allows observing a list of messages based on the provided query.
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
-/// Scheduling a new search cancels any pending debounced work and ignores results from
-/// previously in-flight requests.
+/// Scheduling a new search cancels any pending debounced work.
 ///
 /// - Note: For an async-await alternative of the `ChatMessageSearchController`, please check ``MessageSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatMessageSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
@@ -186,7 +185,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         scheduleSearch(query: query, queryLength: text.count, completion: completion)
     }
 
-    /// Cancels any pending or in-flight search and clears the current search results.
+    /// Cancels any pending search and clears the current search results.
     ///
     /// Call this when the search UI is cleared or dismissed. Without it, a search that was
     /// already debounced still reaches the backend after the user emptied the search field.
@@ -223,8 +222,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
     /// debounced on the length of that text, even when combined with other filters. A query
-    /// with no search text is not typed character by character, so it runs right away — a
-    /// later search still discards its response either way.
+    /// with no search text is not typed character by character, so it runs right away.
     ///
     /// - Parameters:
     ///   - query: Search query.
@@ -232,9 +230,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         guard let queryLength = SearchQueryLength.fromFilter(query.messageFilter) else {
-            searchDebouncer.perform { [weak self] isCurrent in
-                self?.executeSearch(query: query, isCurrent: isCurrent, completion: completion)
-            }
+            searchDebouncer.cancel()
+            executeSearch(query: query, completion: completion)
             return
         }
         scheduleSearch(query: query, queryLength: queryLength, completion: completion)
@@ -245,8 +242,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         queryLength: Int,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isCurrent in
-            self?.executeSearch(query: query, isCurrent: isCurrent, completion: completion)
+        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
+            self?.executeSearch(query: query, completion: completion)
         }
         if !scheduled {
             callback { completion?(nil) }
@@ -255,7 +252,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
     private func executeSearch(
         query: MessageSearchQuery,
-        isCurrent: @escaping @Sendable () -> Bool,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
         var query = query
@@ -267,7 +263,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         resetMessagesObserver()
 
         messageUpdater.search(query: query, policy: .replace) { [weak self] result in
-            guard let self, isCurrent() else { return }
+            guard let self else { return }
 
             if case let .success(response) = result {
                 self.updateNextPageCursor(with: response.payload)

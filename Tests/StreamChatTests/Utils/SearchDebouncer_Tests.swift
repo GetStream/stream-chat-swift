@@ -11,7 +11,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         let debouncer = SearchDebouncer(policy: .constant(0), queue: .main)
         var executed = false
 
-        let scheduled = debouncer.schedule(queryLength: 1) { _ in
+        let scheduled = debouncer.schedule(queryLength: 1) {
             executed = true
         }
 
@@ -27,12 +27,11 @@ final class SearchDebouncer_Tests: XCTestCase {
         let expectation = expectation(description: "Only latest work executes")
         var executionCount = 0
 
-        debouncer.schedule(queryLength: 1) { _ in
+        debouncer.schedule(queryLength: 1) {
             executionCount += 1
             XCTFail("First scheduled work should be cancelled")
         }
-        debouncer.schedule(queryLength: 3) { isCurrent in
-            XCTAssertTrue(isCurrent())
+        debouncer.schedule(queryLength: 3) {
             executionCount += 1
             expectation.fulfill()
         }
@@ -41,7 +40,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         XCTAssertEqual(executionCount, 1)
     }
 
-    func test_cancel_invalidatesPendingAndInFlightGenerations() {
+    func test_cancel_dropsPendingWork() {
         let debouncer = SearchDebouncer(
             policy: .constant(0.2),
             queue: .main
@@ -49,7 +48,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         let expectation = expectation(description: "Cancelled work does not run")
         expectation.isInverted = true
 
-        debouncer.schedule(queryLength: 1) { _ in
+        debouncer.schedule(queryLength: 1) {
             expectation.fulfill()
         }
         debouncer.cancel()
@@ -65,10 +64,10 @@ final class SearchDebouncer_Tests: XCTestCase {
         let expectation = expectation(description: "Pending work is cancelled by short query")
         expectation.isInverted = true
 
-        debouncer.schedule(queryLength: 3) { _ in
+        debouncer.schedule(queryLength: 3) {
             expectation.fulfill()
         }
-        let scheduled = debouncer.schedule(queryLength: 1) { _ in
+        let scheduled = debouncer.schedule(queryLength: 1) {
             XCTFail("Work below the minimum character count should not run")
         }
 

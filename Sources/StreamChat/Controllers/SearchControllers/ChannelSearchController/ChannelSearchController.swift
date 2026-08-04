@@ -17,8 +17,7 @@ public extension ChatClient {
 /// `ChatChannelSearchController` searches channels by name.
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
-/// Scheduling a new search cancels any pending debounced work and ignores results from
-/// previously in-flight requests.
+/// Scheduling a new search cancels any pending debounced work.
 ///
 /// Results stay live: once a search has run, changes to the matching channels (a new message,
 /// a name change, a member update) are reported through the delegate.
@@ -144,8 +143,7 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     ///
     /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
     /// debounced on the length of that text, even when combined with other filters. A query
-    /// with no search text is not typed character by character, so it runs right away — a
-    /// later search still discards its response either way.
+    /// with no search text is not typed character by character, so it runs right away.
     ///
     /// - Parameters:
     ///   - query: Search query.
@@ -158,15 +156,14 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
         startObserversIfNeeded()
 
         guard let queryLength = SearchQueryLength.fromFilter(query.filter) else {
-            searchDebouncer.perform { [weak self] isCurrent in
-                self?.executeSearch(query: query, isCurrent: isCurrent, completion: completion)
-            }
+            searchDebouncer.cancel()
+            executeSearch(query: query, completion: completion)
             return
         }
         scheduleSearch(query: query, queryLength: queryLength, completion: completion)
     }
 
-    /// Cancels any pending or in-flight search and clears the current search results.
+    /// Cancels any pending search and clears the current search results.
     ///
     /// Call this when the search UI is cleared or dismissed. Without it, a search that was
     /// already debounced still reaches the backend after the user emptied the search field.
@@ -213,11 +210,8 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
         var updatedQuery = lastQuery
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
 
-        // Pagination extends the current search, so it takes the generation that is already
-        // current instead of starting a new one: a newer search discards this page, but this
-        // page does not discard the search it extends.
-        let isCurrent = searchDebouncer.currentGenerationCheck()
-        update(query: updatedQuery, limit: limit, isCurrent: isCurrent, updatesState: false, completion: completion)
+        // Pagination extends the current search, so it is not debounced.
+        update(query: updatedQuery, limit: limit, updatesState: false, completion: completion)
     }
 
     // MARK: - Helpers
@@ -227,8 +221,8 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
         queryLength: Int,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isCurrent in
-            self?.executeSearch(query: query, isCurrent: isCurrent, completion: completion)
+        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
+            self?.executeSearch(query: query, completion: completion)
         }
         if !scheduled {
             callback { completion?(nil) }
@@ -237,7 +231,6 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
 
     private func executeSearch(
         query: ChannelListQuery,
-        isCurrent: @escaping @Sendable () -> Bool,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
         var query = query
@@ -252,7 +245,6 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
         update(
             query: query,
             limit: query.pagination.pageSize,
-            isCurrent: isCurrent,
             updatesState: true,
             completion: completion
         )
@@ -261,12 +253,11 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     private func update(
         query: ChannelListQuery,
         limit: Int,
-        isCurrent: @escaping @Sendable () -> Bool,
         updatesState: Bool,
         completion: (@MainActor (_ error: Error?) -> Void)?
     ) {
         channelListUpdater.update(channelListQuery: query) { [weak self] result in
-            guard let self, isCurrent() else { return }
+            guard let self else { return }
 
             switch result {
             case let .success(updateResult):

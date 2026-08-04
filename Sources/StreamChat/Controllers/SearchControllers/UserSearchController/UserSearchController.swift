@@ -20,8 +20,7 @@ extension ChatClient {
 /// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
-/// Scheduling a new search cancels any pending debounced work and ignores results from
-/// previously in-flight requests.
+/// Scheduling a new search cancels any pending debounced work.
 ///
 /// - Note: For an async-await alternative of the `ChatUserSearchController`, please check ``UserSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
@@ -96,8 +95,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///
     /// - Note: A query built around a text-search operator (`.autocomplete`, `.query`) is
     /// debounced on the length of that text, even when combined with other filters. A query
-    /// with no search text is not typed character by character, so it runs right away — a
-    /// later search still discards its response either way.
+    /// with no search text is not typed character by character, so it runs right away.
     ///
     /// - Parameters:
     ///   - query: Search query.
@@ -105,9 +103,8 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: UserListQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         guard let queryLength = SearchQueryLength.fromFilter(query.filter) else {
-            searchDebouncer.perform { [weak self] isCurrent in
-                self?.fetch(query, isCurrent: isCurrent, completion: completion)
-            }
+            searchDebouncer.cancel()
+            fetch(query, completion: completion)
             return
         }
         scheduleFetch(query, queryLength: queryLength, completion: completion)
@@ -134,9 +131,8 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         var updatedQuery = lastQuery
         updatedQuery.pagination = Pagination(pageSize: limit, offset: userArray.count)
 
-        // Pagination extends the latest search: it is not debounced, and it must not
-        // invalidate the search it extends — but a newer search discards its response.
-        fetch(updatedQuery, isCurrent: searchDebouncer.currentGenerationCheck(), completion: completion)
+        // Pagination extends the latest search, so it is not debounced.
+        fetch(updatedQuery, completion: completion)
     }
 
     /// Clears the current search results.
@@ -152,8 +148,8 @@ private extension ChatUserSearchController {
         queryLength: Int,
         completion: (@MainActor (Error?) -> Void)?
     ) {
-        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] isCurrent in
-            self?.fetch(query, isCurrent: isCurrent, completion: completion)
+        let scheduled = searchDebouncer.schedule(queryLength: queryLength) { [weak self] in
+            self?.fetch(query, completion: completion)
         }
         if !scheduled {
             callback { completion?(nil) }
@@ -164,12 +160,9 @@ private extension ChatUserSearchController {
     ///
     /// - Parameters:
     ///   - query: The query to fetch.
-    ///   - isCurrent: Returns whether this request is still the latest scheduled search.
-    ///     Call again after every async boundary before mutating state.
     ///   - completion: The completion that is triggered when the query is processed.
     func fetch(
         _ query: UserListQuery,
-        isCurrent: @escaping @Sendable () -> Bool,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         // TODO: Remove with the next major
@@ -179,12 +172,12 @@ private extension ChatUserSearchController {
         setLocalDataFetchedStateIfNeeded()
 
         userQueryUpdater.fetch(userListQuery: query) { [weak self] result in
-            guard let self, isCurrent() else { return }
+            guard let self else { return }
 
             switch result {
             case let .success(page):
                 self.save(page: page) { [weak self] loadedUsers in
-                    guard let self, isCurrent() else { return }
+                    guard let self else { return }
 
                     let listChanges = self.prepareListChanges(
                         loadedPage: loadedUsers,

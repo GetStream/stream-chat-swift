@@ -126,19 +126,6 @@ final class ChannelSearchController_Tests: XCTestCase {
         wait(for: [expectation], timeout: 0.4)
     }
 
-    func test_search_whenSupersededByANewerSearch_ignoresThePreviousResponse() {
-        let expectation = expectation(description: "Superseded search does not call its completion")
-        expectation.isInverted = true
-
-        controller.search(text: "gen") { _ in expectation.fulfill() }
-        let supersededCompletion = updater?.update_completion
-
-        controller.search(text: "general")
-        supersededCompletion?(.success([]))
-
-        wait(for: [expectation], timeout: 0.3)
-    }
-
     func test_channelSearchController_usesTheDefaultDebouncePolicy() {
         controller = client.channelSearchController()
 
@@ -238,20 +225,6 @@ final class ChannelSearchController_Tests: XCTestCase {
         XCTAssertEqual(paginationQuery?.queryHash, controller.explicitQueryHash)
         XCTAssertEqual(paginationQuery?.pagination.pageSize, 10)
         XCTAssertEqual(paginationQuery?.pagination.offset, 1)
-    }
-
-    func test_loadNextChannels_whenSupersededByANewerSearch_ignoresTheResponse() {
-        let expectation = expectation(description: "Superseded page does not call its completion")
-        expectation.isInverted = true
-
-        controller.search(text: "general")
-        controller.loadNextChannels(limit: 10) { _ in expectation.fulfill() }
-        let supersededCompletion = updater?.update_completion
-
-        controller.search(text: "random")
-        supersededCompletion?(.success([]))
-
-        wait(for: [expectation], timeout: 0.3)
     }
 
     // MARK: - Helpers

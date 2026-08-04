@@ -12,8 +12,8 @@ import Foundation
 /// from different executors cannot lose a cancellation. Awaiting the result then happens
 /// with isolation released, so a newer search can still enter and cancel an in-flight one.
 ///
-/// The callback-based equivalent for the search controllers is ``SearchDebouncer``, which
-/// stays lock-based because its callers are synchronous.
+/// The callback-based equivalent for the search controllers is ``SearchDebouncer``, which is not
+/// an actor because its callers are synchronous.
 actor AsyncSearchDebouncer {
     let policy: SearchDebouncePolicy
     private var currentTask: CancellableTask?
