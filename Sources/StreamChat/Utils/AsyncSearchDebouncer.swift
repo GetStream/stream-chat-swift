@@ -69,9 +69,7 @@ actor AsyncSearchDebouncer {
     /// that started the search would leave the search running to completion.
     ///
     /// Being superseded is a normal outcome of typing, not a failure, so it surfaces as `nil`
-    /// rather than an error. Only a caller that cancels its own task gets `CancellationError`,
-    /// which `Task.isCancelled` distinguishes: it reflects the calling task, so it is `true`
-    /// for the caller's own cancellation and `false` when a newer search cancelled this one.
+    /// rather than an error. Only a caller that cancels its own task gets `CancellationError`.
     private nonisolated func awaitingValue<Success: Sendable>(
         of task: Task<Success, Error>
     ) async throws -> Success? {
@@ -82,9 +80,7 @@ actor AsyncSearchDebouncer {
                 task.cancel()
             }
         } catch is CancellationError {
-            if Task.isCancelled {
-                throw CancellationError()
-            }
+            try Task.checkCancellation()
             return nil
         }
     }
