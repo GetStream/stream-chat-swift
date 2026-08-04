@@ -165,8 +165,7 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
 
     /// Cancels any pending search and clears the current search results.
     ///
-    /// Call this when the search UI is cleared or dismissed. Without it, a search that was
-    /// already debounced still reaches the backend after the user emptied the search field.
+    /// Call this when the search UI is cleared or dismissed.
     ///
     /// - Parameter completion: Called when the local search results have been cleared.
     public func clearResults(completion: (@MainActor (_ error: Error?) -> Void)? = nil) {

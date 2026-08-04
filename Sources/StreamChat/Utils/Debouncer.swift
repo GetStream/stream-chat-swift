@@ -76,11 +76,10 @@ extension Debouncer {
 
 public extension Debouncer {
     /// Creates a debouncer that waits as long as the SDK's search controllers do, based on the
-    /// length of the query: 500ms for 1-2 characters and 300ms for 3 or more.
+    /// length of the query.
     ///
-    /// Short queries have low selectivity and are expensive for the backend, which is why they
-    /// wait longer. Use with ``execute(queryLength:block:)`` when debouncing a search in the UI
-    /// layer, so it stays in step with the rest of the SDK instead of hardcoding an interval.
+    /// Use with ``execute(queryLength:block:)`` when debouncing a search in the UI layer, so it
+    /// stays in step with the rest of the SDK instead of hardcoding an interval.
     ///
     /// - Parameter queue: The queue the debounced task is executed on.
     static func search(queue: DispatchQueue = .main) -> Debouncer {

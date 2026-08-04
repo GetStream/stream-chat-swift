@@ -56,7 +56,7 @@ public class ChannelSearch: @unchecked Sendable {
 
     /// Searches for channels whose name matches the given text and updates ``ChannelSearchState/channels``.
     ///
-    /// Passing empty text cancels any pending search and clears the results.
+    /// Passing empty text clears the results.
     ///
     /// - Parameter text: The channel name search text.
     ///

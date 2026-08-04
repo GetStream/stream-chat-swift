@@ -8,8 +8,6 @@ import Foundation
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Calling ``search(term:)`` or ``search(query:)`` again cancels the previous in-flight search.
-/// The superseded call returns the current results rather than throwing, so typing does not
-/// surface an error per keystroke.
 public class UserSearch: @unchecked Sendable {
     @MainActor private var stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater

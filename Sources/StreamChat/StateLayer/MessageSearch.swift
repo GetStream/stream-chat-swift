@@ -7,9 +7,6 @@ import Foundation
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
-/// Calling ``search(text:sort:)`` or ``search(query:)`` again cancels the previous in-flight
-/// search. The superseded call returns the current results rather than throwing, so typing
-/// does not surface an error per keystroke.
 public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater

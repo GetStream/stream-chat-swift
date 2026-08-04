@@ -10,12 +10,6 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     /// The component responsible to debounce search requests.
-    ///
-    /// Waits as long as the SDK's search controllers do, based on the length of the query:
-    /// 500ms for the short, low selectivity queries of 1-2 characters and 300ms for 3 or more.
-    ///
-    /// - Note: Only used by subclasses that debounce in the UI layer. A subclass backed by an
-    /// LLC search controller does not need it, because the controller debounces already.
     public var debouncer = Debouncer.search(queue: .main)
 
     /// The current active search text.
@@ -109,11 +103,10 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
 
     // swiftlint:enable unavailable_function
 
-    /// Cancels any pending or in-flight search and clears the current results.
+    /// Cancels any pending search and clears the current results.
     ///
     /// Called when the search field is emptied. The default implementation does nothing;
-    /// subclasses should cancel their search controller so a search that was already
-    /// debounced does not reach the backend after the user cleared the field.
+    /// subclasses should cancel their search controller.
     open func cancelSearch() {}
 
     // MARK: - State Handling
