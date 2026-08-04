@@ -5,6 +5,7 @@
 import Foundation
 
 enum EndpointPath: Codable {
+    case custom(String)
     case connect
     case sync
     case users
@@ -134,6 +135,7 @@ enum EndpointPath: Codable {
 
     var value: String {
         switch self {
+        case let .custom(path): return path
         case .connect: return "connect"
         case .sync: return "sync"
         case .users: return "users"

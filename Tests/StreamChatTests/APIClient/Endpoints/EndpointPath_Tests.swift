@@ -195,6 +195,7 @@ final class EndpointPathTests: XCTestCase {
     // MARK: - Codable
 
     func test_isProperlyEncodedAndDecoded() throws {
+        assertResultEncodingAndDecoding(.custom("/custom-path"))
         assertResultEncodingAndDecoding(.connect)
         assertResultEncodingAndDecoding(.sync)
         assertResultEncodingAndDecoding(.users)

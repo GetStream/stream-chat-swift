@@ -33,7 +33,8 @@ final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
         apiClient: APIClient,
-        channelListUpdater: ChannelListUpdater
+        channelListUpdater: ChannelListUpdater,
+        eventReplayPolicy: SyncEventReplayPolicy = .default
     ) {
         super.init(
             config: config,
@@ -41,7 +42,8 @@ final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
             eventNotificationCenter: eventNotificationCenter,
             database: database,
             apiClient: apiClient,
-            channelListUpdater: channelListUpdater
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: eventReplayPolicy
         )
     }
 
@@ -57,6 +59,7 @@ final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
+        alreadySyncedChannelIds: Set<ChannelId> = [],
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         record()

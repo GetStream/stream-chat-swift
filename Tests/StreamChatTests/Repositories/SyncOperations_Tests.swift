@@ -43,7 +43,7 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertEqual(context.synchedChannelIds.count, 0)
         XCTAssertNearlySameDate(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, originalDate)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:alreadySyncedChannelIds:completion:)",
             on: syncRepository,
             times: 3
         )
@@ -64,7 +64,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 2)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:alreadySyncedChannelIds:completion:)",
             on: syncRepository,
             times: 1
         )
@@ -85,7 +85,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(syncRepository.syncMissingEvents_syncChannels?.count, 100)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:alreadySyncedChannelIds:completion:)",
             on: syncRepository,
             times: 1
         )

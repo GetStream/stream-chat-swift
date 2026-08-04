@@ -471,7 +471,7 @@ public extension Appearance {
         public var composerAdd: UIImage = loadSafely(
             systemName: "plus",
             config: UIImage.SymbolConfiguration(
-                weight: .light
+                weight: .regular
             )
         )
 

@@ -160,21 +160,32 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
 final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
     init(syncRepository: SyncRepository, context: SyncContext, recovery: Bool) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
+            let channelIds = Set(context.localChannelIds).subtracting(context.synchedChannelIds)
             log.info(
-                "1. Call `/sync` endpoint and get missing events for all locally existed channels",
+                "Preparing `/sync` for missing events. active=\(context.localChannelIds.count) alreadySynced=\(context.synchedChannelIds.count) remaining=\(channelIds.count)",
                 subsystems: .offlineSupport
             )
 
-            let channelIds = Set(context.localChannelIds).subtracting(context.synchedChannelIds)
             guard !channelIds.isEmpty else {
+                log.info(
+                    "Skipping `/sync` because all active channels were already refreshed by channel lists",
+                    subsystems: .offlineSupport
+                )
                 done(.continue)
                 return
             }
-            
+
+            let channelIdsToSync = Array(channelIds.prefix(SyncRepository.Constants.maximumChannelIdsPerRequest))
+            log.info(
+                "Calling `/sync` for \(channelIdsToSync.count) channel(s) since \(context.lastSyncAt)",
+                subsystems: .offlineSupport
+            )
+
             syncRepository?.syncChannelsEvents(
-                channelIds: Array(channelIds.prefix(100)),
+                channelIds: channelIdsToSync,
                 lastSyncAt: context.lastSyncAt,
-                isRecovery: recovery
+                isRecovery: recovery,
+                alreadySyncedChannelIds: context.synchedChannelIds
             ) { result in
                 switch result {
                 case let .success(channelIds):

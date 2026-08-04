@@ -473,6 +473,279 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
 
+    // MARK: - Event replay policy
+
+    func test_syncChannelsEvents_whenEventCountWithinPolicy_processesEvents() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        let policy = SyncEventReplayPolicy(maximumEventCount: 2)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: policy
+        )
+
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        let eventDates = [Date.unique, Date.unique]
+        let result = waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            requestResult: .success(messageEventPayload(cid: cid, with: eventDates))
+        )
+
+        XCTAssertEqual(try XCTUnwrap(result.get()), [cid])
+        XCTAssertEqual(eventNotificationCenter.mock_processCalledWithEvents.count, 2)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(lastSyncAtValue, eventDates.last)
+    }
+
+    func test_syncChannelsEvents_whenEventCountExceedsPolicy_skipsReplayAndRefreshesWatchedChannels() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        let policy = SyncEventReplayPolicy(maximumEventCount: 2)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: policy
+        )
+
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        let channelController = ChatChannelController_Mock.mock(
+            channelQuery: .init(cid: cid),
+            channelListQuery: nil,
+            client: client
+        )
+        channelController.mockCid = cid
+        repository.startTrackingChannelController(channelController)
+        channelListUpdater.startWatchingChannels_completion_success = true
+
+        let eventDates = [Date.unique, Date.unique, Date.unique]
+        let result = waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            requestResult: .success(messageEventPayload(cid: cid, with: eventDates))
+        )
+
+        XCTAssertEqual(Set(try XCTUnwrap(result.get())), [cid])
+        XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_cids, [cid])
+        XCTAssertEqual(lastSyncAtValue, eventDates.last)
+    }
+
+    func test_syncChannelsEvents_whenTooManyEvents400_refreshesWatchedChannels() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater
+        )
+
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        let channelController = ChatChannelController_Mock.mock(
+            channelQuery: .init(cid: cid),
+            channelListQuery: nil,
+            client: client
+        )
+        channelController.mockCid = cid
+        repository.startTrackingChannelController(channelController)
+        channelListUpdater.startWatchingChannels_completion_success = true
+
+        let before = Date()
+        let result = waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            requestResult: .failure(ClientError(with: APIError(code: 0, message: "too many events", statusCode: 400)))
+        )
+        let after = Date()
+
+        XCTAssertEqual(Set(try XCTUnwrap(result.get())), [cid])
+        XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_cids, [cid])
+        let updatedLastSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertGreaterThanOrEqual(updatedLastSyncAt, before)
+        XCTAssertLessThanOrEqual(updatedLastSyncAt, after)
+    }
+
+    func test_syncChannelsEvents_whenFallback_excludesAlreadySyncedChannelIds() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        let policy = SyncEventReplayPolicy(maximumEventCount: 1)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: policy
+        )
+
+        let watchedCid = ChannelId.unique
+        let alreadySyncedCid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: false
+        )
+
+        let watchedController = ChatChannelController_Mock.mock(
+            channelQuery: .init(cid: watchedCid),
+            channelListQuery: nil,
+            client: client
+        )
+        watchedController.mockCid = watchedCid
+        repository.startTrackingChannelController(watchedController)
+
+        let alreadySyncedController = ChatChannelController_Mock.mock(
+            channelQuery: .init(cid: alreadySyncedCid),
+            channelListQuery: nil,
+            client: client
+        )
+        alreadySyncedController.mockCid = alreadySyncedCid
+        repository.startTrackingChannelController(alreadySyncedController)
+        channelListUpdater.startWatchingChannels_completion_success = true
+
+        let result = waitForSyncChannelsEvents(
+            channelIds: [watchedCid, alreadySyncedCid],
+            lastSyncAt: lastSyncDate,
+            alreadySyncedChannelIds: [alreadySyncedCid],
+            requestResult: .success(messageEventPayload(cid: watchedCid, with: [Date.unique, Date.unique]))
+        )
+
+        XCTAssertEqual(Set(try XCTUnwrap(result.get())), [watchedCid])
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_cids, [watchedCid])
+    }
+
+    func test_syncChannelsEvents_whenFallbackRefreshFails_returnsRetryableError() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        let policy = SyncEventReplayPolicy(maximumEventCount: 1)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: policy
+        )
+
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        let channelController = ChatChannelController_Mock.mock(
+            channelQuery: .init(cid: cid),
+            channelListQuery: nil,
+            client: client
+        )
+        channelController.mockCid = cid
+        repository.startTrackingChannelController(channelController)
+        channelListUpdater.startWatchingChannels_completion_success = false
+
+        let expectation = expectation(description: "syncChannelsEvents")
+        var receivedResult: Result<[ChannelId], SyncError>?
+        repository.syncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            isRecovery: false
+        ) { result in
+            receivedResult = result
+            expectation.fulfill()
+        }
+
+        apiClient.waitForRequest()
+        let callback = try XCTUnwrap(apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void)
+        callback(.success(messageEventPayload(cid: cid, with: [Date.unique, Date.unique])))
+
+        let refreshCompletion = try XCTUnwrap(channelListUpdater.startWatchingChannels_completion)
+        refreshCompletion(ClientError("failed"))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        guard case .failure(let error) = receivedResult else {
+            return XCTFail("Expected failure")
+        }
+        XCTAssertEqual(error.shouldRetry, true)
+        XCTAssertEqual(lastSyncAtValue, lastSyncDate)
+        XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
+    }
+
+    func test_syncChannelsEvents_whenFallbackWithNoWatchedChannels_updatesLastSyncAt() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        let policy = SyncEventReplayPolicy(maximumEventCount: 1)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: policy
+        )
+
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        let eventDates = [Date.unique, Date.unique]
+        let result = waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            requestResult: .success(messageEventPayload(cid: cid, with: eventDates))
+        )
+
+        XCTAssertEqual(try XCTUnwrap(result.get()), [])
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
+        XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
+        XCTAssertEqual(lastSyncAtValue, eventDates.last)
+    }
+
     // MARK: - Queue offline requests
 
     func test_queueOfflineRequest_localStorageDisabled() {
@@ -754,6 +1027,38 @@ extension SyncRepository_Tests {
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
+    }
+
+    @discardableResult
+    func waitForSyncChannelsEvents(
+        channelIds: [ChannelId],
+        lastSyncAt: Date,
+        alreadySyncedChannelIds: Set<ChannelId> = [],
+        requestResult: Result<MissingEventsPayload, Error>
+    ) -> Result<[ChannelId], SyncError> {
+        apiClient.clear()
+
+        let expectation = expectation(description: "syncChannelsEvents")
+        var receivedResult: Result<[ChannelId], SyncError>!
+        repository.syncChannelsEvents(
+            channelIds: channelIds,
+            lastSyncAt: lastSyncAt,
+            isRecovery: false,
+            alreadySyncedChannelIds: alreadySyncedChannelIds
+        ) { result in
+            receivedResult = result
+            expectation.fulfill()
+        }
+
+        apiClient.waitForRequest()
+        guard let callback = apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+            XCTFail("A request for /sync should have been executed")
+            return .failure(.failedFetchingChannels)
+        }
+        callback(requestResult)
+
+        waitForExpectations(timeout: defaultTimeout)
+        return receivedResult
     }
 
     private class CancelRecoveryFlowTracker: SyncRepository, @unchecked Sendable {

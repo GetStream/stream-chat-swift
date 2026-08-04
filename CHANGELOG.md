@@ -3,14 +3,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
+_August 03, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
+### ⚡️ Performance
+- Skip oversized `/sync` event replay and refresh watched channels via `queryChannels` instead [#4189](https://github.com/GetStream/stream-chat-swift/pull/4189)
+
+### 🐞 Fixed
+- Fix double slash handling in some of the endpoint paths [#4191](https://github.com/GetStream/stream-chat-swift/pull/4191) 
+
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `StreamImageDownloader` for downloading and caching images [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
+
+### 🐞 Fixed
+- Fix the composer's add attachment icon being thinner than the other composer icons [#4188](https://github.com/GetStream/stream-chat-swift/pull/4188)
 
 ## StreamChatUI
 ### 🐞 Fixed

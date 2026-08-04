@@ -21,11 +21,21 @@ enum SyncError: Error, Sendable {
     }
 }
 
+/// Controls when `/sync` event payloads are replayed versus skipped in favor of a `queryChannels` refresh.
+struct SyncEventReplayPolicy: Sendable {
+    /// Maximum number of events that may be replayed from a single `/sync` response.
+    var maximumEventCount: Int
+
+    /// Conservative default below the backend hard cap (~2000).
+    static let `default` = SyncEventReplayPolicy(maximumEventCount: 250)
+}
+
 /// This class is in charge of the synchronization of our local storage with the remote.
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
 class SyncRepository: @unchecked Sendable {
-    private enum Constants {
+    enum Constants {
         static let maximumDaysSinceLastSync = 30
+        static let maximumChannelIdsPerRequest = 100
     }
 
     /// Maximum number of retries for each operation step.
@@ -34,6 +44,7 @@ class SyncRepository: @unchecked Sendable {
     private let database: DatabaseContainer
     private let apiClient: APIClient
     private let channelListUpdater: ChannelListUpdater
+    let eventReplayPolicy: SyncEventReplayPolicy
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
 
@@ -58,7 +69,8 @@ class SyncRepository: @unchecked Sendable {
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
         apiClient: APIClient,
-        channelListUpdater: ChannelListUpdater
+        channelListUpdater: ChannelListUpdater,
+        eventReplayPolicy: SyncEventReplayPolicy = .default
     ) {
         self.config = config
         self.offlineRequestsRepository = offlineRequestsRepository
@@ -66,6 +78,7 @@ class SyncRepository: @unchecked Sendable {
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
         self.apiClient = apiClient
+        self.eventReplayPolicy = eventReplayPolicy
     }
 
     deinit {
@@ -172,9 +185,10 @@ class SyncRepository: @unchecked Sendable {
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
     /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`, including grouped lists)
-    /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 2000 events is supported)
+    /// 3. Apply updates from the /sync endpoint for channels not in active channel lists
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
+    ///      * oversized payloads skip event replay and refresh active watched channels via queryChannels
     /// 4. Re-watch channels what we were watching before disconnect
     private func syncLocalState(lastSyncAt: Date, completion: @escaping @Sendable () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
@@ -271,9 +285,14 @@ class SyncRepository: @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
+        alreadySyncedChannelIds: Set<ChannelId> = [],
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
         guard lastSyncAt.numberOfDaysUntilNow < Constants.maximumDaysSinceLastSync else {
+            log.info(
+                "Skipping `/sync` because lastSyncAt (\(lastSyncAt)) is older than \(Constants.maximumDaysSinceLastSync) days",
+                subsystems: .offlineSupport
+            )
             updateLastSyncAt(with: Date()) { error in
                 if let error = error {
                     completion(.failure(error))
@@ -288,8 +307,44 @@ class SyncRepository: @unchecked Sendable {
             using: lastSyncAt,
             channelIds: channelIds,
             isRecoveryRequest: isRecovery,
+            alreadySyncedChannelIds: alreadySyncedChannelIds,
             completion: completion
         )
+    }
+
+    /// Refreshes actively watched channels via `queryChannels`, excluding channels already synced in the reconnect context.
+    func refreshActiveWatchedChannels(
+        excluding alreadySyncedChannelIds: Set<ChannelId>,
+        completion: @escaping @Sendable (Result<Set<ChannelId>, SyncError>) -> Void
+    ) {
+        var channelIds = Set<ChannelId>()
+        channelIds.formUnion(activeChannelControllers.allObjects.compactMap(\.cid))
+        channelIds.formUnion(activeLivestreamControllers.allObjects.compactMap(\.cid))
+        channelIds.formUnion(activeLivestreamChats.allObjects.compactMap { try? $0.cid })
+        let chats = activeChats.allObjects
+
+        let finish: @Sendable (Set<ChannelId>) -> Void = { [weak self] ids in
+            guard let self else {
+                completion(.success([]))
+                return
+            }
+            let idsToRefresh = Array(ids.subtracting(alreadySyncedChannelIds))
+            guard !idsToRefresh.isEmpty else {
+                completion(.success([]))
+                return
+            }
+            self.startWatchingChannelsInBatches(idsToRefresh, accumulated: [], completion: completion)
+        }
+
+        if chats.isEmpty {
+            finish(channelIds)
+        } else {
+            DispatchQueue.main.async {
+                var ids = channelIds
+                ids.formUnion(chats.compactMap { try? $0.cid })
+                finish(ids)
+            }
+        }
     }
 
     private func getUser(completion: @escaping @Sendable (CurrentUserDTO?) -> Void) {
@@ -304,9 +359,13 @@ class SyncRepository: @unchecked Sendable {
         using date: Date,
         channelIds: [ChannelId],
         isRecoveryRequest: Bool,
+        alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
-        log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
+        log.info(
+            "Synching events for \(channelIds.count) channel(s) since \(date). replayThreshold=\(eventReplayPolicy.maximumEventCount) alreadySyncedExcluded=\(alreadySyncedChannelIds.count)",
+            subsystems: .offlineSupport
+        )
 
         guard !channelIds.isEmpty else {
             completion(.success([]))
@@ -317,8 +376,28 @@ class SyncRepository: @unchecked Sendable {
         let requestCompletion: @Sendable (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
-                log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
-                self?.processMissingEventsPayload(payload) { [weak self] in
+                guard let self else { return }
+                let eventCount = payload.eventPayloads.count
+                let maximumEventCount = self.eventReplayPolicy.maximumEventCount
+                log.info(
+                    "Received `/sync` payload with \(eventCount) event(s). replayThreshold=\(maximumEventCount)",
+                    subsystems: .offlineSupport
+                )
+                if eventCount > maximumEventCount {
+                    log.info(
+                        "Skipping event replay; count \(eventCount) exceeds \(maximumEventCount). Refreshing watched channels instead.",
+                        subsystems: .offlineSupport
+                    )
+                    self.handleSyncEventReplayFallback(
+                        lastSyncAt: payload.eventPayloads.last?.createdAt ?? date,
+                        alreadySyncedChannelIds: alreadySyncedChannelIds,
+                        completion: completion
+                    )
+                    return
+                }
+
+                log.info("Processing pending events. Count \(eventCount)", subsystems: .offlineSupport)
+                self.processMissingEventsPayload(payload) { [weak self] in
                     self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
@@ -334,16 +413,12 @@ class SyncRepository: @unchecked Sendable {
                     return
                 }
                 // Backend responds with 400 if there were more than 2000 events to return
-                // Cleaning local channels data and refetching it from scratch
-                log.info("/sync returned too many events. Continuing...", subsystems: .offlineSupport)
-
-                self?.updateLastSyncAt(with: Date()) { error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        completion(.success([]))
-                    }
-                }
+                log.info("/sync returned too many events. Refreshing watched channels instead.", subsystems: .offlineSupport)
+                self?.handleSyncEventReplayFallback(
+                    lastSyncAt: Date(),
+                    alreadySyncedChannelIds: alreadySyncedChannelIds,
+                    completion: completion
+                )
             }
         }
 
@@ -351,6 +426,67 @@ class SyncRepository: @unchecked Sendable {
             apiClient.recoveryRequest(endpoint: endpoint, completion: requestCompletion)
         } else {
             apiClient.request(endpoint: endpoint, completion: requestCompletion)
+        }
+    }
+
+    private func handleSyncEventReplayFallback(
+        lastSyncAt: Date,
+        alreadySyncedChannelIds: Set<ChannelId>,
+        completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
+    ) {
+        log.info(
+            "Running `/sync` fallback via queryChannels. excludingAlreadySynced=\(alreadySyncedChannelIds.count)",
+            subsystems: .offlineSupport
+        )
+        refreshActiveWatchedChannels(excluding: alreadySyncedChannelIds) { [weak self] result in
+            switch result {
+            case let .success(refreshedIds):
+                log.info(
+                    "Fallback refreshed \(refreshedIds.count) watched channel(s). Updating lastSyncAt to \(lastSyncAt)",
+                    subsystems: .offlineSupport
+                )
+                guard let self else {
+                    completion(.failure(.couldNotUpdateUserValue(ClientError("SyncRepository deallocated"))))
+                    return
+                }
+                self.updateLastSyncAt(with: lastSyncAt) { error in
+                    if let error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(Array(refreshedIds)))
+                    }
+                }
+            case let .failure(error):
+                log.error("Fallback queryChannels failed: \(error)", subsystems: .offlineSupport)
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func startWatchingChannelsInBatches(
+        _ channelIds: [ChannelId],
+        accumulated: Set<ChannelId>,
+        completion: @escaping @Sendable (Result<Set<ChannelId>, SyncError>) -> Void
+    ) {
+        guard !channelIds.isEmpty else {
+            completion(.success(accumulated))
+            return
+        }
+
+        let batch = Array(channelIds.prefix(Constants.maximumChannelIdsPerRequest))
+        let remaining = Array(channelIds.dropFirst(Constants.maximumChannelIdsPerRequest))
+        channelListUpdater.startWatchingChannels(withIds: batch) { [weak self] error in
+            if error != nil {
+                completion(.failure(.failedFetchingChannels))
+                return
+            }
+            var nextAccumulated = accumulated
+            nextAccumulated.formUnion(batch)
+            guard let self else {
+                completion(.failure(.failedFetchingChannels))
+                return
+            }
+            self.startWatchingChannelsInBatches(remaining, accumulated: nextAccumulated, completion: completion)
         }
     }
 
