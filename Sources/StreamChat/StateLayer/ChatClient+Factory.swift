@@ -326,6 +326,20 @@ extension ChatClient {
     }
 }
 
+// MARK: - Factory Methods for Searching Channels
+
+extension ChatClient {
+    /// Creates an instance of ``ChannelSearch`` which represents an array of channels matching a channel name search.
+    ///
+    /// Use ``ChannelSearch`` as a data source for channel search UIs. Searches are debounced and
+    /// superseded searches are cancelled, so it can be driven directly from a search field.
+    ///
+    /// - Returns: An instance of ``ChannelSearch`` which represents search actions and the search state.
+    public func makeChannelSearch() -> ChannelSearch {
+        ChannelSearch(client: self)
+    }
+}
+
 // MARK: - Factory Methods for Searching Users
 
 extension ChatClient {
