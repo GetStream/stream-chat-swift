@@ -54,12 +54,12 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // Try to load the saved member from DB
-        if let member = channelPayload.channel.members?.first {
+        if let member = channelPayload.channel.members?.first, let memberId = member.memberId {
             var loadedMember: ChatUser? {
-                try? database.viewContext.member(userId: member.userId, cid: channelId)?.asModel()
+                try? database.viewContext.member(userId: memberId, cid: channelId)?.asModel()
             }
 
-            AssertAsync.willBeEqual(loadedMember?.id, member.userId)
+            AssertAsync.willBeEqual(loadedMember?.id, memberId)
         }
     }
 

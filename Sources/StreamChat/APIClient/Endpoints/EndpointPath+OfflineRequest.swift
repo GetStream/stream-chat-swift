@@ -82,6 +82,7 @@ extension EndpointPath {
              .translateMessage,
              .truncateChannel,
              .unblockUsers,
+             .unmuteChannel,
              .unreadCounts,
              .updateChannel,
              .updateLiveLocation,

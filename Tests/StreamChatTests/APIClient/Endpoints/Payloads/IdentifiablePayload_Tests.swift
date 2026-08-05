@@ -335,7 +335,6 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 name: .unique,
                 imageURL: .unique(),
                 extraData: [:],
-                typeRawValue: cid.type.rawValue,
                 lastMessageAt: Date(),
                 createdAt: Date(),
                 deletedAt: nil,

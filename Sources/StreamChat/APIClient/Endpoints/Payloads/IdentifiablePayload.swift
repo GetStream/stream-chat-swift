@@ -155,7 +155,6 @@ extension ChannelDetailPayload: IdentifiablePayload {
         addId(cache: &cache)
         createdBy?.fillIds(cache: &cache)
         members?.fillIds(cache: &cache)
-        invitedMembers.fillIds(cache: &cache)
     }
 }
 

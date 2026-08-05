@@ -795,7 +795,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
 
-        let shouldNotUpdateLastMessageAt = isSystem && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+        let shouldNotUpdateLastMessageAt = isSystem && (channelDTO.config?.skipLastMsgAtUpdateForSystemMsg ?? false)
         if !shouldNotUpdateLastMessageAt {
             let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
             channelDTO.lastMessageAt = newLastMessageAt
@@ -1046,7 +1046,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
 
         let isSystemMessage = dto.type == MessageType.system.rawValue
-        let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+        let shouldNotUpdateLastMessageAt = isSystemMessage && (channelDTO.config?.skipLastMsgAtUpdateForSystemMsg ?? false)
         if !shouldNotUpdateLastMessageAt {
             channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
         }

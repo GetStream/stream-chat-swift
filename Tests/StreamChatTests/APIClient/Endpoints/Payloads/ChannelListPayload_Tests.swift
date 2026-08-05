@@ -335,7 +335,6 @@ final class ChannelListPayload_Tests: XCTestCase {
                 name: .unique,
                 imageURL: .unique(),
                 extraData: [:],
-                typeRawValue: cid.type.rawValue,
                 lastMessageAt: lastMessageDate,
                 createdAt: channelCreatedDate,
                 deletedAt: nil,
@@ -527,13 +526,13 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
         XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
-        XCTAssertEqual(channel.typeRawValue, "messaging")
-        XCTAssertEqual(channel.isDisabled, true)
-        XCTAssertEqual(channel.isFrozen, true)
+        XCTAssertEqual(channel.type, "messaging")
+        XCTAssertEqual(channel.disabled, true)
+        XCTAssertEqual(channel.frozen, true)
         XCTAssertEqual(channel.memberCount, 4)
         XCTAssertEqual(channel.messageCount, 5)
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
-        XCTAssertEqual(channel.cooldownDuration, 10)
+        XCTAssertEqual(channel.cooldown, 10)
         XCTAssertEqual(channel.team, "GREEN")
 
         XCTAssertEqual(channel.name, "The water cooler")
@@ -547,7 +546,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
 
-        let config = channel.config
+        let config = try XCTUnwrap(channel.config)
         XCTAssertEqual(config.reactionsEnabled, true)
         XCTAssertEqual(config.typingEventsEnabled, true)
         XCTAssertEqual(config.readEventsEnabled, true)
@@ -660,7 +659,6 @@ final class ChannelPayload_Tests: XCTestCase {
             name: "Test Channel",
             imageURL: URL(string: "https://example.com/channel.png"),
             extraData: ["custom_field": .string("custom_value")],
-            typeRawValue: "messaging",
             lastMessageAt: Date(timeIntervalSince1970: 1_609_459_500),
             createdAt: Date(timeIntervalSince1970: 1_609_459_200),
             deletedAt: Date(timeIntervalSince1970: 1_609_459_600),
@@ -758,7 +756,6 @@ final class ChannelPayload_Tests: XCTestCase {
             name: "Minimal Channel",
             imageURL: nil,
             extraData: [:],
-            typeRawValue: "messaging",
             lastMessageAt: Date(timeIntervalSince1970: 1_609_459_200),
             createdAt: Date(timeIntervalSince1970: 1_609_459_200),
             deletedAt: nil,

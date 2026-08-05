@@ -1,10 +1,8 @@
 sources:
+  - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
+  - ./Generated/OpenAPI/models/MemberPayload.swift
   - ./Generated/OpenAPI/models/UserPayload.swift
 templates:
   - ./Generated/OpenAPIDecodable.stencil
 output:
   ./Generated/OpenAPI/OpenAPIDecoders.generated.swift
-args:
-  # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
-  # declares, so those have to be excluded too when rebuilding the extra data.
-  v1CodingKeys: UserPayloadsCodingKeys

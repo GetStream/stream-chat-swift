@@ -5,12 +5,12 @@
 import Foundation
 
 final class UpdateMemberPartialResponse: Sendable, Codable, JSONEncodable {
-    let channelMember: ChannelMemberResponse?
+    let channelMember: MemberPayload?
     /// Duration of the request in milliseconds
     let duration: String
 
     init(
-        channelMember: ChannelMemberResponse? = nil,
+        channelMember: MemberPayload? = nil,
         duration: String
     ) {
         self.channelMember = channelMember

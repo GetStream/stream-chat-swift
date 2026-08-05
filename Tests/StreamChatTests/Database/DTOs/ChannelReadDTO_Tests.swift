@@ -265,7 +265,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenReadDoesNotExistButCanBeCreated_isIsCreated() throws {
         // GIVEN
-        let member: MemberPayload = .dummy()
+        let memberId: UserId = .unique
+        let member: MemberPayload = .dummy(user: .dummy(userId: memberId))
         let channel: ChannelPayload = .dummy(
             members: [member],
             channelReads: []
@@ -279,13 +280,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let readAt = Date()
         database.viewContext.markChannelAsRead(
             cid: channel.channel.cid,
-            userId: member.userId,
+            userId: memberId,
             at: readAt
         )
 
         // THEN
         let createdReadDTO = try XCTUnwrap(
-            ChannelReadDTO.load(cid: channel.channel.cid, userId: member.userId, context: database.viewContext)
+            ChannelReadDTO.load(cid: channel.channel.cid, userId: memberId, context: database.viewContext)
         )
         XCTAssertNearlySameDate(createdReadDTO.lastReadAt.bridgeDate, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
@@ -293,7 +294,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenReadDoesNotExistAndCanNotBeCreated_doesNothing() throws {
         // GIVEN
-        let member: MemberPayload = .dummy()
+        let memberId: UserId = .unique
+        let member: MemberPayload = .dummy(user: .dummy(userId: memberId))
         let channel: ChannelPayload = .dummy(
             members: [member],
             channelReads: []
@@ -312,7 +314,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
 
         // THEN
-        let readDTO = ChannelReadDTO.load(cid: channel.channel.cid, userId: member.userId, context: database.viewContext)
+        let readDTO = ChannelReadDTO.load(cid: channel.channel.cid, userId: memberId, context: database.viewContext)
         XCTAssertNil(readDTO)
     }
 
@@ -805,7 +807,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsUnread_whenReadExists_removesIt() throws {
         // GIVEN
-        let member: MemberPayload = .dummy()
+        let memberId: UserId = .unique
+        let member: MemberPayload = .dummy(user: .dummy(userId: memberId))
         let read = ChannelReadPayload(
             user: member.user!,
             lastReadAt: .init(),
@@ -831,7 +834,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(cid: channel.channel.cid, by: member.userId)
+            session.markChannelAsUnread(cid: channel.channel.cid, by: memberId)
         }
 
         // THEN
@@ -875,7 +878,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_loadOrCreate_assignsComposedId() throws {
         // GIVEN a persisted channel with a member but no read yet.
         let cid = ChannelId.unique
-        let member: MemberPayload = .dummy()
+        let memberId: UserId = .unique
+        let member: MemberPayload = .dummy(user: .dummy(userId: memberId))
         let channel: ChannelPayload = .dummy(channel: .dummy(cid: cid), members: [member], channelReads: [])
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channel)
@@ -884,12 +888,12 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // WHEN
         try database.writeSynchronously { session in
             let context = session as! NSManagedObjectContext
-            _ = ChannelReadDTO.loadOrCreate(cid: cid, userId: member.userId, context: context, cache: nil)
+            _ = ChannelReadDTO.loadOrCreate(cid: cid, userId: memberId, context: context, cache: nil)
         }
 
         // THEN
-        let readDTO = try XCTUnwrap(readDTO(cid: cid, userId: member.userId))
-        XCTAssertEqual(readDTO.id, ChannelReadDTO.createId(cid: cid, userId: member.userId))
+        let readDTO = try XCTUnwrap(readDTO(cid: cid, userId: memberId))
+        XCTAssertEqual(readDTO.id, ChannelReadDTO.createId(cid: cid, userId: memberId))
     }
 
     func test_loadOrCreate_usesPrewarmedCache() throws {

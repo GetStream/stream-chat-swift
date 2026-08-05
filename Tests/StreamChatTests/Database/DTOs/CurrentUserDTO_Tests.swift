@@ -78,7 +78,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         )
 
         let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
-        let mutedChannelIDs = Set(payload.mutedChannels.map(\.mutedChannel.cid))
+        let mutedChannelIDs = Set(payload.mutedChannels.compactMap(\.channel?.cid))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -261,7 +261,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
         XCTAssertEqual(
             Set(database.viewContext.currentUser?.channelMutes.map(\.channel.cid) ?? []),
-            Set(payloadWithUpdatedMutes.mutedChannels.map(\.mutedChannel.cid.rawValue))
+            Set(payloadWithUpdatedMutes.mutedChannels.compactMap(\.channel?.cid.rawValue))
         )
     }
 

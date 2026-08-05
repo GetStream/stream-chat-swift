@@ -38,3 +38,15 @@ extension MemberContainerPayload {
         )
     }
 }
+
+extension MembersResponse {
+    static func dummy(members: [MemberPayload] = []) -> MembersResponse {
+        .init(duration: "", members: members)
+    }
+}
+
+extension UpdateMemberPartialResponse {
+    static func dummy(channelMember: MemberPayload? = nil) -> UpdateMemberPartialResponse {
+        .init(channelMember: channelMember, duration: "")
+    }
+}

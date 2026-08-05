@@ -15,7 +15,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
-    @NSManaged var config: ChannelConfigDTO
+    @NSManaged var config: ChannelConfigDTO?
     @NSManaged var filterTags: Set<ChannelFilterTagDTO>
     @NSManaged var ownCapabilities: [String]
 
@@ -261,9 +261,11 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.typeRawValue = payload.typeRawValue
+        dto.typeRawValue = payload.type
         dto.id = payload.cid.id
-        dto.config = payload.config.asDTO(context: self, cid: dto.cid)
+        if let config = payload.config {
+            dto.config = config.asDTO(context: self, cid: dto.cid)
+        }
         if let filterTags = payload.filterTags {
             // Remove existing filter tags
             dto.filterTags.forEach { delete($0) }
@@ -276,14 +278,14 @@ extension NSManagedObjectContext {
             })
         }
         if let ownCapabilities = payload.ownCapabilities {
-            dto.ownCapabilities = ownCapabilities
+            dto.ownCapabilities = ownCapabilities.map(\.rawValue)
         }
         dto.createdAt = payload.createdAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
-        dto.memberCount = Int64(clamping: payload.memberCount)
+        dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
         if let messageCount = payload.messageCount {
             dto.messageCount = NSNumber(value: messageCount)
@@ -305,22 +307,22 @@ extension NSManagedObjectContext {
             }
         }
 
-        dto.isDisabled = payload.isDisabled
-        dto.isFrozen = payload.isFrozen
+        dto.isDisabled = payload.disabled
+        dto.isFrozen = payload.frozen
         
         // Backend only returns a boolean
         // for blocked 1:1 channels on channel list query
-        if let isBlocked = payload.isBlocked {
+        if let isBlocked = payload.blocked {
             dto.isBlocked = isBlocked
         }
 
         // Backend only returns a boolean for hidden state
         // on channel query and channel list query
-        if let isHidden = payload.isHidden {
+        if let isHidden = payload.hidden {
             dto.isHidden = isHidden
         }
 
-        dto.cooldownDuration = payload.cooldownDuration
+        dto.cooldownDuration = payload.cooldown ?? 0
         dto.team = payload.team
 
         if let createdByPayload = payload.createdBy {
@@ -664,7 +666,7 @@ extension ChatChannel {
             truncatedAt: dto.truncatedAt?.bridgeDate,
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
-            config: dto.config.asModel(),
+            config: dto.config?.asModel() ?? ChannelConfig(),
             filterTags: Set(dto.filterTags.map(\.name)),
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,

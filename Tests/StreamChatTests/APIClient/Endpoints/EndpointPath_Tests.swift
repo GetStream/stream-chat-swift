@@ -225,7 +225,6 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.updateChannel("channel_idu"))
         assertResultEncodingAndDecoding(.deleteChannel("channel_idd"))
         assertResultEncodingAndDecoding(.channelUpdate("channel_idq"))
-        assertResultEncodingAndDecoding(.muteChannel(false))
         assertResultEncodingAndDecoding(.showChannel("channel_id", false))
         assertResultEncodingAndDecoding(.truncateChannel("channel_idq"))
         assertResultEncodingAndDecoding(.markChannelRead("channel_idq"))

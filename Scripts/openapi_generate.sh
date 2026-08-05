@@ -33,6 +33,7 @@ allowed_endpoints=(
     getUserLiveLocations
     listDevices
     listUserGroups
+    muteChannel
     queryMembers
     queryPollVotes
     removeUserGroupMembers
@@ -40,6 +41,7 @@ allowed_endpoints=(
     searchUserGroups
     stopWatchingChannel
     unblockUsers
+    unmuteChannel
     unreadCounts
     updateLiveLocation
     updateMemberPartial
@@ -61,6 +63,9 @@ allowed_models=(
   CastPollVoteRequest
   ChannelMemberRequest
   ChannelMemberResponse
+  ChannelMute
+  ChannelOwnCapability
+  ChannelResponse
   CreateDeviceRequest
   CreatePollOptionRequest
   CreatePollRequest
@@ -80,6 +85,8 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
+  MuteChannelRequest
+  MuteChannelResponse
   PollOptionInput
   PollOptionResponse
   PollOptionResponseData
@@ -100,6 +107,7 @@ allowed_models=(
   SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
+  UnmuteChannelRequest
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
@@ -361,8 +369,13 @@ rename_generated PollVotesResponse PollVoteListResponse
 rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
 rename_generated UpdatePollPartialRequest UpdatePollPartialRequestBody
 rename_generated VoteData VoteDataRequestBody
+rename_generated ChannelMemberResponse MemberPayload
+rename_generated ChannelMute MutedChannelPayload
+rename_generated ChannelResponse ChannelDetailPayload
+rename_generated MuteChannelResponse MutedChannelPayloadResponse
 
 rename_generated_type Response EmptyResponse
+rename_generated_type UnmuteResponse EmptyResponse
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -390,6 +403,11 @@ restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 optionalize_property UserPayload banned
 optionalize_property UserPayload language
 optionalize_property UserPayload teams
+
+optionalize_property MemberPayload banned
+optionalize_property MemberPayload channelRole
+optionalize_property MemberPayload notificationsMuted
+optionalize_property MemberPayload shadowBanned
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -426,6 +444,12 @@ remove_property UserPayload blockedUserIds
 remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
+remove_property MutedChannelPayloadResponse channelMutes
+remove_property MutedChannelPayloadResponse duration
+remove_property MutedChannelPayloadResponse ownUser
+
+retype_property ChannelDetailPayload cid String ChannelId
+retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -473,6 +497,16 @@ unfinalize_model() {
     "$file"
 }
 unfinalize_model UserPayload
+
+# Add a Sourcery annotation to a generated model, consumed by OpenAPIDecodable.stencil.
+annotate_model() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  ANNOTATION="// sourcery: $2 = \"$3\"" perl -0777 -i -pe '
+    my $annotation = $ENV{ANNOTATION};
+    s/^((?:final )?class )/$annotation\n$1/m;
+  ' "$file"
+}
+annotate_model UserPayload v1CodingKeys UserPayloadsCodingKeys
 
 # 4d. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
@@ -526,7 +560,6 @@ inject_v1_endpoint_paths() {
     case updateChannel(String)
     case deleteChannel(String)
     case channelUpdate(String)
-    case muteChannel(Bool)
     case showChannel(String, Bool)
     case truncateChannel(String)
     case markChannelRead(String)
@@ -590,7 +623,6 @@ EOF
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .muteChannel(mute): return "moderation/\(mute ? "mute" : "unmute")/channel"
         case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
         case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"

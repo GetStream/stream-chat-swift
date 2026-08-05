@@ -1036,7 +1036,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.muteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(
+            muteChannelRequest: .init(channelCids: [channelID.rawValue])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -1048,7 +1050,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.muteChannel(cid: channelID, expiration: expiration)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID, expiration: expiration)
+        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(
+            muteChannelRequest: .init(channelCids: [channelID.rawValue], expiration: expiration)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1153,7 +1157,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.unmuteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .unmuteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .unmuteChannel(
+            unmuteChannelRequest: .init(channelCids: [channelID.rawValue])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 

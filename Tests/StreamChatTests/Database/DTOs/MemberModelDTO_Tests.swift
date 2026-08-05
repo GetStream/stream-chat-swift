@@ -65,12 +65,12 @@ final class MemberModelDTO_Tests: XCTestCase {
         }
 
         AssertAsync {
-            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
+            Assert.willBeEqual(payload.channelRole.map(MemberRole.init(rawChannelValue:)), loadedMember?.memberRole)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
-            Assert.willBeEqual(payload.isBanned, loadedMember?.isBannedFromChannel)
-            Assert.willBeEqual(payload.banExpiresAt, loadedMember?.banExpiresAt)
-            Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
+            Assert.willBeEqual(payload.banned, loadedMember?.isBannedFromChannel)
+            Assert.willBeEqual(payload.banExpires, loadedMember?.banExpiresAt)
+            Assert.willBeEqual(payload.shadowBanned, loadedMember?.isShadowBannedFromChannel)
             Assert.willBeEqual(payload.notificationsMuted, loadedMember?.notificationsMuted)
 
             Assert.willBeEqual(payload.user!.id, loadedMember?.id)
