@@ -5,11 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add state-layer `ChannelSearch` with debounced search and DB-backed results [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
-- Add `Debouncer.search()` for UI-layer search debouncing with the same thresholds as search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Add state-layer `ChannelSearch` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ### 🔄 Changed
-- Apply dynamic search debouncing (500ms for 1–2 character queries, 300ms for 3+) to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Apply dynamic search debouncing to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ## StreamChatCommonUI
 ### ✅ Added
@@ -17,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🔄 Changed
-- Debounce channel list search dynamically based on query length [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Debounce channel and message search dynamically based on query length [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 # [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
 _August 03, 2026_
