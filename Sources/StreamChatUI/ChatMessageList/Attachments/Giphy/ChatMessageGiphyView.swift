@@ -14,13 +14,11 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
         }
     }
 
-    private var dataTask: URLSessionDataTask? {
+    private var imageTask: ImageLoadingTask? {
         didSet { oldValue?.cancel() }
     }
 
-    private var gifLoadingHandler = SwiftyGifLoadingHandler()
-
-    public private(set) lazy var imageView = UIImageView()
+    public private(set) lazy var imageView = StreamAnimatedImageView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "imageView")
 
@@ -37,21 +35,7 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
     public private(set) var hasFailed = false
 
     deinit {
-        dataTask?.cancel()
-    }
-
-    override open func setUp() {
-        super.setUp()
-
-        gifLoadingHandler.didFail = { [weak self] _ in
-            self?.hasFailed = true
-        }
-
-        gifLoadingHandler.didSucceed = { [weak self] in
-            self?.hasFailed = false
-        }
-
-        imageView.delegate = gifLoadingHandler
+        imageTask?.cancel()
     }
 
     override open func setUpLayout() {
@@ -60,6 +44,9 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
         widthAnchor.pin(equalTo: heightAnchor).isActive = true
 
         embed(imageView)
+
+        addSubview(loadingIndicator)
+        loadingIndicator.pin(anchors: [.centerX, .centerY], to: imageView)
 
         addSubview(badge)
         badge.pin(anchors: [.leading, .bottom], to: layoutMarginsGuide)
@@ -74,25 +61,28 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
     override open func updateContent() {
         super.updateContent()
 
-        if let url = content?.previewURL {
-            dataTask = imageView.setGifFromURL(url, customLoader: loadingIndicator)
-        }
-    }
-}
+        guard let url = content?.previewURL else { return }
 
-// Internal class to handle the SwiftyGifDelegate.
-// Right now exposing the SwiftyGifDelegate breaks the SDK.
-extension ChatMessageGiphyView {
-    class SwiftyGifLoadingHandler: SwiftyGifDelegate {
-        var didFail: (Error?) -> Void = { _ in }
-        var didSucceed: () -> Void = {}
+        imageView.stopAnimating()
+        loadingIndicator.isHidden = false
 
-        func gifDidStart(sender: UIImageView) {
-            didSucceed()
-        }
-
-        func gifURLDidFail(sender: UIImageView, url: URL, error: Error?) {
-            didFail(error)
+        let task = ImageLoadingTask()
+        imageTask = task
+        components.mediaLoader.loadImage(url: url, options: ImageLoadOptions()) { [weak self] result in
+            guard let self, !task.isCancelled else { return }
+            loadingIndicator.isHidden = true
+            switch result {
+            case let .success(loadedImage):
+                if let animatedImageData = loadedImage.animatedImageData {
+                    imageView.setAnimatedImage(data: animatedImageData, fallbackImage: loadedImage.image)
+                } else {
+                    imageView.clearAnimatedImage()
+                    imageView.image = loadedImage.image
+                }
+                hasFailed = false
+            case .failure:
+                hasFailed = true
+            }
         }
     }
 }

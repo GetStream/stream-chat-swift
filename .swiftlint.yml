@@ -2,7 +2,6 @@ excluded:
   - Scripts
   - Sources/StreamChat/Generated
   - Sources/StreamChatCommonUI/Generated
-  - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChat/StreamStarscream
   - Sources/StreamChatUI/StreamDifferenceKit
   - Tests

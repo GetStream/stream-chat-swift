@@ -28,10 +28,9 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 - **StreamCore** from [`stream-core-swift`](https://github.com/GetStream/stream-core-swift.git) (exact 0.6.2)
 - **swift-docc-plugin** (exact 1.0.0) — for documentation generation
 - **Vendored libraries** (do not edit directly):
-  - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
   - `Sources/StreamChat/StreamStarscream/` — vendored Starscream for WebSocket
-  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z`
+  - Update these via `make update_differencekit version=X.Y.Z`
 
 ### Project layout (high level)
 
@@ -67,7 +66,6 @@ Sources/
     Resources/             # UIKit-specific resources
     Utils/                 # UIKit utilities
     VoiceRecording/        # Voice recording components
-    StreamSwiftyGif/       # Vendored — do not edit
     StreamDifferenceKit/   # Vendored — do not edit
   StreamChatCommonUI/      # Shared appearance, localization, formatters
     Appearance+*/          # Color palette, design tokens, fonts, images, formatters
