@@ -14,7 +14,7 @@ _August 03, 2026_
 
 ## StreamChat
 ### ✅ Added
-- Add state-layer `ChannelSearch` with debounced search and DB-backed results [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Add state-layer `ChannelSearch` with debounced search [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 - Add `Debouncer.search()` for UI-layer search debouncing with the same thresholds as search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
