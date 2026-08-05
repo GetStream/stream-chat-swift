@@ -148,7 +148,7 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
             )
         } else {
             imagePreviewView.contentMode = .center
-            imagePreviewView.setImage(appearance.images.link)
+            imagePreviewView.image = appearance.images.link
         }
     }
 

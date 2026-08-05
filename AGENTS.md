@@ -35,14 +35,13 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 - StreamChatAI must not depend on the Model Context Protocol SDK (it adds a large dependency tree); `AIClientToolDefinition` reads and writes the same JSON as MCP's `Tool`, with schemas as StreamCore's `RawJSON`
 - **StreamLogsUI** from [`stream-logs-ui-swift`](https://github.com/GetStream/stream-logs-ui-swift.git) — used only by StreamChatLogsUI
 - **Vendored libraries** (do not edit directly):
-  - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
   - `Sources/StreamChat/StreamStarscream/` — vendored Starscream for WebSocket
   - `Sources/StreamChatAI/StreamSplash/` — vendored Splash (0.16.0) for code syntax highlighting
   - `Sources/StreamChatAI/StreamMarkdownUI/` — vendored MarkdownUI (2.4.0), with fixes for Swift 6 that an update overwrites
   - `Sources/StreamChatAI/StreamNetworkImage/` — vendored NetworkImage (6.0.1), used by MarkdownUI
   - `Sources/StreamChatAICMark/` — MarkdownUI's cmark-gfm as an internal C target. Every global symbol has a `stream_` prefix, so it links next to an app's own cmark-gfm
-  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_networkimage version=X.Y.Z`
+  - Update these via `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_networkimage version=X.Y.Z`
 
 ### Project layout (high level)
 
@@ -78,7 +77,6 @@ Sources/
     Resources/             # UIKit-specific resources
     Utils/                 # UIKit utilities
     VoiceRecording/        # Voice recording components
-    StreamSwiftyGif/       # Vendored — do not edit
     StreamDifferenceKit/   # Vendored — do not edit
   StreamChatCommonUI/      # Shared appearance, localization, formatters
     Appearance+*/          # Color palette, design tokens, fonts, images, formatters
