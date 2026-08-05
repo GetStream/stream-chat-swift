@@ -7,8 +7,9 @@ import Foundation
 /// An object which represents a list of ``ChatChannel`` matching a channel name search.
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more. Calling
-/// ``search(text:)`` again cancels the previous in-flight search. The superseded call returns
-/// the current results rather than throwing, so typing does not surface an error per keystroke.
+/// ``search(text:)`` or ``search(query:)`` again cancels the previous in-flight search. The
+/// superseded call returns the current results rather than throwing, so typing does not surface
+/// an error per keystroke.
 ///
 /// Results are read from the local database, consistent with the other search APIs in the SDK.
 ///
@@ -74,10 +75,29 @@ public class ChannelSearch: @unchecked Sendable {
             throw ClientError.CurrentUserDoesNotExist("For channel search, a current user must be logged in")
         }
 
-        let query = makeQuery(text: trimmed, currentUserId: currentUserId)
-        let result = try await searchDebouncer.schedule(filter: query.filter) { [weak self] in
+        return try await search(query: makeQuery(text: trimmed, currentUserId: currentUserId))
+    }
+
+    /// Searches for channels with the specified query and updates ``ChannelSearchState/channels``.
+    ///
+    /// - Parameter query: The channel list query used for searching.
+    ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still cancels it either way.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    /// - Returns: An array of channels matching the query. When a newer search supersedes this
+    /// one, the current ``ChannelSearchState/channels`` are returned.
+    @discardableResult public func search(query: ChannelListQuery) async throws -> [ChatChannel] {
+        var preparedQuery = prepareSearchQuery(query)
+        preparedQuery.pagination = Pagination(pageSize: preparedQuery.pagination.pageSize, offset: 0)
+        let searchQuery = preparedQuery
+
+        let result = try await searchDebouncer.schedule(filter: searchQuery.filter) { [weak self] in
             guard let self else { throw ClientError("ChannelSearch was deallocated") }
-            return try await self.performSearch(query: query)
+            return try await self.performSearch(query: searchQuery)
         }
         if let result {
             return result
@@ -117,6 +137,11 @@ public class ChannelSearch: @unchecked Sendable {
         )
         // Do not start watching any of the searched channels.
         query.options = []
+        return query
+    }
+
+    private func prepareSearchQuery(_ query: ChannelListQuery) -> ChannelListQuery {
+        var query = query
         query.explicitQueryHash = explicitQueryHash
         return query
     }

@@ -47,7 +47,66 @@ final class ChannelSearch_Tests: XCTestCase {
             )
             // Searched channels must not be watched.
             XCTAssertTrue(query.options.isEmpty)
+            XCTAssertNotNil(query.explicitQueryHash)
         }
+    }
+
+    func test_searchQuery_usesProvidedPageSize() async throws {
+        let currentUserId = try XCTUnwrap(currentUserId)
+        var query = ChannelListQuery(
+            filter: .and([
+                .autocomplete(.name, text: "general"),
+                .containMembers(userIds: [currentUserId])
+            ]),
+            pageSize: 3
+        )
+        query.options = []
+
+        try await channelSearch.search(query: query)
+
+        XCTAssertEqual(3, env.channelListUpdaterSpy.update_queries.last?.pagination.pageSize)
+    }
+
+    func test_searchQuery_appliesExplicitQueryHash() async throws {
+        let currentUserId = try XCTUnwrap(currentUserId)
+        var query = ChannelListQuery(
+            filter: .and([
+                .autocomplete(.name, text: "general"),
+                .containMembers(userIds: [currentUserId])
+            ])
+        )
+        query.options = []
+
+        try await channelSearch.search(query: query)
+
+        try await MainActor.run {
+            let storedQuery = try XCTUnwrap(channelSearch.state.query)
+            XCTAssertNotNil(storedQuery.explicitQueryHash)
+        }
+    }
+
+    func test_searchQuery_resetsPaginationToTheFirstPage() async throws {
+        let currentUserId = try XCTUnwrap(currentUserId)
+        try await channelSearch.search(text: "general")
+        try writeChannel(cid: .unique, name: "general", query: try await MainActor.run {
+            try XCTUnwrap(channelSearch.state.query)
+        })
+        try await waitForChannels { $0.count == 1 }
+        try await channelSearch.loadMoreChannels(limit: 10)
+
+        var query = ChannelListQuery(
+            filter: .and([
+                .autocomplete(.name, text: "general"),
+                .containMembers(userIds: [currentUserId])
+            ]),
+            pageSize: 3
+        )
+        query.options = []
+        try await channelSearch.search(query: query)
+
+        let paginationQuery = try XCTUnwrap(env.channelListUpdaterSpy.update_queries.last)
+        XCTAssertEqual(0, paginationQuery.pagination.offset)
+        XCTAssertEqual(3, paginationQuery.pagination.pageSize)
     }
 
     func test_search_alwaysQueriesTheFirstPage() async throws {
