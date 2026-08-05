@@ -155,6 +155,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         _clearSearchResults_queries.mutate { $0.append(query) }
+        clearSearchResults_completion = completion
         super.clearSearchResults(for: query, completion: completion)
     }
 
@@ -163,6 +164,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         _deleteSearchQuery_queries.mutate { $0.append(query) }
+        deleteSearchQuery_completion = completion
         super.deleteSearchQuery(query, completion: completion)
     }
 
