@@ -9,23 +9,24 @@ import XCTest
 final class AsyncSearchDebouncer_Tests: XCTestCase {
     func test_schedule_withZeroInterval_executesImmediately() async throws {
         let debouncer = AsyncSearchDebouncer(policy: .constant(0))
-        var executed = false
+        let executed = DebouncerTestFlag()
 
         let result = try await debouncer.schedule(queryLength: 1) {
-            executed = true
+            await executed.set()
             return "ok"
         }
 
         XCTAssertEqual(result, "ok")
-        XCTAssertTrue(executed)
+        let didExecute = await executed.value
+        XCTAssertTrue(didExecute)
     }
 
     func test_schedule_cancelsPreviousPendingWork() async throws {
         let debouncer = AsyncSearchDebouncer(policy: .constant(0.2))
-        var executionCount = 0
+        let executionCount = DebouncerTestCounter()
 
         async let first = debouncer.schedule(queryLength: 1) {
-            executionCount += 1
+            await executionCount.increment()
             XCTFail("First scheduled work should be cancelled")
             return "first"
         }
@@ -34,7 +35,7 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
         try await Task.sleep(nanoseconds: 10_000_000)
 
         async let second = debouncer.schedule(queryLength: 3) {
-            executionCount += 1
+            await executionCount.increment()
             return "second"
         }
 
@@ -43,7 +44,8 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
 
         let secondResult = try await second
         XCTAssertEqual(secondResult, "second")
-        XCTAssertEqual(executionCount, 1)
+        let count = await executionCount.value
+        XCTAssertEqual(count, 1)
     }
 
     func test_cancel_invalidatesPendingWork() async throws {
@@ -134,5 +136,21 @@ final class AsyncSearchDebouncer_Tests: XCTestCase {
             _ = try await task.value
             XCTFail("Cancelled search should throw CancellationError")
         } catch is CancellationError {}
+    }
+}
+
+private actor DebouncerTestFlag {
+    private(set) var value = false
+
+    func set() {
+        value = true
+    }
+}
+
+private actor DebouncerTestCounter {
+    private(set) var value = 0
+
+    func increment() {
+        value += 1
     }
 }

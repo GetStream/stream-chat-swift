@@ -9,14 +9,14 @@ import XCTest
 final class SearchDebouncer_Tests: XCTestCase {
     func test_schedule_withZeroInterval_executesImmediately() {
         let debouncer = SearchDebouncer(policy: .constant(0), queue: .main)
-        var executed = false
+        let executed = LockedFlag()
 
         let scheduled = debouncer.schedule(queryLength: 1) {
-            executed = true
+            executed.set()
         }
 
         XCTAssertTrue(scheduled)
-        XCTAssertTrue(executed)
+        XCTAssertTrue(executed.value)
     }
 
     func test_schedule_cancelsPreviousPendingWork() {
@@ -25,19 +25,19 @@ final class SearchDebouncer_Tests: XCTestCase {
             queue: .main
         )
         let expectation = expectation(description: "Only latest work executes")
-        var executionCount = 0
+        let executionCount = LockedCounter()
 
         debouncer.schedule(queryLength: 1) {
-            executionCount += 1
+            executionCount.increment()
             XCTFail("First scheduled work should be cancelled")
         }
         debouncer.schedule(queryLength: 3) {
-            executionCount += 1
+            executionCount.increment()
             expectation.fulfill()
         }
 
         wait(for: [expectation], timeout: defaultTimeout)
-        XCTAssertEqual(executionCount, 1)
+        XCTAssertEqual(executionCount.value, 1)
     }
 
     func test_cancel_dropsPendingWork() {
@@ -106,5 +106,39 @@ final class SearchDebouncer_Tests: XCTestCase {
 
         XCTAssertTrue(executed)
         wait(for: [expectation], timeout: 0.4)
+    }
+}
+
+private final class LockedFlag: @unchecked Sendable {
+    private var storedValue = false
+    private let lock = NSLock()
+
+    func set() {
+        lock.lock()
+        storedValue = true
+        lock.unlock()
+    }
+
+    var value: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return storedValue
+    }
+}
+
+private final class LockedCounter: @unchecked Sendable {
+    private var count = 0
+    private let lock = NSLock()
+
+    func increment() {
+        lock.lock()
+        count += 1
+        lock.unlock()
+    }
+
+    var value: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return count
     }
 }
