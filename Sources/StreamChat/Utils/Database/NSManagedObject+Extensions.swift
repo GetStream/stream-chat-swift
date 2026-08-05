@@ -140,6 +140,8 @@ final class FetchCache: @unchecked Sendable {
     // `NSManagedObjectContext.performAndWait`, so the calling thread is already blocked. A `sync` on a
     // concurrent queue has to wait out any pending barrier, which needs a libdispatch worker thread —
     // and with several contexts blocked in `performAndWait` at once that thread may never arrive.
+    // Keep the `withLock` bodies to plain dictionary work: the lock is not reentrant, and nothing
+    // inside may block or call back into the cache.
     private let cache = AllocatedUnfairLock([FetchRequestWrapper<NSFetchRequestResult>: [NSManagedObjectID]]())
 
     var cacheEntriesCount: Int {
