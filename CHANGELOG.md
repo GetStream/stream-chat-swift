@@ -3,18 +3,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add state-layer `ChannelSearch` with debounced search and DB-backed results [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Add `Debouncer.search()` for UI-layer search debouncing with the same thresholds as search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+
 ### 🔄 Changed
+- Apply dynamic search debouncing (500ms for 1–2 character queries, 300ms for 3+) to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `chatThreadConnectorIncoming` and `chatThreadConnectorOutgoing` colors for customizing the thread connector [#4195](https://github.com/GetStream/stream-chat-swift/pull/4195)
+
+## StreamChatUI
+### 🔄 Changed
+- Debounce channel list search dynamically based on query length [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 # [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
 _August 03, 2026_
 
 ## StreamChat
 ### ✅ Added
-- Add state-layer `ChannelSearch` with debounced search [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
@@ -23,9 +32,6 @@ _August 03, 2026_
 
 ### 🐞 Fixed
 - Fix double slash handling in some of the endpoint paths [#4191](https://github.com/GetStream/stream-chat-swift/pull/4191)
-
-### 🔄 Changed
-- Apply dynamic search debouncing (500ms for 1–2 character queries, 300ms for 3+) to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ## StreamChatCommonUI
 ### ✅ Added
@@ -39,7 +45,6 @@ _August 03, 2026_
 - Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
 ### 🔄 Changed
-- Debounce channel list search dynamically based on query length [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 - Replace vendored Nuke image loading with the built-in `StreamImageDownloader` [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
 
 # [5.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.7.0)
