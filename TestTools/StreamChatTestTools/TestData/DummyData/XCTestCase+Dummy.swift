@@ -431,23 +431,23 @@ extension XCTestCase {
             allowUserSuggestedOptions: allowUserSuggestedOptions,
             answersCount: answersCount,
             createdAt: createdAt,
+            createdBy: user,
             createdById: user?.id ?? createdById,
+            custom: custom,
             description: description,
             enforceUniqueVote: enforceUniqueVote,
             id: id,
-            name: name,
-            updatedAt: updatedAt,
-            voteCount: voteCount,
+            isClosed: isClosed,
             latestAnswers: latestAnswers,
+            latestVotesByOption: latestVotesByOption,
+            maxVotesAllowed: maxVotesAllowed,
+            name: name,
             options: options,
             ownVotes: ownVotes,
-            custom: custom,
-            latestVotesByOption: latestVotesByOption,
+            updatedAt: updatedAt,
+            voteCount: voteCount,
             voteCountsByOption: voteCountsByOption,
-            isClosed: isClosed,
-            maxVotesAllowed: maxVotesAllowed,
-            votingVisibility: votingVisibility,
-            createdBy: user
+            votingVisibility: votingVisibility
         )
     }
     
@@ -457,9 +457,9 @@ extension XCTestCase {
         custom: [String: RawJSON] = [:]
     ) -> PollOptionPayload {
         .init(
+            custom: custom,
             id: id,
-            text: text,
-            custom: custom
+            text: text
         )
     }
     
@@ -475,16 +475,35 @@ extension XCTestCase {
         user: UserPayload? = .dummy(userId: .unique)
     ) -> PollVotePayload {
         .init(
+            answerText: answerText,
             createdAt: createdAt,
             id: id,
+            isAnswer: isAnswer,
             optionId: optionId,
             pollId: pollId,
             updatedAt: updatedAt,
-            answerText: answerText,
-            isAnswer: isAnswer,
-            userId: userId,
-            user: user
+            user: user,
+            userId: userId
         )
+    }
+}
+
+extension PollVotePayloadResponse {
+    static func dummy(
+        poll: PollPayload? = nil,
+        vote: PollVotePayload? = nil
+    ) -> PollVotePayloadResponse {
+        .init(duration: "", poll: poll, vote: vote)
+    }
+}
+
+extension PollVoteListResponse {
+    static func dummy(
+        next: String? = nil,
+        prev: String? = nil,
+        votes: [PollVotePayload] = []
+    ) -> PollVoteListResponse {
+        .init(duration: "", next: next, prev: prev, votes: votes)
     }
 }
 

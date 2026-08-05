@@ -11,7 +11,6 @@ public struct ChannelQuery: Encodable, Sendable {
         case messages
         case members
         case watchers
-        case memberCustomInclude = "member_custom_include"
     }
 
     /// Channel id this query handles.
@@ -26,10 +25,7 @@ public struct ChannelQuery: Encodable, Sendable {
     public let watchersLimit: Int?
     /// A query options.
     public var options: QueryOptions = .all
-    /// Top-level keys of the message author's channel-member `custom` to project onto `message.member`.
-    ///
-    /// When `nil` or empty, the option is omitted and the response is unchanged.
-    public var memberCustomInclude: [String]? = nil
+
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload?
     /// A pagination for members for the channel to be retrieved.
@@ -68,7 +64,7 @@ public struct ChannelQuery: Encodable, Sendable {
             watchersLimit: watchersLimit
         )
     }
-    
+
     /// Init a channel query with base values.
     init(
         cid: ChannelId,
@@ -109,7 +105,6 @@ public struct ChannelQuery: Encodable, Sendable {
             membersPagination: channelQuery.membersPagination,
             watchersLimit: channelQuery.watchersLimit
         )
-        memberCustomInclude = channelQuery.memberCustomInclude
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -123,9 +118,6 @@ public struct ChannelQuery: Encodable, Sendable {
         try pagination.map { try container.encode($0, forKey: .messages) }
         try membersPagination.map { try container.encode($0, forKey: .members) }
         try watchersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .watchers) }
-        if let memberCustomInclude, !memberCustomInclude.isEmpty {
-            try container.encode(memberCustomInclude, forKey: .memberCustomInclude)
-        }
     }
 }
 

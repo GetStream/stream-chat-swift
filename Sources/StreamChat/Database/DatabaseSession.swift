@@ -622,10 +622,11 @@ protocol PollDatabaseSession {
     /// - Parameters:
     ///   - payload: The `PollPayload` containing the details of the poll to be saved.
     ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
+    ///   - fromEvent: Whether the payload comes from an event, in which case `ownVotes` is ignored.
     /// - Returns: A `PollDTO` representing the saved poll.
     /// - Throws: An error if the save operation fails.
     @discardableResult
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO
     
     /// Saves a list of poll votes with the provided payload.
     /// - Parameters:
@@ -729,6 +730,13 @@ protocol PollDatabaseSession {
     /// Deletes a poll vote.
     /// - Parameter pollVote: The `PollVoteDTO` representing the poll vote to delete.
     func delete(pollVote: PollVoteDTO)
+}
+
+extension PollDatabaseSession {
+    @discardableResult
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
+        try savePoll(payload: payload, cache: cache, fromEvent: false)
+    }
 }
 
 protocol LocationDatabaseSession {
@@ -859,9 +867,8 @@ extension DatabaseSession {
             }
         }
         
-        if var poll = payload.poll {
-            poll.fromEvent = true
-            try savePoll(payload: poll, cache: nil)
+        if let poll = payload.poll {
+            try savePoll(payload: poll, cache: nil, fromEvent: true)
         }
     }
 

@@ -3,6 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+## StreamChatCommonUI
+### ✅ Added
+- Add `chatThreadConnectorIncoming` and `chatThreadConnectorOutgoing` colors for customizing the thread connector [#4195](https://github.com/GetStream/stream-chat-swift/pull/4195)
+
+# [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
+_August 03, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add state-layer `ChannelSearch` with debounced search and DB-backed results [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
@@ -12,6 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ⚡️ Performance
 - Skip oversized `/sync` event replay and refresh watched channels via `queryChannels` instead [#4189](https://github.com/GetStream/stream-chat-swift/pull/4189)
+
+### 🐞 Fixed
+- Fix double slash handling in some of the endpoint paths [#4191](https://github.com/GetStream/stream-chat-swift/pull/4191)
 
 ### 🔄 Changed
 - Apply dynamic search debouncing (500ms for 1–2 character queries, 300ms for 3+) to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)

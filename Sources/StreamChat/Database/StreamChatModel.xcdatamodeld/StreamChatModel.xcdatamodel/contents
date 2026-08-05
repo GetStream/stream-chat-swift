@@ -260,8 +260,6 @@
         <attribute name="latestReactions" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="locallyCreatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
-        <attribute name="memberExtraData" optional="YES" attributeType="Binary"/>
-        <attribute name="memberNotificationsMuted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="mentionedChannel" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="mentionedGroupIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="mentionedHere" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>

@@ -58,7 +58,7 @@ extension ChatMessage {
             draftReply: nil,
             reminder: nil,
             sharedLocation: nil,
-            member: nil
+            channelRole: nil
         )
     }
 }

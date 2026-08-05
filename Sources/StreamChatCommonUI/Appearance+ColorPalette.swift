@@ -270,6 +270,10 @@ public extension Appearance {
         public lazy var chatPollProgressTrackIncoming: UIColor = controlProgressBarTrack
         /// Poll progress bar track color in outgoing messages.
         public lazy var chatPollProgressTrackOutgoing: UIColor = brand200
+        /// Color for the chat thread connector for incoming messages. Used in the SwiftUI SDK only.
+        public lazy var chatThreadConnectorIncoming: UIColor = borderCoreDefault
+        /// Color for the chat thread connector for outgoing messages. Used in the SwiftUI SDK only.
+        public lazy var chatThreadConnectorOutgoing: UIColor = brand150
 
         // MARK: - Control
 

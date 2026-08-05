@@ -24,7 +24,7 @@ final class PushPreferenceInput: Sendable, Codable, JSONEncodable {
             }
         }
     }
-
+    
     /// Set the push preferences for a specific channel. If empty it sets the default for the user
     let channelCid: String?
     /// Set the level of chat push notifications for the user. Note: "mentions" is deprecated in favor of "direct_mentions". One of: all, mentions, direct_mentions, all_mentions, none, default
