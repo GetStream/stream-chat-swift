@@ -68,14 +68,13 @@ final class EndpointPathTests: XCTestCase {
     }
     
     func test_polls_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.polls.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.pollsQuery.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.poll(pollId: "test_poll").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.pollVotes(pollId: "test_poll").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.pollOptions(pollId: "test_poll").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.pollOption(pollId: "test_poll", optionId: "option_id").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.pollVoteInMessage(messageId: "test_message", pollId: "test_poll").shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.createPoll.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updatePollPartial(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deletePoll(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.createPollOption(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.queryPollVotes(pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.castPollVote(messageId: "test_message", pollId: "test_poll").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deletePollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote").shouldBeQueuedOffline)
     }
 
     func test_reminders_shouldNOTBeQueuedOffline() {
@@ -256,14 +255,13 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.unblockUsers)
         assertResultEncodingAndDecoding(.getBlockedUsers)
 
-        assertResultEncodingAndDecoding(.polls)
-        assertResultEncodingAndDecoding(.pollsQuery)
-        assertResultEncodingAndDecoding(.poll(pollId: "test_poll"))
-        assertResultEncodingAndDecoding(.pollVotes(pollId: "test_poll"))
-        assertResultEncodingAndDecoding(.pollOptions(pollId: "test_poll"))
-        assertResultEncodingAndDecoding(.pollOption(pollId: "test_poll", optionId: "option_id"))
-        assertResultEncodingAndDecoding(.pollVoteInMessage(messageId: "test_message", pollId: "test_poll"))
-        assertResultEncodingAndDecoding(.pollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote"))
+        assertResultEncodingAndDecoding(.createPoll)
+        assertResultEncodingAndDecoding(.updatePollPartial(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.deletePoll(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.createPollOption(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.queryPollVotes(pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.castPollVote(messageId: "test_message", pollId: "test_poll"))
+        assertResultEncodingAndDecoding(.deletePollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote"))
 
         assertResultEncodingAndDecoding(.drafts)
         assertResultEncodingAndDecoding(.draftMessage(ChannelId(type: .messaging, id: "test_channel")))
