@@ -143,6 +143,8 @@ public class ChannelSearch: @unchecked Sendable {
     private func prepareSearchQuery(_ query: ChannelListQuery) -> ChannelListQuery {
         var query = query
         query.explicitQueryHash = explicitQueryHash
+        // Searched channels must not be watched.
+        query.options = []
         return query
     }
 

@@ -67,6 +67,20 @@ final class ChannelSearch_Tests: XCTestCase {
         XCTAssertEqual(3, env.channelListUpdaterSpy.update_queries.last?.pagination.pageSize)
     }
 
+    func test_searchQuery_clearsDefaultWatchOptions() async throws {
+        let currentUserId = try XCTUnwrap(currentUserId)
+        let query = ChannelListQuery(
+            filter: .and([
+                .autocomplete(.name, text: "general"),
+                .containMembers(userIds: [currentUserId])
+            ])
+        )
+
+        try await channelSearch.search(query: query)
+
+        XCTAssertTrue(env.channelListUpdaterSpy.update_queries.last?.options.isEmpty == true)
+    }
+
     func test_searchQuery_appliesExplicitQueryHash() async throws {
         let currentUserId = try XCTUnwrap(currentUserId)
         var query = ChannelListQuery(
