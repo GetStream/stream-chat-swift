@@ -138,6 +138,18 @@ import XCTest
         wait(for: [expectation], timeout: 0.6)
     }
 
+    func test_cancelSearch_afterSearchCompletes_restoresChannelListController() {
+        mockedChannelListController.channels_mock = [.mockDMChannel()]
+        vc.reloadChannels()
+
+        vc.loadSearchResults(with: "Dummy")
+        XCTAssert(vc.controller !== mockedChannelListController)
+
+        vc.cancelSearch()
+
+        XCTAssert(vc.controller === mockedChannelListController)
+    }
+
     func test_loadMoreSearchResults() {
         vc.loadMoreSearchResults()
 

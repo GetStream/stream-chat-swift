@@ -12,6 +12,9 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     /// The closure that is triggered whenever a channel is selected from the search result.
     public var didSelectChannel: (@MainActor (ChatChannel) -> Void)?
 
+    /// The channel list controller active before the current search replaced it.
+    private var channelListControllerBeforeSearch: ChatChannelListController?
+
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 
     override open var hasEmptyResults: Bool {
@@ -33,6 +36,9 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
             // Do not watch the query when searching.
             searchChannelsQuery.options = []
 
+            if channelListControllerBeforeSearch == nil {
+                channelListControllerBeforeSearch = controller
+            }
             replaceQuery(searchChannelsQuery)
         }
     }
@@ -43,6 +49,9 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
 
     override open func cancelSearch() {
         debouncer.invalidate()
+        guard let channelListControllerBeforeSearch else { return }
+        replaceChannelListController(channelListControllerBeforeSearch)
+        self.channelListControllerBeforeSearch = nil
     }
 
     // MARK: - Collection View Implementations
