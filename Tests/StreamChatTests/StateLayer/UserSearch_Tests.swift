@@ -63,20 +63,20 @@ final class UserSearch_Tests: XCTestCase {
     
     func test_searchOrder_whenSendingMultipleRequests_thenIrrelevantResultsAreIgnored() async throws {
         // Search for "nam"
-        async let result1 = userSearch.search(term: "nam")
         let expectation1 = XCTestExpectation()
         env.userListUpdaterMock.fetch_query_called = { _ in
             expectation1.fulfill()
         }
+        async let result1 = userSearch.search(term: "nam")
 
         await fulfillment(of: [expectation1], timeout: defaultTimeout)
 
         // Search for "name" — cancels the in-flight "nam" search
-        async let result2 = userSearch.search(term: "name")
         let expectation2 = XCTestExpectation()
         env.userListUpdaterMock.fetch_query_called = { _ in
             expectation2.fulfill()
         }
+        async let result2 = userSearch.search(term: "name")
 
         await fulfillment(of: [expectation2], timeout: defaultTimeout)
 
