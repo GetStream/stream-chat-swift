@@ -50,9 +50,12 @@ public class MessageSearch: @unchecked Sendable {
         // Clear results when there is no text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             await searchDebouncer.cancel()
-            if let query = await state.query {
-                try await messageUpdater.clearSearchResults(for: query)
-                await state.set(query: nil, cursor: nil)
+            let queryToClear = await state.query
+            if let queryToClear {
+                try await messageUpdater.clearSearchResults(for: queryToClear)
+                if await state.query?.filterHash == queryToClear.filterHash {
+                    await state.set(query: nil, cursor: nil)
+                }
             }
             return []
         }
