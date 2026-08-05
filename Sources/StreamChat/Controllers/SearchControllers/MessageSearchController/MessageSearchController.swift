@@ -192,12 +192,13 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// - Parameter completion: Called when the local search results have been cleared.
     public func clearResults(completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         searchDebouncer.cancel()
-        guard let lastQuery else {
+        guard let clearedQuery = lastQuery else {
             callback { completion?(nil) }
             return
         }
-        messageUpdater.clearSearchResults(for: lastQuery) { error in
-            self.nextPageCursor = nil
+        lastQuery = nil
+        nextPageCursor = nil
+        messageUpdater.clearSearchResults(for: clearedQuery) { error in
             self.callback { completion?(error) }
         }
     }

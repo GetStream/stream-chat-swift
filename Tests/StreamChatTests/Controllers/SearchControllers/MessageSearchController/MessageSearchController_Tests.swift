@@ -309,6 +309,7 @@ final class MessageSearchController_Tests: XCTestCase {
 
         // Assert call is made to `clearSearchResults`
         XCTAssertNotNil(env.messageUpdater?.clearSearchResults_query)
+        XCTAssertNil(controller.lastQuery)
     }
 
     // MARK: - search(query:)
