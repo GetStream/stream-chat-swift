@@ -18,6 +18,7 @@ final class StreamAnimatedImageView_Tests: XCTestCase {
         view = StreamAnimatedImageView()
         view.engine = engine
         window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        window.isHidden = false
     }
 
     override func tearDown() {
@@ -184,14 +185,57 @@ final class StreamAnimatedImageView_Tests: XCTestCase {
         XCTAssertTrue(view.isAnimating)
     }
 
-    func test_isAnimating_mirrorsEngine() {
+    func test_isAnimating_isNotAffectedByEnginePlayback() {
+        // UIImageView consults `isAnimating` when rendering `image`: reporting `true` while
+        // the engine delivers frames makes UIKit ignore the updates and freeze on screen.
         window.addSubview(view)
         view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
-        XCTAssertTrue(view.isAnimating)
-
-        view.stopAnimating()
+        XCTAssertTrue(engine.isPlaying)
 
         XCTAssertFalse(view.isAnimating)
+    }
+
+    // MARK: - Hidden ancestors
+
+    func test_onFrame_whenViewHasHiddenAncestor_stopsPlayback() {
+        let container = UIView()
+        window.addSubview(container)
+        container.addSubview(view)
+        view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
+        let poster = view.image
+
+        container.isHidden = true
+        engine.deliver(frame: GIFFixtures.solidColorImage(size: CGSize(width: 4, height: 4), color: .blue))
+
+        XCTAssertEqual(engine.stopCallCount, 1)
+        XCTAssertEqual(view.image, poster)
+    }
+
+    func test_layoutSubviews_afterUnhiding_resumesPlayback() {
+        let container = UIView()
+        window.addSubview(container)
+        container.addSubview(view)
+        view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
+        container.isHidden = true
+        engine.deliver(frame: GIFFixtures.solidColorImage(size: CGSize(width: 4, height: 4), color: .blue))
+
+        container.isHidden = false
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        XCTAssertEqual(engine.playCallCount, 2)
+    }
+
+    func test_setAnimatedImage_whenViewHasHiddenAncestor_doesNotPlay() {
+        let container = UIView()
+        container.isHidden = true
+        window.addSubview(container)
+        container.addSubview(view)
+
+        let didLoad = view.setAnimatedImage(data: GIFFixtures.gifData(frameDelays: [0.1, 0.1]))
+
+        XCTAssertTrue(didLoad)
+        XCTAssertEqual(engine.playCallCount, 0)
     }
 
     // MARK: - Application state

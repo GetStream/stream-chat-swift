@@ -7,12 +7,17 @@ import UIKit
 /// An image view that renders animated GIF data.
 ///
 /// Pass the raw bytes to ``setAnimatedImage(data:fallbackImage:)``. Playback starts
-/// automatically while the view is in a window and the app is in the foreground, and pauses
-/// when either stops being true. ``stopAnimating()`` opts out until ``startAnimating()``
-/// or a new animation is set.
+/// automatically while the view is in a window, visible, and the app is in the foreground,
+/// and pauses when any of those stops being true — including while the view sits hidden in
+/// a reuse pool. ``stopAnimating()`` opts out until ``startAnimating()`` or a new animation
+/// is set.
 ///
 /// Assigning `image` directly does not stop playback: call ``clearAnimatedImage()`` first
 /// when switching the view back to a static image.
+///
+/// `isAnimating` deliberately keeps its `UIImageView` meaning and stays `false` during GIF
+/// playback: UIKit consults it when rendering `image`, and reporting `true` would make it
+/// ignore the delivered frames. Use ``animatedImageData`` to check for a loaded animation.
 @MainActor
 open class StreamAnimatedImageView: UIImageView {
     /// The data of the currently loaded animation, or `nil` when the view shows a static image.
@@ -88,10 +93,6 @@ open class StreamAnimatedImageView: UIImageView {
         super.stopAnimating()
     }
 
-    override open var isAnimating: Bool {
-        engine.isPlaying || super.isAnimating
-    }
-
     override open func didMoveToWindow() {
         super.didMoveToWindow()
         if window == nil {
@@ -101,13 +102,26 @@ open class StreamAnimatedImageView: UIImageView {
         }
     }
 
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        playIfPossible()
+    }
+
     // MARK: - Private
 
     private func configureEngineIfNeeded() {
         guard !isEngineConfigured else { return }
         isEngineConfigured = true
         engine.onFrame = { [weak self] frame in
-            self?.image = frame
+            guard let self else { return }
+            // Reuse pools keep cells hidden but window-attached, so hidden views receive no
+            // lifecycle callback: frame delivery is the only place the pause can be detected.
+            // `layoutSubviews` resumes playback once the view becomes visible again.
+            guard !hasHiddenAncestor else {
+                engine.stop()
+                return
+            }
+            image = frame
         }
         NotificationCenter.default.addObserver(
             self,
@@ -123,8 +137,24 @@ open class StreamAnimatedImageView: UIImageView {
         )
     }
 
+    private var hasHiddenAncestor: Bool {
+        var view: UIView? = self
+        while let current = view {
+            if current.isHidden {
+                return true
+            }
+            view = current.superview
+        }
+        return false
+    }
+
     private func playIfPossible() {
-        guard isPlaybackEnabled, !engine.isPlaying, animatedImageData != nil, window != nil, !isApplicationInBackground else { return }
+        guard isPlaybackEnabled,
+              !engine.isPlaying,
+              animatedImageData != nil,
+              window != nil,
+              !isApplicationInBackground,
+              !hasHiddenAncestor else { return }
         engine.play()
     }
 
