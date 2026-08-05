@@ -155,7 +155,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - text: The message text.
     ///   - sort: Optional sort order for search results. When `nil`, defaults to newest first (createdAt descending).
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(
         text: String,
         sort: [Sorting<MessageSearchSortingKey>]? = nil,
@@ -227,7 +226,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         scheduleSearch(query: query, completion: completion)
     }

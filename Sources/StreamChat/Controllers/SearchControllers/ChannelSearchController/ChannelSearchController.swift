@@ -18,8 +18,6 @@ public extension ChatClient {
 ///
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Scheduling a new search cancels any pending debounced work.
-///
-/// Results are read from the local database, consistent with the other search controllers in the SDK.
 public class ChatChannelSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -101,7 +99,6 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     /// - Parameters:
     ///   - text: The channel name search text.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(
         text: String,
         completion: (@MainActor (_ error: Error?) -> Void)? = nil
@@ -145,7 +142,6 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(
         query: ChannelListQuery,
         completion: (@MainActor (_ error: Error?) -> Void)? = nil
@@ -178,7 +174,6 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     /// - Parameters:
     ///   - limit: Limit for page size.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func loadNextChannels(
         limit: Int? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil

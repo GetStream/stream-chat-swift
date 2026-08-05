@@ -80,7 +80,6 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// - Parameters:
     ///   - term: Search term. If empty string or `nil`, all users are fetched.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(term: String?, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         scheduleFetch(.search(term: term), completion: completion)
     }
@@ -99,7 +98,6 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: UserListQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         scheduleFetch(query, completion: completion)
     }
