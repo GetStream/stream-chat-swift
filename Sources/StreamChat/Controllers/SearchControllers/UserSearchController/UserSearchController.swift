@@ -132,7 +132,22 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// Clears the current search results.
     public func clearResults() {
         searchDebouncer.cancel()
+        let previousUsers = userArray
+        guard !previousUsers.isEmpty || query != nil else { return }
+
+        let listChanges = previousUsers.enumerated().reversed().map { index, user in
+            ListChange.remove(user, index: .init(item: index, section: 0))
+        }
+        query = nil
         _users = []
+
+        guard !listChanges.isEmpty else { return }
+
+        callback {
+            self.multicastDelegate.invoke {
+                $0.controller(self, didChangeUsers: listChanges)
+            }
+        }
     }
 }
 

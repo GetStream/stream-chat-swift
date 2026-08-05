@@ -615,6 +615,26 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(delegate.didChangeUsers_changes, nil)
     }
 
+    @MainActor func test_clearResults_clearsQueryAndNotifiesDelegate() throws {
+        let delegate = TestDelegate()
+        controller.delegate = delegate
+
+        controller.search(term: "name")
+        let userPayload = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload])))
+
+        AssertAsync.willBeEqual(controller.userArray.count, 1)
+        let user = try user(with: userPayload.id)
+
+        controller.clearResults()
+
+        XCTAssertNil(controller.query)
+        XCTAssertTrue(controller.userArray.isEmpty)
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .remove(user, index: .init(item: 0, section: 0))
+        ])
+    }
+
     func test_loadNextUsers_shouldNotKeepControllerAlive() throws {
         // Simulate `search` for query and catch the completion
         nonisolated(unsafe) var searchCompletionCalled = false
