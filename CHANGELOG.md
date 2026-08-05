@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
+
 ### 🔄 Changed
 
 # [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
