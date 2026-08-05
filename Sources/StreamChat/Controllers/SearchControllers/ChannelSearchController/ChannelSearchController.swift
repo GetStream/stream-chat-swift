@@ -19,8 +19,7 @@ public extension ChatClient {
 /// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 /// Scheduling a new search cancels any pending debounced work.
 ///
-/// Results stay live: once a search has run, changes to the matching channels (a new message,
-/// a name change, a member update) are reported through the delegate.
+/// Results are read from the local database, consistent with the other search controllers in the SDK.
 public class ChatChannelSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient

@@ -10,8 +10,7 @@ import Foundation
 /// ``search(text:)`` again cancels the previous in-flight search. The superseded call returns
 /// the current results rather than throwing, so typing does not surface an error per keystroke.
 ///
-/// Results stay live: once a search has run, changes to the matching channels (a new message,
-/// a name change, a member update) are published through ``ChannelSearchState/channels``.
+/// Results are read from the local database, consistent with the other search APIs in the SDK.
 ///
 /// - Note: For a delegate based alternative, please check ``ChatChannelSearchController``.
 public class ChannelSearch: @unchecked Sendable {
