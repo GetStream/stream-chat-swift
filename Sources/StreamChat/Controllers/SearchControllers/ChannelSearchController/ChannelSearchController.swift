@@ -88,9 +88,7 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
     deinit {
         searchDebouncer.cancel()
         let query = self.query
-        client.databaseContainer.write { session in
-            session.delete(query: query)
-        }
+        channelListUpdater.deleteSearchQuery(query) { _ in }
     }
 
     // MARK: - Actions
@@ -170,12 +168,9 @@ public class ChatChannelSearchController: DataController, DelegateCallable, Data
         }
         lastQuery = nil
         hasLoadedAllChannels = false
-        client.databaseContainer.write({ session in
-            // Only the link between the query and its results is removed, the channels stay cached.
-            session.channelListQuery(clearedQuery)?.channels.removeAll()
-        }, completion: { [weak self] error in
+        channelListUpdater.clearSearchResults(for: clearedQuery) { [weak self] error in
             self?.callback { completion?(error) }
-        })
+        }
     }
 
     /// Loads the next page of channels for the current search.

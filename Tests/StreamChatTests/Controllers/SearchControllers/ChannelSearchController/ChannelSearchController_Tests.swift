@@ -199,6 +199,7 @@ final class ChannelSearchController_Tests: XCTestCase {
         }
         wait(for: [expectation], timeout: defaultTimeout)
 
+        XCTAssertEqual(updater?.clearSearchResults_queries.count, 1)
         try waitForChannels(equalTo: [])
     }
 

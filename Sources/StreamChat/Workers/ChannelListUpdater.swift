@@ -188,6 +188,26 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
+    /// Removes all channels linked to the given query without deleting the query itself.
+    ///
+    /// Only the link between the query and its results is removed; the channels stay cached.
+    func clearSearchResults(for query: ChannelListQuery, completion: (@Sendable (Error?) -> Void)? = nil) {
+        database.write { session in
+            session.channelListQuery(query)?.channels.removeAll()
+        } completion: { error in
+            completion?(error)
+        }
+    }
+
+    /// Removes a channel list query from the local database.
+    func deleteSearchQuery(_ query: ChannelListQuery, completion: (@Sendable (Error?) -> Void)? = nil) {
+        database.write { session in
+            session.delete(query: query)
+        } completion: { error in
+            completion?(error)
+        }
+    }
+
     /// The persisted pagination state for a grouped query: the next-page cursor and the
     /// `watch` / `presence` flags that the original `queryGroupedChannels` call used.
     ///
@@ -334,6 +354,30 @@ extension ChannelListUpdater {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in
                 continuation.resume(with: result)
+            }
+        }
+    }
+
+    func clearSearchResults(for query: ChannelListQuery) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            clearSearchResults(for: query) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+
+    func deleteSearchQuery(_ query: ChannelListQuery) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteSearchQuery(query) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
             }
         }
     }

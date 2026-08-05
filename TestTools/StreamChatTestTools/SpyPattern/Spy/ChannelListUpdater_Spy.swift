@@ -37,6 +37,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     @Atomic var unlink_callCount = 0
 
+    @Atomic var clearSearchResults_queries: [ChannelListQuery] = []
+    @Atomic var clearSearchResults_completion: (@Sendable (Error?) -> Void)?
+
+    @Atomic var deleteSearchQuery_queries: [ChannelListQuery] = []
+    @Atomic var deleteSearchQuery_completion: (@Sendable (Error?) -> Void)?
+
     func cleanUp() {
         update_queries.removeAll()
         update_completion = nil
@@ -57,6 +63,10 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         startWatchingChannels_cids.removeAll()
         startWatchingChannels_completion = nil
         startWatchingChannels_completion_success = false
+        clearSearchResults_queries.removeAll()
+        clearSearchResults_completion = nil
+        deleteSearchQuery_queries.removeAll()
+        deleteSearchQuery_completion = nil
     }
 
     override func update(
@@ -138,6 +148,22 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         _unlink_callCount.mutate { $0 += 1 }
+    }
+
+    override func clearSearchResults(
+        for query: ChannelListQuery,
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
+        _clearSearchResults_queries.mutate { $0.append(query) }
+        super.clearSearchResults(for: query, completion: completion)
+    }
+
+    override func deleteSearchQuery(
+        _ query: ChannelListQuery,
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
+        _deleteSearchQuery_queries.mutate { $0.append(query) }
+        super.deleteSearchQuery(query, completion: completion)
     }
 
     override func startWatchingChannels(withIds ids: [ChannelId], completion: (@Sendable (Error?) -> Void)?) {

@@ -42,9 +42,7 @@ public class ChannelSearch: @unchecked Sendable {
 
     deinit {
         let query = ChannelListQuery.searchResults(explicitQueryHash: explicitQueryHash)
-        client.databaseContainer.write { session in
-            session.delete(query: query)
-        }
+        channelListUpdater.deleteSearchQuery(query) { _ in }
     }
 
     // MARK: - Accessing the State
@@ -160,10 +158,7 @@ public class ChannelSearch: @unchecked Sendable {
 
     private func clearResults() async throws {
         let query = ChannelListQuery.searchResults(explicitQueryHash: explicitQueryHash)
-        try await client.databaseContainer.write { session in
-            // Only the link between the query and its results is removed, the channels stay cached.
-            session.channelListQuery(query)?.channels.removeAll()
-        }
+        try await channelListUpdater.clearSearchResults(for: query)
         await state.clear()
     }
 }
