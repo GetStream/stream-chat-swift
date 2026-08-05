@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix the composer's add attachment icon being thinner than the other composer icons [#4188](https://github.com/GetStream/stream-chat-swift/pull/4188)
 
 ## StreamChatUI
+### 🔄 Changed
+- Debounce channel list search dynamically based on query length [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Replace vendored Nuke image loading with the built-in `StreamImageDownloader` [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
+
 ### 🐞 Fixed
 - Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
