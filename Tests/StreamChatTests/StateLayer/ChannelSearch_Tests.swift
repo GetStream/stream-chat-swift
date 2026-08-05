@@ -210,6 +210,10 @@ final class ChannelSearch_Tests: XCTestCase {
         let supersededResult = try await superseded
         let winnerResult = try await winner
         XCTAssertEqual(winnerResult.map(\.cid), supersededResult.map(\.cid))
+
+        let queries = env.channelListUpdaterSpy.update_queries
+        XCTAssertEqual(1, queries.count)
+        XCTAssertTrue(queries[0].filter.filterHash.contains("general"))
     }
 
     // MARK: - Pagination
