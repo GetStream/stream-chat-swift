@@ -470,13 +470,6 @@ remove_nested_enum() {
 remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
 remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
 
-# CHA-3037
-name_empty_enum_case() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  N="$2" perl -0777 -pi -e 's/^(\s*)case  =/$1case $ENV{N} =/mg;' "$file"
-}
-name_empty_enum_case MessageRequest empty
-
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
 #     (== and hash(into:)); the memberwise init and CodingKeys stay internal.

@@ -6,7 +6,6 @@ import Foundation
 
 final class MessageRequest: Sendable, Codable, JSONEncodable {
     enum MessageRequestType: String, Sendable, Codable, CaseIterable {
-        case empty = "''"
         case regular
         case system
         case unknown = "_unknown"
