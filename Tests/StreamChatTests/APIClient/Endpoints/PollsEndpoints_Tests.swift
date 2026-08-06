@@ -42,7 +42,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_deletePoll() {
-        let endpoint = Endpoint<EmptyResponse>.deletePoll(pollId: "test", userId: nil)
+        let endpoint = Endpoint<EmptyResponse>.deletePoll(pollId: "test")
         
         XCTAssertEqual(endpoint.method, .delete)
         XCTAssertEqual(endpoint.path.value, "/api/v2/polls/test")
@@ -95,7 +95,6 @@ final class PollsEndpoints_Tests: XCTestCase {
         let request = QueryPollVotesRequestBody(limit: 30, prev: "10")
         let endpoint = Endpoint<PollVoteListResponse>.queryPollVotes(
             pollId: "test",
-            userId: nil,
             queryPollVotesRequest: request
         )
         
@@ -137,8 +136,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let endpoint = Endpoint<PollVotePayloadResponse>.deletePollVote(
             messageId: "message_id",
             pollId: "test",
-            voteId: "vote",
-            userId: nil
+            voteId: "vote"
         )
 
         XCTAssertEqual(endpoint.method, .delete)
