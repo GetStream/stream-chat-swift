@@ -39,7 +39,6 @@ import XCTest
     }
 
     func test_makeSearchController_whenCustomChannelStrategy_thenCustomChannelSearchControllerIsReturned() {
-        let channelListVC = ChatChannelListVC()
         let strategy = ChannelListSearchStrategy.channels(CustomChatChannelSearchVC.self)
         let searchController = strategy.makeSearchController(with: channelListVC)
 
