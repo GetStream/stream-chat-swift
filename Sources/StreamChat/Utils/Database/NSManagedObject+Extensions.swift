@@ -135,11 +135,17 @@ final class FetchCache: @unchecked Sendable {
     }
 
     fileprivate static let shared = FetchCache()
-    private let queue = DispatchQueue(label: "io.stream.com.fetch-cache", qos: .userInitiated, attributes: .concurrent)
-    private var cache = [FetchRequestWrapper<NSFetchRequestResult>: [NSManagedObjectID]]()
+
+    // Guarded by a lock rather than a concurrent queue: `get` is reached from inside
+    // `NSManagedObjectContext.performAndWait`, so the calling thread is already blocked. A `sync` on a
+    // concurrent queue has to wait out any pending barrier, which needs a libdispatch worker thread —
+    // and with several contexts blocked in `performAndWait` at once that thread may never arrive.
+    // Keep the `withLock` bodies to plain dictionary work: the lock is not reentrant, and nothing
+    // inside may block or call back into the cache.
+    private let cache = AllocatedUnfairLock([FetchRequestWrapper<NSFetchRequestResult>: [NSManagedObjectID]]())
 
     var cacheEntriesCount: Int {
-        queue.sync { cache.count }
+        cache.withLock { $0.count }
     }
 
     func set<T>(_ request: NSFetchRequest<T>, objectIds: [NSManagedObjectID]) where T: NSFetchRequestResult {
@@ -149,9 +155,7 @@ final class FetchCache: @unchecked Sendable {
         }
 
         let wrapper = FetchRequestWrapper(request: request)
-        queue.async(flags: .barrier) {
-            self.cache[wrapper] = objectIds
-        }
+        cache.withLock { $0[wrapper] = objectIds }
     }
 
     func get<T>(_ request: NSFetchRequest<T>) -> [NSManagedObjectID]? where T: NSFetchRequestResult {
@@ -160,11 +164,7 @@ final class FetchCache: @unchecked Sendable {
             return nil
         }
         let wrapper = FetchRequestWrapper(request: request)
-        var objectIDs: [NSManagedObjectID]?
-        queue.sync {
-            objectIDs = cache[wrapper]
-        }
-        return objectIDs
+        return cache.withLock { $0[wrapper] }
     }
 
     static func clear() {
@@ -172,9 +172,7 @@ final class FetchCache: @unchecked Sendable {
     }
 
     private func clear() {
-        queue.async(flags: .barrier) {
-            self.cache.removeAll()
-        }
+        cache.withLock { $0.removeAll() }
     }
 }
 
