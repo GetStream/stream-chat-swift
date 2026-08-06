@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🔄 Changed
-- Debounce channel and message search dynamically based on query length [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
+- Route channel search through `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 # [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
 _August 03, 2026_

@@ -9,9 +9,6 @@ import UIKit
 /// It is a subclass of the Channel List since most of the logic is reused from the original Channel List.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
-    /// The component responsible to debounce search requests.
-    public var debouncer = Debouncer.search(queue: .main)
-
     /// The current active search text.
     public var currentSearchText: String = ""
 
@@ -124,14 +121,6 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
             emptyView.isHidden = !hasEmptyResults
         default:
             loadingIndicator.stopAnimating()
-        }
-    }
-
-    // MARK: - Deinit
-
-    deinit {
-        StreamConcurrency.onMain {
-            debouncer.invalidate()
         }
     }
 }
