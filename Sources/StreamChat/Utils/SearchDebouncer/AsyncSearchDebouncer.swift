@@ -16,7 +16,7 @@ import Foundation
 /// an actor because its callers are synchronous.
 actor AsyncSearchDebouncer {
     let policy: SearchDebouncePolicy
-    private var currentTask: CancellableTask?
+    private var cancelCurrentWork: (@Sendable () -> Void)?
 
     init(policy: SearchDebouncePolicy) {
         self.policy = policy
@@ -75,8 +75,8 @@ actor AsyncSearchDebouncer {
 
     /// Cancels pending debounced work and in-flight search tasks.
     func cancel() {
-        currentTask?.cancel()
-        currentTask = nil
+        cancelCurrentWork?()
+        cancelCurrentWork = nil
     }
 
     // MARK: - Private
@@ -132,19 +132,7 @@ actor AsyncSearchDebouncer {
             try Task.checkCancellation()
             return try await operation()
         }
-        currentTask = CancellableTask(task)
+        cancelCurrentWork = { task.cancel() }
         return task
-    }
-}
-
-private struct CancellableTask: Sendable {
-    private let _cancel: @Sendable () -> Void
-
-    init<Success: Sendable>(_ task: Task<Success, Error>) {
-        _cancel = { task.cancel() }
-    }
-
-    func cancel() {
-        _cancel()
     }
 }
