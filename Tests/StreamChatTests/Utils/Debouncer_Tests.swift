@@ -125,6 +125,6 @@ final class Debouncer_SearchPolicy_Tests: XCTestCase {
         }
 
         XCTAssertFalse(scheduled)
-        wait(for: [expectation], timeout: 0.4)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 }

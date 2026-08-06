@@ -359,25 +359,17 @@ extension ChannelListUpdater {
     }
 
     func clearSearchResults(for query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             clearSearchResults(for: query) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: ())
-                }
+                continuation.resume(with: error)
             }
         }
     }
 
     func deleteSearchQuery(_ query: ChannelListQuery) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+        try await withCheckedThrowingContinuation { continuation in
             deleteSearchQuery(query) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: ())
-                }
+                continuation.resume(with: error)
             }
         }
     }

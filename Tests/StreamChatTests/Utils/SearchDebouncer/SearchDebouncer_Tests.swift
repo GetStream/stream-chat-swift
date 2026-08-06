@@ -9,10 +9,10 @@ import XCTest
 final class SearchDebouncer_Tests: XCTestCase {
     func test_schedule_withZeroInterval_executesImmediately() {
         let debouncer = SearchDebouncer(policy: .constant(0), queue: .main)
-        let executed = LockedFlag()
+        let executed = AllocatedUnfairLock(false)
 
         let scheduled = debouncer.schedule(queryLength: 1) {
-            executed.set()
+            executed.withLock { $0 = true }
         }
 
         XCTAssertTrue(scheduled)
@@ -25,14 +25,14 @@ final class SearchDebouncer_Tests: XCTestCase {
             queue: .main
         )
         let expectation = expectation(description: "Only latest work executes")
-        let executionCount = LockedCounter()
+        let executionCount = AllocatedUnfairLock(0)
 
         debouncer.schedule(queryLength: 1) {
-            executionCount.increment()
+            executionCount.withLock { $0 += 1 }
             XCTFail("First scheduled work should be cancelled")
         }
         debouncer.schedule(queryLength: 3) {
-            executionCount.increment()
+            executionCount.withLock { $0 += 1 }
             expectation.fulfill()
         }
 
@@ -53,7 +53,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         }
         debouncer.cancel()
 
-        wait(for: [expectation], timeout: 0.4)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     func test_schedule_belowMinimumCharacterCount_skipsAndCancelsPending() {
@@ -72,7 +72,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         }
 
         XCTAssertFalse(scheduled)
-        wait(for: [expectation], timeout: 0.4)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     func test_scheduleFilter_withSearchText_isDebouncedOnItsLength() {
@@ -88,7 +88,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         }
 
         XCTAssertFalse(scheduled)
-        wait(for: [expectation], timeout: 0.4)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     func test_scheduleFilter_withoutSearchText_executesImmediatelyAndCancelsPending() {
@@ -105,40 +105,6 @@ final class SearchDebouncer_Tests: XCTestCase {
         }
 
         XCTAssertTrue(executed)
-        wait(for: [expectation], timeout: 0.4)
-    }
-}
-
-private final class LockedFlag: @unchecked Sendable {
-    private var storedValue = false
-    private let lock = NSLock()
-
-    func set() {
-        lock.lock()
-        storedValue = true
-        lock.unlock()
-    }
-
-    var value: Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        return storedValue
-    }
-}
-
-private final class LockedCounter: @unchecked Sendable {
-    private var count = 0
-    private let lock = NSLock()
-
-    func increment() {
-        lock.lock()
-        count += 1
-        lock.unlock()
-    }
-
-    var value: Int {
-        lock.lock()
-        defer { lock.unlock() }
-        return count
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 }

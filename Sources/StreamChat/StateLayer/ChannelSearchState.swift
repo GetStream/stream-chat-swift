@@ -23,7 +23,7 @@ import Foundation
     /// The last initiated search query.
     ///
     /// - Note: If searching fails, this property points to the failing query.
-    @Published public internal(set) var query: ChannelListQuery?
+    @Published public private(set) var query: ChannelListQuery?
 
     /// An array of search results for the specified query.
     @Published public internal(set) var channels: [ChatChannel] = []
