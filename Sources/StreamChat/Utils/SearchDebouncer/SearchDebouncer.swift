@@ -15,16 +15,15 @@ import Foundation
 /// are short-lived, and a newer search overwrites both the results and the controller state, so
 /// the older response is at worst briefly visible.
 ///
-/// `policy` is immutable and the pending work item is confined to `stateQueue`, which is what
-/// `@unchecked Sendable` relies on.
+/// Pending work is guarded by ``AllocatedUnfairLock``, so this type is safe to share across
+/// isolation domains.
 ///
 /// - Note: The async equivalent for the state layer is ``AsyncSearchDebouncer``. It is an actor
 /// because its callers already `await`, and it cancels in-flight work through task cancellation.
-final class SearchDebouncer: @unchecked Sendable {
+final class SearchDebouncer: Sendable {
     let policy: SearchDebouncePolicy
     private let queue: DispatchQueue
-    private let stateQueue = DispatchQueue(label: "io.getstream.search-debouncer")
-    private var _job: DispatchWorkItem?
+    private let job = AllocatedUnfairLock<DispatchWorkItem?>(nil)
 
     init(policy: SearchDebouncePolicy, queue: DispatchQueue = .main) {
         self.policy = policy
@@ -54,9 +53,9 @@ final class SearchDebouncer: @unchecked Sendable {
         }
 
         let newJob = DispatchWorkItem(block: work)
-        stateQueue.sync {
-            _job?.cancel()
-            _job = newJob
+        job.withLock {
+            $0?.cancel()
+            $0 = newJob
         }
         queue.asyncAfter(deadline: .now() + interval, execute: newJob)
         return true
@@ -84,14 +83,16 @@ final class SearchDebouncer: @unchecked Sendable {
 
     /// Cancels work that was scheduled but has not run yet.
     func cancel() {
-        stateQueue.sync {
-            _job?.cancel()
-            _job = nil
+        job.withLock {
+            $0?.cancel()
+            $0 = nil
         }
     }
 
     deinit {
-        // No other reference can be scheduling at this point, so the state queue is not needed.
-        _job?.cancel()
+        job.withLock {
+            $0?.cancel()
+            $0 = nil
+        }
     }
 }
