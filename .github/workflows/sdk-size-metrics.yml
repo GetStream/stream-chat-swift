@@ -8,6 +8,12 @@ on:
       - '**/*.png'
 
   workflow_dispatch:
+    inputs:
+      verbose:
+        description: 'Run in verbose mode?'
+        type: boolean
+        required: false
+        default: false
 
   push:
     branches:
@@ -15,6 +21,7 @@ on:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+  VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
 
 permissions:
   actions: write
@@ -51,5 +58,5 @@ jobs:
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
 
       - name: Run Detailed SDK Size Metrics
-        run: bundle exec fastlane size_analyze
+        run: bundle exec fastlane size_analyze ${{ env.VERBOSE }}
         timeout-minutes: 30
