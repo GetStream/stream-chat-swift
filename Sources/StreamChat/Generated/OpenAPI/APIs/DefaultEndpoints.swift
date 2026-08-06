@@ -27,7 +27,6 @@ enum EndpointPath: Codable {
         String,
         Bool
     )
-    case truncateChannel(String)
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
@@ -112,6 +111,10 @@ enum EndpointPath: Codable {
         type: String,
         id: String
     )
+    case truncateChannel(
+        type: String,
+        id: String
+    )
     case unblockUsers
     case unmuteChannel
     case unreadCounts
@@ -162,7 +165,6 @@ enum EndpointPath: Codable {
             channelId,
             show
         ): return "channels/\(channelId)/\(show ? "show" : "hide")"
-        case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
@@ -273,6 +275,11 @@ enum EndpointPath: Codable {
             id: id
         ):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
+        case let .truncateChannel(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/truncate"
         case .unblockUsers:
             return "/api/v2/users/unblock"
         case .unmuteChannel:
@@ -873,6 +880,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func truncateChannel(
+        type: String,
+        id: String,
+        truncateChannelRequest: TruncateChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .truncateChannel(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: truncateChannelRequest
         )
     }
 

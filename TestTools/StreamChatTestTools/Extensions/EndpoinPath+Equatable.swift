@@ -24,7 +24,6 @@ extension EndpointPath: Equatable {
         case let (.deleteChannel(string1), .deleteChannel(string2)): return string1 == string2
         case let (.channelUpdate(string1), .channelUpdate(string2)): return string1 == string2
         case let (.showChannel(string1, bool1), .showChannel(string2, bool2)): return string1 == string2 && bool1 == bool2
-        case let (.truncateChannel(string1), .truncateChannel(string2)): return string1 == string2
         case let (.markChannelRead(string1), .markChannelRead(string2)): return string1 == string2
         case (.markAllChannelsRead, .markAllChannelsRead): return true
         case let (.channelEvent(string1), .channelEvent(string2)): return string1 == string2

@@ -1660,10 +1660,10 @@ extension MessageDTO {
             restrictedVisibility: restrictedVisibilityArray,
             location: location.map {
                 .init(
-                    latitude: $0.latitude,
-                    longitude: $0.longitude,
+                    createdByDeviceId: $0.deviceId,
                     endAt: $0.endAt?.bridgeDate,
-                    createdByDeviceId: $0.deviceId
+                    latitude: Float($0.latitude),
+                    longitude: Float($0.longitude)
                 )
             },
             extraData: extraData

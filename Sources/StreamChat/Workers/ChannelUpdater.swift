@@ -309,37 +309,18 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             return
         }
 
-        let context = database.backgroundReadOnlyContext
-        context.perform { [weak self] in
-            guard let user = context.currentUser?.user.asRequestBody() else {
-                completion?(ClientError.Unknown("Couldn't fetch current user from local cache."))
-                return
-            }
-            let requestBody = MessageRequestBody(
-                id: .newUniqueId,
-                user: user,
-                text: systemMessage.text,
-                type: nil,
-                command: nil,
-                args: nil,
-                parentId: nil,
-                showReplyInChannel: false,
-                isSilent: false,
-                quotedMessageId: nil,
-                attachments: [],
-                mentionedUserIds: [],
-                pinned: false,
-                pinExpires: nil,
-                extraData: systemMessage.extraData
-            )
-            self?.truncate(
-                cid: cid,
-                skipPush: skipPush,
-                hardDelete: hardDelete,
-                requestBody: requestBody,
-                completion: completion
-            )
-        }
+        let requestBody = MessageRequest(
+            custom: systemMessage.extraData,
+            id: .newUniqueId,
+            text: systemMessage.text
+        )
+        truncate(
+            cid: cid,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            requestBody: requestBody,
+            completion: completion
+        )
     }
 
     /// Hides the channel from queryChannels for the user until a message is added.
@@ -832,10 +813,18 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         skipPush: Bool = false,
         hardDelete: Bool = true,
-        requestBody: MessageRequestBody? = nil,
+        requestBody: MessageRequest? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
+        apiClient.request(endpoint: .truncateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            truncateChannelRequest: TruncateChannelRequest(
+                hardDelete: hardDelete,
+                message: requestBody,
+                skipPush: skipPush
+            )
+        )) {
             if let error = $0.error {
                 log.error(error)
             }

@@ -1277,10 +1277,9 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .truncateChannel(
-            cid: channelID,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            message: nil
+            type: channelID.type.rawValue,
+            id: channelID.id,
+            truncateChannelRequest: .init(hardDelete: hardDelete, skipPush: skipPush)
         )
 
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -1288,15 +1287,6 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_truncateChannel_makesCorrectAPICallWithMessage() throws {
         // GIVEN
-        let currentUserId: UserId = .unique
-        let currentUserName = "John"
-        try channelUpdater.database.createCurrentUser(id: currentUserId, name: currentUserName)
-        let currentUser: UserRequestBody = .dummy(
-            userId: currentUserId,
-            name: currentUserName,
-            imageURL: nil
-        )
-
         let channelID = ChannelId.unique
         let skipPush = true
         let hardDelete = true
@@ -1315,28 +1305,28 @@ final class ChannelUpdater_Tests: XCTestCase {
         AssertAsync { [unowned self] in
             // Assert correct endpoint is called
             Assert.willBeEqual(self.apiClient.request_endpoint, AnyEndpoint(.truncateChannel(
-                cid: channelID,
-                skipPush: skipPush,
-                hardDelete: hardDelete,
-                message: MessageRequestBody(
-                    // inject generated message id
-                    id: (
-                        self.apiClient
-                            .request_endpoint?.body?
-                            .encodable as? ChannelTruncateRequestPayload
-                    )?
-                        .message?.id ?? "id",
-                    user: currentUser,
-                    text: systemMessage,
-                    type: nil,
-                    extraData: [:]
+                type: channelID.type.rawValue,
+                id: channelID.id,
+                truncateChannelRequest: .init(
+                    hardDelete: hardDelete,
+                    message: MessageRequest(
+                        custom: [:],
+                        // inject generated message id
+                        id: (
+                            self.apiClient
+                                .request_endpoint?.body?
+                                .encodable as? TruncateChannelRequest
+                        )?
+                            .message?.id ?? "id",
+                        text: systemMessage
+                    ),
+                    skipPush: skipPush
                 )
             )))
         }
     }
 
     func test_truncateChannel_makesCorrectAPICallWithSystemMessageExtraData() throws {
-        try channelUpdater.database.createCurrentUser(id: .unique)
         let systemMessage = SystemMessage(text: "System message", extraData: ["warning": .bool(true)])
 
         // Simulate `truncateChannel` call with a system message carrying extra data
@@ -1345,39 +1335,14 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Assert the truncate message payload carries the system message text and extra data
         AssertAsync { [unowned self] in
             Assert.willBeEqual(
-                (self.apiClient.request_endpoint?.body?.encodable as? ChannelTruncateRequestPayload)?.message?.text,
+                (self.apiClient.request_endpoint?.body?.encodable as? TruncateChannelRequest)?.message?.text,
                 systemMessage.text
             )
             Assert.willBeEqual(
-                (self.apiClient.request_endpoint?.body?.encodable as? ChannelTruncateRequestPayload)?.message?.extraData,
+                (self.apiClient.request_endpoint?.body?.encodable as? TruncateChannelRequest)?.message?.custom,
                 systemMessage.extraData
             )
         }
-    }
-
-    func test_truncateChannel_failsAPICallWithMessageWhenNoCurrentUser() throws {
-        // GIVEN
-        let expectation = expectation(description: "When no current user is provided, truncate channel with system message fails")
-        let channelID = ChannelId.unique
-        let skipPush = true
-        let hardDelete = true
-        let systemMessage = "System message"
-
-        // WHEN
-        // Simulate `truncateChannel(cid:, completion:)` call
-        channelUpdater.truncateChannel(
-            cid: channelID,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            systemMessage: SystemMessage(text: systemMessage)
-        ) { error in
-            // THEN
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-
-        // In this case, timeout `10` should be used for both local and CI runs
-        wait(for: [expectation], timeout: 10)
     }
 
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {

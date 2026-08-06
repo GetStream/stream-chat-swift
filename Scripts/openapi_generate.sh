@@ -40,6 +40,7 @@ allowed_endpoints=(
     searchRoles
     searchUserGroups
     stopWatchingChannel
+    truncateChannel
     unblockUsers
     unmuteChannel
     unreadCounts
@@ -57,6 +58,7 @@ allowed_models=(
   Action
   AddUserGroupMembersRequest
   AppResponseFields
+  Attachment
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
@@ -85,6 +87,7 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   MembersResponse
+  MessageRequest
   MuteChannelRequest
   MuteChannelResponse
   PollOptionInput
@@ -102,9 +105,11 @@ allowed_models=(
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
+  SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  TruncateChannelRequest
   UnblockUsersRequest
   UnblockUsersResponse
   UnmuteChannelRequest
@@ -354,6 +359,7 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated SharedLocation NewLocationRequestPayload
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 rename_generated CastPollVoteRequest CastPollVoteRequestBody
@@ -375,6 +381,7 @@ rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 
 rename_generated_type Response EmptyResponse
+rename_generated_type TruncateChannelResponse EmptyResponse
 rename_generated_type UnmuteResponse EmptyResponse
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
@@ -462,6 +469,13 @@ remove_nested_enum() {
 }
 remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
 remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
+
+# CHA-3037
+name_empty_enum_case() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  N="$2" perl -0777 -pi -e 's/^(\s*)case  =/$1case $ENV{N} =/mg;' "$file"
+}
+name_empty_enum_case MessageRequest empty
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -561,7 +575,6 @@ inject_v1_endpoint_paths() {
     case deleteChannel(String)
     case channelUpdate(String)
     case showChannel(String, Bool)
-    case truncateChannel(String)
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
@@ -624,7 +637,6 @@ EOF
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
         case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
-        case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
