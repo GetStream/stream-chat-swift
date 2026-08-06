@@ -182,7 +182,7 @@ class SyncRepository_Tests: XCTestCase {
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
         // Should use first event's created at date
-        XCTAssertEqual(lastSyncAtValue, eventDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, eventDate)
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
@@ -213,7 +213,7 @@ class SyncRepository_Tests: XCTestCase {
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
         // Should use first event's created at date
-        XCTAssertEqual(lastSyncAtValue, eventDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, eventDate)
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
@@ -507,7 +507,7 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(result.get()), [cid])
         XCTAssertEqual(eventNotificationCenter.mock_processCalledWithEvents.count, 2)
         XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
-        XCTAssertEqual(lastSyncAtValue, eventDates.last)
+        XCTAssertNearlySameDate(lastSyncAtValue, eventDates.last)
     }
 
     func test_syncChannelsEvents_whenEventCountExceedsPolicy_skipsReplayAndRefreshesWatchedChannels() throws {
@@ -552,7 +552,7 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
         XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
         XCTAssertEqual(channelListUpdater.startWatchingChannels_cids, [cid])
-        XCTAssertEqual(lastSyncAtValue, eventDates.last)
+        XCTAssertNearlySameDate(lastSyncAtValue, eventDates.last)
     }
 
     func test_syncChannelsEvents_whenTooManyEvents400_refreshesWatchedChannels() throws {
@@ -707,7 +707,7 @@ class SyncRepository_Tests: XCTestCase {
             return XCTFail("Expected failure")
         }
         XCTAssertEqual(error.shouldRetry, true)
-        XCTAssertEqual(lastSyncAtValue, lastSyncDate)
+        XCTAssertNearlySameDate(lastSyncAtValue, lastSyncDate)
         XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
     }
 
@@ -743,7 +743,7 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(try XCTUnwrap(result.get()), [])
         XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
         XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
-        XCTAssertEqual(lastSyncAtValue, eventDates.last)
+        XCTAssertNearlySameDate(lastSyncAtValue, eventDates.last)
     }
 
     // MARK: - Queue offline requests

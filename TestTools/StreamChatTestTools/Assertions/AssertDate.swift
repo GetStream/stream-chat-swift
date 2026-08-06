@@ -5,7 +5,7 @@
 import XCTest
 
 public func XCTAssertNearlySameDate(_ lhs: Date, _ rhs: Date, file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertTrue(lhs.isNearlySameDate(as: rhs))
+    XCTAssertTrue(lhs.isNearlySameDate(as: rhs), "\(lhs) is not nearly the same date as \(rhs)", file: file, line: line)
 }
 
 public func XCTAssertNearlySameDate(_ lhs: Date?, _ rhs: Date?, file: StaticString = #filePath, line: UInt = #line) {
