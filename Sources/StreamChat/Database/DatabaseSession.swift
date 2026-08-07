@@ -222,6 +222,9 @@ protocol MessageDatabaseSession {
     /// Checks if a message exists without fetching the object
     func messageExists(id: MessageId) -> Bool
 
+    /// Fetches all `MessageDTO`s authored by the given user in the given channel.
+    func messages(in cid: ChannelId, authoredBy userId: UserId) -> [MessageDTO]
+
     /// Deletes the provided dto from a database
     /// - Parameter message: The DTO to be deleted
     func delete(message: MessageDTO)

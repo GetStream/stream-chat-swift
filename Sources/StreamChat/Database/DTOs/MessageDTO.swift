@@ -378,6 +378,16 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
+    /// Returns a fetch request for messages authored by the given user in the given channel.
+    static func messagesFetchRequest(for cid: ChannelId, authoredBy userId: UserId) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelPredicate(with: cid.rawValue),
+            NSPredicate(format: "user.id == %@", userId)
+        ])
+        return request
+    }
+
     /// Returns a fetch request for replies for the specified `parentMessageId`.
     static func repliesFetchRequest(
         for messageId: MessageId,
@@ -680,6 +690,22 @@ extension MessageDTO {
 
         return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
     }
+
+    func updateMemberInfo(from member: MemberInfoPayload) {
+        if let role = member.channelRole?.rawValue {
+            channelRole = role
+        }
+        memberNotificationsMuted = member.notificationsMuted
+        do {
+            memberExtraData = try JSONEncoder.default.encode(member.extraData)
+        } catch {
+            log.error(
+                "Failed to encode member extra payload for Message with id: <\(id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            memberExtraData = nil
+        }
+    }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
@@ -941,19 +967,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
         if let member = payload.member {
-            if let role = member.channelRole?.rawValue {
-                dto.channelRole = role
-            }
-            dto.memberNotificationsMuted = member.notificationsMuted
-            do {
-                dto.memberExtraData = try JSONEncoder.default.encode(member.extraData)
-            } catch {
-                log.error(
-                    "Failed to encode member extra payload for Message with id: <\(dto.id)>, using default value instead. "
-                        + "Error: \(error)"
-                )
-                dto.memberExtraData = nil
-            }
+            dto.updateMemberInfo(from: member)
         }
 
         do {
@@ -1342,6 +1356,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } catch {
             return false
         }
+    }
+
+    func messages(in cid: ChannelId, authoredBy userId: UserId) -> [MessageDTO] {
+        let request = MessageDTO.messagesFetchRequest(for: cid, authoredBy: userId)
+        return (try? fetch(request)) ?? []
     }
 
     func delete(message: MessageDTO) {

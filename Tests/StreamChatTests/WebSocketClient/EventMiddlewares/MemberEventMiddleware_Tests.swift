@@ -37,6 +37,75 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
     }
 
+    // MARK: - MemberUpdatedEvent updates message member info
+
+    func test_memberUpdatedEvent_updatesMemberInfoOnExistingMessages() throws {
+        let cid = ChannelId.unique
+        let memberId = UserId.unique
+        let messageId = MessageId.unique
+        let otherAuthorMessageId = MessageId.unique
+
+        try database.createMessage(id: messageId, authorId: memberId, cid: cid)
+        try database.createMessage(id: otherAuthorMessageId, authorId: .unique, cid: cid)
+
+        let eventPayload: EventPayload = .init(
+            eventType: .memberUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(
+                userId: memberId,
+                role: .moderator,
+                notificationsMuted: true,
+                extraData: ["is_premium": .bool(true)]
+            ),
+            createdAt: .unique
+        )
+        let event = try MemberUpdatedEventDTO(from: eventPayload)
+
+        _ = middleware.handle(event: event, session: database.viewContext)
+
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(messageDTO.channelRole, MemberRole.moderator.rawValue)
+        XCTAssertEqual(messageDTO.memberNotificationsMuted, true)
+        let extraData = try JSONDecoder.default.decode(
+            [String: RawJSON].self,
+            from: try XCTUnwrap(messageDTO.memberExtraData)
+        )
+        XCTAssertEqual(extraData["is_premium"]?.boolValue, true)
+
+        // Messages from other authors in the same channel should be untouched.
+        let otherMessageDTO = try XCTUnwrap(database.viewContext.message(id: otherAuthorMessageId))
+        XCTAssertNil(otherMessageDTO.channelRole)
+        XCTAssertNil(otherMessageDTO.memberExtraData)
+    }
+
+    func test_memberUpdatedEvent_doesNotUpdateMessagesFromOtherChannels() throws {
+        let cid = ChannelId.unique
+        let otherCid = ChannelId.unique
+        let memberId = UserId.unique
+        let messageInOtherChannelId = MessageId.unique
+
+        try database.createMessage(id: messageInOtherChannelId, authorId: memberId, cid: otherCid)
+
+        let eventPayload: EventPayload = .init(
+            eventType: .memberUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(
+                userId: memberId,
+                extraData: ["is_premium": .bool(true)]
+            ),
+            createdAt: .unique
+        )
+        let event = try MemberUpdatedEventDTO(from: eventPayload)
+
+        _ = middleware.handle(event: event, session: database.viewContext)
+
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageInOtherChannelId))
+        XCTAssertNil(messageDTO.channelRole)
+        XCTAssertNil(messageDTO.memberExtraData)
+    }
+
     // MARK: - MemberAddedEvent
 
     func test_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {

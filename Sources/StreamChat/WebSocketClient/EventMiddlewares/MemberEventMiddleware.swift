@@ -5,12 +5,14 @@
 import Foundation
 
 /// The middleware listens for `MemberEvent`s and updates `ChannelDTO`s accordingly.
+/// It also updates the member info snapshot stored on existing messages when a member is updated.
 struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
             case let event as MemberUpdatedEventDTO:
                 try session.saveMember(payload: event.member, channelId: event.cid)
+                updateMessagesMemberInfo(member: event.member, cid: event.cid, session: session)
 
             case let event as MemberAddedEventDTO:
                 if let channel = session.channel(cid: event.cid) {
@@ -103,6 +105,17 @@ struct MemberEventMiddleware: EventMiddleware {
         }
 
         return event
+    }
+
+    private func updateMessagesMemberInfo(member: MemberPayload, cid: ChannelId, session: DatabaseSession) {
+        let memberInfo = MemberInfoPayload(
+            channelRole: member.role,
+            notificationsMuted: member.notificationsMuted,
+            extraData: member.extraData ?? [:]
+        )
+        session.messages(in: cid, authoredBy: member.userId).forEach {
+            $0.updateMemberInfo(from: memberInfo)
+        }
     }
 
     private func insertMemberToMemberListQueries(_ channel: ChannelDTO, _ member: MemberDTO) {

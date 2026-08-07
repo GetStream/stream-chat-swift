@@ -323,6 +323,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.messageExists(id: id)
     }
 
+    func messages(in cid: ChannelId, authoredBy userId: UserId) -> [MessageDTO] {
+        underlyingSession.messages(in: cid, authoredBy: userId)
+    }
+
     func delete(message: MessageDTO) {
         underlyingSession.delete(message: message)
     }
