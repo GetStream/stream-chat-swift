@@ -8,58 +8,96 @@ import UIKit
 /// The view controller responsible to search channels.
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
 @available(iOSApplicationExtension, unavailable)
-open class ChatChannelSearchVC: ChatChannelListSearchVC {
+open class ChatChannelSearchVC: ChatChannelListSearchVC, ChatChannelSearchControllerDelegate {
+    /// The data of the channel search list.
+    public private(set) var searchChannels: [ChatChannel] = []
+
+    /// The `ChatChannelSearchController` instance to perform the channels search.
+    public var channelSearchController: ChatChannelSearchController!
+
     /// The closure that is triggered whenever a channel is selected from the search result.
     public var didSelectChannel: (@MainActor (ChatChannel) -> Void)?
+
+    private var isPaginatingChannels: Bool = false
+
+    // MARK: - Lifecycle
+
+    override open func setUp() {
+        super.setUp()
+
+        channelSearchController.delegate = self
+    }
 
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 
     override open var hasEmptyResults: Bool {
-        controller.channels.isEmpty
+        channelSearchController.channels.isEmpty
     }
 
     override open func loadSearchResults(with text: String) {
-        guard let currentUserId = controller.client.currentUserId else { return }
-
-        var searchChannelsQuery = ChannelListQuery(
-            filter: .and([
-                .autocomplete(.name, text: text),
-                .containMembers(userIds: [currentUserId])
-            ])
-        )
-        // Do not watch the query when searching.
-        searchChannelsQuery.options = []
-
-        replaceQuery(searchChannelsQuery)
+        channelSearchController.search(text: text)
     }
 
     override open func loadMoreSearchResults() {
-        loadMoreChannels()
+        guard !isPaginatingChannels else {
+            return
+        }
+        isPaginatingChannels = true
+
+        channelSearchController.loadNextChannels { [weak self] _ in
+            self?.isPaginatingChannels = false
+        }
+    }
+
+    override open func cancelSearch() {
+        channelSearchController.clearResults()
+    }
+
+    // MARK: - Actions
+
+    /// Updates the list view with new data.
+    public func reloadSearchChannels() {
+        let previousChannels = searchChannels
+        let newChannels = Array(channelSearchController.channels)
+        let stagedChangeset = StagedChangeset(source: previousChannels, target: newChannels)
+        collectionView.reload(using: stagedChangeset, reconfigure: { _ in true }) { [weak self] newChannels in
+            self?.searchChannels = newChannels
+        }
     }
 
     // MARK: - Collection View Implementations
 
+    override open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        searchChannels.count
+    }
+
     override open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
-        guard let channelListCell = cell as? ChatChannelListCollectionViewCell,
-              let channel = channelListCell.itemView.content?.channel else {
+        let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
+        guard let channel = searchChannels[safe: indexPath.item] else {
             return cell
         }
 
-        channelListCell.itemView.content = .init(
+        cell.components = components
+        cell.itemView.content = .init(
             channel: channel,
-            currentUserId: controller.client.currentUserId,
+            currentUserId: channelSearchController.client.currentUserId,
             searchResult: .init(text: currentSearchText, message: nil)
         )
 
-        return channelListCell
+        return cell
     }
 
     override open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         defer {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
-        guard let channel = channels[safe: indexPath.row] else { return }
+        guard let channel = searchChannels[safe: indexPath.row] else { return }
         didSelectChannel?(channel)
+    }
+
+    // MARK: - ChatChannelSearchControllerDelegate
+
+    open func controller(_ controller: ChatChannelSearchController, didChangeChannels changes: [ListChange<ChatChannel>]) {
+        reloadSearchChannels()
     }
 }

@@ -46,6 +46,10 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
         loadMoreMessages()
     }
 
+    override open func cancelSearch() {
+        messageSearchController.clearResults()
+    }
+
     // MARK: - Actions
 
     /// Updates the list view with new data.

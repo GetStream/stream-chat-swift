@@ -49,7 +49,8 @@ public struct ChannelListSearchStrategy: Sendable {
         }
 
         if let channelSearchVC = searchVC.init() as? ChatChannelSearchVC {
-            channelSearchVC.controller = channelListVC.controller
+            let channelSearchController = channelListVC.controller.client.channelSearchController()
+            channelSearchVC.channelSearchController = channelSearchController
             channelSearchVC.didSelectChannel = { [weak channelListVC] channel in
                 channelListVC?.router.showChannel(for: channel.cid)
             }

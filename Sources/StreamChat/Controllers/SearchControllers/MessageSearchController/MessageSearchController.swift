@@ -19,15 +19,24 @@ public extension ChatClient {
 
 /// `ChatMessageSearchController` is a controller class which allows observing a list of messages based on the provided query.
 ///
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
+/// Scheduling a new search cancels any pending debounced work.
+///
 /// - Note: For an async-await alternative of the `ChatMessageSearchController`, please check ``MessageSearch`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatMessageSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     private let environment: Environment
+    private let searchDebouncer: SearchDebouncer
 
-    init(client: ChatClient, environment: Environment = .init()) {
+    init(
+        client: ChatClient,
+        environment: Environment = .init(),
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         self.client = client
         self.environment = environment
+        searchDebouncer = SearchDebouncer(policy: debouncePolicy)
 
         super.init()
 
@@ -35,6 +44,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     deinit {
+        searchDebouncer.cancel()
         let query = self.query
         client.databaseContainer.write { session in
             session.deleteQuery(query)
@@ -145,7 +155,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - text: The message text.
     ///   - sort: Optional sort order for search results. When `nil`, defaults to newest first (createdAt descending).
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(
         text: String,
         sort: [Sorting<MessageSearchSortingKey>]? = nil,
@@ -160,11 +169,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             return
         }
 
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let lastQuery = lastQuery {
-            messageUpdater.clearSearchResults(for: lastQuery) { error in
-                self.nextPageCursor = nil
-                self.callback { completion?(error) }
-            }
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            clearResults(completion: completion)
             return
         }
 
@@ -175,7 +181,25 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             sort: sortOrder
         )
 
-        search(query: query, completion: completion)
+        scheduleSearch(query: query, completion: completion)
+    }
+
+    /// Cancels any pending search and clears the current search results.
+    ///
+    /// Call this when the search UI is cleared or dismissed.
+    ///
+    /// - Parameter completion: Called when the local search results have been cleared.
+    public func clearResults(completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
+        searchDebouncer.cancel()
+        guard let clearedQuery = lastQuery else {
+            callback { completion?(nil) }
+            return
+        }
+        lastQuery = nil
+        nextPageCursor = nil
+        messageUpdater.clearSearchResults(for: clearedQuery) { error in
+            self.callback { completion?(error) }
+        }
     }
 
     private func resetMessagesObserver() {
@@ -195,11 +219,33 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// - Warning: Make sure the `query` text is not empty. Empty queries will result in 400 errors from backend.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away.
+    ///
     /// - Parameters:
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
-    ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
+        scheduleSearch(query: query, completion: completion)
+    }
+
+    private func scheduleSearch(
+        query: MessageSearchQuery,
+        completion: (@MainActor (_ error: Error?) -> Void)?
+    ) {
+        let scheduled = searchDebouncer.schedule(filter: query.messageFilter) { [weak self] in
+            self?.executeSearch(query: query, completion: completion)
+        }
+        if !scheduled {
+            callback { completion?(nil) }
+        }
+    }
+
+    private func executeSearch(
+        query: MessageSearchQuery,
+        completion: (@MainActor (_ error: Error?) -> Void)?
+    ) {
         var query = query
         query.filterHash = explicitFilterHash
 
@@ -208,7 +254,9 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         // To respect sorting the user passed, we must reset messagesObserver
         resetMessagesObserver()
 
-        messageUpdater.search(query: query, policy: .replace) { result in
+        messageUpdater.search(query: query, policy: .replace) { [weak self] result in
+            guard let self else { return }
+
             if case let .success(response) = result {
                 self.updateNextPageCursor(with: response.payload)
             }

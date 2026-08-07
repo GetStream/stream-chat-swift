@@ -6,11 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `ChatMessage.member` with the author's channel role, notification mute state, and member extra data [#4206](https://github.com/GetStream/stream-chat-swift/pull/4206)
-
+- Add `ChannelSearch` and `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 ### 🐞 Fixed
 - Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
-
 ### 🔄 Changed
+- Apply dynamic search debouncing to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ### ⛔️ Deprecated
 - Deprecate `ChatMessage.channelRole` in favor of `ChatMessage.member?.channelRole` [#4206](https://github.com/GetStream/stream-chat-swift/pull/4206)
@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `chatThreadConnectorIncoming` and `chatThreadConnectorOutgoing` colors for customizing the thread connector [#4195](https://github.com/GetStream/stream-chat-swift/pull/4195)
+
+## StreamChatUI
+### 🔄 Changed
+- Route channel search through `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 # [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
 _August 03, 2026_
@@ -31,7 +35,7 @@ _August 03, 2026_
 - Skip oversized `/sync` event replay and refresh watched channels via `queryChannels` instead [#4189](https://github.com/GetStream/stream-chat-swift/pull/4189)
 
 ### 🐞 Fixed
-- Fix double slash handling in some of the endpoint paths [#4191](https://github.com/GetStream/stream-chat-swift/pull/4191) 
+- Fix double slash handling in some of the endpoint paths [#4191](https://github.com/GetStream/stream-chat-swift/pull/4191)
 
 ## StreamChatCommonUI
 ### ✅ Added
@@ -44,7 +48,6 @@ _August 03, 2026_
 ### 🐞 Fixed
 - Fix `ChatMessageContentView` overwriting a Markdown link's real href when its display text itself looks like a URL, e.g. `[https://text-link.com](https://real-link.com)` [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
-## StreamChatUI
 ### 🔄 Changed
 - Replace vendored Nuke image loading with the built-in `StreamImageDownloader` [#4171](https://github.com/GetStream/stream-chat-swift/pull/4171)
 

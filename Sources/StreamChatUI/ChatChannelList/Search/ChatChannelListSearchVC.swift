@@ -9,9 +9,6 @@ import UIKit
 /// It is a subclass of the Channel List since most of the logic is reused from the original Channel List.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
-    /// The component responsible to debounce search requests.
-    public var debouncer = Debouncer(0.3, queue: .main)
-
     /// The current active search text.
     public var currentSearchText: String = ""
 
@@ -65,15 +62,19 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating
 
     open func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text, !text.isEmpty, text != currentSearchText else {
-            return
-        }
+        let text = searchController.searchBar.text ?? ""
+        guard text != currentSearchText else { return }
 
         currentSearchText = text
 
-        debouncer.execute { [weak self] in
-            self?.loadSearchResults(with: text)
+        // An emptied search field must cancel the search that is already debounced,
+        // otherwise it still reaches the backend and installs its results.
+        guard !text.isEmpty else {
+            cancelSearch()
+            return
         }
+
+        loadSearchResults(with: text)
     }
 
     // MARK: - Required Implementations
@@ -95,8 +96,14 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     open func loadMoreSearchResults() {
         fatalError("This function should be implemented by a subclass.")
     }
-    
+
     // swiftlint:enable unavailable_function
+
+    /// Cancels any pending search and clears the current results.
+    ///
+    /// Called when the search field is emptied. The default implementation does nothing;
+    /// subclasses should cancel their search controller.
+    open func cancelSearch() {}
 
     // MARK: - State Handling
 
@@ -114,14 +121,6 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
             emptyView.isHidden = !hasEmptyResults
         default:
             loadingIndicator.stopAnimating()
-        }
-    }
-
-    // MARK: - Deinit
-
-    deinit {
-        StreamConcurrency.onMain {
-            debouncer.invalidate()
         }
     }
 }

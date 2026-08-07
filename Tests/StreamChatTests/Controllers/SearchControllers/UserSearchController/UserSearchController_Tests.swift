@@ -28,7 +28,12 @@ final class UserSearchController_Tests: XCTestCase {
             sort: [.init(key: .name, isAscending: true)],
             pageSize: 10
         )
-        controller = ChatUserSearchController(client: client, environment: env.environment)
+        controller = ChatUserSearchController(
+            client: client,
+            environment: env.environment,
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
+        )
     }
 
     override func tearDown() {
@@ -79,6 +84,26 @@ final class UserSearchController_Tests: XCTestCase {
 
         // Assert the updater is called with the query
         XCTAssertEqual(env.userListUpdater!.fetch_queries.first, .search(term: searchTerm))
+    }
+
+    func test_searchWithTerm_isDebouncedOnTheTermLength() {
+        controller = ChatUserSearchController(
+            client: client,
+            environment: env.environment,
+            debouncePolicy: .constant(0.15)
+        )
+        let searchTerm = "test"
+
+        controller.search(term: searchTerm)
+
+        XCTAssertTrue(env.userListUpdater?.fetch_queries.isEmpty ?? true)
+
+        let expectation = expectation(description: "Debounced search fires")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            XCTAssertEqual(self.env.userListUpdater?.fetch_queries.first, .search(term: searchTerm))
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     @MainActor func test_searchWithTerm_whenNewSearchSucceeds() throws {
@@ -588,6 +613,26 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: testError)))
         // Assert no list changes are reported
         XCTAssertEqual(delegate.didChangeUsers_changes, nil)
+    }
+
+    @MainActor func test_clearResults_clearsQueryAndNotifiesDelegate() throws {
+        let delegate = TestDelegate()
+        controller.delegate = delegate
+
+        controller.search(term: "name")
+        let userPayload = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload])))
+
+        AssertAsync.willBeEqual(controller.userArray.count, 1)
+        let user = try user(with: userPayload.id)
+
+        controller.clearResults()
+
+        XCTAssertNil(controller.query)
+        XCTAssertTrue(controller.userArray.isEmpty)
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .remove(user, index: .init(item: 0, section: 0))
+        ])
     }
 
     func test_loadNextUsers_shouldNotKeepControllerAlive() throws {
