@@ -11,8 +11,7 @@ import XCTest
 @MainActor final class ChatChannelSearchVC_Tests: XCTestCase {
     var mockedClient: ChatClient_Mock!
     var vc: ChatChannelSearchVC!
-    var mockedChannelListController: ChatChannelListController_Mock!
-    let channelId: ChannelId = .unique
+    var mockedChannelSearchController: ChatChannelSearchController_Mock!
     let currentUserId = UserId.unique
 
     override func setUpWithError() throws {
@@ -21,43 +20,43 @@ import XCTest
 
         mockedClient = ChatClient_Mock.mock
         mockedClient.currentUserId_mock = currentUserId
-        mockedChannelListController = .mock(client: mockedClient)
+        mockedChannelSearchController = ChatChannelSearchController_Mock.mock(client: mockedClient)
 
         vc = ChatChannelSearchVC()
-        vc.controller = mockedChannelListController
+        vc.channelSearchController = mockedChannelSearchController
         vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
     }
 
     override func tearDown() {
         vc = nil
-        mockedChannelListController = nil
+        mockedChannelSearchController = nil
 
         super.tearDown()
     }
 
     func test_emptyAppearance() {
-        mockedChannelListController.channels_mock = []
+        mockedChannelSearchController.channels_mock = []
 
         vc.currentSearchText = "Some message"
         vc.executeLifecycleMethods()
-        vc.controller(mockedChannelListController, didChangeState: .remoteDataFetched)
+        vc.controller(mockedChannelSearchController, didChangeState: .remoteDataFetched)
 
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
     func test_loadingAppearance() {
-        mockedChannelListController.channels_mock = []
+        mockedChannelSearchController.channels_mock = []
 
         vc.currentSearchText = "Some message"
         vc.executeLifecycleMethods()
-        vc.controller(mockedChannelListController, didChangeState: .initialized)
+        vc.controller(mockedChannelSearchController, didChangeState: .initialized)
 
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
     func test_defaultAppearance() {
         let author = ChatUser.mock(id: .unique, name: "Yoda")
-        mockedChannelListController.channels_mock = [
+        mockedChannelSearchController.channels_mock = [
             .mock(
                 cid: .unique,
                 name: "Cool",
@@ -77,45 +76,46 @@ import XCTest
 
         vc.currentSearchText = "Some message"
         vc.executeLifecycleMethods()
-        vc.reloadChannels()
-        vc.controller(mockedChannelListController, didChangeState: .remoteDataFetched)
+        vc.controller(mockedChannelSearchController, didChangeChannels: [])
+        vc.controller(mockedChannelSearchController, didChangeState: .remoteDataFetched)
 
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
     func test_hasEmptyResults() {
-        mockedChannelListController.channels_mock = []
-        vc.reloadChannels()
+        mockedChannelSearchController.channels_mock = []
+        vc.reloadSearchChannels()
         XCTAssertEqual(vc.hasEmptyResults, true)
 
-        mockedChannelListController.channels_mock = [.mockDMChannel()]
-        vc.reloadChannels()
+        mockedChannelSearchController.channels_mock = [.mockDMChannel()]
+        vc.reloadSearchChannels()
         XCTAssertEqual(vc.hasEmptyResults, false)
     }
 
     func test_loadSearchResults() {
         vc.loadSearchResults(with: "Dummy")
 
-        XCTAssert(vc.controller !== mockedChannelListController)
-        XCTAssertEqual(
-            vc.controller.query.filter.filterHash,
-            "(name AUTOCOMPLETE Dummy) AND (members IN [\"\(currentUserId)\"])"
-        )
-        XCTAssertTrue(vc.controller.query.options.isEmpty)
+        XCTAssertEqual(mockedChannelSearchController.searchCallCount, 1)
+    }
+
+    func test_cancelSearch() {
+        vc.cancelSearch()
+
+        XCTAssertEqual(mockedChannelSearchController.clearResultsCallCount, 1)
     }
 
     func test_loadMoreSearchResults() {
         vc.loadMoreSearchResults()
 
-        XCTAssertEqual(mockedChannelListController.loadNextChannelsCallCount, 1)
+        XCTAssertEqual(mockedChannelSearchController.loadNextChannelsCallCount, 1)
     }
 
     func test_collectionViewDidSelectItemAt() {
-        mockedChannelListController.channels_mock = [
+        mockedChannelSearchController.channels_mock = [
             .mock(cid: .unique),
             .mock(cid: .unique)
         ]
-        vc.reloadChannels()
+        vc.reloadSearchChannels()
 
         var didSelectChannelCallCount = 0
         vc.didSelectChannel = { _ in

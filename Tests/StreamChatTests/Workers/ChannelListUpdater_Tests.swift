@@ -437,6 +437,34 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertFalse(channelsInQuery.contains(channel))
     }
 
+    func test_clearSearchResults_unlinksAllChannelsFromQuery() throws {
+        let exp = expectation(description: "clearSearchResults completion is called")
+        let channel = ChatChannel.mock(cid: .unique)
+        let query = ChannelListQuery(filter: .noTeam)
+
+        try database.writeSynchronously { session in
+            let channelDTO = try session.saveChannel(
+                payload: .dummy(channel: .dummy(cid: channel.cid))
+            )
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.insert(channelDTO)
+        }
+
+        var channelsInQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(query)?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertEqual(1, channelsInQuery.count)
+
+        listUpdater.clearSearchResults(for: query) { _ in
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(channelsInQuery.isEmpty)
+    }
+
     // MARK: - queryGroupedChannels
 
     func test_queryGroupedChannels_initial_sendsBodyWithoutGroupsKey() throws {
