@@ -378,16 +378,6 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
-    /// Returns a fetch request for messages authored by the given user in the given channel.
-    static func messagesFetchRequest(for cid: ChannelId, authoredBy userId: UserId) -> NSFetchRequest<MessageDTO> {
-        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            channelPredicate(with: cid.rawValue),
-            NSPredicate(format: "user.id == %@", userId)
-        ])
-        return request
-    }
-
     /// Returns a fetch request for replies for the specified `parentMessageId`.
     static func repliesFetchRequest(
         for messageId: MessageId,
@@ -1356,11 +1346,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } catch {
             return false
         }
-    }
-
-    func messages(in cid: ChannelId, authoredBy userId: UserId) -> [MessageDTO] {
-        let request = MessageDTO.messagesFetchRequest(for: cid, authoredBy: userId)
-        return (try? fetch(request)) ?? []
     }
 
     func delete(message: MessageDTO) {
