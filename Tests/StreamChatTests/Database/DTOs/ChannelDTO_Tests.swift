@@ -334,6 +334,70 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNotNil(channelDTO)
     }
 
+    func test_saveChannel_storesTruncatedBy() throws {
+        let channelId: ChannelId = .unique
+        let truncatedBy = UserPayload.dummy(userId: .unique)
+        let payload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: .unique, truncatedBy: truncatedBy)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.truncatedBy?.id, truncatedBy.id)
+    }
+
+    func test_saveChannel_storesAutoTranslation() throws {
+        let channelId: ChannelId = .unique
+        let payload = ChannelDetailPayload.dummy(
+            cid: channelId,
+            autoTranslationEnabled: true,
+            autoTranslationLanguage: "fr, de"
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.isAutoTranslationEnabled, true)
+        XCTAssertEqual(loadedChannel.autoTranslationLanguages, [.french, .german])
+    }
+
+    func test_saveChannel_disablesAutoTranslation_whenPayloadDoesNotContainIt() throws {
+        let channelId: ChannelId = .unique
+        let enabledPayload = ChannelDetailPayload.dummy(
+            cid: channelId,
+            autoTranslationEnabled: true,
+            autoTranslationLanguage: "fr"
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: enabledPayload, query: nil, cache: nil)
+        }
+
+        let enabledChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(enabledChannel.isAutoTranslationEnabled, true)
+
+        let disabledPayload = ChannelDetailPayload.dummy(cid: channelId)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: disabledPayload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.isAutoTranslationEnabled, false)
+        XCTAssertEqual(loadedChannel.autoTranslationLanguages, [])
+    }
+
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
 

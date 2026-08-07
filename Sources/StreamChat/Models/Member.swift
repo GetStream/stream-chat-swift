@@ -9,11 +9,17 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
     /// The role of the user within the channel.
     public let memberRole: MemberRole
 
+    /// The status of the membership within the channel.
+    public let memberStatus: MemberStatus?
+
     /// The date the user was added to the channel.
     public let memberCreatedAt: Date
 
     /// The date the membership was updated for the last time.
     public let memberUpdatedAt: Date
+
+    /// The date the membership was deleted, otherwise it's `nil`.
+    public let memberDeletedAt: Date?
 
     /// Returns `true` if the member has been invited to the channel.
     public let isInvited: Bool
@@ -71,8 +77,10 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
         language: TranslationLanguage?,
         extraData: [String: RawJSON],
         memberRole: MemberRole,
+        memberStatus: MemberStatus? = nil,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,
+        memberDeletedAt: Date? = nil,
         isInvited: Bool,
         inviteAcceptedAt: Date?,
         inviteRejectedAt: Date?,
@@ -86,8 +94,10 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
         memberExtraData: [String: RawJSON]
     ) {
         self.memberRole = memberRole
+        self.memberStatus = memberStatus
         self.memberCreatedAt = memberCreatedAt
         self.memberUpdatedAt = memberUpdatedAt
+        self.memberDeletedAt = memberDeletedAt
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
@@ -148,8 +158,10 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
             language: language,
             extraData: userExtraData ?? [:],
             memberRole: memberRole,
+            memberStatus: memberStatus,
             memberCreatedAt: memberCreatedAt,
             memberUpdatedAt: memberUpdatedAt,
+            memberDeletedAt: memberDeletedAt,
             isInvited: isInvited,
             inviteAcceptedAt: inviteAcceptedAt,
             inviteRejectedAt: inviteRejectedAt,
@@ -237,6 +249,31 @@ public extension MemberRole {
             try container.encode(rawValue)
         }
     }
+}
+
+/// A `struct` describing the status of a member in a channel.
+/// There are some predefined types but any type can be introduced and sent by the backend.
+public struct MemberStatus: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+public extension MemberStatus {
+    /// The user is a member of the channel.
+    static let member = Self(rawValue: "member")
+
+    /// The user was invited to the channel and has not responded yet.
+    static let pending = Self(rawValue: "pending")
+
+    /// The user rejected the invitation to the channel.
+    static let rejected = Self(rawValue: "rejected")
 }
 
 /// The member information when adding a member to a channel.

@@ -12,8 +12,10 @@ class MemberDTO: NSManagedObject {
 
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
+    @NSManaged var statusRaw: String?
     @NSManaged var memberCreatedAt: DBDate
     @NSManaged var memberUpdatedAt: DBDate
+    @NSManaged var memberDeletedAt: DBDate?
 
     @NSManaged var banExpiresAt: DBDate?
     @NSManaged var isBanned: Bool
@@ -128,8 +130,10 @@ extension NSManagedObjectContext {
             dto.channelRoleRaw = channelRole
         }
 
+        dto.statusRaw = payload.status
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
+        dto.memberDeletedAt = payload.deletedAt?.bridgeDate
         dto.isBanned = payload.banned ?? false
         dto.isShadowBanned = payload.shadowBanned ?? false
         dto.banExpiresAt = payload.banExpires?.bridgeDate
@@ -255,8 +259,10 @@ extension ChatChannelMember {
             language: language,
             extraData: extraData,
             memberRole: role,
+            memberStatus: dto.statusRaw.map(MemberStatus.init(rawValue:)),
             memberCreatedAt: dto.memberCreatedAt.bridgeDate,
             memberUpdatedAt: dto.memberUpdatedAt.bridgeDate,
+            memberDeletedAt: dto.memberDeletedAt?.bridgeDate,
             isInvited: dto.isInvited,
             inviteAcceptedAt: dto.inviteAcceptedAt?.bridgeDate,
             inviteRejectedAt: dto.inviteRejectedAt?.bridgeDate,

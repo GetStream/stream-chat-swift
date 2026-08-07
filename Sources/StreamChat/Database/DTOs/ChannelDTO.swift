@@ -47,6 +47,10 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
     @NSManaged var team: String?
+
+    @NSManaged var isAutoTranslationEnabled: Bool
+    // A comma separated list of language codes the channel is translated to.
+    @NSManaged var autoTranslationLanguage: String?
     
     @NSManaged var isBlocked: Bool
     
@@ -60,6 +64,7 @@ class ChannelDTO: NSManagedObject {
     // MARK: - Relationships
 
     @NSManaged var createdBy: UserDTO?
+    @NSManaged var truncatedBy: UserDTO?
     @NSManaged var members: Set<MemberDTO>
     @NSManaged var threads: Set<ThreadDTO>
 
@@ -325,9 +330,19 @@ extension NSManagedObjectContext {
         dto.cooldownDuration = payload.cooldown ?? 0
         dto.team = payload.team
 
+        // The backend omits both keys when auto translation is off, therefore a missing
+        // value means disabled and must not be treated as "leave the local value alone".
+        dto.isAutoTranslationEnabled = payload.autoTranslationEnabled ?? false
+        dto.autoTranslationLanguage = payload.autoTranslationLanguage
+
         if let createdByPayload = payload.createdBy {
             let creatorDTO = try saveUser(payload: createdByPayload)
             dto.createdBy = creatorDTO
+        }
+
+        if let truncatedByPayload = payload.truncatedBy {
+            let truncatorDTO = try saveUser(payload: truncatedByPayload)
+            dto.truncatedBy = truncatorDTO
         }
 
         try payload.members?.forEach { memberPayload in
@@ -664,6 +679,7 @@ extension ChatChannel {
             updatedAt: dto.updatedAt.bridgeDate,
             deletedAt: dto.deletedAt?.bridgeDate,
             truncatedAt: dto.truncatedAt?.bridgeDate,
+            truncatedBy: dto.truncatedBy?.asModel(),
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: dto.config?.asModel() ?? ChannelConfig(),
@@ -677,6 +693,8 @@ extension ChatChannel {
             currentlyTypingUsers: typingUsers,
             lastActiveWatchers: watchers,
             team: dto.team,
+            isAutoTranslationEnabled: dto.isAutoTranslationEnabled,
+            autoTranslationLanguages: TranslationLanguage.languages(fromCommaSeparated: dto.autoTranslationLanguage),
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),

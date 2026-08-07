@@ -40,6 +40,7 @@
         <relationship name="commands" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CommandDTO" inverseName="channelConfig" inverseEntity="CommandDTO"/>
     </entity>
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
+        <attribute name="autoTranslationLanguage" optional="YES" attributeType="String"/>
         <attribute name="cid" attributeType="String"/>
         <attribute name="cooldownDuration" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -50,6 +51,7 @@
         <attribute name="hasUnreadSorting" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
+        <attribute name="isAutoTranslationEnabled" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isBlocked" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isDisabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -83,6 +85,7 @@
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="channel" inverseEntity="ChannelReadDTO"/>
         <relationship name="reminders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReminderDTO" inverseName="channel" inverseEntity="MessageReminderDTO"/>
         <relationship name="threads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadDTO" inverseName="channel" inverseEntity="ThreadDTO"/>
+        <relationship name="truncatedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="truncatedChannels" inverseEntity="UserDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
         <relationship name="filterTags" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChannelFilterTagDTO" inverseName="channel" inverseEntity="ChannelFilterTagDTO"/>
         <fetchIndex name="defaultSortingIndex">
@@ -225,9 +228,11 @@
         <attribute name="isInvited" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isShadowBanned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="memberCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="memberDeletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notificationsMuted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="pinnedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="statusRaw" optional="YES" attributeType="String"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
         <relationship name="membershipChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="membership" inverseEntity="ChannelDTO"/>
         <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="members" inverseEntity="ChannelMemberListQueryDTO"/>
@@ -619,6 +624,7 @@
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="user" inverseEntity="MessageReactionDTO"/>
         <relationship name="threadReads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadReadDTO" inverseName="user" inverseEntity="ThreadReadDTO"/>
         <relationship name="threads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadParticipantDTO" inverseName="user" inverseEntity="ThreadParticipantDTO"/>
+        <relationship name="truncatedChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="truncatedBy" inverseEntity="ChannelDTO"/>
         <relationship name="typingIn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="currentlyTypingUsers" inverseEntity="ChannelDTO"/>
         <relationship name="votes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PollVoteDTO" inverseName="user" inverseEntity="PollVoteDTO"/>
         <relationship name="watchedChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="watchers" inverseEntity="ChannelDTO"/>

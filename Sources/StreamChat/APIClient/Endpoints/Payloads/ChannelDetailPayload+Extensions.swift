@@ -31,6 +31,7 @@ extension ChannelDetailPayload {
         deletedAt: Date?,
         updatedAt: Date,
         truncatedAt: Date?,
+        truncatedBy: UserPayload? = nil,
         createdBy: UserPayload?,
         config: ChannelConfig?,
         filterTags: [String]?,
@@ -43,7 +44,9 @@ extension ChannelDetailPayload {
         memberCount: Int?,
         messageCount: Int?,
         team: TeamId?,
-        cooldownDuration: Int?
+        cooldownDuration: Int?,
+        autoTranslationEnabled: Bool? = nil,
+        autoTranslationLanguage: String? = nil
     ) {
         var custom = extraData
         if let name {
@@ -54,6 +57,8 @@ extension ChannelDetailPayload {
         }
 
         self.init(
+            autoTranslationEnabled: autoTranslationEnabled,
+            autoTranslationLanguage: autoTranslationLanguage,
             blocked: isBlocked,
             cid: cid,
             config: config,
@@ -74,6 +79,7 @@ extension ChannelDetailPayload {
             ownCapabilities: ownCapabilities?.compactMap(ChannelOwnCapability.init(rawValue:)),
             team: team,
             truncatedAt: truncatedAt,
+            truncatedBy: truncatedBy,
             type: cid.type.rawValue,
             updatedAt: updatedAt
         )

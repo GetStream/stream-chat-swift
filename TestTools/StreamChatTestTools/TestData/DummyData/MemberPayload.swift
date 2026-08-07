@@ -12,6 +12,8 @@ extension MemberPayload {
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         role: MemberRole = .member,
+        status: String? = nil,
+        deletedAt: Date? = nil,
         isMemberBanned: Bool = false,
         archivedAt: Date? = nil,
         pinnedAt: Date? = nil
@@ -20,8 +22,10 @@ extension MemberPayload {
             user: user,
             userId: user.id,
             role: role,
+            status: status,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            deletedAt: deletedAt,
             isBanned: isMemberBanned,
             archivedAt: archivedAt,
             pinnedAt: pinnedAt

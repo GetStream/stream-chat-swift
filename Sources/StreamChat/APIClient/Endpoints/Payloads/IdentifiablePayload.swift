@@ -154,6 +154,7 @@ extension ChannelDetailPayload: IdentifiablePayload {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         createdBy?.fillIds(cache: &cache)
+        truncatedBy?.fillIds(cache: &cache)
         members?.fillIds(cache: &cache)
     }
 }

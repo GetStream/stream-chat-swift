@@ -224,7 +224,11 @@ final class IdentifiablePayload_Tests: XCTestCase {
             UserPayload.dummy(userId: "\($0)")
         }
         let cid = ChannelId.unique
-        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid, createdBy: watchers[0])
+        let channelDetailPayload = ChannelDetailPayload.dummy(
+            cid: cid,
+            truncatedBy: .dummy(userId: "4"),
+            createdBy: watchers[0]
+        )
         let payload = ChannelPayload.dummy(channel: channelDetailPayload, watchers: watchers)
 
         let cache = payload.recursivelyGetAllIds()
@@ -233,7 +237,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let channelDetailIds = try XCTUnwrap(cache[ChannelDTO.className])
 
         XCTAssertEqual(cache.keys.count, 2)
-        XCTAssertEqual(userIds, ["0", "1", "2", "3"])
+        XCTAssertEqual(userIds, ["0", "1", "2", "3", "4"])
         XCTAssertEqual(channelDetailIds, [cid.rawValue])
     }
 

@@ -32,6 +32,9 @@ public final class ChatChannel: @unchecked Sendable {
     /// If the channel was truncated, this field contains the date of the truncation.
     public let truncatedAt: Date?
 
+    /// If the channel was truncated, this field contains the user which truncated it.
+    public let truncatedBy: ChatUser?
+
     /// Flag for representing hidden state for the channel.
     public let isHidden: Bool
 
@@ -117,6 +120,16 @@ public final class ChatChannel: @unchecked Sendable {
     ///
     public let team: TeamId?
 
+    /// A flag indicating whether messages sent to the channel are automatically translated.
+    public let isAutoTranslationEnabled: Bool
+
+    /// The languages configured on the channel for automatically translating new messages.
+    ///
+    /// Takes effect when automatic translation is enabled for either the channel or the app.
+    /// Messages can additionally be translated into languages spoken by other members, and
+    /// translations are available in `ChatMessage.translations`.
+    public let autoTranslationLanguages: Set<TranslationLanguage>
+
     /// The unread counts for the channel.
     public let unreadCount: ChannelUnreadCount
 
@@ -186,6 +199,7 @@ public final class ChatChannel: @unchecked Sendable {
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
         truncatedAt: Date? = nil,
+        truncatedBy: ChatUser? = nil,
         isHidden: Bool,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
@@ -199,6 +213,8 @@ public final class ChatChannel: @unchecked Sendable {
         currentlyTypingUsers: Set<ChatUser>,
         lastActiveWatchers: [ChatUser],
         team: TeamId? = nil,
+        isAutoTranslationEnabled: Bool = false,
+        autoTranslationLanguages: Set<TranslationLanguage> = [],
         unreadCount: ChannelUnreadCount,
         watcherCount: Int = 0,
         memberCount: Int = 0,
@@ -232,6 +248,8 @@ public final class ChatChannel: @unchecked Sendable {
         self.isBlocked = isBlocked
         self.membership = membership
         self.team = team
+        self.isAutoTranslationEnabled = isAutoTranslationEnabled
+        self.autoTranslationLanguages = autoTranslationLanguages
         self.watcherCount = watcherCount
         self.memberCount = memberCount
         self.messageCount = messageCount
@@ -239,6 +257,7 @@ public final class ChatChannel: @unchecked Sendable {
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
         self.truncatedAt = truncatedAt
+        self.truncatedBy = truncatedBy
         self.unreadCount = unreadCount
         self.latestMessages = latestMessages
         self.lastMessageFromCurrentUser = lastMessageFromCurrentUser
@@ -268,6 +287,7 @@ public final class ChatChannel: @unchecked Sendable {
             updatedAt: updatedAt,
             deletedAt: deletedAt,
             truncatedAt: truncatedAt,
+            truncatedBy: truncatedBy,
             isHidden: isHidden,
             createdBy: createdBy,
             config: config,
@@ -281,6 +301,8 @@ public final class ChatChannel: @unchecked Sendable {
             currentlyTypingUsers: currentlyTypingUsers,
             lastActiveWatchers: lastActiveWatchers,
             team: team,
+            isAutoTranslationEnabled: isAutoTranslationEnabled,
+            autoTranslationLanguages: autoTranslationLanguages,
             unreadCount: unreadCount,
             watcherCount: watcherCount,
             memberCount: memberCount,
@@ -365,6 +387,7 @@ public final class ChatChannel: @unchecked Sendable {
             updatedAt: newUpdatedAt,
             deletedAt: newDeletedAt,
             truncatedAt: newTruncatedAt,
+            truncatedBy: truncatedBy,
             isHidden: newIsHidden,
             createdBy: newCreatedBy,
             config: newConfig,
@@ -378,6 +401,8 @@ public final class ChatChannel: @unchecked Sendable {
             currentlyTypingUsers: newCurrentlyTypingUsers,
             lastActiveWatchers: newWatchers,
             team: newTeam,
+            isAutoTranslationEnabled: isAutoTranslationEnabled,
+            autoTranslationLanguages: autoTranslationLanguages,
             unreadCount: unreadCount,
             watcherCount: newWatcherCount,
             memberCount: newMemberCount,
@@ -483,6 +508,9 @@ extension ChatChannel: Hashable {
         guard lhs.membership == rhs.membership else { return false }
         guard lhs.team == rhs.team else { return false }
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
+        guard lhs.truncatedBy == rhs.truncatedBy else { return false }
+        guard lhs.isAutoTranslationEnabled == rhs.isAutoTranslationEnabled else { return false }
+        guard lhs.autoTranslationLanguages == rhs.autoTranslationLanguages else { return false }
         guard lhs.filterTags == rhs.filterTags else { return false }
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
         guard lhs.draftMessage == rhs.draftMessage else { return false }

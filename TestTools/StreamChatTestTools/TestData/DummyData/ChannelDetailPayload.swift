@@ -18,6 +18,7 @@ extension ChannelDetailPayload {
         deletedAt: Date? = nil,
         updatedAt: Date = .init(),
         truncatedAt: Date? = nil,
+        truncatedBy: UserPayload? = nil,
         createdBy: UserPayload = .dummy(userId: .unique),
         config: ChannelConfig? = .mock(),
         filterTags: [String]? = nil,
@@ -30,7 +31,9 @@ extension ChannelDetailPayload {
         memberCount: Int? = nil,
         messageCount: Int? = nil,
         team: String? = nil,
-        cooldownDuration: Int = 0
+        cooldownDuration: Int = 0,
+        autoTranslationEnabled: Bool? = nil,
+        autoTranslationLanguage: String? = nil
     ) -> Self {
         .init(
             cid: cid,
@@ -42,6 +45,7 @@ extension ChannelDetailPayload {
             deletedAt: deletedAt,
             updatedAt: updatedAt,
             truncatedAt: truncatedAt,
+            truncatedBy: truncatedBy,
             createdBy: createdBy,
             config: config,
             filterTags: filterTags,
@@ -54,7 +58,9 @@ extension ChannelDetailPayload {
             memberCount: memberCount ?? members.count,
             messageCount: messageCount,
             team: team,
-            cooldownDuration: cooldownDuration
+            cooldownDuration: cooldownDuration,
+            autoTranslationEnabled: autoTranslationEnabled,
+            autoTranslationLanguage: autoTranslationLanguage
         )
     }
 }
