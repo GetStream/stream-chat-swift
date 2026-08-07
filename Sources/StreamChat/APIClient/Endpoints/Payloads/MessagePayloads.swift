@@ -467,9 +467,8 @@ public struct Command: Codable, Hashable, Sendable {
 
 /// Slim channel-member info attached to a message payload (`message.member`).
 ///
-/// This is not a full channel member. When `member_custom_include` is requested, selected
-/// keys from the author's channel-member `custom` are projected as **inline** fields on this
-/// object (v1 API shape) and collected into ``extraData``.
+/// This is not a full channel member. Known fields are decoded into typed properties;
+/// any additional inline fields are collected into ``extraData``.
 struct MemberInfoPayload: Codable, Hashable {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case channelRole = "channel_role"
@@ -478,7 +477,7 @@ struct MemberInfoPayload: Codable, Hashable {
 
     let channelRole: MemberRole?
     let notificationsMuted: Bool
-    /// Projected channel-member custom keys requested via `member_custom_include`.
+    /// Additional inline fields from `message.member` that are not known typed properties.
     let extraData: [String: RawJSON]
 
     init(
