@@ -4,15 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
-### 🐞 Fixed
-- Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
-
-### 🔄 Changed
-
-## StreamChat
 ### ✅ Added
 - Add `ChatChannel.truncatedBy`, `ChatChannel.isAutoTranslationEnabled` and `ChatChannel.autoTranslationLanguages` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
 - Add `ChatChannelMember.memberStatus` and `ChatChannelMember.memberDeletedAt` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
+### 🐞 Fixed
+- Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
 
 ## StreamChatCommonUI
 ### ✅ Added
