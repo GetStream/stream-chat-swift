@@ -603,15 +603,12 @@ extension Endpoint {
 
     static func deletePoll(
         pollId: String,
-        userId: String?,
         requiresConnectionId: Bool = false
     ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deletePoll(pollId: pollId),
             method: .delete,
-            queryItems: APIHelper.mapValuesToQueryDictionary([
-                "user_id": userId
-            ]),
+            queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
@@ -621,7 +618,6 @@ extension Endpoint {
         messageId: String,
         pollId: String,
         voteId: String,
-        userId: String?,
         requiresConnectionId: Bool = false
     ) -> Endpoint<PollVotePayloadResponse> {
         return .init(
@@ -631,9 +627,7 @@ extension Endpoint {
                 voteId: voteId
             ),
             method: .delete,
-            queryItems: APIHelper.mapValuesToQueryDictionary([
-                "user_id": userId
-            ]),
+            queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
@@ -767,16 +761,13 @@ extension Endpoint {
 
     static func queryPollVotes(
         pollId: String,
-        userId: String?,
         queryPollVotesRequest: QueryPollVotesRequestBody,
         requiresConnectionId: Bool = false
     ) -> Endpoint<PollVoteListResponse> {
         return .init(
             path: .queryPollVotes(pollId: pollId),
             method: .post,
-            queryItems: APIHelper.mapValuesToQueryDictionary([
-                "user_id": userId
-            ]),
+            queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryPollVotesRequest
         )
