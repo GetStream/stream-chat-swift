@@ -4,10 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `ChatMessage.member` with the author's channel role, notification mute state, and extra data snapshot at the time of the message, kept in sync with member updates [#4206](https://github.com/GetStream/stream-chat-swift/pull/4206)
+
 ### 🐞 Fixed
 - Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
 
 ### 🔄 Changed
+
+### ⛔️ Deprecated
+- Deprecate `ChatMessage.channelRole` in favor of `ChatMessage.member?.channelRole` [#4206](https://github.com/GetStream/stream-chat-swift/pull/4206)
 
 ## StreamChatCommonUI
 ### ✅ Added
