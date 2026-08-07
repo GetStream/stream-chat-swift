@@ -114,6 +114,27 @@ final class ManualEventHandler_Tests: XCTestCase {
         }
         XCTAssertNil(result, "Unsupported event types should return nil")
     }
+
+    func test_handle_memberUpdatedEvent_returnsNil() throws {
+        // Member events are intentionally not manually handled: they are comparatively
+        // low-volume compared to messages/reactions/typing, and channel/member state is
+        // expected to stay database-backed even for livestream channels.
+        let eventPayload = EventPayload(
+            eventType: .memberUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(),
+            createdAt: .unique
+        )
+        let eventDTO = try! MemberUpdatedEventDTO(from: eventPayload)
+
+        nonisolated(unsafe) var result: Event!
+        try database.writeSynchronously { _ in
+            result = self.handler.handle(eventDTO)
+        }
+
+        XCTAssertNil(result)
+    }
     
     // MARK: - Message New Event
     

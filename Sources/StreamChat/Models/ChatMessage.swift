@@ -350,7 +350,8 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         moderationDetails: MessageModerationDetails? = nil,
         readBy: Set<ChatUser>? = nil,
         deletedAt: Date? = nil,
-        extraData: [String: RawJSON]? = nil
+        extraData: [String: RawJSON]? = nil,
+        member: MemberInfo? = nil
     ) -> ChatMessage {
         // Resolve the coalesced values up front so the type-checker does not
         // have to evaluate all of them inside the single large initializer call.
@@ -366,6 +367,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         let newOriginalLanguage = originalLanguage ?? self.originalLanguage
         let newModerationDetails = moderationDetails ?? self.moderationDetails
         let newReadBy = readBy ?? self.readBy
+        let newMember = member ?? self.member
         return .init(
             id: id,
             cid: cid,
@@ -413,7 +415,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            member: member
+            member: newMember
         )
     }
 
