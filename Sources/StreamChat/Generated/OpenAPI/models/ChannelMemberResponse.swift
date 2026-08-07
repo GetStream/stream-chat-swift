@@ -8,6 +8,8 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
     let archivedAt: Date?
     /// Expiration date of the ban
     let banExpires: Date?
+    /// Whether the member's ban also applies to channels the channel's creator will create in the future (an active future channel ban by the creator targets this member)
+    let banFromFutureChannels: Bool?
     /// Whether member is banned this channel or not
     let banned: Bool
     /// Role of the member in the channel
@@ -17,6 +19,8 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
     let custom: [String: RawJSON]
     let deletedAt: Date?
     let deletedMessages: [String]?
+    /// Expiration date of the future channel ban; absent when the future channel ban is permanent
+    let futureChannelBanExpires: Date?
     /// Date when invite was accepted
     let inviteAcceptedAt: Date?
     /// Date when invite was rejected
@@ -40,12 +44,14 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
     init(
         archivedAt: Date? = nil,
         banExpires: Date? = nil,
+        banFromFutureChannels: Bool? = nil,
         banned: Bool,
         channelRole: String,
         createdAt: Date,
         custom: [String: RawJSON],
         deletedAt: Date? = nil,
         deletedMessages: [String]? = nil,
+        futureChannelBanExpires: Date? = nil,
         inviteAcceptedAt: Date? = nil,
         inviteRejectedAt: Date? = nil,
         invited: Bool? = nil,
@@ -61,12 +67,14 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
     ) {
         self.archivedAt = archivedAt
         self.banExpires = banExpires
+        self.banFromFutureChannels = banFromFutureChannels
         self.banned = banned
         self.channelRole = channelRole
         self.createdAt = createdAt
         self.custom = custom
         self.deletedAt = deletedAt
         self.deletedMessages = deletedMessages
+        self.futureChannelBanExpires = futureChannelBanExpires
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
         self.invited = invited
@@ -84,12 +92,14 @@ final class ChannelMemberResponse: Sendable, Codable, JSONEncodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case archivedAt = "archived_at"
         case banExpires = "ban_expires"
+        case banFromFutureChannels = "ban_from_future_channels"
         case banned
         case channelRole = "channel_role"
         case createdAt = "created_at"
         case custom
         case deletedAt = "deleted_at"
         case deletedMessages = "deleted_messages"
+        case futureChannelBanExpires = "future_channel_ban_expires"
         case inviteAcceptedAt = "invite_accepted_at"
         case inviteRejectedAt = "invite_rejected_at"
         case invited
