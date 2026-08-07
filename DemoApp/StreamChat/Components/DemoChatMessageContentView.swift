@@ -125,6 +125,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             avatarView.layer.borderWidth = Self.premiumBorderWidth
             avatarView.layer.borderColor = Self.premiumBorderColor.cgColor
         } else {
+            avatarView.layer.cornerRadius = 0
             avatarView.layer.borderWidth = 0
             avatarView.layer.borderColor = nil
         }

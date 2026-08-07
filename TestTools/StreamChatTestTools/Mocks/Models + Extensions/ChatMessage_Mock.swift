@@ -58,7 +58,9 @@ public extension ChatMessage {
         reminder: MessageReminderInfo? = nil,
         sharedLocation: SharedLocation? = nil,
         member: ChatMessage.MemberInfo? = nil,
-        deletedForMe: Bool = false
+        deletedForMe: Bool = false,
+        // Kept for source compatibility with existing call sites; prefer `member`.
+        channelRole: MemberRole? = nil
     ) -> Self {
         .init(
             id: id,
@@ -107,7 +109,7 @@ public extension ChatMessage {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            member: member
+            member: member ?? channelRole.map { ChatMessage.MemberInfo(channelRole: $0) }
         )
     }
 }

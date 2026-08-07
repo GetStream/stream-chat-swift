@@ -798,6 +798,49 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(chatMessage.channelRole, .moderator)
     }
 
+    func test_updateMemberInfo_clearsStoredRole_whenNewSnapshotHasNoRole() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    authorUserId: userId,
+                    member: MemberInfoPayload(channelRole: .moderator, notificationsMuted: false)
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        var loadedMessage: MessageDTO? {
+            database.viewContext.message(id: messageId)
+        }
+        XCTAssertEqual(loadedMessage?.channelRole, MemberRole.moderator.rawValue)
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    authorUserId: userId,
+                    member: MemberInfoPayload(channelRole: nil, notificationsMuted: true)
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        XCTAssertNil(loadedMessage?.channelRole)
+        XCTAssertEqual(loadedMessage?.memberNotificationsMuted, true)
+    }
+
     func test_messagePayload_isPinned_addedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)

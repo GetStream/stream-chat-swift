@@ -682,9 +682,7 @@ extension MessageDTO {
     }
 
     func updateMemberInfo(from member: MemberInfoPayload) {
-        if let role = member.channelRole?.rawValue {
-            channelRole = role
-        }
+        channelRole = member.channelRole?.rawValue
         memberNotificationsMuted = member.notificationsMuted
         do {
             memberExtraData = try JSONEncoder.default.encode(member.extraData)
