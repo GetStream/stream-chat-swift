@@ -405,7 +405,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             eventType: .notificationRemovedFromChannel,
             cid: .unique,
             user: .dummy(userId: .unique),
-            memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
+            memberContainer: .init(member: .dummy()),
             createdAt: .unique
         )
 
@@ -465,7 +465,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             eventType: .notificationInvited,
             cid: .unique,
             user: .dummy(userId: .unique),
-            memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
+            memberContainer: .init(member: .dummy()),
             createdAt: .unique
         )
 
@@ -498,7 +498,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationInviteAccepted,
             user: .dummy(userId: .unique),
-            memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
+            memberContainer: .init(member: .dummy()),
             channel: .dummy(cid: .unique),
             createdAt: .unique
         )
@@ -533,7 +533,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationInviteRejected,
             user: .dummy(userId: .unique),
-            memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
+            memberContainer: .init(member: .dummy()),
             channel: .dummy(cid: .unique),
             createdAt: .unique
         )

@@ -51,11 +51,7 @@ final class MemberEvents_Tests: XCTestCase {
             eventType: .memberAdded,
             cid: .unique,
             user: .dummy(userId: .unique),
-            memberContainer: .init(
-                member: .dummy(),
-                invite: nil,
-                memberRole: nil
-            ),
+            memberContainer: .init(member: .dummy()),
             createdAt: .unique
         )
 
@@ -90,11 +86,7 @@ final class MemberEvents_Tests: XCTestCase {
             eventType: .memberUpdated,
             cid: .unique,
             user: .dummy(userId: .unique),
-            memberContainer: .init(
-                member: .dummy(),
-                invite: nil,
-                memberRole: nil
-            ),
+            memberContainer: .init(member: .dummy()),
             createdAt: .unique
         )
 
