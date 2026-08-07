@@ -22,6 +22,7 @@ swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/Sys
 is_localhost = !is_ci
 mock_server_driver_port = 4566
 @force_check = false
+xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
 before_all do |lane|
   if is_ci
@@ -185,7 +186,8 @@ lane :test do |options|
     devices: options[:device],
     number_of_retries: 5,
     build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build]
+    skip_build: options[:skip_build],
+    xcodebuild_formatter: xcodebuild_formatter
   )
 
   next if options[:build_for_testing]
@@ -200,7 +202,8 @@ lane :test do |options|
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
     skip_build: true,
-    number_of_retries: options[:cron] ? 3 : 2
+    number_of_retries: options[:cron] ? 3 : 2,
+    xcodebuild_formatter: xcodebuild_formatter
   }
 
   scan(scan_options)
@@ -246,7 +249,8 @@ lane :build_test_app_and_frameworks do
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
-    build_for_testing: true
+    build_for_testing: true,
+    xcodebuild_formatter: xcodebuild_formatter
   )
 end
 
@@ -267,7 +271,8 @@ lane :xcmetrics do |options|
     clean: is_localhost,
     sdk: 'iphoneos',
     skip_detect_devices: true,
-    build_for_testing: true
+    build_for_testing: true,
+    xcodebuild_formatter: xcodebuild_formatter
   )
 
   firebase_error = ''
@@ -426,7 +431,8 @@ lane :test_e2e do |options|
     test_without_building: options[:test_without_building],
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3
+    number_of_retries: 3,
+    xcodebuild_formatter: xcodebuild_formatter
   }
 
   begin
@@ -455,7 +461,8 @@ lane :test_e2e_mock do |options|
     test_without_building: options[:test_without_building],
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3
+    number_of_retries: 3,
+    xcodebuild_formatter: xcodebuild_formatter
   }
 
   if ENV['MATRIX_SIZE'] && options[:batch]
@@ -521,7 +528,8 @@ lane :test_ui do |options|
     skip_build: options[:skip_build],
     result_bundle: true,
     devices: options[:device],
-    fail_build: !record_mode
+    fail_build: !record_mode,
+    xcodebuild_formatter: xcodebuild_formatter
   )
 
   if record_mode && is_ci
@@ -560,7 +568,8 @@ lane :test_common_ui do |options|
     skip_build: options[:skip_build],
     result_bundle: true,
     devices: options[:device],
-    number_of_retries: options[:cron] ? 3 : 2
+    number_of_retries: options[:cron] ? 3 : 2,
+    xcodebuild_formatter: xcodebuild_formatter
   )
 end
 
@@ -638,7 +647,8 @@ private_lane :build_example_app do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     build_for_testing: true,
-    devices: options[:device]
+    devices: options[:device],
+    xcodebuild_formatter: xcodebuild_formatter
   )
 end
 
@@ -654,7 +664,8 @@ lane :spm_integration do
     clean: is_localhost,
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
-    destination: 'generic/platform=iOS Simulator'
+    destination: 'generic/platform=iOS Simulator',
+    xcodebuild_formatter: xcodebuild_formatter
   )
 end
 
@@ -850,7 +861,8 @@ lane :size_analyze do
     skip_package_pkg: true,
     skip_codesigning: true,
     derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path
+    cloned_source_packages_path: source_packages_path,
+    xcodebuild_formatter: xcodebuild_formatter
   )
 
   show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)

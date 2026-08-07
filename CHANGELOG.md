@@ -4,12 +4,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
+
+### 🔄 Changed
+
+## StreamChatCommonUI
+### ✅ Added
+- Add `chatThreadConnectorIncoming` and `chatThreadConnectorOutgoing` colors for customizing the thread connector [#4195](https://github.com/GetStream/stream-chat-swift/pull/4195)
+
+# [5.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.8.0)
+_August 03, 2026_
+
+## StreamChat
 ### ✅ Added
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
 ### ⚡️ Performance
 - Skip oversized `/sync` event replay and refresh watched channels via `queryChannels` instead [#4189](https://github.com/GetStream/stream-chat-swift/pull/4189)
+
+### 🐞 Fixed
+- Fix double slash handling in some of the endpoint paths [#4191](https://github.com/GetStream/stream-chat-swift/pull/4191) 
 
 ## StreamChatCommonUI
 ### ✅ Added

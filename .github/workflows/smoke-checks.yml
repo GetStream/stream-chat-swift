@@ -14,6 +14,11 @@ on:
         type: boolean
         required: false
         default: false
+      verbose:
+        description: 'Run tests in verbose mode?'
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,6 +29,7 @@ env:
   IOS_SIMULATOR_DEVICE: "iPhone 17 Pro (26.2)"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+  VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
 
 permissions:
   contents: read
@@ -48,7 +54,7 @@ jobs:
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Build
-      run: bundle exec fastlane build_test_app_and_frameworks
+      run: bundle exec fastlane build_test_app_and_frameworks ${{ env.VERBOSE }}
       timeout-minutes: 60
     - uses: actions/upload-artifact@v4
       if: success()
@@ -91,13 +97,13 @@ jobs:
     - name: List Xcode versions
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC
-      run: bundle exec fastlane test device:"iPhone 16" build_for_testing:true
+      run: bundle exec fastlane test device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build UI
-      run: bundle exec fastlane test_ui device:"iPhone 16" build_for_testing:true
+      run: bundle exec fastlane test_ui device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
     - name: Build Common UI
-      run: bundle exec fastlane test_common_ui device:"iPhone 16" build_for_testing:true
+      run: bundle exec fastlane test_common_ui device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
 
   test-llc-debug:
@@ -114,7 +120,7 @@ jobs:
         INSTALL_YEETD: true
         INSTALL_SONAR: true
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
+      run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
       timeout-minutes: 60
     - name: Run Sonar analysis
       run: bundle exec fastlane sonar_upload
@@ -146,6 +152,9 @@ jobs:
     needs:
       - guard
       - build-test-app-and-frameworks
+    permissions:
+      contents: write # to push the snapshots branch
+      pull-requests: write
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v4
@@ -157,7 +166,7 @@ jobs:
         INSTALL_YEETD: true
         SKIP_SWIFT_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:"${{ github.event.inputs.record_snapshots }}"
+      run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:"${{ github.event.inputs.record_snapshots }}" ${{ env.VERBOSE }}
       timeout-minutes: 120
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
@@ -192,7 +201,7 @@ jobs:
         INSTALL_YEETD: true
         SKIP_SWIFT_BOOTSTRAP: true
     - name: Run Common UI Tests (Debug)
-      run: bundle exec fastlane test_common_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
+      run: bundle exec fastlane test_common_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true ${{ env.VERBOSE }}
       timeout-minutes: 60
     - name: Parse xcresult
       if: failure()
@@ -254,7 +263,7 @@ jobs:
         INSTALL_YEETD: true
         SKIP_SWIFT_BOOTSTRAP: true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}' test_without_building:true ${{ env.VERBOSE }}
       timeout-minutes: 100
       env:
         MATRIX_SIZE: ${{ strategy.job-total }}
@@ -300,19 +309,19 @@ jobs:
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Build Demo App
-      run: bundle exec fastlane build_demo
+      run: bundle exec fastlane build_demo ${{ env.VERBOSE }}
       timeout-minutes: 10
     - name: Build iMessageClone App
-      run: bundle exec fastlane build_imessage_clone
+      run: bundle exec fastlane build_imessage_clone ${{ env.VERBOSE }}
       timeout-minutes: 10
     - name: Build SlackClone App
-      run: bundle exec fastlane build_slack_clone
+      run: bundle exec fastlane build_slack_clone ${{ env.VERBOSE }}
       timeout-minutes: 10
     - name: Build MessengerClone App
-      run: bundle exec fastlane build_messenger_clone
+      run: bundle exec fastlane build_messenger_clone ${{ env.VERBOSE }}
       timeout-minutes: 10
     - name: Build YouTubeClone App
-      run: bundle exec fastlane build_youtube_clone
+      run: bundle exec fastlane build_youtube_clone ${{ env.VERBOSE }}
       timeout-minutes: 10
 
   test-integration:
@@ -331,5 +340,5 @@ jobs:
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Test SPM Integration
-      run: bundle exec fastlane spm_integration
+      run: bundle exec fastlane spm_integration ${{ env.VERBOSE }}
       timeout-minutes: 25
