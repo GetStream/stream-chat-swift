@@ -477,7 +477,6 @@ struct MemberInfoPayload: Codable, Hashable {
 
     let channelRole: MemberRole?
     let notificationsMuted: Bool
-    /// Additional inline fields from `message.member` that are not known typed properties.
     let extraData: [String: RawJSON]
 
     init(
