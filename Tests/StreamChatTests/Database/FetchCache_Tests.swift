@@ -35,6 +35,34 @@ final class FetchCache_Tests: XCTestCase {
         XCTAssertEqual(cache.cacheEntriesCount, 1)
     }
 
+    func test_get_whenDispatchWorkerPoolIsSaturated_shouldStillReturn() {
+        let cache = FetchCache()
+        let request = createRequest()
+
+        // Occupy the libdispatch worker pool with blocked tasks, mirroring many Core Data contexts
+        // stuck in `performAndWait` at once. A barrier write enqueued now cannot find a free worker.
+        let unblockWorkers = DispatchSemaphore(value: 0)
+        let workerCount = 128
+        for _ in 0..<workerCount {
+            DispatchQueue.global(qos: .userInitiated).async { unblockWorkers.wait() }
+        }
+        Thread.sleep(forTimeInterval: 0.2)
+
+        cache.set(request, objectIds: tenIds)
+
+        // The reader runs on a non-dispatch thread, like a Core Data context thread inside
+        // `performAndWait`. It must not depend on a dispatch worker becoming available.
+        let getReturned = expectation(description: "get returned")
+        let reader = Thread {
+            _ = cache.get(request)
+            getReturned.fulfill()
+        }
+        reader.start()
+
+        wait(for: [getReturned], timeout: 5)
+        (0..<workerCount).forEach { _ in unblockWorkers.signal() }
+    }
+
     func test_fetchRequestWrapper_sameRequest_differentSortDescriptorOrder_shouldHaveDifferentHashValue() {
         let cache = FetchCache()
         let objectIDs = tenIds

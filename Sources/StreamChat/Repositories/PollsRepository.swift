@@ -160,8 +160,7 @@ class PollsRepository: @unchecked Sendable {
                     endpoint: .deletePollVote(
                         messageId: messageId,
                         pollId: pollId,
-                        voteId: voteId,
-                        userId: nil
+                        voteId: voteId
                     )
                 ) { [weak self] in
                     if $0.error != nil, $0.error?.isBackendNotFound404StatusCode == false, exists {
@@ -205,7 +204,7 @@ class PollsRepository: @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .deletePoll(pollId: pollId, userId: nil)
+            endpoint: .deletePoll(pollId: pollId)
         ) { [weak self] in
             if $0.error == nil {
                 self?.database.write { session in
@@ -240,7 +239,7 @@ class PollsRepository: @unchecked Sendable {
         completion: (@Sendable (Result<VotePaginationResponse, Error>) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .queryPollVotes(pollId: query.pollId, userId: nil, queryPollVotesRequest: query.toRequest())
+            endpoint: .queryPollVotes(pollId: query.pollId, queryPollVotesRequest: query.toRequest())
         ) { [weak self] (result: Result<PollVoteListResponse, Error>) in
             switch result {
             case let .success(payload):
@@ -278,7 +277,7 @@ class PollsRepository: @unchecked Sendable {
             sort: sort.isEmpty ? nil : sort
         )
         apiClient.request(
-            endpoint: .queryPollVotes(pollId: pollId, userId: nil, queryPollVotesRequest: request),
+            endpoint: .queryPollVotes(pollId: pollId, queryPollVotesRequest: request),
             completion: { [weak self] result in
                 guard let self else { return }
                 switch result {
