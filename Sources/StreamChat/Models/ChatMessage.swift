@@ -203,9 +203,37 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
 
     /// The location information of the message.
     public let sharedLocation: SharedLocation?
-    
+
+    /// Slim channel-member information for the message author, when present on the payload.
+    ///
+    /// Any custom fields present on `message.member` are available on ``MemberInfo/extraData``.
+    public let member: MemberInfo?
+
     /// The role of the member in the channel.
-    public let channelRole: MemberRole?
+    public var channelRole: MemberRole? { member?.channelRole }
+
+    /// Slim channel-member information attached to a message (`message.member` on the wire).
+    ///
+    /// This is not a full ``ChatChannelMember``. Known fields such as role and notification
+    /// mute state are exposed as typed properties; any additional fields land in ``extraData``.
+    public struct MemberInfo: Hashable, Sendable {
+        /// The role of the message author in the channel.
+        public let channelRole: MemberRole?
+        /// Whether the message author has muted notifications for the channel.
+        public let notificationsMuted: Bool
+        /// Additional fields from the author's channel membership on `message.member`.
+        public let extraData: [String: RawJSON]
+
+        init(
+            channelRole: MemberRole? = nil,
+            notificationsMuted: Bool = false,
+            extraData: [String: RawJSON] = [:]
+        ) {
+            self.channelRole = channelRole
+            self.notificationsMuted = notificationsMuted
+            self.extraData = extraData
+        }
+    }
 
     init(
         id: MessageId,
@@ -254,7 +282,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         draftReply: DraftMessage?,
         reminder: MessageReminderInfo?,
         sharedLocation: SharedLocation?,
-        channelRole: MemberRole?
+        member: MemberInfo? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -303,7 +331,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         self.draftReply = draftReply
         self.sharedLocation = sharedLocation
         self.reminder = reminder
-        self.channelRole = channelRole
+        self.member = member
     }
 
     /// Returns a new `ChatMessage` with the provided data changed.
@@ -321,7 +349,8 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         moderationDetails: MessageModerationDetails? = nil,
         readBy: Set<ChatUser>? = nil,
         deletedAt: Date? = nil,
-        extraData: [String: RawJSON]? = nil
+        extraData: [String: RawJSON]? = nil,
+        member: MemberInfo? = nil
     ) -> ChatMessage {
         // Resolve the coalesced values up front so the type-checker does not
         // have to evaluate all of them inside the single large initializer call.
@@ -337,6 +366,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         let newOriginalLanguage = originalLanguage ?? self.originalLanguage
         let newModerationDetails = moderationDetails ?? self.moderationDetails
         let newReadBy = readBy ?? self.readBy
+        let newMember = member ?? self.member
         return .init(
             id: id,
             cid: cid,
@@ -384,7 +414,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            channelRole: channelRole
+            member: newMember
         )
     }
 
@@ -504,7 +534,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            channelRole: channelRole
+            member: member
         )
     }
 }
@@ -682,6 +712,7 @@ extension ChatMessage: Hashable {
         guard mentionedChannel == other.mentionedChannel else { return false }
         guard mentionedGroups == other.mentionedGroups else { return false }
         guard mentionedRoles == other.mentionedRoles else { return false }
+        guard member == other.member else { return false }
         return true
     }
 

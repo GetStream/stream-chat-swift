@@ -24,6 +24,8 @@ struct DemoAppConfig {
     var shouldShowConnectionBanner: Bool
     /// A Boolean value to define if the premium member feature is enabled. This is to test custom member data.
     var isPremiumMemberFeatureEnabled: Bool
+    /// A Boolean value to define if premium members should show a golden avatar border in the message list.
+    var shouldShowPremiumBadge: Bool
     /// A Boolean value to define if the reminders feature is enabled.
     var isRemindersEnabled: Bool
     /// A Boolean value to define if the poll should be deleted when the message is deleted.
@@ -57,6 +59,7 @@ class AppConfig: @unchecked Sendable {
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
+            shouldShowPremiumBadge: false,
             isRemindersEnabled: true,
             shouldDeletePollOnMessageDeletion: false
         )
@@ -67,6 +70,7 @@ class AppConfig: @unchecked Sendable {
             demoAppConfig.isHardDeleteEnabled = true
             demoAppConfig.shouldShowConnectionBanner = true
             demoAppConfig.isPremiumMemberFeatureEnabled = true
+            demoAppConfig.shouldShowPremiumBadge = true
             demoAppConfig.isRemindersEnabled = true
             demoAppConfig.shouldDeletePollOnMessageDeletion = true
             demoAppConfig.isMessageDeliveredInfoEnabled = true
@@ -183,7 +187,17 @@ class AppConfigViewController: UITableViewController {
         case tokenRefreshDetails
         case shouldShowConnectionBanner
         case isPremiumMemberFeatureEnabled
+        case shouldShowPremiumBadge
         case isRemindersEnabled
+
+        var title: String {
+            switch self {
+            case .shouldShowPremiumBadge:
+                return "Show premium badge"
+            default:
+                return rawValue
+            }
+        }
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -316,7 +330,7 @@ class AppConfigViewController: UITableViewController {
         options: [DemoAppConfigOption]
     ) {
         let option = options[indexPath.row]
-        cell.textLabel?.text = option.rawValue
+        cell.textLabel?.text = option.title
 
         switch option {
         case .isHardDeleteEnabled:
@@ -349,6 +363,10 @@ class AppConfigViewController: UITableViewController {
         case .isPremiumMemberFeatureEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isPremiumMemberFeatureEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isPremiumMemberFeatureEnabled = newValue
+            }
+        case .shouldShowPremiumBadge:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.shouldShowPremiumBadge) { [weak self] newValue in
+                self?.demoAppConfig.shouldShowPremiumBadge = newValue
             }
         case .isRemindersEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isRemindersEnabled) { [weak self] newValue in

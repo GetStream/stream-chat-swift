@@ -405,6 +405,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
             }
 
             channel = channel?.changing(members: members, membership: membership)
+            updateMessagesMemberInfo(with: memberUpdatedEvent.member)
 
         case is UserBannedEvent,
              is UserUnbannedEvent:
@@ -565,6 +566,28 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
     private func updateMessage(_ updatedMessage: ChatMessage) {
         if let messageIndex = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
             messages[messageIndex] = updatedMessage
+        }
+    }
+
+    /// Keeps the member info snapshot stored on the author's messages (`ChatMessage.member`)
+    /// in sync whenever their channel membership is updated. Mirrors `MemberDTO.willSave()`'s
+    /// behavior for persisted channels, since livestream messages live only in memory and are
+    /// never automatically kept up to date by the database.
+    private func updateMessagesMemberInfo(with member: ChatChannelMember) {
+        let newMemberInfo = ChatMessage.MemberInfo(
+            channelRole: member.memberRole,
+            notificationsMuted: member.notificationsMuted,
+            extraData: member.memberExtraData
+        )
+
+        func needsUpdate(_ message: ChatMessage) -> Bool {
+            message.author.id == member.id && message.member?.extraData != newMemberInfo.extraData
+        }
+
+        guard messages.contains(where: needsUpdate) else { return }
+
+        messages = messages.map { message in
+            needsUpdate(message) ? message.changing(member: newMemberInfo) : message
         }
     }
 

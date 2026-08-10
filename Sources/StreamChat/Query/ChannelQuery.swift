@@ -25,7 +25,6 @@ public struct ChannelQuery: Encodable, Sendable {
     public let watchersLimit: Int?
     /// A query options.
     public var options: QueryOptions = .all
-
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload?
     /// A pagination for members for the channel to be retrieved.
@@ -64,7 +63,7 @@ public struct ChannelQuery: Encodable, Sendable {
             watchersLimit: watchersLimit
         )
     }
-
+    
     /// Init a channel query with base values.
     init(
         cid: ChannelId,
