@@ -32,8 +32,8 @@ jobs:
 
       - name: Integration Test
         run: | # reports to @support on failure
-          version=$(gh release view --repo ${{ github.repository }} --json tagName --jq .tagName)
-          gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline --field sdk=stream-chat-swift --field version="$version"
+          test -n "$RELEASE_VERSION"
+          gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline --field sdk=stream-chat-swift --field version="$RELEASE_VERSION"
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
 
