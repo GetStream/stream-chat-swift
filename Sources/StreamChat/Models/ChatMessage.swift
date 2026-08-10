@@ -210,7 +210,6 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
     public let member: MemberInfo?
 
     /// The role of the member in the channel.
-    @available(*, deprecated, message: "Use `member?.channelRole` instead.")
     public var channelRole: MemberRole? { member?.channelRole }
 
     /// Slim channel-member information attached to a message (`message.member` on the wire).

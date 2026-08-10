@@ -12,9 +12,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Apply dynamic search debouncing to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
-### ⛔️ Deprecated
-- Deprecate `ChatMessage.channelRole` in favor of `ChatMessage.member?.channelRole` [#4206](https://github.com/GetStream/stream-chat-swift/pull/4206)
-
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `chatThreadConnectorIncoming` and `chatThreadConnectorOutgoing` colors for customizing the thread connector [#4195](https://github.com/GetStream/stream-chat-swift/pull/4195)
