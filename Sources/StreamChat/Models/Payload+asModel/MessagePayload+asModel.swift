@@ -142,7 +142,13 @@ extension MessagePayload {
                     endAt: $0.endAt
                 )
             },
-            channelRole: member?.channelRole
+            member: member.map {
+                ChatMessage.MemberInfo(
+                    channelRole: $0.channelRole,
+                    notificationsMuted: $0.notificationsMuted,
+                    extraData: $0.extraData
+                )
+            }
         )
     }
 }

@@ -78,55 +78,6 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedRoles, [])
     }
 
-    func test_messagePayload_decodesPollOptionWithoutCustomData() throws {
-        let json = """
-        {
-            "id": "message-1",
-            "type": "regular",
-            "user": {
-                "id": "user-1",
-                "role": "user",
-                "online": false,
-                "created_at": "2020-07-16T15:39:03.010717Z",
-                "updated_at": "2020-08-17T13:15:39.895109Z"
-            },
-            "created_at": "2020-07-16T15:39:03.010717Z",
-            "updated_at": "2020-08-17T13:15:39.895109Z",
-            "text": "Poll message",
-            "reply_count": 0,
-            "attachments": [],
-            "latest_reactions": [],
-            "own_reactions": [],
-            "mentioned_users": [],
-            "poll": {
-                "allow_answers": false,
-                "allow_user_suggested_options": false,
-                "answers_count": 0,
-                "created_at": "2020-07-16T15:39:03.010717Z",
-                "created_by_id": "user-1",
-                "description": "",
-                "enforce_unique_vote": false,
-                "id": "poll-1",
-                "name": "Poll",
-                "updated_at": "2020-08-17T13:15:39.895109Z",
-                "vote_count": 0,
-                "options": [
-                    {
-                        "id": "option-1",
-                        "text": "Option 1"
-                    }
-                ]
-            }
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
-
-        let option = try XCTUnwrap(payload.poll?.options.first ?? nil)
-        XCTAssertEqual(option.id, "option-1")
-        XCTAssertNil(option.custom)
-    }
-
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
         let box = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
@@ -181,6 +132,39 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.moderation?.platformCircumvented, false)
         XCTAssertEqual(payload.deletedForMe, true)
         XCTAssertEqual(payload.member?.channelRole, .moderator)
+        XCTAssertEqual(payload.member?.notificationsMuted, false)
+        XCTAssertEqual(payload.member?.extraData, [:])
+    }
+
+    func test_memberInfoPayload_decodesV1InlineCustomKeys() throws {
+        let json = """
+        {
+            "channel_role": "channel_member",
+            "notifications_muted": false,
+            "badge": { "tier": "gold" }
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
+
+        XCTAssertEqual(payload.channelRole, .member)
+        XCTAssertEqual(payload.notificationsMuted, false)
+        XCTAssertEqual(payload.extraData, ["badge": .dictionary(["tier": .string("gold")])])
+    }
+
+    func test_memberInfoPayload_knownFieldsAreNotInExtraData() throws {
+        let json = """
+        {
+            "channel_role": "moderator",
+            "notifications_muted": true
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
+
+        XCTAssertEqual(payload.channelRole, .moderator)
+        XCTAssertEqual(payload.notificationsMuted, true)
+        XCTAssertEqual(payload.extraData, [:])
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {

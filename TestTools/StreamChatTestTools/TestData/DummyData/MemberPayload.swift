@@ -16,7 +16,9 @@ extension MemberPayload {
         deletedAt: Date? = nil,
         isMemberBanned: Bool = false,
         archivedAt: Date? = nil,
-        pinnedAt: Date? = nil
+        pinnedAt: Date? = nil,
+        notificationsMuted: Bool = false,
+        extraData: [String: RawJSON] = [:]
     ) -> MemberPayload {
         .init(
             user: user,
@@ -28,14 +30,28 @@ extension MemberPayload {
             deletedAt: deletedAt,
             isBanned: isMemberBanned,
             archivedAt: archivedAt,
-            pinnedAt: pinnedAt
+            pinnedAt: pinnedAt,
+            notificationsMuted: notificationsMuted,
+            extraData: extraData
         )
     }
 }
 
 extension MemberContainerPayload {
-    static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
-        .init(member: .dummy(user: .dummy(userId: userId)))
+    static func dummy(
+        userId: UserId = .unique,
+        role: MemberRole = .member,
+        notificationsMuted: Bool = false,
+        extraData: [String: RawJSON] = [:]
+    ) -> MemberContainerPayload {
+        .init(
+            member: .dummy(
+                user: .dummy(userId: userId),
+                role: role,
+                notificationsMuted: notificationsMuted,
+                extraData: extraData
+            )
+        )
     }
 }
 
