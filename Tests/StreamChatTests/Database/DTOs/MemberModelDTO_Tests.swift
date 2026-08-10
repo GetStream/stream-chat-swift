@@ -191,6 +191,107 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertEqual(Set(loadedQuery.members.map(\.user.id)), Set(allMembers.map(\.id)))
     }
 
+    // MARK: - willSave (message member info sync)
+
+    func test_willSave_updatesMemberInfoOnExistingMessages_whenExtraDataChanges() throws {
+        let cid = ChannelId.unique
+        let memberId = UserId.unique
+        let messageId = MessageId.unique
+        let otherAuthorMessageId = MessageId.unique
+
+        try database.createMessage(id: messageId, authorId: memberId, cid: cid)
+        try database.createMessage(id: otherAuthorMessageId, authorId: .unique, cid: cid)
+
+        try database.writeSynchronously { session in
+            try session.saveMember(
+                payload: .dummy(
+                    user: .dummy(userId: memberId),
+                    role: .moderator,
+                    notificationsMuted: true,
+                    extraData: ["is_premium": .bool(true)]
+                ),
+                channelId: cid
+            )
+        }
+
+        try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            XCTAssertEqual(messageDTO.channelRole, MemberRole.moderator.rawValue)
+            XCTAssertEqual(messageDTO.memberNotificationsMuted, true)
+            let extraData = try JSONDecoder.default.decode(
+                [String: RawJSON].self,
+                from: try XCTUnwrap(messageDTO.memberExtraData)
+            )
+            XCTAssertEqual(extraData["is_premium"]?.boolValue, true)
+
+            // Messages from other authors in the same channel should be untouched.
+            let otherMessageDTO = try XCTUnwrap(session.message(id: otherAuthorMessageId))
+            XCTAssertNil(otherMessageDTO.channelRole)
+            XCTAssertNil(otherMessageDTO.memberExtraData)
+        }
+    }
+
+    func test_willSave_doesNotUpdateMessagesFromOtherChannels() throws {
+        let cid = ChannelId.unique
+        let otherCid = ChannelId.unique
+        let memberId = UserId.unique
+        let messageInOtherChannelId = MessageId.unique
+
+        try database.createMessage(id: messageInOtherChannelId, authorId: memberId, cid: otherCid)
+
+        try database.writeSynchronously { session in
+            try session.saveMember(
+                payload: .dummy(
+                    user: .dummy(userId: memberId),
+                    extraData: ["is_premium": .bool(true)]
+                ),
+                channelId: cid
+            )
+        }
+
+        try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageInOtherChannelId))
+            XCTAssertNil(messageDTO.channelRole)
+            XCTAssertNil(messageDTO.memberExtraData)
+        }
+    }
+
+    func test_willSave_doesNotUpdateMessages_whenExtraDataIsUnchanged() throws {
+        let cid = ChannelId.unique
+        let memberId = UserId.unique
+        let messageId = MessageId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveMember(
+                payload: .dummy(user: .dummy(userId: memberId), extraData: ["is_premium": .bool(true)]),
+                channelId: cid
+            )
+        }
+
+        // The message is created after the member already exists, so its member info snapshot
+        // starts out empty until the next relevant member update.
+        try database.createMessage(id: messageId, authorId: memberId, cid: cid)
+
+        // Update the member again, changing only its role - the extra data stays the same.
+        try database.writeSynchronously { session in
+            try session.saveMember(
+                payload: .dummy(
+                    user: .dummy(userId: memberId),
+                    role: .moderator,
+                    extraData: ["is_premium": .bool(true)]
+                ),
+                channelId: cid
+            )
+        }
+
+        // The message member snapshot should remain untouched since the extra data did not change.
+        try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            XCTAssertNil(messageDTO.channelRole)
+            XCTAssertNil(messageDTO.memberExtraData)
+        }
+    }
+
     func test_asModel_whenModelTransformerProvided_transformsValues() throws {
         class CustomMemberTransformer: StreamModelsTransformer, @unchecked Sendable {
             var mockTransformedMember: ChatChannelMember = .mock(

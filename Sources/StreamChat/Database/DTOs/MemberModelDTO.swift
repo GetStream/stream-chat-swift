@@ -38,6 +38,31 @@ class MemberDTO: NSManagedObject {
     private static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
+
+    override func willSave() {
+        super.willSave()
+
+        guard !isDeleted else {
+            return
+        }
+
+        // Keep the member info snapshot stored on this member's messages (used for `message.member`)
+        // in sync whenever the member's custom extra data changes.
+        guard hasPersistentChangedValues, changedValues().keys.contains(#keyPath(MemberDTO.extraData)) else {
+            return
+        }
+
+        let memberInfo = MemberInfoPayload(
+            channelRole: channelRoleRaw.flatMap { MemberRole(rawChannelValue: $0) },
+            notificationsMuted: notificationsMuted,
+            extraData: (try? JSONDecoder.stream.decodeRawJSON(from: extraData)) ?? [:]
+        )
+
+        let cid = channel.cid
+        for message in user.messages ?? [] where message.cid == cid && !message.hasChanges && !message.isDeleted {
+            message.updateMemberInfo(from: memberInfo)
+        }
+    }
 }
 
 // MARK: - Fetch requests

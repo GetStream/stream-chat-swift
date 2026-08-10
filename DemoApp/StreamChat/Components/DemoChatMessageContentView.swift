@@ -9,6 +9,9 @@ import UIKit
 final class DemoChatMessageContentView: ChatMessageContentView {
     var pinInfoLabel: UILabel?
 
+    private static let premiumBorderColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
+    private static let premiumBorderWidth: CGFloat = 2
+
     lazy var saveForLaterView: UIView = {
         HContainer(spacing: 4) {
             saveForLaterIcon
@@ -57,6 +60,11 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         }
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updatePremiumAvatarBorder()
+    }
+
     override func updateContent() {
         super.updateContent()
 
@@ -101,5 +109,31 @@ final class DemoChatMessageContentView: ChatMessageContentView {
            let birthLand = content?.author.birthLand {
             authorNameLabel.text?.append(" \(birthLand)")
         }
+
+        updatePremiumAvatarBorder()
+    }
+
+    private func updatePremiumAvatarBorder() {
+        guard let avatarView = authorAvatarView?.presenceAvatarView.avatarView else { return }
+
+        let shouldShowPremiumBorder = AppConfig.shared.demoAppConfig.shouldShowPremiumBadge
+            && content?.member?.isPremium == true
+
+        if shouldShowPremiumBorder {
+            let radius = min(avatarView.bounds.width, avatarView.bounds.height) / 2
+            avatarView.layer.cornerRadius = radius
+            avatarView.layer.borderWidth = Self.premiumBorderWidth
+            avatarView.layer.borderColor = Self.premiumBorderColor.cgColor
+        } else {
+            avatarView.layer.cornerRadius = 0
+            avatarView.layer.borderWidth = 0
+            avatarView.layer.borderColor = nil
+        }
+    }
+}
+
+private extension ChatMessage.MemberInfo {
+    var isPremium: Bool {
+        extraData["is_premium"]?.boolValue == true
     }
 }

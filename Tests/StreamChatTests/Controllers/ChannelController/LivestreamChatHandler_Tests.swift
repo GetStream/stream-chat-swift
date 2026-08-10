@@ -615,6 +615,63 @@ extension LivestreamChatHandler_Tests {
         XCTAssertFalse(handler.channel?.lastActiveMembers.contains(where: { $0.id == memberId }) ?? false)
     }
 
+    func test_didReceiveEvent_memberUpdatedEvent_updatesMessagesMemberInfo_whenExtraDataChanges() {
+        let memberId = UserId.unique
+        seedChannel(members: [.mock(id: memberId)])
+        let originalMemberInfo = ChatMessage.MemberInfo(channelRole: .member, notificationsMuted: false, extraData: [:])
+        handler.messages = [
+            .mock(id: "m1", author: .mock(id: memberId), member: originalMemberInfo),
+            .mock(id: "m2", author: .mock(id: .unique))
+        ]
+
+        let updatedMember = ChatChannelMember.mock(
+            id: memberId,
+            memberRole: .moderator,
+            notificationsMuted: true,
+            memberExtraData: ["custom": .string("value")]
+        )
+
+        handler.didReceiveEvent(MemberUpdatedEvent(
+            user: updatedMember,
+            cid: cid,
+            member: updatedMember,
+            createdAt: .unique
+        ))
+
+        let updatedMessage = handler.messages.first(where: { $0.id == "m1" })
+        XCTAssertEqual(updatedMessage?.member?.channelRole, .moderator)
+        XCTAssertEqual(updatedMessage?.member?.notificationsMuted, true)
+        XCTAssertEqual(updatedMessage?.member?.extraData, ["custom": .string("value")])
+
+        let otherMessage = handler.messages.first(where: { $0.id == "m2" })
+        XCTAssertNil(otherMessage?.member)
+    }
+
+    func test_didReceiveEvent_memberUpdatedEvent_doesNotUpdateMessages_whenExtraDataIsUnchanged() {
+        let memberId = UserId.unique
+        seedChannel(members: [.mock(id: memberId)])
+        let originalMemberInfo = ChatMessage.MemberInfo(channelRole: .member, notificationsMuted: false, extraData: [:])
+        let originalMessage = ChatMessage.mock(id: "m1", author: .mock(id: memberId), member: originalMemberInfo)
+        handler.messages = [originalMessage]
+
+        let updatedMember = ChatChannelMember.mock(
+            id: memberId,
+            memberRole: .moderator,
+            notificationsMuted: true,
+            memberExtraData: [:]
+        )
+
+        handler.didReceiveEvent(MemberUpdatedEvent(
+            user: updatedMember,
+            cid: cid,
+            member: updatedMember,
+            createdAt: .unique
+        ))
+
+        // The message instance is preserved (no array replacement) since the extra data hasn't changed.
+        XCTAssertTrue(handler.messages.first === originalMessage)
+    }
+
     func test_didReceiveEvent_notificationAddedToChannelEvent_addsMembership() {
         seedChannel()
         let newMember = ChatChannelMember.dummy(id: .unique)

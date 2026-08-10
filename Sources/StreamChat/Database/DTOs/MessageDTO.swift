@@ -127,6 +127,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var defaultSortingKey: DBDate!
     
     @NSManaged var channelRole: String?
+    @NSManaged var memberNotificationsMuted: Bool
+    @NSManaged var memberExtraData: Data?
     @NSManaged var deletedForMe: Bool
 
     override func willSave() {
@@ -678,6 +680,20 @@ extension MessageDTO {
 
         return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
     }
+
+    func updateMemberInfo(from member: MemberInfoPayload) {
+        channelRole = member.channelRole?.rawValue
+        memberNotificationsMuted = member.notificationsMuted
+        do {
+            memberExtraData = try JSONEncoder.default.encode(member.extraData)
+        } catch {
+            log.error(
+                "Failed to encode member extra payload for Message with id: <\(id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            memberExtraData = nil
+        }
+    }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
@@ -938,8 +954,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
-        if let role = payload.member?.channelRole?.rawValue {
-            dto.channelRole = role
+        if let member = payload.member {
+            dto.updateMemberInfo(from: member)
         }
 
         do {
@@ -1839,10 +1855,25 @@ private extension ChatMessage {
 
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
         
-        var channelRole: MemberRole?
-        if let role = dto.channelRole {
-            channelRole = MemberRole(rawValue: role)
-        }
+        let member: ChatMessage.MemberInfo? = {
+            guard dto.channelRole != nil || dto.memberExtraData != nil else { return nil }
+
+            let extraData: [String: RawJSON]
+            do {
+                extraData = try JSONDecoder.stream.decodeRawJSON(from: dto.memberExtraData)
+            } catch {
+                log.error(
+                    "Failed to decode member extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)"
+                )
+                extraData = [:]
+            }
+
+            return ChatMessage.MemberInfo(
+                channelRole: dto.channelRole.map(MemberRole.init(rawValue:)),
+                notificationsMuted: dto.memberNotificationsMuted,
+                extraData: extraData
+            )
+        }()
 
         let message = ChatMessage(
             id: id,
@@ -1895,7 +1926,7 @@ private extension ChatMessage {
                 updatedAt: $0.updatedAt.bridgeDate
             ) },
             sharedLocation: location,
-            channelRole: channelRole
+            member: member
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {
