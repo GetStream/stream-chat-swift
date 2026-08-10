@@ -49,6 +49,7 @@ lane :release do |options|
     Dir.chdir('fastlane') { update_img_shields_sdk_sizes }
   end
 
+  lint_swift_package
   check_unsafe_flags
 
   release_ios_sdk(
