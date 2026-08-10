@@ -15,7 +15,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
-    @NSManaged var config: ChannelConfigDTO?
+    @NSManaged var config: ChannelConfigDTO
     @NSManaged var filterTags: Set<ChannelFilterTagDTO>
     @NSManaged var ownCapabilities: [String]
 
@@ -268,9 +268,7 @@ extension NSManagedObjectContext {
         }
         dto.typeRawValue = payload.type
         dto.id = payload.cid.id
-        if let config = payload.config {
-            dto.config = config.asDTO(context: self, cid: dto.cid)
-        }
+        dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let filterTags = payload.filterTags {
             // Remove existing filter tags
             dto.filterTags.forEach { delete($0) }
@@ -682,7 +680,7 @@ extension ChatChannel {
             truncatedBy: dto.truncatedBy?.asModel(),
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
-            config: dto.config?.asModel() ?? ChannelConfig(),
+            config: dto.config.asModel(),
             filterTags: Set(dto.filterTags.map(\.name)),
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,

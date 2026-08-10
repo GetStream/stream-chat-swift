@@ -450,24 +450,24 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.disabled, loadedChannel.isDisabled)
 
             // Config
-            Assert.willBeEqual(payload.channel.config?.reactionsEnabled, loadedChannel.config.reactionsEnabled)
-            Assert.willBeEqual(payload.channel.config?.typingEventsEnabled, loadedChannel.config.typingEventsEnabled)
-            Assert.willBeEqual(payload.channel.config?.readEventsEnabled, loadedChannel.config.readEventsEnabled)
-            Assert.willBeEqual(payload.channel.config?.deliveryEventsEnabled, loadedChannel.config.deliveryEventsEnabled)
-            Assert.willBeEqual(payload.channel.config?.connectEventsEnabled, loadedChannel.config.connectEventsEnabled)
-            Assert.willBeEqual(payload.channel.config?.uploadsEnabled, loadedChannel.config.uploadsEnabled)
-            Assert.willBeEqual(payload.channel.config?.repliesEnabled, loadedChannel.config.repliesEnabled)
-            Assert.willBeEqual(payload.channel.config?.quotesEnabled, loadedChannel.config.quotesEnabled)
-            Assert.willBeEqual(payload.channel.config?.searchEnabled, loadedChannel.config.searchEnabled)
-            Assert.willBeEqual(payload.channel.config?.mutesEnabled, loadedChannel.config.mutesEnabled)
-            Assert.willBeEqual(payload.channel.config?.urlEnrichmentEnabled, loadedChannel.config.urlEnrichmentEnabled)
-            Assert.willBeEqual(payload.channel.config?.messageRetention, loadedChannel.config.messageRetention)
-            Assert.willBeEqual(payload.channel.config?.maxMessageLength, loadedChannel.config.maxMessageLength)
-            Assert.willBeEqual(payload.channel.config?.commands, loadedChannel.config.commands)
-            Assert.willBeEqual(payload.channel.config?.createdAt, loadedChannel.config.createdAt)
-            Assert.willBeEqual(payload.channel.config?.updatedAt, loadedChannel.config.updatedAt)
-            Assert.willBeEqual(payload.channel.config?.messageRemindersEnabled, loadedChannel.config.messageRemindersEnabled)
-            Assert.willBeEqual(payload.channel.config?.sharedLocationsEnabled, loadedChannel.config.sharedLocationsEnabled)
+            Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel.config.reactionsEnabled)
+            Assert.willBeEqual(payload.channel.config.typingEventsEnabled, loadedChannel.config.typingEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.readEventsEnabled, loadedChannel.config.readEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.deliveryEventsEnabled, loadedChannel.config.deliveryEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.connectEventsEnabled, loadedChannel.config.connectEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.uploadsEnabled, loadedChannel.config.uploadsEnabled)
+            Assert.willBeEqual(payload.channel.config.repliesEnabled, loadedChannel.config.repliesEnabled)
+            Assert.willBeEqual(payload.channel.config.quotesEnabled, loadedChannel.config.quotesEnabled)
+            Assert.willBeEqual(payload.channel.config.searchEnabled, loadedChannel.config.searchEnabled)
+            Assert.willBeEqual(payload.channel.config.mutesEnabled, loadedChannel.config.mutesEnabled)
+            Assert.willBeEqual(payload.channel.config.urlEnrichmentEnabled, loadedChannel.config.urlEnrichmentEnabled)
+            Assert.willBeEqual(payload.channel.config.messageRetention, loadedChannel.config.messageRetention)
+            Assert.willBeEqual(payload.channel.config.maxMessageLength, loadedChannel.config.maxMessageLength)
+            Assert.willBeEqual(payload.channel.config.commands, loadedChannel.config.commands)
+            Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel.config.createdAt)
+            Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel.config.updatedAt)
+            Assert.willBeEqual(payload.channel.config.messageRemindersEnabled, loadedChannel.config.messageRemindersEnabled)
+            Assert.willBeEqual(payload.channel.config.sharedLocationsEnabled, loadedChannel.config.sharedLocationsEnabled)
 
             // Own Capabilities
             Assert.willBeEqual(payload.channel.ownCapabilities, [.joinChannel, .deleteChannel])
@@ -1342,52 +1342,6 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeTrue((try? getChannel().lastActiveWatchers.isEmpty) ?? false)
             Assert.willBeEqual(try? getChannel().watcherCount, 0)
         }
-    }
-
-    func test_saveChannel_whenPayloadHasNoConfig_thenStoredConfigIsPreserved() throws {
-        let cid = ChannelId.unique
-        let config = ChannelConfig.mock(
-            reactionsEnabled: true,
-            typingEventsEnabled: true,
-            maxMessageLength: 1000
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, config: config)))
-        }
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, config: nil)))
-        }
-
-        let loadedChannel = try database.readSynchronously { session in
-            try XCTUnwrap(session.channel(cid: cid)?.asModel())
-        }
-        XCTAssertEqual(loadedChannel.config.reactionsEnabled, true)
-        XCTAssertEqual(loadedChannel.config.typingEventsEnabled, true)
-        XCTAssertEqual(loadedChannel.config.maxMessageLength, 1000)
-    }
-
-    func test_asModel_whenNoConfigIsStored_thenDefaultConfigIsReturned() throws {
-        let cid = ChannelId.unique
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, config: nil)))
-        }
-
-        let hasStoredConfig = try database.readSynchronously { session in
-            session.channel(cid: cid)?.config != nil
-        }
-        XCTAssertFalse(hasStoredConfig)
-
-        let loadedChannel = try database.readSynchronously { session in
-            try XCTUnwrap(session.channel(cid: cid)?.asModel())
-        }
-        XCTAssertEqual(loadedChannel.config.reactionsEnabled, false)
-        XCTAssertEqual(loadedChannel.config.typingEventsEnabled, false)
-        XCTAssertEqual(loadedChannel.config.maxMessageLength, 0)
-        XCTAssertEqual(loadedChannel.config.messageRetention, "")
-        XCTAssertTrue(loadedChannel.config.commands.isEmpty)
     }
 
     func test_channelConfigCommands_whenConvertedToDTO_thenPreserveOrder() {

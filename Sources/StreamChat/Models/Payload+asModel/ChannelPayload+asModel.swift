@@ -41,7 +41,7 @@ extension ChannelPayload {
             truncatedBy: channelPayload.truncatedBy?.asModel(),
             isHidden: isHidden ?? false,
             createdBy: channelPayload.createdBy?.asModel(),
-            config: channelPayload.config ?? ChannelConfig(),
+            config: channelPayload.config,
             filterTags: Set(channelPayload.filterTags ?? []),
             ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0.rawValue) } ?? []),
             isFrozen: channelPayload.frozen,

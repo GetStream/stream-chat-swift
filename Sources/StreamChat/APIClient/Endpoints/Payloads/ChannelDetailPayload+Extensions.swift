@@ -33,7 +33,7 @@ extension ChannelDetailPayload {
         truncatedAt: Date?,
         truncatedBy: UserPayload? = nil,
         createdBy: UserPayload?,
-        config: ChannelConfig?,
+        config: ChannelConfig,
         filterTags: [String]?,
         ownCapabilities: [String]?,
         isDisabled: Bool,

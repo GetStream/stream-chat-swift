@@ -546,7 +546,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
 
-        let config = try XCTUnwrap(channel.config)
+        let config = channel.config
         XCTAssertEqual(config.reactionsEnabled, true)
         XCTAssertEqual(config.typingEventsEnabled, true)
         XCTAssertEqual(config.readEventsEnabled, true)

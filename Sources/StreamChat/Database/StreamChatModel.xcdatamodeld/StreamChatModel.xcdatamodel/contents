@@ -69,7 +69,7 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="watcherCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="activeLiveLocations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SharedLocationDTO" inverseName="channel" inverseEntity="SharedLocationDTO"/>
-        <relationship name="config" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ChannelConfigDTO" inverseName="channel" inverseEntity="ChannelConfigDTO"/>
+        <relationship name="config" maxCount="1" deletionRule="Cascade" destinationEntity="ChannelConfigDTO" inverseName="channel" inverseEntity="ChannelConfigDTO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="currentlyTypingUsers" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="typingIn" inverseEntity="UserDTO"/>
         <relationship name="draftMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="draftOfChannel" inverseEntity="MessageDTO"/>

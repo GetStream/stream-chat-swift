@@ -104,7 +104,7 @@ extension NSManagedObjectContext {
 
         let isLocallyTracked = !dto.isInserted
             && chatClientConfig?.isLocalUnreadCountEnabled == true
-            && !(dto.channel.config?.readEventsEnabled ?? false)
+            && !dto.channel.config.readEventsEnabled
 
         if !isLocallyTracked {
             dto.lastReadAt = payload.lastReadAt.bridgeDate

@@ -13,7 +13,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
     let blocked: Bool?
     /// Channel CID (<type>:<id>)
     let cid: ChannelId
-    let config: ChannelConfig?
+    let config: ChannelConfig
     /// Cooldown period after sending each message
     let cooldown: Int?
     /// Date/time of creation
@@ -63,7 +63,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
         autoTranslationLanguage: String? = nil,
         blocked: Bool? = nil,
         cid: ChannelId,
-        config: ChannelConfig? = nil,
+        config: ChannelConfig,
         cooldown: Int? = nil,
         createdAt: Date,
         createdBy: UserPayload? = nil,
@@ -159,7 +159,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
         autoTranslationLanguage = try container.decodeIfPresent(String.self, forKey: .autoTranslationLanguage)
         blocked = try container.decodeIfPresent(Bool.self, forKey: .blocked)
         cid = try container.decode(ChannelId.self, forKey: .cid)
-        config = try container.decodeIfPresent(ChannelConfig.self, forKey: .config)
+        config = try container.decode(ChannelConfig.self, forKey: .config)
         cooldown = try container.decodeIfPresent(Int.self, forKey: .cooldown)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)

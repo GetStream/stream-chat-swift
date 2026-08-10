@@ -20,7 +20,7 @@ extension ChannelDetailPayload {
         truncatedAt: Date? = nil,
         truncatedBy: UserPayload? = nil,
         createdBy: UserPayload = .dummy(userId: .unique),
-        config: ChannelConfig? = .mock(),
+        config: ChannelConfig = .mock(),
         filterTags: [String]? = nil,
         ownCapabilities: [String] = [],
         isFrozen: Bool = false,

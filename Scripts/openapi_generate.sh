@@ -285,6 +285,15 @@ optionalize_property UnreadCountsChannel lastRead
 optionalize_property UnreadCountsThread lastRead
 optionalize_property UnreadCountsThread lastReadMessageId
 
+require_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  P="$2" perl -0777 -pi -e '
+    my $p = $ENV{P};
+    s/^(    let \Q$p\E: [^\n]+)\?$/$1/m;
+    s/([(,]\s*)\Q$p\E: ([^,)\n]+?)\? = nil(?=[,)])/${1}$p: $2/;
+  ' "$file"
+}
+
 retype_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   P="$2" O="$3" N="$4" perl -0777 -pi -e '
@@ -450,6 +459,8 @@ remove_property MutedChannelPayloadResponse ownUser
 
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
+# Will be changed on the generation side later
+require_property ChannelDetailPayload config
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
