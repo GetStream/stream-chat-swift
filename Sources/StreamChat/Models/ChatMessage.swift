@@ -224,7 +224,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         /// Additional fields from the author's channel membership on `message.member`.
         public let extraData: [String: RawJSON]
 
-        public init(
+        init(
             channelRole: MemberRole? = nil,
             notificationsMuted: Bool = false,
             extraData: [String: RawJSON] = [:]
