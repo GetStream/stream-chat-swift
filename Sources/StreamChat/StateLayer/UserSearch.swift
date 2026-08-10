@@ -5,15 +5,23 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser` for the specified search query.
+///
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
+/// Calling ``search(term:)`` or ``search(query:)`` again cancels the previous in-flight search.
 public class UserSearch: @unchecked Sendable {
     @MainActor private var stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
-    
-    init(client: ChatClient, environment: Environment = .init()) {
+    private let searchDebouncer: AsyncSearchDebouncer
+    init(
+        client: ChatClient,
+        environment: Environment = .init(),
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         userListUpdater = environment.userListUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
+        searchDebouncer = AsyncSearchDebouncer(policy: debouncePolicy)
         stateBuilder = StateBuilder { UserSearchState() }
     }
     
@@ -29,7 +37,8 @@ public class UserSearch: @unchecked Sendable {
     /// - Parameter term: The search term for searching users. If `nil` or empty, all users are returned.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: An array of users for the search term.
+    /// - Returns: An array of users for the search term. When a newer search supersedes this
+    /// one, the current ``UserSearchState/users`` are returned.
     @discardableResult public func search(term: String?) async throws -> [ChatUser] {
         try await search(query: .search(term: term))
     }
@@ -38,12 +47,24 @@ public class UserSearch: @unchecked Sendable {
     ///
     /// - Parameter query: The user list query used for searching.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.query`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still cancels it either way.
+    ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: An array of users for the query.
+    /// - Returns: An array of users for the query. When a newer search supersedes this one,
+    /// the current ``UserSearchState/users`` are returned.
     @discardableResult public func search(query: UserListQuery) async throws -> [ChatUser] {
-        let limit = query.pagination?.pageSize ?? .usersPageSize
-        let pagination = Pagination(pageSize: limit, offset: 0)
-        return try await search(query: query, pagination: pagination)
+        let pagination = Pagination(pageSize: query.pagination?.pageSize ?? .usersPageSize, offset: 0)
+        let result = try await searchDebouncer.schedule(filter: query.filter) { [weak self] in
+            guard let self else { throw ClientError("UserSearch was deallocated") }
+            return try await self.performSearch(query: query, pagination: pagination)
+        }
+        if let result {
+            return result
+        }
+        return await state.users
     }
     
     /// Searches for more users with the specified query and updates ``UserSearchState/users``.
@@ -58,15 +79,21 @@ public class UserSearch: @unchecked Sendable {
         let limit = (limit ?? query.pagination?.pageSize) ?? .usersPageSize
         let offset = await state.users.count
         let pagination = Pagination(pageSize: limit, offset: offset)
-        return try await search(query: query, pagination: pagination)
+        return try await performSearch(query: query, pagination: pagination)
     }
     
     // MARK: - Private
-    
-    private func search(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
+
+    private func performSearch(query: UserListQuery, pagination: Pagination) async throws -> [ChatUser] {
         let query = query.withPagination(pagination)
+        // A superseded search must not publish its query. `state.query` is what
+        // `handleDidFetchQuery` compares against and what `loadMoreUsers` paginates, so a
+        // stale write here would make the winning search discard its own results and would
+        // paginate the wrong query.
+        try Task.checkCancellation()
         await state.setQuery(query)
         let users = try await userListUpdater.fetch(userListQuery: query, pagination: pagination)
+        try Task.checkCancellation()
         await state.handleDidFetchQuery(query, users: users)
         return users
     }

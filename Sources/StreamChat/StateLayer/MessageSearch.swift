@@ -5,13 +5,20 @@
 import Foundation
 
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
+///
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
 public class MessageSearch: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let messageUpdater: MessageUpdater
+    private let searchDebouncer: AsyncSearchDebouncer
     @MainActor private var stateBuilder: StateBuilder<MessageSearchState>
     let explicitFilterHash = UUID().uuidString
-    
-    init(client: ChatClient, environment: Environment = .init()) {
+
+    init(
+        client: ChatClient,
+        environment: Environment = .init(),
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         authenticationRepository = client.authenticationRepository
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
@@ -19,6 +26,7 @@ public class MessageSearch: @unchecked Sendable {
             client.databaseContainer,
             client.apiClient
         )
+        searchDebouncer = AsyncSearchDebouncer(policy: debouncePolicy)
         stateBuilder = StateBuilder { environment.stateBuilder(client.databaseContainer) }
     }
     
@@ -36,13 +44,19 @@ public class MessageSearch: @unchecked Sendable {
     ///   - sort: Optional sort order for search results. When `nil`, defaults to newest first (createdAt descending).
     ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: An array of paginated chat messages matching to the search term.
+    /// - Returns: An array of paginated chat messages matching to the search term. When a newer
+    /// search supersedes this one, the current ``MessageSearchState/messages`` are returned.
     @discardableResult public func search(text: String, sort: [Sorting<MessageSearchSortingKey>]? = nil) async throws -> [ChatMessage] {
         // Clear results when there is no text
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-           let query = await state.query {
-            try await messageUpdater.clearSearchResults(for: query)
-            await state.set(query: nil, cursor: nil)
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            await searchDebouncer.cancel()
+            let queryToClear = await state.query
+            if let queryToClear {
+                try await messageUpdater.clearSearchResults(for: queryToClear)
+                if await state.query?.filterHash == queryToClear.filterHash {
+                    await state.set(query: nil, cursor: nil)
+                }
+            }
             return []
         }
 
@@ -60,14 +74,23 @@ public class MessageSearch: @unchecked Sendable {
     ///
     /// - Parameter query: The search query specifying filters, sorting and pagination.
     ///
+    /// - Note: A query built around a text-search operator (`.autocomplete`, `.queryText`) is
+    /// debounced on the length of that text, even when combined with other filters. A query
+    /// with no search text is not typed character by character, so it runs right away — a
+    /// later search still cancels it either way.
+    ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: An array of paginated chat messages matching to the query.
+    /// - Returns: An array of paginated chat messages matching to the query. When a newer
+    /// search supersedes this one, the current ``MessageSearchState/messages`` are returned.
     @discardableResult public func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
-        var query = query
-        query.filterHash = explicitFilterHash
-        let result = try await messageUpdater.search(query: query, policy: .replace)
-        await state.set(query: query, cursor: result.payload.next)
-        return result.models
+        let result = try await searchDebouncer.schedule(filter: query.messageFilter) { [weak self] in
+            guard let self else { throw ClientError("MessageSearch was deallocated") }
+            return try await self.performSearch(query: query)
+        }
+        if let result {
+            return result
+        }
+        return await state.messages
     }
     
     /// Searches for more messages matching with the last search query.
@@ -95,6 +118,15 @@ public class MessageSearch: @unchecked Sendable {
     }
     
     // MARK: - Private
+
+    private func performSearch(query: MessageSearchQuery) async throws -> [ChatMessage] {
+        var query = query
+        query.filterHash = explicitFilterHash
+        let result = try await messageUpdater.search(query: query, policy: .replace)
+        try Task.checkCancellation()
+        await state.set(query: query, cursor: result.payload.next)
+        return result.models
+    }
     
     private func currentUserId() throws -> UserId {
         guard let id = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
