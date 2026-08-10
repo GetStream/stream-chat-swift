@@ -214,19 +214,21 @@ final class MemberModelDTO_Tests: XCTestCase {
             )
         }
 
-        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertEqual(messageDTO.channelRole, MemberRole.moderator.rawValue)
-        XCTAssertEqual(messageDTO.memberNotificationsMuted, true)
-        let extraData = try JSONDecoder.default.decode(
-            [String: RawJSON].self,
-            from: try XCTUnwrap(messageDTO.memberExtraData)
-        )
-        XCTAssertEqual(extraData["is_premium"]?.boolValue, true)
+        try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            XCTAssertEqual(messageDTO.channelRole, MemberRole.moderator.rawValue)
+            XCTAssertEqual(messageDTO.memberNotificationsMuted, true)
+            let extraData = try JSONDecoder.default.decode(
+                [String: RawJSON].self,
+                from: try XCTUnwrap(messageDTO.memberExtraData)
+            )
+            XCTAssertEqual(extraData["is_premium"]?.boolValue, true)
 
-        // Messages from other authors in the same channel should be untouched.
-        let otherMessageDTO = try XCTUnwrap(database.viewContext.message(id: otherAuthorMessageId))
-        XCTAssertNil(otherMessageDTO.channelRole)
-        XCTAssertNil(otherMessageDTO.memberExtraData)
+            // Messages from other authors in the same channel should be untouched.
+            let otherMessageDTO = try XCTUnwrap(session.message(id: otherAuthorMessageId))
+            XCTAssertNil(otherMessageDTO.channelRole)
+            XCTAssertNil(otherMessageDTO.memberExtraData)
+        }
     }
 
     func test_willSave_doesNotUpdateMessagesFromOtherChannels() throws {
@@ -247,9 +249,11 @@ final class MemberModelDTO_Tests: XCTestCase {
             )
         }
 
-        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageInOtherChannelId))
-        XCTAssertNil(messageDTO.channelRole)
-        XCTAssertNil(messageDTO.memberExtraData)
+        try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageInOtherChannelId))
+            XCTAssertNil(messageDTO.channelRole)
+            XCTAssertNil(messageDTO.memberExtraData)
+        }
     }
 
     func test_willSave_doesNotUpdateMessages_whenExtraDataIsUnchanged() throws {
@@ -281,9 +285,11 @@ final class MemberModelDTO_Tests: XCTestCase {
         }
 
         // The message member snapshot should remain untouched since the extra data did not change.
-        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertNil(messageDTO.channelRole)
-        XCTAssertNil(messageDTO.memberExtraData)
+        try database.readSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            XCTAssertNil(messageDTO.channelRole)
+            XCTAssertNil(messageDTO.memberExtraData)
+        }
     }
 
     func test_asModel_whenModelTransformerProvided_transformsValues() throws {
