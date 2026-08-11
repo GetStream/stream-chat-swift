@@ -32,7 +32,6 @@ enum EndpointPath: Codable {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
 
@@ -103,6 +102,7 @@ enum EndpointPath: Codable {
     case getUserLiveLocations
     case listDevices
     case listUserGroups
+    case markDelivered
     case queryMembers
     case queryPollVotes(pollId: String)
     case removeUserGroupMembers(id: String)
@@ -166,7 +166,6 @@ enum EndpointPath: Codable {
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
@@ -256,6 +255,8 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case .listUserGroups:
             return "/api/v2/usergroups"
+        case .markDelivered:
+            return "/api/v2/chat/channels/delivered"
         case .queryMembers:
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
@@ -738,6 +739,19 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func markDelivered(
+        markDeliveredRequest: ChannelDeliveredRequestPayload,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markDelivered,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markDeliveredRequest
         )
     }
 

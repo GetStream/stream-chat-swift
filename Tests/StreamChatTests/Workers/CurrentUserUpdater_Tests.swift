@@ -1014,7 +1014,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedPayload = ChannelDeliveredRequestPayload(
             latestDeliveredMessages: deliveredMessages.map { $0.asPayload }
         )
-        let expectedEndpoint: Endpoint<EmptyResponse> = .markChannelsDelivered(payload: expectedPayload)
+        let expectedEndpoint: Endpoint<EmptyResponse> = .markDelivered(markDeliveredRequest: expectedPayload)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

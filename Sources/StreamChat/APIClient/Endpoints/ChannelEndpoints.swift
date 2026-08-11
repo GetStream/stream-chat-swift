@@ -306,16 +306,6 @@ extension Endpoint {
         )
     }
 
-    static func markChannelsDelivered(payload: ChannelDeliveredRequestPayload) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .markChannelsDelivered,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: payload
-        )
-    }
-
     static func sendEvent(cid: ChannelId, eventType: EventType) -> Endpoint<EmptyResponse> {
         .init(
             path: .channelEvent(cid.apiPath),
