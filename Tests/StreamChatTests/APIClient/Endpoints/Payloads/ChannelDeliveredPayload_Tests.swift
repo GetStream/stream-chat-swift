@@ -11,7 +11,7 @@ final class ChannelDeliveredPayload_Tests: XCTestCase {
         // GIVEN
         let cid = ChannelId(type: .messaging, id: "test-channel")
         let messageId = MessageId.unique
-        let payload = DeliveredMessagePayload(cid: cid, id: messageId)
+        let payload = DeliveredMessagePayload(cid: cid.rawValue, id: messageId)
         
         // WHEN
         let encoded = try JSONEncoder.stream.encode(payload)
@@ -26,11 +26,11 @@ final class ChannelDeliveredPayload_Tests: XCTestCase {
         // GIVEN
         let cid1 = ChannelId(type: .messaging, id: "test-channel-1")
         let messageId1 = MessageId.unique
-        let deliveredMessage1 = DeliveredMessagePayload(cid: cid1, id: messageId1)
+        let deliveredMessage1 = DeliveredMessagePayload(cid: cid1.rawValue, id: messageId1)
         
         let cid2 = ChannelId(type: .livestream, id: "test-channel-2")
         let messageId2 = MessageId.unique
-        let deliveredMessage2 = DeliveredMessagePayload(cid: cid2, id: messageId2)
+        let deliveredMessage2 = DeliveredMessagePayload(cid: cid2.rawValue, id: messageId2)
         
         let payload = ChannelDeliveredRequestPayload(latestDeliveredMessages: [deliveredMessage1, deliveredMessage2])
         
