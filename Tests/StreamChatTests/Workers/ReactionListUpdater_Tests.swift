@@ -64,8 +64,9 @@ final class ReactionListUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            query: query
+        let referenceEndpoint: Endpoint<MessageReactionsPayload> = .queryReactions(
+            id: query.messageId,
+            queryReactionsRequest: .init(filter: query.filter, limit: query.pagination.pageSize)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
@@ -93,8 +94,9 @@ final class ReactionListUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            query: query
+        let referenceEndpoint: Endpoint<MessageReactionsPayload> = .queryReactions(
+            id: query.messageId,
+            queryReactionsRequest: .init(filter: query.filter, limit: query.pagination.pageSize)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

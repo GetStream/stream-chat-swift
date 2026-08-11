@@ -43,7 +43,6 @@ enum EndpointPath: Codable {
     case pinMessage(MessageId)
     case unpinMessage(MessageId)
     case replies(MessageId)
-    case reactions(MessageId)
     case addReaction(MessageId)
     case deleteReaction(
         MessageId,
@@ -99,12 +98,14 @@ enum EndpointPath: Codable {
     case getApp
     case getBlockedUsers
     case getOG
+    case getReactions(id: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
     case listDevices
     case listUserGroups
     case queryMembers
     case queryPollVotes(pollId: String)
+    case queryReactions(id: String)
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
@@ -177,7 +178,6 @@ enum EndpointPath: Codable {
         case let .pinMessage(messageId): return "messages/\(messageId)"
         case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(
             messageId,
@@ -248,6 +248,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users/block"
         case .getOG:
             return "/api/v2/og"
+        case let .getReactions(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
@@ -260,6 +262,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
+        case let .queryReactions(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchRoles:
@@ -684,6 +688,24 @@ extension Endpoint {
         )
     }
 
+    static func getReactions(
+        id: String,
+        limit: Int?,
+        offset: Int?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageReactionsPayload> {
+        return .init(
+            path: .getReactions(id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "offset": offset
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func getUserGroup(
         id: String,
         teamId: String?,
@@ -770,6 +792,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryPollVotesRequest
+        )
+    }
+
+    static func queryReactions(
+        id: String,
+        queryReactionsRequest: QueryReactionsRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageReactionsPayload> {
+        return .init(
+            path: .queryReactions(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryReactionsRequest
         )
     }
 

@@ -1020,8 +1020,7 @@ extension LivestreamChannelController_Tests {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedPagination = Pagination(pageSize: 50, offset: 10)
-        let expectedEndpoint = Endpoint<MessageReactionsPayload>.loadReactions(messageId: messageId, pagination: expectedPagination)
+        let expectedEndpoint = Endpoint<MessageReactionsPayload>.getReactions(id: messageId, limit: 50, offset: 10)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNotNil(loadResult)
         if case .success = loadResult {
@@ -1037,8 +1036,7 @@ extension LivestreamChannelController_Tests {
 
         controller.loadReactions(for: messageId) { _ in }
 
-        let expectedPagination = Pagination(pageSize: 25, offset: 0)
-        let expectedEndpoint = Endpoint<MessageReactionsPayload>.loadReactions(messageId: messageId, pagination: expectedPagination)
+        let expectedEndpoint = Endpoint<MessageReactionsPayload>.getReactions(id: messageId, limit: 25, offset: 0)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
