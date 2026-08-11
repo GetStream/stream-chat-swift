@@ -1255,6 +1255,60 @@ import XCTest
         XCTAssertEqual(mock.cancelCallCount, 1)
     }
 
+    func test_viewWillDisappear_whenShouldMarkChannelRead_marksReadImmediately() throws {
+        let mockedListView = makeMockMessageListView()
+        let currentUserId = UserId.unique
+        let lastMessage = ChatMessage.mock(id: .unique, text: "Latest", createdAt: Date(timeIntervalSince1970: 100))
+        vc.components.isJumpToUnreadEnabled = true
+        vc.mockIsViewVisible(true)
+        vc.messages = [lastMessage]
+        channelControllerMock.messages_mock = [lastMessage]
+        channelControllerMock.mockFirstUnreadMessageId = nil
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+        try XCTUnwrap(channelControllerMock.client as? ChatClient_Mock).currentUserId_mock = currentUserId
+
+        // Catch up so hasSeenFirstUnreadMessage is true (read channel, no first unread).
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: .noUnread,
+            reads: [
+                .mock(
+                    lastReadAt: .distantFuture,
+                    lastReadMessageId: lastMessage.id,
+                    unreadMessagesCount: 0,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+
+        // New unread arrives while still at the bottom.
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: ChannelUnreadCount(messages: 1, mentions: 0),
+            reads: [
+                .mock(
+                    lastReadAt: Date(timeIntervalSince1970: 50),
+                    lastReadMessageId: .unique,
+                    unreadMessagesCount: 1,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+        channelControllerMock.markReadCallCount = 0
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+
+        vc.viewWillDisappear(false)
+
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
 
     func test_headerViewForMessage_whenMessageShouldShowDateSeparator() throws {

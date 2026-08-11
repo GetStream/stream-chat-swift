@@ -255,6 +255,9 @@ open class ChatChannelVC: _ViewController,
         super.viewWillDisappear(animated)
 
         markReadThrottler.cancel()
+        if shouldMarkChannelRead {
+            markRead()
+        }
 
         keyboardHandler.stop()
 
