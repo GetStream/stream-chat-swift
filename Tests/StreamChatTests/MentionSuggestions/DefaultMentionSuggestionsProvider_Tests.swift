@@ -105,6 +105,47 @@ final class DefaultMentionSuggestionsProvider_Tests: XCTestCase {
         XCTAssertTrue(suggestions.allSatisfy { $0.kind is MentionSuggestion.User })
     }
 
+    func test_mentionSuggestions_whenLargeChannel_searchesMembersRemotely() async throws {
+        let cid = ChannelId.unique
+        try client.mockDatabaseContainer.createChannel(cid: cid, withMessages: false)
+
+        let remoteMember = ChannelMemberResponse.dummy(
+            user: .dummy(userId: "remote-user", name: "Remote User")
+        )
+        let response: Result<MembersResponse, Error> = .success(.dummy(members: [remoteMember]))
+        client.mockAPIClient.test_mockResponseResult(response)
+
+        let provider = DefaultMentionSuggestionsProvider(client: client)
+        let channel = ChatChannel.mock(
+            cid: cid,
+            lastActiveMembers: [.mock(id: "local-only", name: "Local")],
+            memberCount: 1000
+        )
+
+        let suggestions = try await provider.mentionSuggestions(
+            for: MentionSuggestionsRequest(text: "Rem", channel: channel)
+        )
+
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/members")
+        XCTAssertEqual(userIds(from: suggestions), ["remote-user"])
+    }
+
+    func test_mentionSuggestions_whenLargeChannelAndEmptyText_returnsNoUsers() async throws {
+        let provider = DefaultMentionSuggestionsProvider(client: client)
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            lastActiveMembers: [.mock(id: "local-only", name: "Local")],
+            memberCount: 1000
+        )
+
+        let suggestions = try await provider.mentionSuggestions(
+            for: MentionSuggestionsRequest(text: "", channel: channel)
+        )
+
+        XCTAssertNil(client.mockAPIClient.request_endpoint)
+        XCTAssertTrue(suggestions.isEmpty)
+    }
+
     // MARK: - private
 
     private func userIds(from suggestions: [MentionSuggestion]) -> [String] {

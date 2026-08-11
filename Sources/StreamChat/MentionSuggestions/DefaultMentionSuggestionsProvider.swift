@@ -9,12 +9,17 @@ import Foundation
 /// Suggests users only, preserving the historical mention behaviour. By default
 /// it searches the channel's members and watchers; pass `mentionAllAppUsers: true`
 /// at initialization to search across all app users instead.
+///
+/// When the channel has more members than are available in
+/// `ChatChannel.lastActiveMembers`, members are searched remotely via
+/// ``MemberList``.
 public final class DefaultMentionSuggestionsProvider: MentionSuggestionsProvider, Sendable {
     /// When `true`, user suggestions are searched across all app users instead
     /// of only the channel's members and watchers.
     public let mentionAllAppUsers: Bool
 
     private let userSearch: UserSearch
+    private let makeMemberList: @Sendable (ChannelMemberListQuery) -> MemberList
     private let currentUserId: @Sendable () -> UserId?
 
     /// Creates a new default mention suggestions provider.
@@ -25,22 +30,18 @@ public final class DefaultMentionSuggestionsProvider: MentionSuggestionsProvider
     public init(client: ChatClient, mentionAllAppUsers: Bool = false) {
         self.mentionAllAppUsers = mentionAllAppUsers
         userSearch = client.makeUserSearch()
+        makeMemberList = { client.makeMemberList(with: $0) }
         currentUserId = { [weak client] in client?.currentUserId }
     }
 
     public func mentionSuggestions(for request: MentionSuggestionsRequest) async throws -> [MentionSuggestion] {
-        let users: [ChatUser]
-        if mentionAllAppUsers {
-            let query = MentionSuggestionsSearch.allAppUsersQuery(for: request.text)
-            users = try await userSearch.search(query: query)
-        } else {
-            let channel = request.channel
-            users = MentionSuggestionsSearch.searchUsers(
-                channel.lastActiveWatchers.map(\.self) + channel.lastActiveMembers.map(\.self),
-                by: request.text,
-                excludingId: currentUserId()
-            )
-        }
+        let users = try await MentionSuggestionsSearch.fetchUsers(
+            for: request,
+            mentionAllAppUsers: mentionAllAppUsers,
+            currentUserId: currentUserId(),
+            userSearch: userSearch,
+            makeMemberList: makeMemberList
+        )
         return users.map { MentionSuggestion.user($0) }
     }
 }

@@ -99,4 +99,38 @@ final class MentionSuggestionsSearch_Tests: XCTestCase {
         )
         XCTAssertEqual(query.sort, [.init(key: .name, isAscending: true)])
     }
+
+    // MARK: - channelMembersQuery
+
+    func test_channelMembersQuery_buildsAutocompleteNameFilterSortedByName() {
+        let cid = ChannelId.unique
+        let query = MentionSuggestionsSearch.channelMembersQuery(cid: cid, for: "abc")
+
+        XCTAssertEqual(query.cid, cid)
+        XCTAssertEqual(query.filter, .autocomplete(.name, text: "abc"))
+        XCTAssertEqual(query.sort, [.init(key: .name, isAscending: true)])
+    }
+
+    // MARK: - requiresRemoteMemberSearch
+
+    func test_requiresRemoteMemberSearch_whenMemberCountExceedsLastActiveMembers() {
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            lastActiveMembers: [.mock(id: "a"), .mock(id: "b")],
+            memberCount: 1000
+        )
+
+        XCTAssertTrue(MentionSuggestionsSearch.requiresRemoteMemberSearch(for: channel))
+    }
+
+    func test_requiresRemoteMemberSearch_whenAllMembersAreLocal_returnsFalse() {
+        let members: [ChatChannelMember] = [.mock(id: "a"), .mock(id: "b")]
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            lastActiveMembers: members,
+            memberCount: members.count
+        )
+
+        XCTAssertFalse(MentionSuggestionsSearch.requiresRemoteMemberSearch(for: channel))
+    }
 }
