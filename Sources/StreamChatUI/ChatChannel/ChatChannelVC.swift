@@ -539,9 +539,12 @@ open class ChatChannelVC: _ViewController,
             }
 
             if self.shouldMarkChannelRead {
-                // Mark read before refreshing unread UI so the banner/pill are not
-                // anchored to messages the user is already seeing at the bottom.
-                self.markRead()
+                // First request runs immediately via Throttler; later calls within
+                // the interval are coalesced. Skip anchoring unread UI for messages
+                // the user is already seeing at the bottom.
+                self.markReadThrottler.execute { [weak self] in
+                    self?.markRead()
+                }
             } else {
                 self.updateJumpToUnreadRelatedComponents()
                 if !self.hasSeenFirstUnreadMessage {
@@ -560,8 +563,11 @@ open class ChatChannelVC: _ViewController,
 
         if shouldMarkChannelRead {
             // Channel unread can update before the message list snapshot. Mark read
-            // immediately and skip anchoring the unread banner for in-view messages.
-            markRead()
+            // via the throttler (first request still runs immediately) and skip
+            // anchoring the unread banner for in-view messages.
+            markReadThrottler.execute { [weak self] in
+                self?.markRead()
+            }
         } else {
             updateJumpToUnreadRelatedComponents()
             updateUnreadMessagesBannerRelatedComponents()
