@@ -69,6 +69,8 @@ final class ChannelRepository_Tests: XCTestCase {
         let cid = ChannelId.unique
         let userId = UserId.unique
 
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(.init()))
+
         let expectation = self.expectation(description: "markRead completes")
         nonisolated(unsafe) var receivedError: Error?
         repository.markRead(cid: cid, userId: userId) { error in
@@ -76,7 +78,6 @@ final class ChannelRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
         waitForExpectations(timeout: defaultTimeout)
 
         let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
@@ -88,6 +89,10 @@ final class ChannelRepository_Tests: XCTestCase {
     func test_markRead_errorResponse() {
         let cid = ChannelId.unique
         let userId = UserId.unique
+        let error = TestError()
+
+        // Optimistic local write + rollback write both happen; API failure is reported via completion.
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
 
         let expectation = self.expectation(description: "markRead completes")
         nonisolated(unsafe) var receivedError: Error?
@@ -96,15 +101,75 @@ final class ChannelRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
-
         waitForExpectations(timeout: defaultTimeout)
 
         let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        XCTAssertEqual(database.writeSessionCounter, 0)
+        XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(receivedError, error)
+    }
+
+    func test_markRead_clearsLocalUnreadOptimistically() throws {
+        let cid = ChannelId.unique
+        let currentUserPayload = UserPayload.dummy(userId: .unique)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserPayload.id, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            let read = try XCTUnwrap(session.loadOrCreateChannelRead(cid: cid, userId: currentUserPayload.id))
+            read.unreadMessageCount = 5
+        }
+        database.writeSessionCounter = 0
+
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(.init()))
+
+        let expectation = self.expectation(description: "markRead completes")
+        repository.markRead(cid: cid, userId: currentUserPayload.id) { _ in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
+        )
+        XCTAssertEqual(read.unreadMessageCount, 0)
+    }
+
+    func test_markRead_onAPIFailure_rollsBackLocalUnreadState() throws {
+        let cid = ChannelId.unique
+        let currentUserPayload = UserPayload.dummy(userId: .unique)
+        let previousLastReadAt = Date(timeIntervalSince1970: 1_700_000_000)
+        let previousLastReadMessageId = MessageId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserPayload.id, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            let read = try XCTUnwrap(session.loadOrCreateChannelRead(cid: cid, userId: currentUserPayload.id))
+            read.lastReadAt = previousLastReadAt.bridgeDate
+            read.lastReadMessageId = previousLastReadMessageId
+            read.unreadMessageCount = 5
+        }
+        database.writeSessionCounter = 0
+
+        let error = TestError()
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
+
+        let expectation = self.expectation(description: "markRead completes")
+        nonisolated(unsafe) var receivedError: Error?
+        repository.markRead(cid: cid, userId: currentUserPayload.id) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
+        )
+        XCTAssertEqual(receivedError as? TestError, error)
+        XCTAssertEqual(read.unreadMessageCount, 5)
+        XCTAssertEqual(read.lastReadMessageId, previousLastReadMessageId)
+        XCTAssertEqual(read.lastReadAt.bridgeDate.timeIntervalSince1970, previousLastReadAt.timeIntervalSince1970)
+        XCTAssertEqual(database.writeSessionCounter, 2)
     }
 
     // MARK: - Mark as read locally

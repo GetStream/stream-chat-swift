@@ -94,9 +94,17 @@ open class ChatChannelVC: _ViewController,
         let isLocalReadEnabled = client.config.isLocalUnreadCountEnabled
             && channelController.channel?.config.readEventsEnabled == false
         guard hasSeenFirstUnreadMessage || isLocalReadEnabled else { return false }
-        
+
         guard let channel = channelController.channel, let currentUserId = client.currentUserId else { return false }
-        guard let read = channel.read(for: currentUserId), let lastMessage = messages.first else {
+        // Prefer the controller's latest messages — `self.messages` can still be stale when
+        // `didUpdateChannel` fires for a newly incremented unread count before `didUpdateMessages`.
+        // In that race, treating outstanding unreads as "should mark read" prevents the unread
+        // banner/pill from being anchored for messages the user is already looking at.
+        if channel.unreadCount.messages > 0 {
+            return true
+        }
+        guard let read = channel.read(for: currentUserId),
+              let lastMessage = channelController.messages.first ?? messages.first else {
             return true // no read state, always mark as read
         }
         return read.lastReadAt < lastMessage.createdAt
@@ -453,7 +461,9 @@ open class ChatChannelVC: _ViewController,
     }
 
     public func chatMessageListShouldShowJumpToUnread(_ vc: ChatMessageListVC) -> Bool {
-        true
+        // Hide while the user is at the bottom and we're about to mark the channel read,
+        // so newly arrived messages don't flash the jump-to-unread button.
+        !shouldMarkChannelRead
     }
 
     public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
@@ -528,13 +538,15 @@ open class ChatChannelVC: _ViewController,
                 self.hasSeenFirstUnreadMessage = true
             }
 
-            self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
-                self.markReadThrottler.execute {
-                    self.markRead()
+                // Mark read before refreshing unread UI so the banner/pill are not
+                // anchored to messages the user is already seeing at the bottom.
+                self.markRead()
+            } else {
+                self.updateJumpToUnreadRelatedComponents()
+                if !self.hasSeenFirstUnreadMessage {
+                    self.updateUnreadMessagesBannerRelatedComponents()
                 }
-            } else if !self.hasSeenFirstUnreadMessage {
-                self.updateUnreadMessagesBannerRelatedComponents()
             }
         }
         viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
@@ -545,8 +557,15 @@ open class ChatChannelVC: _ViewController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         updateScrollToBottomButtonCount()
-        updateJumpToUnreadRelatedComponents()
-        updateUnreadMessagesBannerRelatedComponents()
+
+        if shouldMarkChannelRead {
+            // Channel unread can update before the message list snapshot. Mark read
+            // immediately and skip anchoring the unread banner for in-view messages.
+            markRead()
+        } else {
+            updateJumpToUnreadRelatedComponents()
+            updateUnreadMessagesBannerRelatedComponents()
+        }
 
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
