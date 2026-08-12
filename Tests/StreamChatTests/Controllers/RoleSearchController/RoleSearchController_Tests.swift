@@ -15,7 +15,11 @@ final class RoleSearchController_Tests: XCTestCase {
         super.setUp()
         client = ChatClient.mock
         repository = client.mockRolesRepository
-        controller = client.roleSearchController()
+        controller = RoleSearchController(
+            client: client,
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
+        )
     }
 
     override func tearDown() {

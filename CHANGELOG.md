@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
 ### 🔄 Changed
+- Apply dynamic search debouncing to `RoleSearch` and `RoleSearchController` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Apply dynamic search debouncing to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ## StreamChatCommonUI

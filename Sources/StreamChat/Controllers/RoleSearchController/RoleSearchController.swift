@@ -13,7 +13,12 @@ public extension ChatClient {
 
 /// A controller for searching roles.
 ///
+/// Text searches are debounced: 500ms for 1-2 characters, 300ms for 3 or more.
+/// Scheduling a new search cancels any pending debounced work.
+///
 /// Results are replaced on every new search.
+///
+/// - Note: For an async-await alternative, please check ``RoleSearch``.
 public class RoleSearchController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -44,11 +49,20 @@ public class RoleSearchController: DataController, DelegateCallable, DataStorePr
     }
 
     private let rolesRepository: RolesRepository
+    private let searchDebouncer: SearchDebouncer
 
-    init(client: ChatClient) {
+    init(
+        client: ChatClient,
+        debouncePolicy: SearchDebouncePolicy = .default
+    ) {
         self.client = client
         rolesRepository = client.rolesRepository
+        searchDebouncer = SearchDebouncer(policy: debouncePolicy)
         super.init()
+    }
+
+    deinit {
+        searchDebouncer.cancel()
     }
 
     /// Searches roles by name.
@@ -74,12 +88,28 @@ public class RoleSearchController: DataController, DelegateCallable, DataStorePr
     ///
     /// The `roles` property is updated with the results on completion.
     ///
+    /// - Note: Searches are debounced on the length of ``RoleSearchQuery/query``.
+    ///
     /// - Parameters:
     ///   - query: The query describing the search term and filters.
     ///   - completion: Called with the matching roles or an error.
     public func searchRoles(
         query: RoleSearchQuery,
         completion: (@MainActor (Result<[Role], Error>) -> Void)? = nil
+    ) {
+        let scheduled = searchDebouncer.schedule(queryLength: query.query.count) { [weak self] in
+            self?.fetch(query, completion: completion)
+        }
+        if !scheduled {
+            callback { [weak self] in
+                completion?(.success(self?.roles ?? []))
+            }
+        }
+    }
+
+    private func fetch(
+        _ query: RoleSearchQuery,
+        completion: (@MainActor (Result<[Role], Error>) -> Void)?
     ) {
         rolesRepository.searchRoles(query: query) { [weak self] result in
             guard let self else { return }
