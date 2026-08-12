@@ -866,6 +866,7 @@
 				StreamChatTests/Controllers/ThreadListController/ChatThreadListController_Tests.swift,
 				StreamChatTests/Controllers/UserGroupController/UserGroupController_Tests.swift,
 				StreamChatTests/Controllers/UserGroupController/UserGroupListController_Tests.swift,
+				StreamChatTests/Controllers/UserGroupSearchController/UserGroupSearchController_Tests.swift,
 				StreamChatTests/Database/DatabaseContainer_Tests.swift,
 				StreamChatTests/Database/DatabaseSession_Tests.swift,
 				StreamChatTests/Database/DataStore_Tests.swift,
