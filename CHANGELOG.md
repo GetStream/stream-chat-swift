@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add `MemberSearch` for debounced channel member search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Add `ChatMessage.member` with the author's channel role, notification mute state, and member extra data [#4206](https://github.com/GetStream/stream-chat-swift/pull/4206)
 - Add `ChannelSearch` and `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 ### 🐞 Fixed

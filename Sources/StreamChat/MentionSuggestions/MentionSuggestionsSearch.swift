@@ -72,7 +72,7 @@ enum MentionSuggestionsSearch {
     ///
     /// Search strategy, in order:
     /// 1. All app users, when `mentionAllAppUsers` is `true`.
-    /// 2. Remote channel member search via ``MemberList``, when the channel has
+    /// 2. Remote channel member search via ``MemberSearch``, when the channel has
     ///    more members than are available in `lastActiveMembers`.
     /// 3. Local search over `lastActiveMembers` and `lastActiveWatchers`.
     static func fetchUsers(
@@ -80,7 +80,7 @@ enum MentionSuggestionsSearch {
         mentionAllAppUsers: Bool,
         currentUserId: UserId?,
         userSearch: UserSearch,
-        makeMemberList: (ChannelMemberListQuery) -> MemberList
+        memberSearch: MemberSearch
     ) async throws -> [ChatUser] {
         if mentionAllAppUsers {
             let query = allAppUsersQuery(for: request.text)
@@ -93,10 +93,7 @@ enum MentionSuggestionsSearch {
             guard !request.text.isEmpty else { return [] }
 
             let query = channelMembersQuery(cid: channel.cid, for: request.text)
-            let memberList = makeMemberList(query)
-            let members = try await memberList.loadMembers(
-                with: Pagination(pageSize: query.pagination.pageSize)
-            )
+            let members = try await memberSearch.search(query: query)
             return members.filter { $0.id != currentUserId }
         }
 

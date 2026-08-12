@@ -12,7 +12,7 @@ import Foundation
 ///
 /// When the channel has more members than are available in
 /// `ChatChannel.lastActiveMembers`, members are searched remotely via
-/// ``MemberList``.
+/// ``MemberSearch``.
 public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvider, Sendable {
     /// When `true`, user suggestions are searched across all app users instead
     /// of only the channel's members and watchers.
@@ -21,7 +21,7 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
     private let userSearch: UserSearch
     private let roleSearch: RoleSearch
     private let userGroupSearch: UserGroupSearch
-    private let makeMemberList: @Sendable (ChannelMemberListQuery) -> MemberList
+    private let memberSearch: MemberSearch
     private let currentUserId: @Sendable () -> UserId?
 
     /// Creates a new enhanced mention suggestions provider.
@@ -34,7 +34,7 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
         userSearch = client.makeUserSearch()
         roleSearch = client.makeRoleSearch()
         userGroupSearch = client.makeUserGroupSearch()
-        makeMemberList = { client.makeMemberList(with: $0) }
+        memberSearch = client.makeMemberSearch()
         currentUserId = { [weak client] in client?.currentUserId }
     }
 
@@ -110,7 +110,7 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
                 mentionAllAppUsers: mentionAllAppUsers,
                 currentUserId: currentUserId(),
                 userSearch: userSearch,
-                makeMemberList: makeMemberList
+                memberSearch: memberSearch
             )
             return users.map { MentionSuggestion.user($0) }
         } catch {
