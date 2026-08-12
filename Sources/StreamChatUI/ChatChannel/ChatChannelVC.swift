@@ -104,7 +104,7 @@ open class ChatChannelVC: _ViewController,
             return true
         }
         guard let read = channel.read(for: currentUserId),
-              let lastMessage = channelController.messages.first else {
+              let lastMessage = channelController.messages.first ?? messages.first else {
             return true // no read state, always mark as read
         }
         return read.lastReadAt < lastMessage.createdAt
