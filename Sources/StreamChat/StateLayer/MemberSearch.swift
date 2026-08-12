@@ -94,6 +94,12 @@ public class MemberSearch: @unchecked Sendable {
         return try await performSearch(query: query, pagination: pagination)
     }
 
+    /// Cancels any pending or in-flight search and clears ``MemberSearchState/members``.
+    public func clearResults() async {
+        await searchDebouncer.cancel()
+        await state.clear()
+    }
+
     // MARK: - Private
 
     private func performSearch(

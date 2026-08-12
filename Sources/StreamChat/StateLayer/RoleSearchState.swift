@@ -22,6 +22,12 @@ extension RoleSearchState {
         self.query = query
     }
 
+    /// Clears the current query and results.
+    func clear() {
+        query = nil
+        roles = []
+    }
+
     /// Updates the state with the results of the completed query.
     ///
     /// Results from an outdated query are discarded so the state always

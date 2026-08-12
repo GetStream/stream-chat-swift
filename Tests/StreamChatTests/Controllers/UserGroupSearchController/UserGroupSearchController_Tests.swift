@@ -124,6 +124,25 @@ final class UserGroupSearchController_Tests: XCTestCase {
         XCTAssertEqual(delegate.userGroups.map(\.id), ["backendsupport"])
     }
 
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsUserGroups() {
+        repository.searchUserGroups_completion_result = .success([
+            UserGroup.dummy(id: "backendsupport", name: "Backend Support")
+        ])
+
+        let exp = expectation(description: "search completes")
+        controller.searchUserGroups(text: "backend") { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+        XCTAssertFalse(controller.userGroups.isEmpty)
+
+        controller.clearResults()
+
+        XCTAssertTrue(controller.userGroups.isEmpty)
+    }
+
     // MARK: - Failure path
 
     func test_searchUserGroups_whenRequestFails_thenErrorIsForwardedAndStateIsFailed() {

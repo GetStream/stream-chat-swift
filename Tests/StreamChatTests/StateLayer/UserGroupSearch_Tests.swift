@@ -99,6 +99,24 @@ final class UserGroupSearch_Tests: XCTestCase {
         }
     }
 
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsState() async throws {
+        let userGroup = UserGroup.dummy(id: "backendsupport", name: "Backend Support")
+        repository.searchUserGroups_completion_result = .success([userGroup])
+        try await search.search(text: "backend")
+        try await MainActor.run {
+            XCTAssertEqual(1, search.state.userGroups.count)
+        }
+
+        await search.clearResults()
+
+        try await MainActor.run {
+            XCTAssertTrue(search.state.userGroups.isEmpty)
+            XCTAssertNil(search.state.query)
+        }
+    }
+
     // MARK: - Factory
 
     func test_makeUserGroupSearch_returnsUserGroupSearch() {

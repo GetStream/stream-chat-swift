@@ -24,6 +24,12 @@ extension MemberSearchState {
         self.query = query
     }
 
+    /// Clears the current query and results.
+    func clear() {
+        query = nil
+        members = []
+    }
+
     /// Updates the state to include query results if user has not already started a new query.
     ///
     /// * Case 1: User triggered a new search. Then we need to reset the state.

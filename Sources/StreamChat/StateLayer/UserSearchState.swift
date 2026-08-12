@@ -23,6 +23,12 @@ extension UserSearchState {
     func setQuery(_ query: UserListQuery) {
         self.query = query
     }
+
+    /// Clears the current query and results.
+    func clear() {
+        query = nil
+        users = []
+    }
     
     /// Updates the state to include query results if user has not already started a new query.
     ///

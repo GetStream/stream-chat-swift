@@ -44,4 +44,9 @@ public final class DefaultMentionSuggestionsProvider: MentionSuggestionsProvider
         )
         return users.map { MentionSuggestion.user($0) }
     }
+
+    public func clearResults() async {
+        await userSearch.clearResults()
+        await memberSearch.clearResults()
+    }
 }

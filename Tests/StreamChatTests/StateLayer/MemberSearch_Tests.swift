@@ -98,6 +98,22 @@ final class MemberSearch_Tests: XCTestCase {
         await XCTAssertEqual(secondResult.map(\.id), memberSearch.state.members.map(\.id))
     }
 
+    // MARK: - Clearing Results
+
+    func test_clearResults_cancelsPendingSearchAndClearsState() async throws {
+        let fetchResult = makeMembers(name: "name", count: 5, offset: 0)
+        env.memberListUpdaterMock.load_completion_result = .success(fetchResult)
+        try await memberSearch.search(text: "name", in: channelId)
+        await XCTAssertEqual(5, memberSearch.state.members.count)
+
+        await memberSearch.clearResults()
+
+        await XCTAssertEqual([], memberSearch.state.members.map(\.id))
+        try await MainActor.run {
+            XCTAssertNil(memberSearch.state.query)
+        }
+    }
+
     // MARK: - Results Pagination
 
     func test_loadMoreMembers_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {

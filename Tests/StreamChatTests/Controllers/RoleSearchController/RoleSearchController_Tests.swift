@@ -112,6 +112,23 @@ final class RoleSearchController_Tests: XCTestCase {
         XCTAssertEqual(delegate.roles.map(\.name), ["admin"])
     }
 
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsRoles() {
+        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
+
+        let exp = expectation(description: "search completes")
+        controller.searchRoles(text: "adm") { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+        XCTAssertFalse(controller.roles.isEmpty)
+
+        controller.clearResults()
+
+        XCTAssertTrue(controller.roles.isEmpty)
+    }
+
     // MARK: - Failure path
 
     func test_searchRoles_whenRequestFails_thenErrorIsForwardedAndStateIsFailed() {

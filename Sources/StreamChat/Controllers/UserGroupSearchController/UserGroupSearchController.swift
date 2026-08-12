@@ -98,6 +98,19 @@ public class UserGroupSearchController: DataController, DelegateCallable, DataSt
         }
     }
 
+    /// Cancels any pending search and clears the current results.
+    public func clearResults() {
+        searchDebouncer.cancel()
+        let previousUserGroups = userGroups
+        guard !previousUserGroups.isEmpty else { return }
+
+        userGroups = []
+        delegateCallback { [weak self] in
+            guard let self else { return }
+            $0.controller(self, didChangeUserGroups: self.userGroups)
+        }
+    }
+
     private func fetch(
         _ query: UserGroupSearchQuery,
         completion: (@MainActor (Result<[UserGroup], Error>) -> Void)?

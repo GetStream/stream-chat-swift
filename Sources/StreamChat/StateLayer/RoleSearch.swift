@@ -66,6 +66,12 @@ public class RoleSearch: @unchecked Sendable {
         return await state.roles
     }
 
+    /// Cancels any pending or in-flight search and clears ``RoleSearchState/roles``.
+    public func clearResults() async {
+        await searchDebouncer.cancel()
+        await state.clear()
+    }
+
     // MARK: - Private
 
     private func performSearch(query: RoleSearchQuery) async throws -> [Role] {

@@ -92,6 +92,20 @@ final class RoleSearch_Tests: XCTestCase {
         }
     }
 
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsState() async throws {
+        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
+        try await search.search(text: "adm")
+
+        await search.clearResults()
+
+        try await MainActor.run {
+            XCTAssertTrue(search.state.roles.isEmpty)
+            XCTAssertNil(search.state.query)
+        }
+    }
+
     // MARK: - Factory
 
     func test_makeRoleSearch_returnsRoleSearch() {

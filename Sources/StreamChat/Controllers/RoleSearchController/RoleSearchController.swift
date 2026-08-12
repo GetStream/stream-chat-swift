@@ -107,6 +107,19 @@ public class RoleSearchController: DataController, DelegateCallable, DataStorePr
         }
     }
 
+    /// Cancels any pending search and clears the current results.
+    public func clearResults() {
+        searchDebouncer.cancel()
+        let previousRoles = roles
+        guard !previousRoles.isEmpty else { return }
+
+        roles = []
+        delegateCallback { [weak self] in
+            guard let self else { return }
+            $0.controller(self, didChangeRoles: self.roles)
+        }
+    }
+
     private func fetch(
         _ query: RoleSearchQuery,
         completion: (@MainActor (Result<[Role], Error>) -> Void)?

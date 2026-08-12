@@ -68,6 +68,12 @@ public class UserGroupSearch: @unchecked Sendable {
         return await state.userGroups
     }
 
+    /// Cancels any pending or in-flight search and clears ``UserGroupSearchState/userGroups``.
+    public func clearResults() async {
+        await searchDebouncer.cancel()
+        await state.clear()
+    }
+
     // MARK: - Private
 
     private func performSearch(query: UserGroupSearchQuery) async throws -> [UserGroup] {

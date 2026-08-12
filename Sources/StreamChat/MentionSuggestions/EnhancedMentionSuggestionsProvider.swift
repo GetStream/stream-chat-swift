@@ -118,4 +118,11 @@ public final class EnhancedMentionSuggestionsProvider: MentionSuggestionsProvide
             return []
         }
     }
+
+    public func clearResults() async {
+        await userSearch.clearResults()
+        await memberSearch.clearResults()
+        await roleSearch.clearResults()
+        await userGroupSearch.clearResults()
+    }
 }
