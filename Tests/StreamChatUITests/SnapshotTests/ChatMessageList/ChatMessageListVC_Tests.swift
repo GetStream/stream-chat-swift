@@ -19,6 +19,10 @@ import XCTest
     var mockedDataSource: ChatMessageListVCDataSource_Mock!
     var mockedDelegate: ChatMessageListVCDelegate_Mock!
 
+    private var retainedDataSource: ChatMessageListVCDataSource_Mock?
+    private var retainedDelegate: ChatMessageListVCDelegate_Mock?
+    private var retainedWindow: UIWindow?
+
     override func setUp() {
         super.setUp()
 
@@ -41,6 +45,9 @@ import XCTest
     override func tearDown() {
         mockedDataSource = nil
         mockedDelegate = nil
+        retainedDataSource = nil
+        retainedDelegate = nil
+        retainedWindow = nil
         AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount = 0
         super.tearDown()
     }
@@ -958,6 +965,99 @@ import XCTest
         // THEN
         XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
         XCTAssertEqual(mockedListView.reloadRowsCalledWith.count, 0)
+    }
+
+    // MARK: - highlightCell
+
+    func test_cellForRow_whenMessageIsHighlighted_appliesHighlightToCell() throws {
+        mockedDataSource.mockedChannel = .mock(cid: .unique)
+        mockedDataSource.messages = [.mock(id: "0"), .mock(id: "1")]
+
+        sut.highlightCell(at: IndexPath(item: 0, section: 0))
+
+        let cell = try XCTUnwrap(
+            sut.tableView(sut.listView, cellForRowAt: IndexPath(item: 0, section: 0)) as? ChatMessageCell
+        )
+        XCTAssertEqual(cell.messageContentView?.isJumpHighlighted, true)
+    }
+
+    func test_cellForRow_whenAnotherMessageIsHighlighted_doesNotApplyHighlightToCell() throws {
+        mockedDataSource.mockedChannel = .mock(cid: .unique)
+        mockedDataSource.messages = [.mock(id: "0"), .mock(id: "1")]
+
+        sut.highlightCell(at: IndexPath(item: 0, section: 0))
+
+        let cell = try XCTUnwrap(
+            sut.tableView(sut.listView, cellForRowAt: IndexPath(item: 1, section: 0)) as? ChatMessageCell
+        )
+        XCTAssertEqual(cell.messageContentView?.isJumpHighlighted, false)
+    }
+
+    func test_highlightCell_whenOtherVisibleCellsAreHighlighted_clearsThem() throws {
+        let vc = makeMessageListVCInWindow(messageCount: 30)
+
+        for item in [2, 5, 9] {
+            let cell = vc.listView.cellForRow(at: IndexPath(item: item, section: 0)) as? ChatMessageCell
+            cell?.messageContentView?.isJumpHighlighted = true
+        }
+        XCTAssertEqual(highlightedMessageIds(in: vc).count, 3)
+
+        vc.highlightCell(at: IndexPath(item: 12, section: 0))
+
+        XCTAssertEqual(highlightedMessageIds(in: vc), ["12"])
+    }
+
+    func test_highlightCell_whenHighlightFadesOut_clearsAllVisibleCells() throws {
+        let vc = makeMessageListVCInWindow(messageCount: 30)
+
+        for item in [2, 5] {
+            let cell = vc.listView.cellForRow(at: IndexPath(item: item, section: 0)) as? ChatMessageCell
+            cell?.messageContentView?.isJumpHighlighted = true
+        }
+
+        vc.highlightCell(at: IndexPath(item: 12, section: 0))
+
+        let expectation = expectation(description: "highlight faded out")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { expectation.fulfill() }
+        wait(for: [expectation], timeout: 5)
+
+        XCTAssertEqual(highlightedMessageIds(in: vc), [])
+    }
+
+    private func makeMessageListVCInWindow(messageCount: Int) -> ChatMessageListVC {
+        let vc = ChatMessageListVC()
+        vc.client = ChatClient_Mock(config: ChatClientConfig(apiKey: .init(.unique)))
+        vc.components = .mock
+        vc.components.messageListRouter = ChatMessageListRouter_Mock.self
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique)
+        dataSource.messages = (0..<messageCount).map {
+            .mock(id: "\($0)", cid: .unique, text: "Message \($0)", author: .mock(id: "author"))
+        }
+        let delegate = ChatMessageListVCDelegate_Mock()
+        // `dataSource` and `delegate` are weak, so they have to outlive this scope.
+        retainedDataSource = dataSource
+        retainedDelegate = delegate
+        vc.dataSource = dataSource
+        vc.delegate = delegate
+
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
+        retainedWindow = window
+        window.rootViewController = vc
+        window.isHidden = false
+        vc.view.frame = window.bounds
+        vc.view.layoutIfNeeded()
+        vc.listView.reloadData()
+        vc.view.layoutIfNeeded()
+        return vc
+    }
+
+    private func highlightedMessageIds(in vc: ChatMessageListVC) -> [MessageId] {
+        vc.listView.visibleCells
+            .compactMap { ($0 as? ChatMessageCell)?.messageContentView }
+            .filter { $0.isJumpHighlighted }
+            .compactMap { $0.content?.id }
     }
 
     // MARK: - cellForRow
