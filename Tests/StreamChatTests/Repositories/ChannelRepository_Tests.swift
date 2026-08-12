@@ -123,16 +123,14 @@ final class ChannelRepository_Tests: XCTestCase {
 
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(.init()))
 
-        let expectation = self.expectation(description: "markRead completes")
-        repository.markRead(cid: cid, userId: currentUserPayload.id) { _ in
-            expectation.fulfill()
+        try waitFor { done in
+            repository.markRead(cid: cid, userId: currentUserPayload.id, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
-        let read = try XCTUnwrap(
-            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
-        )
-        XCTAssertEqual(read.unreadMessageCount, 0)
+        let unreadMessageCount = try database.readSynchronously { session in
+            try XCTUnwrap(session.loadChannelRead(cid: cid, userId: currentUserPayload.id)).unreadMessageCount
+        }
+        XCTAssertEqual(unreadMessageCount, 0)
     }
 
     func test_markRead_onAPIFailure_rollsBackLocalUnreadState() throws {
@@ -154,17 +152,13 @@ final class ChannelRepository_Tests: XCTestCase {
         let error = TestError()
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
 
-        let expectation = self.expectation(description: "markRead completes")
-        nonisolated(unsafe) var receivedError: Error?
-        repository.markRead(cid: cid, userId: currentUserPayload.id) { error in
-            receivedError = error
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            repository.markRead(cid: cid, userId: currentUserPayload.id, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
-        let read = try XCTUnwrap(
-            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
-        )
+        let read = try database.readSynchronously { session in
+            try XCTUnwrap(session.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+        }
         XCTAssertEqual(receivedError as? TestError, error)
         XCTAssertEqual(read.unreadMessageCount, 5)
         XCTAssertEqual(read.lastReadMessageId, previousLastReadMessageId)
