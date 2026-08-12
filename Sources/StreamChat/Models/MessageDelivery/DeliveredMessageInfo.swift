@@ -28,6 +28,6 @@ public struct MessageDeliveryInfo: Equatable, Sendable {
 extension MessageDeliveryInfo {
     /// Converts this model to its corresponding payload representation.
     var asPayload: DeliveredMessagePayload {
-        DeliveredMessagePayload(cid: channelId, id: messageId)
+        DeliveredMessagePayload(cid: channelId.rawValue, id: messageId)
     }
 }

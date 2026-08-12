@@ -290,7 +290,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             latestDeliveredMessages: deliveries.map { $0.asPayload }
         )
         
-        apiClient.request(endpoint: .markChannelsDelivered(payload: payload)) { result in
+        apiClient.request(endpoint: .markDelivered(markDeliveredRequest: payload)) { result in
             completion?(result.error)
         }
     }

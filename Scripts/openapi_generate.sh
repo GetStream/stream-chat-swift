@@ -34,6 +34,7 @@ allowed_endpoints=(
     getUserLiveLocations
     listDevices
     listUserGroups
+    markDelivered
     queryMembers
     queryPollVotes
     queryReactions
@@ -67,6 +68,7 @@ allowed_models=(
   CreatePollOptionRequest
   CreatePollRequest
   CreateUserGroupRequest
+  DeliveredMessagePayload
   DeviceResponse
   Field
   FileUploadConfig
@@ -82,6 +84,7 @@ allowed_models=(
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
+  MarkDeliveredRequest
   MembersResponse
   PollOptionInput
   PollOptionResponse
@@ -354,6 +357,7 @@ rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
+rename_generated MarkDeliveredRequest ChannelDeliveredRequestPayload
 rename_generated CastPollVoteRequest CastPollVoteRequestBody
 rename_generated CreatePollOptionRequest CreatePollOptionRequestBody
 rename_generated CreatePollRequest CreatePollRequestBody
@@ -371,6 +375,7 @@ rename_generated GetReactionsResponse MessageReactionsPayload
 rename_generated ReactionResponse MessageReactionPayload
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 
+rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
@@ -542,7 +547,6 @@ inject_v1_endpoint_paths() {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
 
@@ -605,7 +609,6 @@ EOF
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
