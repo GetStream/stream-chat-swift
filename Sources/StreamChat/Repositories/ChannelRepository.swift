@@ -48,30 +48,28 @@ class ChannelRepository: @unchecked Sendable {
         userId: UserId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        // Captured inside the DB write for a possible rollback if the API fails.
-        nonisolated(unsafe) var previousReadState: PreviousChannelReadState?
-
-        database.write({ session in
-            previousReadState = PreviousChannelReadState(from: session.loadChannelRead(cid: cid, userId: userId))
+        database.write(converting: { session in
+            let previousReadState = PreviousChannelReadState(from: session.loadChannelRead(cid: cid, userId: userId))
             session.markChannelAsRead(cid: cid, userId: userId, at: .init())
-        }, completion: { [weak self] dbError in
-            if let dbError {
+            return previousReadState
+        }, completion: { [weak self] result in
+            switch result {
+            case .failure(let dbError):
                 completion?(dbError)
-                return
-            }
-
-            self?.apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
-                if let error = result.error {
-                    self?.rollbackMarkRead(
-                        cid: cid,
-                        userId: userId,
-                        to: previousReadState,
-                        apiError: error,
-                        completion: completion
-                    )
-                    return
+            case .success(let previousReadState):
+                self?.apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] apiResult in
+                    if let error = apiResult.error {
+                        self?.rollbackMarkRead(
+                            cid: cid,
+                            userId: userId,
+                            to: previousReadState,
+                            apiError: error,
+                            completion: completion
+                        )
+                        return
+                    }
+                    completion?(nil)
                 }
-                completion?(nil)
             }
         })
     }
@@ -164,8 +162,7 @@ class ChannelRepository: @unchecked Sendable {
     }
 }
 
-/// Snapshot of a channel read used to restore local state when an optimistic mark-read fails.
-private struct PreviousChannelReadState {
+private struct PreviousChannelReadState: Sendable {
     let existed: Bool
     let lastReadAt: Date
     let lastReadMessageId: MessageId?
