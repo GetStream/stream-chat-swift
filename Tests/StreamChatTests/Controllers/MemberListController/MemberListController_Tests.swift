@@ -91,7 +91,7 @@ final class MemberListController_Tests: XCTestCase {
         // Simulate successful network call.
         env.memberListUpdater!.load_completion!(.success([]))
         // Release reference of completion so we can deallocate stuff
-        env.memberListUpdater!.load_completion = nil
+        env.memberListUpdater!.releaseCompletions()
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionIsCalled)
@@ -393,7 +393,7 @@ final class MemberListController_Tests: XCTestCase {
         // Simulate successful network response.
         env.memberListUpdater!.load_completion!(.success([]))
         // Release reference of completion so we can deallocate stuff
-        env.memberListUpdater!.load_completion = nil
+        env.memberListUpdater!.releaseCompletions()
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)

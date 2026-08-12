@@ -17,9 +17,15 @@ final class ChannelMemberListUpdater_Mock: ChannelMemberListUpdater, @unchecked 
     func cleanUp() {
         load_query = nil
         load_queries.removeAll()
+        load_query_called = { _ in }
+        releaseCompletions()
+        load_completion_result = nil
+    }
+
+    /// Drops retained load completions so controllers under test can deallocate.
+    func releaseCompletions() {
         load_completion = nil
         load_completions.removeAll()
-        load_completion_result = nil
     }
 
     override func load(_ query: ChannelMemberListQuery, completion: (@Sendable (Result<[ChatChannelMember], Error>) -> Void)? = nil) {
