@@ -29,6 +29,7 @@ _August 12, 2026_
 - Add `ChannelSearch` and `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 ### 🐞 Fixed
 - Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
+### 🔄 Changed
 - Apply dynamic search debouncing to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
 ## StreamChatCommonUI
