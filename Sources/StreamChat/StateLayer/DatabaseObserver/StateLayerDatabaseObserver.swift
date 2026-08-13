@@ -111,26 +111,21 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
             dtos.count <= 1,
             "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(dtos)"
         )
-        do {
-            let items = DatabaseItemConverter.convert(
-                dtos: dtos,
-                existing: reuseItems ?? [],
-                changes: changes,
-                itemCreator: itemCreator,
-                itemReuseKeyPaths: itemReuseKeyPaths,
-                sorting: []
-            )
-            log.assert(
-                items.count <= 1,
-                "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(items.count)"
-            )
-            let item = items.first
-            reuseItems = item.map { [$0] }
-            return item
-        } catch {
-            log.debug("Failed to convert DTO (\(DTO.self) to \(Item.self)")
-            return nil
-        }
+        let items = DatabaseItemConverter.convert(
+            dtos: dtos,
+            existing: reuseItems ?? [],
+            changes: changes,
+            itemCreator: itemCreator,
+            itemReuseKeyPaths: itemReuseKeyPaths,
+            sorting: []
+        )
+        log.assert(
+            items.count <= 1,
+            "StateLayerDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(items.count)"
+        )
+        let item = items.first
+        reuseItems = item.map { [$0] }
+        return item
     }
 }
 

@@ -10,7 +10,7 @@ func objc_getAssociatedWeakObject(_ object: AnyObject, _ key: UnsafeRawPointer) 
 }
 
 func objc_setAssociatedWeakObject(_ object: AnyObject, _ key: UnsafeRawPointer, _ value: AnyObject?) {
-    weak var weakValue = value
+    weak let weakValue = value
     let block: (() -> AnyObject?)? = {
         return weakValue
     }

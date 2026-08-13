@@ -42,7 +42,7 @@ final class EventsController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only weak reference to the controller.
-        weak var eventsController = controller
+        weak let eventsController = controller
         controller = nil
 
         // Assert controller is kept alive by the publisher.
@@ -57,7 +57,7 @@ final class EventsController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only weak reference to the controller.
-        weak var eventsController = controller
+        weak let eventsController = controller
         controller = nil
 
         // Assert controller is kept alive by the publisher.

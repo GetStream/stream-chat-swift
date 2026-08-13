@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 import UserNotifications
 
-final class PushNotifications: NSObject {
+final class PushNotifications: NSObject, @unchecked Sendable {
     var center: UNUserNotificationCenter {
         UNUserNotificationCenter.current()
     }

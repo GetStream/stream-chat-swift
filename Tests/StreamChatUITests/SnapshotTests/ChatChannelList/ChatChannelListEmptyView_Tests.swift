@@ -23,7 +23,7 @@ class ChatChannelListEmptyView_Tests: XCTestCase {
     }
 
     @MainActor func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.textSecondary = .cyan
         appearance.colorPalette.textPrimary = .green

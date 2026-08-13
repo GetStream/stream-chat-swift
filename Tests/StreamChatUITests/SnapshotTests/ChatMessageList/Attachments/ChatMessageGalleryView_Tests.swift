@@ -90,7 +90,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.backgroundCoreScrim = UIColor.purple.withAlphaComponent(0.5)
         galleryView = ChatMessageGalleryView()
             .withoutAutoresizingMaskConstraints

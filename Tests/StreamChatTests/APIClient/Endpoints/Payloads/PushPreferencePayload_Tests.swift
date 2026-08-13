@@ -53,7 +53,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
 
         // Test asModel conversion
         let model = payload
-        XCTAssertEqual(model.level, .mentions)
+        XCTAssertEqual(model.level, PushPreferenceLevel(rawValue: "mentions"))
         XCTAssertEqual(model.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
 
@@ -207,7 +207,10 @@ final class PushPreferencePayload_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(models.count, 2)
         XCTAssertTrue(models.contains { $0.level == .all && $0.disabledUntil == nil })
-        XCTAssertTrue(models.contains { $0.level == .mentions && $0.disabledUntil == "2024-12-31T23:59:59.999Z".toDate() })
+        XCTAssertTrue(models.contains {
+            $0.level == PushPreferenceLevel(rawValue: "mentions")
+                && $0.disabledUntil == "2024-12-31T23:59:59.999Z".toDate()
+        })
     }
 
     func test_channelPushPreferencesPayload_asModel() throws {
@@ -224,7 +227,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         XCTAssertEqual(models.count, 2)
         XCTAssertEqual(models["messaging:channel1"]?.level, .all)
         XCTAssertNil(models["messaging:channel1"]?.disabledUntil)
-        XCTAssertEqual(models["messaging:channel2"]?.level, .mentions)
+        XCTAssertEqual(models["messaging:channel2"]?.level, PushPreferenceLevel(rawValue: "mentions"))
         XCTAssertEqual(models["messaging:channel2"]?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
 }

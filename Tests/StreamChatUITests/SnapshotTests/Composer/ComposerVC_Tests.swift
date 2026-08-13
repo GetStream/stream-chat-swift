@@ -281,7 +281,7 @@ import XCTest
 
         // When mention already exists, should not search.
         composerVC.content.mentionedUsers.insert(.mock(id: .unique, name: "Han Solo"))
-        let existingMentionDataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Han Solo"))
+        _ = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Han Solo"))
         XCTAssertEqual(mockedSearchController.searchCallCount, 0)
 
         // Happy path

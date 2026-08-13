@@ -412,7 +412,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         var client: StreamCDNStorage? = builder.make()
 
         let expectation = XCTestExpectation(description: "Completion called")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
 
         client?.deleteAttachment(
             remoteUrl: .unique(),
@@ -435,7 +435,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         var client: StreamCDNStorage? = builder.make()
 
         let expectation = XCTestExpectation(description: "Completion called")
-        var receivedResult: Result<UploadedFile, Error>?
+        nonisolated(unsafe) var receivedResult: Result<UploadedFile, Error>?
 
         client?.uploadAttachment(
             .dummy(
@@ -527,7 +527,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let payload = FileUploadResponse.dummy(file: URL.unique().absoluteString)
         builder.decoder.decodeRequestResponse = .success(payload)
 
-        var progressCalled = false
+        nonisolated(unsafe) var progressCalled = false
         let completionExpectation = expectation(description: "Upload completed")
 
         client.uploadAttachment(

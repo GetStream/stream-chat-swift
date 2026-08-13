@@ -48,7 +48,7 @@ import XCTest
         let bubble = ChatMessageBubbleView().withFixedSize
 
         // Set custom appearance
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.backgroundCoreSurfaceStrong = Appearance.default.colorPalette.backgroundCoreScrim
         bubble.appearance = appearance
 

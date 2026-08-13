@@ -1097,7 +1097,7 @@ final class MessageController_Tests: XCTestCase {
         controller.flag()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.
@@ -1978,7 +1978,7 @@ final class MessageController_Tests: XCTestCase {
         controller.addReaction(.init(rawValue: .unique))
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.
@@ -2048,7 +2048,7 @@ final class MessageController_Tests: XCTestCase {
         controller.deleteReaction(.init(rawValue: .unique))
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.
@@ -2247,7 +2247,7 @@ final class MessageController_Tests: XCTestCase {
         controller.resendMessage()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.
@@ -2306,7 +2306,7 @@ final class MessageController_Tests: XCTestCase {
         controller.dispatchEphemeralMessageAction(.unique)
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.
@@ -2368,7 +2368,7 @@ final class MessageController_Tests: XCTestCase {
         controller.translate(to: .english)
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.

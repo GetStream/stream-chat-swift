@@ -15,7 +15,7 @@ import XCTest
     private let defaultCommand = Command(name: "Default", description: "", set: "", args: "[text]")
 
     func test_updateContent_whenCommandIsRecognized_commandIconImageIsUsed() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.images.commandIcons = [
             "yoda": TestImages.yoda.image
         ]
@@ -31,7 +31,7 @@ import XCTest
     }
 
     func test_updateContent_whenCommandIsNotRecognized_fallbackCommandImageIsUsed() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.images.commandIcons = [
             "yoda": TestImages.yoda.image
         ]
@@ -53,7 +53,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.images.commandIcons = [
             "default": TestImages.yoda.image
         ]

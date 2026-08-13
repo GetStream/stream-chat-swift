@@ -37,7 +37,7 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelListController_Mock? = channelListController
+        weak let controller: ChannelListController_Mock? = channelListController
         channelListController = nil
 
         controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
@@ -56,7 +56,7 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelListController_Mock? = channelListController
+        weak let controller: ChannelListController_Mock? = channelListController
         channelListController = nil
 
         let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])

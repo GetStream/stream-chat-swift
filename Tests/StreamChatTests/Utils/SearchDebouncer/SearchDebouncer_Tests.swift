@@ -95,7 +95,7 @@ final class SearchDebouncer_Tests: XCTestCase {
         let debouncer = SearchDebouncer(policy: .constant(0.2), queue: .main)
         let expectation = expectation(description: "Pending text search is cancelled")
         expectation.isInverted = true
-        var executed = false
+        nonisolated(unsafe) var executed = false
 
         debouncer.schedule(filter: Filter<UserListFilterScope>.autocomplete(.name, text: "abc")) {
             expectation.fulfill()

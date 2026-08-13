@@ -94,7 +94,7 @@ import XCTest
         )
 
         // Create custom Appearance.
-        var appearance = Appearance.default
+        let appearance = Appearance.default
         // Inject custom `alert` colour.
         appearance.colorPalette.accentError = .systemYellow
 

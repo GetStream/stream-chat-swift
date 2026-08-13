@@ -111,7 +111,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.textPrimary = .blue
 
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints

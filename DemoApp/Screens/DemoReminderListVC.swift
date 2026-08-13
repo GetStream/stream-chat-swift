@@ -295,11 +295,17 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     private func createFilterPillButton(for filterOption: FilterOption) -> UIButton {
         let button = UIButton(type: .system)
         button.tag = filterOption.rawValue
-        button.setTitle(filterOption.title, for: .normal)
-        button.titleLabel?.font = Appearance.default.fonts.footnote
+        var configuration = UIButton.Configuration.plain()
+        configuration.title = filterOption.title
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = Appearance.default.fonts.footnote
+            return outgoing
+        }
+        button.configuration = configuration
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
-        button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
         button.addTarget(self, action: #selector(didTapFilterPill), for: .touchUpInside)
         return button
     }
@@ -310,10 +316,10 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
             
             if button.tag == selectedFilter.rawValue {
                 button.backgroundColor = Appearance.default.colorPalette.accentPrimary
-                button.setTitleColor(.white, for: .normal)
+                button.configuration?.baseForegroundColor = .white
             } else {
                 button.backgroundColor = Appearance.default.colorPalette.backgroundCoreSurfaceStrong
-                button.setTitleColor(Appearance.default.colorPalette.textPrimary, for: .normal)
+                button.configuration?.baseForegroundColor = Appearance.default.colorPalette.textPrimary
             }
         }
         

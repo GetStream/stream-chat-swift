@@ -274,7 +274,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // WHEN: synchronize completes successfully
         let exp = expectation(description: "synchronize completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.synchronize { error in
             receivedError = error
             exp.fulfill()
@@ -308,7 +308,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         let error = TestError()
         let exp = expectation(description: "synchronize completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         controller.synchronize { error in
             receivedError = error
             exp.fulfill()
@@ -623,7 +623,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterMatches_shouldLinkChannelToQuery() {
-        let filter: (ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)

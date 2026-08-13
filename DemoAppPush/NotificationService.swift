@@ -91,7 +91,7 @@ class NotificationService: UNNotificationServiceExtension {
         let client = ChatClient(config: config)
         client.setToken(token: Token(stringLiteral: userCredentials.token.rawValue))
 
-        let chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
+        nonisolated(unsafe) let chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
 
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {

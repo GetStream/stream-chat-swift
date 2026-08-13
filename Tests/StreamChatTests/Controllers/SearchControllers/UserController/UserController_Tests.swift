@@ -464,7 +464,7 @@ final class UserController_Tests: XCTestCase {
         controller.flag()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive
@@ -529,7 +529,7 @@ final class UserController_Tests: XCTestCase {
         controller.unflag()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive
@@ -592,7 +592,7 @@ final class UserController_Tests: XCTestCase {
         controller.block()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive
@@ -655,7 +655,7 @@ final class UserController_Tests: XCTestCase {
         controller.unblock()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive

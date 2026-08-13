@@ -139,10 +139,12 @@ class DemoLivestreamMessageActionsVC: UIViewController {
     
     private func createReactionButton(image: UIImage, reactionType: MessageReactionType) -> UIButton {
         let button = UIButton(type: .system)
-        button.setImage(image, for: .normal)
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = image
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
+        button.configuration = configuration
         button.contentMode = .scaleAspectFit
         button.imageView?.contentMode = .scaleAspectFit
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
         let isSelected = message?.currentUserReactions.contains { $0.type == reactionType } ?? false
         let colorPalette = Appearance.default.colorPalette

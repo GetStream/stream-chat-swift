@@ -56,7 +56,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func disableAnimations() {
-        UIApplication.shared.keyWindow?.layer.speed = 2
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first { $0.isKeyWindow }?
+            .layer.speed = 2
         UIView.setAnimationsEnabled(false)
     }
 

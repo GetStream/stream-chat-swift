@@ -44,7 +44,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         )
         middleware?.timer = VirtualTimeTimer.self
 
-        weak var weakMiddleware = middleware
+        weak let weakMiddleware = middleware
 
         // Handle a new TypingStart event for the current user and collect resulting events
         let typingStartEvent = TypingEventDTO.startTyping(userId: currentUser.id)
@@ -72,7 +72,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         )
         middleware?.timer = VirtualTimeTimer.self
 
-        weak var weakMiddleware = middleware
+        weak let weakMiddleware = middleware
 
         // Simulate some user started typing
         let otherUser = ChatUser.mock(id: .unique)

@@ -33,7 +33,7 @@ final class RoleSearchController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: RoleSearchController? = roleSearchController
+        weak let controller: RoleSearchController? = roleSearchController
         roleSearchController = nil
 
         controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
@@ -50,7 +50,7 @@ final class RoleSearchController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: RoleSearchController? = roleSearchController
+        weak let controller: RoleSearchController? = roleSearchController
         roleSearchController = nil
 
         let roles = [Role.dummy(name: "admin")]

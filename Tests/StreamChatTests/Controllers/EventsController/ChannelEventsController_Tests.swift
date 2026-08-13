@@ -185,7 +185,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         controller?.sendEvent(IdeaEventPayload.unique)
 
         // Keep only weak ref to controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is kept alive.

@@ -284,7 +284,7 @@ final class UserSearchController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is not kept alive
@@ -478,7 +478,7 @@ final class UserSearchController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is not kept alive
@@ -652,7 +652,7 @@ final class UserSearchController_Tests: XCTestCase {
         controller.loadNextUsers()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        weak let weakController = controller
         controller = nil
 
         // Assert controller is not kept alive

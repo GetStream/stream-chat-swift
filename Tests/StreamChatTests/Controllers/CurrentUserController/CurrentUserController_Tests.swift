@@ -693,7 +693,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_markAllRead_keepsControllerAlive() {
         // GIVEN
-        weak var weakController = controller
+        weak let weakController = controller
 
         // WHEN
         controller.markAllRead { _ in }
@@ -838,7 +838,7 @@ final class CurrentUserController_Tests: XCTestCase {
         client.authenticationRepository.setMockToken()
         
         // Create weak reference to controller
-        weak var weakController = controller
+        weak let weakController = controller
         
         // Call loadAllUnreads
         controller.loadAllUnreads { _ in }
@@ -854,9 +854,9 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_setPushPreference_callsUpdaterWithCorrectParameters() {
         // GIVEN
-        let level: PushPreferenceLevel = .mentions
+        let level: PushPreferenceLevel = .directMentions
         let expectedPreference = PushPreferenceInput(
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -890,7 +890,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_setPushPreference_propagatesError() {
         // GIVEN
-        let level: PushPreferenceLevel = .mentions
+        let level: PushPreferenceLevel = .directMentions
         let expectedError = TestError()
 
         // WHEN

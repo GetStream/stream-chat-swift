@@ -49,7 +49,7 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: PollVoteListController? = voteListController
+        weak let controller: PollVoteListController? = voteListController
         voteListController = nil
 
         controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
@@ -68,7 +68,7 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: PollVoteListController? = voteListController
+        weak let controller: PollVoteListController? = voteListController
         voteListController = nil
 
         let vote: PollVote = .unique
@@ -91,7 +91,7 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        nonisolated(unsafe) weak var controller: PollVoteListController? = voteListController
+        weak let controller: PollVoteListController? = voteListController
         voteListController = nil
 
         let poll: Poll = .unique

@@ -106,7 +106,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingUIConfig() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.backgroundCoreElevation1 = .cyan
 
         vc.appearance = appearance

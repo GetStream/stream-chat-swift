@@ -84,7 +84,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
         )
         
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Simulate channel update event
@@ -105,7 +105,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
@@ -125,7 +125,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         let newMessage1: ChatMessage = .mock(id: .unique, cid: channelQuery.cid!, text: "Message 1", author: .mock(id: .unique))
@@ -169,7 +169,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
@@ -189,7 +189,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Test initial state
@@ -213,7 +213,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
@@ -236,7 +236,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Test initial state
@@ -274,7 +274,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: LivestreamChannelController? = livestreamChannelController
+        weak let controller: LivestreamChannelController? = livestreamChannelController
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.

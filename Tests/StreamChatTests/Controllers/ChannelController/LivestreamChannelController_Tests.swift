@@ -1479,7 +1479,7 @@ extension LivestreamChannelController_Tests {
     func test_freezeChannel_makesCorrectAPICall() {
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Freeze channel completes")
-        var freezeError: Error?
+        nonisolated(unsafe) var freezeError: Error?
 
         controller.freezeChannel { error in
             freezeError = error
@@ -1498,7 +1498,7 @@ extension LivestreamChannelController_Tests {
     func test_unfreezeChannel_makesCorrectAPICall() {
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Unfreeze channel completes")
-        var unfreezeError: Error?
+        nonisolated(unsafe) var unfreezeError: Error?
 
         controller.unfreezeChannel { error in
             unfreezeError = error
