@@ -5,26 +5,6 @@
 import Foundation
 
 extension Endpoint {
-    static func loadReactions(messageId: MessageId, pagination: Pagination) -> Endpoint<MessageReactionsPayload> {
-        .init(
-            path: .reactions(messageId),
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: pagination
-        )
-    }
-
-    static func loadReactionsV2(query: ReactionListQuery) -> Endpoint<MessageReactionsPayload> {
-        .init(
-            path: .reactions(query.messageId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: query
-        )
-    }
-
     static func addReaction(
         _ type: MessageReactionType,
         score: Int,

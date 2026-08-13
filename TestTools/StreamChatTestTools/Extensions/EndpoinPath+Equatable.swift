@@ -35,7 +35,8 @@ extension EndpointPath: Equatable {
         case let (.editMessage(messageId1), .editMessage(messageId2)): return messageId1 == messageId2
         case let (.deleteMessage(messageId1), .deleteMessage(messageId2)): return messageId1 == messageId2
         case let (.replies(messageId1), .replies(messageId2)): return messageId1 == messageId2
-        case let (.reactions(messageId1), .reactions(messageId2)): return messageId1 == messageId2
+        case let (.getReactions(messageId1), .getReactions(messageId2)): return messageId1 == messageId2
+        case let (.queryReactions(messageId1), .queryReactions(messageId2)): return messageId1 == messageId2
         case let (.addReaction(messageId1), .addReaction(messageId2)): return messageId1 == messageId2
         case let (
             .deleteReaction(messageId1, messageReactionType1),

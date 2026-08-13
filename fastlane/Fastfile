@@ -49,6 +49,7 @@ lane :release do |options|
     Dir.chdir('fastlane') { update_img_shields_sdk_sizes }
   end
 
+  lint_swift_package
   check_unsafe_flags
 
   release_ios_sdk(
@@ -81,6 +82,7 @@ lane :publish_release do |options|
   release_version = get_sdk_version_from_environment
   UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
   UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
+  File.write(ENV['GITHUB_ENV'], "RELEASE_VERSION=#{release_version}\n", mode: 'a') if ENV['GITHUB_ENV']
   ensure_git_branch(branch: 'main')
 
   publish_ios_sdk(

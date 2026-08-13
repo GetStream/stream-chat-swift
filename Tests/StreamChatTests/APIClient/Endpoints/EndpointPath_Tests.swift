@@ -187,9 +187,9 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertTrue(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
     }
 
-    func test_markChannelsDelivered_value() {
-        let path = EndpointPath.markChannelsDelivered.value
-        XCTAssertEqual(path, "channels/delivered")
+    func test_markDelivered_value() {
+        let path = EndpointPath.markDelivered.value
+        XCTAssertEqual(path, "/api/v2/chat/channels/delivered")
     }
 
     // MARK: - Codable
@@ -229,7 +229,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.truncateChannel("channel_idq"))
         assertResultEncodingAndDecoding(.markChannelRead("channel_idq"))
         assertResultEncodingAndDecoding(.markAllChannelsRead)
-        assertResultEncodingAndDecoding(.markChannelsDelivered)
+        assertResultEncodingAndDecoding(.markDelivered)
         assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
         assertResultEncodingAndDecoding(.stopWatchingChannel(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
@@ -241,7 +241,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.deleteMessage("message_idd"))
         assertResultEncodingAndDecoding(.pinMessage("message_idp"))
         assertResultEncodingAndDecoding(.replies("message_idr"))
-        assertResultEncodingAndDecoding(.reactions("message_idre"))
+        assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
+        assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))
         assertResultEncodingAndDecoding(.addReaction("message_ida"))
         assertResultEncodingAndDecoding(.deleteReaction("message_id", MessageReactionType(rawValue: "love")))
         assertResultEncodingAndDecoding(.messageAction("message_ida"))

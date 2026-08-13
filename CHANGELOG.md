@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.9.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.9.0)
+_August 12, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `ChatChannel.truncatedBy`, `ChatChannel.isAutoTranslationEnabled` and `ChatChannel.autoTranslationLanguages` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
@@ -30,7 +35,7 @@ _August 03, 2026_
 - Add `SystemMessage` support to `addMembers`, `removeMembers`, and `truncateChannel` to send system messages with extra data [#4183](https://github.com/GetStream/stream-chat-swift/pull/4183)
 - Add `NSMutableAttributedString.addLinks(detectedBy:)` and `AttributedString.addLinks(detectedBy:)` for applying detected links to attributed strings while preserving existing Markdown links [#4181](https://github.com/GetStream/stream-chat-swift/pull/4181)
 
-### ⚡️ Performance
+### ⚡ Performance
 - Skip oversized `/sync` event replay and refresh watched channels via `queryChannels` instead [#4189](https://github.com/GetStream/stream-chat-swift/pull/4189)
 
 ### 🐞 Fixed
@@ -72,7 +77,7 @@ _July 03, 2026_
 - Add support for searching roles [#4139](https://github.com/GetStream/stream-chat-swift/pull/4139)
 - Add highlighting for `@here`, `@channel`, role and group mentions in messages [#4140](https://github.com/GetStream/stream-chat-swift/pull/4140)
 - Add customizable mention suggestion providers [#4141](https://github.com/GetStream/stream-chat-swift/pull/4141)
-### ⚡️ Performance
+### ⚡ Performance
 - Improve channel list performance with optimizations in model conversions [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
 - Reduce SDK size by 1 MB (including StreamChatCommonUI) [#4165](https://github.com/GetStream/stream-chat-swift/pull/4165)
 ### 🔄 Changed
@@ -393,7 +398,7 @@ _November 18, 2025_
 ## StreamChat
 ### ✅ Added
 - Add `ChatClientConfig.isAutomaticSyncOnReconnectEnabled` for toggling automatic syncing [#3879](https://github.com/GetStream/stream-chat-swift/pull/3879)
-### ⚡️ Performance
+### ⚡ Performance
 - Reduce SDK size by converting Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)
 ### 🔄 Changed
 - Change Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)

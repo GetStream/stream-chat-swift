@@ -30,6 +30,13 @@ jobs:
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
         run: bundle exec fastlane publish_release --verbose
 
+      - name: Integration Test
+        run: | # reports to @support on failure
+          test -n "$RELEASE_VERSION"
+          gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline --field sdk=stream-chat-swift --field version="$RELEASE_VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+
   merge-main-to-develop:
     name: Merge main to develop
     runs-on: macos-15

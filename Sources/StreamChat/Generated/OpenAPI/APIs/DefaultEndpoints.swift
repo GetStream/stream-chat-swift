@@ -31,7 +31,6 @@ enum EndpointPath: Codable {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
 
@@ -42,7 +41,6 @@ enum EndpointPath: Codable {
     case pinMessage(MessageId)
     case unpinMessage(MessageId)
     case replies(MessageId)
-    case reactions(MessageId)
     case addReaction(MessageId)
     case deleteReaction(
         MessageId,
@@ -98,13 +96,16 @@ enum EndpointPath: Codable {
     case getApp
     case getBlockedUsers
     case getOG
+    case getReactions(id: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
     case listDevices
     case listUserGroups
+    case markDelivered
     case muteChannel
     case queryMembers
     case queryPollVotes(pollId: String)
+    case queryReactions(id: String)
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
@@ -166,7 +167,6 @@ enum EndpointPath: Codable {
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
@@ -177,7 +177,6 @@ enum EndpointPath: Codable {
         case let .pinMessage(messageId): return "messages/\(messageId)"
         case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(
             messageId,
@@ -248,6 +247,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users/block"
         case .getOG:
             return "/api/v2/og"
+        case let .getReactions(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
@@ -256,12 +257,16 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case .listUserGroups:
             return "/api/v2/usergroups"
+        case .markDelivered:
+            return "/api/v2/chat/channels/delivered"
         case .muteChannel:
             return "/api/v2/chat/moderation/mute/channel"
         case .queryMembers:
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
+        case let .queryReactions(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchRoles:
@@ -688,6 +693,24 @@ extension Endpoint {
         )
     }
 
+    static func getReactions(
+        id: String,
+        limit: Int?,
+        offset: Int?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageReactionsPayload> {
+        return .init(
+            path: .getReactions(id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "offset": offset
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func getUserGroup(
         id: String,
         teamId: String?,
@@ -745,6 +768,19 @@ extension Endpoint {
         )
     }
 
+    static func markDelivered(
+        markDeliveredRequest: ChannelDeliveredRequestPayload,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markDelivered,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markDeliveredRequest
+        )
+    }
+
     static func muteChannel(
         muteChannelRequest: MuteChannelRequest,
         requiresConnectionId: Bool = false
@@ -787,6 +823,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryPollVotesRequest
+        )
+    }
+
+    static func queryReactions(
+        id: String,
+        queryReactionsRequest: QueryReactionsRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageReactionsPayload> {
+        return .init(
+            path: .queryReactions(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryReactionsRequest
         )
     }
 

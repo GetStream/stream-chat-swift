@@ -4,7 +4,6 @@
 
 import Foundation
 
-// sourcery: v1CodingKeys = "UserPayloadsCodingKeys"
 class UserPayload: @unchecked Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?
     /// Whether a user is banned or not

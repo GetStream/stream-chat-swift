@@ -2,8 +2,8 @@
 // sourcery:decoder:{{ type.name }}
 {% for variable in type.storedVariables where variable.name == "custom" %}
     class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue)){% if type.annotations.v1CodingKeys %}
-            .union({{ type.annotations.v1CodingKeys }}.allCases.map(\.rawValue)){% endif %}
+        Set(CodingKeys.allCases.map(\.rawValue)){% if argument.v1CodingKeys[type.name] %}
+            .union({{ argument.v1CodingKeys[type.name] }}.allCases.map(\.rawValue)){% endif %}
     }
 
 {% endfor %}

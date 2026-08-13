@@ -29,13 +29,16 @@ allowed_endpoints=(
     getApp
     getBlockedUsers
     getOG
+    getReactions
     getUserGroup
     getUserLiveLocations
     listDevices
     listUserGroups
+    markDelivered
     muteChannel
     queryMembers
     queryPollVotes
+    queryReactions
     removeUserGroupMembers
     searchRoles
     searchUserGroups
@@ -70,6 +73,7 @@ allowed_models=(
   CreatePollOptionRequest
   CreatePollRequest
   CreateUserGroupRequest
+  DeliveredMessagePayload
   DeviceResponse
   Field
   FileUploadConfig
@@ -77,6 +81,7 @@ allowed_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
+  GetReactionsResponse
   GetUserGroupResponse
   ImageData
   Images
@@ -84,6 +89,7 @@ allowed_models=(
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
+  MarkDeliveredRequest
   MembersResponse
   MuteChannelRequest
   MuteChannelResponse
@@ -99,6 +105,8 @@ allowed_models=(
   PushPreferencesResponse
   QueryMembersPayload
   QueryPollVotesRequest
+  QueryReactionsRequest
+  ReactionResponse
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
@@ -305,6 +313,7 @@ retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVo
 retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
 retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
+retype_property ReactionResponse type String MessageReactionType
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
 retype_property SharedLocationResponseData channelCid String ChannelId
@@ -365,6 +374,7 @@ rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
+rename_generated MarkDeliveredRequest ChannelDeliveredRequestPayload
 rename_generated CastPollVoteRequest CastPollVoteRequestBody
 rename_generated CreatePollOptionRequest CreatePollOptionRequestBody
 rename_generated CreatePollRequest CreatePollRequestBody
@@ -378,11 +388,15 @@ rename_generated PollVotesResponse PollVoteListResponse
 rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
 rename_generated UpdatePollPartialRequest UpdatePollPartialRequestBody
 rename_generated VoteData VoteDataRequestBody
+rename_generated GetReactionsResponse MessageReactionsPayload
+rename_generated ReactionResponse MessageReactionPayload
+rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 
+rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type UnmuteResponse EmptyResponse
 
@@ -439,6 +453,7 @@ remove_property() {
   perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsLevel
@@ -509,16 +524,6 @@ unfinalize_model() {
 }
 unfinalize_model UserPayload
 
-# Add a Sourcery annotation to a generated model, consumed by OpenAPIDecodable.stencil.
-annotate_model() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  ANNOTATION="// sourcery: $2 = \"$3\"" perl -0777 -i -pe '
-    my $annotation = $ENV{ANNOTATION};
-    s/^((?:final )?class )/$annotation\n$1/m;
-  ' "$file"
-}
-annotate_model UserPayload v1CodingKeys UserPayloadsCodingKeys
-
 # 4d. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
 #     the file (opening at column 0, running to EOF), so delete from its opening
@@ -576,7 +581,6 @@ inject_v1_endpoint_paths() {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case markChannelsDelivered
     case channelEvent(String)
     case pinnedMessages(String)
 
@@ -587,7 +591,6 @@ inject_v1_endpoint_paths() {
     case pinMessage(MessageId)
     case unpinMessage(MessageId)
     case replies(MessageId)
-    case reactions(MessageId)
     case addReaction(MessageId)
     case deleteReaction(MessageId, MessageReactionType)
     case messageAction(MessageId)
@@ -639,7 +642,6 @@ EOF
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
@@ -650,7 +652,6 @@ EOF
         case let .pinMessage(messageId): return "messages/\(messageId)"
         case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
