@@ -156,13 +156,14 @@ final class ChannelRepository_Tests: XCTestCase {
             repository.markRead(cid: cid, userId: currentUserPayload.id, completion: done)
         }
 
-        let read = try database.readSynchronously { session in
-            try XCTUnwrap(session.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+        let (unreadMessageCount, lastReadMessageId, lastReadAt) = try database.readSynchronously { session in
+            let read = try XCTUnwrap(session.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+            return (read.unreadMessageCount, read.lastReadMessageId, read.lastReadAt.bridgeDate.timeIntervalSince1970)
         }
         XCTAssertEqual(receivedError as? TestError, error)
-        XCTAssertEqual(read.unreadMessageCount, 5)
-        XCTAssertEqual(read.lastReadMessageId, previousLastReadMessageId)
-        XCTAssertEqual(read.lastReadAt.bridgeDate.timeIntervalSince1970, previousLastReadAt.timeIntervalSince1970)
+        XCTAssertEqual(unreadMessageCount, 5)
+        XCTAssertEqual(lastReadMessageId, previousLastReadMessageId)
+        XCTAssertEqual(lastReadAt, previousLastReadAt.timeIntervalSince1970)
         XCTAssertEqual(database.writeSessionCounter, 2)
     }
 
