@@ -3,9 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
+- Fix unread banner and jump-to-unread button flickering when receiving messages in an open channel [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
   
 # [5.9.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.9.0)
 _August 12, 2026_
@@ -16,7 +21,6 @@ _August 12, 2026_
 - Add `ChannelSearch` and `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 ### 🐞 Fixed
 - Fix concurrent channel watches hanging indefinitely due to a FetchCache deadlock [#4200](https://github.com/GetStream/stream-chat-swift/pull/4200)
-- Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 ### 🔄 Changed
 - Apply dynamic search debouncing to message, user, and channel search controllers [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
@@ -25,8 +29,6 @@ _August 12, 2026_
 - Add `chatThreadConnectorIncoming` and `chatThreadConnectorOutgoing` colors for customizing the thread connector [#4195](https://github.com/GetStream/stream-chat-swift/pull/4195)
 
 ## StreamChatUI
-### 🐞 Fixed
-- Fix unread banner and jump-to-unread button flickering when receiving messages in an open channel [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 ### 🔄 Changed
 - Route channel search through `ChatChannelSearchController` [#4198](https://github.com/GetStream/stream-chat-swift/pull/4198)
 
