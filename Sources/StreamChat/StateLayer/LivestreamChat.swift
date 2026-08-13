@@ -462,9 +462,8 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         limit: Int = 25,
         offset: Int = 0
     ) async throws -> [ChatMessageReaction] {
-        let pagination = Pagination(pageSize: limit, offset: offset)
         let payload: MessageReactionsPayload = try await apiClient.request(
-            endpoint: .loadReactions(messageId: messageId, pagination: pagination)
+            endpoint: .getReactions(id: messageId, limit: limit, offset: offset)
         )
         return payload.reactions.compactMap { $0.asModel(messageId: messageId) }
     }

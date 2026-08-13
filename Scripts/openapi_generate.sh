@@ -29,6 +29,7 @@ allowed_endpoints=(
     getApp
     getBlockedUsers
     getOG
+    getReactions
     getUserGroup
     getUserLiveLocations
     listDevices
@@ -36,6 +37,7 @@ allowed_endpoints=(
     markDelivered
     queryMembers
     queryPollVotes
+    queryReactions
     removeUserGroupMembers
     searchRoles
     searchUserGroups
@@ -74,6 +76,7 @@ allowed_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
+  GetReactionsResponse
   GetUserGroupResponse
   ImageData
   Images
@@ -95,6 +98,8 @@ allowed_models=(
   PushPreferencesResponse
   QueryMembersPayload
   QueryPollVotesRequest
+  QueryReactionsRequest
+  ReactionResponse
   RemoveUserGroupMembersRequest
   Role
   SearchRolesResponse
@@ -291,6 +296,7 @@ retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVo
 retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
 retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
+retype_property ReactionResponse type String MessageReactionType
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
 retype_property SharedLocationResponseData channelCid String ChannelId
@@ -365,6 +371,9 @@ rename_generated PollVotesResponse PollVoteListResponse
 rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
 rename_generated UpdatePollPartialRequest UpdatePollPartialRequestBody
 rename_generated VoteData VoteDataRequestBody
+rename_generated GetReactionsResponse MessageReactionsPayload
+rename_generated ReactionResponse MessageReactionPayload
+rename_generated_type QueryReactionsResponse MessageReactionsPayload
 
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
@@ -417,6 +426,7 @@ remove_property() {
   perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsLevel
@@ -547,7 +557,6 @@ inject_v1_endpoint_paths() {
     case pinMessage(MessageId)
     case unpinMessage(MessageId)
     case replies(MessageId)
-    case reactions(MessageId)
     case addReaction(MessageId)
     case deleteReaction(MessageId, MessageReactionType)
     case messageAction(MessageId)
@@ -610,7 +619,6 @@ EOF
         case let .pinMessage(messageId): return "messages/\(messageId)"
         case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
