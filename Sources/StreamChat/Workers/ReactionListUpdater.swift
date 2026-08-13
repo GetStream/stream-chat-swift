@@ -10,7 +10,10 @@ class ReactionListUpdater: Worker, @unchecked Sendable {
         completion: @escaping @Sendable (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .loadReactionsV2(query: query)
+            endpoint: .queryReactions(
+                id: query.messageId,
+                queryReactionsRequest: .init(filter: query.filter, limit: query.pagination.pageSize)
+            )
         ) { [weak self] (result: Result<MessageReactionsPayload, Error>) in
             switch result {
             case let .success(payload):

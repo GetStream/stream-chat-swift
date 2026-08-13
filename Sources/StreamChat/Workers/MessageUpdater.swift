@@ -491,9 +491,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
         pagination: Pagination,
         completion: (@Sendable (Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
-        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
-            messageId: messageId,
-            pagination: pagination
+        let endpoint: Endpoint<MessageReactionsPayload> = .getReactions(
+            id: messageId,
+            limit: pagination.pageSize,
+            offset: pagination.offset
         )
 
         apiClient.request(endpoint: endpoint) { result in

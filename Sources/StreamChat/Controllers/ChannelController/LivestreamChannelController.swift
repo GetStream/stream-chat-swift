@@ -516,9 +516,8 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         offset: Int = 0,
         completion: @escaping @MainActor (Result<[ChatMessageReaction], Error>) -> Void
     ) {
-        let pagination = Pagination(pageSize: limit, offset: offset)
         apiClient.request(
-            endpoint: .loadReactions(messageId: messageId, pagination: pagination)
+            endpoint: .getReactions(id: messageId, limit: limit, offset: offset)
         ) { [weak self] result in
             self?.callback {
                 switch result {
