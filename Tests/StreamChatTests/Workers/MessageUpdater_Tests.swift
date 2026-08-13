@@ -1148,9 +1148,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
         messageUpdater.loadReactions(cid: .unique, messageId: messageId, pagination: pagination)
 
-        let expectedEndpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
-            messageId: messageId,
-            pagination: pagination
+        let expectedEndpoint: Endpoint<MessageReactionsPayload> = .getReactions(
+            id: messageId,
+            limit: pagination.pageSize,
+            offset: pagination.offset
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
