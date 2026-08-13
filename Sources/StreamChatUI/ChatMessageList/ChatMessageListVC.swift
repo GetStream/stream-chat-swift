@@ -729,7 +729,7 @@ open class ChatMessageListVC: _ViewController,
 
     /// Highlight the the message cell, for example, when jumping to a message.
     ///
-    /// The highlight is tracked by message id and re-applied whenever the cell is (re)configured,
+    /// The highlight is tracked by message id and applied to whichever cell displays that message,
     /// so it survives the cell reloads/reuse that can happen while jumping to a message (otherwise
     /// the highlight could flash and instantly vanish). It is then faded out after a short hold.
     open func highlightCell(at indexPath: IndexPath) {
@@ -737,13 +737,8 @@ open class ChatMessageListVC: _ViewController,
             return
         }
 
-        // If a different message was being highlighted, clear it so it doesn't stay highlighted.
-        if let previousId = highlightedMessageId, previousId != messageId {
-            updateHighlightBackgroundColor(nil, forMessageId: previousId)
-        }
-
         highlightedMessageId = messageId
-        updateHighlightBackgroundColor(appearance.colorPalette.backgroundCoreHighlight, forMessageId: messageId)
+        syncJumpHighlightOnVisibleCells()
 
         // Fade the highlight out after the hold. Driven by a work item independent of the cell
         // instance, and cancelled/rescheduled if the same message is highlighted again, so
@@ -753,21 +748,23 @@ open class ChatMessageListVC: _ViewController,
             guard let self, self.highlightedMessageId == messageId else { return }
             self.highlightedMessageId = nil
             UIView.animate(withDuration: 0.2) {
-                self.updateHighlightBackgroundColor(nil, forMessageId: messageId)
+                self.syncJumpHighlightOnVisibleCells()
             }
         }
         highlightFadeOutWorkItem = workItem
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: workItem)
     }
 
-    /// Sets the background color of the message content view of the cell currently displaying the
-    /// given message id, if it is on screen.
-    private func updateHighlightBackgroundColor(_ color: UIColor?, forMessageId messageId: MessageId) {
-        guard let indexPath = getIndexPath(forMessageId: messageId),
-              let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell else {
-            return
+    /// Makes every on screen cell match the current `highlightedMessageId`.
+    ///
+    /// The cells are matched by the message they display instead of by index path, since index
+    /// paths of the message being highlighted can shift (or stop resolving altogether) while the
+    /// message list is being updated, which would leave stale highlights on screen.
+    private func syncJumpHighlightOnVisibleCells() {
+        for case let cell as ChatMessageCell in listView.visibleCells {
+            guard let messageContentView = cell.messageContentView else { continue }
+            messageContentView.isJumpHighlighted = messageContentView.content?.id == highlightedMessageId
         }
-        cell.messageContentView?.backgroundColor = color
     }
 
     /// Jump to the first page of the message list.
@@ -843,11 +840,10 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.content = message
         cell.messageContentView?.currentUserId = client.currentUserId
 
-        // Re-apply the highlight if this message is currently being highlighted, so it is not
-        // lost when the cell is reloaded/reused while jumping to the message.
-        if message.id == highlightedMessageId {
-            cell.messageContentView?.backgroundColor = appearance.colorPalette.backgroundCoreHighlight
-        }
+        // Cells are recycled, so the highlight has to be re-applied to the message being jumped to
+        // (it would be lost on reload/reuse) and cleared on every other message (a recycled cell
+        // would otherwise keep the highlight of the message it displayed before).
+        cell.messageContentView?.isJumpHighlighted = message.id == highlightedMessageId
 
         /// Process cell decorations
         cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))

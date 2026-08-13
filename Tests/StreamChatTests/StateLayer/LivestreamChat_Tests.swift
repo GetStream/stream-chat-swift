@@ -594,9 +594,10 @@ final class LivestreamChat_Tests: XCTestCase {
 
         let reactions = try await livestreamChat.loadReactions(for: messageId, limit: 10, offset: 5)
 
-        let expectedEndpoint = Endpoint<MessageReactionsPayload>.loadReactions(
-            messageId: messageId,
-            pagination: .init(pageSize: 10, offset: 5)
+        let expectedEndpoint = Endpoint<MessageReactionsPayload>.getReactions(
+            id: messageId,
+            limit: 10,
+            offset: 5
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertEqual(reactions.count, 1)
