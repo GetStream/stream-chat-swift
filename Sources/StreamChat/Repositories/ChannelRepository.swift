@@ -39,23 +39,63 @@ class ChannelRepository: @unchecked Sendable {
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    /// Local unread state is cleared optimistically before the network request so the UI does not
+    /// briefly show jump-to-unread / unread badges while the mark-read request is in flight.
+    /// If the API call fails, the previous local read state is restored.
     func markRead(
         cid: ChannelId,
         userId: UserId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
-            if let error = result.error {
-                completion?(error)
-                return
+        database.write(converting: { session in
+            let previousReadState = PreviousChannelReadState(from: session.loadChannelRead(cid: cid, userId: userId))
+            session.markChannelAsRead(cid: cid, userId: userId, at: .init())
+            return previousReadState
+        }, completion: { [weak self] result in
+            switch result {
+            case .failure(let dbError):
+                completion?(dbError)
+            case .success(let previousReadState):
+                self?.apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] apiResult in
+                    if let error = apiResult.error {
+                        self?.rollbackMarkRead(
+                            cid: cid,
+                            userId: userId,
+                            to: previousReadState,
+                            apiError: error,
+                            completion: completion
+                        )
+                        return
+                    }
+                    completion?(nil)
+                }
             }
+        })
+    }
 
-            self?.database.write({ session in
-                session.markChannelAsRead(cid: cid, userId: userId, at: .init())
-            }, completion: { error in
-                completion?(error)
-            })
-        }
+    private func rollbackMarkRead(
+        cid: ChannelId,
+        userId: UserId,
+        to previousReadState: PreviousChannelReadState?,
+        apiError: Error,
+        completion: (@Sendable (Error?) -> Void)?
+    ) {
+        database.write({ session in
+            guard let previousReadState else { return }
+
+            if previousReadState.existed {
+                guard let read = session.loadChannelRead(cid: cid, userId: userId) else { return }
+                read.lastReadAt = previousReadState.lastReadAt.bridgeDate
+                read.lastReadMessageId = previousReadState.lastReadMessageId
+                read.unreadMessageCount = previousReadState.unreadMessageCount
+            } else {
+                // The optimistic write created a read object that did not exist before.
+                session.markChannelAsUnread(cid: cid, by: userId)
+            }
+        }, completion: { _ in
+            completion?(apiError)
+        })
     }
 
     /// Marks a channel as read locally, without making a network request.
@@ -118,6 +158,27 @@ class ChannelRepository: @unchecked Sendable {
                     completion?(.failure(error ?? ClientError.ChannelNotCreatedYet()))
                 }
             })
+        }
+    }
+}
+
+private struct PreviousChannelReadState: Sendable {
+    let existed: Bool
+    let lastReadAt: Date
+    let lastReadMessageId: MessageId?
+    let unreadMessageCount: Int32
+
+    init(from read: ChannelReadDTO?) {
+        if let read {
+            existed = true
+            lastReadAt = read.lastReadAt.bridgeDate
+            lastReadMessageId = read.lastReadMessageId
+            unreadMessageCount = read.unreadMessageCount
+        } else {
+            existed = false
+            lastReadAt = .distantPast
+            lastReadMessageId = nil
+            unreadMessageCount = 0
         }
     }
 }

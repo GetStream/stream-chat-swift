@@ -28,10 +28,18 @@ final class ReadStateHandler: @unchecked Sendable {
     }
 
     func markRead(_ channel: ChatChannel, completion: @escaping @Sendable (Error?) -> Void) {
-        guard !markingRead, let currentUserId = authenticationRepository.currentUserId else {
+        guard let currentUserId = authenticationRepository.currentUserId else {
             completion(nil)
             return
         }
+
+        // A mark-read request is already in flight. Still clear any newly arrived local
+        // unreads so jump-to-unread / unread badges don't flicker while waiting on the API.
+        if markingRead {
+            channelUpdater.markReadLocally(cid: channel.cid, userId: currentUserId, completion: completion)
+            return
+        }
+
         markingRead = true
 
         if config.isLocalUnreadCountEnabled && !channel.config.readEventsEnabled {

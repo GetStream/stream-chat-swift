@@ -349,7 +349,7 @@ open class ChatMessageListVC: _ViewController,
 
     /// Set the visibility of `jumpToUnreadMessagesButton`.
     open func updateJumpToUnreadButtonVisibility(animated: Bool = true) {
-        guard isJumpToUnreadEnabled else { return }
+        guard components.isJumpToUnreadEnabled else { return }
 
         if let unreadCount = dataSource?.channel(for: self)?.unreadCount,
            unreadCount != jumpToUnreadMessagesButton.content,
@@ -357,6 +357,9 @@ open class ChatMessageListVC: _ViewController,
             jumpToUnreadMessagesButton.content = unreadCount
         }
 
+        // Always apply visibility — `isJumpToUnreadMessagesButtonVisible` already
+        // accounts for the delegate. Returning early when the delegate says "hide"
+        // would leave a previously visible button on screen.
         updateVisibility(
             for: jumpToUnreadMessagesButton,
             isVisible: isJumpToUnreadMessagesButtonVisible,
