@@ -54,7 +54,7 @@ class MessageRepository: @unchecked Sendable {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as MessageRequestBody
+            let requestBody = dto.asMessageRequest()
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
@@ -80,11 +80,14 @@ class MessageRepository: @unchecked Sendable {
                         return
                     }
 
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                        cid: cid,
-                        messagePayload: requestBody,
-                        skipPush: skipPush,
-                        skipEnrichUrl: skipEnrichUrl
+                    let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
+                        type: cid.type.rawValue,
+                        id: cid.id,
+                        sendMessageRequest: SendMessageRequest(
+                            message: requestBody,
+                            skipEnrichUrl: skipEnrichUrl,
+                            skipPush: skipPush
+                        )
                     )
                     self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                         self?.handleSentMessage(result, cid: cid, messageId: messageId, completion: completion)
@@ -112,12 +115,15 @@ class MessageRepository: @unchecked Sendable {
             }
 
             // Send the message to offline handling
-            let requestBody = dto.asRequestBody() as MessageRequestBody
-            let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                cid: cid,
-                messagePayload: requestBody,
-                skipPush: dto.skipPush,
-                skipEnrichUrl: dto.skipEnrichUrl
+            let requestBody = dto.asMessageRequest()
+            let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendMessageRequest: SendMessageRequest(
+                    message: requestBody,
+                    skipEnrichUrl: dto.skipEnrichUrl,
+                    skipPush: dto.skipPush
+                )
             )
             dataEndpoint = endpoint.withDataResponse
 
@@ -170,7 +176,7 @@ class MessageRepository: @unchecked Sendable {
 
     /// Handles the result when sending the message to the server.
     private func handleSentMessage(
-        _ result: Result<MessagePayload.Boxed, Error>,
+        _ result: Result<SendMessageResponsePayload, Error>,
         cid: ChannelId,
         messageId: MessageId,
         completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void

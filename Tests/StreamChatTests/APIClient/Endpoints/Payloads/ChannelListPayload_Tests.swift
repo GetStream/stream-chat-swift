@@ -501,20 +501,19 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.messages.count, 25)
         let firstMessage = payload.messages.first(where: { $0.id == "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9" })!
 
-        XCTAssertEqual(firstMessage.type, MessageType.regular)
+        XCTAssertEqual(firstMessage.type, MessageType.regular.rawValue)
         XCTAssertEqual(firstMessage.user.id, "broken-waterfall-5")
         XCTAssertEqual(firstMessage.createdAt, "2020-06-09T08:10:40.800912Z".toDate())
         XCTAssertEqual(firstMessage.updatedAt, "2020-06-09T08:10:40.800912Z".toDate())
         XCTAssertNil(firstMessage.deletedAt)
         XCTAssertEqual(firstMessage.text, "sadfadf")
         XCTAssertNil(firstMessage.command)
-        XCTAssertNil(firstMessage.args)
         XCTAssertNil(firstMessage.parentId)
-        XCTAssertFalse(firstMessage.showReplyInChannel)
+        XCTAssertNotEqual(firstMessage.showInChannel, true)
         XCTAssert(firstMessage.mentionedUsers.isEmpty)
         XCTAssert(firstMessage.reactionScores.isEmpty)
         XCTAssertEqual(firstMessage.replyCount, 0)
-        XCTAssertFalse(firstMessage.isSilent)
+        XCTAssertFalse(firstMessage.silent)
 
         XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
         let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first)

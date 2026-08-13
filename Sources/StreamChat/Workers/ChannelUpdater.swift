@@ -328,7 +328,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 showReplyInChannel: false,
                 isSilent: false,
                 quotedMessageId: nil,
-                attachments: [],
                 mentionedUserIds: [],
                 pinned: false,
                 pinExpires: nil,

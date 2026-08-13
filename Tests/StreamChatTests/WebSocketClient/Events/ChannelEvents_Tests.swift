@@ -101,7 +101,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
         XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
         XCTAssertEqual(event?.message?.text, "Channel truncated")
-        XCTAssertEqual(event?.message?.type, .system)
+        XCTAssertEqual(event?.message?.type, MessageType.system.rawValue)
     }
 
     // MARK: DTO -> Event

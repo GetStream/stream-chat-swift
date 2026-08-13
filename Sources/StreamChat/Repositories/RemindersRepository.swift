@@ -79,17 +79,23 @@ class RemindersRepository: @unchecked Sendable {
 
         // First optimistically create the reminder locally
         database.write { session in
+            guard session.currentUser != nil else {
+                throw ClientError.CurrentUserDoesNotExist()
+            }
             let now = Date()
             let reminderPayload = ReminderPayload(
-                channelCid: cid,
-                messageId: messageId,
-                message: nil,
-                remindAt: remindAt,
+                channelCid: cid.rawValue,
                 createdAt: now,
+                messageId: messageId,
+                remindAt: remindAt,
                 updatedAt: now
             )
             try session.saveReminder(payload: reminderPayload, cache: nil)
-        } completion: { _ in
+        } completion: { error in
+            if let error {
+                completion(.failure(error))
+                return
+            }
             // Make the API call to create the reminder
             self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
@@ -186,20 +192,26 @@ class RemindersRepository: @unchecked Sendable {
             
             // Get original reminder data for potential rollback
             if let reminderDTO = messageDTO.reminder {
+                guard session.currentUser != nil else {
+                    throw ClientError.CurrentUserDoesNotExist()
+                }
                 // Store the original state for potential rollback
                 originalPayload = ReminderPayload(
-                    channelCid: cid,
-                    messageId: messageId,
-                    message: nil,
-                    remindAt: reminderDTO.remindAt?.bridgeDate,
+                    channelCid: cid.rawValue,
                     createdAt: reminderDTO.createdAt.bridgeDate,
+                    messageId: messageId,
+                    remindAt: reminderDTO.remindAt?.bridgeDate,
                     updatedAt: reminderDTO.updatedAt.bridgeDate
                 )
             }
             
             // Delete optimistically
             session.deleteReminder(messageId: messageId)
-        } completion: { _ in
+        } completion: { error in
+            if let error {
+                completion(error)
+                return
+            }
             // Make the API call to delete the reminder
             self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {

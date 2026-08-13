@@ -587,7 +587,7 @@ final class APIClient_Tests: XCTestCase {
         let lastRequestExpectation = expectation(description: "Last request completed")
         (1...5).forEach { index in
             let channelId = ChannelId(type: .messaging, id: "\(index)")
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { _ in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(type: channelId.type.rawValue, id: channelId.id))) { _ in
                 if index == 5 {
                     lastRequestExpectation.fulfill()
                 }
@@ -635,7 +635,7 @@ final class APIClient_Tests: XCTestCase {
         }
         (1...5).forEach { index in
             let channelId = ChannelId(type: .messaging, id: "\(index)")
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { _ in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(type: channelId.type.rawValue, id: channelId.id))) { _ in
                 testBlock(index)
             }
         }
@@ -667,7 +667,7 @@ final class APIClient_Tests: XCTestCase {
         nonisolated(unsafe) var results: [Result<TestUser, Error>] = []
         (1...5).forEach { index in
             let channelId = ChannelId(type: .messaging, id: "\(index)")
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { result in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(type: channelId.type.rawValue, id: channelId.id))) { result in
                 results.append(result)
                 if index == 5 {
                     lastRequestExpectation.fulfill()

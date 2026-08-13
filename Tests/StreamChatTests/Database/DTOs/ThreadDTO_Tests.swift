@@ -160,7 +160,7 @@ final class ThreadDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
@@ -222,7 +222,7 @@ final class ThreadDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),

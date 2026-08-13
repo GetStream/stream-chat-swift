@@ -456,6 +456,8 @@ class MessageDTO: NSManagedObject {
         new.id = id
         new.latestReactions = []
         new.ownReactions = []
+        new.reactionCounts = [:]
+        new.showReplyInChannel = false
         return new
     }
 
@@ -682,10 +684,23 @@ extension MessageDTO {
     }
 
     func updateMemberInfo(from member: MemberInfoPayload) {
-        channelRole = member.channelRole?.rawValue
-        memberNotificationsMuted = member.notificationsMuted
+        updateMemberInfo(
+            channelRole: MemberRole(rawChannelValue: member.channelRole),
+            notificationsMuted: member.notificationsMuted,
+            extraData: member.custom
+        )
+    }
+
+    func updateMemberInfo(
+        channelRole: MemberRole?,
+        notificationsMuted: Bool,
+        extraData: [String: RawJSON]?
+    ) {
+        self.channelRole = channelRole?.rawValue
+        memberNotificationsMuted = notificationsMuted
+        guard let extraData else { return }
         do {
-            memberExtraData = try JSONEncoder.default.encode(member.extraData)
+            memberExtraData = try JSONEncoder.default.encode(extraData)
         } catch {
             log.error(
                 "Failed to encode member extra payload for Message with id: <\(id)>, using default value instead. "
@@ -942,24 +957,26 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return dto
         }
 
-        dto.cid = payload.cid?.rawValue
-        dto.text = payload.text
+        dto.cid = payload.cid
+        dto.text = payload.text.trimmingCharacters(in: .whitespacesAndNewlines)
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.textUpdatedAt = payload.messageTextUpdatedAt?.bridgeDate
-        dto.type = payload.type.rawValue
+        dto.type = payload.type
         dto.command = payload.command
         dto.args = payload.args
         dto.parentMessageId = payload.parentId
-        dto.showReplyInChannel = payload.showReplyInChannel
+        if let showInChannel = payload.showInChannel {
+            dto.showReplyInChannel = showInChannel
+        }
         dto.replyCount = Int32(payload.replyCount)
         if let member = payload.member {
             dto.updateMemberInfo(from: member)
         }
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
@@ -968,8 +985,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.extraData = Data()
         }
 
-        dto.isSilent = payload.isSilent
-        dto.isShadowed = payload.isShadowed
+        dto.isSilent = payload.silent
+        if let shadowed = payload.shadowed {
+            dto.isShadowed = shadowed
+        }
         if let deletedForMe = payload.deletedForMe {
             dto.deletedForMe = deletedForMe
         }
@@ -983,7 +1002,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.isShadowed = false
         }
 
-        dto.pinned = payload.pinned
+        if let pinned = payload.pinned {
+            dto.pinned = pinned
+        }
         dto.pinExpires = payload.pinExpires?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
         if let pinnedByUser = payload.pinnedBy {
@@ -1024,22 +1045,28 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         }
 
-        if let location = payload.location {
+        if let location = payload.sharedLocation {
             dto.location = try saveLocation(payload: location, cache: cache)
         }
 
         let user = try saveUser(payload: payload.user)
         dto.user = user
 
-        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
-        dto.reactionCounts = payload.reactionCounts.mapKeys { $0.rawValue }
-        dto.reactionGroups = Set(payload.reactionGroups.map { (type, groupPayload) in
-            MessageReactionGroupDTO(
-                type: type,
-                payload: groupPayload,
-                context: self
-            )
-        })
+        dto.reactionScores = payload.reactionScores
+        if let reactionCounts = payload.reactionCounts {
+            dto.reactionCounts = reactionCounts
+        }
+        if let reactionGroups = payload.reactionGroups {
+            dto.reactionGroups = Set(reactionGroups.compactMap { (type, groupPayload) in
+                groupPayload.map {
+                    MessageReactionGroupDTO(
+                        type: .init(rawValue: type),
+                        payload: $0,
+                        context: self
+                    )
+                }
+            })
+        }
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
@@ -1048,18 +1075,30 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return user
         })
         dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
-        dto.mentionedHere = payload.mentionedHere
-        dto.mentionedChannel = payload.mentionedChannel
-        dto.mentionedGroupIds = payload.mentionedGroups.map(\.id)
-        dto.mentionedGroups = try Set(payload.mentionedGroups.map { try saveUserGroup(payload: $0) })
-        dto.mentionedRoles = payload.mentionedRoles
+        if let mentionedHere = payload.mentionedHere {
+            dto.mentionedHere = mentionedHere
+        }
+        if let mentionedChannel = payload.mentionedChannel {
+            dto.mentionedChannel = mentionedChannel
+        }
+        if let mentionedGroups = payload.mentionedGroups {
+            dto.mentionedGroupIds = mentionedGroups.map(\.id)
+            dto.mentionedGroups = try Set(mentionedGroups.map { try saveUserGroup(payload: $0) })
+        }
+        if let mentionedRoles = payload.mentionedRoles {
+            dto.mentionedRoles = mentionedRoles
+        }
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
-        dto.threadParticipants = try NSOrderedSet(
-            array: payload.threadParticipants.map { try saveUser(payload: $0) }
-        )
-        let restrictedVisibility = Set(payload.restrictedVisibility)
-        dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
+        if let threadParticipants = payload.threadParticipants {
+            dto.threadParticipants = try NSOrderedSet(
+                array: threadParticipants.map { try saveUser(payload: $0) }
+            )
+        }
+        if let restrictedVisibility = payload.restrictedVisibility {
+            let restrictedVisibility = Set(restrictedVisibility)
+            dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
+        }
 
         let isSystemMessage = dto.type == MessageType.system.rawValue
         let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
@@ -1111,13 +1150,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let moderationPayload = payload.moderation {
             dto.moderationDetails = MessageModerationDetailsDTO.create(
                 from: moderationPayload,
-                isV1: false,
-                context: self
-            )
-        } else if let moderationDetailsPayload = payload.moderationDetails {
-            dto.moderationDetails = MessageModerationDetailsDTO.create(
-                from: moderationDetailsPayload,
-                isV1: true,
                 context: self
             )
         } else {
@@ -1212,7 +1244,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     ) throws -> MessageDTO {
         let draftDetailsPayload = payload.message
         let channelDTO: ChannelDTO?
-        if let channelPayload = payload.channelPayload {
+        if let channelPayload = payload.channel {
             channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
         } else {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
@@ -1235,8 +1267,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.command = draftDetailsPayload.command
         dto.args = draftDetailsPayload.args
         dto.parentMessageId = payload.parentId
-        dto.showReplyInChannel = draftDetailsPayload.showReplyInChannel
-        dto.isSilent = draftDetailsPayload.isSilent
+        if let showInChannel = draftDetailsPayload.showInChannel {
+            dto.showReplyInChannel = showInChannel
+        }
+        if let silent = draftDetailsPayload.silent {
+            dto.isSilent = silent
+        }
         dto.user = user
         dto.channel = channelDTO
         dto.isDraft = true
@@ -1292,7 +1328,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(draftDetailsPayload.extraData)
+            dto.extraData = try JSONEncoder.default.encode(
+                draftDetailsPayload.custom.removingValues(
+                    forKeys: [MessagePayloadsCodingKeys.args.rawValue, MessagePayloadsCodingKeys.command.rawValue]
+                )
+            )
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
@@ -1631,7 +1671,7 @@ extension MessageDTO {
     }
 
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
-    func asRequestBody() -> MessageRequestBody {
+    func asMessageRequest() -> MessageRequest {
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
@@ -1640,53 +1680,51 @@ extension MessageDTO {
             extraData = [:]
         }
 
-        let uploadedAttachments: [MessageAttachmentPayload] = attachments
-            .filter { $0.localState == .uploaded || $0.localState == nil }
-            .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
-            .compactMap { $0.asRequestPayload() }
-
         // At the moment, we only provide the type for system messages when creating a message.
-        let systemType = type == MessageType.system.rawValue ? type : nil
-        
+        let systemType: MessageRequest.MessageRequestType? = type == MessageType.system.rawValue ? .system : nil
+
         var restrictedVisibilityArray: [UserId]?
         if let restrictedVisibility {
             restrictedVisibilityArray = Array(restrictedVisibility)
         }
 
-        return .init(
+        // Messages have no dedicated args field, it is stored as custom data.
+        var custom = extraData
+        if let args {
+            custom[MessagePayloadsCodingKeys.args.rawValue] = .string(args)
+        }
+
+        return MessageRequest(
+            attachments: uploadedAttachmentPayloads(),
+            custom: custom,
             id: id,
-            user: user.asRequestBody(),
-            text: text,
-            type: systemType,
-            command: command,
-            args: args,
-            parentId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
-            isSilent: isSilent,
-            quotedMessageId: quotedMessage?.id,
-            attachments: uploadedAttachments,
-            mentionedUserIds: mentionedUserIds,
-            mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
             mentionedGroupIds: mentionedGroupIds,
+            mentionedHere: mentionedHere,
             mentionedRoles: mentionedRoles,
-            pinned: pinned,
+            mentionedUsers: mentionedUserIds,
+            parentId: parentMessageId,
             pinExpires: pinExpires?.bridgeDate,
+            pinned: pinned,
             pollId: poll?.id,
+            quotedMessageId: quotedMessage?.id,
             restrictedVisibility: restrictedVisibilityArray,
-            location: location.map {
+            sharedLocation: location.map {
                 .init(
-                    latitude: $0.latitude,
-                    longitude: $0.longitude,
+                    createdByDeviceId: $0.deviceId,
                     endAt: $0.endAt?.bridgeDate,
-                    createdByDeviceId: $0.deviceId
+                    latitude: $0.latitude,
+                    longitude: $0.longitude
                 )
             },
-            extraData: extraData
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text,
+            type: systemType
         )
     }
 
-    func asDraftRequestBody() -> DraftMessageRequestBody {
+    func asDraftMessageRequest() -> MessageRequest {
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
@@ -1695,24 +1733,33 @@ extension MessageDTO {
             extraData = [:]
         }
 
-        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+        // Drafts have no dedicated command and args fields, they are stored as custom data.
+        var custom = extraData
+        if let command {
+            custom[MessagePayloadsCodingKeys.command.rawValue] = .string(command)
+        }
+        if let args {
+            custom[MessagePayloadsCodingKeys.args.rawValue] = .string(args)
+        }
+
+        return MessageRequest(
+            attachments: uploadedAttachmentPayloads(),
+            custom: custom,
+            id: id,
+            mentionedUsers: mentionedUserIds,
+            parentId: parentMessageId,
+            quotedMessageId: quotedMessage?.id,
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text
+        )
+    }
+
+    private func uploadedAttachmentPayloads() -> [MessageAttachmentPayload] {
+        attachments
             .filter { $0.localState == .uploaded || $0.localState == nil }
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
-
-        return .init(
-            id: id,
-            text: text,
-            command: command,
-            args: args,
-            parentId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
-            isSilent: isSilent,
-            quotedMessageId: quotedMessage?.id,
-            attachments: uploadedAttachments,
-            mentionedUserIds: mentionedUserIds,
-            extraData: extraData
-        )
     }
 
     /// The message has been successfully sent to the server.

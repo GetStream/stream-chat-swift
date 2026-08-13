@@ -38,6 +38,7 @@ final class MemberPayload: Sendable, Codable, JSONEncodable {
     let status: String?
     /// Date/time of the last update
     let updatedAt: Date
+    /// User response object
     let user: UserPayload?
     let userId: String?
 

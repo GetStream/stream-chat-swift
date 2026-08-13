@@ -6,6 +6,27 @@ import Foundation
 @testable import StreamChat
 
 extension DraftPayload {
+    // Generated properties are slightly different from the previously hand-written ones.
+    convenience init(
+        cid: ChannelId?,
+        channelPayload: ChannelDetailPayload?,
+        createdAt: Date,
+        message: DraftMessagePayload,
+        quotedMessage: MessagePayload?,
+        parentId: String?,
+        parentMessage: MessagePayload?
+    ) {
+        self.init(
+            channel: channelPayload,
+            channelCid: cid?.rawValue,
+            createdAt: createdAt,
+            message: message,
+            parentId: parentId,
+            parentMessage: parentMessage,
+            quotedMessage: quotedMessage
+        )
+    }
+
     /// Returns dummy draft payload with the given values.
     static func dummy(
         cid: ChannelId? = nil,
@@ -17,18 +38,47 @@ extension DraftPayload {
         parentMessage: MessagePayload? = nil
     ) -> DraftPayload {
         .init(
-            cid: cid,
-            channelPayload: channelPayload,
+            channel: channelPayload,
+            channelCid: cid?.rawValue,
             createdAt: createdAt,
             message: message,
-            quotedMessage: quotedMessage,
             parentId: parentId,
-            parentMessage: parentMessage
+            parentMessage: parentMessage,
+            quotedMessage: quotedMessage
         )
     }
 }
 
 extension DraftMessagePayload {
+    convenience init(
+        id: String,
+        text: String,
+        command: String?,
+        args: String?,
+        showReplyInChannel: Bool,
+        mentionedUsers: [UserPayload]?,
+        extraData: [String: RawJSON],
+        attachments: [MessageAttachmentPayload]?,
+        isSilent: Bool
+    ) {
+        var custom = extraData
+        if let command {
+            custom["command"] = .string(command)
+        }
+        if let args {
+            custom["args"] = .string(args)
+        }
+        self.init(
+            attachments: attachments,
+            custom: custom,
+            id: id,
+            mentionedUsers: mentionedUsers,
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text
+        )
+    }
+
     static func dummy(
         id: String = .unique,
         text: String = .unique,

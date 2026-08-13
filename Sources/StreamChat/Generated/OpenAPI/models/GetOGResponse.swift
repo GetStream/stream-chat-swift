@@ -36,7 +36,7 @@ final class GetOGResponse: Sendable, Codable, JSONEncodable {
     let title: String?
     /// og:url
     let titleLink: String?
-    /// Attachment type, could be empty, image, audio or video
+    /// MessageAttachmentPayload type, could be empty, image, audio or video
     let type: String?
 
     init(

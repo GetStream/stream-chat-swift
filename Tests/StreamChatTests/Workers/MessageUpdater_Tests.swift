@@ -198,14 +198,9 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
-                    moderationDetails: .init(
-                        originalText: "",
+                    moderation: .init(
                         action: MessageModerationAction.bounce.rawValue,
-                        textHarms: nil,
-                        imageHarms: nil,
-                        blocklistMatched: nil,
-                        semanticFilterMatched: nil,
-                        platformCircumvented: nil
+                        originalText: ""
                     )
                 ),
                 for: channelId,
@@ -725,7 +720,6 @@ final class MessageUpdater_Tests: XCTestCase {
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
                 from: .dummy(originalText: "", action: MessageModerationAction.bounce.rawValue),
-                isV1: false,
                 context: self.database.writableContext
             )
             messageDTO.localMessageState = .sendingFailed
@@ -770,7 +764,6 @@ final class MessageUpdater_Tests: XCTestCase {
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
                 from: .dummy(originalText: "", action: MessageModerationAction.bounce.rawValue),
-                isV1: false,
                 context: self.database.writableContext
             )
         }
@@ -1976,7 +1969,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: userId)
         try database.createMessage(id: messageId, authorId: userId)
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(UpdateMessagePartialResponse.dummy(message: nil)))
 
         let expiration: MessagePinning = .expirationDate(.unique)
         let result = try waitFor {
@@ -1997,7 +1990,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId, authorId: userId)
         
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.failure(expectedError))
 
         let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: messageId, pinning: .expirationDate(.unique), completion: $0)
@@ -2030,7 +2023,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: userId)
         try database.createMessage(id: messageId, authorId: userId)
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(UpdateMessagePartialResponse.dummy(message: nil)))
 
         let result = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
@@ -2058,7 +2051,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
         
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.failure(expectedError))
 
         let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
@@ -2471,14 +2464,9 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
-                    moderationDetails: .init(
-                        originalText: "",
+                    moderation: .init(
                         action: MessageModerationAction.bounce.rawValue,
-                        textHarms: nil,
-                        imageHarms: nil,
-                        blocklistMatched: nil,
-                        semanticFilterMatched: nil,
-                        platformCircumvented: nil
+                        originalText: ""
                     )
                 ),
                 for: channelId,
@@ -2657,7 +2645,7 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(completionCalledError == nil)
             // Assert message is updated.
-            Assert.willBeEqual(message.type, messagePayload.message.type.rawValue)
+            Assert.willBeEqual(message.type, messagePayload.message.type)
             Assert.willBeEqual(message.text, messagePayload.message.text)
         }
     }
@@ -3112,12 +3100,12 @@ final class MessageUpdater_Tests: XCTestCase {
         let attachments: [AnyAttachmentPayload] = [.mockImage]
         
         // Convert attachments to expected format
-        let expectedAttachmentPayloads: [MessageAttachmentPayload] = attachments.compactMap { attachment in
+        let expectedAttachmentPayloads: [RawJSON] = attachments.compactMap { attachment in
             guard let payloadData = try? JSONEncoder.default.encode(attachment.payload),
                   let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
                 return nil
             }
-            return MessageAttachmentPayload(
+            return MessageAttachmentPayload.makeFlattenedRawJSON(
                 type: attachment.type,
                 payload: payloadRawJSON
             )
@@ -3137,23 +3125,58 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful API response
         apiClient.test_simulateResponse(
-            .success(MessagePayload.Boxed(message: .dummy(messageId: messageId)))
+            .success(UpdateMessagePartialResponse.dummy(message: .dummy(messageId: messageId)))
         )
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .partialUpdateMessage(
-            messageId: messageId,
-            request: .init(
-                set: .init(
-                    text: text,
-                    extraData: extraData,
-                    attachments: expectedAttachmentPayloads
-                )
-            )
+        var expectedSet: [String: RawJSON] = extraData
+        expectedSet["text"] = .string(text)
+        expectedSet["attachments"] = .array(expectedAttachmentPayloads)
+        let expectedEndpoint: Endpoint<UpdateMessagePartialResponse> = .updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: expectedSet)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         
         wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    // The backend parses the `set` map with flattened semantics, therefore attachment
+    // custom fields must not be nested under `custom`.
+    func test_updatePartialMessage_encodesSetWithFlattenedCustomFields() throws {
+        let messageId: MessageId = .unique
+        let text: String = .unique
+        let extraData: [String: RawJSON] = ["secret": .number(42)]
+        let attachmentPayload = TestAttachmentPayload.unique
+
+        let exp = expectation(description: "updatePartialMessage completes")
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: text,
+            attachments: [AnyAttachmentPayload(payload: attachmentPayload)],
+            extraData: extraData
+        ) { _ in
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(
+            .success(UpdateMessagePartialResponse.dummy(message: .dummy(messageId: messageId)))
+        )
+        wait(for: [exp], timeout: defaultTimeout)
+
+        let body = try XCTUnwrap(apiClient.request_endpoint?.body)
+        let encodedBody = try JSONEncoder.default.encode(body)
+        let json = try JSONDecoder.default.decode(RawJSON.self, from: encodedBody)
+
+        let set = try XCTUnwrap(json["set"])
+        XCTAssertEqual(.string(text), set["text"])
+        XCTAssertEqual(.number(42), set["secret"])
+
+        let encodedAttachment = try XCTUnwrap(set["attachments"]?[0])
+        XCTAssertEqual(.string(TestAttachmentPayload.type.rawValue), encodedAttachment["type"])
+        XCTAssertEqual(.string(attachmentPayload.name), encodedAttachment["name"])
+        XCTAssertEqual(.number(Double(attachmentPayload.number)), encodedAttachment["number"])
+        XCTAssertNil(encodedAttachment["custom"])
     }
 
     func test_updatePartialMessage_propagatesNetworkError() throws {
@@ -3172,7 +3195,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with error
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.failure(networkError))
 
         wait(for: [exp], timeout: defaultTimeout)
         
@@ -3210,7 +3233,7 @@ final class MessageUpdater_Tests: XCTestCase {
             text: text,
             cid: cid
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(.init(message: messagePayload)))
+        apiClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: messagePayload)))
 
         wait(for: [exp], timeout: defaultTimeout)
         

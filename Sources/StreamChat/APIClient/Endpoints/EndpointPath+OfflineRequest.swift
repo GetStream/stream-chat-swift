@@ -8,13 +8,13 @@ extension EndpointPath {
     var shouldBeQueuedOffline: Bool {
         switch self {
         case .addReaction,
+             .createDraft,
              .deleteMessage,
              .deleteReaction,
              .draftMessage,
-             .editMessage,
-             .pinMessage,
              .sendMessage,
-             .unpinMessage:
+             .updateMessage,
+             .updateMessagePartial:
             return true
         case .addUserGroupMembers,
              .banMember,

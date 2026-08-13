@@ -18,6 +18,7 @@ final class RemindersRepository_Tests: XCTestCase {
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
         repository = RemindersRepository(database: database, apiClient: apiClient)
+        try! database.createCurrentUser()
     }
     
     override func tearDown() {

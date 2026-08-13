@@ -15,6 +15,7 @@ allowed_endpoints=(
     blockUsers
     castPollVote
     createDevice
+    createDraft
     createPoll
     createPollOption
     createUserGroup
@@ -44,6 +45,7 @@ allowed_endpoints=(
     removeUserGroupMembers
     searchRoles
     searchUserGroups
+    sendMessage
     showChannel
     stopWatchingChannel
     unblockUsers
@@ -51,6 +53,8 @@ allowed_endpoints=(
     unreadCounts
     updateLiveLocation
     updateMemberPartial
+    updateMessage
+    updateMessagePartial
     updatePollPartial
     updatePushNotificationPreferences
     updateUserGroup
@@ -63,22 +67,28 @@ allowed_models=(
   Action
   AddUserGroupMembersRequest
   AppResponseFields
+  Attachment
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
+  ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
   ChannelMute
   ChannelOwnCapability
   ChannelResponse
   CreateDeviceRequest
+  CreateDraftRequest
+  CreateDraftResponse
   CreatePollOptionRequest
   CreatePollRequest
   CreateUserGroupRequest
   DeleteChannelResponse
   DeliveredMessagePayload
   DeviceResponse
+  DraftPayloadResponse
+  DraftResponse
   Field
   FileUploadConfig
   FileUploadResponse
@@ -96,6 +106,8 @@ allowed_models=(
   ListUserGroupsResponse
   MarkDeliveredRequest
   MembersResponse
+  MessageRequest
+  ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
   PollOptionInput
@@ -111,10 +123,16 @@ allowed_models=(
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest
+  ReactionGroupResponse
   ReactionResponse
+  ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  SearchResultMessage
   SearchRolesResponse
+  SendMessageRequest
+  SendMessageResponse
+  SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
@@ -127,6 +145,10 @@ allowed_models=(
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
+  UpdateMessagePartialRequest
+  UpdateMessagePartialResponse
+  UpdateMessageRequest
+  UpdateMessageResponse
   UpdatePollPartialRequest
   UpdateUserGroupRequest
   UploadChannelFileResponse
@@ -377,6 +399,7 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated SharedLocation NewLocationRequestPayload
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 rename_generated MarkDeliveredRequest ChannelDeliveredRequestPayload
@@ -400,6 +423,16 @@ rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
+rename_generated Attachment MessageAttachmentPayload
+rename_generated ChannelMemberPartialResponse MemberInfoPayload
+rename_generated DraftPayloadResponse DraftMessagePayload
+rename_generated DraftResponse DraftPayload
+rename_generated ModerationV2Response MessageModerationDetailsPayload
+rename_generated ReactionGroupResponse MessageReactionGroupPayload
+rename_generated ReminderResponseData ReminderPayload
+rename_generated SearchResultMessage MessagePayload
+rename_generated SendMessageResponse SendMessageResponsePayload
+rename_generated_type MessageResponse MessagePayload
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
@@ -479,11 +512,68 @@ remove_property DeleteChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
+remove_property CreateDraftResponse duration
+# include_channel_context flag is never set and this value is always nil
+remove_property SendMessageResponsePayload channelContext
+remove_property SendMessageResponsePayload duration
+remove_property UpdateMessagePartialResponse duration
+remove_property UpdateMessageResponse duration
+
+# Server-side only: client-side requests cannot set these fields
+remove_property DraftMessagePayload mml
+remove_property MessagePayload mml
+remove_property SendMessageResponsePayload pendingMessageMetadata
+remove_property UpdateMessagePartialResponse pendingMessageMetadata
+remove_property UpdateMessageResponse pendingMessageMetadata
+
+# Opt-in: only returned when the request asks for it, which the SDK never does
+remove_property SendMessageResponsePayload mentionedMembers
+
+# Legacy: no writer left in the backend for image_moderation_labels
+remove_property MessagePayload imageLabels
+
+# Deprecated by the backend in favour of blocklists_matched
+remove_property MessageModerationDetailsPayload blocklistMatched
+
+# Unused
+remove_property DraftMessagePayload html
+remove_property DraftMessagePayload pollId
+remove_property DraftMessagePayload quotedMessageId
+remove_property DraftMessagePayload type
+remove_property MessagePayload deletedReplyCount
+remove_property MessagePayload html
+remove_property MessagePayload mentionedGroupIds
+remove_property MessagePayload pollId
+remove_property ReminderPayload user
+remove_property ReminderPayload userId
+# TODO: reaction group reactors need CoreData and public API design first
+remove_property MessageReactionGroupPayload latestReactionsBy
 
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
+
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property DraftPayload channelCid
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload cid
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload deletedReplyCount
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload mentionedChannel
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload mentionedHere
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload pinned
+# TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
+optionalize_property MessagePayload reactionCounts
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload restrictedVisibility
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessagePayload shadowed
+# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
+optionalize_property MessageReactionGroupPayload latestReactionsBy
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -590,12 +680,8 @@ inject_v1_endpoint_paths() {
     case channelEvent(String)
     case pinnedMessages(String)
 
-    case sendMessage(ChannelId)
     case message(MessageId)
-    case editMessage(MessageId)
     case deleteMessage(MessageId)
-    case pinMessage(MessageId)
-    case unpinMessage(MessageId)
     case replies(MessageId)
     case addReaction(MessageId)
     case deleteReaction(MessageId, MessageReactionType)
@@ -649,12 +735,8 @@ EOF
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
-        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
-        case let .editMessage(messageId): return "messages/\(messageId)"
         case let .deleteMessage(messageId): return "messages/\(messageId)"
-        case let .pinMessage(messageId): return "messages/\(messageId)"
-        case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"

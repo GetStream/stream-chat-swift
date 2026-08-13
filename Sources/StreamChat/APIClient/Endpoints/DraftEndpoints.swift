@@ -16,22 +16,6 @@ extension Endpoint {
         )
     }
 
-    static func updateDraftMessage(
-        channelId: ChannelId,
-        requestBody: DraftMessageRequestBody
-    ) -> Endpoint<DraftPayloadResponse> {
-        let body: [String: AnyEncodable] = [
-            "message": AnyEncodable(requestBody)
-        ]
-        return .init(
-            path: .draftMessage(channelId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: body
-        )
-    }
-
     static func getDraftMessage(
         channelId: ChannelId,
         threadId: MessageId?

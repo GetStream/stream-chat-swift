@@ -54,15 +54,16 @@ class MemberDTO: NSManagedObject {
             return
         }
 
-        let memberInfo = MemberInfoPayload(
-            channelRole: channelRoleRaw.flatMap { MemberRole(rawChannelValue: $0) },
-            notificationsMuted: notificationsMuted,
-            extraData: (try? JSONDecoder.stream.decodeRawJSON(from: extraData)) ?? [:]
-        )
+        let channelRole = channelRoleRaw.flatMap { MemberRole(rawChannelValue: $0) }
+        let memberExtraData = (try? JSONDecoder.stream.decodeRawJSON(from: extraData)) ?? [:]
 
         let cid = channel.cid
         for message in user.messages ?? [] where message.cid == cid && !message.hasChanges && !message.isDeleted {
-            message.updateMemberInfo(from: memberInfo)
+            message.updateMemberInfo(
+                channelRole: channelRole,
+                notificationsMuted: notificationsMuted,
+                extraData: memberExtraData
+            )
         }
     }
 }

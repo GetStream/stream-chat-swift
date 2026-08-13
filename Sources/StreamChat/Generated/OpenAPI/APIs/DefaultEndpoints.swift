@@ -29,12 +29,8 @@ enum EndpointPath: Codable {
     case channelEvent(String)
     case pinnedMessages(String)
 
-    case sendMessage(ChannelId)
     case message(MessageId)
-    case editMessage(MessageId)
     case deleteMessage(MessageId)
-    case pinMessage(MessageId)
-    case unpinMessage(MessageId)
     case replies(MessageId)
     case addReaction(MessageId)
     case deleteReaction(
@@ -67,6 +63,10 @@ enum EndpointPath: Codable {
         pollId: String
     )
     case createDevice
+    case createDraft(
+        type: String,
+        id: String
+    )
     case createPoll
     case createPollOption(pollId: String)
     case createUserGroup
@@ -112,6 +112,10 @@ enum EndpointPath: Codable {
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
+    case sendMessage(
+        type: String,
+        id: String
+    )
     case showChannel(
         type: String,
         id: String
@@ -128,6 +132,8 @@ enum EndpointPath: Codable {
         type: String,
         id: String
     )
+    case updateMessage(id: String)
+    case updateMessagePartial(id: String)
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
     case updateUserGroup(id: String)
@@ -172,12 +178,8 @@ enum EndpointPath: Codable {
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
-        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
-        case let .editMessage(messageId): return "messages/\(messageId)"
         case let .deleteMessage(messageId): return "messages/\(messageId)"
-        case let .pinMessage(messageId): return "messages/\(messageId)"
-        case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(
@@ -211,6 +213,11 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote"
         case .createDevice:
             return "/api/v2/devices"
+        case let .createDraft(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .createPoll:
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
@@ -285,6 +292,11 @@ enum EndpointPath: Codable {
             return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
+        case let .sendMessage(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
         case let .showChannel(
             type: type,
             id: id
@@ -308,6 +320,10 @@ enum EndpointPath: Codable {
             id: id
         ):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/member"
+        case let .updateMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
+        case let .updateMessagePartial(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case let .updatePollPartial(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
         case .updatePushNotificationPreferences:
@@ -499,6 +515,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createDeviceRequest
+        )
+    }
+
+    static func createDraft(
+        type: String,
+        id: String,
+        createDraftRequest: CreateDraftRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateDraftResponse> {
+        return .init(
+            path: .createDraft(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createDraftRequest
         )
     }
 
@@ -955,6 +989,24 @@ extension Endpoint {
         )
     }
 
+    static func sendMessage(
+        type: String,
+        id: String,
+        sendMessageRequest: SendMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<SendMessageResponsePayload> {
+        return .init(
+            path: .sendMessage(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendMessageRequest
+        )
+    }
+
     static func showChannel(
         type: String,
         id: String,
@@ -1053,6 +1105,34 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateMemberPartialRequest
+        )
+    }
+
+    static func updateMessage(
+        id: String,
+        updateMessageRequest: UpdateMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateMessageResponse> {
+        return .init(
+            path: .updateMessage(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateMessageRequest
+        )
+    }
+
+    static func updateMessagePartial(
+        id: String,
+        updateMessagePartialRequest: UpdateMessagePartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateMessagePartialResponse> {
+        return .init(
+            path: .updateMessagePartial(id: id),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateMessagePartialRequest
         )
     }
 

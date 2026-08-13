@@ -22,75 +22,22 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
     
     // MARK: - Creation Tests
     
-    func test_createFromPayload_v1_bounce() throws {
-        // Given
-        let payload = MessageModerationDetailsPayload(
-            originalText: "bad message",
-            action: "MESSAGE_RESPONSE_ACTION_BOUNCE",
-            textHarms: nil,
-            imageHarms: nil,
-            blocklistMatched: nil,
-            semanticFilterMatched: nil,
-            platformCircumvented: true
-        )
-        
-        // When
-        let dto = try XCTUnwrap(
-            MessageModerationDetailsDTO.create(
-                from: payload,
-                isV1: true,
-                context: database.viewContext
-            )
-        )
-        
-        // Then
-        XCTAssertEqual(dto.originalText, "bad message")
-        XCTAssertEqual(dto.action, "bounce")
-    }
-    
-    func test_createFromPayload_v1_block() throws {
-        // Given
-        let payload = MessageModerationDetailsPayload(
-            originalText: "bad message",
-            action: "MESSAGE_RESPONSE_ACTION_BLOCK",
-            textHarms: nil,
-            imageHarms: nil,
-            blocklistMatched: nil,
-            semanticFilterMatched: nil,
-            platformCircumvented: false
-        )
-        
-        // When
-        let dto = try XCTUnwrap(
-            MessageModerationDetailsDTO.create(
-                from: payload,
-                isV1: true,
-                context: database.viewContext
-            )
-        )
-        
-        // Then
-        XCTAssertEqual(dto.originalText, "bad message")
-        XCTAssertEqual(dto.action, "remove")
-    }
-    
     func test_createFromPayload_v2_bounce() throws {
         // Given
         let payload = MessageModerationDetailsPayload(
-            originalText: "bad message",
             action: "bounce",
-            textHarms: ["hate"],
+            blocklistsMatched: ["badword", "worseword"],
             imageHarms: nil,
-            blocklistMatched: "badword",
+            originalText: "bad message",
+            platformCircumvented: true,
             semanticFilterMatched: "phrase",
-            platformCircumvented: true
+            textHarms: ["hate"]
         )
         
         // When
         let dto = try XCTUnwrap(
             MessageModerationDetailsDTO.create(
                 from: payload,
-                isV1: false,
                 context: database.viewContext
             )
         )
@@ -100,7 +47,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.action, "bounce")
         XCTAssertEqual(dto.textHarms, ["hate"])
         XCTAssertNil(dto.imageHarms)
-        XCTAssertEqual(dto.blocklistMatched, "badword")
+        XCTAssertEqual(dto.blocklistsMatched, ["badword", "worseword"])
         XCTAssertEqual(dto.semanticFilterMatched, "phrase")
         XCTAssertTrue(dto.platformCircumvented)
     }
@@ -108,20 +55,18 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
     func test_createFromPayload_v2_remove() throws {
         // Given
         let payload = MessageModerationDetailsPayload(
-            originalText: "bad message",
             action: "remove",
-            textHarms: nil,
             imageHarms: ["nsfw"],
-            blocklistMatched: nil,
+            originalText: "bad message",
+            platformCircumvented: nil,
             semanticFilterMatched: nil,
-            platformCircumvented: nil
+            textHarms: nil
         )
         
         // When
         let dto = try XCTUnwrap(
             MessageModerationDetailsDTO.create(
                 from: payload,
-                isV1: false,
                 context: database.viewContext
             )
         )
@@ -131,7 +76,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.action, "remove")
         XCTAssertNil(dto.textHarms)
         XCTAssertEqual(dto.imageHarms, ["nsfw"])
-        XCTAssertNil(dto.blocklistMatched)
+        XCTAssertNil(dto.blocklistsMatched)
         XCTAssertNil(dto.semanticFilterMatched)
         XCTAssertFalse(dto.platformCircumvented)
     }
@@ -145,7 +90,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
             action: "bounce",
             textHarms: ["hate"],
             imageHarms: ["nsfw"],
-            blocklistMatched: "badword",
+            blocklistsMatched: ["badword", "worseword"],
             semanticFilterMatched: "phrase",
             platformCircumvented: true,
             context: database.viewContext
@@ -159,7 +104,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
         XCTAssertEqual(model.action, .bounce)
         XCTAssertEqual(model.textHarms, ["hate"])
         XCTAssertEqual(model.imageHarms, ["nsfw"])
-        XCTAssertEqual(model.blocklistMatched, "badword")
+        XCTAssertEqual(model.blocklistsMatched, ["badword", "worseword"])
         XCTAssertEqual(model.semanticFilterMatched, "phrase")
         XCTAssertEqual(model.platformCircumvented, true)
     }
@@ -173,7 +118,7 @@ private extension MessageModerationDetailsDTO {
         action: String,
         textHarms: [String]?,
         imageHarms: [String]?,
-        blocklistMatched: String?,
+        blocklistsMatched: [String]?,
         semanticFilterMatched: String?,
         platformCircumvented: Bool,
         context: NSManagedObjectContext
@@ -184,7 +129,7 @@ private extension MessageModerationDetailsDTO {
         new.action = action
         new.textHarms = textHarms
         new.imageHarms = imageHarms
-        new.blocklistMatched = blocklistMatched
+        new.blocklistsMatched = blocklistsMatched
         new.semanticFilterMatched = semanticFilterMatched
         new.platformCircumvented = platformCircumvented
         return new

@@ -477,7 +477,10 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func pinMessage(_ messageId: MessageId) async throws {
         try await apiClient.request(
-            endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: true)))
+            endpoint: .updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
+            )
         )
     }
 
@@ -488,7 +491,10 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func unpinMessage(_ messageId: MessageId) async throws {
         try await apiClient.request(
-            endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: false)))
+            endpoint: .updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
+            )
         )
     }
 

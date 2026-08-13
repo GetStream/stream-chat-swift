@@ -461,12 +461,12 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.mentionedRoles, ["admin"])
 
         // Verify the request body re-serializes the group ids
-        let requestBody: MessageRequestBody = try database.readSynchronously { session in
+        let requestBody: MessageRequest = try database.readSynchronously { session in
             let messageDTO = try XCTUnwrap(session.message(id: messageId))
-            return messageDTO.asRequestBody()
+            return messageDTO.asMessageRequest()
         }
-        XCTAssertTrue(requestBody.mentionedHere)
-        XCTAssertTrue(requestBody.mentionedChannel)
+        XCTAssertEqual(requestBody.mentionedHere, true)
+        XCTAssertEqual(requestBody.mentionedChannel, true)
         XCTAssertEqual(requestBody.mentionedGroupIds, ["backendsupport", "engineering"])
         XCTAssertEqual(requestBody.mentionedRoles, ["admin"])
     }
@@ -507,16 +507,16 @@ final class MessageDTO_Tests: XCTestCase {
             isShadowed: true,
             reactionGroups: [
                 "love": .init(
-                    sumScores: 2,
                     count: 2,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 2
                 ),
                 "like": .init(
-                    sumScores: 1,
                     count: 1,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 1
                 )
             ],
             translations: [.english: .unique],
@@ -587,7 +587,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Assert the message was saved correctly
         XCTAssertEqual(messagePayload.id, loadedMessage?.id)
-        XCTAssertEqual(messagePayload.type.rawValue, loadedMessage?.type)
+        XCTAssertEqual(messagePayload.type, loadedMessage?.type)
         XCTAssertEqual(messagePayload.user.id, loadedMessage?.user.id)
         XCTAssertNearlySameDate(messagePayload.createdAt, loadedMessage?.createdAt.bridgeDate)
         XCTAssertNearlySameDate(messagePayload.updatedAt, loadedMessage?.updatedAt.bridgeDate)
@@ -596,10 +596,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNotNil(messagePayload.messageTextUpdatedAt)
         XCTAssertEqual(messagePayload.text, loadedMessage?.text)
         XCTAssertEqual(loadedMessage?.command, messagePayload.command)
-        XCTAssertEqual(loadedMessage?.args, messagePayload.args)
         XCTAssertEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
         XCTAssertEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
-        XCTAssertEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+        XCTAssertEqual(messagePayload.showInChannel, loadedMessage?.showReplyInChannel)
         XCTAssertEqual(messagePayload.pinned, loadedMessage?.pinned)
         XCTAssertNearlySameDate(messagePayload.pinExpires, loadedMessage?.pinExpires?.bridgeDate)
         XCTAssertNearlySameDate(messagePayload.pinnedAt, loadedMessage?.pinnedAt?.bridgeDate)
@@ -609,19 +608,17 @@ final class MessageDTO_Tests: XCTestCase {
             loadedMessage?.mentionedUsers.map(\.id)
         )
         XCTAssertEqual(
-            messagePayload.threadParticipants.map(\.id),
+            messagePayload.threadParticipants?.map(\.id),
             (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
         )
         XCTAssertEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-        XCTAssertEqual(messagePayload.extraData, loadedMessage.map {
+        XCTAssertEqual(messagePayload.custom, loadedMessage.map {
             try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
         })
-        XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
-            MessageReactionType(rawValue: reaction)
-        })
+        XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
         XCTAssertEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
-        XCTAssertEqual(messagePayload.isSilent, loadedMessage?.isSilent)
-        XCTAssertEqual(messagePayload.isShadowed, loadedMessage?.isShadowed)
+        XCTAssertEqual(messagePayload.silent, loadedMessage?.isSilent)
+        XCTAssertEqual(messagePayload.shadowed, loadedMessage?.isShadowed)
         XCTAssertEqual(
             Set(messagePayload.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
@@ -633,16 +630,19 @@ final class MessageDTO_Tests: XCTestCase {
         let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage?.reactionGroups)
         let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "love" }))
         let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "like" }))
+        let payloadReactionGroups = try XCTUnwrap(messagePayload.reactionGroups)
+        let payloadLoveReactionGroup = try XCTUnwrap(payloadReactionGroups["love"] ?? nil)
+        let payloadLikeReactionGroup = try XCTUnwrap(payloadReactionGroups["like"] ?? nil)
         XCTAssertEqual(loadedLoveReactionGroup.type, "love")
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, Int(loadedLoveReactionGroup.count))
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, Int(loadedLoveReactionGroup.sumScores))
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
+        XCTAssertEqual(payloadLoveReactionGroup.count, Int(loadedLoveReactionGroup.count))
+        XCTAssertEqual(payloadLoveReactionGroup.sumScores, Int(loadedLoveReactionGroup.sumScores))
+        XCTAssertEqual(payloadLoveReactionGroup.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(payloadLoveReactionGroup.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
         XCTAssertEqual(loadedLikeReactionGroup.type, "like")
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, Int(loadedLikeReactionGroup.count))
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, Int(loadedLikeReactionGroup.sumScores))
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
+        XCTAssertEqual(payloadLikeReactionGroup.count, Int(loadedLikeReactionGroup.count))
+        XCTAssertEqual(payloadLikeReactionGroup.sumScores, Int(loadedLikeReactionGroup.sumScores))
+        XCTAssertEqual(payloadLikeReactionGroup.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(payloadLikeReactionGroup.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
@@ -711,9 +711,9 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedAt: .unique,
             pinExpires: .unique,
             member: MemberInfoPayload(
-                channelRole: .moderator,
-                notificationsMuted: true,
-                extraData: ["badge": .dictionary(["tier": .string("gold")])]
+                channelRole: MemberRole.moderator.rawValue,
+                custom: ["badge": .dictionary(["tier": .string("gold")])],
+                notificationsMuted: true
             )
         )
 
@@ -741,16 +741,15 @@ final class MessageDTO_Tests: XCTestCase {
 
         AssertAsync {
             Assert.willBeEqual(messagePayload.id, loadedMessage?.id)
-            Assert.willBeEqual(messagePayload.type.rawValue, loadedMessage?.type)
+            Assert.willBeEqual(messagePayload.type, loadedMessage?.type)
             Assert.willBeEqual(messagePayload.user.id, loadedMessage?.user.id)
             Assert.willBeEqual(messagePayload.createdAt.bridgeDate, loadedMessage?.createdAt)
             Assert.willBeEqual(messagePayload.updatedAt.bridgeDate, loadedMessage?.updatedAt)
             Assert.willBeEqual(messagePayload.deletedAt?.bridgeDate, loadedMessage?.deletedAt)
             Assert.willBeEqual(messagePayload.text, loadedMessage?.text)
             Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
-            Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+            Assert.willBeEqual(messagePayload.showInChannel, loadedMessage?.showReplyInChannel)
             Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
             Assert.willBeEqual(messagePayload.pinExpires?.bridgeDate, loadedMessage?.pinExpires!)
             Assert.willBeEqual(messagePayload.pinnedAt?.bridgeDate, loadedMessage?.pinnedAt!)
@@ -760,27 +759,23 @@ final class MessageDTO_Tests: XCTestCase {
                 loadedMessage?.mentionedUsers.map(\.id)
             )
             Assert.willBeEqual(
-                messagePayload.threadParticipants.map(\.id),
+                messagePayload.threadParticipants?.map(\.id),
                 (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-            Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
+            Assert.willBeEqual(messagePayload.custom, loadedMessage.map {
                 try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
             })
-            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
-                MessageReactionType(rawValue: reaction)
-            })
-            Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts.mapKeys { reaction in
-                MessageReactionType(rawValue: reaction)
-            })
+            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
+            Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts)
             Assert.willBeEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
             Assert.willBeEqual(loadedMessage?.ownReactions.count, messagePayload.ownReactions.count)
-            Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
+            Assert.willBeEqual(messagePayload.silent, loadedMessage?.isSilent)
             Assert.willBeEqual(
                 Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
             )
-            Assert.willBeEqual(messagePayload.member?.channelRole?.rawValue, loadedMessage?.channelRole)
+            Assert.willBeEqual(messagePayload.member?.channelRole, loadedMessage?.channelRole)
             Assert.willBeEqual(true, loadedMessage?.memberNotificationsMuted)
             Assert.willBeEqual(
                 ["badge": .dictionary(["tier": .string("gold")])],
@@ -811,7 +806,7 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: messageId,
                     authorUserId: userId,
-                    member: MemberInfoPayload(channelRole: .moderator, notificationsMuted: false)
+                    member: MemberInfoPayload(channelRole: MemberRole.moderator.rawValue, notificationsMuted: false)
                 ),
                 for: channelId,
                 syncOwnReactions: false,
@@ -825,20 +820,72 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage?.channelRole, MemberRole.moderator.rawValue)
 
         try database.writeSynchronously { session in
-            try session.saveMessage(
-                payload: .dummy(
-                    messageId: messageId,
-                    authorUserId: userId,
-                    member: MemberInfoPayload(channelRole: nil, notificationsMuted: true)
-                ),
-                for: channelId,
-                syncOwnReactions: false,
-                cache: nil
+            session.message(id: messageId)?.updateMemberInfo(
+                channelRole: nil,
+                notificationsMuted: true,
+                extraData: [:]
             )
         }
 
         XCTAssertNil(loadedMessage?.channelRole)
         XCTAssertEqual(loadedMessage?.memberNotificationsMuted, true)
+    }
+
+    func test_saveMessage_whenShadowedIsMissing_keepsStoredValue() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+
+        func messageJSON(shadowed: Bool?) -> Data {
+            let shadowedField = shadowed.map { "\"shadowed\": \($0)," } ?? ""
+            return """
+            {
+                "id": "\(messageId)",
+                "type": "regular",
+                "user": {
+                    "id": "\(userId)",
+                    "role": "user",
+                    "online": false,
+                    "banned": false,
+                    "created_at": "2020-07-16T15:39:03.010717Z",
+                    "updated_at": "2020-08-17T13:15:39.895109Z"
+                },
+                "created_at": "2020-07-16T15:39:03.010717Z",
+                "updated_at": "2020-08-17T13:15:39.895109Z",
+                "text": "Hello",
+                "html": "",
+                "silent": false,
+                \(shadowedField)
+                "reply_count": 0,
+                "reaction_scores": {},
+                "attachments": [],
+                "latest_reactions": [],
+                "own_reactions": [],
+                "mentioned_users": []
+            }
+            """.data(using: .utf8)!
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: channelId), query: nil, cache: nil)
+            let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: messageJSON(shadowed: true))
+            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+        }
+
+        var storedIsShadowed: Bool? {
+            try? database.readSynchronously { session in
+                try XCTUnwrap(session.message(id: messageId)).isShadowed
+            }
+        }
+        XCTAssertEqual(storedIsShadowed, true)
+
+        // The payload does not say anything about `shadowed`, so the stored value is kept
+        try database.writeSynchronously { session in
+            let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: messageJSON(shadowed: nil))
+            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+        }
+
+        XCTAssertEqual(storedIsShadowed, true)
     }
 
     func test_messagePayload_isPinned_addedToPinnedMessages() throws {
@@ -1063,7 +1110,7 @@ final class MessageDTO_Tests: XCTestCase {
         let linkAttachmentPayload: MessageAttachmentPayload = .link()
         let videoAttachmentPayload: MessageAttachmentPayload = .video()
         let testPayload = TestAttachmentPayload.unique
-        let testAttachmentPayload: MessageAttachmentPayload = .init(
+        let testAttachmentPayload: MessageAttachmentPayload = .make(
             type: TestAttachmentPayload.type,
             payload: .dictionary([
                 "name": .string(testPayload.name),
@@ -1100,26 +1147,26 @@ final class MessageDTO_Tests: XCTestCase {
             pinExpires: .unique,
             reactionGroups: [
                 "love": .init(
-                    sumScores: 2,
                     count: 2,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 2
                 ),
                 "like": .init(
-                    sumScores: 1,
                     count: 1,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 1
                 )
             ],
             moderation: .init(
-                originalText: "Original",
                 action: "bounce",
-                textHarms: ["textHarm"],
+                blocklistsMatched: ["block"],
                 imageHarms: ["imageHarm"],
-                blocklistMatched: "block",
+                originalText: "Original",
+                platformCircumvented: true,
                 semanticFilterMatched: "semantic",
-                platformCircumvented: true
+                textHarms: ["textHarm"]
             )
         )
 
@@ -1136,23 +1183,22 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(loadedMessage.id, messagePayload.id)
         XCTAssertEqual(loadedMessage.cid, messagePayload.channel?.cid)
-        XCTAssertEqual(loadedMessage.type, messagePayload.type)
+        XCTAssertEqual(loadedMessage.type.rawValue, messagePayload.type)
         XCTAssertEqual(loadedMessage.author.id, messagePayload.user.id)
         XCTAssertNearlySameDate(loadedMessage.createdAt, messagePayload.createdAt)
         XCTAssertNearlySameDate(loadedMessage.updatedAt, messagePayload.updatedAt)
         XCTAssertNearlySameDate(loadedMessage.deletedAt, messagePayload.deletedAt)
         XCTAssertEqual(loadedMessage.text, messagePayload.text)
         XCTAssertEqual(loadedMessage.command, messagePayload.command)
-        XCTAssertEqual(loadedMessage.arguments, messagePayload.args)
         XCTAssertEqual(loadedMessage.parentMessageId, messagePayload.parentId)
-        XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showReplyInChannel)
+        XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showInChannel)
         XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
-        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), messagePayload.threadParticipants.map(\.id))
+        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), messagePayload.threadParticipants?.map(\.id))
         XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
-        XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
-        XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores)
-        XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts)
-        XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
+        XCTAssertEqual(loadedMessage.extraData, messagePayload.custom)
+        XCTAssertEqual(loadedMessage.reactionScores.mapKeys(\.rawValue), messagePayload.reactionScores)
+        XCTAssertEqual(loadedMessage.reactionCounts.mapKeys(\.rawValue), messagePayload.reactionCounts)
+        XCTAssertEqual(loadedMessage.isSilent, messagePayload.silent)
         XCTAssertEqual(loadedMessage.latestReactions.count, 3)
         XCTAssertEqual(loadedMessage.currentUserReactions.count, 2)
         XCTAssertEqual(loadedMessage.isPinned, true)
@@ -1169,7 +1215,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
         XCTAssertEqual(loadedMessage.moderationDetails?.textHarms, ["textHarm"])
         XCTAssertEqual(loadedMessage.moderationDetails?.imageHarms, ["imageHarm"])
-        XCTAssertEqual(loadedMessage.moderationDetails?.blocklistMatched, "block")
+        XCTAssertEqual(loadedMessage.moderationDetails?.blocklistsMatched, ["block"])
         XCTAssertEqual(loadedMessage.moderationDetails?.semanticFilterMatched, "semantic")
         XCTAssertEqual(loadedMessage.moderationDetails?.platformCircumvented, true)
         XCTAssertEqual(loadedMessage.isBounced, true)
@@ -1181,7 +1227,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(
             loadedMessage._attachments.map(\.type),
-            messagePayload.attachments.map(\.type)
+            messagePayload.attachments.map(\.attachmentType)
         )
         XCTAssertEqual(loadedMessage.imageAttachments.map(\.payload), [imageAttachmentPayload.decodedImagePayload])
         XCTAssertEqual(loadedMessage.fileAttachments.map(\.payload), [fileAttachmentPayload.decodedFilePayload])
@@ -1198,23 +1244,26 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(
             loadedMessage.attachmentCounts,
             messagePayload.attachments.reduce(into: [:]) { scores, attachment in
-                scores[attachment.type, default: 0] += 1
+                scores[attachment.attachmentType, default: 0] += 1
             }
         )
         // Reaction Groups
         let loadedMessageReactionGroup = try XCTUnwrap(loadedMessage.reactionGroups)
         let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["love"])
         let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["like"])
+        let payloadReactionGroups = try XCTUnwrap(messagePayload.reactionGroups)
+        let payloadLoveReactionGroup = try XCTUnwrap(payloadReactionGroups["love"] ?? nil)
+        let payloadLikeReactionGroup = try XCTUnwrap(payloadReactionGroups["like"] ?? nil)
         XCTAssertEqual(loadedLoveReactionGroup.type, "love")
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, loadedLoveReactionGroup.count)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, loadedLoveReactionGroup.sumScores)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt)
+        XCTAssertEqual(payloadLoveReactionGroup.count, loadedLoveReactionGroup.count)
+        XCTAssertEqual(payloadLoveReactionGroup.sumScores, loadedLoveReactionGroup.sumScores)
+        XCTAssertEqual(payloadLoveReactionGroup.firstReactionAt, loadedLoveReactionGroup.firstReactionAt)
+        XCTAssertEqual(payloadLoveReactionGroup.lastReactionAt, loadedLoveReactionGroup.lastReactionAt)
         XCTAssertEqual(loadedLikeReactionGroup.type, "like")
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, loadedLikeReactionGroup.count)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, loadedLikeReactionGroup.sumScores)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
+        XCTAssertEqual(payloadLikeReactionGroup.count, loadedLikeReactionGroup.count)
+        XCTAssertEqual(payloadLikeReactionGroup.sumScores, loadedLikeReactionGroup.sumScores)
+        XCTAssertEqual(payloadLikeReactionGroup.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
+        XCTAssertEqual(payloadLikeReactionGroup.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
     }
 
     func test_newMessage_asRequestBody() throws {
@@ -1298,23 +1347,20 @@ final class MessageDTO_Tests: XCTestCase {
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Load the message from the database and convert to request body.
-        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
+        let requestBody: MessageRequest = messageDTO.asMessageRequest()
 
         // Assert request body has correct fields.
         XCTAssertEqual(requestBody.id, messageId)
-        XCTAssertEqual(requestBody.user.id, currentUserId)
         XCTAssertEqual(requestBody.text, messageText)
-        XCTAssertEqual(requestBody.command, messageCommand)
-        XCTAssertEqual(requestBody.args, messageArguments)
         XCTAssertEqual(requestBody.parentId, parentMessageId)
-        XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
-        XCTAssertEqual(requestBody.isSilent, messageIsSilent)
-        XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
+        XCTAssertEqual(requestBody.showInChannel, messageShowReplyInChannel)
+        XCTAssertEqual(requestBody.silent, messageIsSilent)
+        XCTAssertEqual(requestBody.custom, ["k": .string("v"), "args": .string(messageArguments)])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-        XCTAssertEqual(requestBody.attachments.map(\.type), [.image, .video])
-        XCTAssertEqual(requestBody.attachments.count, 2)
-        XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
+        XCTAssertEqual(requestBody.attachments?.map(\.attachmentType), [.image, .video])
+        XCTAssertEqual(requestBody.attachments?.count, 2)
+        XCTAssertEqual(requestBody.mentionedUsers, mentionedUserIds)
         XCTAssertEqual(requestBody.type, nil)
     }
 
@@ -1361,13 +1407,12 @@ final class MessageDTO_Tests: XCTestCase {
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         // Load the message from the database and convert to request body.
-        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
+        let requestBody: MessageRequest = messageDTO.asMessageRequest()
 
         // Assert request body has correct fields.
         XCTAssertEqual(requestBody.id, messageId)
-        XCTAssertEqual(requestBody.user.id, currentUserId)
         XCTAssertEqual(requestBody.text, messageText)
-        XCTAssertEqual(requestBody.type, "system")
+        XCTAssertEqual(requestBody.type, .system)
     }
 
     func test_additionalLocalState_isStored() throws {
@@ -1513,13 +1558,13 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            moderationDetails: .dummy(originalText: "original", action: "dummy")
+            moderation: .dummy(originalText: "original", action: "dummy")
         )
 
         let messagePayloadResetModeration: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            moderationDetails: nil
+            moderation: nil
         )
 
         var loadedMessage: ChatMessage? {
@@ -4484,7 +4529,7 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
         let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
@@ -4520,6 +4565,38 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNil(draftMessage.parentMessageId)
     }
 
+    func test_saveDraftMessage_whenCommandAndArgsInCustomData() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
+        let draftPayload = DraftPayload.dummy(
+            cid: cid,
+            channelPayload: channelDetailPayload,
+            message: .dummy(
+                text: "/giphy hello",
+                command: "giphy",
+                args: "hello",
+                extraData: ["key": .string("value")]
+            )
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+            try session.saveDraftMessage(payload: draftPayload, for: cid, cache: nil)
+        }
+
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        let draftMessage = try XCTUnwrap(channelDTO.draftMessage)
+        XCTAssertEqual(draftMessage.command, "giphy")
+        XCTAssertEqual(draftMessage.args, "hello")
+        XCTAssertEqual(try draftMessage.asModel().extraData, ["key": .string("value")])
+    }
+
     func test_saveDraftMessage_inThread() throws {
         // GIVEN
         let cid: ChannelId = .unique
@@ -4529,7 +4606,7 @@ final class MessageDTO_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         let parentMessage = MessagePayload.dummy(messageId: parentMessageId)
         
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
@@ -4614,7 +4691,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
         let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
         let draftId = MessageId.unique
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
@@ -4642,7 +4719,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // Then save it without attachment.
-        let draftPayloadWithoutAttachment = DraftPayload(
+        let draftPayloadWithoutAttachment = DraftPayload.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
@@ -4682,7 +4759,7 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
         let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
@@ -4727,7 +4804,7 @@ final class MessageDTO_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         let parentMessage = MessagePayload.dummy(messageId: parentMessageId)
         
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftPayload.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
@@ -4789,7 +4866,7 @@ final class MessageDTO_Tests: XCTestCase {
         let draftReply = try XCTUnwrap(message.draftReply)
         XCTAssertEqual(draftReply.id, draftMessagePayload.id)
         XCTAssertEqual(draftReply.text, draftMessagePayload.text)
-        XCTAssertEqual(draftReply.extraData, draftMessagePayload.extraData)
+        XCTAssertEqual(draftReply.extraData, draftMessagePayload.custom)
     }
 
     func test_saveMessage_whenDraftReplyIsNil_removesExistingDraft() throws {

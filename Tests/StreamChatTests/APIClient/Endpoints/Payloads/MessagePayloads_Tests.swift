@@ -26,7 +26,10 @@ final class MessagePayload_Tests: XCTestCase {
             "created_at": "2020-07-16T15:39:03.010717Z",
             "updated_at": "2020-08-17T13:15:39.895109Z",
             "text": "Hey @here, @backendsupport, and @admin",
+            "html": "Hey @here, @backendsupport, and @admin",
             "reply_count": 0,
+            "reaction_scores": {},
+            "silent": false,
             "attachments": [],
             "latest_reactions": [],
             "own_reactions": [],
@@ -40,14 +43,14 @@ final class MessagePayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
 
-        XCTAssertTrue(payload.mentionedHere)
-        XCTAssertTrue(payload.mentionedChannel)
-        XCTAssertEqual(payload.mentionedGroups.map(\.id), ["backendsupport"])
-        XCTAssertEqual(payload.mentionedGroups.map(\.name), ["Backend Support"])
+        XCTAssertEqual(payload.mentionedHere, true)
+        XCTAssertEqual(payload.mentionedChannel, true)
+        XCTAssertEqual(payload.mentionedGroups?.map(\.id), ["backendsupport"])
+        XCTAssertEqual(payload.mentionedGroups?.map(\.name), ["Backend Support"])
         XCTAssertEqual(payload.mentionedRoles, ["admin"])
     }
 
-    func test_messagePayload_enhancedMentionsDefaultWhenMissing() throws {
+    func test_messagePayload_enhancedMentionsAreNilWhenMissing() throws {
         let json = """
         {
             "id": "msg-1",
@@ -62,7 +65,10 @@ final class MessagePayload_Tests: XCTestCase {
             "created_at": "2020-07-16T15:39:03.010717Z",
             "updated_at": "2020-08-17T13:15:39.895109Z",
             "text": "Hello",
+            "html": "Hello",
             "reply_count": 0,
+            "reaction_scores": {},
+            "silent": false,
             "attachments": [],
             "latest_reactions": [],
             "own_reactions": [],
@@ -72,10 +78,17 @@ final class MessagePayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
 
-        XCTAssertFalse(payload.mentionedHere)
-        XCTAssertFalse(payload.mentionedChannel)
-        XCTAssertTrue(payload.mentionedGroups.isEmpty)
-        XCTAssertEqual(payload.mentionedRoles, [])
+        XCTAssertNil(payload.mentionedHere)
+        XCTAssertNil(payload.mentionedChannel)
+        XCTAssertNil(payload.mentionedGroups)
+        XCTAssertNil(payload.mentionedRoles)
+
+        // The defaults are applied when the payload is converted to a model
+        let message = payload.asModel(cid: .unique, currentUserId: nil, channelReads: [])
+        XCTAssertFalse(message.mentionedHere)
+        XCTAssertFalse(message.mentionedChannel)
+        XCTAssertTrue(message.mentionedGroups.isEmpty)
+        XCTAssertEqual(message.mentionedRoles, [])
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
@@ -83,7 +96,7 @@ final class MessagePayload_Tests: XCTestCase {
         let payload = box.message
 
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
-        XCTAssertEqual(payload.type.rawValue, "regular")
+        XCTAssertEqual(payload.type, "regular")
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.createdAt, "2020-07-16T15:39:03.010717Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-08-17T13:15:39.895109Z".toDate())
@@ -91,27 +104,25 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.messageTextUpdatedAt, "2023-08-17T13:15:39.895109Z".toDate())
         XCTAssertEqual(payload.text, "No, I am your father!")
         XCTAssertEqual(payload.command, nil)
-        XCTAssertEqual(payload.args, nil)
         XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
-        XCTAssertEqual(payload.showReplyInChannel, true)
+        XCTAssertEqual(payload.showInChannel, true)
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
-        XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh", "vader"])
+        XCTAssertEqual(payload.threadParticipants?.map(\.id), ["josh", "vader"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, messageCustomData)
+        XCTAssertEqual(payload.custom, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
-        XCTAssertEqual(payload.reactionGroups, [
-            "love": MessageReactionGroupPayload(
-                sumScores: 1,
-                count: 1,
-                firstReactionAt: "2024-04-17T13:14:53.643826Z".toDate(),
-                lastReactionAt: "2024-04-17T13:15:53.643826Z".toDate()
-            )
-        ])
-        XCTAssertEqual(payload.isSilent, true)
-        XCTAssertEqual(payload.isShadowed, true)
+        let reactionGroups = try XCTUnwrap(payload.reactionGroups)
+        XCTAssertEqual(reactionGroups.keys.sorted(), ["love"])
+        let reactionGroup = try XCTUnwrap(reactionGroups["love"] ?? nil)
+        XCTAssertEqual(reactionGroup.sumScores, 1)
+        XCTAssertEqual(reactionGroup.count, 1)
+        XCTAssertEqual(reactionGroup.firstReactionAt, "2024-04-17T13:14:53.643826Z".toDate())
+        XCTAssertEqual(reactionGroup.lastReactionAt, "2024-04-17T13:15:53.643826Z".toDate())
+        XCTAssertEqual(payload.silent, true)
+        XCTAssertEqual(payload.shadowed, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.pinned, true)
@@ -121,19 +132,17 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.quotedMessageId, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.translations, [.italian: "si sono qui", .dutch: "ja ik ben hier"])
         XCTAssertEqual(payload.originalLanguage, "it")
-        XCTAssertEqual(payload.moderationDetails?.action, "MESSAGE_RESPONSE_ACTION_BOUNCE")
-        XCTAssertEqual(payload.moderationDetails?.originalText, "click here to win a new iphone!!")
         XCTAssertEqual(payload.moderation?.action, "bounce")
         XCTAssertEqual(payload.moderation?.originalText, "The message original text")
         XCTAssertEqual(payload.moderation?.textHarms, ["sexual_harrassment", "self_harm"])
         XCTAssertEqual(payload.moderation?.imageHarms, ["nudity"])
-        XCTAssertEqual(payload.moderation?.blocklistMatched, "profanity_2021_01")
+        XCTAssertEqual(payload.moderation?.blocklistsMatched, ["profanity_2021_01"])
         XCTAssertEqual(payload.moderation?.semanticFilterMatched, "bad_phrases")
         XCTAssertEqual(payload.moderation?.platformCircumvented, false)
         XCTAssertEqual(payload.deletedForMe, true)
-        XCTAssertEqual(payload.member?.channelRole, .moderator)
+        XCTAssertEqual(payload.member?.channelRole, "moderator")
         XCTAssertEqual(payload.member?.notificationsMuted, false)
-        XCTAssertEqual(payload.member?.extraData, [:])
+        XCTAssertEqual(payload.member?.custom, [String: RawJSON]())
     }
 
     func test_memberInfoPayload_decodesV1InlineCustomKeys() throws {
@@ -147,9 +156,9 @@ final class MessagePayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
 
-        XCTAssertEqual(payload.channelRole, .member)
+        XCTAssertEqual(payload.channelRole, "channel_member")
         XCTAssertEqual(payload.notificationsMuted, false)
-        XCTAssertEqual(payload.extraData, ["badge": .dictionary(["tier": .string("gold")])])
+        XCTAssertEqual(payload.custom, ["badge": .dictionary(["tier": .string("gold")])])
     }
 
     func test_memberInfoPayload_knownFieldsAreNotInExtraData() throws {
@@ -162,9 +171,41 @@ final class MessagePayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
 
-        XCTAssertEqual(payload.channelRole, .moderator)
+        XCTAssertEqual(payload.channelRole, "moderator")
         XCTAssertEqual(payload.notificationsMuted, true)
-        XCTAssertEqual(payload.extraData, [:])
+        XCTAssertEqual(payload.custom, [String: RawJSON]())
+    }
+
+    func test_memberInfoPayload_requiredFieldsThrowWhenMissing() throws {
+        let fields: [(key: String, json: String)] = [
+            ("channel_role", #"{"notifications_muted":false}"#),
+            ("notifications_muted", #"{"channel_role":"channel_member"}"#)
+        ]
+
+        for field in fields {
+            XCTAssertThrowsError(
+                try JSONDecoder.stream.decode(MemberInfoPayload.self, from: Data(field.json.utf8)),
+                "Expected decoding to fail when \(field.key) is missing"
+            )
+        }
+    }
+
+    func test_messagePayload_requiredFieldsThrowWhenMissing() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        let message = try XCTUnwrap(root["message"] as? [String: Any])
+
+        for field in ["reaction_scores", "silent"] {
+            var candidateRoot = root
+            var candidateMessage = message
+            candidateMessage.removeValue(forKey: field)
+            candidateRoot["message"] = candidateMessage
+            let data = try JSONSerialization.data(withJSONObject: candidateRoot)
+
+            XCTAssertThrowsError(
+                try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data),
+                "Expected decoding to fail when \(field) is missing"
+            )
+        }
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
@@ -175,26 +216,25 @@ final class MessagePayload_Tests: XCTestCase {
         messageCustomData["tau"] = .double(6.28)
 
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
-        XCTAssertEqual(payload.type.rawValue, "regular")
+        XCTAssertEqual(payload.type, "regular")
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.createdAt, "2020-07-16T15:39:03.010717Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-08-17T13:15:39.895109Z".toDate())
         XCTAssertEqual(payload.deletedAt, "2020-07-16T15:55:03.010717Z".toDate())
         XCTAssertEqual(payload.text, "No, I am your father!")
         XCTAssertEqual(payload.command, nil)
-        XCTAssertEqual(payload.args, nil)
         XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
-        XCTAssertEqual(payload.showReplyInChannel, true)
+        XCTAssertEqual(payload.showInChannel, true)
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
-        XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
+        XCTAssertEqual(payload.threadParticipants?.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, messageCustomData)
+        XCTAssertEqual(payload.custom, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
-        XCTAssertEqual(payload.isSilent, true)
-        XCTAssertEqual(payload.isShadowed, false)
+        XCTAssertEqual(payload.silent, true)
+        XCTAssertNil(payload.shadowed)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.attachments.count, 2)
@@ -210,26 +250,25 @@ final class MessagePayload_Tests: XCTestCase {
         let payload = box.message
 
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
-        XCTAssertEqual(payload.type.rawValue, "regular")
+        XCTAssertEqual(payload.type, "regular")
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.createdAt, "2020-07-16T15:39:03.010717Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-08-17T13:15:39.895109Z".toDate())
         XCTAssertEqual(payload.deletedAt, "2020-07-16T15:55:03.010717Z".toDate())
         XCTAssertEqual(payload.text, "No, I am your father!")
         XCTAssertEqual(payload.command, nil)
-        XCTAssertEqual(payload.args, nil)
         XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
-        XCTAssertEqual(payload.showReplyInChannel, true)
+        XCTAssertEqual(payload.showInChannel, true)
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
-        XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh", "vader"])
+        XCTAssertEqual(payload.threadParticipants?.map(\.id), ["josh", "vader"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, messageCustomData)
+        XCTAssertEqual(payload.custom, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
-        XCTAssertEqual(payload.isSilent, true)
-        XCTAssertEqual(payload.isShadowed, true)
+        XCTAssertEqual(payload.silent, true)
+        XCTAssertEqual(payload.shadowed, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.pinned, true)
@@ -270,7 +309,6 @@ final class MessagePayload_Tests: XCTestCase {
             deletedAt: Date(timeIntervalSince1970: 1_609_459_300),
             text: "Test message text",
             command: "test-command",
-            args: "test-args",
             parentId: "parent-message-id",
             showReplyInChannel: true,
             quotedMessageId: "quoted-message-id",
@@ -295,7 +333,6 @@ final class MessagePayload_Tests: XCTestCase {
             translations: [.spanish: "Texto del mensaje de prueba"],
             originalLanguage: "en",
             moderation: nil,
-            moderationDetails: nil,
             messageTextUpdatedAt: Date(timeIntervalSince1970: 1_609_459_350), poll: nil,
             reminder: nil,
             location: nil
@@ -323,7 +360,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(chatMessage.createdAt, Date(timeIntervalSince1970: 1_609_459_200))
         XCTAssertEqual(chatMessage.updatedAt, Date(timeIntervalSince1970: 1_609_459_250))
         XCTAssertEqual(chatMessage.deletedAt, Date(timeIntervalSince1970: 1_609_459_300))
-        XCTAssertEqual(chatMessage.arguments, "test-args")
+        XCTAssertNil(chatMessage.arguments)
         XCTAssertEqual(chatMessage.parentMessageId, "parent-message-id")
         XCTAssertEqual(chatMessage.showReplyInChannel, true)
         XCTAssertEqual(chatMessage.replyCount, 5)
@@ -388,7 +425,6 @@ final class MessagePayload_Tests: XCTestCase {
             translations: nil,
             originalLanguage: nil,
             moderation: nil,
-            moderationDetails: nil,
             messageTextUpdatedAt: nil,
             poll: nil,
             reminder: nil,

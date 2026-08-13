@@ -101,27 +101,6 @@ extension Endpoint {
         )
     }
 
-    static func sendMessage(
-        cid: ChannelId,
-        messagePayload: MessageRequestBody,
-        skipPush: Bool,
-        skipEnrichUrl: Bool
-    )
-        -> Endpoint<MessagePayload.Boxed> {
-        let body: [String: AnyEncodable] = [
-            "message": AnyEncodable(messagePayload),
-            "skip_push": AnyEncodable(skipPush),
-            "skip_enrich_url": AnyEncodable(skipEnrichUrl)
-        ]
-        return .init(
-            path: .sendMessage(cid),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: body
-        )
-    }
-
     static func addMembers(
         cid: ChannelId,
         members: [MemberInfoRequest],

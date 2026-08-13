@@ -334,7 +334,7 @@
     </entity>
     <entity name="MessageModerationDetailsDTO" representedClassName="MessageModerationDetailsDTO" syncable="YES">
         <attribute name="action" attributeType="String" defaultValueString=""/>
-        <attribute name="blocklistMatched" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="blocklistsMatched" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="imageHarms" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="originalText" attributeType="String" defaultValueString=""/>
         <attribute name="platformCircumvented" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>

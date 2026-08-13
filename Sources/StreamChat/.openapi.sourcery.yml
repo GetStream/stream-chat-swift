@@ -1,6 +1,10 @@
 sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
+  - ./Generated/OpenAPI/models/DraftMessagePayload.swift
+  - ./Generated/OpenAPI/models/MemberInfoPayload.swift
   - ./Generated/OpenAPI/models/MemberPayload.swift
+  - ./Generated/OpenAPI/models/MessageAttachmentPayload.swift
+  - ./Generated/OpenAPI/models/MessagePayload.swift
   - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/UserPayload.swift
 templates:
@@ -11,4 +15,5 @@ args:
   # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
   # declares, so those have to be excluded too when rebuilding the extra data.
   v1CodingKeys:
+    MessagePayload: MessagePayloadsCodingKeys
     UserPayload: UserPayloadsCodingKeys

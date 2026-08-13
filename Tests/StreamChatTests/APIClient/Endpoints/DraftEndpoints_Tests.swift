@@ -27,47 +27,6 @@ final class DraftEndpoints_Tests: XCTestCase {
         AssertDictionary(body, expectedBody)
     }
 
-    func test_updateDraftMessage() throws {
-        let cid = ChannelId(type: .messaging, id: "123")
-        let requestBody = DraftMessageRequestBody(
-            id: "draft-id",
-            text: "Hello",
-            command: nil,
-            args: nil,
-            parentId: "parent-id",
-            showReplyInChannel: true,
-            isSilent: false,
-            quotedMessageId: "quoted-id",
-            attachments: [],
-            mentionedUserIds: ["user1", "user2"],
-            extraData: [:]
-        )
-
-        let endpoint = Endpoint<DraftPayloadResponse>.updateDraftMessage(
-            channelId: cid,
-            requestBody: requestBody
-        )
-        
-        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
-        let expectedBody: [String: Any] = [
-            "message": [
-                "id": "draft-id",
-                "text": "Hello",
-                "parent_id": "parent-id",
-                "show_in_channel": true,
-                "silent": false,
-                "quoted_message_id": "quoted-id",
-                "mentioned_users": ["user1", "user2"]
-            ]
-        ]
-
-        XCTAssertEqual(endpoint.method, .post)
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/123/draft")
-        XCTAssertEqual(endpoint.requiresConnectionId, false)
-        XCTAssertNil(endpoint.queryItems)
-        AssertDictionary(body, expectedBody)
-    }
-
     func test_getDraftMessage() throws {
         let cid = ChannelId(type: .messaging, id: "123")
         let threadId = "thread-id"

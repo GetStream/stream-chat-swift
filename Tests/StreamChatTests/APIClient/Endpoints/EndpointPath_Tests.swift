@@ -7,19 +7,23 @@ import XCTest
 
 final class EndpointPathTests: XCTestCase {
     func test_sendMessage_shouldBeQueuedOffline() throws {
-        XCTAssertTrue(EndpointPath.sendMessage(.unique).shouldBeQueuedOffline)
+        XCTAssertTrue(EndpointPath.sendMessage(type: "messaging", id: .unique).shouldBeQueuedOffline)
     }
 
-    func test_editMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.editMessage("").shouldBeQueuedOffline)
+    func test_updateMessage_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.updateMessage(id: "").shouldBeQueuedOffline)
+    }
+
+    func test_updateMessagePartial_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.updateMessagePartial(id: "").shouldBeQueuedOffline)
+    }
+
+    func test_createDraft_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.createDraft(type: "messaging", id: "").shouldBeQueuedOffline)
     }
 
     func test_deleteMessage_shouldBeQueuedOffline() {
         XCTAssertTrue(EndpointPath.deleteMessage("").shouldBeQueuedOffline)
-    }
-    
-    func test_pinMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.pinMessage("").shouldBeQueuedOffline)
     }
 
     func test_addReaction_shouldBeQueuedOffline() {
@@ -236,11 +240,12 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
         assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
 
-        assertResultEncodingAndDecoding(.sendMessage(ChannelId(type: .messaging, id: "the_id")))
+        assertResultEncodingAndDecoding(.sendMessage(type: "messaging", id: "the_id"))
         assertResultEncodingAndDecoding(.message("message_idm"))
-        assertResultEncodingAndDecoding(.editMessage("message_ide"))
+        assertResultEncodingAndDecoding(.updateMessage(id: "message_ide"))
+        assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
+        assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))
         assertResultEncodingAndDecoding(.deleteMessage("message_idd"))
-        assertResultEncodingAndDecoding(.pinMessage("message_idp"))
         assertResultEncodingAndDecoding(.replies("message_idr"))
         assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))

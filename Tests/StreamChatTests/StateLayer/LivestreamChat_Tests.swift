@@ -607,25 +607,25 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Message Pinning
 
     func test_pinMessage_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: nil)))
 
         try await livestreamChat.pinMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: "msg-1",
-            request: .init(set: .init(pinned: true))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: "msg-1",
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_unpinMessage_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: nil)))
 
         try await livestreamChat.unpinMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: "msg-1",
-            request: .init(set: .init(pinned: false))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: "msg-1",
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }

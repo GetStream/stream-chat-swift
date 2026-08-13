@@ -68,4 +68,10 @@ extension Encodable {
     fileprivate func encode(to container: inout SingleValueEncodingContainer) throws {
         try container.encode(self)
     }
+
+    /// Encodes the value and re-decodes it into a `RawJSON` value.
+    var rawJSON: RawJSON? {
+        guard let data = try? JSONEncoder.default.encode(self) else { return nil }
+        return try? JSONDecoder.default.decode(RawJSON.self, from: data)
+    }
 }

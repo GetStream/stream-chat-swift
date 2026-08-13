@@ -398,13 +398,13 @@ final class DatabaseContainer_Tests: XCTestCase {
                 .dummy(
                     reactionGroups: [
                         "like": MessageReactionGroupPayload(
-                            sumScores: 1,
                             count: 1,
                             firstReactionAt: .unique,
-                            lastReactionAt: .unique
+                            lastReactionAt: .unique,
+                            sumScores: 1
                         )
                     ],
-                    moderationDetails: .dummy(originalText: "yo", action: "spam")
+                    moderation: .dummy(originalText: "yo", action: "spam")
                 ),
                 .dummy(
                     poll: self.dummyPollPayload(
