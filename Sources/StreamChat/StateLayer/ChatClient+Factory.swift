@@ -282,6 +282,20 @@ extension ChatClient {
     }
 }
 
+// MARK: - Factory Methods for Searching Channel Members
+
+extension ChatClient {
+    /// Creates an instance of ``MemberSearch`` which represents an array of channel members matching to the specified ``ChannelMemberListQuery``.
+    ///
+    /// Use ``MemberSearch`` as a data source for member search UIs. Consecutive searches are debounced
+    /// and cancel in-flight work, unlike ``MemberList`` which is bound to a single query.
+    ///
+    /// - Returns: An instance of ``MemberSearch`` which represents search actions and the search state.
+    public func makeMemberSearch() -> MemberSearch {
+        MemberSearch(client: self)
+    }
+}
+
 // MARK: - Factory Methods for Creating Message Reaction Lists
 
 extension ChatClient {

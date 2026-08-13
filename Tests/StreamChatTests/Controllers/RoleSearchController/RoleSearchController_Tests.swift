@@ -15,7 +15,11 @@ final class RoleSearchController_Tests: XCTestCase {
         super.setUp()
         client = ChatClient.mock
         repository = client.mockRolesRepository
-        controller = client.roleSearchController()
+        controller = RoleSearchController(
+            client: client,
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
+        )
     }
 
     override func tearDown() {
@@ -106,6 +110,23 @@ final class RoleSearchController_Tests: XCTestCase {
 
         wait(for: [delegate.expectation], timeout: defaultTimeout)
         XCTAssertEqual(delegate.roles.map(\.name), ["admin"])
+    }
+
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsRoles() {
+        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
+
+        let exp = expectation(description: "search completes")
+        controller.searchRoles(text: "adm") { _ in
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+        XCTAssertFalse(controller.roles.isEmpty)
+
+        controller.clearResults()
+
+        XCTAssertTrue(controller.roles.isEmpty)
     }
 
     // MARK: - Failure path

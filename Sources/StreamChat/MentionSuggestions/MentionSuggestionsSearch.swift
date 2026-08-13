@@ -50,4 +50,57 @@ enum MentionSuggestionsSearch {
             sort: [.init(key: .name, isAscending: true)]
         )
     }
+
+    /// Builds the query used to search channel members for mention suggestions.
+    static func channelMembersQuery(cid: ChannelId, for searchInput: String) -> ChannelMemberListQuery {
+        ChannelMemberListQuery(
+            cid: cid,
+            filter: .autocomplete(.name, text: searchInput),
+            sort: [.init(key: .name, isAscending: true)]
+        )
+    }
+
+    /// Whether mention suggestions should query members from the backend.
+    ///
+    /// `ChatChannel.lastActiveMembers` is capped (default 100), so larger channels
+    /// need a remote member search.
+    static func requiresRemoteMemberSearch(for channel: ChatChannel) -> Bool {
+        channel.memberCount > channel.lastActiveMembers.count
+    }
+
+    /// Resolves user mention suggestions for the given request.
+    ///
+    /// Search strategy, in order:
+    /// 1. All app users, when `mentionAllAppUsers` is `true`.
+    /// 2. Remote channel member search via ``MemberSearch``, when the channel has
+    ///    more members than are available in `lastActiveMembers`.
+    /// 3. Local search over `lastActiveMembers` and `lastActiveWatchers`.
+    static func fetchUsers(
+        for request: MentionSuggestionsRequest,
+        mentionAllAppUsers: Bool,
+        currentUserId: UserId?,
+        userSearch: UserSearch,
+        memberSearch: MemberSearch
+    ) async throws -> [ChatUser] {
+        if mentionAllAppUsers {
+            let query = allAppUsersQuery(for: request.text)
+            return try await userSearch.search(query: query)
+        }
+
+        let channel = request.channel
+        if requiresRemoteMemberSearch(for: channel) {
+            // Empty `@` should not load every member of a large channel.
+            guard !request.text.isEmpty else { return [] }
+
+            let query = channelMembersQuery(cid: channel.cid, for: request.text)
+            let members = try await memberSearch.search(query: query)
+            return members.filter { $0.id != currentUserId }
+        }
+
+        return searchUsers(
+            channel.lastActiveWatchers.map(\.self) + channel.lastActiveMembers.map(\.self),
+            by: request.text,
+            excludingId: currentUserId
+        )
+    }
 }

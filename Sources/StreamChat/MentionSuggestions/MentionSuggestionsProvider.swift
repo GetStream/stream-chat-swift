@@ -30,6 +30,12 @@ public protocol MentionSuggestionsProvider: Sendable {
     /// - Parameter request: The context describing the current mention query.
     /// - Returns: The suggestions to present, in display order.
     func mentionSuggestions(for request: MentionSuggestionsRequest) async throws -> [MentionSuggestion]
+
+    /// Cancels any pending or in-flight suggestion searches and clears cached results.
+    ///
+    /// Call this when the mention query ends (for example when the user deletes `@`)
+    /// so a slower, superseded search cannot surface stale suggestions.
+    func clearResults() async
 }
 
 public extension MentionSuggestionsProvider {
@@ -55,4 +61,6 @@ public extension MentionSuggestionsProvider {
             }
         }
     }
+
+    func clearResults() async {}
 }

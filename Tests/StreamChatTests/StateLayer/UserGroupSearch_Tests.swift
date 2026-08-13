@@ -15,7 +15,11 @@ final class UserGroupSearch_Tests: XCTestCase {
         super.setUp()
         client = ChatClient.mock
         repository = client.mockUserGroupsRepository
-        search = UserGroupSearch(client: client)
+        search = UserGroupSearch(
+            client: client,
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
+        )
     }
 
     override func tearDown() {
@@ -93,5 +97,29 @@ final class UserGroupSearch_Tests: XCTestCase {
             XCTAssertTrue(search.state.userGroups.isEmpty)
             XCTAssertEqual("backend", search.state.query?.query)
         }
+    }
+
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsState() async throws {
+        let userGroup = UserGroup.dummy(id: "backendsupport", name: "Backend Support")
+        repository.searchUserGroups_completion_result = .success([userGroup])
+        try await search.search(text: "backend")
+        try await MainActor.run {
+            XCTAssertEqual(1, search.state.userGroups.count)
+        }
+
+        await search.clearResults()
+
+        try await MainActor.run {
+            XCTAssertTrue(search.state.userGroups.isEmpty)
+            XCTAssertNil(search.state.query)
+        }
+    }
+
+    // MARK: - Factory
+
+    func test_makeUserGroupSearch_returnsUserGroupSearch() {
+        XCTAssertNotNil(client.makeUserGroupSearch())
     }
 }

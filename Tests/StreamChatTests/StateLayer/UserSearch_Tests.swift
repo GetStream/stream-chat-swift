@@ -98,6 +98,22 @@ final class UserSearch_Tests: XCTestCase {
         await XCTAssertEqual(secondResult.users.map(\.id), userSearch.state.users.map(\.id))
     }
     
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsState() async throws {
+        let fetchResult = makeUsers(name: "name", count: 5, offset: 0)
+        env.userListUpdaterMock.fetch_completion_result = .success(fetchResult)
+        try await userSearch.search(term: "name")
+        await XCTAssertEqual(5, userSearch.state.users.count)
+
+        await userSearch.clearResults()
+
+        await XCTAssertEqual([], userSearch.state.users.map(\.id))
+        try await MainActor.run {
+            XCTAssertNil(userSearch.state.query)
+        }
+    }
+
     // MARK: - Results Pagination
     
     func test_loadMoreUsers_whenMoreResultsAreAvailable_thenResultsAndStateAreUpdated() async throws {
