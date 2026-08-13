@@ -162,6 +162,17 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// Unnecessary updates can get expensive due to text updates.
     private var previousContentUpdateTintColor: UIColor?
 
+    /// Whether the message is temporarily highlighted, for example when jumping to it.
+    ///
+    /// Tracking it here makes it possible to tell the highlighted cells apart from the ones that
+    /// were never highlighted, so that clearing the highlight leaves the latter untouched.
+    var isJumpHighlighted = false {
+        didSet {
+            guard isJumpHighlighted != oldValue else { return }
+            backgroundColor = isJumpHighlighted ? appearance.colorPalette.backgroundCoreHighlight : nil
+        }
+    }
+
     // MARK: - Content views
 
     /// Shows the bubble around message content.
@@ -727,6 +738,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     open func prepareForReuse() {
         defer { attachmentViewInjector?.contentViewDidPrepareForReuse() }
 
+        isJumpHighlighted = false
         delegate = nil
         indexPath = nil
     }
