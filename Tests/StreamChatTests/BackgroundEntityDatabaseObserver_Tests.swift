@@ -47,6 +47,22 @@ final class BackgroundEntityDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(observer.item, TestItem(id: "1", value: "value1"))
     }
 
+    func test_item_whenAccessedBeforeStartObserving_thenItemIsReturnedRightAfterStartObserving() throws {
+        try insertTestObject(id: "1", value: "value1")
+
+        let observer = BackgroundEntityDatabaseObserver<TestItem, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { TestItem(id: $0.testId, value: $0.testValue) }
+        )
+
+        XCTAssertNil(observer.item)
+
+        try observer.startObserving()
+
+        XCTAssertEqual(observer.item, TestItem(id: "1", value: "value1"))
+    }
+
     /// Without `itemReuseKeyPaths`, the observer has no way of knowing an item produced while aggregating an FRC
     /// change can be reused, so it asks `itemCreator` to rebuild it a second time when refreshing its cached snapshot.
     func test_withoutItemReuseKeyPaths_itemCreatorIsInvokedTwicePerChange() throws {

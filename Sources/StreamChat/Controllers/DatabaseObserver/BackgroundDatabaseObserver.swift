@@ -145,15 +145,21 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     ///
     /// - Important: Must be called from the managed object's perform closure.
     @discardableResult private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
+        let fetchedObjects = frc.fetchedObjects
         let items = DatabaseItemConverter.convert(
-            dtos: frc.fetchedObjects ?? [],
+            dtos: fetchedObjects ?? [],
             existing: cachedItems.value ?? [],
             changes: changes,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: sorting
         )
-        cachedItems.value = items
+        // `fetchedObjects` is nil until the FRC performs its initial fetch. Caching the empty result
+        // of such a read would make later reads serve it from the fast path and miss the initial
+        // items, which are loaded asynchronously by `startObserving`.
+        if fetchedObjects != nil {
+            cachedItems.value = items
+        }
         return items
     }
 }

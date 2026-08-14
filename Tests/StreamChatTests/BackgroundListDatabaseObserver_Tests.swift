@@ -168,6 +168,27 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(["1"], itemIds)
     }
     
+    func test_accessingItemsBeforeStartObserving_thenItemsAreReturnedRightAfterStartObserving() throws {
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+            item.testId = "1"
+            item.testValue = "testValue1"
+        }
+
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId }
+        )
+
+        XCTAssertEqual([], observer.items.map { $0 })
+
+        try observer.startObserving()
+
+        XCTAssertEqual(["1"], observer.items.map { $0 })
+    }
+
     func test_accessingItemsConcurrentlyWhileInitialFetchIsRunning() throws {
         let expectedIds = (0..<5).map { "\($0)" }
         try database.writeSynchronously { session in
