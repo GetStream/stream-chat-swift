@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `clearResults()` to user, member, role, and user group search APIs [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 ### 🔄 Changed
-- Improve channel list scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
+- Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 - Add `UserGroupSearchController` for debounced user group search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Add `MemberSearch` for debounced channel member search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 ### 🐞 Fixed
