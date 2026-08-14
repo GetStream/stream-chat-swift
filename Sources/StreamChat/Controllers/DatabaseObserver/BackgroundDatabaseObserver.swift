@@ -25,14 +25,26 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated)
-    private var _items: [Item]?
+
+    /// An in-memory cache of the mapped items.
+    ///
+    /// The cache is kept up to date by the change callbacks (which run on the observed context's
+    /// queue), which allows reads to return immediately without hopping onto the context's queue via
+    /// `performAndWait` — this is what makes reading ``rawItems`` cheap even while the context is busy
+    /// (e.g. merging changes during scrolling).
+    private let cachedItems = AllocatedUnfairLock<[Item]?>(nil)
 
     /// The items that have been fetched and mapped
     var rawItems: [Item] {
-        nonisolated(unsafe) var rawItems: [Item]!
+        // Fast path: return the in-memory snapshot without touching the Core Data context.
+        if let items = cachedItems.value {
+            return items
+        }
+        // Slow path (observing not started yet, or initial load still pending): load synchronously
+        // once. Subsequent reads are served from the cache.
+        nonisolated(unsafe) var rawItems: [Item] = []
         frc.managedObjectContext.performAndWait {
-            // When we already have loaded items, reuse them, otherwise refetch all
-            rawItems = _items ?? updateItems(nil)
+            rawItems = updateItems(nil)
         }
         return rawItems
     }
@@ -94,14 +106,22 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
         guard !isInitialized else { return }
         isInitialized = true
 
-        do {
-            try frc.performFetch()
-        } catch {
-            log.error("Failed to start observing database: \(error). This is an internal error.")
-            throw error
+        // Perform the initial fetch on the context's own queue. This is required for correct Core Data
+        // threading and, with a synchronously-merged context, ensures the fetch is serialized against
+        // incoming merges so the FRC reports subsequent changes as deltas.
+        nonisolated(unsafe) var fetchError: Error?
+        frc.managedObjectContext.performAndWait {
+            do {
+                try frc.performFetch()
+                frc.delegate = changeAggregator
+            } catch {
+                fetchError = error
+            }
         }
-
-        frc.delegate = changeAggregator
+        if let fetchError {
+            log.error("Failed to start observing database: \(fetchError). This is an internal error.")
+            throw fetchError
+        }
 
         // Start loading initial items and call did change for the initial change.
         frc.managedObjectContext.perform { [weak self] in
@@ -127,13 +147,13 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     @discardableResult private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
         let items = DatabaseItemConverter.convert(
             dtos: frc.fetchedObjects ?? [],
-            existing: _items ?? [],
+            existing: cachedItems.value ?? [],
             changes: changes,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
             sorting: sorting
         )
-        _items = items
+        cachedItems.value = items
         return items
     }
 }

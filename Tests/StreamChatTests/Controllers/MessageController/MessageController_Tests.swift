@@ -2562,6 +2562,14 @@ final class MessageController_Tests: XCTestCase {
         StreamConcurrency.onMain {
             delegate.didChangeRepliesExpectation = expectation
             delegate.didChangeRepliesExpectedCount = count
+            // The change may already have been delivered by the time we register (the observer's
+            // context merges synchronously, so a change can arrive during the triggering write).
+            // Fulfill immediately when the observed state already matches to avoid depending on
+            // callback timing.
+            if controller.replies.count == count {
+                delegate.didChangeRepliesExpectation = nil
+                expectation.fulfill()
+            }
         }
         wait(for: [expectation], timeout: defaultTimeout)
     }
