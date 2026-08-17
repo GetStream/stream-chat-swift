@@ -1425,7 +1425,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.hideChannel(cid: channelID, clearHistory: clearHistory)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(cid: channelID, clearHistory: clearHistory)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id,
+            hideChannelRequest: .init(clearHistory: clearHistory)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1504,7 +1508,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.showChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 

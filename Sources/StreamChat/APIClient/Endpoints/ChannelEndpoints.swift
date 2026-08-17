@@ -101,26 +101,6 @@ extension Endpoint {
         )
     }
 
-    static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .showChannel(cid.apiPath, false),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["clear_history": clearHistory]
-        )
-    }
-
-    static func showChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .showChannel(cid.apiPath, true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-    }
-
     static func sendMessage(
         cid: ChannelId,
         messagePayload: MessageRequestBody,

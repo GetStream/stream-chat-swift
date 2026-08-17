@@ -22,10 +22,6 @@ enum EndpointPath: Codable {
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case showChannel(
-        String,
-        Bool
-    )
     case truncateChannel(String)
     case markChannelRead(String)
     case markChannelUnread(String)
@@ -102,6 +98,10 @@ enum EndpointPath: Codable {
     case getReactions(id: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
+    case hideChannel(
+        type: String,
+        id: String
+    )
     case listDevices
     case listUserGroups
     case markDelivered
@@ -112,6 +112,10 @@ enum EndpointPath: Codable {
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
+    case showChannel(
+        type: String,
+        id: String
+    )
     case stopWatchingChannel(
         type: String,
         id: String
@@ -161,10 +165,6 @@ enum EndpointPath: Codable {
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .showChannel(
-            channelId,
-            show
-        ): return "channels/\(channelId)/\(show ? "show" : "hide")"
         case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
@@ -260,6 +260,11 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
             return "/api/v2/users/live_locations"
+        case let .hideChannel(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/hide"
         case .listDevices:
             return "/api/v2/devices"
         case .listUserGroups:
@@ -280,6 +285,11 @@ enum EndpointPath: Codable {
             return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
+        case let .showChannel(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
         case let .stopWatchingChannel(
             type: type,
             id: id
@@ -764,6 +774,24 @@ extension Endpoint {
         )
     }
 
+    static func hideChannel(
+        type: String,
+        id: String,
+        hideChannelRequest: HideChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .hideChannel(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: hideChannelRequest
+        )
+    }
+
     static func listDevices(requiresConnectionId: Bool = false) -> Endpoint<ListDevicesResponse> {
         return .init(
             path: .listDevices,
@@ -922,6 +950,23 @@ extension Endpoint {
                 "id_gt": idGt,
                 "team_id": teamId
             ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func showChannel(
+        type: String,
+        id: String,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .showChannel(
+                type: type,
+                id: id
+            ),
+            method: .post,
+            queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
