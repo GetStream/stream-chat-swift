@@ -18,6 +18,7 @@ allowed_endpoints=(
     createPoll
     createPollOption
     createUserGroup
+    deleteChannel
     deleteChannelFile
     deleteChannelImage
     deleteDevice
@@ -73,6 +74,7 @@ allowed_models=(
   CreatePollOptionRequest
   CreatePollRequest
   CreateUserGroupRequest
+  DeleteChannelResponse
   DeliveredMessagePayload
   DeviceResponse
   Field
@@ -468,6 +470,7 @@ remove_property UserPayload blockedUserIds
 remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
+remove_property DeleteChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
@@ -574,7 +577,6 @@ inject_v1_endpoint_paths() {
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
-    case deleteChannel(String)
     case channelUpdate(String)
     case showChannel(String, Bool)
     case truncateChannel(String)
@@ -635,7 +637,6 @@ EOF
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
-        case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
         case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
         case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"

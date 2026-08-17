@@ -39,7 +39,7 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_deleteChannel_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.deleteChannel("").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteChannel(type: "", id: "").shouldBeQueuedOffline)
     }
 
     func test_banMember_shouldNOTBeQueuedOffline() {
@@ -223,7 +223,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))
         assertResultEncodingAndDecoding(.updateChannel("channel_idu"))
-        assertResultEncodingAndDecoding(.deleteChannel("channel_idd"))
+        assertResultEncodingAndDecoding(.deleteChannel(type: "messaging", id: "channel_idd"))
         assertResultEncodingAndDecoding(.channelUpdate("channel_idq"))
         assertResultEncodingAndDecoding(.showChannel("channel_id", false))
         assertResultEncodingAndDecoding(.truncateChannel("channel_idq"))

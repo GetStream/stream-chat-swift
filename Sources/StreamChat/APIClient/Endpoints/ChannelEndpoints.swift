@@ -82,16 +82,6 @@ extension Endpoint {
         )
     }
     
-    static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .deleteChannel(cid.apiPath),
-            method: .delete,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-    }
-
     static func truncateChannel(
         cid: ChannelId,
         skipPush: Bool,
