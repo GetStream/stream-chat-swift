@@ -133,3 +133,14 @@ public extension TranslationLanguage {
         .vietnamese
     ]
 }
+
+extension TranslationLanguage {
+    static func languages(fromCommaSeparated value: String?) -> Set<TranslationLanguage> {
+        guard let value = value?.trimmingCharacters(in: .whitespaces), !value.isEmpty else { return [] }
+        return Set(
+            value
+                .components(separatedBy: ",")
+                .map { TranslationLanguage(languageCode: $0.trimmingCharacters(in: .whitespaces)) }
+        )
+    }
+}

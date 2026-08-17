@@ -54,13 +54,17 @@ extension NSManagedObjectContext {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        let channel = try saveChannel(payload: payload.mutedChannel, query: nil, cache: nil)
-        let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, context: self)
+        guard let mutedChannel = payload.channel else {
+            throw ClientError("Channel mute payload is missing a channel")
+        }
+
+        let channel = try saveChannel(payload: mutedChannel, query: nil, cache: nil)
+        let dto = ChannelMuteDTO.loadOrCreate(cid: mutedChannel.cid, context: self)
         dto.channel = channel
         dto.currentUser = currentUser
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
-        dto.expiresAt = payload.expiresAt?.bridgeDate
+        dto.expiresAt = payload.expires?.bridgeDate
 
         return dto
     }

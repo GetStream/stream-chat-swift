@@ -12,8 +12,10 @@ class MemberDTO: NSManagedObject {
 
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
+    @NSManaged var statusRaw: String?
     @NSManaged var memberCreatedAt: DBDate
     @NSManaged var memberUpdatedAt: DBDate
+    @NSManaged var memberDeletedAt: DBDate?
 
     @NSManaged var banExpiresAt: DBDate?
     @NSManaged var isBanned: Bool
@@ -138,7 +140,10 @@ extension NSManagedObjectContext {
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(userId: payload.userId, channelId: channelId, context: self, cache: cache)
+        guard let userId = payload.memberId else {
+            throw ClientError("Member payload is missing a user id")
+        }
+        let dto = MemberDTO.loadOrCreate(userId: userId, channelId: channelId, context: self, cache: cache)
 
         // Save user-part of member first
         if let userPayload = payload.user {
@@ -146,75 +151,29 @@ extension NSManagedObjectContext {
         }
 
         // Save member specific data
-        if let role = payload.role {
-            dto.channelRoleRaw = role.rawChannelValue
+        if let channelRole = payload.channelRole {
+            dto.channelRoleRaw = channelRole
         }
 
+        dto.statusRaw = payload.status
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
-        dto.isBanned = payload.isBanned ?? false
-        dto.isShadowBanned = payload.isShadowBanned ?? false
-        dto.banExpiresAt = payload.banExpiresAt?.bridgeDate
-        dto.isInvited = payload.isInvited ?? false
+        dto.memberDeletedAt = payload.deletedAt?.bridgeDate
+        dto.isBanned = payload.banned ?? false
+        dto.isShadowBanned = payload.shadowBanned ?? false
+        dto.banExpiresAt = payload.banExpires?.bridgeDate
+        dto.isInvited = payload.invited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         dto.archivedAt = payload.archivedAt?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
-        dto.notificationsMuted = payload.notificationsMuted
-
-        if let extraData = payload.extraData {
-            dto.extraData = try? JSONEncoder.default.encode(extraData)
-        }
-
-        if let query = query {
-            let queryDTO = try saveQuery(query)
-            queryDTO.members.insert(dto)
-        }
-
-        if let channelDTO = channel(cid: channelId) {
-            channelDTO.members.insert(dto)
-        }
-
-        return dto
-    }
-    
-    func saveMember(
-        response: ChannelMemberResponse,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> MemberDTO {
-        guard let userId = response.userId ?? response.user?.id else {
-            throw ClientError("Member payload is missing a user id")
-        }
-        let dto = MemberDTO.loadOrCreate(userId: userId, channelId: channelId, context: self, cache: cache)
-
-        // Save user-part of member first
-        if let userResponse = response.user {
-            dto.user = try saveUser(payload: userResponse)
-        }
-
-        // Save member specific data
-        let role = MemberRole(rawChannelValue: response.channelRole)
-        dto.channelRoleRaw = role.rawChannelValue
-
-        dto.memberCreatedAt = response.createdAt.bridgeDate
-        dto.memberUpdatedAt = response.updatedAt.bridgeDate
-        dto.isBanned = response.banned
-        dto.isShadowBanned = response.shadowBanned
-        dto.banExpiresAt = response.banExpires?.bridgeDate
-        dto.isInvited = response.invited ?? false
-        dto.inviteAcceptedAt = response.inviteAcceptedAt?.bridgeDate
-        dto.inviteRejectedAt = response.inviteRejectedAt?.bridgeDate
-        dto.archivedAt = response.archivedAt?.bridgeDate
-        dto.pinnedAt = response.pinnedAt?.bridgeDate
-        dto.notificationsMuted = response.notificationsMuted
+        dto.notificationsMuted = payload.notificationsMuted ?? false
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(response.custom)
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
-                "Failed to decode extra payload for channel member with id: <\(response.userId ?? "")>. Error: \(error)"
+                "Failed to decode extra payload for channel member with id: <\(userId)>. Error: \(error)"
             )
             dto.extraData = nil
         }
@@ -260,7 +219,7 @@ extension NSManagedObjectContext {
         }
 
         return response.members.compactMapLoggingError {
-            try saveMember(response: $0, channelId: channelId, query: query, cache: nil)
+            try saveMember(payload: $0, channelId: channelId, query: query, cache: nil)
         }
     }
 }
@@ -325,8 +284,10 @@ extension ChatChannelMember {
             language: language,
             extraData: extraData,
             memberRole: role,
+            memberStatus: dto.statusRaw.map(MemberStatus.init(rawValue:)),
             memberCreatedAt: dto.memberCreatedAt.bridgeDate,
             memberUpdatedAt: dto.memberUpdatedAt.bridgeDate,
+            memberDeletedAt: dto.memberDeletedAt?.bridgeDate,
             isInvited: dto.isInvited,
             inviteAcceptedAt: dto.inviteAcceptedAt?.bridgeDate,
             inviteRejectedAt: dto.inviteRejectedAt?.bridgeDate,

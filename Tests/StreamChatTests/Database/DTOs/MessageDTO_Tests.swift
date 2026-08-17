@@ -552,7 +552,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.imageURL, loadedChannel?.imageURL)
         XCTAssertEqual(channelPayload.memberCount, loadedChannel?.memberCount)
         XCTAssertEqual(channelPayload.extraData, loadedChannel?.extraData)
-        XCTAssertEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
+        XCTAssertEqual(channelPayload.type, loadedChannel?.type.rawValue)
         XCTAssertNearlySameDate(loadedChannel?.lastMessageAt, messagePayload.createdAt)
         XCTAssertNearlySameDate(channelPayload.createdAt, loadedChannel?.createdAt)
         XCTAssertNearlySameDate(channelPayload.updatedAt, loadedChannel?.updatedAt)

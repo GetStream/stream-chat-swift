@@ -195,7 +195,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     let memberListQueryDTO = try session.saveQuery(memberListQuery)
                     memberListQueryDTO.members.formUnion(updatedChannel.members)
 
-                    paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.userId, cid: cid)?.asModel() }
+                    paginatedMembers = payload.members.compactMapLoggingError {
+                        guard let userId = $0.memberId else { return nil }
+                        return try session.member(userId: userId, cid: cid)?.asModel()
+                    }
                 } completion: { error in
                     if let paginatedMembers {
                         completion(.success(paginatedMembers))
@@ -216,12 +219,18 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func muteChannel(cid: ChannelId, expiration: Int? = nil, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .muteChannel(cid: cid, expiration: expiration)
+            endpoint: .muteChannel(
+                muteChannelRequest: .init(channelCids: [cid.rawValue], expiration: expiration)
+            )
         ) { [weak self] (result: Result<MutedChannelPayloadResponse, Error>) in
             switch result {
             case .success(let payload):
+                guard let channelMute = payload.channelMute else {
+                    completion?(nil)
+                    return
+                }
                 self?.database.write({ session in
-                    try session.saveChannelMute(payload: payload.channelMute)
+                    try session.saveChannelMute(payload: channelMute)
                 }) { _ in
                     completion?(nil)
                 }
@@ -237,7 +246,9 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func unmuteChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .unmuteChannel(cid: cid)
+            endpoint: .unmuteChannel(
+                unmuteChannelRequest: .init(channelCids: [cid.rawValue])
+            )
         ) { [weak self] (result: Result<EmptyResponse, Error>) in
             switch result {
             case .success:

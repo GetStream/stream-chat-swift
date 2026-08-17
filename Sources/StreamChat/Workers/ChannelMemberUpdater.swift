@@ -32,7 +32,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
                     return
                 }
                 self.database.write { session in
-                    let member = try session.saveMember(response: channelMember, channelId: cid).asModel()
+                    let member = try session.saveMember(payload: channelMember, channelId: cid).asModel()
                     completion(.success(member))
                 }
             case .failure(let error):

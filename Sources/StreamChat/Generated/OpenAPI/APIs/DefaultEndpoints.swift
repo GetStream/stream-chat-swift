@@ -23,7 +23,6 @@ enum EndpointPath: Codable {
     case updateChannel(String)
     case deleteChannel(String)
     case channelUpdate(String)
-    case muteChannel(Bool)
     case showChannel(
         String,
         Bool
@@ -103,6 +102,7 @@ enum EndpointPath: Codable {
     case listDevices
     case listUserGroups
     case markDelivered
+    case muteChannel
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
@@ -114,6 +114,7 @@ enum EndpointPath: Codable {
         id: String
     )
     case unblockUsers
+    case unmuteChannel
     case unreadCounts
     case updateLiveLocation
     case updateMemberPartial(
@@ -158,7 +159,6 @@ enum EndpointPath: Codable {
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .muteChannel(mute): return "moderation/\(mute ? "mute" : "unmute")/channel"
         case let .showChannel(
             channelId,
             show
@@ -259,6 +259,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups"
         case .markDelivered:
             return "/api/v2/chat/channels/delivered"
+        case .muteChannel:
+            return "/api/v2/chat/moderation/mute/channel"
         case .queryMembers:
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
@@ -278,6 +280,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
             return "/api/v2/users/unblock"
+        case .unmuteChannel:
+            return "/api/v2/chat/moderation/unmute/channel"
         case .unreadCounts:
             return "/api/v2/chat/unread"
         case .updateLiveLocation:
@@ -777,6 +781,19 @@ extension Endpoint {
         )
     }
 
+    static func muteChannel(
+        muteChannelRequest: MuteChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MutedChannelPayloadResponse> {
+        return .init(
+            path: .muteChannel,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: muteChannelRequest
+        )
+    }
+
     static func queryMembers(
         payload: QueryMembersPayload?,
         requiresConnectionId: Bool = false
@@ -910,6 +927,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: unblockUsersRequest
+        )
+    }
+
+    static func unmuteChannel(
+        unmuteChannelRequest: UnmuteChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .unmuteChannel,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: unmuteChannelRequest
         )
     }
 

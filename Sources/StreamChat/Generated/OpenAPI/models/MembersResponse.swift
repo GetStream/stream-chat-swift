@@ -8,11 +8,11 @@ final class MembersResponse: Sendable, Codable, JSONEncodable {
     /// Duration of the request in milliseconds
     let duration: String
     /// List of found members
-    let members: [ChannelMemberResponse]
+    let members: [MemberPayload]
 
     init(
         duration: String,
-        members: [ChannelMemberResponse]
+        members: [MemberPayload]
     ) {
         self.duration = duration
         self.members = members

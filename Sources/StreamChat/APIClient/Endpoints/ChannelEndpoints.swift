@@ -82,39 +82,6 @@ extension Endpoint {
         )
     }
     
-    static func muteChannel(
-        cid: ChannelId,
-        expiration: Int? = nil
-    ) -> Endpoint<MutedChannelPayloadResponse> {
-        var body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
-        
-        if let expiration = expiration {
-            body["expiration"] = AnyEncodable(expiration)
-        }
-        
-        return .init(
-            path: .muteChannel(true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: body
-        )
-    }
-
-    static func unmuteChannel(
-        cid: ChannelId
-    ) -> Endpoint<EmptyResponse> {
-        let body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
-
-        return .init(
-            path: .muteChannel(false),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: body
-        )
-    }
-
     static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: .deleteChannel(cid.apiPath),

@@ -1196,7 +1196,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             name: .unique,
             imageURL: .unique(),
             extraData: [:],
-            typeRawValue: "",
             lastMessageAt: nil,
             createdAt: .unique,
             deletedAt: nil,

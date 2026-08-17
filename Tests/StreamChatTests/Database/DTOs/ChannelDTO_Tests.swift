@@ -334,6 +334,70 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNotNil(channelDTO)
     }
 
+    func test_saveChannel_storesTruncatedBy() throws {
+        let channelId: ChannelId = .unique
+        let truncatedBy = UserPayload.dummy(userId: .unique)
+        let payload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: .unique, truncatedBy: truncatedBy)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.truncatedBy?.id, truncatedBy.id)
+    }
+
+    func test_saveChannel_storesAutoTranslation() throws {
+        let channelId: ChannelId = .unique
+        let payload = ChannelDetailPayload.dummy(
+            cid: channelId,
+            autoTranslationEnabled: true,
+            autoTranslationLanguage: "fr, de"
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.isAutoTranslationEnabled, true)
+        XCTAssertEqual(loadedChannel.autoTranslationLanguages, [.french, .german])
+    }
+
+    func test_saveChannel_disablesAutoTranslation_whenPayloadDoesNotContainIt() throws {
+        let channelId: ChannelId = .unique
+        let enabledPayload = ChannelDetailPayload.dummy(
+            cid: channelId,
+            autoTranslationEnabled: true,
+            autoTranslationLanguage: "fr"
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: enabledPayload, query: nil, cache: nil)
+        }
+
+        let enabledChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(enabledChannel.isAutoTranslationEnabled, true)
+
+        let disabledPayload = ChannelDetailPayload.dummy(cid: channelId)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: disabledPayload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.isAutoTranslationEnabled, false)
+        XCTAssertEqual(loadedChannel.autoTranslationLanguages, [])
+    }
+
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
 
@@ -376,14 +440,14 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.imageURL, loadedChannel.imageURL)
             Assert.willBeEqual(payload.channel.memberCount, loadedChannel.memberCount)
             Assert.willBeEqual(payload.channel.extraData, loadedChannel.extraData)
-            Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel.type.rawValue)
+            Assert.willBeEqual(payload.channel.type, loadedChannel.type.rawValue)
             Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel.lastMessageAt)
             Assert.willBeEqual(payload.channel.createdAt, loadedChannel.createdAt)
             Assert.willBeEqual(payload.channel.updatedAt, loadedChannel.updatedAt)
             Assert.willBeEqual(payload.channel.deletedAt, loadedChannel.deletedAt)
-            Assert.willBeEqual(payload.channel.cooldownDuration, loadedChannel.cooldownDuration)
+            Assert.willBeEqual(payload.channel.cooldown, loadedChannel.cooldownDuration)
             Assert.willBeEqual(payload.channel.team!, loadedChannel.team)
-            Assert.willBeEqual(payload.channel.isDisabled, loadedChannel.isDisabled)
+            Assert.willBeEqual(payload.channel.disabled, loadedChannel.isDisabled)
 
             // Config
             Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel.config.reactionsEnabled)
@@ -406,7 +470,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.sharedLocationsEnabled, loadedChannel.config.sharedLocationsEnabled)
 
             // Own Capabilities
-            Assert.willBeEqual(payload.channel.ownCapabilities, ["join-channel", "delete-channel"])
+            Assert.willBeEqual(payload.channel.ownCapabilities, [.joinChannel, .deleteChannel])
 
             // Creator
             Assert.willBeEqual(payload.channel.createdBy!.id, loadedChannel.createdBy?.id)
@@ -419,7 +483,10 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.createdBy!.extraData, loadedChannel.createdBy?.extraData)
 
             // Members
-            Assert.willBeEqual(payload.members[0].role, loadedChannel.lastActiveMembers.first?.memberRole)
+            Assert.willBeEqual(
+                payload.members[0].channelRole.map(MemberRole.init(rawChannelValue:)),
+                loadedChannel.lastActiveMembers.first?.memberRole
+            )
             Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)
             Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel.lastActiveMembers.first?.memberUpdatedAt)
 

@@ -35,6 +35,7 @@ allowed_endpoints=(
     listDevices
     listUserGroups
     markDelivered
+    muteChannel
     queryMembers
     queryPollVotes
     queryReactions
@@ -43,6 +44,7 @@ allowed_endpoints=(
     searchUserGroups
     stopWatchingChannel
     unblockUsers
+    unmuteChannel
     unreadCounts
     updateLiveLocation
     updateMemberPartial
@@ -64,6 +66,9 @@ allowed_models=(
   CastPollVoteRequest
   ChannelMemberRequest
   ChannelMemberResponse
+  ChannelMute
+  ChannelOwnCapability
+  ChannelResponse
   CreateDeviceRequest
   CreatePollOptionRequest
   CreatePollRequest
@@ -86,6 +91,8 @@ allowed_models=(
   ListUserGroupsResponse
   MarkDeliveredRequest
   MembersResponse
+  MuteChannelRequest
+  MuteChannelResponse
   PollOptionInput
   PollOptionResponse
   PollOptionResponseData
@@ -108,6 +115,7 @@ allowed_models=(
   SortParamRequest
   UnblockUsersRequest
   UnblockUsersResponse
+  UnmuteChannelRequest
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
@@ -285,6 +293,15 @@ optionalize_property UnreadCountsChannel lastRead
 optionalize_property UnreadCountsThread lastRead
 optionalize_property UnreadCountsThread lastReadMessageId
 
+require_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  P="$2" perl -0777 -pi -e '
+    my $p = $ENV{P};
+    s/^(    let \Q$p\E: [^\n]+)\?$/$1/m;
+    s/([(,]\s*)\Q$p\E: ([^,)\n]+?)\? = nil(?=[,)])/${1}$p: $2/;
+  ' "$file"
+}
+
 retype_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   P="$2" O="$3" N="$4" perl -0777 -pi -e '
@@ -374,9 +391,14 @@ rename_generated VoteData VoteDataRequestBody
 rename_generated GetReactionsResponse MessageReactionsPayload
 rename_generated ReactionResponse MessageReactionPayload
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
+rename_generated ChannelMemberResponse MemberPayload
+rename_generated ChannelMute MutedChannelPayload
+rename_generated ChannelResponse ChannelDetailPayload
+rename_generated MuteChannelResponse MutedChannelPayloadResponse
 
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
+rename_generated_type UnmuteResponse EmptyResponse
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -404,6 +426,11 @@ restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 optionalize_property UserPayload banned
 optionalize_property UserPayload language
 optionalize_property UserPayload teams
+
+optionalize_property MemberPayload banned
+optionalize_property MemberPayload channelRole
+optionalize_property MemberPayload notificationsMuted
+optionalize_property MemberPayload shadowBanned
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -441,6 +468,14 @@ remove_property UserPayload blockedUserIds
 remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
+remove_property MutedChannelPayloadResponse channelMutes
+remove_property MutedChannelPayloadResponse duration
+remove_property MutedChannelPayloadResponse ownUser
+
+retype_property ChannelDetailPayload cid String ChannelId
+retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
+# Will be changed on the generation side later
+require_property ChannelDetailPayload config
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -541,7 +576,6 @@ inject_v1_endpoint_paths() {
     case updateChannel(String)
     case deleteChannel(String)
     case channelUpdate(String)
-    case muteChannel(Bool)
     case showChannel(String, Bool)
     case truncateChannel(String)
     case markChannelRead(String)
@@ -603,7 +637,6 @@ EOF
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .muteChannel(mute): return "moderation/\(mute ? "mute" : "unmute")/channel"
         case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
         case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"

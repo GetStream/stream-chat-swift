@@ -1,4 +1,6 @@
 sources:
+  - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
+  - ./Generated/OpenAPI/models/MemberPayload.swift
   - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/UserPayload.swift
 templates:
