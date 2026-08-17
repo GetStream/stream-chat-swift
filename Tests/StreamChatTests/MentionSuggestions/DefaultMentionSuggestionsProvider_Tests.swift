@@ -109,7 +109,7 @@ final class DefaultMentionSuggestionsProvider_Tests: XCTestCase {
         let cid = ChannelId.unique
         try client.mockDatabaseContainer.createChannel(cid: cid, withMessages: false)
 
-        let remoteMember = ChannelMemberResponse.dummy(
+        let remoteMember = MemberPayload.dummy(
             user: .dummy(userId: "remote-user", name: "Remote User")
         )
         let response: Result<MembersResponse, Error> = .success(.dummy(members: [remoteMember]))
