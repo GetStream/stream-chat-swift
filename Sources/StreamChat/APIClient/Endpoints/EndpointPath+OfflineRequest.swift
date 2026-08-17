@@ -52,6 +52,7 @@ extension EndpointPath {
              .getUserLiveLocations,
              .groupedChannels,
              .guest,
+             .hideChannel,
              .listDevices,
              .listUserGroups,
              .markAllChannelsRead,

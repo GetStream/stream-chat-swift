@@ -33,6 +33,7 @@ allowed_endpoints=(
     getReactions
     getUserGroup
     getUserLiveLocations
+    hideChannel
     listDevices
     listUserGroups
     markDelivered
@@ -44,6 +45,7 @@ allowed_endpoints=(
     removeUserGroupMembers
     searchRoles
     searchUserGroups
+    showChannel
     stopWatchingChannel
     unblockUsers
     unmute
@@ -88,6 +90,7 @@ allowed_models=(
   GetOGResponse
   GetReactionsResponse
   GetUserGroupResponse
+  HideChannelRequest
   ImageData
   Images
   ImageSize
@@ -416,8 +419,10 @@ rename_generated PrivacySettingsResponse UserPrivacySettings
 rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
+rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
+rename_generated_type ShowChannelResponse EmptyResponse
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -643,7 +648,6 @@ inject_v1_endpoint_paths() {
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case showChannel(String, Bool)
     case truncateChannel(String)
     case markChannelRead(String)
     case markChannelUnread(String)
@@ -702,7 +706,6 @@ EOF
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .showChannel(channelId, show): return "channels/\(channelId)/\(show ? "show" : "hide")"
         case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"

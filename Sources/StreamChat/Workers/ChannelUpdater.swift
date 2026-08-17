@@ -350,7 +350,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+        let request = HideChannelRequest(clearHistory: clearHistory)
+        apiClient.request(endpoint: .hideChannel(type: cid.type.rawValue, id: cid.id, hideChannelRequest: request)) { [weak self] result in
             if result.error == nil {
                 // If the API call is a success, we mark the channel as hidden
                 // We do this because if the channel was already hidden, but the SDK
@@ -377,7 +378,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - channel: The channel you want to show.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func showChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .showChannel(cid: cid)) {
+        apiClient.request(endpoint: .showChannel(type: cid.type.rawValue, id: cid.id)) {
             completion?($0.error)
         }
     }
