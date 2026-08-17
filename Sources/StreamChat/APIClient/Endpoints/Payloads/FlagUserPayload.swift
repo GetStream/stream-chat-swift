@@ -13,7 +13,7 @@ struct FlagUserPayload: Decodable {
     }
 
     /// The payload of a current user who performed flag/unflag action.
-    let currentUser: CurrentUserPayload
+    let currentUser: OwnUserResponse
     /// The payload of a user who was flagged or unflagged.
     let flaggedUser: UserPayload
 
@@ -23,13 +23,13 @@ struct FlagUserPayload: Decodable {
             .nestedContainer(keyedBy: CodingKeys.self, forKey: .flag)
 
         self.init(
-            currentUser: try nestedContainer.decode(CurrentUserPayload.self, forKey: .currentUser),
+            currentUser: try nestedContainer.decode(OwnUserResponse.self, forKey: .currentUser),
             flaggedUser: try nestedContainer.decode(UserPayload.self, forKey: .flaggedUser)
         )
     }
 
     init(
-        currentUser: CurrentUserPayload,
+        currentUser: OwnUserResponse,
         flaggedUser: UserPayload
     ) {
         self.currentUser = currentUser

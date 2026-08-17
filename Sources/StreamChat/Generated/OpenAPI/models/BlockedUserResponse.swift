@@ -5,10 +5,12 @@
 import Foundation
 
 final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
+    /// User response object
     let blockedUser: UserPayload
     /// ID of the user who got blocked
     let blockedUserId: String
     let createdAt: Date
+    /// User response object
     let user: UserPayload
     /// ID of the user who blocked another user
     let userId: String

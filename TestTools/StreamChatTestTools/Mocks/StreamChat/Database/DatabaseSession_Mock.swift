@@ -49,6 +49,11 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveCurrentDevice(deviceId)
     }
 
+    func saveCurrentUserMutedUsers(_ mutedUsers: [MutedUserPayload]) throws -> [UserDTO] {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveCurrentUserMutedUsers(mutedUsers)
+    }
+
     func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {
         try throwErrorIfNeeded()
         return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)

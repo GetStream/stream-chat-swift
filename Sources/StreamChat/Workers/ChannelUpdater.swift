@@ -249,7 +249,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             endpoint: .unmuteChannel(
                 unmuteChannelRequest: .init(channelCids: [cid.rawValue])
             )
-        ) { [weak self] (result: Result<EmptyResponse, Error>) in
+        ) { [weak self] (result: Result<UnmuteUsersResponse, Error>) in
             switch result {
             case .success:
                 self?.database.write({ session in

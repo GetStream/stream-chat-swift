@@ -47,7 +47,6 @@ extension EndpointPath: @retroactive Equatable {
         case (.banMember, .banMember): return true
         case let (.flagUser(bool1), .flagUser(bool2)): return bool1 == bool2
         case let (.flagMessage(bool1), .flagMessage(bool2)): return bool1 == bool2
-        case let (.muteUser(bool1), .muteUser(bool2)): return bool1 == bool2
         default: return false
         }
     }

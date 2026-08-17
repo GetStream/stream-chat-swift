@@ -53,7 +53,7 @@ extension CurrentUserPayload {
         isBanned: Bool = false,
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil,
-        privacySettings: UserPrivacySettingsPayload? = nil
+        privacySettings: UserPrivacySettings? = nil
     ) -> CurrentUserPayload {
         .init(
             id: userId,

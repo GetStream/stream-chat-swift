@@ -128,7 +128,23 @@ public final class ConnectedUser: Sendable {
     public func muteUser(_ userId: UserId) async throws {
         try await userUpdater.muteUser(userId)
     }
-    
+
+    /// Mutes the users in all the channels.
+    ///
+    /// - Note: Messages from muted users are not delivered via push notifications.
+    ///
+    /// - Parameters:
+    ///   - userIds: The ids of the users to mute.
+    ///   - expirationInMinutes: The duration of the mute in minutes. When `nil`, the mute does not expire.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    ///
+    /// - Returns: The created mutes and the ids of the users which could not be found.
+    @discardableResult
+    public func muteUsers(_ userIds: Set<UserId>, expiration expirationInMinutes: Int? = nil) async throws -> MuteUsersResponse {
+        try await currentUserUpdater.muteUsers(userIds, expiration: expirationInMinutes)
+    }
+
     /// Unmutes the user in all the channels.
     ///
     /// - Parameter userId: The id of the user to unmute.
@@ -136,6 +152,18 @@ public final class ConnectedUser: Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func unmuteUser(_ userId: UserId) async throws {
         try await userUpdater.unmuteUser(userId)
+    }
+
+    /// Unmutes the users in all the channels.
+    ///
+    /// - Parameter userIds: The ids of the users to unmute.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    ///
+    /// - Returns: The ids of the users which could not be found.
+    @discardableResult
+    public func unmuteUsers(_ userIds: Set<UserId>) async throws -> UnmuteUsersResponse {
+        try await currentUserUpdater.unmuteUsers(userIds)
     }
     
     /// Blocks the user in all the channels.
