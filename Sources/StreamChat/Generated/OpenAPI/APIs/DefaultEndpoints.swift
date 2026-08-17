@@ -21,7 +21,6 @@ enum EndpointPath: Codable {
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
-    case deleteChannel(String)
     case channelUpdate(String)
     case showChannel(
         String,
@@ -75,6 +74,10 @@ enum EndpointPath: Codable {
     case createPoll
     case createPollOption(pollId: String)
     case createUserGroup
+    case deleteChannel(
+        type: String,
+        id: String
+    )
     case deleteChannelFile(
         type: String,
         id: String
@@ -157,7 +160,6 @@ enum EndpointPath: Codable {
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
-        case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
         case let .showChannel(
             channelId,
@@ -215,6 +217,11 @@ enum EndpointPath: Codable {
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/options"
         case .createUserGroup:
             return "/api/v2/usergroups"
+        case let .deleteChannel(
+            type: type,
+            id: id
+        ):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
         case let .deleteChannelFile(
             type: type,
             id: id
@@ -522,6 +529,26 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createUserGroupRequest
+        )
+    }
+
+    static func deleteChannel(
+        type: String,
+        id: String,
+        hardDelete: Bool?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<DeleteChannelResponse> {
+        return .init(
+            path: .deleteChannel(
+                type: type,
+                id: id
+            ),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "hard_delete": hardDelete
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 

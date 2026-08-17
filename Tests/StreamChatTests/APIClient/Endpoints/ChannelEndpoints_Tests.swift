@@ -165,25 +165,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
     }
 
-    func test_deleteChannel_buildsCorrectly() {
-        let cid = ChannelId.unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .deleteChannel(cid.apiPath),
-            method: .delete,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: cid)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)", endpoint.path.value)
-    }
-
     func test_truncateChannel_buildsCorrectly() {
         let cid = ChannelId.unique
         let skipPush = false

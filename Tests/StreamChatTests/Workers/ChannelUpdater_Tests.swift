@@ -1225,7 +1225,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.deleteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<DeleteChannelResponse> = .deleteChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id,
+            hardDelete: nil
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1241,7 +1245,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<DeleteChannelResponse, Error>.success(.dummy()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -1254,7 +1258,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<DeleteChannelResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
