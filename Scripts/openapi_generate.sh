@@ -520,8 +520,6 @@ remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
 
 # Server-side only: client-side requests cannot set these fields
-remove_property DraftMessagePayload mml
-remove_property MessagePayload mml
 remove_property SendMessageResponsePayload pendingMessageMetadata
 remove_property UpdateMessagePartialResponse pendingMessageMetadata
 remove_property UpdateMessageResponse pendingMessageMetadata
@@ -529,23 +527,6 @@ remove_property UpdateMessageResponse pendingMessageMetadata
 # Opt-in: only returned when the request asks for it, which the SDK never does
 remove_property SendMessageResponsePayload mentionedMembers
 
-# Legacy: no writer left in the backend for image_moderation_labels
-remove_property MessagePayload imageLabels
-
-# Deprecated by the backend in favour of blocklists_matched
-remove_property MessageModerationDetailsPayload blocklistMatched
-
-# Unused
-remove_property DraftMessagePayload html
-remove_property DraftMessagePayload pollId
-remove_property DraftMessagePayload quotedMessageId
-remove_property DraftMessagePayload type
-remove_property MessagePayload deletedReplyCount
-remove_property MessagePayload html
-remove_property MessagePayload mentionedGroupIds
-remove_property MessagePayload pollId
-remove_property ReminderPayload user
-remove_property ReminderPayload userId
 # TODO: reaction group reactors need CoreData and public API design first
 remove_property MessageReactionGroupPayload latestReactionsBy
 
@@ -572,8 +553,6 @@ optionalize_property MessagePayload reactionCounts
 optionalize_property MessagePayload restrictedVisibility
 # TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
 optionalize_property MessagePayload shadowed
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessageReactionGroupPayload latestReactionsBy
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"

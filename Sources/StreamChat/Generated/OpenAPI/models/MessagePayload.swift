@@ -14,17 +14,22 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     let custom: [String: RawJSON]
     let deletedAt: Date?
     let deletedForMe: Bool?
+    let deletedReplyCount: Int?
     let draft: DraftPayload?
+    let html: String
     let i18n: [String: String]?
     let id: String
+    let imageLabels: [String: [String]]?
     let latestReactions: [MessageReactionPayload]
     let member: MemberInfoPayload?
     let mentionedChannel: Bool?
+    let mentionedGroupIds: [String]?
     let mentionedGroups: [UserGroup]?
     let mentionedHere: Bool?
     let mentionedRoles: [String]?
     let mentionedUsers: [UserPayload]
     let messageTextUpdatedAt: Date?
+    let mml: String?
     let moderation: MessageModerationDetailsPayload?
     let ownReactions: [MessageReactionPayload]
     let parentId: String?
@@ -34,6 +39,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     /// User response object
     let pinnedBy: UserPayload?
     let poll: PollPayload?
+    let pollId: String?
     /// Represents any chat message
     let quotedMessage: MessagePayload?
     let quotedMessageId: String?
@@ -63,17 +69,22 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         custom: [String: RawJSON],
         deletedAt: Date? = nil,
         deletedForMe: Bool? = nil,
+        deletedReplyCount: Int? = nil,
         draft: DraftPayload? = nil,
+        html: String,
         i18n: [String: String]? = nil,
         id: String,
+        imageLabels: [String: [String]]? = nil,
         latestReactions: [MessageReactionPayload],
         member: MemberInfoPayload? = nil,
         mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
         mentionedGroups: [UserGroup]? = nil,
         mentionedHere: Bool? = nil,
         mentionedRoles: [String]? = nil,
         mentionedUsers: [UserPayload],
         messageTextUpdatedAt: Date? = nil,
+        mml: String? = nil,
         moderation: MessageModerationDetailsPayload? = nil,
         ownReactions: [MessageReactionPayload],
         parentId: String? = nil,
@@ -82,6 +93,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         pinnedAt: Date? = nil,
         pinnedBy: UserPayload? = nil,
         poll: PollPayload? = nil,
+        pollId: String? = nil,
         quotedMessage: MessagePayload? = nil,
         quotedMessageId: String? = nil,
         reactionCounts: [String: Int]? = nil,
@@ -108,17 +120,22 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         self.custom = custom
         self.deletedAt = deletedAt
         self.deletedForMe = deletedForMe
+        self.deletedReplyCount = deletedReplyCount
         self.draft = draft
+        self.html = html
         self.i18n = i18n
         self.id = id
+        self.imageLabels = imageLabels
         self.latestReactions = latestReactions
         self.member = member
         self.mentionedChannel = mentionedChannel
+        self.mentionedGroupIds = mentionedGroupIds
         self.mentionedGroups = mentionedGroups
         self.mentionedHere = mentionedHere
         self.mentionedRoles = mentionedRoles
         self.mentionedUsers = mentionedUsers
         self.messageTextUpdatedAt = messageTextUpdatedAt
+        self.mml = mml
         self.moderation = moderation
         self.ownReactions = ownReactions
         self.parentId = parentId
@@ -127,6 +144,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         self.pinnedAt = pinnedAt
         self.pinnedBy = pinnedBy
         self.poll = poll
+        self.pollId = pollId
         self.quotedMessage = quotedMessage
         self.quotedMessageId = quotedMessageId
         self.reactionCounts = reactionCounts
@@ -155,17 +173,22 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         case custom
         case deletedAt = "deleted_at"
         case deletedForMe = "deleted_for_me"
+        case deletedReplyCount = "deleted_reply_count"
         case draft
+        case html
         case i18n
         case id
+        case imageLabels = "image_labels"
         case latestReactions = "latest_reactions"
         case member
         case mentionedChannel = "mentioned_channel"
+        case mentionedGroupIds = "mentioned_group_ids"
         case mentionedGroups = "mentioned_groups"
         case mentionedHere = "mentioned_here"
         case mentionedRoles = "mentioned_roles"
         case mentionedUsers = "mentioned_users"
         case messageTextUpdatedAt = "message_text_updated_at"
+        case mml
         case moderation
         case ownReactions = "own_reactions"
         case parentId = "parent_id"
@@ -174,6 +197,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         case pinnedAt = "pinned_at"
         case pinnedBy = "pinned_by"
         case poll
+        case pollId = "poll_id"
         case quotedMessage = "quoted_message"
         case quotedMessageId = "quoted_message_id"
         case reactionCounts = "reaction_counts"
@@ -214,17 +238,22 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         }
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
+        deletedReplyCount = try container.decodeIfPresent(Int.self, forKey: .deletedReplyCount)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        html = try container.decode(String.self, forKey: .html)
         i18n = try container.decodeIfPresent([String: String].self, forKey: .i18n)
         id = try container.decode(String.self, forKey: .id)
+        imageLabels = try container.decodeIfPresent([String: [String]].self, forKey: .imageLabels)
         latestReactions = try container.decode([MessageReactionPayload].self, forKey: .latestReactions)
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
         mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel)
+        mentionedGroupIds = try container.decodeIfPresent([String].self, forKey: .mentionedGroupIds)
         mentionedGroups = try container.decodeIfPresent([UserGroup].self, forKey: .mentionedGroups)
         mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere)
         mentionedRoles = try container.decodeIfPresent([String].self, forKey: .mentionedRoles)
         mentionedUsers = try container.decode([UserPayload].self, forKey: .mentionedUsers)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
+        mml = try container.decodeIfPresent(String.self, forKey: .mml)
         moderation = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderation)
         ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
@@ -233,6 +262,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinnedBy = try container.decodeIfPresent(UserPayload.self, forKey: .pinnedBy)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
+        pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
         quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
         quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
         reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts)

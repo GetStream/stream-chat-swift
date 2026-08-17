@@ -79,7 +79,7 @@ class RemindersRepository: @unchecked Sendable {
 
         // First optimistically create the reminder locally
         database.write { session in
-            guard session.currentUser != nil else {
+            guard let currentUser = session.currentUser else {
                 throw ClientError.CurrentUserDoesNotExist()
             }
             let now = Date()
@@ -88,7 +88,8 @@ class RemindersRepository: @unchecked Sendable {
                 createdAt: now,
                 messageId: messageId,
                 remindAt: remindAt,
-                updatedAt: now
+                updatedAt: now,
+                userId: currentUser.user.id
             )
             try session.saveReminder(payload: reminderPayload, cache: nil)
         } completion: { error in
@@ -192,7 +193,7 @@ class RemindersRepository: @unchecked Sendable {
             
             // Get original reminder data for potential rollback
             if let reminderDTO = messageDTO.reminder {
-                guard session.currentUser != nil else {
+                guard let currentUser = session.currentUser else {
                     throw ClientError.CurrentUserDoesNotExist()
                 }
                 // Store the original state for potential rollback
@@ -201,7 +202,8 @@ class RemindersRepository: @unchecked Sendable {
                     createdAt: reminderDTO.createdAt.bridgeDate,
                     messageId: messageId,
                     remindAt: reminderDTO.remindAt?.bridgeDate,
-                    updatedAt: reminderDTO.updatedAt.bridgeDate
+                    updatedAt: reminderDTO.updatedAt.bridgeDate,
+                    userId: currentUser.user.id
                 )
             }
             

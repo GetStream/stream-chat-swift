@@ -14,6 +14,9 @@ final class ReminderPayload: Sendable, Codable, JSONEncodable {
     let messageId: String
     let remindAt: Date?
     let updatedAt: Date
+    /// User response object
+    let user: UserPayload?
+    let userId: String
 
     init(
         channel: ChannelDetailPayload? = nil,
@@ -22,7 +25,9 @@ final class ReminderPayload: Sendable, Codable, JSONEncodable {
         message: MessagePayload? = nil,
         messageId: String,
         remindAt: Date? = nil,
-        updatedAt: Date
+        updatedAt: Date,
+        user: UserPayload? = nil,
+        userId: String
     ) {
         self.channel = channel
         self.channelCid = channelCid
@@ -31,6 +36,8 @@ final class ReminderPayload: Sendable, Codable, JSONEncodable {
         self.messageId = messageId
         self.remindAt = remindAt
         self.updatedAt = updatedAt
+        self.user = user
+        self.userId = userId
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
@@ -41,5 +48,7 @@ final class ReminderPayload: Sendable, Codable, JSONEncodable {
         case messageId = "message_id"
         case remindAt = "remind_at"
         case updatedAt = "updated_at"
+        case user
+        case userId = "user_id"
     }
 }

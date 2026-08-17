@@ -22,7 +22,8 @@ extension ReminderPayload {
             message: message,
             messageId: messageId,
             remindAt: remindAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            userId: ""
         )
     }
 }

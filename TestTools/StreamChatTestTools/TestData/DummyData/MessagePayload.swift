@@ -74,6 +74,7 @@ extension MessagePayload {
             deletedAt: deletedAt,
             deletedForMe: deletedForMe,
             draft: draft,
+            html: "",
             i18n: i18n.isEmpty ? nil : i18n,
             id: id,
             latestReactions: latestReactions,
