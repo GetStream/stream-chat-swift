@@ -12,7 +12,7 @@ import XCTest
     func test_correctInstanceIsUsed() {
         let testColor: UIColor? = UIColor(r: 4, g: 2, b: 0)
 
-        var referenceAppearance = Appearance()
+        let referenceAppearance = Appearance()
         referenceAppearance.colorPalette.accentError = testColor!
 
         var usedAppearance: Appearance.ObservableObject?

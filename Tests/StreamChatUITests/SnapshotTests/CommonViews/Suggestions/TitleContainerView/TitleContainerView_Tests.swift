@@ -27,7 +27,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.fonts.headlineBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.textSecondary = .cyan
 

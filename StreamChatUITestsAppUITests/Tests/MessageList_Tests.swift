@@ -437,7 +437,7 @@ extension MessageList_Tests {
     }
     
     func test_scrollToBottom_unreadCount() throws {
-        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/491")
+        try XCTSkipIf(true, "https://github.com/GetStream/ios-issues-tracking/issues/491")
         
         linkToScenario(withId: 1669)
 

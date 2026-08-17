@@ -100,7 +100,7 @@ final class DifferenceKit_Stream_Tests: XCTestCase {
     }
 }
 
-extension String: Differentiable {}
+extension String: @retroactive Differentiable {}
 
 private extension DifferenceKit_Stream_Tests {
     final class MockCollectionView: UICollectionView {

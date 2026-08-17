@@ -1928,16 +1928,6 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		824251AF2F2CC77F0040192C /* Exceptions for "TestTools" folder in "Compile Sources" phase from "StreamChatTestTools" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 793060E225778896005CF846 /* Sources */;
-			membershipExceptions = (
-				StreamChatTestTools/Fixtures/JSONs/PartiallyFailingChannelListPayload.json,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		822A92762F2BB46C0090D2A0 /* DemoApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -1976,7 +1966,6 @@
 			exceptions = (
 				824251AD2F2CC77F0040192C /* Exceptions for "TestTools" folder in "StreamChatTests" target */,
 				824251AE2F2CC77F0040192C /* Exceptions for "TestTools" folder in "StreamChatTestTools" target */,
-				824251AF2F2CC77F0040192C /* Exceptions for "TestTools" folder in "Compile Sources" phase from "StreamChatTestTools" target */,
 				824251B02F2CC77F0040192C /* Exceptions for "TestTools" folder in "StreamChatTestToolsTests" target */,
 				824251B12F2CC77F0040192C /* Exceptions for "TestTools" folder in "StreamChatTestMockServer" target */,
 				824251B22F2CC77F0040192C /* Exceptions for "TestTools" folder in "StreamChatUITestsAppUITests" target */,

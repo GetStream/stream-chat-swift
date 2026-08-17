@@ -62,7 +62,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.textSecondary = .red
         appearance.fonts.bodyBold = UIFont.preferredFont(forTextStyle: .body).bold
         fileAttachmentView.appearance = appearance

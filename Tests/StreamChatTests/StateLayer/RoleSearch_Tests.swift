@@ -71,7 +71,7 @@ final class RoleSearch_Tests: XCTestCase {
         XCTAssertEqual(["admin", "moderator"], result.map(\.name))
         XCTAssertEqual(query, repository.searchRoles_query)
 
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertEqual(["admin", "moderator"], search.state.roles.map(\.name))
             XCTAssertEqual(query, search.state.query)
         }
@@ -86,7 +86,7 @@ final class RoleSearch_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await search.search(text: "adm"), testError)
 
         // Even on failure, the query the user started is kept in the state.
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertTrue(search.state.roles.isEmpty)
             XCTAssertEqual("adm", search.state.query?.query)
         }

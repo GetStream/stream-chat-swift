@@ -78,7 +78,7 @@ final class UserGroupSearch_Tests: XCTestCase {
         XCTAssertEqual(["backendsupport", "backendcore"], result.map(\.id))
         XCTAssertEqual(query, repository.searchUserGroups_query)
 
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertEqual(["backendsupport", "backendcore"], search.state.userGroups.map(\.id))
             XCTAssertEqual(query, search.state.query)
         }
@@ -93,7 +93,7 @@ final class UserGroupSearch_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await search.search(text: "backend"), testError)
 
         // Even on failure, the query the user started is kept in the state.
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertTrue(search.state.userGroups.isEmpty)
             XCTAssertEqual("backend", search.state.query?.query)
         }
