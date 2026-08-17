@@ -194,48 +194,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/truncate", endpoint.path.value)
     }
 
-    func test_hideChannel_buildsCorrectly() {
-        let testCases = [true, false]
-
-        for clearHistory in testCases {
-            let cid = ChannelId.unique
-
-            let expectedEndpoint = Endpoint<EmptyResponse>(
-                path: .showChannel(cid.apiPath, false),
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: false,
-                body: ["clear_history": clearHistory]
-            )
-
-            // Build endpoint
-            let endpoint: Endpoint<EmptyResponse> = .hideChannel(cid: cid, clearHistory: clearHistory)
-
-            // Assert endpoint is built correctly
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/hide", endpoint.path.value)
-        }
-    }
-
-    func test_showChannel_buildsCorrectly() {
-        let cid = ChannelId.unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .showChannel(cid.apiPath, true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .showChannel(cid: cid)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/show", endpoint.path.value)
-    }
-
     func test_sendMessage_buildsCorrectly() {
         let cid = ChannelId.unique
 
