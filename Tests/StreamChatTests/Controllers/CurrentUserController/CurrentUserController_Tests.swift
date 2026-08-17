@@ -693,7 +693,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_markAllRead_keepsControllerAlive() {
         // GIVEN
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
 
         // WHEN
         controller.markAllRead { _ in }
@@ -701,7 +701,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller = nil
 
         // THEN
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     func test_markAllRead_propagatesErrorFromUpdater() {
@@ -838,7 +838,7 @@ final class CurrentUserController_Tests: XCTestCase {
         client.authenticationRepository.setMockToken()
         
         // Create weak reference to controller
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         
         // Call loadAllUnreads
         controller.loadAllUnreads { _ in }
@@ -847,7 +847,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller = nil
         
         // Verify controller is still alive due to the async operation
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - setPushPreference

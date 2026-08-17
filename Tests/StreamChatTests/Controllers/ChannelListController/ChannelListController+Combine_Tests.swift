@@ -37,10 +37,10 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: ChannelListController_Mock? = channelListController
+        let controller = { [weak channelListController] in channelListController }
         channelListController = nil
 
-        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { [controller = controller()] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -56,12 +56,12 @@ final class ChannelListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: ChannelListController_Mock? = channelListController
+        let controller = { [weak channelListController] in channelListController }
         channelListController = nil
 
         let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
-        controller?.channels_simulated = [newChannel]
-        controller?.delegateCallback { [controller] in
+        controller()?.channels_simulated = [newChannel]
+        controller()?.delegateCallback { [controller = controller()] in
             $0.controller(controller!, didChangeChannels: [.insert(newChannel, index: [0, 1])])
         }
 

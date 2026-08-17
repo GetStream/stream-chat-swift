@@ -464,11 +464,11 @@ final class UserController_Tests: XCTestCase {
         controller.flag()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
     
     // MARK: - Unlag user
@@ -529,11 +529,11 @@ final class UserController_Tests: XCTestCase {
         controller.unflag()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Block user
@@ -592,11 +592,11 @@ final class UserController_Tests: XCTestCase {
         controller.block()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Unblock user
@@ -655,11 +655,11 @@ final class UserController_Tests: XCTestCase {
         controller.unblock()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
     
     // MARK: -

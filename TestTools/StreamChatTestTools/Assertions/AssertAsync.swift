@@ -272,10 +272,10 @@ public extension Assert {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Assertion {
-        weak let weakObject: T? = object
+        let weakObject = { [weak object] in object }
         object = nil
         
-        return willBeNil(weakObject, message: "Failed to be released from the memory.", file: file, line: line)
+        return willBeNil(weakObject(), message: "Failed to be released from the memory.", file: file, line: line)
     }
 }
 

@@ -43,10 +43,10 @@ final class PollController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: PollController? = pollController
+        let controller = { [weak pollController] in pollController }
         pollController = nil
 
-        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { [controller = controller()] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         AssertAsync.willBeEqual(recording.output, [.initialized, .remoteDataFetched])
     }
@@ -62,11 +62,11 @@ final class PollController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: PollController? = pollController
+        let controller = { [weak pollController] in pollController }
         pollController = nil
 
         let poll: Poll = .unique
-        controller?.delegateCallback { [controller] in
+        controller()?.delegateCallback { [controller = controller()] in
             $0.pollController(controller!, didUpdatePoll: .create(poll))
         }
 
@@ -84,7 +84,7 @@ final class PollController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: PollController? = pollController
+        let controller = { [weak pollController] in pollController }
         pollController = nil
 
         let pollVote = PollVote(
@@ -97,7 +97,7 @@ final class PollController_Combine_Tests: iOS13TestCase {
             answerText: nil,
             user: .unique
         )
-        controller?.delegateCallback { [controller] in
+        controller()?.delegateCallback { [controller = controller()] in
             $0.pollController(
                 controller!,
                 didUpdateCurrentUserVotes: [.insert(pollVote, index: IndexPath(row: 0, section: 0))]

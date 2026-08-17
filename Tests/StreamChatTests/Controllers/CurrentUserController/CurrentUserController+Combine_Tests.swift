@@ -40,12 +40,12 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: CurrentUserController_Mock? = currentUserController
+        let controller = { [weak currentUserController] in currentUserController }
         currentUserController = nil
 
         let newCurrentUser: CurrentChatUser = .mock(currentUserId: .unique)
-        controller?.currentUser_simulated = newCurrentUser
-        controller?.delegateCallback { [controller] in
+        controller()?.currentUser_simulated = newCurrentUser
+        controller()?.delegateCallback { [controller = controller()] in
             $0.currentUserController(controller!, didChangeCurrentUser: .create(newCurrentUser))
         }
 
@@ -63,12 +63,12 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: CurrentUserController_Mock? = currentUserController
+        let controller = { [weak currentUserController] in currentUserController }
         currentUserController = nil
 
         let newUnreadCount: UnreadCount = .dummy
-        controller?.unreadCount_simulated = newUnreadCount
-        controller?.delegateCallback { [controller] in
+        controller()?.unreadCount_simulated = newUnreadCount
+        controller()?.delegateCallback { [controller = controller()] in
             $0.currentUserController(controller!, didChangeCurrentUserUnreadCount: newUnreadCount)
         }
 

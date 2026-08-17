@@ -1097,11 +1097,11 @@ final class MessageController_Tests: XCTestCase {
         controller.flag()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Unflag message
@@ -1978,11 +1978,11 @@ final class MessageController_Tests: XCTestCase {
         controller.addReaction(.init(rawValue: .unique))
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Delete reaction
@@ -2048,11 +2048,11 @@ final class MessageController_Tests: XCTestCase {
         controller.deleteReaction(.init(rawValue: .unique))
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Pinning message
@@ -2247,11 +2247,11 @@ final class MessageController_Tests: XCTestCase {
         controller.resendMessage()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Dispatch ephemeral message action
@@ -2306,11 +2306,11 @@ final class MessageController_Tests: XCTestCase {
         controller.dispatchEphemeralMessageAction(.unique)
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Translate message
@@ -2368,11 +2368,11 @@ final class MessageController_Tests: XCTestCase {
         controller.translate(to: .english)
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Mark thread read

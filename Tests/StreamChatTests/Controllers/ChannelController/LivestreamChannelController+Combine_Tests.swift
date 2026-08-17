@@ -84,11 +84,11 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
         )
         
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Simulate channel update event
-        controller?.didReceiveEvent(event)
+        controller()?.didReceiveEvent(event)
 
         // Use AssertAsync to wait for the async update (delegate callback happens on main queue)
         AssertAsync {
@@ -105,11 +105,11 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
-        AssertAsync.staysTrue(controller != nil)
+        AssertAsync.staysTrue(controller() != nil)
     }
 
     // MARK: - Messages Changes Publisher
@@ -125,7 +125,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         let newMessage1: ChatMessage = .mock(id: .unique, cid: channelQuery.cid!, text: "Message 1", author: .mock(id: .unique))
@@ -151,9 +151,9 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
         )
         
         // Send the events
-        controller?.didReceiveEvent(event1)
+        controller()?.didReceiveEvent(event1)
         
-        controller?.didReceiveEvent(event2)
+        controller()?.didReceiveEvent(event2)
 
         // Use AssertAsync to wait for the async updates
         AssertAsync {
@@ -169,11 +169,11 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
-        AssertAsync.staysTrue(controller != nil)
+        AssertAsync.staysTrue(controller() != nil)
     }
 
     // MARK: - Is Paused Publisher
@@ -189,19 +189,19 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Test initial state
         XCTAssertEqual(recording.output, [false])
 
         // Test pausing
-        controller?.pause()
+        controller()?.pause()
         
         // Use AssertAsync to wait for the async update
         AssertAsync {
             Assert.willBeEqual(recording.output, [false, true])
-            Assert.willBeEqual(controller?.isPaused, true)
+            Assert.willBeEqual(controller()?.isPaused, true)
         }
     }
 
@@ -213,11 +213,11 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
-        AssertAsync.staysTrue(controller != nil)
+        AssertAsync.staysTrue(controller() != nil)
     }
 
     // MARK: - Skipped Messages Amount Publisher
@@ -236,14 +236,14 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Test initial state
         XCTAssertEqual(recording.output, [0])
 
         // Pause the controller to enable skipped message counting
-        controller?.pause()
+        controller()?.pause()
         
         // Simulate new messages from other users while paused
         let otherUserId = UserId.unique
@@ -258,7 +258,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             unreadCount: nil
         )
         
-        controller?.didReceiveEvent(event)
+        controller()?.didReceiveEvent(event)
 
         // Use AssertAsync to wait for the async update
         AssertAsync {
@@ -274,10 +274,10 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak let controller: LivestreamChannelController? = livestreamChannelController
+        let controller = { [weak livestreamChannelController] in livestreamChannelController }
         livestreamChannelController = nil
 
         // Assert controller is kept alive by the publisher.
-        AssertAsync.staysTrue(controller != nil)
+        AssertAsync.staysTrue(controller() != nil)
     }
 }

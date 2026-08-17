@@ -284,11 +284,11 @@ final class UserSearchController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is not kept alive
-        AssertAsync.staysTrue(weakController == nil)
+        AssertAsync.staysTrue(weakController() == nil)
     }
 
     // MARK: - search(query:)
@@ -478,11 +478,11 @@ final class UserSearchController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is not kept alive
-        AssertAsync.staysTrue(weakController == nil)
+        AssertAsync.staysTrue(weakController() == nil)
     }
 
     // MARK: - loadNextUsers
@@ -652,11 +652,11 @@ final class UserSearchController_Tests: XCTestCase {
         controller.loadNextUsers()
 
         // Create a weak ref and release a controller.
-        weak let weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is not kept alive
-        AssertAsync.staysTrue(weakController == nil)
+        AssertAsync.staysTrue(weakController() == nil)
     }
 }
 
