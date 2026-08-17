@@ -250,12 +250,15 @@ Testing policy
   - `Tests/StreamChatCommonUITests/` for shared UI module tests
 - Test infrastructure (mocks, shared helpers, fixtures) lives in `TestTools/StreamChatTestTools/`
 - Use fakes/mocks from the test helpers provided by the repo when possible.
+- Use `waitFor` from StreamChatTestTools to await async completion handlers instead of manual `XCTestExpectation` + `waitForExpectations`.
+- Assert database state with `readSynchronously` / `writeSynchronously` on `DatabaseContainer` — the same APIs the SDK uses — rather than reading directly from `viewContext`.
 
 Database conventions
 
 - Core Data model lives in `Sources/StreamChat/Database/StreamChatModel.xcdatamodeld`
 - In database DTOs under `Sources/StreamChat/Database/DTOs/`, use `DBDate` instead of `Date`/`NSDate` for NSManaged properties (enforced by SwiftLint custom rule)
 - Prefer `.pin()` over `.constraint()` in `Sources/StreamChatUI/` for Auto Layout (enforced by SwiftLint custom rule)
+- When a database write needs to produce a value for later use, prefer `write(converting:)` over plain `write` with a captured `nonisolated(unsafe) var`.
 
 Security & credentials
 

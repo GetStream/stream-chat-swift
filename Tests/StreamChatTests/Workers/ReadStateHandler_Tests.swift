@@ -183,6 +183,27 @@ final class ReadStateHandler_Tests: XCTestCase {
         XCTAssertNil(channelUpdater.markRead_cid)
     }
 
+    // MARK: - In-flight mark read
+
+    func test_markRead_whenAlreadyMarkingRead_clearsLocalUnreadWithoutStartingAnotherAPIRequest() {
+        // GIVEN: first markRead starts the remote path and stays in-flight
+        var config = ChatClientConfig(apiKeyString: "test")
+        config.isLocalUnreadCountEnabled = false
+        let handler = makeHandler(config: config)
+        let channel = ChatChannel.mock(cid: .unique, config: .mock(readEventsEnabled: true))
+
+        handler.markRead(channel) { _ in }
+        XCTAssertEqual(channelUpdater.markRead_cid, channel.cid)
+        XCTAssertNil(channelUpdater.markReadLocally_cid)
+
+        // WHEN: another markRead arrives while the API call is still in flight
+        handler.markRead(channel) { _ in }
+
+        // THEN: local unread is cleared again, but no second remote markRead is started
+        XCTAssertEqual(channelUpdater.markReadLocally_cid, channel.cid)
+        XCTAssertEqual(channelUpdater.markReadLocally_userId, userId)
+    }
+
     // MARK: - Helpers
 
     private func makeHandler(config: ChatClientConfig) -> ReadStateHandler {
