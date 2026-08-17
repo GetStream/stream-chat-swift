@@ -5,14 +5,21 @@
 import Foundation
 
 final class SendMessageResponsePayload: Sendable, Codable, JSONEncodable {
+    /// Map of mentioned user ID to whether that user is currently an active channel member. Only set when include_mentioned_members was requested; omitted when the message has no mentions or the membership lookup failed
+    let mentionedMembers: [String: Bool]?
     /// Represents any chat message
     let message: MessagePayload
 
-    init(message: MessagePayload) {
+    init(
+        mentionedMembers: [String: Bool]? = nil,
+        message: MessagePayload
+    ) {
+        self.mentionedMembers = mentionedMembers
         self.message = message
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
+        case mentionedMembers = "mentioned_members"
         case message
     }
 }

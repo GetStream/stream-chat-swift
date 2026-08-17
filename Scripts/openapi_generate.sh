@@ -524,9 +524,6 @@ remove_property SendMessageResponsePayload pendingMessageMetadata
 remove_property UpdateMessagePartialResponse pendingMessageMetadata
 remove_property UpdateMessageResponse pendingMessageMetadata
 
-# Opt-in: only returned when the request asks for it, which the SDK never does
-remove_property SendMessageResponsePayload mentionedMembers
-
 # TODO: reaction group reactors need CoreData and public API design first
 remove_property MessageReactionGroupPayload latestReactionsBy
 

@@ -381,7 +381,7 @@ import XCTest
             MessageAttachmentPayload.dummy(type: .image)
         ].compactMap {
             guard let payload = try? encoder.encode($0.payload) else { return nil }
-            return AnyChatMessageAttachment.dummy(type: $0.type, payload: payload)
+            return AnyChatMessageAttachment.dummy(type: $0.attachmentType, payload: payload)
         }
         let message = ChatMessage.mock(id: messageId, attachments: attachments)
         content.editMessage(message)
