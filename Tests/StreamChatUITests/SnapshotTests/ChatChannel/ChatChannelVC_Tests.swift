@@ -1222,6 +1222,29 @@ import XCTest
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
 
+    func test_chatMessageListShouldShowJumpToUnread_whenShouldMarkChannelRead_returnsFalse() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+        vc.components.isJumpToUnreadEnabled = false
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+        XCTAssertFalse(vc.chatMessageListShouldShowJumpToUnread(vc.messageListVC))
+    }
+
+    func test_chatMessageListShouldShowJumpToUnread_whenShouldNotMarkChannelRead_returnsTrue() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
+        XCTAssertTrue(vc.chatMessageListShouldShowJumpToUnread(vc.messageListVC))
+    }
+
     func test_viewWillDisappear_shouldCancelMarkReadThrottler() {
         let mock = ThrottlerMock()
         vc = ChatChannelVC()
@@ -1230,6 +1253,60 @@ import XCTest
         vc.viewWillDisappear(false)
 
         XCTAssertEqual(mock.cancelCallCount, 1)
+    }
+
+    func test_viewWillDisappear_whenShouldMarkChannelRead_marksReadImmediately() throws {
+        let mockedListView = makeMockMessageListView()
+        let currentUserId = UserId.unique
+        let lastMessage = ChatMessage.mock(id: .unique, text: "Latest", createdAt: Date(timeIntervalSince1970: 100))
+        vc.components.isJumpToUnreadEnabled = true
+        vc.mockIsViewVisible(true)
+        vc.messages = [lastMessage]
+        channelControllerMock.messages_mock = [lastMessage]
+        channelControllerMock.mockFirstUnreadMessageId = nil
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+        try XCTUnwrap(channelControllerMock.client as? ChatClient_Mock).currentUserId_mock = currentUserId
+
+        // Catch up so hasSeenFirstUnreadMessage is true (read channel, no first unread).
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: .noUnread,
+            reads: [
+                .mock(
+                    lastReadAt: .distantFuture,
+                    lastReadMessageId: lastMessage.id,
+                    unreadMessagesCount: 0,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+
+        // New unread arrives while still at the bottom.
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: ChannelUnreadCount(messages: 1, mentions: 0),
+            reads: [
+                .mock(
+                    lastReadAt: Date(timeIntervalSince1970: 50),
+                    lastReadMessageId: .unique,
+                    unreadMessagesCount: 1,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+        channelControllerMock.markReadCallCount = 0
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+
+        vc.viewWillDisappear(false)
+
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
     }
 
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
@@ -1375,6 +1452,117 @@ import XCTest
             "UNREAD MESSAGES"
         )
         AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_shouldMarkChannelRead_whenUnreadCountPositive_whileAtBottom_returnsTrue() throws {
+        // Regression: when a new message arrives, `didUpdateChannel` can fire with unread > 0
+        // before `self.messages` includes that message. Outstanding unreads while at the bottom
+        // must still count as should-mark-read so the banner/pill are not anchored.
+        let mockedListView = makeMockMessageListView()
+        let currentUserId = UserId.unique
+        let lastMessage = ChatMessage.mock(createdAt: Date(timeIntervalSince1970: 100))
+        vc.mockIsViewVisible(true)
+        vc.components.isJumpToUnreadEnabled = true
+        vc.messages = [lastMessage]
+        channelControllerMock.messages_mock = [lastMessage]
+        channelControllerMock.state_mock = .remoteDataFetched
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: ChannelUnreadCount(messages: 1, mentions: 0),
+            reads: [
+                .mock(
+                    lastReadAt: Date(timeIntervalSince1970: 200), // newer than stale last message
+                    lastReadMessageId: lastMessage.id,
+                    unreadMessagesCount: 1,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        try XCTUnwrap(channelControllerMock.client as? ChatClient_Mock).currentUserId_mock = currentUserId
+
+        // Establish hasSeenFirstUnreadMessage via a prior read state.
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: .noUnread,
+            reads: [.mock(lastReadAt: .distantFuture, lastReadMessageId: lastMessage.id, unreadMessagesCount: 0, user: .mock(id: currentUserId))]
+        )
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+
+        // Restore the unread channel update that races ahead of the message list.
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: ChannelUnreadCount(messages: 1, mentions: 0),
+            reads: [
+                .mock(
+                    lastReadAt: Date(timeIntervalSince1970: 200),
+                    lastReadMessageId: lastMessage.id,
+                    unreadMessagesCount: 1,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+        XCTAssertFalse(vc.chatMessageListShouldShowJumpToUnread(vc.messageListVC))
+    }
+
+    func test_didUpdateChannel_whenShouldMarkChannelRead_doesNotAnchorUnreadBanner() throws {
+        let mockedListView = makeMockMessageListView()
+        let currentUserId = UserId.unique
+        let lastMessage = ChatMessage.mock(id: .unique, text: "Latest", createdAt: Date(timeIntervalSince1970: 100))
+        vc.components.isJumpToUnreadEnabled = true
+        vc.components.isUnreadMessagesSeparatorEnabled = true
+        vc.mockIsViewVisible(true)
+        vc.messages = [lastMessage]
+        channelControllerMock.messages_mock = [lastMessage]
+        channelControllerMock.mockFirstUnreadMessageId = nil
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+        try XCTUnwrap(channelControllerMock.client as? ChatClient_Mock).currentUserId_mock = currentUserId
+
+        // Catch up so hasSeenFirstUnreadMessage is true (read channel, no first unread).
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            unreadCount: .noUnread,
+            reads: [.mock(lastReadAt: .distantFuture, lastReadMessageId: lastMessage.id, unreadMessagesCount: 0, user: .mock(id: currentUserId))]
+        )
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+        channelControllerMock.markReadCallCount = 0
+
+        // New unread arrives while still at the bottom.
+        channelControllerMock.mockFirstUnreadMessageId = lastMessage.id
+        let unreadChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: ChannelUnreadCount(messages: 1, mentions: 0),
+            reads: [
+                .mock(
+                    lastReadAt: Date(timeIntervalSince1970: 50),
+                    lastReadMessageId: .unique,
+                    unreadMessagesCount: 1,
+                    user: .mock(id: currentUserId)
+                )
+            ]
+        )
+        channelControllerMock.channel_mock = unreadChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(unreadChannel))
+
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+
+        let header = vc.chatMessageListVC(
+            vc.messageListVC,
+            headerViewForMessage: lastMessage,
+            at: IndexPath(item: 0, section: 0)
+        ) as? ChatChannelMessageHeaderDecoratorView
+        XCTAssertFalse(header?.content?.shouldShowUnreadMessages ?? false)
     }
 
     func test_didUpdateChannel_whenChannelBecomesReadInBackground_unreadMessagesBannerRemainsVisible() throws {

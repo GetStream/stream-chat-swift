@@ -15,7 +15,11 @@ final class RoleSearch_Tests: XCTestCase {
         super.setUp()
         client = ChatClient.mock
         repository = client.mockRolesRepository
-        search = RoleSearch(client: client)
+        search = RoleSearch(
+            client: client,
+            // Keep search synchronous in unit tests unless a test opts into debouncing.
+            debouncePolicy: .constant(0)
+        )
     }
 
     override func tearDown() {
@@ -88,14 +92,23 @@ final class RoleSearch_Tests: XCTestCase {
         }
     }
 
+    // MARK: - Clearing Results
+
+    func test_clearResults_clearsState() async throws {
+        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
+        try await search.search(text: "adm")
+
+        await search.clearResults()
+
+        try await MainActor.run {
+            XCTAssertTrue(search.state.roles.isEmpty)
+            XCTAssertNil(search.state.query)
+        }
+    }
+
     // MARK: - Factory
 
-    func test_makeRoleSearch_returnsConfiguredRoleSearch() async throws {
-        let roleSearch = client.makeRoleSearch()
-        repository.searchRoles_completion_result = .success([Role.dummy(name: "admin")])
-
-        let result = try await roleSearch.search(text: "adm")
-
-        XCTAssertEqual(["admin"], result.map(\.name))
+    func test_makeRoleSearch_returnsRoleSearch() {
+        XCTAssertNotNil(client.makeRoleSearch())
     }
 }

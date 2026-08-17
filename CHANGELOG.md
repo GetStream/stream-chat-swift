@@ -3,8 +3,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `clearResults()` to user, member, role, and user group search APIs [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
+- Add `UserGroupSearchController` for debounced user group search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
+- Add `MemberSearch` for debounced channel member search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
+### 🐞 Fixed
+- Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
+- Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 ### 🔄 Changed
+- Apply dynamic search debouncing to `UserGroupSearch` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
+- Apply dynamic search debouncing to `RoleSearch` and `RoleSearchController` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
+- Fix unread banner and jump-to-unread button flickering when receiving messages in an open channel [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
+  
 # [5.9.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.9.0)
 _August 12, 2026_
 

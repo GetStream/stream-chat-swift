@@ -81,6 +81,12 @@ public class UserSearch: @unchecked Sendable {
         let pagination = Pagination(pageSize: limit, offset: offset)
         return try await performSearch(query: query, pagination: pagination)
     }
+
+    /// Cancels any pending or in-flight search and clears ``UserSearchState/users``.
+    public func clearResults() async {
+        await searchDebouncer.cancel()
+        await state.clear()
+    }
     
     // MARK: - Private
 

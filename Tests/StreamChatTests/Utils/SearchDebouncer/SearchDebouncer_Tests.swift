@@ -95,16 +95,16 @@ final class SearchDebouncer_Tests: XCTestCase {
         let debouncer = SearchDebouncer(policy: .constant(0.2), queue: .main)
         let expectation = expectation(description: "Pending text search is cancelled")
         expectation.isInverted = true
-        nonisolated(unsafe) var executed = false
+        let executed = AllocatedUnfairLock(false)
 
         debouncer.schedule(filter: Filter<UserListFilterScope>.autocomplete(.name, text: "abc")) {
             expectation.fulfill()
         }
         debouncer.schedule(filter: Filter<UserListFilterScope>.equal(.id, to: .unique)) {
-            executed = true
+            executed.withLock { $0 = true }
         }
 
-        XCTAssertTrue(executed)
+        XCTAssertTrue(executed.value)
         wait(for: [expectation], timeout: defaultTimeout)
     }
 }

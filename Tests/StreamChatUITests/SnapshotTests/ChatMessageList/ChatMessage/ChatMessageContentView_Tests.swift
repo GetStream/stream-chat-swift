@@ -1166,6 +1166,30 @@ extension ChatMessageContentView_Tests {
     }
 }
 
+// MARK: - Jump Highlight
+
+extension ChatMessageContentView_Tests {
+    func test_isJumpHighlighted_whenEnabled_appliesHighlightColor() {
+        let view = ChatMessageContentView()
+        view.appearance = Appearance.default
+
+        view.isJumpHighlighted = true
+
+        XCTAssertEqual(view.backgroundColor, view.appearance.colorPalette.backgroundCoreHighlight)
+    }
+
+    func test_prepareForReuse_whenJumpHighlighted_clearsHighlight() {
+        let view = ChatMessageContentView()
+        view.appearance = Appearance.default
+        view.isJumpHighlighted = true
+
+        view.prepareForReuse()
+
+        XCTAssertFalse(view.isJumpHighlighted)
+        XCTAssertNil(view.backgroundColor)
+    }
+}
+
 // MARK: - Helpers
 
 private extension ChatMessageContentView_Tests {
