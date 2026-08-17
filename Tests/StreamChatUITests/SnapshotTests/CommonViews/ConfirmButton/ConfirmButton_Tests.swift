@@ -29,7 +29,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.images.confirmCheckmark = TestImages.vader.image.tinted(with: .systemPink)!
         appearance.colorPalette.accentNeutral = .black
 

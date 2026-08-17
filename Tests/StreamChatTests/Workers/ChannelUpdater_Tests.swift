@@ -2711,7 +2711,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // WHEN
         let exp = expectation(description: "setPushPreference completion")
-        var receivedPreference: PushPreference?
+        nonisolated(unsafe) var receivedPreference: PushPreference?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             if case .success(let pref) = result {
                 receivedPreference = pref
@@ -2725,7 +2725,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // THEN
         // Verify the push preference was successfully set
-        XCTAssertEqual(receivedPreference?.level, .mentions)
+        XCTAssertEqual(receivedPreference?.level, PushPreferenceLevel(rawValue: "mentions"))
         XCTAssertNil(receivedPreference?.disabledUntil)
 
         // Verify the channel now has the push preference associated
@@ -2733,7 +2733,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.channel(cid: cid)?.asModel()
         }
         XCTAssertNotNil(channel?.pushPreference)
-        XCTAssertEqual(channel?.pushPreference?.level, .mentions)
+        XCTAssertEqual(channel?.pushPreference?.level, PushPreferenceLevel(rawValue: "mentions"))
         XCTAssertNil(channel?.pushPreference?.disabledUntil)
     }
 
@@ -2773,7 +2773,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // WHEN
         let exp = expectation(description: "setPushPreference completion")
-        var receivedPreference: PushPreference?
+        nonisolated(unsafe) var receivedPreference: PushPreference?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             if case .success(let pref) = result {
                 receivedPreference = pref

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension EndpointPath: Equatable {
+extension EndpointPath: @retroactive Equatable {
     public static func == (_ lhs: EndpointPath, _ rhs: EndpointPath) -> Bool {
         switch (lhs, rhs) {
         case (.connect, .connect): return true

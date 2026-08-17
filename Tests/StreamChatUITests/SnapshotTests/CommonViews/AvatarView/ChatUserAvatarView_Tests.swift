@@ -75,7 +75,7 @@ import XCTest
             }
         }
 
-        var appearance = Appearance()
+        let appearance = Appearance()
         var components = Components.mock
         appearance.colorPalette.accentSuccess = .brown
         components.onlineIndicatorView = RectIndicator.self

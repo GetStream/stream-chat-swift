@@ -44,7 +44,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         )
         middleware?.timer = VirtualTimeTimer.self
 
-        weak var weakMiddleware = middleware
+        let weakMiddleware = { [weak middleware] in middleware }
 
         // Handle a new TypingStart event for the current user and collect resulting events
         let typingStartEvent = TypingEventDTO.startTyping(userId: currentUser.id)
@@ -61,7 +61,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         AssertAsync.canBeReleased(&middleware)
 
         middleware = nil
-        XCTAssertNil(weakMiddleware)
+        XCTAssertNil(weakMiddleware())
     }
 
     func test_stopTypingEvent_sentAfterTimeout() {
@@ -72,7 +72,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         )
         middleware?.timer = VirtualTimeTimer.self
 
-        weak var weakMiddleware = middleware
+        let weakMiddleware = { [weak middleware] in middleware }
 
         // Simulate some user started typing
         let otherUser = ChatUser.mock(id: .unique)
@@ -98,6 +98,6 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
 
         middleware = nil
-        XCTAssertNil(weakMiddleware)
+        XCTAssertNil(weakMiddleware())
     }
 }

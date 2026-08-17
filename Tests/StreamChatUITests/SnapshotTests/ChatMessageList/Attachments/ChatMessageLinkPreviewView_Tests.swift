@@ -122,7 +122,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.fonts.subheadline = appearance.fonts.subheadlineBold
         linkPreviewView.appearance = appearance
 

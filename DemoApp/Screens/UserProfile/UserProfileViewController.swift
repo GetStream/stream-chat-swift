@@ -63,10 +63,13 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
         imageView.addGestureRecognizer(tapGesture)
         
-        updateButton.setTitle("Update", for: .normal)
+        var updateButtonConfiguration = UIButton.Configuration.plain()
+        updateButtonConfiguration.title = "Update"
+        updateButtonConfiguration.baseForegroundColor = .white
+        updateButtonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
+        updateButton.configuration = updateButtonConfiguration
         updateButton.layer.cornerRadius = 4
         updateButton.backgroundColor = .systemBlue
-        updateButton.contentEdgeInsets = UIEdgeInsets(top: 0.0, left: 15, bottom: 0.0, right: 15)
         updateButton.addTarget(self, action: #selector(didTapUpdateButton), for: .touchUpInside)
         
         loadingSpinner.hidesWhenStopped = true
@@ -371,8 +374,10 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         // Delete the attachment from CDN
         currentUserController.client.deleteAttachment(remoteUrl: imageURL) { [weak self] error in
             if let error = error {
-                self?.loadingSpinner.stopAnimating()
-                self?.showError(error)
+                Task { @MainActor in
+                    self?.loadingSpinner.stopAnimating()
+                    self?.showError(error)
+                }
             } else {
                 // Only update user data if deletion was successful
                 self?.currentUserController.updateUserData(unsetProperties: ["image"]) { updateError in

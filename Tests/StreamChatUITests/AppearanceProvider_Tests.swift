@@ -11,7 +11,7 @@ import XCTest
     func test_appearance_passedDownToSubview() {
         let parentView = TestAppearanceView()
         let subView = TestAppearanceView()
-        var appearance = Appearance()
+        let appearance = Appearance()
         // Set some random color to check if the appearance is passed down
         appearance.colorPalette.accentSuccess = testColor
 
@@ -29,7 +29,7 @@ import XCTest
         let parentView = TestAppearanceView()
         let intermediateView = UIView()
         let subView = TestAppearanceView()
-        var appearance = Appearance()
+        let appearance = Appearance()
         // Set some random color to check if the appearance is passed down
         appearance.colorPalette.accentSuccess = testColor
 
@@ -60,7 +60,7 @@ import XCTest
 
     func test_appearance_passedDownToVCView() {
         let vc = TestAppearanceViewController()
-        var appearance = Appearance()
+        let appearance = Appearance()
         // Set some random color to check if the appearance is passed down
         appearance.colorPalette.accentSuccess = testColor
 

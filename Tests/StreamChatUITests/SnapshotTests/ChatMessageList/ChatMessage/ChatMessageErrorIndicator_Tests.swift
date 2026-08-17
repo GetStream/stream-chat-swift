@@ -11,7 +11,7 @@ import XCTest
 @MainActor final class ChatMessageErrorIndicator_Tests: XCTestCase {
     func test_appearanceCustomization_usingAppearance() {
         // Create custom appearance
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.accentError = Appearance.default.colorPalette.backgroundCoreSurfaceSubtle
 
         // Create an error indicator

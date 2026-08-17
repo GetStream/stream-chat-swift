@@ -22,7 +22,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
 
         appearance.colorPalette.backgroundCoreOverlayLight = .brown
         appearance.fonts.body = .italicSystemFont(ofSize: 20)

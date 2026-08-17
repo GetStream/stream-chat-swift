@@ -42,11 +42,11 @@ final class EventsController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only weak reference to the controller.
-        weak var eventsController = controller
+        let eventsController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive by the publisher.
-        AssertAsync.staysTrue(eventsController != nil)
+        AssertAsync.staysTrue(eventsController() != nil)
     }
 
     func test_concreteEventPublisher_keepsControllerAlive() {
@@ -57,11 +57,11 @@ final class EventsController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only weak reference to the controller.
-        weak var eventsController = controller
+        let eventsController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive by the publisher.
-        AssertAsync.staysTrue(eventsController != nil)
+        AssertAsync.staysTrue(eventsController() != nil)
     }
 
     // MARK: - Event propagation

@@ -684,7 +684,7 @@ class SyncRepository_Tests: XCTestCase {
         channelListUpdater.startWatchingChannels_completion_success = false
 
         let expectation = expectation(description: "syncChannelsEvents")
-        var receivedResult: Result<[ChannelId], SyncError>?
+        nonisolated(unsafe) var receivedResult: Result<[ChannelId], SyncError>?
         repository.syncChannelsEvents(
             channelIds: [cid],
             lastSyncAt: lastSyncDate,
@@ -1039,7 +1039,7 @@ extension SyncRepository_Tests {
         apiClient.clear()
 
         let expectation = expectation(description: "syncChannelsEvents")
-        var receivedResult: Result<[ChannelId], SyncError>!
+        nonisolated(unsafe) var receivedResult: Result<[ChannelId], SyncError>!
         repository.syncChannelsEvents(
             channelIds: channelIds,
             lastSyncAt: lastSyncAt,

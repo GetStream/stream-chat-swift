@@ -37,10 +37,10 @@ final class MessageController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChatMessageController_Mock? = messageController
+        let controller = { [weak messageController] in messageController }
         messageController = nil
 
-        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { [controller = controller()] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -56,12 +56,12 @@ final class MessageController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChatMessageController_Mock? = messageController
+        let controller = { [weak messageController] in messageController }
         messageController = nil
 
         let newMessage: ChatMessage = .unique
-        controller?.message_mock = newMessage
-        controller?.delegateCallback { [controller] in
+        controller()?.message_mock = newMessage
+        controller()?.delegateCallback { [controller = controller()] in
             $0.messageController(controller!, didChangeMessage: .create(newMessage))
         }
 
@@ -79,12 +79,12 @@ final class MessageController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChatMessageController_Mock? = messageController
+        let controller = { [weak messageController] in messageController }
         messageController = nil
 
         let newReply: ChatMessage = .unique
-        controller?.replies_mock = [newReply]
-        controller?.delegateCallback { [controller] in
+        controller()?.replies_mock = [newReply]
+        controller()?.delegateCallback { [controller = controller()] in
             $0.messageController(controller!, didChangeReplies: [.insert(newReply, index: .init())])
         }
 
@@ -102,7 +102,7 @@ final class MessageController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChatMessageController_Mock? = messageController
+        let controller = { [weak messageController] in messageController }
         messageController = nil
 
         let newReaction: ChatMessageReaction = .init(
@@ -114,8 +114,8 @@ final class MessageController_Combine_Tests: iOS13TestCase {
             author: .unique,
             extraData: [:]
         )
-        controller?.reactions = []
-        controller?.delegateCallback { [controller] in
+        controller()?.reactions = []
+        controller()?.delegateCallback { [controller = controller()] in
             $0.messageController(controller!, didChangeReactions: [newReaction])
         }
 

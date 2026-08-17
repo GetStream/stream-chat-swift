@@ -158,7 +158,7 @@ final class ChannelList_Tests: XCTestCase {
     func test_get_whenQueryHasGroupKey_fetchesFirstPageWithoutCursor() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
-        channelList = await ChannelList(
+        channelList = ChannelList(
             query: groupedQuery,
             dynamicFilter: nil,
             client: env.client,
@@ -182,7 +182,7 @@ final class ChannelList_Tests: XCTestCase {
     func test_loadMoreChannels_whenQueryHasGroupKey_readsCursorFromQueryDTO() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
-        channelList = await ChannelList(
+        channelList = ChannelList(
             query: groupedQuery,
             dynamicFilter: nil,
             client: env.client,
@@ -213,7 +213,7 @@ final class ChannelList_Tests: XCTestCase {
     func test_loadMoreChannels_whenQueryHasGroupKey_propagatesPersistedWatchAndPresence() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
-        channelList = await ChannelList(
+        channelList = ChannelList(
             query: groupedQuery,
             dynamicFilter: nil,
             client: env.client,
@@ -244,7 +244,7 @@ final class ChannelList_Tests: XCTestCase {
     func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_marksAsFullyLoaded() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
-        channelList = await ChannelList(
+        channelList = ChannelList(
             query: groupedQuery,
             dynamicFilter: nil,
             client: env.client,
