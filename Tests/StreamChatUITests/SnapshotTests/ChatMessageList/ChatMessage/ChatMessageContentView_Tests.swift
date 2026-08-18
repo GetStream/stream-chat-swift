@@ -1166,6 +1166,56 @@ extension ChatMessageContentView_Tests {
     }
 }
 
+// MARK: - Audio Attachment
+
+extension ChatMessageContentView_Tests {
+    func test_appearance_whenMessageWithAudioAttachment_incoming() {
+        let audioAttachment: ChatMessageAudioAttachment = .mock(id: .unique)
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: myFriend,
+            createdAt: createdAt,
+            attachments: [audioAttachment.asAnyAttachment],
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: FilesAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageWithAudioAttachment_outgoing() {
+        let audioAttachment: ChatMessageAudioAttachment = .mock(id: .unique)
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: me,
+            createdAt: createdAt,
+            attachments: [audioAttachment.asAnyAttachment],
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: FilesAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+}
+
 // MARK: - Jump Highlight
 
 extension ChatMessageContentView_Tests {
