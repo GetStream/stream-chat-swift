@@ -93,6 +93,7 @@ struct MessageRequestBody: Encodable, Sendable {
     let showReplyInChannel: Bool
     let isSilent: Bool
     let quotedMessageId: String?
+    let attachments: [MessageAttachmentPayload]
     let mentionedUserIds: [UserId]
     let mentionedHere: Bool
     let mentionedChannel: Bool
@@ -116,6 +117,7 @@ struct MessageRequestBody: Encodable, Sendable {
         showReplyInChannel: Bool = false,
         isSilent: Bool = false,
         quotedMessageId: String? = nil,
+        attachments: [MessageAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
@@ -138,6 +140,7 @@ struct MessageRequestBody: Encodable, Sendable {
         self.showReplyInChannel = showReplyInChannel
         self.isSilent = isSilent
         self.quotedMessageId = quotedMessageId
+        self.attachments = attachments
         self.mentionedUserIds = mentionedUserIds
         self.mentionedHere = mentionedHere
         self.mentionedChannel = mentionedChannel
@@ -167,6 +170,10 @@ struct MessageRequestBody: Encodable, Sendable {
         try container.encodeIfPresent(type, forKey: .type)
         try container.encodeIfPresent(restrictedVisibility, forKey: .restrictedVisibility)
         try container.encodeIfPresent(location, forKey: .location)
+
+        if !attachments.isEmpty {
+            try container.encode(attachments, forKey: .attachments)
+        }
 
         if !mentionedUserIds.isEmpty {
             try container.encode(mentionedUserIds, forKey: .mentionedUsers)
