@@ -61,6 +61,12 @@ import XCTest
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }
 
+    func test_appearance_audio() {
+        fileAttachmentView.content = ChatMessageAudioAttachment.mock(id: .unique)
+            .asAttachment(payloadType: FileAttachmentPayload.self)
+        AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         let appearance = Appearance()
         appearance.colorPalette.textSecondary = .red
