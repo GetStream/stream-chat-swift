@@ -59,7 +59,7 @@ final class EventPayload: Decodable, Sendable {
     let createdBy: UserPayload?
     let memberContainer: MemberContainerPayload?
     let channel: ChannelDetailPayload?
-    let message: MessagePayload?
+    let message: MessageResponse?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
     let unreadCount: UnreadCountPayload?
@@ -103,7 +103,7 @@ final class EventPayload: Decodable, Sendable {
         createdBy: UserPayload? = nil,
         memberContainer: MemberContainerPayload? = nil,
         channel: ChannelDetailPayload? = nil,
-        message: MessagePayload? = nil,
+        message: MessageResponse? = nil,
         reaction: MessageReactionPayload? = nil,
         watcherCount: Int? = nil,
         unreadCount: UnreadCountPayload? = nil,
@@ -188,7 +188,7 @@ final class EventPayload: Decodable, Sendable {
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         memberContainer = try container.decodeIfPresent(MemberContainerPayload.self, forKey: .memberContainer)
         channel = try? container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        message = try container.decodeIfPresent(MessagePayload.self, forKey: .message)
+        message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
         reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         unreadCount = try? UnreadCountPayload(from: decoder)

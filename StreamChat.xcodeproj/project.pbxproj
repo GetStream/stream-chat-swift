@@ -770,6 +770,7 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/PushPreferencePayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ReminderPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/RolePayloads_Tests.swift,
+				StreamChatTests/APIClient/Endpoints/Payloads/SearchResultMessage_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ThreadListPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/UnknownChannelEvent_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/UnknownUserEvent_Tests.swift,

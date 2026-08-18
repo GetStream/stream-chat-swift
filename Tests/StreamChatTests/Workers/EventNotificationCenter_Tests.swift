@@ -255,7 +255,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
             database.write({ session in
                 try session.saveChannel(payload: ChannelPayload.dummy(channel: .dummy(cid: channelId)))
                 try existingPayloads.forEach {
-                    try session.saveMessage(payload: $0, for: channelId, syncOwnReactions: false, cache: nil)
+                    try session.saveMessage(payload: $0, syncOwnReactions: false, cache: nil)
                 }
             }, completion: { _ in done() })
         }

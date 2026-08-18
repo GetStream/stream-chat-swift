@@ -937,7 +937,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     ///   saveDraftMessage function to avoid an infinite loop since saving the draft would be called again.
     ///   - cache: The pre-warmed cache.
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool = false,
@@ -1165,14 +1165,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
     func saveMessages(
         messagesPayload: MessageListPayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool = true
     ) -> [MessageDTO] {
         let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
         return messagesPayload.messages.compactMapLoggingError {
             try saveMessage(
                 payload: $0,
-                for: cid,
                 syncOwnReactions: syncOwnReactions,
                 skipDraftUpdate: false,
                 cache: cache
@@ -1181,37 +1179,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
-        for cid: ChannelId?,
+        payload: MessageResponse,
         syncOwnReactions: Bool = true,
         skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        guard payload.channel != nil || cid != nil else {
-            throw ClientError.MessagePayloadSavingFailure("""
-            Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
-            - `payload.channel` value: \(String(describing: payload.channel))
-            - `cid` value: \(String(describing: cid))
-            """)
-        }
+        let cid = try ChannelId(cid: payload.cid)
 
-        if let cid = cid, let payloadCid = payload.channel?.cid {
-            log.assert(cid == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
-        }
-
-        var channelDTO: ChannelDTO?
-
-        if let channelPayload = payload.channel {
-            channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
-        } else if let cid = cid {
-            channelDTO = ChannelDTO.load(cid: cid, context: self)
-        } else {
-            let description = "Should never happen because either `cid` or `payload.channel` should be present."
-            log.assertionFailure(description)
-            throw ClientError.MessagePayloadSavingFailure(description)
-        }
-
-        guard let channel = channelDTO else {
+        guard let channel = ChannelDTO.load(cid: cid, context: self) else {
             let description = "Should never happen, a channel should have been fetched."
             log.assertionFailure(description)
             throw ClientError.MessagePayloadSavingFailure(description)
@@ -1334,8 +1309,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
-        let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
+    func saveMessage(payload: SearchResultMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+        // Only the search endpoint embeds the channel, and it is the sole source of the cid for
+        // results whose channel is not cached locally yet.
+        if let channel = payload.channel {
+            _ = try saveChannel(payload: channel, query: nil, cache: cache)
+        }
+        let messageDTO = try saveMessage(payload: payload.asMessageResponse(), cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }

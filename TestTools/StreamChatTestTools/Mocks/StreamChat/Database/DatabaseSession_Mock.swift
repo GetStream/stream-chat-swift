@@ -238,7 +238,6 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
         cache: PreWarmedCache?
@@ -246,7 +245,6 @@ class DatabaseSession_Mock: DatabaseSession {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(
             payload: payload,
-            for: cid,
             syncOwnReactions: syncOwnReactions,
             skipDraftUpdate: skipDraftUpdate,
             cache: cache
@@ -255,11 +253,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        try saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, skipDraftUpdate: false, cache: cache)
+        try saveMessage(payload: payload, syncOwnReactions: syncOwnReactions, skipDraftUpdate: false, cache: cache)
     }
 
     func saveMessage(
@@ -294,8 +291,8 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
-        underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
+    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO] {
+        underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
     }
 
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
@@ -491,7 +488,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: SearchResultMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: query, cache: cache)
     }
@@ -667,13 +664,11 @@ extension DatabaseSession {
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
         try saveMessage(
             payload: payload,
-            for: cid,
             syncOwnReactions: syncOwnReactions,
             skipDraftUpdate: false,
             cache: cache

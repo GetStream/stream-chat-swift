@@ -6,9 +6,9 @@ import Foundation
 
 final class UpdateMessageResponse: Sendable, Codable, JSONEncodable {
     /// Represents any chat message
-    let message: MessagePayload
+    let message: MessageResponse
 
-    init(message: MessagePayload) {
+    init(message: MessageResponse) {
         self.message = message
     }
 

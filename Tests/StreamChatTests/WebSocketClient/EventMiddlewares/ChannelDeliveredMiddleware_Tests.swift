@@ -55,7 +55,6 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: authorUserId),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -92,7 +91,6 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: channelId))
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: authorUserId),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -204,7 +202,6 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: userId),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )

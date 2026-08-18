@@ -358,7 +358,6 @@ final class ChannelUpdater_Tests: XCTestCase {
             try (1...3).forEach {
                 try session.saveMessage(
                     payload: self.dummyMessagePayload(id: "\($0)dames"),
-                    for: cid,
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -396,7 +395,6 @@ final class ChannelUpdater_Tests: XCTestCase {
             try (1...3).forEach {
                 try session.saveMessage(
                     payload: self.dummyMessagePayload(id: "\($0)dames"),
-                    for: cid,
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -440,7 +438,6 @@ final class ChannelUpdater_Tests: XCTestCase {
             try (1...3).forEach {
                 try session.saveMessage(
                     payload: self.dummyMessagePayload(id: "\($0)"),
-                    for: cid,
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -484,7 +481,6 @@ final class ChannelUpdater_Tests: XCTestCase {
             try (1...3).forEach {
                 try session.saveMessage(
                     payload: self.dummyMessagePayload(id: "\($0)"),
-                    for: cid,
                     syncOwnReactions: false,
                     cache: nil
                 )

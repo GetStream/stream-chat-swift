@@ -6,10 +6,13 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
+/// The generated model is `MessageResponse`; tests keep the historical name.
+typealias MessagePayload = MessageResponse
+
 extension MessagePayload {
     convenience init(
         id: String,
-        cid: ChannelId? = nil,
+        cid: ChannelId = .unique,
         type: MessageType,
         user: UserPayload,
         createdAt: Date,
@@ -39,7 +42,6 @@ extension MessagePayload {
         isSilent: Bool,
         isShadowed: Bool,
         attachments: [MessageAttachmentPayload],
-        channel: ChannelDetailPayload? = nil,
         pinned: Bool = false,
         pinnedBy: UserPayload? = nil,
         pinnedAt: Date? = nil,
@@ -66,8 +68,7 @@ extension MessagePayload {
         }
         self.init(
             attachments: attachments,
-            channel: channel,
-            cid: cid?.rawValue ?? "",
+            cid: cid.rawValue,
             command: command,
             createdAt: createdAt,
             custom: custom,
@@ -140,8 +141,7 @@ extension MessagePayload {
         createdAt: Date? = .unique,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
-        channel: ChannelDetailPayload? = nil,
-        cid: ChannelId? = nil,
+        cid: ChannelId = .unique,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
@@ -200,7 +200,6 @@ extension MessagePayload {
             isSilent: isSilent,
             isShadowed: isShadowed,
             attachments: attachments,
-            channel: channel,
             pinned: pinned,
             pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
             pinnedAt: pinnedAt,

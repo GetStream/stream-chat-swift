@@ -64,7 +64,7 @@ final class MessageEvents_Tests: XCTestCase {
 
         try session.saveUser(payload: userPayload)
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
-        _ = try session.saveMessage(payload: messagePayload, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: messagePayload, cache: nil)
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
         try session.saveEvent(payload: eventPayload)
 
@@ -132,7 +132,7 @@ final class MessageEvents_Tests: XCTestCase {
         let message = try XCTUnwrap(event?.message)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channelId, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
 
         let domainEvent = event?.toDomainEvent(session: session)
         XCTAssertEqual(domainEvent is MessageDeletedEvent, true)

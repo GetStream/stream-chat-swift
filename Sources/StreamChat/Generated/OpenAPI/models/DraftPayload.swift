@@ -13,9 +13,9 @@ final class DraftPayload: Sendable, Codable, JSONEncodable {
     let message: DraftMessagePayload
     let parentId: String?
     /// Represents any chat message
-    let parentMessage: MessagePayload?
+    let parentMessage: MessageResponse?
     /// Represents any chat message
-    let quotedMessage: MessagePayload?
+    let quotedMessage: MessageResponse?
 
     init(
         channel: ChannelDetailPayload? = nil,
@@ -23,8 +23,8 @@ final class DraftPayload: Sendable, Codable, JSONEncodable {
         createdAt: Date,
         message: DraftMessagePayload,
         parentId: String? = nil,
-        parentMessage: MessagePayload? = nil,
-        quotedMessage: MessagePayload? = nil
+        parentMessage: MessageResponse? = nil,
+        quotedMessage: MessageResponse? = nil
     ) {
         self.channel = channel
         self.channelCid = channelCid

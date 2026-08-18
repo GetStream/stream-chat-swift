@@ -56,7 +56,7 @@ extension XCTestCase {
 
     func dummyMessagePayload(
         id: MessageId = .unique,
-        cid: ChannelId? = nil,
+        cid: ChannelId = .unique,
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
     ) -> MessagePayload {
         MessagePayload(

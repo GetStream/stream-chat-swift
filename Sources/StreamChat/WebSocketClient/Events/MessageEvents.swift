@@ -52,7 +52,7 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasUnr
 final class MessageNewEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
-    let message: MessagePayload
+    let message: MessageResponse
     let createdAt: Date
     let watcherCount: Int?
     let unreadCount: UnreadCountPayload?
@@ -121,7 +121,7 @@ public final class MessageUpdatedEvent: ChannelSpecificEvent {
 final class MessageUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
-    let message: MessagePayload
+    let message: MessageResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -192,7 +192,7 @@ public final class MessageDeletedEvent: ChannelSpecificEvent {
 final class MessageDeletedEventDTO: EventDTO {
     let user: UserPayload?
     let cid: ChannelId
-    let message: MessagePayload
+    let message: MessageResponse
     let createdAt: Date
     let payload: EventPayload
     let hardDelete: Bool

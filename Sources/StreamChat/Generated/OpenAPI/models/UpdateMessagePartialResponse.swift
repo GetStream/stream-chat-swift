@@ -6,9 +6,9 @@ import Foundation
 
 final class UpdateMessagePartialResponse: Sendable, Codable, JSONEncodable {
     /// Represents any chat message
-    let message: MessagePayload?
+    let message: MessageResponse?
 
-    init(message: MessagePayload? = nil) {
+    init(message: MessageResponse? = nil) {
         self.message = message
     }
 

@@ -4,65 +4,96 @@
 
 import Foundation
 
-final class MessagePayload: Sendable, Codable, JSONEncodable {
+final class MessageResponse: Sendable, Codable, JSONEncodable {
+    /// Array of message attachments
     let attachments: [MessageAttachmentPayload]
-    /// Represents channel in chat
-    let channel: ChannelDetailPayload?
+    /// Channel unique identifier in <type>:<id> format
     let cid: String
+    /// Contains provided slash command
     let command: String?
+    /// Date/time of creation
     let createdAt: Date
     let custom: [String: RawJSON]
+    /// Date/time of deletion
     let deletedAt: Date?
     let deletedForMe: Bool?
     let deletedReplyCount: Int
     let draft: DraftPayload?
+    /// Contains HTML markup of the message. Can only be set when using server-side API
     let html: String
+    /// Object with translations. Key `language` contains the original language key. Other keys contain translations
     let i18n: [String: String]?
+    /// Message ID is unique string identifier of the message
     let id: String
+    /// Contains image moderation information
     let imageLabels: [String: [String]]?
+    /// List of 10 latest reactions to this message
     let latestReactions: [MessageReactionPayload]
     let member: MemberInfoPayload?
+    /// Whether the message mentioned the channel tag
     let mentionedChannel: Bool
+    /// List of user group IDs mentioned in the message. Group members who are also channel members will receive push notifications based on their push preferences. Max 10 groups
     let mentionedGroupIds: [String]?
+    /// List of mentioned user group objects.
     let mentionedGroups: [UserGroup]?
+    /// Whether the message mentioned online users with @here tag
     let mentionedHere: Bool
+    /// List of roles mentioned in the message (e.g. admin, channel_moderator, custom roles). Members with matching roles will receive push notifications based on their push preferences. Max 10 roles
     let mentionedRoles: [String]?
+    /// List of mentioned users
     let mentionedUsers: [UserPayload]
     let messageTextUpdatedAt: Date?
+    /// Should be empty if `text` is provided. Can only be set when using server-side API
     let mml: String?
     let moderation: MessageModerationDetailsPayload?
+    /// List of 10 latest reactions of authenticated user to this message
     let ownReactions: [MessageReactionPayload]
+    /// ID of parent message (thread)
     let parentId: String?
+    /// Date when pinned message expires
     let pinExpires: Date?
+    /// Whether message is pinned or not
     let pinned: Bool
+    /// Date when message got pinned
     let pinnedAt: Date?
     /// User response object
     let pinnedBy: UserPayload?
     let poll: PollPayload?
+    /// Identifier of the poll to include in the message
     let pollId: String?
     /// Represents any chat message
-    let quotedMessage: MessagePayload?
+    let quotedMessage: MessageResponse?
     let quotedMessageId: String?
+    /// An object containing number of reactions of each type. Key: reaction type (string), value: number of reactions (int)
     let reactionCounts: [String: Int]?
     let reactionGroups: [String: MessageReactionGroupPayload?]?
+    /// An object containing scores of reactions of each type. Key: reaction type (string), value: total score of reactions (int)
     let reactionScores: [String: Int]
     let reminder: ReminderPayload?
+    /// Number of replies to this message
     let replyCount: Int
+    /// A list of user ids that have restricted visibility to the message, if the list is not empty, the message is only visible to the users in the list
     let restrictedVisibility: [String]
+    /// Whether the message was shadowed or not
     let shadowed: Bool
     let sharedLocation: SharedLocation?
+    /// Whether thread reply should be shown in the channel as well
     let showInChannel: Bool?
+    /// Whether message is silent or not
     let silent: Bool
+    /// Text of the message. Should be empty if `mml` is provided
     let text: String
+    /// List of users who participate in thread
     let threadParticipants: [UserPayload]?
+    /// Contains type of the message. One of: regular, ephemeral, error, reply, system, deleted
     let type: String
+    /// Date/time of the last update
     let updatedAt: Date
     /// User response object
     let user: UserPayload
 
     init(
         attachments: [MessageAttachmentPayload],
-        channel: ChannelDetailPayload? = nil,
         cid: String,
         command: String? = nil,
         createdAt: Date,
@@ -94,7 +125,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         pinnedBy: UserPayload? = nil,
         poll: PollPayload? = nil,
         pollId: String? = nil,
-        quotedMessage: MessagePayload? = nil,
+        quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
         reactionCounts: [String: Int]? = nil,
         reactionGroups: [String: MessageReactionGroupPayload?]? = nil,
@@ -113,7 +144,6 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         user: UserPayload
     ) {
         self.attachments = attachments
-        self.channel = channel
         self.cid = cid
         self.command = command
         self.createdAt = createdAt
@@ -166,7 +196,6 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case attachments
-        case channel
         case cid
         case command
         case createdAt = "created_at"
@@ -225,7 +254,6 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         attachments = try container.decode([MessageAttachmentPayload].self, forKey: .attachments)
-        channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         cid = try container.decode(String.self, forKey: .cid)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
@@ -263,7 +291,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         pinnedBy = try container.decodeIfPresent(UserPayload.self, forKey: .pinnedBy)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
-        quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
+        quotedMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .quotedMessage)
         quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
         reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts)
         reactionGroups = try container.decodeIfPresent([String: MessageReactionGroupPayload?].self, forKey: .reactionGroups)

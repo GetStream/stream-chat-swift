@@ -960,7 +960,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
         writeAndWaitForMessageUpdates(count: 6) {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: newerMessagePayload, syncOwnReactions: true, cache: nil)
         }
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: channelId))
@@ -1086,7 +1086,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                try session.saveMessage(payload: newMessagePayload, syncOwnReactions: true, cache: nil)
             }, completion: $0)
         }
 
@@ -1112,8 +1112,8 @@ final class ChannelController_Tests: XCTestCase {
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, syncOwnReactions: true, cache: nil)
         }
 
         // Check the order of messages is correct
@@ -1139,8 +1139,8 @@ final class ChannelController_Tests: XCTestCase {
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, syncOwnReactions: true, cache: nil)
         }
 
         // Check the order of messages is correct
@@ -1178,10 +1178,10 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         writeAndWaitForMessageUpdates(count: 3) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply2, syncOwnReactions: true, cache: nil)
         }
 
         // Check the relevant reply is shown in channel
@@ -1210,8 +1210,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         writeAndWaitForMessageUpdates(count: 1) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: ephemeralMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: ephemeralMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Check the relevant ephemeral message is not shown in channel
@@ -1242,8 +1242,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: incomingDeletedMessage, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: outgoingDeletedMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Both outgoing and incoming messages should be visible
@@ -1279,8 +1279,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: shadowedMessage, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: nonShadowedMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Both messages should be visible
@@ -1311,8 +1311,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         writeAndWaitForMessageUpdates(count: 1) {
-            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: shadowedMessage, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: nonShadowedMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Only non-shadowed message should be visible
@@ -5704,7 +5704,6 @@ final class ChannelController_Tests: XCTestCase {
                         messageId: existingMessageId
                     )
                 ),
-                for: self.channelId,
                 syncOwnReactions: false,
                 cache: nil
             )

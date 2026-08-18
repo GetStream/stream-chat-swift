@@ -107,6 +107,7 @@ allowed_models=(
   MarkDeliveredRequest
   MembersResponse
   MessageRequest
+  MessageResponse
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
@@ -430,9 +431,7 @@ rename_generated DraftResponse DraftPayload
 rename_generated ModerationV2Response MessageModerationDetailsPayload
 rename_generated ReactionGroupResponse MessageReactionGroupPayload
 rename_generated ReminderResponseData ReminderPayload
-rename_generated SearchResultMessage MessagePayload
 rename_generated SendMessageResponse SendMessageResponsePayload
-rename_generated_type MessageResponse MessagePayload
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
@@ -533,7 +532,8 @@ retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 require_property ChannelDetailPayload config
 
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
-optionalize_property MessagePayload reactionCounts
+optionalize_property MessageResponse reactionCounts
+optionalize_property SearchResultMessage reactionCounts
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"

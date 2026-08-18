@@ -115,7 +115,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         // 1 to remove the request from the queue
         XCTAssertEqual(database.writeSessionCounter, 1)
-        XCTAssertCall("saveSuccessfullySentMessage(cid:message:completion:)", on: messageRepository, times: 1)
+        XCTAssertCall("saveSuccessfullySentMessage(message:completion:)", on: messageRepository, times: 1)
     }
 
     func test_runQueuedRequestsWithPendingRequests_editMessage() throws {

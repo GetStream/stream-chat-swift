@@ -65,16 +65,23 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case deletedForMe = "deleted_for_me"
 }
 
-extension MessagePayload {
+extension MessageResponse {
     /// A object describing the incoming JSON format for message payload. Unfortunately, our backend is not consistent
     /// in this and the payload has the form: `{ "message": <message payload> }` rather than `{ <message payload> }`
     struct Boxed: Decodable {
-        let message: MessagePayload
+        let message: MessageResponse
+    }
+}
+
+extension SearchResultMessage {
+    /// The boxed form of a search result, matching `{ "message": <message payload> }`.
+    struct Boxed: Decodable {
+        let message: SearchResultMessage
     }
 }
 
 struct MessageSearchResultsPayload: Decodable {
-    let results: [MessagePayload.Boxed]
+    let results: [SearchResultMessage.Boxed]
     let next: String?
 }
 
@@ -206,7 +213,7 @@ typealias PinnedMessagesPayload = MessageListPayload
 typealias MessageRepliesPayload = MessageListPayload
 
 struct MessageListPayload: Decodable {
-    let messages: [MessagePayload]
+    let messages: [MessageResponse]
 }
 
 /// A command in a message, e.g. /giphy.

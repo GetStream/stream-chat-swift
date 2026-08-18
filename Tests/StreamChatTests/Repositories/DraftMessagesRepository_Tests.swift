@@ -289,7 +289,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             if let threadId {
-                try session.saveMessage(payload: .dummy(messageId: threadId), for: channelId, syncOwnReactions: false, cache: nil)
+                try session.saveMessage(payload: .dummy(messageId: threadId), syncOwnReactions: false, cache: nil)
             }
         }
     }

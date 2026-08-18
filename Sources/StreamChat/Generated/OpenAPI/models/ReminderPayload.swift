@@ -10,7 +10,7 @@ final class ReminderPayload: Sendable, Codable, JSONEncodable {
     let channelCid: String
     let createdAt: Date
     /// Represents any chat message
-    let message: MessagePayload?
+    let message: MessageResponse?
     let messageId: String
     let remindAt: Date?
     let updatedAt: Date
@@ -22,7 +22,7 @@ final class ReminderPayload: Sendable, Codable, JSONEncodable {
         channel: ChannelDetailPayload? = nil,
         channelCid: String,
         createdAt: Date,
-        message: MessagePayload? = nil,
+        message: MessageResponse? = nil,
         messageId: String,
         remindAt: Date? = nil,
         updatedAt: Date,

@@ -223,25 +223,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
                     return
                 }
                 self?.database.write { session in
-                    let cid: ChannelId?
-
-                    if let payloadCid = messagePayload.channelId {
-                        cid = payloadCid
-                    } else if let cidFromLocal = session.message(id: messageId)?.cid,
-                              let localCid = try? ChannelId(cid: cidFromLocal) {
-                        cid = localCid
-                    } else {
-                        cid = nil
-                    }
-
-                    guard let cid = cid else {
-                        completion?(.failure(ClientError.ChannelNotCreatedYet()))
-                        return
-                    }
-                    
                     let messageDTO = try session.saveMessage(
                         payload: messagePayload,
-                        for: cid,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil
@@ -464,7 +447,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
-                    let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
+                    let replies = session.saveMessages(messagesPayload: payload, syncOwnReactions: true)
                     replies.forEach {
                         $0.showInsideThread = true
                     }
@@ -936,7 +919,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 if action.isCancel {
                     completion?(nil)
                 } else {
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                    let endpoint: Endpoint<MessageResponse.Boxed> = .dispatchEphemeralMessageAction(
                         cid: cid,
                         messageId: messageId,
                         action: action
@@ -947,7 +930,6 @@ class MessageUpdater: Worker, @unchecked Sendable {
                             self.database.write({ session in
                                 try session.saveMessage(
                                     payload: payload.message,
-                                    for: cid,
                                     syncOwnReactions: true,
                                     skipDraftUpdate: true,
                                     cache: nil
@@ -1009,7 +991,6 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 self.database.write { session in
                     let messageDTO = try session.saveMessage(
                         payload: boxedMessage.message,
-                        for: boxedMessage.message.channelId,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil

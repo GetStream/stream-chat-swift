@@ -350,7 +350,6 @@ extension DatabaseContainer {
 
                 let replyDTO = try session.saveMessage(
                     payload: reply,
-                    for: cid,
                     syncOwnReactions: true,
                     skipDraftUpdate: true,
                     cache: nil
@@ -376,9 +375,9 @@ extension DatabaseContainer {
 
             try session.saveChannel(payload: channelPayload)
 
-            let message: MessagePayload = .dummy(
+            let message: SearchResultMessage = .dummy(
                 messageId: id,
-                authorUserId: .unique,
+                cid: cid,
                 channel: channelPayload.channel
             )
 
@@ -403,9 +402,9 @@ extension DatabaseContainer {
             try session.saveChannel(payload: channelPayload)
 
             try ids.forEach {
-                let message: MessagePayload = .dummy(
+                let message: SearchResultMessage = .dummy(
                     messageId: $0,
-                    authorUserId: .unique,
+                    cid: cid,
                     channel: channelPayload.channel
                 )
 

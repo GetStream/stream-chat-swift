@@ -140,11 +140,11 @@ struct ChannelPayload {
 
     let membership: MemberPayload?
 
-    let messages: [MessagePayload]
+    let messages: [MessageResponse]
     
-    let pendingMessages: [MessagePayload]?
+    let pendingMessages: [MessageResponse]?
 
-    let pinnedMessages: [MessagePayload]
+    let pinnedMessages: [MessageResponse]
 
     let channelReads: [ChannelReadPayload]
 
@@ -159,7 +159,7 @@ struct ChannelPayload {
 
 extension ChannelPayload {
     /// Returns the newest message from `messages` in O(1) assuming messages are sorted by `createdAt`.
-    var newestMessage: MessagePayload? {
+    var newestMessage: MessageResponse? {
         guard let first = messages.first, let last = messages.last else { return nil }
 
         return first.createdAt > last.createdAt ? first : last
@@ -192,9 +192,9 @@ extension ChannelPayload: Decodable {
             watchers: try container.decodeArrayIfPresentIgnoringFailures([UserPayload].self, forKey: .watchers),
             members: try container.decodeArrayIgnoringFailures([MemberPayload].self, forKey: .members),
             membership: try container.decodeIfPresent(MemberPayload.self, forKey: .membership),
-            messages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .messages),
-            pendingMessages: try container.decodeArrayIfPresentIgnoringFailures([MessagePayload.Boxed].self, forKey: .pendingMessages)?.map(\.message),
-            pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
+            messages: try container.decodeArrayIgnoringFailures([MessageResponse].self, forKey: .messages),
+            pendingMessages: try container.decodeArrayIfPresentIgnoringFailures([MessageResponse.Boxed].self, forKey: .pendingMessages)?.map(\.message),
+            pinnedMessages: try container.decodeArrayIgnoringFailures([MessageResponse].self, forKey: .pinnedMessages),
             channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
             draft: try container.decodeIfPresent(DraftPayload.self, forKey: .draft),

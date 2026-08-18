@@ -439,7 +439,6 @@ final class ChannelListPayload_Tests: XCTestCase {
                     isSilent: false,
                     isShadowed: false,
                     attachments: messageIndex % 2 == 0 ? [.dummy()] : [],
-                    channel: channelDetail,
                     pinned: false,
                     pinnedBy: nil,
                     pinnedAt: nil,

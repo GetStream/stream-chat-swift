@@ -351,7 +351,7 @@ final class MessageController_Tests: XCTestCase {
             text: .unique
         )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
+            try session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
         }
 
         // Assert the controller's `message` is up-to-date
@@ -624,7 +624,7 @@ final class MessageController_Tests: XCTestCase {
             authorUserId: currentUserId
         )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
+            try session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
         }
         env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
 
@@ -661,7 +661,7 @@ final class MessageController_Tests: XCTestCase {
             text: "new text"
         )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true, cache: nil)
+            try session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
         }
         env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
 
@@ -2536,14 +2536,12 @@ final class MessageController_Tests: XCTestCase {
             try session.saveChannel(payload: channelPayload ?? .dummy(channel: .dummy(cid: self.cid)))
             let parentMessage = try session.saveMessage(
                 payload: .dummy(messageId: self.messageId),
-                for: self.cid,
                 syncOwnReactions: false,
                 cache: nil
             )
             replies = try payloads.compactMap { payload in
                 let reply = try session.saveMessage(
                     payload: payload,
-                    for: self.cid,
                     syncOwnReactions: false,
                     cache: nil
                 )

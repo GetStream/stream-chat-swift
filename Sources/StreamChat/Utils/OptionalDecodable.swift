@@ -11,7 +11,7 @@ import Foundation
 ///
 /// Use this when you are decoding objects in array and there is possibility
 /// that some of the objects can be malformed in JSON. Then you should `compactMap` the array
-/// For example usage, see `MessagePayload.swift` `init(from decoder:)`
+/// For example usage, see `MessageResponse.swift` `init(from decoder:)`
 struct OptionalDecodable<Base: Decodable>: Decodable {
     let base: Base?
     public init(from decoder: Decoder) throws {

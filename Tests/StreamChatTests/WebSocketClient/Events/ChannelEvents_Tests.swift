@@ -130,7 +130,7 @@ final class ChannelEvents_Tests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelUpdatedEvent)

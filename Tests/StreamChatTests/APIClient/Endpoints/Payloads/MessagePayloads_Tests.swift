@@ -131,7 +131,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(reactionGroup.lastReactionAt, "2024-04-17T13:15:53.643826Z".toDate())
         XCTAssertEqual(payload.silent, true)
         XCTAssertEqual(payload.shadowed, true)
-        XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
+        XCTAssertEqual(payload.cid, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.pinned, true)
         XCTAssertEqual(payload.pinnedAt, "2021-04-15T06:43:08.776911Z".toDate())
@@ -254,7 +254,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.silent, true)
         XCTAssertFalse(payload.shadowed)
-        XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
+        XCTAssertEqual(payload.cid, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.attachments.count, 2)
         XCTAssertEqual(payload.pinned, true)
@@ -288,7 +288,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.silent, true)
         XCTAssertEqual(payload.shadowed, true)
-        XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
+        XCTAssertEqual(payload.cid, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.pinned, true)
         XCTAssertEqual(payload.pinnedAt, "2021-04-15T06:43:08.776911Z".toDate())
@@ -344,7 +344,6 @@ final class MessagePayload_Tests: XCTestCase {
             isSilent: true,
             isShadowed: true,
             attachments: [],
-            channel: nil,
             pinned: true,
             pinnedBy: pinnedByPayload,
             pinnedAt: Date(timeIntervalSince1970: 1_609_459_400),
@@ -436,7 +435,6 @@ final class MessagePayload_Tests: XCTestCase {
             isSilent: false,
             isShadowed: false,
             attachments: [],
-            channel: nil,
             pinned: false,
             pinnedBy: nil,
             pinnedAt: nil,

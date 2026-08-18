@@ -167,7 +167,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
@@ -209,7 +209,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
@@ -251,7 +251,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields

@@ -196,17 +196,16 @@ class OfflineRequestsRepository: @unchecked Sendable {
         }
 
         switch endpoint.path {
-        case let .sendMessage(type, id):
+        case .sendMessage:
             guard let response = decodeTo(SendMessageResponsePayload.self) else {
                 completion()
                 return
             }
-            let cid = ChannelId(type: ChannelType(rawValue: type), id: id)
-            messageRepository.saveSuccessfullySentMessage(cid: cid, message: response.message) { _ in completion() }
+            messageRepository.saveSuccessfullySentMessage(message: response.message) { _ in completion() }
         case let .updateMessage(messageId), let .updateMessagePartial(messageId):
             messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
         case .deleteMessage:
-            guard let message = decodeTo(MessagePayload.Boxed.self) else {
+            guard let message = decodeTo(MessageResponse.Boxed.self) else {
                 completion()
                 return
             }

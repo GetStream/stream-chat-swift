@@ -4,8 +4,8 @@
 
 import Foundation
 
-extension MessagePayload {
-    /// Converts the MessagePayload to a ChatMessage model.
+extension MessageResponse {
+    /// Converts the MessageResponse to a ChatMessage model.
     /// - Parameters:
     ///   - cid: The channel ID the message belongs to.
     ///   - currentUserId: The current user's ID for determining sent status.

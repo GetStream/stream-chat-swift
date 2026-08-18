@@ -159,8 +159,9 @@ import XCTest
         nonisolated(unsafe) var messageDTOWithoutCid: MessageDTO!
         nonisolated(unsafe) var mockedMessageWithoutCid: ChatMessage!
         try mockedClient.databaseContainer.writeSynchronously { session in
-            let messagePayload = self.dummyMessagePayload(cid: nil)
-            let channel = try session.saveChannel(payload: .dummy())
+            let cid = ChannelId.unique
+            let messagePayload = self.dummyMessagePayload(cid: cid)
+            let channel = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             messageDTOWithoutCid = try session.saveMessage(
                 payload: messagePayload,
                 channelDTO: channel,
@@ -170,7 +171,7 @@ import XCTest
             messageDTOWithoutCid.channel = nil
             mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
         }
-        
+
         mockedListView.mockedCellForRow = .init()
         mockedListView.mockedCellForRow?.mockedMessage = mockedMessageWithoutCid
 

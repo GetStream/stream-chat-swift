@@ -36,7 +36,6 @@ final class ReactionListUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             try session.saveMessage(
                 payload: .dummy(messageId: messageId),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )

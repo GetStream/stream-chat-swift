@@ -48,7 +48,6 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: "test-user"),
-                for: cid,
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -84,7 +83,6 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: "test-user"),
-                for: cid,
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -138,7 +136,6 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: "test-user"),
-                for: cid,
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -182,7 +179,6 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: "test-user"),
-                for: cid,
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil

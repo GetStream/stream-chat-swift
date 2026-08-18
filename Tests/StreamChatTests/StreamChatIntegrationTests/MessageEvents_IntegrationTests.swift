@@ -163,7 +163,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)
@@ -200,7 +200,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageUpdatedEvent)
@@ -235,7 +235,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageDeletedEvent)

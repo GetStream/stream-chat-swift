@@ -214,7 +214,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields

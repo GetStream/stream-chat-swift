@@ -122,7 +122,7 @@ extension NSManagedObjectContext: ReminderDatabaseSession {
         if let existingMessage = MessageDTO.load(id: payload.messageId, context: self) {
             messageDTO = existingMessage
         } else if let messagePayload = payload.message {
-            messageDTO = try saveMessage(payload: messagePayload, for: cid, cache: cache)
+            messageDTO = try saveMessage(payload: messagePayload, cache: cache)
         } else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
         }

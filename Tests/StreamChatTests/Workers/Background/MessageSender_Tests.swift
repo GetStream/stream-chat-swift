@@ -494,7 +494,6 @@ final class MessageSender_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             let message = try session.saveMessage(
                 payload: .dummy(messageId: messageId),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )

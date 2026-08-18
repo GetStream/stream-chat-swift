@@ -203,7 +203,6 @@ final class MessageUpdater_Tests: XCTestCase {
                         originalText: ""
                     )
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -1260,7 +1259,6 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveMessage(
                 payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId),
-                for: cid,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -2469,7 +2467,6 @@ final class MessageUpdater_Tests: XCTestCase {
                         originalText: ""
                     )
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3503,7 +3500,6 @@ extension MessageUpdater_Tests {
         try database.writeSynchronously { session in
             try session.saveMessage(
                 payload: .dummy(messageId: parentMessageId, text: "Example"),
-                for: cid,
                 syncOwnReactions: false,
                 cache: nil
             )

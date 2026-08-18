@@ -767,7 +767,6 @@ import XCTest
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveMessage(
                 payload: messageInsideThread,
-                for: cid,
                 syncOwnReactions: false,
                 cache: nil
             )
