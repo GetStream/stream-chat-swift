@@ -386,20 +386,15 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         extraData: [String: RawJSON]? = nil
     ) async throws {
         try await apiClient.request(
-            endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
+            endpoint: .flagMessage(with: messageId, reason: reason, extraData: extraData)
         )
     }
 
     /// Removes the flag from the specified message.
     ///
     /// - Parameter messageId: The id of the message to be unflagged.
-    ///
-    /// - Throws: An error while communicating with the Stream API.
-    public func unflagMessage(_ messageId: MessageId) async throws {
-        try await apiClient.request(
-            endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)
-        )
-    }
+    @available(*, deprecated, message: "Unflagging a message is not supported")
+    public func unflagMessage(_ messageId: MessageId) async throws {}
 
     // MARK: - Message Reactions
 

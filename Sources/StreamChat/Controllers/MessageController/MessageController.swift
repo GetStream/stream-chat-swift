@@ -714,6 +714,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
+    @available(*, deprecated, message: "Unflagging a message is not supported")
     public func unflag(completion: (@MainActor (Error?) -> Void)? = nil) {
         messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil) { error in
             self.callback {

@@ -473,6 +473,7 @@ final class UserController_Tests: XCTestCase {
     
     // MARK: - Unlag user
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagUser_propagatesError() {
         // Simulate `unflag` call and catch the completion.
         nonisolated(unsafe) var completionError: Error?
@@ -488,6 +489,7 @@ final class UserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagUser_propagatesNilError() {
         // Simulate `unflag` call and catch the completion.
         nonisolated(unsafe) var completionIsCalled = false
@@ -514,6 +516,7 @@ final class UserController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagUser_callsUserUpdater_withCorrectValues() {
         // Simulate `unflag` call.
         controller.unflag()
@@ -524,6 +527,7 @@ final class UserController_Tests: XCTestCase {
         XCTAssertEqual(env.userUpdater!.flagUser_userId, controller.userId)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagUser_keepsControllerAlive() {
         // Simulate `unflag` call.
         controller.unflag()

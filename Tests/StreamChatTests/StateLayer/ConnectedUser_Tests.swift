@@ -134,6 +134,7 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(extraData, env.userUpdaterMock.flagUser_extraData)
     }
     
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagUser_whenUpdatedSucceeds_thenUnflagUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         
