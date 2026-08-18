@@ -185,6 +185,7 @@ public final class ConnectedUser: Sendable {
     /// - Parameter userId: The id of the user to unflag.
     ///
     /// - Throws: An error while communicating with the Stream API.
+    @available(*, deprecated, message: "Unflagging a user is not supported")
     public func unflag(_ userId: UserId) async throws {
         try await userUpdater.unflag(userId)
     }

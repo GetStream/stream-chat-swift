@@ -248,19 +248,24 @@ final class UserUpdater_Tests: XCTestCase {
     // MARK: - Flag user
 
     func test_flagUser_makesCorrectAPICall() {
-        let cases = [
-            (true, UserId.unique, String.unique, ["a": RawJSON.string("1")]),
-            (false, UserId.unique, String.unique, ["b": RawJSON.bool(true)])
-        ]
+        let userId = UserId.unique
+        let reason = String.unique
+        let extraData = ["a": RawJSON.string("1")]
 
-        for (flag, userId, reason, extraData) in cases {
-            // Simulate `flagUser` call.
-            userUpdater.flagUser(flag, with: userId, reason: reason, extraData: extraData)
+        // Simulate `flagUser` call.
+        userUpdater.flagUser(true, with: userId, reason: reason, extraData: extraData)
 
-            // Assert correct endpoint is called.
-            let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId, reason: reason, extraData: extraData)
-            XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-        }
+        // Assert correct endpoint is called.
+        let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(with: userId, reason: reason, extraData: extraData)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_unflagUser_doesNotMakeAPICall() {
+        // Simulate `flagUser` call with `flag` set to false.
+        userUpdater.flagUser(false, with: .unique)
+
+        // Assert no API call is made because unflagging is not supported.
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_flagUser_updatesFlaggedUserList() throws {

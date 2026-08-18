@@ -519,7 +519,6 @@ final class LivestreamChat_Tests: XCTestCase {
         try await livestreamChat.flagMessage("msg-1", reason: "spam", extraData: ["k": .string("v")])
 
         let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            true,
             with: "msg-1",
             reason: "spam",
             extraData: ["k": .string("v")]
@@ -527,20 +526,11 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
-    func test_unflagMessage_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(
-            Result<FlagMessagePayload, Error>.success(.init(currentUser: .dummy(userId: .unique), flaggedMessageId: "msg-1"))
-        )
-
+    @available(*, deprecated, message: "Tests deprecated unflag API")
+    func test_unflagMessage_doesNotCallAPI() async throws {
         try await livestreamChat.unflagMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            false,
-            with: "msg-1",
-            reason: nil,
-            extraData: nil
-        )
-        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertNil(client.mockAPIClient.request_endpoint)
     }
 
     // MARK: - Message Reactions
