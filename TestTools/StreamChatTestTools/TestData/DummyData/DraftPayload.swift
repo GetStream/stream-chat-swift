@@ -8,7 +8,7 @@ import Foundation
 extension DraftPayload {
     // Generated properties are slightly different from the previously hand-written ones.
     convenience init(
-        cid: ChannelId?,
+        cid: ChannelId,
         channelPayload: ChannelDetailPayload?,
         createdAt: Date,
         message: DraftMessagePayload,
@@ -18,7 +18,7 @@ extension DraftPayload {
     ) {
         self.init(
             channel: channelPayload,
-            channelCid: cid?.rawValue,
+            channelCid: cid.rawValue,
             createdAt: createdAt,
             message: message,
             parentId: parentId,
@@ -29,7 +29,7 @@ extension DraftPayload {
 
     /// Returns dummy draft payload with the given values.
     static func dummy(
-        cid: ChannelId? = nil,
+        cid: ChannelId,
         channelPayload: ChannelDetailPayload? = nil,
         createdAt: Date = .unique,
         message: DraftMessagePayload = .dummy(),
@@ -39,7 +39,7 @@ extension DraftPayload {
     ) -> DraftPayload {
         .init(
             channel: channelPayload,
-            channelCid: cid?.rawValue,
+            channelCid: cid.rawValue,
             createdAt: createdAt,
             message: message,
             parentId: parentId,

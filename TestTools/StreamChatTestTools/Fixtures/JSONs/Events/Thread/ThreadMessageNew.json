@@ -4,6 +4,9 @@
     "channel_id": "456F834D-1",
     "channel_type": "messaging",
     "message": {
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": [],
         "id": "74625138-f60a-4d19-a3f1-4d97ec3f1390",
         "text": "@Han Solo Ahahah",
         "html": "<p>@Han Solo Ahahah</p>\n",

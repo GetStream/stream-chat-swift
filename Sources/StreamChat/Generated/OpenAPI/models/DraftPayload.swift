@@ -7,7 +7,7 @@ import Foundation
 final class DraftPayload: Sendable, Codable, JSONEncodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
-    let channelCid: String?
+    let channelCid: String
     let createdAt: Date
     /// Contains the draft message content
     let message: DraftMessagePayload
@@ -19,7 +19,7 @@ final class DraftPayload: Sendable, Codable, JSONEncodable {
 
     init(
         channel: ChannelDetailPayload? = nil,
-        channelCid: String? = nil,
+        channelCid: String,
         createdAt: Date,
         message: DraftMessagePayload,
         parentId: String? = nil,

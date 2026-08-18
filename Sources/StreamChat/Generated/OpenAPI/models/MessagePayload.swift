@@ -8,13 +8,13 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     let attachments: [MessageAttachmentPayload]
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
-    let cid: String?
+    let cid: String
     let command: String?
     let createdAt: Date
     let custom: [String: RawJSON]
     let deletedAt: Date?
     let deletedForMe: Bool?
-    let deletedReplyCount: Int?
+    let deletedReplyCount: Int
     let draft: DraftPayload?
     let html: String
     let i18n: [String: String]?
@@ -22,10 +22,10 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     let imageLabels: [String: [String]]?
     let latestReactions: [MessageReactionPayload]
     let member: MemberInfoPayload?
-    let mentionedChannel: Bool?
+    let mentionedChannel: Bool
     let mentionedGroupIds: [String]?
     let mentionedGroups: [UserGroup]?
-    let mentionedHere: Bool?
+    let mentionedHere: Bool
     let mentionedRoles: [String]?
     let mentionedUsers: [UserPayload]
     let messageTextUpdatedAt: Date?
@@ -34,7 +34,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     let ownReactions: [MessageReactionPayload]
     let parentId: String?
     let pinExpires: Date?
-    let pinned: Bool?
+    let pinned: Bool
     let pinnedAt: Date?
     /// User response object
     let pinnedBy: UserPayload?
@@ -48,8 +48,8 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     let reactionScores: [String: Int]
     let reminder: ReminderPayload?
     let replyCount: Int
-    let restrictedVisibility: [String]?
-    let shadowed: Bool?
+    let restrictedVisibility: [String]
+    let shadowed: Bool
     let sharedLocation: SharedLocation?
     let showInChannel: Bool?
     let silent: Bool
@@ -63,13 +63,13 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
     init(
         attachments: [MessageAttachmentPayload],
         channel: ChannelDetailPayload? = nil,
-        cid: String? = nil,
+        cid: String,
         command: String? = nil,
         createdAt: Date,
         custom: [String: RawJSON],
         deletedAt: Date? = nil,
         deletedForMe: Bool? = nil,
-        deletedReplyCount: Int? = nil,
+        deletedReplyCount: Int,
         draft: DraftPayload? = nil,
         html: String,
         i18n: [String: String]? = nil,
@@ -77,10 +77,10 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         imageLabels: [String: [String]]? = nil,
         latestReactions: [MessageReactionPayload],
         member: MemberInfoPayload? = nil,
-        mentionedChannel: Bool? = nil,
+        mentionedChannel: Bool,
         mentionedGroupIds: [String]? = nil,
         mentionedGroups: [UserGroup]? = nil,
-        mentionedHere: Bool? = nil,
+        mentionedHere: Bool,
         mentionedRoles: [String]? = nil,
         mentionedUsers: [UserPayload],
         messageTextUpdatedAt: Date? = nil,
@@ -89,7 +89,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         ownReactions: [MessageReactionPayload],
         parentId: String? = nil,
         pinExpires: Date? = nil,
-        pinned: Bool? = nil,
+        pinned: Bool,
         pinnedAt: Date? = nil,
         pinnedBy: UserPayload? = nil,
         poll: PollPayload? = nil,
@@ -101,8 +101,8 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         reactionScores: [String: Int],
         reminder: ReminderPayload? = nil,
         replyCount: Int,
-        restrictedVisibility: [String]? = nil,
-        shadowed: Bool? = nil,
+        restrictedVisibility: [String],
+        shadowed: Bool,
         sharedLocation: SharedLocation? = nil,
         showInChannel: Bool? = nil,
         silent: Bool,
@@ -226,7 +226,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         attachments = try container.decode([MessageAttachmentPayload].self, forKey: .attachments)
         channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        cid = try container.decodeIfPresent(String.self, forKey: .cid)
+        cid = try container.decode(String.self, forKey: .cid)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
@@ -238,7 +238,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         }
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
-        deletedReplyCount = try container.decodeIfPresent(Int.self, forKey: .deletedReplyCount)
+        deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         html = try container.decode(String.self, forKey: .html)
         i18n = try container.decodeIfPresent([String: String].self, forKey: .i18n)
@@ -246,10 +246,10 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         imageLabels = try container.decodeIfPresent([String: [String]].self, forKey: .imageLabels)
         latestReactions = try container.decode([MessageReactionPayload].self, forKey: .latestReactions)
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
-        mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel)
+        mentionedChannel = try container.decode(Bool.self, forKey: .mentionedChannel)
         mentionedGroupIds = try container.decodeIfPresent([String].self, forKey: .mentionedGroupIds)
         mentionedGroups = try container.decodeIfPresent([UserGroup].self, forKey: .mentionedGroups)
-        mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere)
+        mentionedHere = try container.decode(Bool.self, forKey: .mentionedHere)
         mentionedRoles = try container.decodeIfPresent([String].self, forKey: .mentionedRoles)
         mentionedUsers = try container.decode([UserPayload].self, forKey: .mentionedUsers)
         messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
@@ -258,7 +258,7 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
-        pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned)
+        pinned = try container.decode(Bool.self, forKey: .pinned)
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinnedBy = try container.decodeIfPresent(UserPayload.self, forKey: .pinnedBy)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
@@ -270,8 +270,8 @@ final class MessagePayload: Sendable, Codable, JSONEncodable {
         reactionScores = try container.decode([String: Int].self, forKey: .reactionScores)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        restrictedVisibility = try container.decodeIfPresent([String].self, forKey: .restrictedVisibility)
-        shadowed = try container.decodeIfPresent(Bool.self, forKey: .shadowed)
+        restrictedVisibility = try container.decode([String].self, forKey: .restrictedVisibility)
+        shadowed = try container.decode(Bool.self, forKey: .shadowed)
         sharedLocation = try container.decodeIfPresent(SharedLocation.self, forKey: .sharedLocation)
         showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
         silent = try container.decode(Bool.self, forKey: .silent)

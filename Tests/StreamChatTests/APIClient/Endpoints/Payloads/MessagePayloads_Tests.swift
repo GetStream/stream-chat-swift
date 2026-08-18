@@ -27,6 +27,11 @@ final class MessagePayload_Tests: XCTestCase {
             "updated_at": "2020-08-17T13:15:39.895109Z",
             "text": "Hey @here, @backendsupport, and @admin",
             "html": "Hey @here, @backendsupport, and @admin",
+            "cid": "messaging:general",
+            "deleted_reply_count": 0,
+            "pinned": false,
+            "restricted_visibility": [],
+            "shadowed": false,
             "reply_count": 0,
             "reaction_scores": {},
             "silent": false,
@@ -50,7 +55,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedRoles, ["admin"])
     }
 
-    func test_messagePayload_enhancedMentionsAreNilWhenMissing() throws {
+    func test_messagePayload_optionalMentionsAreNilWhenMissing() throws {
         let json = """
         {
             "id": "msg-1",
@@ -66,6 +71,13 @@ final class MessagePayload_Tests: XCTestCase {
             "updated_at": "2020-08-17T13:15:39.895109Z",
             "text": "Hello",
             "html": "Hello",
+            "cid": "messaging:general",
+            "deleted_reply_count": 0,
+            "pinned": false,
+            "restricted_visibility": [],
+            "shadowed": false,
+            "mentioned_channel": false,
+            "mentioned_here": false,
             "reply_count": 0,
             "reaction_scores": {},
             "silent": false,
@@ -78,15 +90,11 @@ final class MessagePayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
 
-        XCTAssertNil(payload.mentionedHere)
-        XCTAssertNil(payload.mentionedChannel)
         XCTAssertNil(payload.mentionedGroups)
         XCTAssertNil(payload.mentionedRoles)
 
         // The defaults are applied when the payload is converted to a model
         let message = payload.asModel(cid: .unique, currentUserId: nil, channelReads: [])
-        XCTAssertFalse(message.mentionedHere)
-        XCTAssertFalse(message.mentionedChannel)
         XCTAssertTrue(message.mentionedGroups.isEmpty)
         XCTAssertEqual(message.mentionedRoles, [])
     }
@@ -194,7 +202,18 @@ final class MessagePayload_Tests: XCTestCase {
         let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
         let message = try XCTUnwrap(root["message"] as? [String: Any])
 
-        for field in ["reaction_scores", "silent"] {
+        let fields = [
+            "cid",
+            "deleted_reply_count",
+            "mentioned_channel",
+            "mentioned_here",
+            "pinned",
+            "reaction_scores",
+            "restricted_visibility",
+            "shadowed",
+            "silent"
+        ]
+        for field in fields {
             var candidateRoot = root
             var candidateMessage = message
             candidateMessage.removeValue(forKey: field)
@@ -234,7 +253,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.silent, true)
-        XCTAssertNil(payload.shadowed)
+        XCTAssertFalse(payload.shadowed)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.attachments.count, 2)

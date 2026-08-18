@@ -990,7 +990,7 @@ private extension DatabaseSession {
         case .messageUpdated:
             guard let message = eventPayload.message else { return false }
             guard let currentUserId = currentUser?.user.id else { return false }
-            return message.restrictedVisibility?.contains(currentUserId) ?? false
+            return message.restrictedVisibility.contains(currentUserId)
         default:
             return false
         }

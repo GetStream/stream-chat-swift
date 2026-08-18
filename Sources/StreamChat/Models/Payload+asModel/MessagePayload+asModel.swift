@@ -75,7 +75,7 @@ extension MessagePayload {
             quotedMessage: quotedMessage,
             isBounced: moderation?.action == MessageModerationAction.bounce.rawValue,
             isSilent: silent,
-            isShadowed: shadowed ?? false,
+            isShadowed: shadowed,
             deletedForMe: deletedForMe ?? false,
             reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
             reactionCounts: (reactionCounts ?? [:]).mapKeys(MessageReactionType.init(rawValue:)),
@@ -92,8 +92,8 @@ extension MessagePayload {
             },
             author: author,
             mentionedUsers: mentionedUsers,
-            mentionedHere: mentionedHere ?? false,
-            mentionedChannel: mentionedChannel ?? false,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
             mentionedGroups: Set(mentionedGroups ?? []),
             mentionedRoles: mentionedRoles ?? [],
             threadParticipants: threadParticipants,
@@ -104,7 +104,7 @@ extension MessagePayload {
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
             isSentByCurrentUser: user.id == currentUserId,
-            pinDetails: pinned == true ? MessagePinDetails(
+            pinDetails: pinned ? MessagePinDetails(
                 pinnedAt: pinnedAt ?? createdAt,
                 pinnedBy: pinnedBy?.asModel() ?? author,
                 expiresAt: pinExpires

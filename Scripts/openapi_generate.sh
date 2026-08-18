@@ -532,24 +532,8 @@ retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
 
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property DraftPayload channelCid
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload cid
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload deletedReplyCount
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload mentionedChannel
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload mentionedHere
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload pinned
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessagePayload reactionCounts
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload restrictedVisibility
-# TODO: v1 and v2 require this field; removing compatibility requires JSON fixture normalization.
-optionalize_property MessagePayload shadowed
 
 remove_nested_enum() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"

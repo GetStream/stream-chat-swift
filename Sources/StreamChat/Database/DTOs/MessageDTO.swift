@@ -986,9 +986,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         dto.isSilent = payload.silent
-        if let shadowed = payload.shadowed {
-            dto.isShadowed = shadowed
-        }
+        dto.isShadowed = payload.shadowed
         if let deletedForMe = payload.deletedForMe {
             dto.deletedForMe = deletedForMe
         }
@@ -1002,9 +1000,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.isShadowed = false
         }
 
-        if let pinned = payload.pinned {
-            dto.pinned = pinned
-        }
+        dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
         if let pinnedByUser = payload.pinnedBy {
@@ -1075,12 +1071,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return user
         })
         dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
-        if let mentionedHere = payload.mentionedHere {
-            dto.mentionedHere = mentionedHere
-        }
-        if let mentionedChannel = payload.mentionedChannel {
-            dto.mentionedChannel = mentionedChannel
-        }
+        dto.mentionedHere = payload.mentionedHere
+        dto.mentionedChannel = payload.mentionedChannel
         if let mentionedGroups = payload.mentionedGroups {
             dto.mentionedGroupIds = mentionedGroups.map(\.id)
             dto.mentionedGroups = try Set(mentionedGroups.map { try saveUserGroup(payload: $0) })
@@ -1095,10 +1087,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 array: threadParticipants.map { try saveUser(payload: $0) }
             )
         }
-        if let restrictedVisibility = payload.restrictedVisibility {
-            let restrictedVisibility = Set(restrictedVisibility)
-            dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
-        }
+        let restrictedVisibility = Set(payload.restrictedVisibility)
+        dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
 
         let isSystemMessage = dto.type == MessageType.system.rawValue
         let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg

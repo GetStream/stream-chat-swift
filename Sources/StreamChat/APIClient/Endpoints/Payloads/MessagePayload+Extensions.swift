@@ -6,7 +6,7 @@ import Foundation
 
 // Generated properties are slightly different from the previously hand-written ones.
 extension MessagePayload {
-    var channelId: ChannelId? { cid.flatMap { try? ChannelId(cid: $0) } }
+    var channelId: ChannelId? { try? ChannelId(cid: cid) }
     var campaignId: String? { custom["created_by_campaign_id"]?.stringValue }
     // Messages have no dedicated args field, it is stored as custom data.
     var args: String? { custom[MessagePayloadsCodingKeys.args.rawValue]?.stringValue }

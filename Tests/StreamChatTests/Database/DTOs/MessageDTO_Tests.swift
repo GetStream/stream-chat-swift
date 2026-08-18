@@ -831,63 +831,6 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage?.memberNotificationsMuted, true)
     }
 
-    func test_saveMessage_whenShadowedIsMissing_keepsStoredValue() throws {
-        let userId: UserId = .unique
-        let messageId: MessageId = .unique
-        let channelId: ChannelId = .unique
-
-        func messageJSON(shadowed: Bool?) -> Data {
-            let shadowedField = shadowed.map { "\"shadowed\": \($0)," } ?? ""
-            return """
-            {
-                "id": "\(messageId)",
-                "type": "regular",
-                "user": {
-                    "id": "\(userId)",
-                    "role": "user",
-                    "online": false,
-                    "banned": false,
-                    "created_at": "2020-07-16T15:39:03.010717Z",
-                    "updated_at": "2020-08-17T13:15:39.895109Z"
-                },
-                "created_at": "2020-07-16T15:39:03.010717Z",
-                "updated_at": "2020-08-17T13:15:39.895109Z",
-                "text": "Hello",
-                "html": "",
-                "silent": false,
-                \(shadowedField)
-                "reply_count": 0,
-                "reaction_scores": {},
-                "attachments": [],
-                "latest_reactions": [],
-                "own_reactions": [],
-                "mentioned_users": []
-            }
-            """.data(using: .utf8)!
-        }
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: channelId), query: nil, cache: nil)
-            let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: messageJSON(shadowed: true))
-            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
-        }
-
-        var storedIsShadowed: Bool? {
-            try? database.readSynchronously { session in
-                try XCTUnwrap(session.message(id: messageId)).isShadowed
-            }
-        }
-        XCTAssertEqual(storedIsShadowed, true)
-
-        // The payload does not say anything about `shadowed`, so the stored value is kept
-        try database.writeSynchronously { session in
-            let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: messageJSON(shadowed: nil))
-            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
-        }
-
-        XCTAssertEqual(storedIsShadowed, true)
-    }
-
     func test_messagePayload_isPinned_addedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)

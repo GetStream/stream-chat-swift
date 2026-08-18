@@ -3,6 +3,12 @@
     "channel_id" : "general",
     "created_at" : "2020-07-17T13:49:48.158327128Z",
     "message" : {
+        "cid" : "messaging:general",
+        "deleted_reply_count" : 0,
+        "mentioned_channel" : false,
+        "mentioned_here" : false,
+        "restricted_visibility" : [],
+        "shadowed" : false,
         "id" : "1ff9f6d0-df70-4703-aef0-379f95ad7366",
         "reaction_counts" : null,
         "silent" : false,
