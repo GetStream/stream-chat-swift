@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension CleanUpTypingEvent: @retroactive Equatable {
+extension CleanUpTypingEvent: Equatable {
     public static func == (lhs: CleanUpTypingEvent, rhs: CleanUpTypingEvent) -> Bool {
         lhs.cid == rhs.cid && lhs.userId == rhs.userId
     }
