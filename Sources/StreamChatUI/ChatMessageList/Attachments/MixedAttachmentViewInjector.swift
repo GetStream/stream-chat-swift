@@ -21,6 +21,7 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
         (.video, GalleryAttachmentViewInjector.self),
         (.image, GalleryAttachmentViewInjector.self),
         (.file, FilesAttachmentViewInjector.self),
+        (.audio, FilesAttachmentViewInjector.self),
         (.voiceRecording, VoiceRecordingAttachmentViewInjector.self)
     ]
 
