@@ -211,7 +211,7 @@ final class MessageState_Tests: XCTestCase {
                     user: .dummy(userId: .unique)
                 )
             }
-        return MessagePayload.dummy(messageId: messageId, latestReactions: reactions)
+        return MessagePayload.dummy(messageId: messageId, latestReactions: reactions, cid: channelId)
     }
     
     private func makeMessageRepliesPayload(repliesCount: Int, parentMessageId: MessageId) -> [MessagePayload] {

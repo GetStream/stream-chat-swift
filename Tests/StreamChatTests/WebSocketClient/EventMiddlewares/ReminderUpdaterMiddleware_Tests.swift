@@ -47,7 +47,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
-                payload: .dummy(messageId: messageId, authorUserId: "test-user"),
+                payload: .dummy(messageId: messageId, authorUserId: "test-user", cid: cid),
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -82,7 +82,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
-                payload: .dummy(messageId: messageId, authorUserId: "test-user"),
+                payload: .dummy(messageId: messageId, authorUserId: "test-user", cid: cid),
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -135,7 +135,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
-                payload: .dummy(messageId: messageId, authorUserId: "test-user"),
+                payload: .dummy(messageId: messageId, authorUserId: "test-user", cid: cid),
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -178,7 +178,7 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
-                payload: .dummy(messageId: messageId, authorUserId: "test-user"),
+                payload: .dummy(messageId: messageId, authorUserId: "test-user", cid: cid),
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil

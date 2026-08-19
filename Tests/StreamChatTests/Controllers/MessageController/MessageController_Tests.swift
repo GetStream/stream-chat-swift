@@ -348,7 +348,8 @@ final class MessageController_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
-            text: .unique
+            text: .unique,
+            cid: cid
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
@@ -387,14 +388,16 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: cid
         )
 
         let reply2: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: cid
         )
         try saveReplies(with: [reply1, reply2])
         try waitForRepliesChange(count: 2)
@@ -434,7 +437,8 @@ final class MessageController_Tests: XCTestCase {
             parentId: messageId,
             showReplyInChannel: false,
             authorUserId: .unique,
-            createdAt: .unique(after: truncatedDate)
+            createdAt: .unique(after: truncatedDate),
+            cid: cid
         )
 
         let createdAt = Date.unique(after: truncatedDate)
@@ -444,7 +448,8 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             createdAt: createdAt,
-            deletedAt: .unique(after: createdAt)
+            deletedAt: .unique(after: createdAt),
+            cid: cid
         )
 
         // Insert 3rd reply before truncation date
@@ -453,7 +458,8 @@ final class MessageController_Tests: XCTestCase {
             parentId: messageId,
             showReplyInChannel: false,
             authorUserId: .unique,
-            createdAt: .unique(before: truncatedDate)
+            createdAt: .unique(before: truncatedDate),
+            cid: cid
         )
 
         // Save messages
@@ -491,6 +497,7 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             createdAt: .unique(after: truncatedDate),
+            cid: cid,
             isShadowed: false
         )
 
@@ -502,6 +509,7 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             createdAt: createdAt,
+            cid: cid,
             isShadowed: true
         )
 
@@ -541,6 +549,7 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             createdAt: .unique(after: truncatedDate),
+            cid: cid,
             isShadowed: false
         )
 
@@ -552,6 +561,7 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             createdAt: createdAt,
+            cid: cid,
             isShadowed: true
         )
 
@@ -621,7 +631,8 @@ final class MessageController_Tests: XCTestCase {
         // Simulate response from a backend with a message that doesn't exist locally
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: currentUserId
+            authorUserId: currentUserId,
+            cid: cid
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
@@ -658,7 +669,8 @@ final class MessageController_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
-            text: "new text"
+            text: "new text",
+            cid: cid
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
@@ -2525,7 +2537,7 @@ final class MessageController_Tests: XCTestCase {
     @discardableResult
     private func saveReplies(with ids: [MessageId], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
         let payloads: [MessagePayload] = ids.map {
-            MessagePayload.dummy(messageId: $0, parentId: self.messageId)
+            MessagePayload.dummy(messageId: $0, parentId: self.messageId, cid: self.cid)
         }
 
         return try saveReplies(with: payloads, channelPayload: channelPayload)
@@ -2538,7 +2550,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload ?? .dummy(channel: .dummy(cid: self.cid)))
             let parentMessage = try session.saveMessage(
-                payload: .dummy(messageId: self.messageId),
+                payload: .dummy(messageId: self.messageId, cid: self.cid),
                 syncOwnReactions: false,
                 cache: nil
             )

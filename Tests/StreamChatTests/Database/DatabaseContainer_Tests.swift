@@ -396,6 +396,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveUser(payload: .dummy(userId: .unique))
             let messages: [MessagePayload] = [
                 .dummy(
+                    cid: cid,
                     reactionGroups: [
                         "like": MessageReactionGroupPayload(
                             count: 1,
@@ -407,6 +408,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                     moderation: .dummy(originalText: "yo", action: "spam")
                 ),
                 .dummy(
+                    cid: cid,
                     poll: self.dummyPollPayload(
                         createdById: currentUserId,
                         id: "pollId",
@@ -415,9 +417,9 @@ final class DatabaseContainer_Tests: XCTestCase {
                         user: .dummy(userId: currentUserId)
                     )
                 ),
-                .dummy(mentionedGroups: [.dummy()]),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid, mentionedGroups: [.dummy()]),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
             try messages.forEach {
                 let message = try session.saveMessage(payload: $0, syncOwnReactions: true, cache: nil)
@@ -438,7 +440,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                 )
             }
             try session.saveMessage(
-                payload: .dummy(channel: .dummy(cid: cid)),
+                payload: .dummy(cid: cid, channel: .dummy(cid: cid)),
                 for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
                 cache: nil
             )

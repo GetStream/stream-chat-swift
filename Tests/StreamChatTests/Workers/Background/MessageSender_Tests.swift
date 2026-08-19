@@ -493,7 +493,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             let message = try session.saveMessage(
-                payload: .dummy(messageId: messageId),
+                payload: .dummy(messageId: messageId, cid: channelId),
                 syncOwnReactions: false,
                 cache: nil
             )

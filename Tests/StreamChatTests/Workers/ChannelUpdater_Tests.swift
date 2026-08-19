@@ -357,7 +357,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)dames"),
+                    payload: self.dummyMessagePayload(id: "\($0)dames", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -394,7 +394,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)dames"),
+                    payload: self.dummyMessagePayload(id: "\($0)dames", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -437,7 +437,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)"),
+                    payload: self.dummyMessagePayload(id: "\($0)", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -480,7 +480,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)"),
+                    payload: self.dummyMessagePayload(id: "\($0)", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -2509,9 +2509,9 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let payload = PinnedMessagesPayload(messages: [
-            .dummy(messageId: .unique, authorUserId: .unique),
-            .dummy(messageId: .unique, authorUserId: .unique),
-            .dummy(messageId: .unique, authorUserId: .unique)
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid)
         ])
 
         apiClient.test_simulateResponse(Result<PinnedMessagesPayload, Error>.success(payload))

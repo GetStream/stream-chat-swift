@@ -50,8 +50,8 @@ final class MessageEvents_Tests: XCTestCase {
         ]
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         let userPayload = UserPayload.dummy(userId: .unique)
-        let messagePayload = MessagePayload.dummy(messageId: .unique, authorUserId: userPayload.id)
         let cid: ChannelId = .unique
+        let messagePayload = MessagePayload.dummy(messageId: .unique, authorUserId: userPayload.id, cid: cid)
         let eventPayload = EventPayload(
             eventType: .messageNew,
             cid: cid,

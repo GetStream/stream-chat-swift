@@ -314,6 +314,7 @@ extension DatabaseContainer {
                 latestReactions: latestReactions,
                 ownReactions: ownReactions,
                 updatedAt: updatedAt,
+                cid: cid,
                 pinned: pinned,
                 pinnedByUserId: pinnedByUserId,
                 pinnedAt: pinnedAt,
@@ -345,7 +346,8 @@ extension DatabaseContainer {
                     parentId: id,
                     authorUserId: authorId,
                     text: "Reply \(idx)",
-                    extraData: extraData
+                    extraData: extraData,
+                    cid: cid
                 )
 
                 let replyDTO = try session.saveMessage(

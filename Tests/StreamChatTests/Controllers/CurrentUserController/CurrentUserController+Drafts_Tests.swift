@@ -202,7 +202,7 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
             let parentId = MessageId.unique
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
-            try session.saveMessage(payload: .dummy(messageId: parentId), syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: .dummy(messageId: parentId, cid: cid), syncOwnReactions: false, cache: nil)
 
             // Test a draft in a channel and thread in the same channel
             let messages = [

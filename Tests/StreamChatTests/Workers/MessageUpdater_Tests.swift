@@ -198,6 +198,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
+                    cid: channelId,
                     moderation: .init(
                         action: MessageModerationAction.bounce.rawValue,
                         originalText: ""
@@ -1029,10 +1030,10 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [
-            .dummy(messageId: .unique, authorUserId: .unique)
-        ])
         let cid = ChannelId.unique
+        let repliesPayload: MessageRepliesPayload = .init(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid)
+        ])
 
         // Create channel in the database
         try database.createChannel(cid: cid)
@@ -1073,7 +1074,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
-            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
+            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique, cid: cid) }
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
 
@@ -1087,34 +1088,36 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_shouldSetNewestReplyAt() throws {
+        let cid: ChannelId = .unique
         let pagination = MessagesPagination(pageSize: 3, parameter: .around(.unique))
         let expectedNewestReplyAt = Date.unique
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
-                .dummy(),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
         )
 
         paginationStateHandler.mockState.newestFetchedMessage = .dummy(createdAt: expectedNewestReplyAt)
 
-        try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: pagination)
+        try AssertLoadReplies(cid: cid, expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: pagination)
     }
 
     func test_loadReplies_whenNewestFetchedMessageIsNil_shouldSetNewestReplyAtToNil() throws {
+        let cid: ChannelId = .unique
         let pagination = MessagesPagination(pageSize: 3, parameter: nil)
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
-                .dummy(),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
         )
 
         paginationStateHandler.mockState.newestFetchedMessage = nil
 
-        try AssertLoadReplies(expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
+        try AssertLoadReplies(cid: cid, expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
     }
 
     func test_loadReplies_whenIsFirstPage_shouldClearCurrentMessagesExcludingLocalOnly() throws {
@@ -1258,7 +1261,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Add it to DB as it is as expected after a successful getMessage call
         try database.writeSynchronously { session in
             try session.saveMessage(
-                payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId),
+                payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId, cid: cid),
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -2459,6 +2462,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
+                    cid: channelId,
                     moderation: .init(
                         action: MessageModerationAction.bounce.rawValue,
                         originalText: ""
@@ -2626,7 +2630,8 @@ final class MessageUpdater_Tests: XCTestCase {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
-                authorUserId: currentUserId
+                authorUserId: currentUserId,
+                cid: cid
             )
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -2834,7 +2839,8 @@ final class MessageUpdater_Tests: XCTestCase {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
-                authorUserId: currentUserId
+                authorUserId: currentUserId,
+                cid: cid
             )
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -3484,6 +3490,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
 extension MessageUpdater_Tests {
     private func AssertLoadReplies(
+        cid: ChannelId,
         expectedNewestReplyAt: Date?,
         for repliesPayload: MessageRepliesPayload,
         with pagination: MessagesPagination,
@@ -3492,11 +3499,10 @@ extension MessageUpdater_Tests {
     ) throws {
         // GIVEN
         let parentMessageId = MessageId.unique
-        let cid: ChannelId = .unique
         try database.createChannel(cid: cid)
         try database.writeSynchronously { session in
             try session.saveMessage(
-                payload: .dummy(messageId: parentMessageId, text: "Example"),
+                payload: .dummy(messageId: parentMessageId, text: "Example", cid: cid),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3540,14 +3546,14 @@ extension MessageUpdater_Tests {
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
             let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             let parentMessage = try session.saveMessage(
-                payload: .dummy(messageId: parentMessageId),
+                payload: .dummy(messageId: parentMessageId, cid: cid),
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
                 cache: nil
             )
             try currentMessageIds.enumerated().forEach { index, message in
                 let currentMessage = try session.saveMessage(
-                    payload: .dummy(type: index == 0 ? .error : .regular, messageId: message),
+                    payload: .dummy(type: index == 0 ? .error : .regular, messageId: message, cid: cid),
                     channelDTO: channelDTO,
                     syncOwnReactions: false,
                     cache: nil
@@ -3567,7 +3573,7 @@ extension MessageUpdater_Tests {
 
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
-            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
+            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique, cid: cid) }
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
 

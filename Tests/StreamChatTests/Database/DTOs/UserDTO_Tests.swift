@@ -363,7 +363,8 @@ final class UserDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
-            text: "Yo"
+            text: "Yo",
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
@@ -400,7 +401,8 @@ final class UserDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
-            text: "Yo"
+            text: "Yo",
+            cid: channelId
         )
 
         try database.writeSynchronously { session in

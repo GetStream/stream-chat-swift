@@ -622,7 +622,8 @@ final class DatabaseSession_Tests: XCTestCase {
         let newMessage: MessagePayload = .dummy(
             messageId: .unique,
             parentId: .unique,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: channel.channel.cid
         )
 
         // Save a message in pending state (SendMessageInterceptor use case)

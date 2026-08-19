@@ -482,7 +482,8 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: userId,
             extraData: ["k1": .string("v1")],
-            createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 1
+            createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 1,
+            cid: channelId
         )
 
         let messagePayload: MessagePayload = .dummy(
@@ -498,6 +499,7 @@ final class MessageDTO_Tests: XCTestCase {
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
             ],
             createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 2,
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -523,7 +525,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try! database.writeSynchronously { session in
-            // Save the message, it should also save the channel
+            try! session.saveChannel(payload: channelPayload, query: nil, cache: nil)
             try! session.saveMessage(payload: messagePayload, syncOwnReactions: true, cache: nil)
         }
 
@@ -660,7 +662,7 @@ final class MessageDTO_Tests: XCTestCase {
             let expectedMessage = shouldOverwrite ? "Edited Text" : "Original Text"
             let messageId = MessageId.unique
             let channelId = ChannelId.unique
-            let originalMessage = MessagePayload.dummy(messageId: messageId, text: "Original Text")
+            let originalMessage = MessagePayload.dummy(messageId: messageId, text: "Original Text", cid: channelId)
 
             try database.writeSynchronously {
                 try $0.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
@@ -676,7 +678,7 @@ final class MessageDTO_Tests: XCTestCase {
             XCTAssertEqual(messageInDatabase?.localMessageState, state)
 
             // When
-            let editedMessage = MessagePayload.dummy(messageId: messageId, text: "Edited Text")
+            let editedMessage = MessagePayload.dummy(messageId: messageId, text: "Edited Text", cid: channelId)
             try database.writeSynchronously {
                 try $0.saveMessage(payload: editedMessage, syncOwnReactions: false, cache: nil)
             }
@@ -704,6 +706,7 @@ final class MessageDTO_Tests: XCTestCase {
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
             ],
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -804,6 +807,7 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: messageId,
                     authorUserId: userId,
+                    cid: channelId,
                     member: MemberInfoPayload(channelRole: MemberRole.moderator.rawValue, notificationsMuted: false)
                 ),
                 syncOwnReactions: false,
@@ -835,6 +839,7 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            cid: channelId,
             pinned: true
         )
 
@@ -863,11 +868,12 @@ final class MessageDTO_Tests: XCTestCase {
     func test_messagePayload_isPinned_whenAlreadyAddedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
-        let channelPayload: ChannelPayload = dummyPayload(with: channelId, pinnedMessages: [.dummy(messageId: messageId)])
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId, pinnedMessages: [.dummy(messageId: messageId, cid: channelId)])
         let payload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            cid: channelId,
             pinned: true
         )
 
@@ -899,6 +905,7 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            cid: channelId,
             pinned: false
         )
 
@@ -933,6 +940,7 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: "2018-12-12T15:33:46.488935Z".toDate(),
@@ -969,6 +977,7 @@ final class MessageDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
+            cid: channelId,
             reactionScores: ["like": 10],
             reactionCounts: ["like": 2]
         )
@@ -998,7 +1007,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
 
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId, cid: channelId)
 
         try database.writeSynchronously { session in
             // Create the channel first
@@ -1048,7 +1057,8 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: messageId,
             quotedMessage: .dummy(
                 messageId: quotedMessageId,
-                authorUserId: quotedMessageAuthorId
+                authorUserId: quotedMessageAuthorId,
+                cid: channelId
             ),
             attachments: [
                 imageAttachmentPayload,
@@ -1066,6 +1076,7 @@ final class MessageDTO_Tests: XCTestCase {
             ownReactions: (0..<2).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: currentUserId))
             },
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -1346,7 +1357,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
 
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId, cid: channelId)
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -1483,12 +1494,14 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
+            cid: channelId,
             moderation: .dummy(originalText: "original", action: "dummy")
         )
 
         let messagePayloadResetModeration: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
+            cid: channelId,
             moderation: nil
         )
 
@@ -1790,12 +1803,14 @@ final class MessageDTO_Tests: XCTestCase {
             role: .admin
         )
 
+        let cid: ChannelId = .unique
+
         let previewMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: currentUserId
+            authorUserId: currentUserId,
+            cid: cid
         )
 
-        let cid: ChannelId = .unique
         let channel: ChannelPayload = .dummy(
             channel: .dummy(cid: cid),
             messages: [previewMessage]
@@ -2096,7 +2111,8 @@ final class MessageDTO_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             text: "Reply",
-            extraData: [:]
+            extraData: [:],
+            cid: cid
         )
 
         // Save reply payload
@@ -2166,7 +2182,8 @@ final class MessageDTO_Tests: XCTestCase {
         let olderMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(before: channelPayload.channel.lastMessageAt!),
+            cid: channelId
         )
         assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
@@ -2180,7 +2197,8 @@ final class MessageDTO_Tests: XCTestCase {
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!),
+            cid: channelId
         )
         assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is updated
@@ -2210,7 +2228,8 @@ final class MessageDTO_Tests: XCTestCase {
         let olderMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(before: channelPayload.channel.lastMessageAt!),
+            cid: channelId
         )
         assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
@@ -2225,7 +2244,8 @@ final class MessageDTO_Tests: XCTestCase {
             type: .system,
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!),
+            cid: channelId
         )
         assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
 
@@ -2265,6 +2285,7 @@ final class MessageDTO_Tests: XCTestCase {
             authorUserId: messageAuthorId,
             latestReactions: [],
             ownReactions: [],
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -2277,12 +2298,14 @@ final class MessageDTO_Tests: XCTestCase {
                 messageId: messageId,
                 quotedMessage: .dummy(
                     messageId: quotedMessageId,
-                    authorUserId: messageAuthorId
+                    authorUserId: messageAuthorId,
+                    cid: channelId
                 ),
                 attachments: [],
                 authorUserId: messageAuthorId,
                 latestReactions: [],
                 ownReactions: [],
+                cid: channelId,
                 pinned: true,
                 pinnedByUserId: .unique,
                 pinnedAt: .unique,
@@ -2341,6 +2364,7 @@ final class MessageDTO_Tests: XCTestCase {
             authorUserId: messageAuthorId,
             latestReactions: [],
             ownReactions: [],
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -2355,6 +2379,7 @@ final class MessageDTO_Tests: XCTestCase {
             authorUserId: messageAuthorId,
             latestReactions: [],
             ownReactions: [],
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -2371,6 +2396,7 @@ final class MessageDTO_Tests: XCTestCase {
             authorUserId: messageAuthorId,
             latestReactions: [],
             ownReactions: [],
+            cid: channelId,
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -2406,7 +2432,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldIncludeRepliesOnChannel() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
 
         let message: MessagePayload = .dummy(
             type: .regular,
@@ -2415,7 +2441,8 @@ final class MessageDTO_Tests: XCTestCase {
             showReplyInChannel: true,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
@@ -2423,14 +2450,15 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldNotIncludeDeletedReplies() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .deleted,
             messageId: .unique,
             parentId: .unique,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
@@ -2438,13 +2466,14 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldIncludeSystemMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .system,
             messageId: .unique,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
@@ -2452,13 +2481,14 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldIncludeEphemeralMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .ephemeral,
             messageId: .unique,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
@@ -2466,14 +2496,15 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldNotIncludeEphemeralMessagesOnThreads() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .ephemeral,
             messageId: .unique,
             parentId: .unique,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
@@ -2481,13 +2512,14 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldIncludeRegularMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .regular,
             messageId: .unique,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
@@ -2495,13 +2527,14 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldIncludeDeletedMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .deleted,
             messageId: .unique,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
@@ -2509,7 +2542,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldIncludeDeletedRepliesInChannelMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .deleted,
             messageId: .unique,
@@ -2517,7 +2550,8 @@ final class MessageDTO_Tests: XCTestCase {
             showReplyInChannel: true,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
@@ -2525,7 +2559,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldNotIncludeDeletedRepliesMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .deleted,
             messageId: .unique,
@@ -2533,7 +2567,8 @@ final class MessageDTO_Tests: XCTestCase {
             showReplyInChannel: false,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
@@ -2541,7 +2576,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_channelMessagesPredicate_shouldNotIncludeHardDeletedMessages() throws {
         let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        try database.createChannel(cid: channelId, withMessages: false)
         let message: MessagePayload = .dummy(
             type: .deleted,
             messageId: .unique,
@@ -2549,7 +2584,8 @@ final class MessageDTO_Tests: XCTestCase {
             showReplyInChannel: true,
             attachments: [],
             authorUserId: .unique,
-            createdAt: Date(timeIntervalSince1970: 1)
+            createdAt: Date(timeIntervalSince1970: 1),
+            cid: channelId
         )
 
         let predicateCount = try checkChannelMessagesPredicateCount(channelId: channelId, message: message, isHardDeleted: true)
@@ -2621,7 +2657,8 @@ final class MessageDTO_Tests: XCTestCase {
         // Create a regular message
         let regularMessage = MessagePayload.dummy(
             messageId: .unique,
-            text: "Regular message"
+            text: "Regular message",
+            cid: cid
         )
 
         // Create a draft message
@@ -2701,13 +2738,15 @@ final class MessageDTO_Tests: XCTestCase {
         request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
 
         let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withMessages: false)
         let message: MessagePayload =
             .dummy(
                 type: .regular,
                 messageId: .unique,
                 attachments: [],
                 authorUserId: .unique,
-                createdAt: Date(timeIntervalSince1970: 1)
+                createdAt: Date(timeIntervalSince1970: 1),
+                cid: cid
             )
 
         try database.writeSynchronously { session in
@@ -2729,13 +2768,15 @@ final class MessageDTO_Tests: XCTestCase {
         request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
 
         let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withMessages: false)
         let message: MessagePayload =
             .dummy(
                 type: .regular,
                 messageId: .unique,
                 attachments: [],
                 authorUserId: .unique,
-                createdAt: Date(timeIntervalSince1970: 1)
+                createdAt: Date(timeIntervalSince1970: 1),
+                cid: cid
             )
 
         try database.writeSynchronously { session in
@@ -2772,13 +2813,15 @@ final class MessageDTO_Tests: XCTestCase {
         request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
 
         let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withMessages: false)
         let message: MessagePayload =
             .dummy(
                 type: .regular,
                 messageId: .unique,
                 attachments: [],
                 authorUserId: .unique,
-                createdAt: Date(timeIntervalSince1970: 1)
+                createdAt: Date(timeIntervalSince1970: 1),
+                cid: cid
             )
 
         try database.writeSynchronously { session in
@@ -2815,13 +2858,15 @@ final class MessageDTO_Tests: XCTestCase {
         request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
 
         let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withMessages: false)
         let message: MessagePayload =
             .dummy(
                 type: .regular,
                 messageId: .unique,
                 attachments: [],
                 authorUserId: .unique,
-                createdAt: Date(timeIntervalSince1970: 1)
+                createdAt: Date(timeIntervalSince1970: 1),
+                cid: cid
             )
 
         try database.writeSynchronously { session in
@@ -2876,7 +2921,8 @@ final class MessageDTO_Tests: XCTestCase {
                 let message = MessagePayload.dummy(
                     messageId: .unique,
                     authorUserId: currentUserId,
-                    createdAt: createdAtFrom.addingTimeInterval(10)
+                    createdAt: createdAtFrom.addingTimeInterval(10),
+                    cid: cid
                 )
                 try session.saveMessage(payload: message, syncOwnReactions: true, cache: nil)
             }
@@ -2900,7 +2946,8 @@ final class MessageDTO_Tests: XCTestCase {
                 let message = MessagePayload.dummy(
                     messageId: .unique,
                     authorUserId: currentUserId,
-                    createdAt: createdAtFrom.addingTimeInterval(10)
+                    createdAt: createdAtFrom.addingTimeInterval(10),
+                    cid: cid
                 )
                 try session.saveMessage(payload: message, syncOwnReactions: true, cache: nil)
             }
@@ -2909,7 +2956,8 @@ final class MessageDTO_Tests: XCTestCase {
                 let message = MessagePayload.dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom.addingTimeInterval(10)
+                    createdAt: createdAtFrom.addingTimeInterval(10),
+                    cid: cid
                 )
                 try session.saveMessage(payload: message, syncOwnReactions: true, cache: nil)
             }
@@ -2933,7 +2981,8 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom.addingTimeInterval(-1)
+                    createdAt: createdAtFrom.addingTimeInterval(-1),
+                    cid: cid
                 ),
                 syncOwnReactions: false,
                 cache: nil
@@ -2943,7 +2992,8 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom
+                    createdAt: createdAtFrom,
+                    cid: cid
                 ),
                 syncOwnReactions: false,
                 cache: nil
@@ -2953,7 +3003,8 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom.addingTimeInterval(1)
+                    createdAt: createdAtFrom.addingTimeInterval(1),
+                    cid: cid
                 ),
                 syncOwnReactions: false,
                 cache: nil
@@ -3462,7 +3513,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(message)
+            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(message, channelTruncatedAt: truncatedAt)
         )
     }
 
@@ -3603,10 +3654,12 @@ final class MessageDTO_Tests: XCTestCase {
         let targetMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            createdAt: .init()
+            createdAt: .init(),
+            cid: channel.cid
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: targetMessage,
                 syncOwnReactions: false,
@@ -3650,10 +3703,12 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: .init(),
+            cid: channel.cid,
             isShadowed: true
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: shadowedMessage,
                 syncOwnReactions: false,
@@ -3684,10 +3739,12 @@ final class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: .init(),
+            cid: channel.cid,
             isShadowed: true
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: shadowedMessage,
                 syncOwnReactions: false,
@@ -3754,7 +3811,7 @@ final class MessageDTO_Tests: XCTestCase {
 
             try pairs.forEach { id, state, attachments in
                 let message = try session.saveMessage(
-                    payload: .dummy(messageId: id, attachments: attachments),
+                    payload: .dummy(messageId: id, attachments: attachments, cid: channelId),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -3789,7 +3846,7 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
 
             let message = try session.saveMessage(
-                payload: .dummy(messageId: messageId, attachments: []),
+                payload: .dummy(messageId: messageId, attachments: [], cid: channelId),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3984,6 +4041,7 @@ final class MessageDTO_Tests: XCTestCase {
                 let messagePayload: MessagePayload = .dummy(
                     messageId: id,
                     authorUserId: userId,
+                    cid: channelId,
                     sharedLocation: .dummy(
                         channelId: channelId,
                         endAt: isActive ? .distantFuture : .distantPast,
@@ -4039,6 +4097,7 @@ final class MessageDTO_Tests: XCTestCase {
             let sentMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
+                cid: channelId,
                 sharedLocation: .dummy(
                     channelId: channelId,
                     endAt: .distantFuture, // Active location
@@ -4059,6 +4118,7 @@ final class MessageDTO_Tests: XCTestCase {
             let pendingSendMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
+                cid: channelId,
                 sharedLocation: .dummy(
                     channelId: channelId,
                     endAt: .distantFuture,
@@ -4078,6 +4138,7 @@ final class MessageDTO_Tests: XCTestCase {
             let sendingFailedMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
+                cid: channelId,
                 sharedLocation: .dummy(
                     channelId: channelId,
                     endAt: .distantFuture,
@@ -4097,6 +4158,7 @@ final class MessageDTO_Tests: XCTestCase {
             let pendingSyncMessagePayload: MessagePayload = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
+                cid: channelId,
                 sharedLocation: .dummy(
                     channelId: channelId,
                     endAt: .distantFuture,
@@ -4338,11 +4400,12 @@ final class MessageDTO_Tests: XCTestCase {
         createdAtFrom: Date? = nil,
         createdAtThrough: Date? = nil,
         saveAuthorAsCurrentUser: Bool = true,
-        messageLocalState: LocalMessageState? = nil
+        messageLocalState: LocalMessageState? = nil,
+        channelTruncatedAt: Date? = nil
     ) -> Bool {
         let context = database.viewContext
         let cid = try! ChannelId(cid: message.cid)
-        _ = try! context.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+        _ = try! context.saveChannel(payload: .dummy(cid: cid, truncatedAt: channelTruncatedAt), query: nil, cache: nil)
 
         if saveAuthorAsCurrentUser {
             _ = try! context.saveCurrentUser(payload: .dummy(userPayload: message.user))
@@ -4485,7 +4548,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
         let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
         let parentMessageId = MessageId.unique
-        let parentMessage = MessagePayload.dummy(messageId: parentMessageId)
+        let parentMessage = MessagePayload.dummy(messageId: parentMessageId, cid: cid)
         
         let draftPayload = DraftPayload.dummy(
             cid: cid,
@@ -4534,6 +4597,7 @@ final class MessageDTO_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         let parentMessage = MessagePayload.dummy(
             messageId: parentMessageId,
+            cid: cid,
             draft: .dummy(cid: cid, message: draftMessage)
         )
         let draftPayload = DraftPayload.dummy(
@@ -4683,7 +4747,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid)
         let channelPayload: ChannelPayload = .dummy(channel: channelDetailPayload)
         let parentMessageId = MessageId.unique
-        let parentMessage = MessagePayload.dummy(messageId: parentMessageId)
+        let parentMessage = MessagePayload.dummy(messageId: parentMessageId, cid: cid)
         
         let draftPayload = DraftPayload.dummy(
             cid: cid,
@@ -4729,6 +4793,7 @@ final class MessageDTO_Tests: XCTestCase {
             text: "Draft message text"
         )
         let messagePayload = MessagePayload.dummy(
+            cid: cid,
             draft: .dummy(
                 cid: cid,
                 message: draftMessagePayload
@@ -4757,6 +4822,7 @@ final class MessageDTO_Tests: XCTestCase {
             text: "Draft message text"
         )
         let messagePayload = MessagePayload.dummy(
+            cid: cid,
             draft: .dummy(
                 cid: cid,
                 message: draftMessagePayload
@@ -4777,6 +4843,7 @@ final class MessageDTO_Tests: XCTestCase {
         // Save channel without draft
         let payloadWithoutDraft = MessagePayload.dummy(
             messageId: messagePayload.id,
+            cid: cid,
             draft: nil
         )
 
@@ -4796,6 +4863,7 @@ final class MessageDTO_Tests: XCTestCase {
             text: "Draft message text"
         )
         let messagePayload = MessagePayload.dummy(
+            cid: cid,
             draft: .dummy(
                 cid: cid,
                 message: draftMessagePayload
@@ -4821,6 +4889,7 @@ final class MessageDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messagePayload = MessagePayload.dummy(
             messageId: .unique,
+            cid: cid,
             deletedForMe: true
         )
         
@@ -4844,6 +4913,7 @@ final class MessageDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messagePayload = MessagePayload.dummy(
             messageId: .unique,
+            cid: cid,
             deletedForMe: false
         )
         
@@ -4867,6 +4937,7 @@ final class MessageDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messagePayload = MessagePayload.dummy(
             messageId: .unique,
+            cid: cid,
             deletedForMe: nil
         )
         

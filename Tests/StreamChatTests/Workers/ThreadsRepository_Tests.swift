@@ -35,7 +35,7 @@ final class ThreadsRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             try session.saveMessage(
-                payload: .dummy(messageId: messageId),
+                payload: .dummy(messageId: messageId, cid: channelId),
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -97,7 +97,7 @@ final class ThreadsRepository_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             try session.saveMessage(
-                payload: .dummy(messageId: messageId),
+                payload: .dummy(messageId: messageId, cid: channelId),
                 syncOwnReactions: false,
                 cache: nil
             )

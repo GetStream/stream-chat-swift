@@ -169,7 +169,7 @@ extension XCTestCase {
             payloadMessages = messages
         } else {
             for _ in 0..<numberOfMessages {
-                payloadMessages += [dummyMessagePayload()]
+                payloadMessages += [dummyMessagePayload(cid: channelId)]
             }
         }
 
@@ -339,7 +339,7 @@ extension XCTestCase {
 
     func dummyThreadPayload(
         parentMessageId: MessageId = .unique,
-        parentMessage: MessagePayload = .dummy(),
+        parentMessage: MessagePayload? = nil,
         channel: ChannelDetailPayload = .dummy(),
         createdBy: UserPayload = .dummy(userId: .newUniqueId),
         replyCount: Int = 0,
@@ -357,7 +357,7 @@ extension XCTestCase {
     ) -> ThreadPayload {
         .init(
             parentMessageId: parentMessageId,
-            parentMessage: parentMessage,
+            parentMessage: parentMessage ?? .dummy(cid: channel.cid),
             channel: channel,
             createdBy: createdBy,
             replyCount: replyCount,

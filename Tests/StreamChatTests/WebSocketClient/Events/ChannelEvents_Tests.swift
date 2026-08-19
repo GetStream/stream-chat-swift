@@ -117,7 +117,7 @@ final class ChannelEvents_Tests: XCTestCase {
             cid: cid,
             user: .dummy(userId: .unique),
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, authorUserId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             createdAt: .unique
         )
 

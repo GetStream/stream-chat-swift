@@ -189,7 +189,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
-                payload: .dummy(messageId: messageId, authorUserId: .unique),
+                payload: .dummy(messageId: messageId, authorUserId: .unique, cid: cid),
                 syncOwnReactions: false,
                 cache: nil
             )
