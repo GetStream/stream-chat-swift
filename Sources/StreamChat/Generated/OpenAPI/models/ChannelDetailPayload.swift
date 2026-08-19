@@ -18,6 +18,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
     let cooldown: Int?
     /// Date/time of creation
     let createdAt: Date
+    /// User response object
     let createdBy: UserPayload?
     /// Custom data for this object
     let custom: [String: RawJSON]
@@ -47,11 +48,12 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
     /// Whether this channel is muted or not
     let muted: Bool?
     /// List of channel capabilities of authenticated user
-    let ownCapabilities: [ChannelOwnCapability]?
+    let ownCapabilities: [ChannelCapability]?
     /// Team the channel belongs to (multi-tenant only)
     let team: String?
     /// Date of the latest truncation of the channel
     let truncatedAt: Date?
+    /// User response object
     let truncatedBy: UserPayload?
     /// Type of the channel
     let type: String
@@ -81,7 +83,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
         messageCount: Int? = nil,
         muteExpiresAt: Date? = nil,
         muted: Bool? = nil,
-        ownCapabilities: [ChannelOwnCapability]? = nil,
+        ownCapabilities: [ChannelCapability]? = nil,
         team: String? = nil,
         truncatedAt: Date? = nil,
         truncatedBy: UserPayload? = nil,
@@ -183,7 +185,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
         messageCount = try container.decodeIfPresent(Int.self, forKey: .messageCount)
         muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
         muted = try container.decodeIfPresent(Bool.self, forKey: .muted)
-        ownCapabilities = try container.decodeIfPresent([ChannelOwnCapability].self, forKey: .ownCapabilities)
+        ownCapabilities = try container.decodeIfPresent([ChannelCapability].self, forKey: .ownCapabilities)
         team = try container.decodeIfPresent(String.self, forKey: .team)
         truncatedAt = try container.decodeIfPresent(Date.self, forKey: .truncatedAt)
         truncatedBy = try container.decodeIfPresent(UserPayload.self, forKey: .truncatedBy)

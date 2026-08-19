@@ -5,6 +5,7 @@
 import Foundation
 
 final class MutedChannelPayload: Sendable, Codable, JSONEncodable {
+    /// Represents channel in chat
     let channel: ChannelDetailPayload?
     /// Date/time of creation
     let createdAt: Date
@@ -12,6 +13,7 @@ final class MutedChannelPayload: Sendable, Codable, JSONEncodable {
     let expires: Date?
     /// Date/time of the last update
     let updatedAt: Date
+    /// User response object
     let user: UserPayload?
 
     init(

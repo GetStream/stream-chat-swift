@@ -682,7 +682,7 @@ extension ChatChannel {
             createdBy: dto.createdBy?.asModel(),
             config: dto.config.asModel(),
             filterTags: Set(dto.filterTags.map(\.name)),
-            ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
+            ownCapabilities: Set(dto.ownCapabilities.map(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
             isDisabled: dto.isDisabled,
             isBlocked: dto.isBlocked,

@@ -349,6 +349,23 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel.truncatedBy?.id, truncatedBy.id)
     }
 
+    func test_saveChannel_keepsUnrecognizedOwnCapability() throws {
+        let channelId: ChannelId = .unique
+        let payload = ChannelDetailPayload.dummy(
+            cid: channelId,
+            ownCapabilities: [ChannelCapability.sendMessage.rawValue, "future-capability"]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.ownCapabilities, [.sendMessage, ChannelCapability(rawValue: "future-capability")])
+    }
+
     func test_saveChannel_storesAutoTranslation() throws {
         let channelId: ChannelId = .unique
         let payload = ChannelDetailPayload.dummy(

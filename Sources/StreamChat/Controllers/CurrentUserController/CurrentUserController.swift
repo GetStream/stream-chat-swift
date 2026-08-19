@@ -477,7 +477,7 @@ public extension CurrentChatUserController {
         completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
     ) {
         let userPreference = PushPreferenceInput(
-            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
+            chatLevel: level,
             removeDisable: true
         )
 

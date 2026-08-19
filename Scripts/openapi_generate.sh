@@ -191,6 +191,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/chat-manager openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
+    --opt struct_over_enum=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
@@ -398,32 +399,18 @@ rename_generated ReactionResponse MessageReactionPayload
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
+rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
+
+rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
+rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
 rename_generated_type UnmuteResponse EmptyResponse
-
-# Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
-remove_property() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^self\\." p " = " p "$"       { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-}
-remove_property FileUploadResponse duration
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
@@ -460,6 +447,7 @@ remove_property() {
   perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property FileUploadResponse duration
 remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
@@ -485,17 +473,17 @@ retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
 
-remove_nested_enum() {
+remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   awk -v e="$2" '
-    $0 ~ "^    enum " e ":" { skip = 1; next }
-    skip && /^    }$/       { skip = 0; next }
-    skip                    { next }
+    $0 ~ "^(enum|struct) " e ":" { skip = 1; next }
+    skip && /^}$/               { skip = 0; next }
+    skip                        { next }
     { print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
-remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
-remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
+remove_type PushPreferenceInput PushPreferenceInputCallLevel
+remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
 # 4c. Expose selected generated models as public API. The class and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -521,6 +509,27 @@ publicize_model UnreadThread
 publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
+
+# Expose a generated RawRepresentable struct as public API. Unlike publicize_model, the
+#     init must be public too — it is the RawRepresentable requirement — along with every
+#     static let holding a known value. The struct is looked up by name, since the file
+#     named after a model also holds the structs generated for its string properties.
+publicize_raw_representable() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v n="${2:-$1}" '
+    $0 ~ "^struct " n ":" { sub(/^struct /, "public struct "); inside = 1; print; next }
+    inside && /^}$/       { inside = 0; print; next }
+    inside {
+      sub(/^    let /, "    public let ")
+      sub(/^    init\(/, "    public init(")
+      sub(/^    static let /, "    public static let ")
+    }
+    { print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+publicize_raw_representable ChannelCapability
+publicize_raw_representable CreatePollRequestBody VotingVisibility
+publicize_raw_representable PushPreferenceInput PushPreferenceLevel
 
 # Drop `final` from a generated model so hand-written payloads can subclass it.
 unfinalize_model() {

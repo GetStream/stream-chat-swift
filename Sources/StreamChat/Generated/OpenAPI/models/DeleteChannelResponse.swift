@@ -5,6 +5,7 @@
 import Foundation
 
 final class DeleteChannelResponse: Sendable, Codable, JSONEncodable {
+    /// Represents channel in chat
     let channel: ChannelDetailPayload?
 
     init(channel: ChannelDetailPayload? = nil) {

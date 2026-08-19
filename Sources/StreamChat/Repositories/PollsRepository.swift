@@ -20,7 +20,7 @@ class PollsRepository: @unchecked Sendable {
         description: String?,
         enforceUniqueVote: Bool?,
         maxVotesAllowed: Int?,
-        votingVisibility: String?,
+        votingVisibility: VotingVisibility?,
         options: [PollOption]?,
         custom: [String: RawJSON]?,
         completion: @escaping @Sendable (Result<PollPayload, Error>) -> Void
@@ -34,7 +34,7 @@ class PollsRepository: @unchecked Sendable {
             maxVotesAllowed: maxVotesAllowed,
             name: name,
             options: options?.compactMap { PollOptionRequestBody(custom: $0.extraData, text: $0.text) },
-            votingVisibility: votingVisibility.flatMap { .init(rawValue: $0) }
+            votingVisibility: votingVisibility
         )
         apiClient.request(
             endpoint: .createPoll(createPollRequest: request)

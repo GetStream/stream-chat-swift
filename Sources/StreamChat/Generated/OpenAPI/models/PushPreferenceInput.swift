@@ -4,31 +4,26 @@
 
 import Foundation
 
-final class PushPreferenceInput: Sendable, Codable, JSONEncodable {
-    enum PushPreferenceInputChatLevel: String, Sendable, Codable, CaseIterable {
-        case `default`
-        case all
-        case allMentions = "all_mentions"
-        case directMentions = "direct_mentions"
-        case mentions
-        case none
-        case unknown = "_unknown"
+public struct PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sendable {
+    public let rawValue: String
 
-        init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            if let decodedValue = try? container.decode(String.self),
-               let value = Self(rawValue: decodedValue) {
-                self = value
-            } else {
-                self = .unknown
-            }
-        }
+    public init(rawValue: String) {
+        self.rawValue = rawValue
     }
-    
+
+    public static let `default` = Self(rawValue: "default")
+    public static let all = Self(rawValue: "all")
+    public static let allMentions = Self(rawValue: "all_mentions")
+    public static let directMentions = Self(rawValue: "direct_mentions")
+    public static let mentions = Self(rawValue: "mentions")
+    public static let none = Self(rawValue: "none")
+}
+
+final class PushPreferenceInput: Sendable, Codable, JSONEncodable {
     /// Set the push preferences for a specific channel. If empty it sets the default for the user
     let channelCid: String?
     /// Set the level of chat push notifications for the user. Note: "mentions" is deprecated in favor of "direct_mentions". One of: all, mentions, direct_mentions, all_mentions, none, default
-    let chatLevel: PushPreferenceInputChatLevel?
+    let chatLevel: PushPreferenceLevel?
     /// Disable push notifications till a certain time
     let disabledUntil: Date?
     /// Remove the disabled until time. (IE stop snoozing notifications)
@@ -38,7 +33,7 @@ final class PushPreferenceInput: Sendable, Codable, JSONEncodable {
 
     init(
         channelCid: String? = nil,
-        chatLevel: PushPreferenceInputChatLevel? = nil,
+        chatLevel: PushPreferenceLevel? = nil,
         disabledUntil: Date? = nil,
         removeDisable: Bool? = nil,
         userId: String? = nil
