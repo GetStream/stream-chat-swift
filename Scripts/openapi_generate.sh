@@ -72,6 +72,7 @@ allowed_models=(
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
+  ChannelContextResponse
   ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
@@ -512,8 +513,6 @@ remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
 remove_property CreateDraftResponse duration
-# include_channel_context flag is never set and this value is always nil
-remove_property SendMessageResponsePayload channelContext
 remove_property SendMessageResponsePayload duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
