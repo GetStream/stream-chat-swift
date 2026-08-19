@@ -1252,7 +1252,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Add it to DB as it is as expected after a successful getMessage call
@@ -1286,18 +1286,12 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate `unflagMessage` call.
+        apiClient.cleanUp()
         nonisolated(unsafe) var unflagCompletionCalled = false
         messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
             XCTAssertNil(error)
             unflagCompletionCalled = true
         }
-
-        // Assert unflag endpoint is called.
-        let unflagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(false, with: messageId)
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(unflagEndpoint))
-
-        // Simulate unflag API response.
-        apiClient.test_simulateResponse(.success(flagMessagePayload))
 
         // Assert unflag completion is called.
         AssertAsync.willBeTrue(unflagCompletionCalled)
@@ -1308,6 +1302,9 @@ final class MessageUpdater_Tests: XCTestCase {
             // Assert message is not flagged by current user anymore.
             Assert.willBeEqual(messageDTO?.flaggedBy, nil)
         }
+
+        // Assert no API call is made because unflagging is not supported.
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_flagMessage_propagatesError() {
@@ -1343,7 +1340,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with failure.
@@ -1374,7 +1371,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with success.
@@ -1404,7 +1401,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Delete the message from the database.

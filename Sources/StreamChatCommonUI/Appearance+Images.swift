@@ -679,6 +679,7 @@ public extension Appearance {
         public var iconPpt: UIImage = loadImageSafely(with: "file-ppt")
         public var iconXls: UIImage = loadImageSafely(with: "file-xls")
         public var iconMp3: UIImage = loadImageSafely(with: "file-mp3")
+        public var iconAudio: UIImage = loadImageSafely(with: "file-audio")
         public var iconMp4: UIImage = loadImageSafely(with: "file-mp4")
         public var iconHtml: UIImage = loadImageSafely(with: "file-html")
         public var iconZip: UIImage = loadImageSafely(with: "file-zip")
@@ -715,6 +716,7 @@ public extension Appearance {
                     "wav": iconMp3,
                     "m4a": iconMp3,
                     "ogg": iconMp3,
+                    "audio": iconAudio,
                     // Video
                     "mp4": iconMp4,
                     "mov": iconMp4,

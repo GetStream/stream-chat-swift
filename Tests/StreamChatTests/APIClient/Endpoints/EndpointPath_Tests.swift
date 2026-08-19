@@ -254,8 +254,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.messageAction("message_ida"))
 
         assertResultEncodingAndDecoding(.banMember)
-        assertResultEncodingAndDecoding(.flagUser(false))
-        assertResultEncodingAndDecoding(.flagMessage(false))
+        assertResultEncodingAndDecoding(.flagUser)
+        assertResultEncodingAndDecoding(.flagMessage)
         assertResultEncodingAndDecoding(.muteUser(false))
         assertResultEncodingAndDecoding(.blockUsers)
         assertResultEncodingAndDecoding(.unblockUsers)

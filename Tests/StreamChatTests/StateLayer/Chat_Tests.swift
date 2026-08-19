@@ -1177,6 +1177,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(true, env.messageUpdaterMock.flagMessage_flag)
     }
     
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagMessage_whenMessageUpdaterSucceeds_thenUnflagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         env.messageUpdaterMock.flagMessage_completion_result = .success(())
@@ -1186,6 +1187,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(false, env.messageUpdaterMock.flagMessage_flag)
     }
     
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagMessage_whenMessageUpdaterFails_thenUnflagMessageActionSucceeds() async throws {
         let messageId: MessageId = .unique
         env.messageUpdaterMock.flagMessage_completion_result = .failure(expectedTestError)

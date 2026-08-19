@@ -29,6 +29,18 @@ import XCTest
         ])
     }
 
+    func test_injectors_whenImageAndAudio_usesFilesInjectorOnce() {
+        let message = ChatMessage.mock(
+            attachments: [.dummy(type: .image), .dummy(type: .audio)]
+        )
+        let injectors = MixedAttachmentViewInjector.injectors(for: message)
+
+        AssertEqualInjectors(injectors, [
+            GalleryAttachmentViewInjector.self,
+            FilesAttachmentViewInjector.self
+        ])
+    }
+
     func test_injectors_whenImageAndVideo_shouldNotHaveDuplicatedInjectors() {
         let message = ChatMessage.mock(
             attachments: [.dummy(type: .image), .dummy(type: .video), .dummy(type: .file)]

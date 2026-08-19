@@ -548,7 +548,6 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     ) {
         apiClient.request(
             endpoint: .flagMessage(
-                true,
                 with: messageId,
                 reason: reason,
                 extraData: extraData
@@ -563,23 +562,14 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     /// Unflags a message.
     /// - Parameters:
     ///   - messageId: The message identifier to unflag.
-    ///   - completion: Called when the network request is finished.
-    ///   If request fails, the completion will be called with an error.
+    ///   - completion: Called when the completion is delivered.
+    @available(*, deprecated, message: "Unflagging a message is not supported")
     public func unflag(
         messageId: MessageId,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(
-            endpoint: .flagMessage(
-                false,
-                with: messageId,
-                reason: nil,
-                extraData: nil
-            )
-        ) { [weak self] result in
-            self?.callback {
-                completion?(result.error)
-            }
+        callback {
+            completion?(nil)
         }
     }
 

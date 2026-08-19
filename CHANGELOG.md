@@ -17,9 +17,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Apply dynamic search debouncing to `UserGroupSearch` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Apply dynamic search debouncing to `RoleSearch` and `RoleSearchController` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
+- Deprecate `ChatUserController.unflag`, `ChatMessageController.unflag`, `LivestreamChannelController.unflag`, `Chat.unflagMessage`, `LivestreamChat.unflagMessage` and `ConnectedUser.unflag` because unflagging is not supported by the API. Unflagging no longer sends a network request, it only clears the local flag state [#4221](https://github.com/GetStream/stream-chat-swift/pull/4221)
+
+## StreamChatCommonUI
+### ✅ Added
+- Add `Appearance.Images.iconAudio` for audio file type artwork [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 
 ## StreamChatUI
 ### 🐞 Fixed
+- Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
 - Fix unread banner and jump-to-unread button flickering when receiving messages in an open channel [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
   

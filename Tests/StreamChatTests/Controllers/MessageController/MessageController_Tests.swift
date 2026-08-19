@@ -1106,6 +1106,7 @@ final class MessageController_Tests: XCTestCase {
 
     // MARK: - Unflag message
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflag_propagatesError() {
         // Simulate `unflag` call and catch the completion.
         nonisolated(unsafe) var completionError: Error?
@@ -1119,6 +1120,7 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflag_propagatesNilError() {
         // Simulate `unflag` call and catch the completion.
         nonisolated(unsafe) var completionIsCalled = false
@@ -1145,6 +1147,7 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflag_callsUpdater_withCorrectValues() {
         // Simulate `unflag` call.
         controller.unflag()

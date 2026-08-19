@@ -56,13 +56,12 @@ extension Endpoint {
 
 extension Endpoint {
     static func flagUser(
-        _ flag: Bool,
         with userId: UserId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> Endpoint<FlagUserPayload> {
         .init(
-            path: .flagUser(flag),
+            path: .flagUser,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -80,13 +79,12 @@ extension Endpoint {
 
 extension Endpoint {
     static func flagMessage(
-        _ flag: Bool,
         with messageId: MessageId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> Endpoint<FlagMessagePayload> {
         .init(
-            path: .flagMessage(flag),
+            path: .flagMessage,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

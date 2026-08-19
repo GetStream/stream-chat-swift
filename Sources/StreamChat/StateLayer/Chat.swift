@@ -847,6 +847,7 @@ public class Chat: @unchecked Sendable {
     /// - Parameter messageId: The id of the message to be unflagged.
     ///
     /// - Throws: An error while communicating with the Stream API.
+    @available(*, deprecated, message: "Unflagging a message is not supported")
     public func unflagMessage(_ messageId: MessageId) async throws {
         try await messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil)
     }
