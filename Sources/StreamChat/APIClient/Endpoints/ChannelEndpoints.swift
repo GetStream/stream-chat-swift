@@ -82,49 +82,6 @@ extension Endpoint {
         )
     }
     
-    static func muteChannel(
-        cid: ChannelId,
-        expiration: Int? = nil
-    ) -> Endpoint<MutedChannelPayloadResponse> {
-        var body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
-        
-        if let expiration = expiration {
-            body["expiration"] = AnyEncodable(expiration)
-        }
-        
-        return .init(
-            path: .muteChannel(true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: body
-        )
-    }
-
-    static func unmuteChannel(
-        cid: ChannelId
-    ) -> Endpoint<EmptyResponse> {
-        let body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
-
-        return .init(
-            path: .muteChannel(false),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: body
-        )
-    }
-
-    static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .deleteChannel(cid.apiPath),
-            method: .delete,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-    }
-
     static func truncateChannel(
         cid: ChannelId,
         skipPush: Bool,
@@ -141,26 +98,6 @@ extension Endpoint {
                 hardDelete: hardDelete,
                 message: message
             )
-        )
-    }
-
-    static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .showChannel(cid.apiPath, false),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["clear_history": clearHistory]
-        )
-    }
-
-    static func showChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .showChannel(cid.apiPath, true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
         )
     }
 

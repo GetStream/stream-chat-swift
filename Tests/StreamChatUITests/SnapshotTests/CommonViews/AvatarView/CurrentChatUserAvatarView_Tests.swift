@@ -25,7 +25,7 @@ import XCTest
     func test_emptyAppearance() {
         let view = CurrentChatUserAvatarView().withoutAutoresizingMaskConstraints
 
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.backgroundCoreApp = .yellow
         view.appearance = appearance
 

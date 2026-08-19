@@ -205,7 +205,7 @@ final class MemberList_Tests: XCTestCase {
                 } else {
                     name = String(format: "%03d", index)
                 }
-                return ChannelMemberResponse.dummy(
+                return MemberPayload.dummy(
                     user: .dummy(
                         userId: String(format: "%03d", index),
                         name: name

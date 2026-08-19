@@ -6,14 +6,14 @@ import AVFoundation
 @testable import StreamChat
 
 public class MockAVPlayer: AVPlayer {
-    public var playWasCalled = false
+    public nonisolated(unsafe) var playWasCalled = false
 
-    public private(set) var pauseWasCalled = false
+    public private(set) nonisolated(unsafe) var pauseWasCalled = false
 
     public var replaceCurrentItemWasCalled = false
     public var replaceCurrentItemWasCalledWithItem: AVPlayerItem?
 
-    public private(set) var rateWasUpdatedTo: Float?
+    public private(set) nonisolated(unsafe) var rateWasUpdatedTo: Float?
 
     public private(set) var seekWasCalledWithTime: CMTime?
     public private(set) var seekWasCalledWithToleranceBefore: CMTime?
@@ -27,7 +27,7 @@ public class MockAVPlayer: AVPlayer {
         }
     }
 
-    public var mockPlayerObserver: MockAudioPlayerObserver?
+    public nonisolated(unsafe) var mockPlayerObserver: MockAudioPlayerObserver?
 
     override public func play() {
         playWasCalled = true

@@ -25,7 +25,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingComponents() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.accentError = .green
 
         let view = ChatChannelUnreadCountView().withoutAutoresizingMaskConstraints

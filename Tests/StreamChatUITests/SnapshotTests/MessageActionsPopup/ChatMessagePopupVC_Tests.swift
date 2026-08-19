@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-extension ChatMessagePopupVC: AppearanceProvider {}
+extension ChatMessagePopupVC: @retroactive AppearanceProvider {}
 
 @MainActor final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!
@@ -105,7 +105,7 @@ extension ChatMessagePopupVC: AppearanceProvider {}
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var config = Appearance()
+        let config = Appearance()
         config.colorPalette.borderCoreDefault = .cyan
 
         vc.appearance = config

@@ -23,6 +23,7 @@ open class AttachmentViewCatalog {
 
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
             if attachmentCounts.keys.contains(.file)
+                || attachmentCounts.keys.contains(.audio)
                 || attachmentCounts.keys.contains(.voiceRecording)
                 || attachmentCounts.keys.contains(.unknown) {
                 return components.mixedAttachmentInjector
@@ -33,7 +34,7 @@ open class AttachmentViewCatalog {
             return components.mixedAttachmentInjector
         } else if attachmentCounts.keys.contains(.giphy) {
             return components.giphyAttachmentInjector
-        } else if attachmentCounts.keys.contains(.file) {
+        } else if attachmentCounts.keys.contains(.file) || attachmentCounts.keys.contains(.audio) {
             return components.filesAttachmentInjector
         } else if attachmentCounts.keys.contains(.linkPreview) {
             return components.linkAttachmentInjector

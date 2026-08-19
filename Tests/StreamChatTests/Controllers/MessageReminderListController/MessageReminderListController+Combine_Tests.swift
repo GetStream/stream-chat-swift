@@ -42,10 +42,10 @@ final class MessageReminderListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        nonisolated(unsafe) weak var controller: MessageReminderListController? = reminderListController
+        let controller = { [weak reminderListController] in reminderListController }
         reminderListController = nil
 
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { $0.controller(controller()!, didChangeState: .remoteDataFetched) }
 
         AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -61,7 +61,7 @@ final class MessageReminderListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        nonisolated(unsafe) weak var controller: MessageReminderListController? = reminderListController
+        let controller = { [weak reminderListController] in reminderListController }
         reminderListController = nil
 
         let reminder = MessageReminder(
@@ -73,8 +73,8 @@ final class MessageReminderListController_Combine_Tests: iOS13TestCase {
             updatedAt: .unique
         )
         let changes: [ListChange<MessageReminder>] = .init([.insert(reminder, index: .init())])
-        controller?.delegateCallback {
-            $0.controller(controller!, didChangeReminders: changes)
+        controller()?.delegateCallback {
+            $0.controller(controller()!, didChangeReminders: changes)
         }
 
         XCTAssertEqual(recording.output, .init(arrayLiteral: [.insert(reminder, index: .init())]))

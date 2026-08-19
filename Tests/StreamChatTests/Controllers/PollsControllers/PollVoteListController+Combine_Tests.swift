@@ -49,10 +49,10 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: PollVoteListController? = voteListController
+        let controller = { [weak voteListController] in voteListController }
         voteListController = nil
 
-        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { [controller = controller()] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -68,12 +68,12 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: PollVoteListController? = voteListController
+        let controller = { [weak voteListController] in voteListController }
         voteListController = nil
 
         let vote: PollVote = .unique
         let changes: [ListChange<PollVote>] = .init([.insert(vote, index: .init())])
-        controller?.delegateCallback { [controller] in
+        controller()?.delegateCallback { [controller = controller()] in
             $0.controller(controller!, didChangeVotes: changes)
         }
 
@@ -91,12 +91,12 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        nonisolated(unsafe) weak var controller: PollVoteListController? = voteListController
+        let controller = { [weak voteListController] in voteListController }
         voteListController = nil
 
         let poll: Poll = .unique
-        controller?.delegateCallback {
-            $0.controller(controller!, didUpdatePoll: poll)
+        controller()?.delegateCallback {
+            $0.controller(controller()!, didUpdatePoll: poll)
         }
 
         XCTAssertEqual(recording.output, [poll])

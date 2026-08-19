@@ -42,11 +42,11 @@ final class MemberController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChatChannelMemberController? = memberController
+        let controller = { [weak memberController] in memberController }
         memberController = nil
 
         // Simulate delegate invocation.
-        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { [controller = controller()] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         // Assert all state changes are delivered.
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
@@ -63,12 +63,12 @@ final class MemberController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChatChannelMemberController? = memberController
+        let controller = { [weak memberController] in memberController }
         memberController = nil
 
         // Simulate delegate invocation with the new member.
         let newMember: ChatChannelMember = .dummy
-        controller?.delegateCallback { [controller] in
+        controller()?.delegateCallback { [controller = controller()] in
             $0.memberController(controller!, didUpdateMember: .create(newMember))
         }
 

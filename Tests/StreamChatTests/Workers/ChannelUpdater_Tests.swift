@@ -1036,7 +1036,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.muteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(
+            muteChannelRequest: .init(channelCids: [channelID.rawValue])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -1048,7 +1050,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.muteChannel(cid: channelID, expiration: expiration)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID, expiration: expiration)
+        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(
+            muteChannelRequest: .init(channelCids: [channelID.rawValue], expiration: expiration)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1153,7 +1157,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.unmuteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .unmuteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .unmuteChannel(
+            unmuteChannelRequest: .init(channelCids: [channelID.rawValue])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1219,7 +1225,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.deleteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<DeleteChannelResponse> = .deleteChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id,
+            hardDelete: nil
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1235,7 +1245,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<DeleteChannelResponse, Error>.success(.dummy()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -1248,7 +1258,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<DeleteChannelResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -1415,7 +1425,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.hideChannel(cid: channelID, clearHistory: clearHistory)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(cid: channelID, clearHistory: clearHistory)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id,
+            hideChannelRequest: .init(clearHistory: clearHistory)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1494,7 +1508,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.showChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -2705,7 +2722,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // WHEN
         let exp = expectation(description: "setPushPreference completion")
-        var receivedPreference: PushPreference?
+        nonisolated(unsafe) var receivedPreference: PushPreference?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             if case .success(let pref) = result {
                 receivedPreference = pref
@@ -2719,7 +2736,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // THEN
         // Verify the push preference was successfully set
-        XCTAssertEqual(receivedPreference?.level, .mentions)
+        XCTAssertEqual(receivedPreference?.level, PushPreferenceLevel(rawValue: "mentions"))
         XCTAssertNil(receivedPreference?.disabledUntil)
 
         // Verify the channel now has the push preference associated
@@ -2727,7 +2744,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.channel(cid: cid)?.asModel()
         }
         XCTAssertNotNil(channel?.pushPreference)
-        XCTAssertEqual(channel?.pushPreference?.level, .mentions)
+        XCTAssertEqual(channel?.pushPreference?.level, PushPreferenceLevel(rawValue: "mentions"))
         XCTAssertNil(channel?.pushPreference?.disabledUntil)
     }
 
@@ -2767,7 +2784,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // WHEN
         let exp = expectation(description: "setPushPreference completion")
-        var receivedPreference: PushPreference?
+        nonisolated(unsafe) var receivedPreference: PushPreference?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             if case .success(let pref) = result {
                 receivedPreference = pref

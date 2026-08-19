@@ -47,6 +47,10 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
     @NSManaged var team: String?
+
+    @NSManaged var isAutoTranslationEnabled: Bool
+    // A comma separated list of language codes the channel is translated to.
+    @NSManaged var autoTranslationLanguage: String?
     
     @NSManaged var isBlocked: Bool
     
@@ -60,6 +64,7 @@ class ChannelDTO: NSManagedObject {
     // MARK: - Relationships
 
     @NSManaged var createdBy: UserDTO?
+    @NSManaged var truncatedBy: UserDTO?
     @NSManaged var members: Set<MemberDTO>
     @NSManaged var threads: Set<ThreadDTO>
 
@@ -261,7 +266,7 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.typeRawValue = payload.typeRawValue
+        dto.typeRawValue = payload.type
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let filterTags = payload.filterTags {
@@ -276,14 +281,14 @@ extension NSManagedObjectContext {
             })
         }
         if let ownCapabilities = payload.ownCapabilities {
-            dto.ownCapabilities = ownCapabilities
+            dto.ownCapabilities = ownCapabilities.map(\.rawValue)
         }
         dto.createdAt = payload.createdAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
-        dto.memberCount = Int64(clamping: payload.memberCount)
+        dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
         if let messageCount = payload.messageCount {
             dto.messageCount = NSNumber(value: messageCount)
@@ -305,27 +310,37 @@ extension NSManagedObjectContext {
             }
         }
 
-        dto.isDisabled = payload.isDisabled
-        dto.isFrozen = payload.isFrozen
+        dto.isDisabled = payload.disabled
+        dto.isFrozen = payload.frozen
         
         // Backend only returns a boolean
         // for blocked 1:1 channels on channel list query
-        if let isBlocked = payload.isBlocked {
+        if let isBlocked = payload.blocked {
             dto.isBlocked = isBlocked
         }
 
         // Backend only returns a boolean for hidden state
         // on channel query and channel list query
-        if let isHidden = payload.isHidden {
+        if let isHidden = payload.hidden {
             dto.isHidden = isHidden
         }
 
-        dto.cooldownDuration = payload.cooldownDuration
+        dto.cooldownDuration = payload.cooldown ?? 0
         dto.team = payload.team
+
+        // The backend omits both keys when auto translation is off, therefore a missing
+        // value means disabled and must not be treated as "leave the local value alone".
+        dto.isAutoTranslationEnabled = payload.autoTranslationEnabled ?? false
+        dto.autoTranslationLanguage = payload.autoTranslationLanguage
 
         if let createdByPayload = payload.createdBy {
             let creatorDTO = try saveUser(payload: createdByPayload)
             dto.createdBy = creatorDTO
+        }
+
+        if let truncatedByPayload = payload.truncatedBy {
+            let truncatorDTO = try saveUser(payload: truncatedByPayload)
+            dto.truncatedBy = truncatorDTO
         }
 
         try payload.members?.forEach { memberPayload in
@@ -662,6 +677,7 @@ extension ChatChannel {
             updatedAt: dto.updatedAt.bridgeDate,
             deletedAt: dto.deletedAt?.bridgeDate,
             truncatedAt: dto.truncatedAt?.bridgeDate,
+            truncatedBy: dto.truncatedBy?.asModel(),
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: dto.config.asModel(),
@@ -675,6 +691,8 @@ extension ChatChannel {
             currentlyTypingUsers: typingUsers,
             lastActiveWatchers: watchers,
             team: dto.team,
+            isAutoTranslationEnabled: dto.isAutoTranslationEnabled,
+            autoTranslationLanguages: TranslationLanguage.languages(fromCommaSeparated: dto.autoTranslationLanguage),
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),

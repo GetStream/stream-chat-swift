@@ -166,7 +166,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
     func test_partialUpdate_propagatesSuccessfulResponse() {
         let cid: ChannelId = .unique
-        let memberResponse: ChannelMemberResponse = .dummy()
+        let memberResponse: MemberPayload = .dummy()
 
         // Simulate `partialUpdate` call
         nonisolated(unsafe) var completionResult: Result<ChatChannelMember, Error>?
@@ -225,10 +225,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let pinnedDate = Date()
         let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
-                pinnedAt: pinnedDate,
                 user: .dummy(
                     userId: userId
-                )
+                ),
+                pinnedAt: pinnedDate
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -277,10 +277,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         
         let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
-                pinnedAt: nil,
                 user: .dummy(
                     userId: userId
-                )
+                ),
+                pinnedAt: nil
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -332,10 +332,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let archivedDate = Date()
         let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
-                archivedAt: archivedDate,
                 user: .dummy(
                     userId: userId
-                )
+                ),
+                archivedAt: archivedDate
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))
@@ -384,10 +384,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         
         let apiResponse = UpdateMemberPartialResponse.dummy(
             channelMember: .dummy(
-                archivedAt: nil,
                 user: .dummy(
                     userId: userId
-                )
+                ),
+                archivedAt: nil
             )
         )
         apiClient.test_mockResponseResult(.success(apiResponse))

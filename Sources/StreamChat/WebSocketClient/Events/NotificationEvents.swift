@@ -360,7 +360,8 @@ final class NotificationAddedToChannelEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.userId, cid: channel.cid),
+            let memberUserId = member.memberId,
+            let memberDTO = session.member(userId: memberUserId, cid: channel.cid),
             let currentUser = session.currentUser
         else { return nil }
 
@@ -414,7 +415,8 @@ final class NotificationRemovedFromChannelEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.userId, cid: cid)
+            let memberUserId = member.memberId,
+            let memberDTO = session.member(userId: memberUserId, cid: cid)
         else { return nil }
 
         return try? NotificationRemovedFromChannelEvent(
@@ -502,7 +504,8 @@ final class NotificationInvitedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.userId, cid: cid)
+            let memberUserId = member.memberId,
+            let memberDTO = session.member(userId: memberUserId, cid: cid)
         else { return nil }
 
         return try? NotificationInvitedEvent(
@@ -559,7 +562,8 @@ final class NotificationInviteAcceptedEventDTO: EventDTO {
         guard
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.userId, cid: channel.cid)
+            let memberUserId = member.memberId,
+            let memberDTO = session.member(userId: memberUserId, cid: channel.cid)
         else { return nil }
 
         return try? NotificationInviteAcceptedEvent(
@@ -616,7 +620,8 @@ final class NotificationInviteRejectedEventDTO: EventDTO {
         guard
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.userId, cid: channel.cid)
+            let memberUserId = member.memberId,
+            let memberDTO = session.member(userId: memberUserId, cid: channel.cid)
         else { return nil }
 
         return try? NotificationInviteRejectedEvent(

@@ -454,15 +454,6 @@ protocol MemberDatabaseSession {
         query: ChannelMemberListQuery?
     ) -> [MemberDTO]
 
-    /// Creates a new `MemberDTO` object in the database with the given `response` in the channel with `channelId`.
-    @discardableResult
-    func saveMember(
-        response: ChannelMemberResponse,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> MemberDTO
-
     /// Creates new `MemberDTO` objects in the database with the given `response` in the channel with `channelId`.
     @discardableResult
     func saveMembers(
@@ -781,14 +772,6 @@ extension DatabaseSession {
         channelId: ChannelId
     ) throws -> MemberDTO {
         try saveMember(payload: payload, channelId: channelId, query: nil, cache: nil)
-    }
-
-    @discardableResult
-    func saveMember(
-        response: ChannelMemberResponse,
-        channelId: ChannelId
-    ) throws -> MemberDTO {
-        try saveMember(response: response, channelId: channelId, query: nil, cache: nil)
     }
 
     // MARK: - Event

@@ -3310,11 +3310,11 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendKeystrokeEvent()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     func test_startTyping_keepsControllerAlive() throws {
@@ -3332,11 +3332,11 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendStartTypingEvent()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     func test_stopTyping_keepsControllerAlive() throws {
@@ -3354,11 +3354,11 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendStopTypingEvent()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Message sending
@@ -4161,11 +4161,11 @@ final class ChannelController_Tests: XCTestCase {
         controller.markRead { _ in }
 
         // WHEN
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Mark unread
@@ -4497,14 +4497,14 @@ final class ChannelController_Tests: XCTestCase {
         controller.loadChannelReads { _ in }
 
         // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
 
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Enable slow mode (cooldown)
@@ -5367,14 +5367,14 @@ final class ChannelController_Tests: XCTestCase {
         controller.loadPinnedMessages { _ in }
 
         // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
 
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
 
         // Assert controller is kept alive
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: Synchronize registers active controller
@@ -5773,10 +5773,10 @@ final class ChannelController_Tests: XCTestCase {
     func test_setPushPreference_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let cid: ChannelId = channelId
-        let level: PushPreferenceLevel = .mentions
+        let level: PushPreferenceLevel = .directMentions
         let expectedPreference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -5811,7 +5811,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_setPushPreference_propagatesError() {
         // GIVEN
-        let level: PushPreferenceLevel = .mentions
+        let level: PushPreferenceLevel = .directMentions
         let expectedError = TestError()
 
         // WHEN

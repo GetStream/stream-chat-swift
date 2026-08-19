@@ -37,10 +37,10 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelControllerSpy? = channelController
+        let controller = { [weak channelController] in channelController }
         channelController = nil
 
-        controller?.delegateCallback { [weak controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller()?.delegateCallback { [weak controller = controller()] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -56,12 +56,12 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelControllerSpy? = channelController
+        let controller = { [weak channelController] in channelController }
         channelController = nil
 
         let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
-        controller?.channel_simulated = newChannel
-        controller?.delegateCallback { [controller] in
+        controller()?.channel_simulated = newChannel
+        controller()?.delegateCallback { [controller = controller()] in
             $0.channelController(controller!, didUpdateChannel: .create(newChannel))
         }
 
@@ -79,12 +79,12 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelControllerSpy? = channelController
+        let controller = { [weak channelController] in channelController }
         channelController = nil
 
         let newMessage: ChatMessage = .unique
-        controller?.messages_simulated = [newMessage]
-        controller?.delegateCallback { [controller] in
+        controller()?.messages_simulated = [newMessage]
+        controller()?.delegateCallback { [controller = controller()] in
             $0.channelController(controller!, didUpdateMessages: [.insert(newMessage, index: .init())])
         }
 
@@ -102,11 +102,11 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelControllerSpy? = channelController
+        let controller = { [weak channelController] in channelController }
         channelController = nil
 
         let memberEvent: TestMemberEvent = .unique
-        controller?.delegateCallback { [controller] in
+        controller()?.delegateCallback { [controller = controller()] in
             $0.channelController(controller!, didReceiveMemberEvent: memberEvent)
         }
 
@@ -124,7 +124,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             .store(in: &cancellables)
 
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: ChannelControllerSpy? = channelController
+        let controller = { [weak channelController] in channelController }
         channelController = nil
 
         let typingUser = ChatUser(
@@ -146,7 +146,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             extraData: [:]
         )
 
-        controller?.delegateCallback { [controller] in
+        controller()?.delegateCallback { [controller = controller()] in
             $0.channelController(controller!, didChangeTypingUsers: [typingUser])
         }
 

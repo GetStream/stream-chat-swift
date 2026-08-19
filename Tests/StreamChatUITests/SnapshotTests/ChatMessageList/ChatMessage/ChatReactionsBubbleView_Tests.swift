@@ -36,7 +36,7 @@ import XCTest
         let bubble = ChatReactionsBubbleView().withFixedSize
 
         // Set custom appearance
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.colorPalette.borderCoreDefault = Appearance.default.colorPalette.accentError
         bubble.appearance = appearance
 

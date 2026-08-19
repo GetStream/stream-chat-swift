@@ -12,18 +12,22 @@ extension MemberPayload {
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         role: MemberRole = .member,
+        status: String? = nil,
+        deletedAt: Date? = nil,
         isMemberBanned: Bool = false,
         archivedAt: Date? = nil,
         pinnedAt: Date? = nil,
         notificationsMuted: Bool = false,
-        extraData: [String: RawJSON]? = nil
+        extraData: [String: RawJSON] = [:]
     ) -> MemberPayload {
         .init(
             user: user,
             userId: user.id,
             role: role,
+            status: status,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            deletedAt: deletedAt,
             isBanned: isMemberBanned,
             archivedAt: archivedAt,
             pinnedAt: pinnedAt,
@@ -38,7 +42,7 @@ extension MemberContainerPayload {
         userId: UserId = .unique,
         role: MemberRole = .member,
         notificationsMuted: Bool = false,
-        extraData: [String: RawJSON]? = nil
+        extraData: [String: RawJSON] = [:]
     ) -> MemberContainerPayload {
         .init(
             member: .dummy(
@@ -46,9 +50,19 @@ extension MemberContainerPayload {
                 role: role,
                 notificationsMuted: notificationsMuted,
                 extraData: extraData
-            ),
-            invite: nil,
-            memberRole: nil
+            )
         )
+    }
+}
+
+extension MembersResponse {
+    static func dummy(members: [MemberPayload] = []) -> MembersResponse {
+        .init(duration: "", members: members)
+    }
+}
+
+extension UpdateMemberPartialResponse {
+    static func dummy(channelMember: MemberPayload? = nil) -> UpdateMemberPartialResponse {
+        .init(channelMember: channelMember, duration: "")
     }
 }

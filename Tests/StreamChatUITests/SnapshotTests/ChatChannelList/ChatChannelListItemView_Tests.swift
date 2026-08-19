@@ -1054,7 +1054,7 @@ import XCTest
     }
 
     func test_appearanceCustomization_usingAppearance() {
-        var appearance = Appearance()
+        let appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.textSecondary = .cyan
         appearance.colorPalette.textPrimary = .red
@@ -1839,7 +1839,7 @@ import XCTest
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         view.components = components ?? .mock
         view.components.isDraftMessagesEnabled = true
-        var viewAppearance = appearance ?? Appearance()
+        let viewAppearance = appearance ?? Appearance()
         viewAppearance.formatters = Appearance.Formatters()
         viewAppearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
         view.appearance = viewAppearance

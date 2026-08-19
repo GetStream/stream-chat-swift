@@ -13,14 +13,14 @@ final class MemberPayload_Tests: XCTestCase {
     func test_memberJSON_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberJSON)
 
-        XCTAssertEqual(payload.role, .owner)
+        XCTAssertEqual(payload.channelRole, "owner")
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-05T12:53:09.862721Z".toDate())
-        XCTAssertEqual(payload.banExpiresAt, "2021-03-08T15:42:31.355923Z".toDate())
-        XCTAssertEqual(payload.isBanned, true)
-        XCTAssertEqual(payload.isShadowBanned, true)
+        XCTAssertEqual(payload.banExpires, "2021-03-08T15:42:31.355923Z".toDate())
+        XCTAssertEqual(payload.banned, true)
+        XCTAssertEqual(payload.shadowBanned, true)
         XCTAssertEqual(payload.notificationsMuted, true)
-        XCTAssertEqual(payload.extraData?["is_premium"], true)
+        XCTAssertEqual(payload.custom["is_premium"], true)
 
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user!.id, "broken-waterfall-5")
@@ -39,6 +39,6 @@ final class MemberPayload_Tests: XCTestCase {
 
     func test_memberJSON_channelRole_isCustomRole() throws {
         let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberRoleJSON)
-        XCTAssertEqual(payload.role, "custom_role")
+        XCTAssertEqual(payload.channelRole, "custom_role")
     }
 }

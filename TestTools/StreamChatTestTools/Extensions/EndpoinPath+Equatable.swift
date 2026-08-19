@@ -21,10 +21,8 @@ extension EndpointPath: Equatable {
         case (.channels, .channels): return true
         case let (.createChannel(string1), .createChannel(string2)): return string1 == string2
         case let (.updateChannel(string1), .updateChannel(string2)): return string1 == string2
-        case let (.deleteChannel(string1), .deleteChannel(string2)): return string1 == string2
+        case let (.deleteChannel(type1, id1), .deleteChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.channelUpdate(string1), .channelUpdate(string2)): return string1 == string2
-        case let (.muteChannel(bool1), .muteChannel(bool2)): return bool1 == bool2
-        case let (.showChannel(string1, bool1), .showChannel(string2, bool2)): return string1 == string2 && bool1 == bool2
         case let (.truncateChannel(string1), .truncateChannel(string2)): return string1 == string2
         case let (.markChannelRead(string1), .markChannelRead(string2)): return string1 == string2
         case (.markAllChannelsRead, .markAllChannelsRead): return true
@@ -46,8 +44,8 @@ extension EndpointPath: Equatable {
             messageReactionType2
         case let (.messageAction(messageId1), .messageAction(messageId2)): return messageId1 == messageId2
         case (.banMember, .banMember): return true
-        case let (.flagUser(bool1), .flagUser(bool2)): return bool1 == bool2
-        case let (.flagMessage(bool1), .flagMessage(bool2)): return bool1 == bool2
+        case (.flagUser, .flagUser): return true
+        case (.flagMessage, .flagMessage): return true
         case let (.muteUser(bool1), .muteUser(bool2)): return bool1 == bool2
         default: return false
         }

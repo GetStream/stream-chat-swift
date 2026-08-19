@@ -514,6 +514,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
     /// Flags or unflags the message with the provided `messageId` depending on `flag` value.
     /// If the message doesn't exist locally it will be fetched and saved locally first first.
     ///
+    /// Unflagging is not supported by the API, therefore it only updates the local state.
+    ///
     /// - Parameters:
     ///   - flag: The indicator saying whether the message should be flagged or unflagged.
     ///   - messageId: The identifier of a message that should be flagged or unflagged.
@@ -530,13 +532,23 @@ class MessageUpdater: Worker, @unchecked Sendable {
         extraData: [String: RawJSON]? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
+        if !flag {
+            database.write({ session in
+                guard let messageDTO = session.message(id: messageId) else { return }
+                session.currentUser?.flaggedMessages.remove(messageDTO)
+            }, completion: { error in
+                completion?(error)
+            })
+            return
+        }
+
         fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
             guard error == nil else {
                 completion?(error)
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
+            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case let .success(payload):
@@ -545,12 +557,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
 
-                        let currentUserDTO = session.currentUser
-                        if flag {
-                            currentUserDTO?.flaggedMessages.insert(messageDTO)
-                        } else {
-                            currentUserDTO?.flaggedMessages.remove(messageDTO)
-                        }
+                        session.currentUser?.flaggedMessages.insert(messageDTO)
                     }, completion: { error in
                         completion?(error)
                     })

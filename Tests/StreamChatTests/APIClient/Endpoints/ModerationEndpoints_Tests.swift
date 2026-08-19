@@ -103,74 +103,59 @@ final class ModerationEndpoints_Tests: XCTestCase {
     }
 
     func test_flagUser_buildsCorrectly() {
-        let testCases = [
-            (true, EndpointPath.flagUser(true)),
-            (false, EndpointPath.flagUser(false))
-        ]
+        let userId: UserId = .unique
+        let reason: String = .unique
+        let extraData: [String: RawJSON] = ["key": .string(.unique)]
+        let body = FlagRequestBody(
+            reason: reason,
+            targetMessageId: nil,
+            targetUserId: userId,
+            custom: extraData
+        )
+        let expectedEndpoint = Endpoint<FlagUserPayload>(
+            path: .flagUser,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
 
-        for (flag, path) in testCases {
-            let userId: UserId = .unique
-            let reason: String = .unique
-            let extraData: [String: RawJSON] = ["key": .string(.unique)]
-            let body = FlagRequestBody(
-                reason: reason,
-                targetMessageId: nil,
-                targetUserId: userId,
-                custom: extraData
-            )
-            let expectedEndpoint = Endpoint<FlagUserPayload>(
-                path: path,
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: false,
-                body: body
-            )
+        // Build endpoint.
+        let endpoint: Endpoint<FlagUserPayload> = .flagUser(
+            with: userId,
+            reason: reason,
+            extraData: extraData
+        )
 
-            // Build endpoint.
-            let endpoint: Endpoint<FlagUserPayload> = .flagUser(
-                flag,
-                with: userId,
-                reason: reason,
-                extraData: extraData
-            )
-
-            // Assert endpoint is built correctly.
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
-        }
+        // Assert endpoint is built correctly.
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/flag", endpoint.path.value)
     }
 
     func test_flagMessage_buildsCorrectly() {
-        let testCases = [
-            (true, EndpointPath.flagMessage(true)),
-            (false, EndpointPath.flagMessage(false))
-        ]
+        let messageId: MessageId = .unique
+        let reason: String = .unique
+        let extraData: [String: RawJSON] = ["key": .string(.unique)]
+        let body = FlagRequestBody(
+            reason: reason,
+            targetMessageId: messageId,
+            targetUserId: nil,
+            custom: extraData
+        )
+        let expectedEndpoint = Endpoint<FlagMessagePayload>(
+            path: .flagMessage,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
 
-        for (flag, path) in testCases {
-            let messageId: MessageId = .unique
-            let reason: String = .unique
-            let extraData: [String: RawJSON] = ["key": .string(.unique)]
-            let body = FlagRequestBody(
-                reason: reason,
-                targetMessageId: messageId,
-                targetUserId: nil,
-                custom: extraData
-            )
-            let expectedEndpoint = Endpoint<FlagMessagePayload>(
-                path: path,
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: false,
-                body: body
-            )
+        // Build endpoint.
+        let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
 
-            // Build endpoint.
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
-
-            // Assert endpoint is built correctly.
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
-        }
+        // Assert endpoint is built correctly.
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/flag", endpoint.path.value)
     }
     
     func test_blockUsers_buildsCorrectly() {

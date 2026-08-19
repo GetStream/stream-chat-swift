@@ -195,7 +195,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     let memberListQueryDTO = try session.saveQuery(memberListQuery)
                     memberListQueryDTO.members.formUnion(updatedChannel.members)
 
-                    paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.userId, cid: cid)?.asModel() }
+                    paginatedMembers = payload.members.compactMapLoggingError {
+                        guard let userId = $0.memberId else { return nil }
+                        return try session.member(userId: userId, cid: cid)?.asModel()
+                    }
                 } completion: { error in
                     if let paginatedMembers {
                         completion(.success(paginatedMembers))
@@ -216,12 +219,18 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func muteChannel(cid: ChannelId, expiration: Int? = nil, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .muteChannel(cid: cid, expiration: expiration)
+            endpoint: .muteChannel(
+                muteChannelRequest: .init(channelCids: [cid.rawValue], expiration: expiration)
+            )
         ) { [weak self] (result: Result<MutedChannelPayloadResponse, Error>) in
             switch result {
             case .success(let payload):
+                guard let channelMute = payload.channelMute else {
+                    completion?(nil)
+                    return
+                }
                 self?.database.write({ session in
-                    try session.saveChannelMute(payload: payload.channelMute)
+                    try session.saveChannelMute(payload: channelMute)
                 }) { _ in
                     completion?(nil)
                 }
@@ -237,7 +246,9 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func unmuteChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .unmuteChannel(cid: cid)
+            endpoint: .unmuteChannel(
+                unmuteChannelRequest: .init(channelCids: [cid.rawValue])
+            )
         ) { [weak self] (result: Result<EmptyResponse, Error>) in
             switch result {
             case .success:
@@ -261,12 +272,14 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - cid: The channel identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func deleteChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteChannel(cid: cid)) { [weak self] result in
+        apiClient.request(
+            endpoint: .deleteChannel(type: cid.type.rawValue, id: cid.id, hardDelete: nil)
+        ) { [weak self] result in
             switch result {
-            case .success:
-                self?.database.write {
-                    if let channel = $0.channel(cid: cid) {
-                        channel.truncatedAt = channel.lastMessageAt ?? channel.createdAt
+            case let .success(payload):
+                self?.database.write { session in
+                    if let channelPayload = payload.channel {
+                        try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
                     }
                 } completion: { error in
                     completion?(error)
@@ -337,7 +350,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+        let request = HideChannelRequest(clearHistory: clearHistory)
+        apiClient.request(endpoint: .hideChannel(type: cid.type.rawValue, id: cid.id, hideChannelRequest: request)) { [weak self] result in
             if result.error == nil {
                 // If the API call is a success, we mark the channel as hidden
                 // We do this because if the channel was already hidden, but the SDK
@@ -364,7 +378,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - channel: The channel you want to show.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func showChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .showChannel(cid: cid)) {
+        apiClient.request(endpoint: .showChannel(type: cid.type.rawValue, id: cid.id)) {
             completion?($0.error)
         }
     }

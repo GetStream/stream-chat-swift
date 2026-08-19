@@ -1097,15 +1097,16 @@ final class MessageController_Tests: XCTestCase {
         controller.flag()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Unflag message
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflag_propagatesError() {
         // Simulate `unflag` call and catch the completion.
         nonisolated(unsafe) var completionError: Error?
@@ -1119,6 +1120,7 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflag_propagatesNilError() {
         // Simulate `unflag` call and catch the completion.
         nonisolated(unsafe) var completionIsCalled = false
@@ -1145,6 +1147,7 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflag_callsUpdater_withCorrectValues() {
         // Simulate `unflag` call.
         controller.unflag()
@@ -1978,11 +1981,11 @@ final class MessageController_Tests: XCTestCase {
         controller.addReaction(.init(rawValue: .unique))
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Delete reaction
@@ -2048,11 +2051,11 @@ final class MessageController_Tests: XCTestCase {
         controller.deleteReaction(.init(rawValue: .unique))
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Pinning message
@@ -2247,11 +2250,11 @@ final class MessageController_Tests: XCTestCase {
         controller.resendMessage()
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Dispatch ephemeral message action
@@ -2306,11 +2309,11 @@ final class MessageController_Tests: XCTestCase {
         controller.dispatchEphemeralMessageAction(.unique)
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Translate message
@@ -2368,11 +2371,11 @@ final class MessageController_Tests: XCTestCase {
         controller.translate(to: .english)
 
         // Create a weak ref and release a controller.
-        weak var weakController = controller
+        let weakController = { [weak controller] in controller }
         controller = nil
 
         // Assert controller is kept alive.
-        AssertAsync.staysTrue(weakController != nil)
+        AssertAsync.staysTrue(weakController() != nil)
     }
 
     // MARK: - Mark thread read
