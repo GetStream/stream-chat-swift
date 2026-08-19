@@ -168,6 +168,27 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(["1"], itemIds)
     }
     
+    func test_accessingItemsBeforeStartObserving_thenItemsAreReturnedRightAfterStartObserving() throws {
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+            item.testId = "1"
+            item.testValue = "testValue1"
+        }
+
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId }
+        )
+
+        XCTAssertEqual([], observer.items.map { $0 })
+
+        try observer.startObserving()
+
+        XCTAssertEqual(["1"], observer.items.map { $0 })
+    }
+
     func test_accessingItemsConcurrentlyWhileInitialFetchIsRunning() throws {
         let expectedIds = (0..<5).map { "\($0)" }
         try database.writeSynchronously { session in
@@ -197,6 +218,35 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(expectedIds, observer.items.map { $0 })
     }
     
+    /// Reads must never observe a partially updated snapshot while another thread is inside the
+    /// `performAndWait` that merges a write into the observed context and refreshes the cached items.
+    func test_accessingItemsConcurrentlyWhileWritesAreBeingMerged_thenSnapshotsAreAlwaysComplete() throws {
+        let expectedIds = (0..<10).map { "\($0)" }
+
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId }
+        )
+        try observer.startObserving()
+
+        for itemId in expectedIds {
+            try database.writeSynchronously { session in
+                let context = try XCTUnwrap(session as? NSManagedObjectContext)
+                let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+                item.testId = itemId
+                item.testValue = "testValue_" + itemId
+            }
+
+            DispatchQueue.concurrentPerform(iterations: 100) { _ in
+                let snapshot = observer.items.map { $0 }
+                XCTAssertEqual(snapshot, Array(expectedIds.prefix(snapshot.count)))
+            }
+        }
+
+        XCTAssertEqual(expectedIds, observer.items.map { $0 })
+    }
+
     func test_accessingItems_whenObservationStartsWithEmptyDBAndWriteHappens_thenWrittenDataIsReturned() throws {
         let initialFinishedExpectation = XCTestExpectation(description: "Initial")
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
