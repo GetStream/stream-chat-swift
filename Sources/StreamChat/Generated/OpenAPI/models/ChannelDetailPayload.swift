@@ -18,6 +18,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
     let cooldown: Int?
     /// Date/time of creation
     let createdAt: Date
+    /// User response object
     let createdBy: UserPayload?
     /// Custom data for this object
     let custom: [String: RawJSON]
@@ -52,6 +53,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
     let team: String?
     /// Date of the latest truncation of the channel
     let truncatedAt: Date?
+    /// User response object
     let truncatedBy: UserPayload?
     /// Type of the channel
     let type: String

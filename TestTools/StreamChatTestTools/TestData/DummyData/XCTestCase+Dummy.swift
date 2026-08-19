@@ -11,7 +11,25 @@ extension XCTestCase {
 
     // MARK: - Dummy data with extra data
 
-    var dummyCurrentUser: CurrentUserPayload {
+    var dummyCurrentUser: UserPayload {
+        UserPayload(
+            id: "dummyCurrentUser",
+            name: .unique,
+            imageURL: nil,
+            role: .user,
+            teamsRole: nil,
+            createdAt: .unique,
+            updatedAt: .unique,
+            deactivatedAt: nil,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isBanned: false,
+            language: nil,
+            extraData: [:]
+        )
+    }
+
+    var dummyCurrentUserPayload: CurrentUserPayload {
         CurrentUserPayload(
             id: "dummyCurrentUser",
             name: .unique,

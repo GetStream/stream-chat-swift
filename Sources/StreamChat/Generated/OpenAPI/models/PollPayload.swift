@@ -9,6 +9,7 @@ final class PollPayload: Sendable, Codable, JSONEncodable {
     let allowUserSuggestedOptions: Bool
     let answersCount: Int
     let createdAt: Date
+    /// User response object
     let createdBy: UserPayload?
     let createdById: String
     let custom: [String: RawJSON]?

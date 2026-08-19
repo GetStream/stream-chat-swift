@@ -62,7 +62,7 @@ final class UserRequestBody: Encodable, Sendable {
 
 /// An object describing the incoming user JSON payload.
 struct CurrentUserUpdateResponse: Decodable {
-    let user: CurrentUserPayload
+    let user: OwnUserResponse
 
     enum CodingKeys: String, CodingKey {
         case users
@@ -70,7 +70,7 @@ struct CurrentUserUpdateResponse: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let users = try container.decode([String: CurrentUserPayload].self, forKey: .users)
+        let users = try container.decode([String: OwnUserResponse].self, forKey: .users)
         guard let user = users.first?.value else {
             throw DecodingError.dataCorrupted(
                 .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
@@ -79,7 +79,7 @@ struct CurrentUserUpdateResponse: Decodable {
         self.user = user
     }
 
-    init(user: CurrentUserPayload) {
+    init(user: OwnUserResponse) {
         self.user = user
     }
 }
@@ -88,7 +88,7 @@ struct CurrentUserUpdateResponse: Decodable {
 struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
-    let privacySettings: UserPrivacySettingsPayload?
+    let privacySettings: UserPrivacySettings?
     let role: UserRole?
     let extraData: [String: RawJSON]?
     let teamsRole: [TeamId: UserRole]?
@@ -96,7 +96,7 @@ struct UserUpdateRequestBody: Encodable {
     init(
         name: String?,
         imageURL: URL?,
-        privacySettings: UserPrivacySettingsPayload?,
+        privacySettings: UserPrivacySettings?,
         role: UserRole?,
         teamsRole: [TeamId: UserRole]?,
         extraData: [String: RawJSON]?

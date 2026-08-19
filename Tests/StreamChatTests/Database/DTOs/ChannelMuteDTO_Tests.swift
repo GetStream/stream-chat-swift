@@ -30,7 +30,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let mutedChannel: ChannelDetailPayload = .dummy(cid: .unique)
         let mutePayload: MutedChannelPayload = .init(
             mutedChannel: mutedChannel,
-            user: currentUserPayload,
+            user: .dummy(userId: currentUserPayload.id),
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique
@@ -73,7 +73,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
         let mute: MutedChannelPayload = .init(
             mutedChannel: channel,
-            user: currentUser,
+            user: .dummy(userId: currentUser.id),
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique
@@ -105,7 +105,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
         let initialMute: MutedChannelPayload = .init(
             mutedChannel: channel,
-            user: currentUser,
+            user: .dummy(userId: currentUser.id),
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique
@@ -119,7 +119,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         // WHEN
         let updatedMute: MutedChannelPayload = .init(
             mutedChannel: channel,
-            user: currentUser,
+            user: .dummy(userId: currentUser.id),
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique

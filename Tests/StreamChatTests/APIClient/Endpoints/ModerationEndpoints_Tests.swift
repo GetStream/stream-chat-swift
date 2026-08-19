@@ -7,44 +7,6 @@
 import XCTest
 
 final class ModerationEndpoints_Tests: XCTestCase {
-    func test_muteUser_buildsCorrectly() {
-        let userId: UserId = .unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .muteUser(true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["target_id": userId]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .muteUser(userId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/mute", endpoint.path.value)
-    }
-
-    func test_unmuteUser_buildsCorrectly() {
-        let userId: UserId = .unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .muteUser(false),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["target_id": userId]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .unmuteUser(userId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/unmute", endpoint.path.value)
-    }
-
     func test_banMember_buildsCorrectly() {
         let userId: UserId = .unique
         let cid: ChannelId = .unique

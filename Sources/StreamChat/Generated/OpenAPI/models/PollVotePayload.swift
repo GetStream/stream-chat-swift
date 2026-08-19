@@ -12,6 +12,7 @@ final class PollVotePayload: Sendable, Codable, JSONEncodable {
     let optionId: String?
     let pollId: String
     let updatedAt: Date
+    /// User response object
     let user: UserPayload?
     let userId: String?
 
