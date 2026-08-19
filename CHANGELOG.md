@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatChannel.truncatedBy`, `ChatChannel.isAutoTranslationEnabled` and `ChatChannel.autoTranslationLanguages` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
 - Add `ChatChannelMember.memberStatus` and `ChatChannelMember.memberDeletedAt` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
 ### 🐞 Fixed
+- Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 - Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 - Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 ### 🔄 Changed
@@ -23,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Appearance.Images.iconAudio` for audio file type artwork [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 
 ## StreamChatUI
+### ⚡ Performance
+- Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 ### 🐞 Fixed
 - Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
