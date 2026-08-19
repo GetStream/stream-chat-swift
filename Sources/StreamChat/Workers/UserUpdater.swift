@@ -140,6 +140,8 @@ class UserUpdater: Worker, @unchecked Sendable {
     }
 
     /// Flags or unflags the user with the provided `userId` depending on `flag` value.
+    ///
+    /// Unflagging is not supported by the API, therefore it only updates the local state.
     /// - Parameters:
     ///   - flag: The indicator saying whether the user should be flagged or unflagged.
     ///   - userId: The identifier of a user that should be flagged or unflagged.
@@ -153,8 +155,20 @@ class UserUpdater: Worker, @unchecked Sendable {
         extraData: [String: RawJSON]? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
+        if !flag {
+            database.write({ session in
+                guard let userDTO = session.user(id: userId) else { return }
+                session.currentUser?.flaggedUsers.remove(userDTO)
+            }, completion: {
+                if let error = $0 {
+                    log.error("Failed to remove the flag from the user with id: <\(userId)> in the database. Error: \(error)")
+                }
+                completion?($0)
+            })
+            return
+        }
+
         let endpoint: Endpoint<FlagUserPayload> = .flagUser(
-            flag,
             with: userId,
             reason: reason,
             extraData: extraData
@@ -164,13 +178,7 @@ class UserUpdater: Worker, @unchecked Sendable {
             case let .success(payload):
                 self.database.write({ session in
                     let userDTO = try session.saveUser(payload: payload.flaggedUser)
-
-                    let currentUserDTO = session.currentUser
-                    if flag {
-                        currentUserDTO?.flaggedUsers.insert(userDTO)
-                    } else {
-                        currentUserDTO?.flaggedUsers.remove(userDTO)
-                    }
+                    session.currentUser?.flaggedUsers.insert(userDTO)
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save flagged user with id: <\(userId)> to the database. Error: \(error)")

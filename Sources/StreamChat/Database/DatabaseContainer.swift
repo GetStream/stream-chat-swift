@@ -37,11 +37,21 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// If you need a time sensitive context, use `viewContext` instead.
     lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
-        context.automaticallyMergesChangesFromParent = true
+        // Changes are merged manually (synchronously on save) instead of automatically. This keeps the
+        // context up to date by the time a write completes, which allows the background observers to
+        // serve reads from their in-memory cache without a per-read `performAndWait` while preserving
+        // read-your-writes semantics.
+        context.automaticallyMergesChangesFromParent = false
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        backgroundReadOnlyContextRefreshObservers = [
+            context.observeChanges(in: writableContext),
+            context.observeChanges(in: viewContext)
+        ]
         context.setChatClientConfig(chatClientConfig)
         return context
     }()
+
+    private var backgroundReadOnlyContextRefreshObservers = [NSObjectProtocol]()
     
     /// An immediately reacting NSManagedObjectContext for the chat state layer.
     ///
@@ -149,6 +159,9 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
 
     deinit {
         stateLayerContextRefreshObservers.forEach { observer in
+            NotificationCenter.default.removeObserver(observer)
+        }
+        backgroundReadOnlyContextRefreshObservers.forEach { observer in
             NotificationCenter.default.removeObserver(observer)
         }
         if let observer = loggerNotificationObserver {

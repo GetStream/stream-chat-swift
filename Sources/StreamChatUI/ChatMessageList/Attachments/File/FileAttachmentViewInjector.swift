@@ -49,13 +49,14 @@ public class FilesAttachmentViewInjector: AttachmentViewInjector {
 
 public extension FilesAttachmentViewInjector {
     var fileAttachments: [ChatMessageFileAttachment] {
+        let fileAttachments = contentView.content?.fileAttachments ?? []
+        let audioAttachments = (contentView.content?.audioAttachments ?? [])
+            .compactMap { $0.asAttachment(payloadType: FileAttachmentPayload.self) }
         if fileAttachmentView.components.isVoiceRecordingEnabled {
-            return contentView.content?.fileAttachments ?? []
-        } else {
-            let fileAttachments = contentView.content?.fileAttachments ?? []
-            let voiceRecordingAttachments = (contentView.content?.voiceRecordingAttachments ?? [])
-                .compactMap { $0.asAttachment(payloadType: FileAttachmentPayload.self) }
-            return fileAttachments + voiceRecordingAttachments
+            return fileAttachments + audioAttachments
         }
+        let voiceRecordingAttachments = (contentView.content?.voiceRecordingAttachments ?? [])
+            .compactMap { $0.asAttachment(payloadType: FileAttachmentPayload.self) }
+        return fileAttachments + audioAttachments + voiceRecordingAttachments
     }
 }

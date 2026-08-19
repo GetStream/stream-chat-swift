@@ -14,14 +14,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once
 - Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team
 ### 🐞 Fixed
+- Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 - Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 - Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 ### 🔄 Changed
 - Apply dynamic search debouncing to `UserGroupSearch` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Apply dynamic search debouncing to `RoleSearch` and `RoleSearchController` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
+- Deprecate `ChatUserController.unflag`, `ChatMessageController.unflag`, `LivestreamChannelController.unflag`, `Chat.unflagMessage`, `LivestreamChat.unflagMessage` and `ConnectedUser.unflag` because unflagging is not supported by the API. Unflagging no longer sends a network request, it only clears the local flag state [#4221](https://github.com/GetStream/stream-chat-swift/pull/4221)
+
+## StreamChatCommonUI
+### ✅ Added
+- Add `Appearance.Images.iconAudio` for audio file type artwork [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 
 ## StreamChatUI
+### ⚡ Performance
+- Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 ### 🐞 Fixed
+- Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
 - Fix unread banner and jump-to-unread button flickering when receiving messages in an open channel [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
   

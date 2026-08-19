@@ -140,6 +140,18 @@ import XCTest
         AssertSnapshot(view, suffix: "-emptyText")
     }
 
+    func test_withAudioAttachmentAppearance() {
+        let attachment = ChatMessageAudioAttachment.mock(id: .unique)
+
+        view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view)
+
+        view.content = makeContent(text: "", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view, suffix: "-emptyText")
+    }
+
     func test_withLinkAttachmentAppearance() {
         let attachment = ChatMessageLinkAttachment.mock(
             id: .unique,

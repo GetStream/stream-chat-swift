@@ -676,11 +676,8 @@ inject_v1_endpoint_paths() {
     case reminder(MessageId)
 
     case banMember
-    case flagUser(Bool)
-    case flagMessage(Bool)
-
-    case callToken(String)
-    case createCall(String)
+    case flagUser
+    case flagMessage
 
 EOF
 
@@ -732,10 +729,8 @@ EOF
         case let .reminder(messageId): return "messages/\(messageId)/reminders"
 
         case .banMember: return "moderation/ban"
-        case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
-        case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
-        case let .callToken(callId): return "calls/\(callId)"
-        case let .createCall(queryString): return "channels/\(queryString)/call"
+        case .flagUser: return "moderation/flag"
+        case .flagMessage: return "moderation/flag"
 
 EOF
 

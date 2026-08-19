@@ -29,6 +29,14 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
     }
 
+    func test_appearance_audio_attachment() {
+        fileAttachmentListView.content = [
+            ChatMessageAudioAttachment.mock(id: .unique)
+                .asAttachment(payloadType: FileAttachmentPayload.self)
+        ].compactMap { $0 }
+        AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
+    }
+
     func test_appearance_two_attachments() {
         fileAttachmentListView.content = [
             .mock(
