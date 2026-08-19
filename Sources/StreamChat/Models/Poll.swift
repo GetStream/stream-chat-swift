@@ -5,7 +5,7 @@
 import Foundation
 
 /// The model for a poll. `Poll` is an immutable snapshot of a poll entity at the given time.
-public final class Poll: Identifiable, @unchecked Sendable {
+public final class Poll: Identifiable, Sendable {
     /// A boolean indicating whether the poll allows answers/comments.
     public let allowAnswers: Bool
 

@@ -6,7 +6,7 @@ import Foundation
 
 /// A type representing a message reaction. `ChatMessageReaction` is an immutable snapshot
 /// of a message reaction entity at the given time.
-public final class ChatMessageReaction: Identifiable, @unchecked Sendable {
+public final class ChatMessageReaction: Identifiable, Sendable {
     /// The id of the reaction.
     public let id: String
 

@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a thread. `ChatThread` is an immutable snapshot of a thread entity at the given time.
-public final class ChatThread: Identifiable, @unchecked Sendable {
+public final class ChatThread: Identifiable, Sendable {
     public var id: MessageId { parentMessageId }
     /// The id of the message which created the thread. It is also the id of the thread.
     public let parentMessageId: MessageId

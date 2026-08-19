@@ -6,7 +6,7 @@ import Foundation
 
 /// A type representing a user's last read action on a channel. `ChatChannelRead` is an immutable snapshot
 /// of a channel read entity at the given time.
-public final class ChatChannelRead: @unchecked Sendable {
+public final class ChatChannelRead: Sendable {
     /// The last time the user has read the channel.
     public let lastReadAt: Date
 
