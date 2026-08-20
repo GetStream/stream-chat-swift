@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 - Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 ### 🔄 Changed
+- Convert `ChatThread`, `Poll`, `ChatMessageReaction`, and `ChatChannelRead` to immutable classes to reduce SDK size [#4227](https://github.com/GetStream/stream-chat-swift/pull/4227)
 - Apply dynamic search debouncing to `UserGroupSearch` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Apply dynamic search debouncing to `RoleSearch` and `RoleSearchController` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Deprecate `ChatUserController.unflag`, `ChatMessageController.unflag`, `LivestreamChannelController.unflag`, `Chat.unflagMessage`, `LivestreamChat.unflagMessage` and `ConnectedUser.unflag` because unflagging is not supported by the API. Unflagging no longer sends a network request, it only clears the local flag state [#4221](https://github.com/GetStream/stream-chat-swift/pull/4221)

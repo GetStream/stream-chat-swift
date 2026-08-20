@@ -4,8 +4,8 @@
 
 import Foundation
 
-/// A type representing a thread.
-public struct ChatThread: Identifiable, Sendable {
+/// A type representing a thread. `ChatThread` is an immutable snapshot of a thread entity at the given time.
+public final class ChatThread: Identifiable, Sendable {
     public var id: MessageId { parentMessageId }
     /// The id of the message which created the thread. It is also the id of the thread.
     public let parentMessageId: MessageId
@@ -37,6 +37,40 @@ public struct ChatThread: Identifiable, Sendable {
     public let reads: [ThreadRead]
     /// The custom data of the thread.
     public let extraData: [String: RawJSON]
+
+    init(
+        parentMessageId: MessageId,
+        parentMessage: ChatMessage,
+        channel: ChatChannel,
+        createdBy: ChatUser,
+        replyCount: Int,
+        participantCount: Int,
+        activeParticipantCount: Int,
+        threadParticipants: [ThreadParticipant],
+        lastMessageAt: Date?,
+        createdAt: Date,
+        updatedAt: Date?,
+        title: String?,
+        latestReplies: [ChatMessage],
+        reads: [ThreadRead],
+        extraData: [String: RawJSON]
+    ) {
+        self.parentMessageId = parentMessageId
+        self.parentMessage = parentMessage
+        self.channel = channel
+        self.createdBy = createdBy
+        self.replyCount = replyCount
+        self.participantCount = participantCount
+        self.activeParticipantCount = activeParticipantCount
+        self.threadParticipants = threadParticipants
+        self.lastMessageAt = lastMessageAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.title = title
+        self.latestReplies = latestReplies
+        self.reads = reads
+        self.extraData = extraData
+    }
 }
 
 extension ChatThread: Hashable {
@@ -53,7 +87,7 @@ extension ChatThread: Hashable {
             lhs.threadParticipants == rhs.threadParticipants &&
             lhs.extraData == rhs.extraData
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(parentMessageId)
     }

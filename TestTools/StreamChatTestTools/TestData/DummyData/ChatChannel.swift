@@ -70,7 +70,7 @@ extension Array where Element == ChatChannel {
 }
 
 extension ChatChannelRead {
-    init(
+    convenience init(
         lastReadAt: Date,
         lastReadMessageId: MessageId?,
         unreadMessagesCount: Int,
