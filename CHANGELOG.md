@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ⚡ Performance
 - Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 ### 🐞 Fixed
-- Fix sending a message after jumping to a mid-page message not scrolling to the latest messages [#4229](https://github.com/GetStream/stream-chat-swift/pull/4229)
+- Fix the scroll-to-bottom button not disappearing after sending a message from a mid-page jump [#4229](https://github.com/GetStream/stream-chat-swift/pull/4229)
 - Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
 - Fix unread banner and jump-to-unread button flickering when receiving messages in an open channel [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
