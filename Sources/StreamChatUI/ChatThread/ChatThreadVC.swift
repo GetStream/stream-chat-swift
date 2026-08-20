@@ -486,7 +486,7 @@ open class ChatThreadVC: _ViewController,
             }
         case let event as NewMessagePendingEvent:
             let newMessage = event.message
-            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
+            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.parentMessageId == messageController.messageId {
                 chatMessageListVCShouldLoadFirstPage(messageListVC)
             }
         case let event as DraftUpdatedEvent where event.draftMessage.threadId == messageController.messageId:

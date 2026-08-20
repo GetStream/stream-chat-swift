@@ -418,4 +418,30 @@ import XCTest
         footerView?.updateContent()
         XCTAssertEqual(footerView?.messagesCountDecorationView.textLabel.text, expected(), file: file, line: line)
     }
+
+    func test_didReceiveNewMessagePendingEvent_whenReplyBelongsToThread_thenLoadsFirstPage() {
+        messageControllerMock.hasLoadedAllNextReplies_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: messageControllerMock.messageId,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: .unique)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(messageControllerMock.loadFirstPageCallCount, 1)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenReplyHasDifferentParentId_thenDoesNotLoadFirstPage() {
+        messageControllerMock.hasLoadedAllNextReplies_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: .unique,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: .unique)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(messageControllerMock.loadFirstPageCallCount, 0)
+    }
 }
