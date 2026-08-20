@@ -366,8 +366,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
             }
 
             let request = UpdateLiveLocationRequest(
-                latitude: Float(locationInfo.latitude),
-                longitude: Float(locationInfo.longitude),
+                latitude: locationInfo.latitude,
+                longitude: locationInfo.longitude,
                 messageId: messageId
             )
 

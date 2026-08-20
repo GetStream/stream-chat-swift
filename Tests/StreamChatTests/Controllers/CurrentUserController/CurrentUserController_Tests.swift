@@ -906,6 +906,93 @@ final class CurrentUserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
     }
 
+    // MARK: - muteUsers
+
+    func test_muteUsers_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        let userIds: Set<UserId> = [.unique, .unique]
+
+        // WHEN
+        controller.muteUsers(userIds, expiration: 30) { _ in }
+
+        // THEN
+        XCTAssertEqual(env.currentUserUpdater?.muteUsers_userIds, userIds)
+        XCTAssertEqual(env.currentUserUpdater?.muteUsers_expiration, 30)
+    }
+
+    func test_muteUsers_propagatesSuccess() throws {
+        // GIVEN
+        let mutedUserId: UserId = .unique
+        let expectedMutedUsers = MuteUsersResponse(
+            mutes: [.init(createdAt: .unique, expires: nil, user: .mock(id: mutedUserId), updatedAt: .unique)],
+            nonExistingUsers: nil
+        )
+
+        // WHEN
+        let result: Result<MuteUsersResponse, Error> = try waitFor { done in
+            controller.muteUsers([mutedUserId], completion: done)
+            env.currentUserUpdater?.muteUsers_completion?(.success(expectedMutedUsers))
+        }
+
+        // THEN
+        XCTAssertEqual(result.value?.mutes?.map { $0.user?.id }, [mutedUserId])
+    }
+
+    func test_muteUsers_propagatesError() throws {
+        // GIVEN
+        let expectedError = TestError()
+
+        // WHEN
+        let result: Result<MuteUsersResponse, Error> = try waitFor { done in
+            controller.muteUsers([.unique], completion: done)
+            env.currentUserUpdater?.muteUsers_completion?(.failure(expectedError))
+        }
+
+        // THEN
+        XCTAssertEqual(result.error as? TestError, expectedError)
+    }
+
+    // MARK: - unmuteUsers
+
+    func test_unmuteUsers_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        let userIds: Set<UserId> = [.unique, .unique]
+
+        // WHEN
+        controller.unmuteUsers(userIds) { _ in }
+
+        // THEN
+        XCTAssertEqual(env.currentUserUpdater?.unmuteUsers_userIds, userIds)
+    }
+
+    func test_unmuteUsers_propagatesSuccess() throws {
+        // GIVEN
+        let nonExistingUserId: UserId = .unique
+
+        // WHEN
+        let result: Result<UnmuteUsersResponse, Error> = try waitFor { done in
+            controller.unmuteUsers([.unique], completion: done)
+            env.currentUserUpdater?.unmuteUsers_completion?(.success(.init(nonExistingUsers: [nonExistingUserId])))
+        }
+
+        // THEN
+        XCTAssertEqual(result.value?.nonExistingUsers, [nonExistingUserId])
+    }
+
+    func test_unmuteUsers_propagatesError() throws {
+        // GIVEN
+        let expectedError = TestError()
+
+        // WHEN
+        let result: Result<UnmuteUsersResponse, Error> = try waitFor { done in
+            controller.unmuteUsers([.unique], completion: done)
+            env.currentUserUpdater?.unmuteUsers_completion?(.failure(expectedError))
+        }
+
+        // THEN
+        XCTAssertEqual(result.error as? TestError, expectedError)
+    }
+
     // MARK: - snoozePushNotifications
 
     func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {

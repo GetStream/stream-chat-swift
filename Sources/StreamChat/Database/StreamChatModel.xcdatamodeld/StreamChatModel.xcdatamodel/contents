@@ -180,6 +180,7 @@
         <attribute name="isReadReceiptsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="isTypingIndicatorsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="lastSynchedEventDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="totalUnreadCountByTeam" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="uniquenessKey" attributeType="String" defaultValueString="this is an immmutable arbitrary key which makes sure we have only once instance of CurrentUserDTO in the db"/>
         <attribute name="unreadChannelsCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="unreadMessagesCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>

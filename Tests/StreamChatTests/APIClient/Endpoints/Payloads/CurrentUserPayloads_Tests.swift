@@ -31,20 +31,20 @@ final class CurrentUserPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.devices.map(\.id), [
+        XCTAssertEqual(payload.devices?.map(\.id), [
             "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",
             "e25wfsxcnyA:APA91bFgZR_hfd6GvR42OqCUgIhvpBajjxw7"
         ])
-        XCTAssertEqual(payload.mutedUsers.map(\.mutedUser.id), ["dawn-grass-7"])
+        XCTAssertEqual(payload.mutes?.compactMap(\.target?.id), ["dawn-grass-7"])
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
-        XCTAssertEqual(payload.mutedChannels.count, 1)
-        XCTAssertEqual(payload.mutedChannels[0].user?.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.mutedChannels[0].channel?.cid.rawValue, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
-        XCTAssertEqual(payload.mutedChannels[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
-        XCTAssertEqual(payload.mutedChannels[0].updatedAt, "2021-04-22T10:23:52.516225Z".toDate())
-        XCTAssertEqual(payload.isInvisible, true)
-        XCTAssertNotNil(payload.pushPreference)
-        XCTAssertEqual(payload.pushPreference?.level, "mentions")
-        XCTAssertEqual(payload.pushPreference?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
+        XCTAssertEqual(payload.channelMutes?.count, 1)
+        XCTAssertEqual(payload.channelMutes?[0].user?.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.channelMutes?[0].channel?.cid.rawValue, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
+        XCTAssertEqual(payload.channelMutes?[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
+        XCTAssertEqual(payload.channelMutes?[0].updatedAt, "2021-04-22T10:23:52.516225Z".toDate())
+        XCTAssertEqual(payload.invisible, true)
+        XCTAssertNotNil(payload.pushPreferences)
+        XCTAssertEqual(payload.pushPreferences?.level, "mentions")
+        XCTAssertEqual(payload.pushPreferences?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
 }

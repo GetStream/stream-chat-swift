@@ -12,6 +12,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     @NSManaged var unreadThreadsCount: Int64
+    @NSManaged var totalUnreadCountByTeam: [String: Int]?
 
     /// Contains the timestamp when last sync process was finished.
     /// The date later serves as reference date for the last event synced using `/sync` endpoint
@@ -89,12 +90,14 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: OwnUserResponse) throws -> CurrentUserDTO {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.user = try saveUser(payload: payload)
-        dto.isInvisible = payload.isInvisible
+        let userDTO = UserDTO.loadOrCreate(id: payload.id, context: self, cache: nil)
+        userDTO.saveCommonUserFields(from: payload)
+        dto.user = userDTO
+        dto.isInvisible = payload.invisible ?? false
 
         // If not privacy setting is provided by the backend then we treat as enabled by default.
         // This is a bit different than the rest of the backend responses, but it was done like this
@@ -104,26 +107,34 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? true
 
         // Save push preference
-        if let pushPreference = payload.pushPreference {
+        if let pushPreference = payload.pushPreferences {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
         }
 
-        let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
+        let mutedUsers = try (payload.mutes ?? []).compactMap { $0.target }.map { try saveUser(payload: $0) }
         dto.mutedUsers = Set(mutedUsers)
         
-        dto.blockedUserIds = payload.blockedUserIds
+        dto.blockedUserIds = Set(payload.blockedUserIds ?? [])
 
         let channelMutes = Set(
-            try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
+            try (payload.channelMutes ?? []).map { try saveChannelMute(payload: $0) }
         )
         dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
         dto.channelMutes = channelMutes
 
-        if let unreadCount = payload.unreadCount {
-            try saveCurrentUserUnreadCount(count: unreadCount)
+        if let unreadChannels = payload.unreadChannels, let totalUnreadCount = payload.totalUnreadCount {
+            try saveCurrentUserUnreadCount(
+                count: UnreadCountPayload(
+                    channels: unreadChannels,
+                    messages: totalUnreadCount,
+                    threads: payload.unreadThreads
+                )
+            )
         }
 
-        _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
+        dto.totalUnreadCountByTeam = payload.totalUnreadCountByTeam
+
+        _ = try saveCurrentUserDevices(payload.devices ?? [], clearExisting: true)
 
         return dto
     }
@@ -144,6 +155,18 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         if let threadsCount = count.threads {
             dto.unreadThreadsCount = Int64(clamping: threadsCount)
         }
+    }
+
+    func saveCurrentUserMutedUsers(_ mutedUsers: [MutedUserPayload]) throws -> [UserDTO] {
+        invalidateCurrentUserCache()
+
+        guard let dto = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        let userDTOs = try mutedUsers.compactMap { $0.target }.map { try saveUser(payload: $0) }
+        dto.mutedUsers.formUnion(userDTOs)
+        return userDTOs
     }
 
     /// Merges per-group unread channel counts into `CurrentUserDTO.unreadChannelCountsByGroup`.
@@ -328,6 +351,7 @@ extension CurrentChatUser {
                 threads: Int(dto.unreadThreadsCount)
             ),
             unreadChannelCountsByGroup: dto.unreadChannelCountsByGroup,
+            totalUnreadCountByTeam: dto.totalUnreadCountByTeam,
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),

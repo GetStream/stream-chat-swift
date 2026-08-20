@@ -55,7 +55,6 @@ enum EndpointPath: Codable {
     case banMember
     case flagUser
     case flagMessage
-    case muteUser(Bool)
 
     case addUserGroupMembers(id: String)
     case blockUsers
@@ -102,6 +101,7 @@ enum EndpointPath: Codable {
     case listDevices
     case listUserGroups
     case markDelivered
+    case mute
     case muteChannel
     case queryMembers
     case queryPollVotes(pollId: String)
@@ -118,6 +118,7 @@ enum EndpointPath: Codable {
         id: String
     )
     case unblockUsers
+    case unmute
     case unmuteChannel
     case unreadCounts
     case updateLiveLocation
@@ -193,7 +194,6 @@ enum EndpointPath: Codable {
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"
         case .flagMessage: return "moderation/flag"
-        case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
@@ -266,6 +266,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups"
         case .markDelivered:
             return "/api/v2/chat/channels/delivered"
+        case .mute:
+            return "/api/v2/moderation/mute"
         case .muteChannel:
             return "/api/v2/chat/moderation/mute/channel"
         case .queryMembers:
@@ -292,6 +294,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
         case .unblockUsers:
             return "/api/v2/users/unblock"
+        case .unmute:
+            return "/api/v2/moderation/unmute"
         case .unmuteChannel:
             return "/api/v2/chat/moderation/unmute/channel"
         case .unreadCounts:
@@ -831,6 +835,19 @@ extension Endpoint {
         )
     }
 
+    static func mute(
+        muteRequest: MuteRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MuteResponse> {
+        return .init(
+            path: .mute,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: muteRequest
+        )
+    }
+
     static func muteChannel(
         muteChannelRequest: MuteChannelRequest,
         requiresConnectionId: Bool = false
@@ -997,10 +1014,23 @@ extension Endpoint {
         )
     }
 
+    static func unmute(
+        unmuteRequest: UnmuteRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UnmuteUsersResponse> {
+        return .init(
+            path: .unmute,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: unmuteRequest
+        )
+    }
+
     static func unmuteChannel(
         unmuteChannelRequest: UnmuteChannelRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<EmptyResponse> {
+    ) -> Endpoint<UnmuteUsersResponse> {
         return .init(
             path: .unmuteChannel,
             method: .post,

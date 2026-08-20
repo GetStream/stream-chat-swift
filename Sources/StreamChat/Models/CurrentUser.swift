@@ -58,6 +58,9 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
     /// Unread channel counts keyed by the backend-provided group identifier.
     public let unreadChannelCountsByGroup: [String: Int]?
 
+    /// Total unread message counts keyed by team id.
+    public let totalUnreadCountByTeam: [TeamId: Int]?
+
     /// A Boolean value indicating if the user has opted to hide their online status.
     public let isInvisible: Bool
 
@@ -91,6 +94,7 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
         unreadChannelCountsByGroup: [String: Int]? = nil,
+        totalUnreadCountByTeam: [TeamId: Int]? = nil,
         mutedChannels: Set<ChatChannel>,
         privacySettings: UserPrivacySettings,
         avgResponseTime: Int?,
@@ -104,6 +108,7 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
         self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
         self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
+        self.totalUnreadCountByTeam = totalUnreadCountByTeam
         self.isInvisible = isInvisible
         self.privacySettings = privacySettings
         self.mutedChannels = mutedChannels

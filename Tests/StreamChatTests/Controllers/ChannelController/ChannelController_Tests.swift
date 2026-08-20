@@ -3964,7 +3964,7 @@ final class ChannelController_Tests: XCTestCase {
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUser: UserPayload = .dummy(userId: .unique, role: .user)
 
         let channel: ChannelPayload = .dummy(
             channel: .dummy(
@@ -3985,7 +3985,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
+            try session.saveCurrentUser(payload: .dummy(userPayload: currentUser))
             try session.saveChannel(payload: channel)
         }
 
@@ -4081,7 +4081,7 @@ final class ChannelController_Tests: XCTestCase {
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUser: UserPayload = .dummy(userId: .unique, role: .user)
 
         let channel: ChannelPayload = .dummy(
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
@@ -4097,7 +4097,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
+            try session.saveCurrentUser(payload: .dummy(userPayload: currentUser))
             try session.saveChannel(payload: channel)
         }
 
@@ -4211,7 +4211,7 @@ final class ChannelController_Tests: XCTestCase {
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: userId, role: .user)
+        let currentUser: UserPayload = .dummy(userId: userId, role: .user)
 
         let channel: ChannelPayload = .dummy(
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
@@ -4227,7 +4227,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
+            try session.saveCurrentUser(payload: .dummy(userPayload: currentUser))
             try session.saveChannel(payload: channel)
         }
 

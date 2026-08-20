@@ -13,8 +13,17 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func muteUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .muteUser(userId)) {
-            completion?($0.error)
+        apiClient.request(endpoint: .mute(muteRequest: .init(targetIds: [userId]))) { result in
+            switch result {
+            case .success(let payload):
+                self.database.write({ session in
+                    try session.saveCurrentUserMutedUsers(payload.ownUser?.mutes ?? payload.mutes ?? [])
+                }, completion: {
+                    completion?($0)
+                })
+            case .failure(let error):
+                completion?(error)
+            }
         }
     }
 
@@ -24,7 +33,7 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unmuteUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .unmuteUser(userId)) {
+        apiClient.request(endpoint: .unmute(unmuteRequest: .init(targetIds: [userId]))) {
             completion?($0.error)
         }
     }

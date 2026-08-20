@@ -38,7 +38,7 @@ struct UserWebSocketPayload: Encodable {
     let imageURL: URL?
     let isInvisible: Bool?
     let language: String?
-    let privacySettings: UserPrivacySettingsPayload?
+    let privacySettings: UserPrivacySettings?
     let blockedUserIds: [UserId]?
     let extraData: [String: RawJSON]
 
@@ -48,7 +48,7 @@ struct UserWebSocketPayload: Encodable {
         imageURL = userInfo.imageURL
         isInvisible = userInfo.isInvisible
         language = userInfo.language?.languageCode
-        privacySettings = userInfo.privacySettings.map { .init(settings: $0) }
+        privacySettings = userInfo.privacySettings
         blockedUserIds = userInfo.blockedUserIds
         extraData = userInfo.extraData
     }
@@ -64,51 +64,4 @@ struct UserWebSocketPayload: Encodable {
         try container.encodeIfPresent(blockedUserIds, forKey: .blockedUserIds)
         try extraData.encode(to: encoder)
     }
-}
-
-struct UserPrivacySettingsPayload: Codable {
-    enum CodingKeys: String, CodingKey {
-        case typingIndicators = "typing_indicators"
-        case readReceipts = "read_receipts"
-        case deliveryReceipts = "delivery_receipts"
-    }
-
-    let typingIndicators: TypingIndicatorPrivacySettingsPayload?
-    let readReceipts: ReadReceiptsPrivacySettingsPayload?
-    let deliveryReceipts: DeliveryReceiptsPrivacySettingsPayload?
-
-    init(
-        typingIndicators: TypingIndicatorPrivacySettingsPayload? = nil,
-        readReceipts: ReadReceiptsPrivacySettingsPayload? = nil,
-        deliveryReceipts: DeliveryReceiptsPrivacySettingsPayload? = nil
-    ) {
-        self.typingIndicators = typingIndicators
-        self.readReceipts = readReceipts
-        self.deliveryReceipts = deliveryReceipts
-    }
-
-    init(settings: UserPrivacySettings) {
-        typingIndicators = settings.typingIndicators.map { .init(enabled: $0.enabled) }
-        readReceipts = settings.readReceipts.map { .init(enabled: $0.enabled) }
-        deliveryReceipts = settings.deliveryReceipts.map { .init(enabled: $0.enabled) }
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(typingIndicators, forKey: .typingIndicators)
-        try container.encodeIfPresent(readReceipts, forKey: .readReceipts)
-        try container.encodeIfPresent(deliveryReceipts, forKey: .deliveryReceipts)
-    }
-}
-
-struct TypingIndicatorPrivacySettingsPayload: Codable {
-    var enabled: Bool
-}
-
-struct ReadReceiptsPrivacySettingsPayload: Codable {
-    var enabled: Bool
-}
-
-struct DeliveryReceiptsPrivacySettingsPayload: Codable {
-    var enabled: Bool
 }

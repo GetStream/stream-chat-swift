@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `MemberSearch` for debounced channel member search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Add `ChatChannel.truncatedBy`, `ChatChannel.isAutoTranslationEnabled` and `ChatChannel.autoTranslationLanguages` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
 - Add `ChatChannelMember.memberStatus` and `ChatChannelMember.memberDeletedAt` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
+- Add `CurrentChatUserController.muteUsers(_:expiration:completion:)` and `ConnectedUser.muteUsers(_:expiration:)` for muting multiple users at once with an optional expiration
+- Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once
+- Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team
 ### 🐞 Fixed
 - Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 - Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)

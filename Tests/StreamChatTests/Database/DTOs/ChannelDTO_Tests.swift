@@ -134,7 +134,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: .dummy(userId: currentUser.id))
 
         let anotherMember: MemberPayload = .dummy(user: .dummy(userId: .unique))
         let anotherMemberRead: ChannelReadPayload = .init(
@@ -1171,7 +1171,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_channelUnreadCount_calculatedCorrectly() throws {
         // GIVEN
-        let currentUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUserPayload: UserPayload = .dummy(userId: .unique, role: .user)
 
         let currentUserChannelReadPayload: ChannelReadPayload = .init(
             user: currentUserPayload,
@@ -1206,7 +1206,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let unreadMessages = 5
 
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveCurrentUser(payload: .dummy(userPayload: currentUserPayload))
             try session.saveChannel(payload: channelPayload)
 
             let read = try XCTUnwrap(
