@@ -8,6 +8,7 @@ final class ChannelMemberRequest: Sendable, Codable, JSONEncodable {
     /// Role of the member in the channel
     let channelRole: String?
     let custom: [String: RawJSON]?
+    /// User response object
     let user: UserPayload?
     let userId: String
 

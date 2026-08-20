@@ -8,16 +8,16 @@ final class UpdateLiveLocationRequest: Sendable, Codable, JSONEncodable {
     /// Time when the live location expires
     let endAt: Date?
     /// Latitude coordinate
-    let latitude: Float?
+    let latitude: Double?
     /// Longitude coordinate
-    let longitude: Float?
+    let longitude: Double?
     /// Live location ID
     let messageId: String
 
     init(
         endAt: Date? = nil,
-        latitude: Float? = nil,
-        longitude: Float? = nil,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
         messageId: String
     ) {
         self.endAt = endAt

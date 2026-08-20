@@ -17,6 +17,7 @@ final class MessageReactionPayload: Sendable, Codable, JSONEncodable {
     let type: MessageReactionType
     /// Date/time of the last update
     let updatedAt: Date
+    /// User response object
     let user: UserPayload
     /// User ID
     let userId: String

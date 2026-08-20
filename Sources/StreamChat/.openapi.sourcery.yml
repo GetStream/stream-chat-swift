@@ -1,5 +1,6 @@
 sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
+  - ./Generated/OpenAPI/models/OwnUserResponse.swift
   - ./Generated/OpenAPI/models/MemberPayload.swift
   - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/UserPayload.swift
@@ -11,4 +12,5 @@ args:
   # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
   # declares, so those have to be excluded too when rebuilding the extra data.
   v1CodingKeys:
+    OwnUserResponse: UserPayloadsCodingKeys
     UserPayload: UserPayloadsCodingKeys
