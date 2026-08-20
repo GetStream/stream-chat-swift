@@ -237,7 +237,62 @@ import XCTest
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
+    func test_updateContent_whenMarkdownAndPlainTextHaveSameRenderedString_resetsFont() throws {
+        let view = contentView(message: .mock(text: "**test**"))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let markdownText = try XCTUnwrap(view.textView?.attributedText)
+        let markdownFont = try XCTUnwrap(markdownText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertTrue(markdownFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+
+        view.content = .mock(text: "test")
+
+        let plainText = try XCTUnwrap(view.textView?.attributedText)
+        let plainFont = try XCTUnwrap(plainText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertEqual(plainText.string, "test")
+        XCTAssertEqual(plainFont, view.messageTextFont)
+        XCTAssertFalse(plainFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenMarkdownIsDisabled_resetsPreviouslyBoldFont() throws {
+        let appearance = Appearance.default
+        let view = contentView(message: .mock(text: "**test**"), appearance: appearance)
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let markdownText = try XCTUnwrap(view.textView?.attributedText)
+        let markdownFont = try XCTUnwrap(markdownText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertTrue(markdownFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+
+        appearance.formatters.isMarkdownEnabled = false
+        view.content = .mock(text: "test")
+
+        let plainText = try XCTUnwrap(view.textView?.attributedText)
+        let plainFont = try XCTUnwrap(plainText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertEqual(plainText.string, "test")
+        XCTAssertEqual(plainFont, view.messageTextFont)
+        XCTAssertFalse(plainFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenRebuildingMarkdownText_appliesMarkdownAndLinkDetection() throws {
+        let view = contentView(message: .mock(text: "Initial text"))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        view.content = .mock(text: "**test** https://getstream.io")
+
+        let attributedText = try XCTUnwrap(view.textView?.attributedText)
+        let boldFont = try XCTUnwrap(attributedText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        let linkRange = (attributedText.string as NSString).range(of: "https://getstream.io")
+        XCTAssertTrue(boldFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        XCTAssertEqual(attributedText.attribute(.link, at: linkRange.location, effectiveRange: nil) as? URL, URL(string: "https://getstream.io"))
+        withExtendedLifetime(hostView) {}
+    }
+
     func test_appearance_whenMessageWithMarkdownOrderedListFromTheCurrentUserIsSent() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
