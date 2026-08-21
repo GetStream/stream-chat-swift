@@ -66,6 +66,16 @@ class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
         loadPageAroundReplyId_callCount += 1
         loadPageAroundReplyId_completion = completion
     }
+
+    var hasLoadedAllNextReplies_mock: Bool?
+    override var hasLoadedAllNextReplies: Bool {
+        hasLoadedAllNextReplies_mock ?? super.hasLoadedAllNextReplies
+    }
+
+    var loadFirstPageCallCount = 0
+    override func loadFirstPage(limit: Int? = nil, _ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
+        loadFirstPageCallCount += 1
+    }
 }
 
 extension ChatMessageController_Mock {

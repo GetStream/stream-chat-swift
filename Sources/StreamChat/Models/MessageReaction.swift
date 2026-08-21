@@ -6,10 +6,10 @@ import Foundation
 
 /// A type representing a message reaction. `ChatMessageReaction` is an immutable snapshot
 /// of a message reaction entity at the given time.
-public struct ChatMessageReaction: Hashable, Identifiable, Sendable {
+public final class ChatMessageReaction: Identifiable, Sendable {
     /// The id of the reaction.
     public let id: String
-    
+
     /// The reaction type.
     public let type: MessageReactionType
 
@@ -27,4 +27,38 @@ public struct ChatMessageReaction: Hashable, Identifiable, Sendable {
 
     /// Custom data
     public let extraData: [String: RawJSON]
+
+    init(
+        id: String,
+        type: MessageReactionType,
+        score: Int,
+        createdAt: Date,
+        updatedAt: Date,
+        author: ChatUser,
+        extraData: [String: RawJSON]
+    ) {
+        self.id = id
+        self.type = type
+        self.score = score
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.author = author
+        self.extraData = extraData
+    }
+}
+
+extension ChatMessageReaction: Hashable {
+    public static func == (lhs: ChatMessageReaction, rhs: ChatMessageReaction) -> Bool {
+        lhs.id == rhs.id &&
+            lhs.type == rhs.type &&
+            lhs.score == rhs.score &&
+            lhs.createdAt == rhs.createdAt &&
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.author == rhs.author &&
+            lhs.extraData == rhs.extraData
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
