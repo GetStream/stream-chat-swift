@@ -52,6 +52,66 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.latestMessages.first?.id, newerMessage.id)
     }
 
+    func test_saveChannel_latestMessagesExcludesHardDeletedMessages() throws {
+        // GIVEN
+        let previousMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let hardDeletedMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 2000),
+            deletedAt: Date(timeIntervalSince1970: 2500)
+        )
+
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [previousMessage, hardDeletedMessage]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            session.message(id: hardDeletedMessage.id)?.isHardDeleted = true
+        }
+
+        // THEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+        XCTAssertEqual(channel.latestMessages.map(\.id), [previousMessage.id])
+    }
+
+    func test_saveChannel_latestMessagesEmpty_whenOnlyMessageIsHardDeleted() throws {
+        // GIVEN
+        let hardDeletedMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 2000),
+            deletedAt: Date(timeIntervalSince1970: 2500)
+        )
+
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [hardDeletedMessage]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            session.message(id: hardDeletedMessage.id)?.isHardDeleted = true
+        }
+
+        // THEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+        XCTAssertTrue(channel.latestMessages.isEmpty)
+    }
+
     func test_saveChannel_latestMessagesFirstIncludesDeletedMessages() throws {
         // GIVEN
         let regularMessage: MessagePayload = .dummy(
@@ -897,6 +957,36 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(lastMessageFromCurrentUser.text, message2.text)
+    }
+
+    func test_lastMessageFromCurrentUser_whenLastMessageIsHardDeleted() throws {
+        let user: UserPayload = dummyCurrentUser
+        let channelId: ChannelId = .unique
+        let previousMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let hardDeletedMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: user.id,
+            createdAt: Date(timeIntervalSince1970: 2000),
+            deletedAt: Date(timeIntervalSince1970: 2500)
+        )
+
+        let channelPayload = dummyPayload(with: channelId, messages: [previousMessage, hardDeletedMessage])
+
+        try database.createCurrentUser(id: user.id)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            session.message(id: hardDeletedMessage.id)?.isHardDeleted = true
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        XCTAssertEqual(channel.lastMessageFromCurrentUser?.id, previousMessage.id)
     }
 
     func test_lastMessageFromCurrentUser_whenLastMessageIsThreadReply() throws {
