@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once
 - Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team
 ### 🐞 Fixed
+- Fix the channel list showing "Message deleted" after hard deleting the last message [#4230](https://github.com/GetStream/stream-chat-swift/pull/4230)
 - Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 - Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 - Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
