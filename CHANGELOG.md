@@ -30,6 +30,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ⚡ Performance
 - Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
+### 🔄 Changed
+- Use the system photos picker in the composer, so that the photo library opens instantly and no longer asks for permission [#4232](https://github.com/GetStream/stream-chat-swift/pull/4232)
 ### 🐞 Fixed
 - Fix the scroll-to-bottom button not disappearing after sending a message from a mid-page jump [#4229](https://github.com/GetStream/stream-chat-swift/pull/4229)
 - Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
