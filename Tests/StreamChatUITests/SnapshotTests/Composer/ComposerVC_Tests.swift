@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import PhotosUI
 @testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
@@ -32,9 +33,38 @@ import XCTest
     }
     
     override func tearDown() {
+        temporaryFiles.forEach { try? FileManager.default.removeItem(at: $0) }
+        temporaryFiles = []
         composerVC = nil
         mockedChatChannelController = nil
         super.tearDown()
+    }
+
+    private var temporaryFiles: [URL] = []
+
+    private func makeImage(width: Int, height: Int) throws -> UIImage {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        let size = CGSize(width: width, height: height)
+        return UIGraphicsImageRenderer(size: size, format: format).image { context in
+            UIColor.red.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
+    }
+
+    private func makeTemporaryImageFile(width: Int, height: Int) throws -> URL {
+        let image = try makeImage(width: width, height: height)
+        let data = try XCTUnwrap(image.jpegData(compressionQuality: 1))
+        let url = try makeTemporaryFile(named: "\(UUID().uuidString).jpg")
+        try data.write(to: url)
+        return url
+    }
+
+    private func makeTemporaryFile(named name: String) throws -> URL {
+        let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(name)
+        try Data(count: 1024).write(to: url)
+        temporaryFiles.append(url)
+        return url
     }
     
     // MARK: - Search
@@ -941,6 +971,77 @@ import XCTest
         composerVC.updateContent()
 
         XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 0)
+    }
+
+    // MARK: - mediaPickerVC
+
+    func test_mediaPickerVC_whenIOS14AndAbove_thenUsesSystemPhotosPicker() throws {
+        guard #available(iOS 14.0, *) else { throw XCTSkip("Requires iOS 14") }
+
+        XCTAssertTrue(composerVC.mediaPickerVC is PHPickerViewController)
+    }
+
+    func test_mediaPickerVC_whenIOS14AndAbove_thenSelectionIsLimitedToOneItem() throws {
+        guard #available(iOS 14.0, *) else { throw XCTSkip("Requires iOS 14") }
+
+        let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
+        XCTAssertEqual(picker.configuration.selectionLimit, 1)
+    }
+
+    func test_mediaPickerVC_whenIOS14AndAbove_thenComposerIsSetAsDelegate() throws {
+        guard #available(iOS 14.0, *) else { throw XCTSkip("Requires iOS 14") }
+
+        let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
+        XCTAssertTrue(picker.delegate === composerVC)
+    }
+
+    func test_mediaPickerVC_thenTheSameInstanceIsReusedBetweenPresentations() {
+        XCTAssertTrue(composerVC.mediaPickerVC === composerVC.mediaPickerVC)
+    }
+
+    // MARK: - imagePickerController(_:didFinishPickingMediaWithInfo:)
+
+    func test_didFinishPickingMedia_whenImageURLWithoutOriginalImage_thenResolutionIsReadFromTheFile() throws {
+        let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
+
+        composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [.imageURL: imageURL])
+
+        AssertAsync.willBeEqual(self.composerVC.content.attachments.count, 1)
+        let attachment = try XCTUnwrap(composerVC.content.attachments.first)
+        XCTAssertEqual(attachment.type, .image)
+        let payload = try XCTUnwrap(attachment.payload as? ImageAttachmentPayload)
+        XCTAssertEqual(payload.originalWidth, 40)
+        XCTAssertEqual(payload.originalHeight, 20)
+    }
+
+    func test_didFinishPickingMedia_whenOriginalImageIsProvided_thenResolutionComesFromTheImage() throws {
+        let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
+        let originalImage = try makeImage(width: 10, height: 30)
+
+        composerVC.imagePickerController(
+            UIImagePickerController(),
+            didFinishPickingMediaWithInfo: [.imageURL: imageURL, .originalImage: originalImage]
+        )
+
+        AssertAsync.willBeEqual(self.composerVC.content.attachments.count, 1)
+        let payload = try XCTUnwrap(composerVC.content.attachments.first?.payload as? ImageAttachmentPayload)
+        XCTAssertEqual(payload.originalWidth, 10)
+        XCTAssertEqual(payload.originalHeight, 30)
+    }
+
+    func test_didFinishPickingMedia_whenVideoURL_thenVideoAttachmentIsAdded() throws {
+        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov")
+
+        composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [.mediaURL: videoURL])
+
+        AssertAsync.willBeEqual(self.composerVC.content.attachments.count, 1)
+        XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
+    }
+
+    func test_didFinishPickingMedia_whenNothingIsPicked_thenNoAttachmentIsAdded() {
+        composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [:])
+
+        XCTAssertEqual(composerVC.content.attachments.count, 0)
     }
 
     // MARK: - maxAttachmentSize

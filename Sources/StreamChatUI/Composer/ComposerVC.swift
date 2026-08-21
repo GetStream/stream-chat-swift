@@ -4,6 +4,8 @@
 
 import AVFoundation
 import Foundation
+import ImageIO
+import PhotosUI
 import StreamChat
 import UIKit
 
@@ -443,7 +445,17 @@ open class ComposerVC: _ViewController,
         .init()
 
     /// The view controller for selecting image attachments.
+    ///
+    /// On iOS 14 and above the system photos picker is used, which is presented considerably
+    /// faster than `UIImagePickerController` and needs no photo library permission.
     open private(set) lazy var mediaPickerVC: UIViewController = {
+        if #available(iOS 14.0, *) {
+            var configuration = PHPickerConfiguration()
+            configuration.filter = .any(of: [.images, .videos])
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            return picker
+        }
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
@@ -1612,8 +1624,13 @@ open class ComposerVC: _ViewController,
         }
 
         nonisolated(unsafe) var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
-            localAttachmentInfo[.originalImage] = originalImage
+        if urlAndType.1 == .image {
+            if let originalImage = info[.originalImage] {
+                localAttachmentInfo[.originalImage] = originalImage
+            } else if let dimensions = imageDimensions(at: urlAndType.0) {
+                localAttachmentInfo[.originalWidth] = dimensions.width
+                localAttachmentInfo[.originalHeight] = dimensions.height
+            }
         }
         if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
             let asset = AVURLAsset(url: videoURL)
@@ -1660,6 +1677,25 @@ open class ComposerVC: _ViewController,
                     attachmentType: urlAndType.1,
                     error: error
                 )
+            }
+        }
+    }
+
+    /// Adds the media item which was selected in the photos picker to the composer's content.
+    @available(iOS 14.0, *)
+    open func handleMediaPickerResult(_ result: PHPickerResult) {
+        let itemProvider = result.itemProvider
+        let isVideo = itemProvider.hasItemConformingToTypeIdentifier("public.movie")
+        itemProvider.loadFileRepresentation(forTypeIdentifier: isVideo ? "public.movie" : "public.image") { url, _ in
+            // The provided file is deleted as soon as this closure returns, so it needs
+            // to be copied to a location which is owned by the composer.
+            let localURL = url.flatMap { try? copyToTemporaryLocation($0) }
+            Task { @MainActor [weak self] in
+                guard let localURL else {
+                    log.error("Failed to load the media selected in the photos picker")
+                    return
+                }
+                self?.handleImagePickerMediaSelected(info: [isVideo ? .mediaURL : .imageURL: localURL])
             }
         }
     }
@@ -1826,6 +1862,28 @@ open class ComposerVC: _ViewController,
     }
 }
 
+/// Reads the dimensions from the image's metadata, without decoding the whole image.
+private func imageDimensions(at url: URL) -> (width: Double, height: Double)? {
+    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+          let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any],
+          let width = (properties[kCGImagePropertyPixelWidth as String] as? NSNumber)?.doubleValue,
+          let height = (properties[kCGImagePropertyPixelHeight as String] as? NSNumber)?.doubleValue
+    else { return nil }
+    let orientation = (properties[kCGImagePropertyOrientation as String] as? NSNumber)?.intValue ?? 1
+    let isRotated = (5...8).contains(orientation)
+    return isRotated ? (width: height, height: width) : (width: width, height: height)
+}
+
+private func copyToTemporaryLocation(_ url: URL) throws -> URL {
+    let directory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
+    let destination = directory.appendingPathComponent(fileName)
+    try FileManager.default.copyItem(at: url, to: destination)
+    return destination
+}
+
 /// searchUsers does an autocomplete search on a list of ChatUser and returns users with `id` or `name` containing the search string
 /// results are returned sorted by their edit distance from the searched string
 /// distance is calculated using the levenshtein algorithm
@@ -1860,5 +1918,15 @@ extension ComposerVC: ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         cooldownTracker.start(with: channelController.currentCooldownTime())
+    }
+}
+
+@available(iOS 14.0, *)
+extension ComposerVC: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true) { [weak self] in
+            guard let result = results.first else { return }
+            self?.handleMediaPickerResult(result)
+        }
     }
 }
