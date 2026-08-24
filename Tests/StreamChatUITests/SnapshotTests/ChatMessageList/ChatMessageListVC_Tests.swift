@@ -169,6 +169,7 @@ import XCTest
                 cache: nil
             )
             messageDTOWithoutCid.channel = nil
+            messageDTOWithoutCid.cid = nil
             mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
         }
 

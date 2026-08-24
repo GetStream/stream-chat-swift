@@ -246,10 +246,10 @@ final class EventNotificationCenter_Tests: XCTestCase {
     // Performance tests
 
     func test_measure_processMultipleNewMessageEvents() throws {
-        let existingPayloads: [MessagePayload] = (0...200).map { _ in
-            MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
-        }
         let channelId = ChannelId.unique
+        let existingPayloads: [MessagePayload] = (0...200).map { _ in
+            MessagePayload.dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
+        }
 
         waitUntil(timeout: 100) { done in
             database.write({ session in
