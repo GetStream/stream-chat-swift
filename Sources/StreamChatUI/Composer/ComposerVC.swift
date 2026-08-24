@@ -1689,12 +1689,11 @@ open class ComposerVC: _ViewController,
         itemProvider.loadFileRepresentation(forTypeIdentifier: isVideo ? "public.movie" : "public.image") { url, _ in
             // The provided file is deleted as soon as this closure returns, so it needs
             // to be copied to a location which is owned by the composer.
-            let localURL = url.flatMap { try? copyToTemporaryLocation($0) }
+            guard let localURL = url.flatMap({ try? copyToTemporaryLocation($0) }) else {
+                log.error("Failed to load the media selected in the photos picker")
+                return
+            }
             Task { @MainActor [weak self] in
-                guard let localURL else {
-                    log.error("Failed to load the media selected in the photos picker")
-                    return
-                }
                 self?.handleImagePickerMediaSelected(info: [isVideo ? .mediaURL : .imageURL: localURL])
             }
         }
@@ -1869,9 +1868,14 @@ private func imageDimensions(at url: URL) -> (width: Double, height: Double)? {
           let width = (properties[kCGImagePropertyPixelWidth as String] as? NSNumber)?.doubleValue,
           let height = (properties[kCGImagePropertyPixelHeight as String] as? NSNumber)?.doubleValue
     else { return nil }
-    let orientation = (properties[kCGImagePropertyOrientation as String] as? NSNumber)?.intValue ?? 1
-    let isRotated = (5...8).contains(orientation)
-    return isRotated ? (width: height, height: width) : (width: width, height: height)
+    let rawOrientation = (properties[kCGImagePropertyOrientation as String] as? NSNumber)?.uint32Value
+    let orientation = rawOrientation.flatMap(CGImagePropertyOrientation.init(rawValue:)) ?? .up
+    switch orientation {
+    case .left, .leftMirrored, .right, .rightMirrored:
+        return (width: height, height: width)
+    default:
+        return (width: width, height: height)
+    }
 }
 
 private func copyToTemporaryLocation(_ url: URL) throws -> URL {
