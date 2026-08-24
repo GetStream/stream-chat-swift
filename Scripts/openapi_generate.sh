@@ -203,7 +203,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/chat-manager openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
-    --opt struct_over_enum=true \
+    --opt raw_representable_over_enum=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
