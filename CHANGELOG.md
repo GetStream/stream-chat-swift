@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once
 - Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team
 ### 🐞 Fixed
+- Fix the channel list showing "Message deleted" after hard deleting the last message [#4230](https://github.com/GetStream/stream-chat-swift/pull/4230)
 - Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 - Fix unread count not clearing immediately when marking a channel as read [#4214](https://github.com/GetStream/stream-chat-swift/pull/4214)
 - Fix mention suggestions not showing members in channels with 100+ members in the `MentionSuggestionsProvider` [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
@@ -33,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Use the system photos picker in the composer, so that the photo library opens instantly and no longer asks for permission [#4232](https://github.com/GetStream/stream-chat-swift/pull/4232)
 ### 🐞 Fixed
+- Fix reused message cells keeping Markdown or mention styling when the next message has the same visible text [#4231](https://github.com/GetStream/stream-chat-swift/pull/4231)
 - Fix the scroll-to-bottom button not disappearing after sending a message from a mid-page jump [#4229](https://github.com/GetStream/stream-chat-swift/pull/4229)
 - Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)

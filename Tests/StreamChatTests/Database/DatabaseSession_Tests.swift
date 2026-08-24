@@ -796,6 +796,55 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertNil(channelDTO.messageCount)
     }
 
+    func test_saveEvent_whenMessageHardDeletedEvent_latestMessagesExcludesHardDeletedMessage() throws {
+        // GIVEN
+        let previousMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let message: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+
+        let channel: ChannelPayload = .dummy(
+            messages: [previousMessage, message]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let hardDeletedMessage: MessagePayload = .dummy(
+            messageId: message.id,
+            authorUserId: message.user.id,
+            createdAt: message.createdAt,
+            deletedAt: Date(timeIntervalSince1970: 3000)
+        )
+
+        let messageDeletedEvent = EventPayload(
+            eventType: .messageDeleted,
+            cid: channel.channel.cid,
+            channel: channel.channel,
+            message: hardDeletedMessage,
+            hardDelete: true
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: messageDeletedEvent)
+        }
+
+        // THEN
+        let channelModel = try XCTUnwrap(
+            database.viewContext.channel(cid: channel.channel.cid)?.asModel()
+        )
+        XCTAssertEqual(channelModel.latestMessages.map(\.id), [previousMessage.id])
+        XCTAssertTrue(database.viewContext.message(id: message.id)?.isHardDeleted == true)
+    }
+
     func test_saveEvent_whenMessageDeletedEvent_latestMessagesFirstStillReturnsDeletedMessage() throws {
         // GIVEN
         let message: MessagePayload = .dummy(
