@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MessageReactionGroupPayload: Sendable, Codable, JSONEncodable {
+final class MessageReactionGroupPayload: Sendable, Decodable {
     /// Count is the number of reactions of this type.
     let count: Int
     /// FirstReactionAt is the time of the first reaction of this type. This is the same also if all reaction of this type are deleted, because if someone will react again with the same type, will be preserved the sorting.

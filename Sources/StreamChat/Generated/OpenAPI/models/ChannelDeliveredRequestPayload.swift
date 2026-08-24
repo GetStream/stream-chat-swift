@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelDeliveredRequestPayload: Sendable, Codable, JSONEncodable {
+final class ChannelDeliveredRequestPayload: Sendable, Encodable, JSONEncodable {
     let latestDeliveredMessages: [DeliveredMessagePayload]?
 
     init(latestDeliveredMessages: [DeliveredMessagePayload]? = nil) {

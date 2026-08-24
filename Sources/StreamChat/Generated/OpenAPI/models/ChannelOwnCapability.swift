@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum ChannelOwnCapability: String, Sendable, Codable, CaseIterable {
+enum ChannelOwnCapability: String, Sendable, Decodable, CaseIterable {
     case banChannelMembers = "ban-channel-members"
     case castPollVote = "cast-poll-vote"
     case connectEvents = "connect-events"

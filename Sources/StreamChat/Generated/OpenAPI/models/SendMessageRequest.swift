@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SendMessageRequest: Sendable, Codable, JSONEncodable {
+final class SendMessageRequest: Sendable, Encodable, JSONEncodable {
     /// When true, the response includes channel_context: a slim channel object with cid, type, id and created_by
     let includeChannelContext: Bool?
     /// When true, the response includes mentioned_members: for each mentioned user, whether that user is currently a channel member. Requires the ReadChannelMembers permission

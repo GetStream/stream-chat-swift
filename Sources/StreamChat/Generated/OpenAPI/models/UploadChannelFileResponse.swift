@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UploadChannelFileResponse: Sendable, Codable, JSONEncodable {
+final class UploadChannelFileResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds
     let duration: String
     /// URL to the uploaded asset. Should be used to put to `asset_url` attachment field

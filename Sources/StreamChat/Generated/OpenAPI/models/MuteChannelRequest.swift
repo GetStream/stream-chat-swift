@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MuteChannelRequest: Sendable, Codable, JSONEncodable {
+final class MuteChannelRequest: Sendable, Encodable, JSONEncodable {
     /// Channel CIDs to mute (if multiple channels)
     let channelCids: [String]?
     /// Duration of mute in milliseconds

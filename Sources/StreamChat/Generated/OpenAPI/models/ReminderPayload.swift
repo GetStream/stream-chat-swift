@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ReminderPayload: Sendable, Codable, JSONEncodable {
+final class ReminderPayload: Sendable, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
     let channelCid: String

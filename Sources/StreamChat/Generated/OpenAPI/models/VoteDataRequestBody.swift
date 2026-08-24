@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class VoteDataRequestBody: Sendable, Codable, JSONEncodable {
+final class VoteDataRequestBody: Sendable, Encodable, JSONEncodable {
     let answerText: String?
     let optionId: String?
 

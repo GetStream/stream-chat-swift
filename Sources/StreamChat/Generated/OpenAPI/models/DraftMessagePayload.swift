@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class DraftMessagePayload: Sendable, Codable, JSONEncodable {
+final class DraftMessagePayload: Sendable, Decodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]?
     let custom: [String: RawJSON]

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UnblockUsersResponse: Sendable, Codable, JSONEncodable {
+final class UnblockUsersResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds
     let duration: String
 

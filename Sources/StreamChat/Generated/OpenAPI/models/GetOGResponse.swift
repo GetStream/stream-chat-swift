@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class GetOGResponse: Sendable, Codable, JSONEncodable {
+final class GetOGResponse: Sendable, Decodable {
     let actions: [AttachmentActionPayload]?
     /// URL of detected video or audio
     let assetUrl: String?

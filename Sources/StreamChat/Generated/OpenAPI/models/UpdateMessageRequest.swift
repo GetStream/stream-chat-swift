@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateMessageRequest: Sendable, Codable, JSONEncodable {
+final class UpdateMessageRequest: Sendable, Encodable, JSONEncodable {
     /// Message data for creating or updating a message
     let message: MessageRequest
     /// Skip enrich URL

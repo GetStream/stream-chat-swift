@@ -4,8 +4,8 @@
 
 import Foundation
 
-final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
-    enum CreateDeviceRequestPushProvider: String, Sendable, Codable, CaseIterable {
+final class CreateDeviceRequest: Sendable, Encodable, JSONEncodable {
+    enum CreateDeviceRequestPushProvider: String, Sendable, Encodable, CaseIterable {
         case apn
         case firebase
         case huawei

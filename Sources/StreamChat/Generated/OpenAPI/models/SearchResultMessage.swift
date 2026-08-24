@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SearchResultMessage: Sendable, Codable, JSONEncodable {
+final class SearchResultMessage: Sendable, Decodable {
     let attachments: [MessageAttachmentPayload]
     /// Represents channel in chat
     let channel: ChannelDetailPayload?

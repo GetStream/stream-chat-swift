@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CreateDraftResponse: Sendable, Codable, JSONEncodable {
+final class CreateDraftResponse: Sendable, Decodable {
     let draft: DraftPayload
 
     init(draft: DraftPayload) {

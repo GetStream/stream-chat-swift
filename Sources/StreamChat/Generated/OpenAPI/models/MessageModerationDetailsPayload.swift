@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MessageModerationDetailsPayload: Sendable, Codable, JSONEncodable {
+final class MessageModerationDetailsPayload: Sendable, Decodable {
     let action: String
     let blocklistMatched: String?
     let blocklistsMatched: [String]?

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelContextResponse: Sendable, Codable, JSONEncodable {
+final class ChannelContextResponse: Sendable, Decodable {
     /// Channel CID (<type>:<id>)
     let cid: String
     /// User response object

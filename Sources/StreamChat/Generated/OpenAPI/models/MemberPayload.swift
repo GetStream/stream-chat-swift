@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MemberPayload: Sendable, Codable, JSONEncodable {
+final class MemberPayload: Sendable, Decodable {
     let archivedAt: Date?
     /// Expiration date of the ban
     let banExpires: Date?

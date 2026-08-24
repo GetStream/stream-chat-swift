@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class BlockUsersResponse: Sendable, Codable, JSONEncodable {
+final class BlockUsersResponse: Sendable, Decodable {
     /// User id who blocked another user
     let blockedByUserId: String
     /// User id who got blocked

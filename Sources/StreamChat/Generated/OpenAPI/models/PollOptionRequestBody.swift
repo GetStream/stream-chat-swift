@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class PollOptionRequestBody: Sendable, Codable, JSONEncodable {
+final class PollOptionRequestBody: Sendable, Encodable, JSONEncodable {
     let custom: [String: RawJSON]?
     let text: String?
 

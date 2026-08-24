@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class DraftPayload: Sendable, Codable, JSONEncodable {
+final class DraftPayload: Sendable, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
     let channelCid: String

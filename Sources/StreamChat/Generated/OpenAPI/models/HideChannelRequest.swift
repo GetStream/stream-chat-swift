@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class HideChannelRequest: Sendable, Codable, JSONEncodable {
+final class HideChannelRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to clear message history of the channel or not
     let clearHistory: Bool?
 

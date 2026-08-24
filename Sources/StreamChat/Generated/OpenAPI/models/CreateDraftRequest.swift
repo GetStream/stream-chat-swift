@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CreateDraftRequest: Sendable, Codable, JSONEncodable {
+final class CreateDraftRequest: Sendable, Encodable, JSONEncodable {
     /// Message data for creating or updating a message
     let message: MessageRequest
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class OwnUserResponse: Sendable, Codable, JSONEncodable {
+final class OwnUserResponse: Sendable, Decodable {
     let avgResponseTime: Int?
     let banned: Bool?
     let blockedUserIds: [String]?

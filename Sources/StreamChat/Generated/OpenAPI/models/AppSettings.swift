@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class AppSettings: Sendable, Codable, JSONEncodable {
+public final class AppSettings: Sendable, Decodable {
     public let asyncUrlEnrichEnabled: Bool
     public let autoTranslationEnabled: Bool
     public let fileUploadConfig: UploadConfig

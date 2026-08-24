@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CreateUserGroupRequest: Sendable, Codable, JSONEncodable {
+final class CreateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// An optional description for the group
     let description: String?
     /// Optional user group ID. If not provided, a UUID v7 will be generated

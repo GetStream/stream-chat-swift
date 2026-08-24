@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UnblockUsersRequest: Sendable, Codable, JSONEncodable {
+final class UnblockUsersRequest: Sendable, Encodable, JSONEncodable {
     let blockedUserId: String
 
     init(blockedUserId: String) {

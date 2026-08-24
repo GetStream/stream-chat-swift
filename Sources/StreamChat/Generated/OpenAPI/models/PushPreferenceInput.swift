@@ -4,8 +4,8 @@
 
 import Foundation
 
-final class PushPreferenceInput: Sendable, Codable, JSONEncodable {
-    enum PushPreferenceInputChatLevel: String, Sendable, Codable, CaseIterable {
+final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
+    enum PushPreferenceInputChatLevel: String, Sendable, Encodable, CaseIterable {
         case `default`
         case all
         case allMentions = "all_mentions"

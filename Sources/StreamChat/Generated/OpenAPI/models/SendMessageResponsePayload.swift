@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SendMessageResponsePayload: Sendable, Codable, JSONEncodable {
+final class SendMessageResponsePayload: Sendable, Decodable {
     /// Slim channel object: identity plus creator
     let channelContext: ChannelContextResponse?
     /// Map of mentioned user ID to whether that user is currently an active channel member. Only set when include_mentioned_members was requested; omitted when the message has no mentions or the membership lookup failed

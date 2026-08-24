@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MessageResponse: Sendable, Codable, JSONEncodable {
+final class MessageResponse: Sendable, Decodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]
     /// Channel unique identifier in <type>:<id> format

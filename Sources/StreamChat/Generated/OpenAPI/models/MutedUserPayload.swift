@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MutedUserPayload: Sendable, Codable, JSONEncodable {
+final class MutedUserPayload: Sendable, Decodable {
     let createdAt: Date
     let expires: Date?
     /// User response object

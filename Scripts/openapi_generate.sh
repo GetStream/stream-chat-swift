@@ -191,6 +191,126 @@ allowed_hashable_models=(
   UserGroupMember
 )
 
+# Coding conformances for retained models after the renames in step 4b. Every
+# generated model must belong to exactly one group so new models fail closed until
+# their request/response direction is classified.
+encodable_only_models=(
+  AddUserGroupMembersRequest
+  BlockUsersRequest
+  CastPollVoteRequestBody
+  ChannelDeliveredRequestPayload
+  ChannelMemberRequest
+  CreateDeviceRequest
+  CreateDraftRequest
+  CreatePollOptionRequestBody
+  CreatePollRequestBody
+  CreateUserGroupRequest
+  DeliveredMessagePayload
+  HideChannelRequest
+  MessageRequest
+  MuteChannelRequest
+  MuteRequest
+  NewLocationRequestPayload
+  PollOptionRequestBody
+  PushPreferenceInput
+  QueryMembersPayload
+  QueryPollVotesRequestBody
+  QueryReactionsRequest
+  RemoveUserGroupMembersRequest
+  SendMessageRequest
+  SortParamRequest
+  UnblockUsersRequest
+  UnmuteChannelRequest
+  UnmuteRequest
+  UpdateLiveLocationRequest
+  UpdateMemberPartialRequest
+  UpdateMessagePartialRequest
+  UpdateMessageRequest
+  UpdatePollPartialRequestBody
+  UpdateUserGroupRequest
+  UpsertPushPreferencesRequest
+  VoteDataRequestBody
+)
+
+decodable_only_models=(
+  AppSettings
+  BlockUsersResponse
+  BlockedUserResponse
+  ChannelContextResponse
+  ChannelDetailPayload
+  ChannelOwnCapability
+  CreateDraftResponse
+  CurrentUserUnreads
+  DeleteChannelResponse
+  DraftMessagePayload
+  DraftPayload
+  FileUploadResponse
+  GetApplicationResponse
+  GetBlockedUsersResponse
+  GetOGResponse
+  ImageSize
+  ImageUploadResponse
+  ListDevicesResponse
+  ListUserGroupsResponse
+  MemberInfoPayload
+  MemberPayload
+  MembersResponse
+  MessageModerationDetailsPayload
+  MessageReactionGroupPayload
+  MessageReactionPayload
+  MessageReactionsPayload
+  MessageResponse
+  MuteResponse
+  MutedChannelPayload
+  MutedChannelPayloadResponse
+  MutedUserPayload
+  OwnUserResponse
+  PollOptionPayload
+  PollOptionResponse
+  PollPayload
+  PollPayloadResponse
+  PollVoteListResponse
+  PollVotePayload
+  PollVotePayloadResponse
+  PushPreference
+  ReminderPayload
+  SearchResultMessage
+  SearchRolesResponse
+  SendMessageResponsePayload
+  SharedLocation
+  SharedLocationsResponse
+  UnblockUsersResponse
+  UnmuteUsersResponse
+  UnreadChannel
+  UnreadChannelByType
+  UnreadThread
+  UpdateMemberPartialResponse
+  UpdateMessagePartialResponse
+  UpdateMessageResponse
+  UploadChannelFileResponse
+  UploadChannelResponse
+  UploadConfig
+  UpsertPushPreferencesResponse
+  UserGroup
+  UserGroupMember
+  UserGroupResponse
+)
+
+codable_models=(
+  AttachmentActionPayload
+  AttachmentFieldPayload
+  DeliveryReceiptsPrivacySettings
+  Device
+  GiphyImageData
+  GiphyImages
+  MessageAttachmentPayload
+  ReadReceiptsPrivacySettings
+  Role
+  TypingIndicatorPrivacySettings
+  UserPayload
+  UserPrivacySettings
+)
+
 # Exact membership test (macOS bash 3.2 — no associative arrays).
 contains() {
   local needle="$1"; shift
@@ -547,11 +667,6 @@ remove_property SendMessageResponsePayload duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
 
-# Server-side only: client-side requests cannot set these fields
-remove_property SendMessageResponsePayload pendingMessageMetadata
-remove_property UpdateMessagePartialResponse pendingMessageMetadata
-remove_property UpdateMessageResponse pendingMessageMetadata
-
 # TODO: reaction group reactors need CoreData and public API design first
 remove_property MessageReactionGroupPayload latestReactionsBy
 
@@ -646,7 +761,86 @@ default_init_parameter DeliveryReceiptsPrivacySettings enabled true
 default_init_parameter ReadReceiptsPrivacySettings enabled true
 default_init_parameter TypingIndicatorPrivacySettings enabled true
 
-# 4d. Strip the generated Hashable conformance from every model not in
+# 4d. Keep only the coding direction each internal model needs. Public models and
+#     models shared by requests and responses retain Codable for compatibility.
+apply_directional_coding_conformances() {
+  local encodable_csv decodable_csv codable_csv
+  encodable_csv="$(IFS=,; echo "${encodable_only_models[*]}")"
+  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]}")"
+  codable_csv="$(IFS=,; echo "${codable_models[*]}")"
+
+  python3 - \
+    "$OUTPUT_DIR_CHAT/models" \
+    "$encodable_csv" \
+    "$decodable_csv" \
+    "$codable_csv" <<'PY'
+import pathlib
+import re
+import sys
+
+models_dir = pathlib.Path(sys.argv[1])
+groups = {
+    "Encodable": set(filter(None, sys.argv[2].split(","))),
+    "Decodable": set(filter(None, sys.argv[3].split(","))),
+    "Codable": set(filter(None, sys.argv[4].split(","))),
+}
+
+all_classified = set()
+for direction, names in groups.items():
+    overlap = all_classified.intersection(names)
+    if overlap:
+        raise SystemExit(f"Models classified more than once: {sorted(overlap)}")
+    all_classified.update(names)
+
+generated = {path.stem for path in models_dir.glob("*.swift")}
+unclassified = generated - all_classified
+missing = all_classified - generated
+if unclassified:
+    raise SystemExit(f"Unclassified generated models: {sorted(unclassified)}")
+if missing:
+    raise SystemExit(f"Classified models missing from generated output: {sorted(missing)}")
+
+declaration = re.compile(
+    r"^(\s*(?:public )?(?:final )?(?:class|struct|enum)\s+([A-Za-z0-9_]+)[^:\n]*:\s*)(.*)$"
+)
+
+for direction, names in groups.items():
+    for name in sorted(names):
+        path = models_dir / f"{name}.swift"
+        lines = path.read_text().splitlines(keepends=True)
+        output = []
+        top_level_conformances = None
+
+        for line in lines:
+            ending = "\n" if line.endswith("\n") else ""
+            content = line[:-1] if ending else line
+            match = declaration.match(content)
+            if match:
+                prefix, declared_name, conformances = match.groups()
+                if direction != "Codable":
+                    conformances = re.sub(r"\bCodable\b", direction, conformances)
+                    if direction == "Decodable":
+                        conformances = re.sub(r",\s*JSONEncodable\b", "", conformances)
+                content = f"{prefix}{conformances}"
+                if declared_name == name:
+                    top_level_conformances = conformances
+            output.append(content + ending)
+
+        if top_level_conformances is None:
+            raise SystemExit(f"Could not find the top-level declaration for {name}")
+        if not re.search(rf"\b{direction}\b", top_level_conformances):
+            raise SystemExit(f"{name} does not conform to {direction}")
+        if direction == "Decodable" and re.search(
+            r"\bEncodable\b|\bJSONEncodable\b", top_level_conformances
+        ):
+            raise SystemExit(f"{name} retains an encoding conformance")
+
+        path.write_text("".join(output))
+PY
+}
+apply_directional_coding_conformances
+
+# 4e. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
 #     the file (opening at column 0, running to EOF), so delete from its opening
 #     line to end of file; swiftformat (step 5) tidies the leftover blank line.

@@ -4,8 +4,8 @@
 
 import Foundation
 
-final class CreatePollRequestBody: Sendable, Codable, JSONEncodable {
-    enum CreatePollRequestVotingVisibility: String, Sendable, Codable, CaseIterable {
+final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
+    enum CreatePollRequestVotingVisibility: String, Sendable, Encodable, CaseIterable {
         case `public`
         case anonymous
         case unknown = "_unknown"

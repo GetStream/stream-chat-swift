@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CastPollVoteRequestBody: Sendable, Codable, JSONEncodable {
+final class CastPollVoteRequestBody: Sendable, Encodable, JSONEncodable {
     let vote: VoteDataRequestBody?
 
     init(vote: VoteDataRequestBody? = nil) {

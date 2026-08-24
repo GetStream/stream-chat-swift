@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MessageReactionsPayload: Sendable, Codable, JSONEncodable {
+final class MessageReactionsPayload: Sendable, Decodable {
     /// List of reactions
     let reactions: [MessageReactionPayload]
 

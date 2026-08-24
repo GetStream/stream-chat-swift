@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MembersResponse: Sendable, Codable, JSONEncodable {
+final class MembersResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds
     let duration: String
     /// List of found members

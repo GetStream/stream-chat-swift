@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ImageSize: Sendable, Codable, JSONEncodable {
+final class ImageSize: Sendable, Decodable {
     /// Crop mode. One of: top, bottom, left, right, center
     let crop: String?
     /// Target image height

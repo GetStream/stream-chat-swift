@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class GetApplicationResponse: Sendable, Codable, JSONEncodable {
+final class GetApplicationResponse: Sendable, Decodable {
     let app: AppSettings
     /// Duration of the request in milliseconds
     let duration: String

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateMessageResponse: Sendable, Codable, JSONEncodable {
+final class UpdateMessageResponse: Sendable, Decodable {
     /// Represents any chat message
     let message: MessageResponse
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MutedChannelPayloadResponse: Sendable, Codable, JSONEncodable {
+final class MutedChannelPayloadResponse: Sendable, Decodable {
     let channelMute: MutedChannelPayload?
 
     init(channelMute: MutedChannelPayload? = nil) {

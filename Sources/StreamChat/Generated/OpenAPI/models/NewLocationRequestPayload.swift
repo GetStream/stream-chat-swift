@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class NewLocationRequestPayload: Sendable, Codable, JSONEncodable {
+final class NewLocationRequestPayload: Sendable, Encodable, JSONEncodable {
     let createdByDeviceId: String?
     let endAt: Date?
     let latitude: Double

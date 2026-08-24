@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SearchRolesResponse: Sendable, Codable, JSONEncodable {
+final class SearchRolesResponse: Sendable, Decodable {
     let duration: String
     /// Matching roles, sorted ascending by name
     let roles: [Role]

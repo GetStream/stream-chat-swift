@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class PollVotePayloadResponse: Sendable, Codable, JSONEncodable {
+final class PollVotePayloadResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds
     let duration: String
     let poll: PollPayload?

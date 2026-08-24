@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UnmuteRequest: Sendable, Codable, JSONEncodable {
+final class UnmuteRequest: Sendable, Encodable, JSONEncodable {
     /// User IDs to unmute
     let targetIds: [String]
 

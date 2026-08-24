@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UserGroupResponse: Sendable, Codable, JSONEncodable {
+final class UserGroupResponse: Sendable, Decodable {
     let duration: String
     let userGroup: UserGroup?
 

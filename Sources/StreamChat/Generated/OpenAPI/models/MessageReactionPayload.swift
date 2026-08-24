@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MessageReactionPayload: Sendable, Codable, JSONEncodable {
+final class MessageReactionPayload: Sendable, Decodable {
     /// Date/time of creation
     let createdAt: Date
     /// Custom data for this object

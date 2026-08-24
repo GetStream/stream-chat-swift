@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateMessagePartialRequest: Sendable, Codable, JSONEncodable {
+final class UpdateMessagePartialRequest: Sendable, Encodable, JSONEncodable {
     /// Sets new field values
     let set: [String: RawJSON]?
     /// Skip enriching the URL in the message

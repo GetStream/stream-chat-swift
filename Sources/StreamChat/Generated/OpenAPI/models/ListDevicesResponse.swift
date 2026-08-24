@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
+final class ListDevicesResponse: Sendable, Decodable {
     /// List of devices
     let devices: [Device]
     let duration: String

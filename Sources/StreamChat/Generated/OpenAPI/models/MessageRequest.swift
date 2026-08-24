@@ -4,8 +4,8 @@
 
 import Foundation
 
-final class MessageRequest: Sendable, Codable, JSONEncodable {
-    enum MessageRequestType: String, Sendable, Codable, CaseIterable {
+final class MessageRequest: Sendable, Encodable, JSONEncodable {
+    enum MessageRequestType: String, Sendable, Encodable, CaseIterable {
         case regular
         case system
         case unknown = "_unknown"
