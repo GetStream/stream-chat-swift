@@ -5,7 +5,7 @@
 import Foundation
 
 extension PushPreferenceLevel: ExpressibleByStringLiteral {
-    public init(stringLiteral value: StringLiteralType) {
+    public convenience init(stringLiteral value: StringLiteralType) {
         self.init(rawValue: value)
     }
 }

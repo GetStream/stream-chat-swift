@@ -4,15 +4,15 @@
 
 import Foundation
 
-public struct VotingVisibility: RawRepresentable, Codable, Hashable, Sendable {
+public final class VotingVisibility: RawRepresentable, Codable, Hashable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
-    public static let `public` = Self(rawValue: "public")
-    public static let anonymous = Self(rawValue: "anonymous")
+    public static let `public` = VotingVisibility(rawValue: "public")
+    public static let anonymous = VotingVisibility(rawValue: "anonymous")
 }
 
 final class CreatePollRequestBody: Sendable, Codable, JSONEncodable {

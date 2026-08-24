@@ -4,17 +4,17 @@
 
 import Foundation
 
-struct CreateDeviceRequestPushProvider: RawRepresentable, Codable, Hashable, Sendable {
+final class CreateDeviceRequestPushProvider: RawRepresentable, Codable, Hashable, Sendable {
     let rawValue: String
 
     init(rawValue: String) {
         self.rawValue = rawValue
     }
 
-    static let apn = Self(rawValue: "apn")
-    static let firebase = Self(rawValue: "firebase")
-    static let huawei = Self(rawValue: "huawei")
-    static let xiaomi = Self(rawValue: "xiaomi")
+    static let apn = CreateDeviceRequestPushProvider(rawValue: "apn")
+    static let firebase = CreateDeviceRequestPushProvider(rawValue: "firebase")
+    static let huawei = CreateDeviceRequestPushProvider(rawValue: "huawei")
+    static let xiaomi = CreateDeviceRequestPushProvider(rawValue: "xiaomi")
 }
 
 final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {

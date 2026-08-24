@@ -506,7 +506,7 @@ require_property ChannelDetailPayload config
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   awk -v e="$2" '
-    $0 ~ "^(enum|struct) " e ":" { skip = 1; next }
+    $0 ~ "^final class " e ":" { skip = 1; next }
     skip && /^}$/               { skip = 0; next }
     skip                        { next }
     { print }
@@ -562,14 +562,14 @@ publicize_model UserGroup
 publicize_model UserGroupMember
 publicize_model UserPrivacySettings
 
-# Expose a generated RawRepresentable struct as public API. Unlike publicize_model, the
+# Expose a generated RawRepresentable class as public API. Unlike publicize_model, the
 #     init must be public too — it is the RawRepresentable requirement — along with every
-#     static let holding a known value. The struct is looked up by name, since the file
-#     named after a model also holds the structs generated for its string properties.
+#     static let holding a known value. The class is looked up by name, since the file
+#     named after a model also holds the classes generated for its string properties.
 publicize_raw_representable() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   awk -v n="${2:-$1}" '
-    $0 ~ "^struct " n ":" { sub(/^struct /, "public struct "); inside = 1; print; next }
+    $0 ~ "^final class " n ":" { sub(/^final class /, "public final class "); inside = 1; print; next }
     inside && /^}$/       { inside = 0; print; next }
     inside {
       sub(/^    let /, "    public let ")

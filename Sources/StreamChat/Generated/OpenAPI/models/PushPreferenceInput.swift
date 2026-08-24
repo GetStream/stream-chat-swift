@@ -4,19 +4,19 @@
 
 import Foundation
 
-public struct PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sendable {
+public final class PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
-    public static let `default` = Self(rawValue: "default")
-    public static let all = Self(rawValue: "all")
-    public static let allMentions = Self(rawValue: "all_mentions")
-    public static let directMentions = Self(rawValue: "direct_mentions")
-    public static let mentions = Self(rawValue: "mentions")
-    public static let none = Self(rawValue: "none")
+    public static let `default` = PushPreferenceLevel(rawValue: "default")
+    public static let all = PushPreferenceLevel(rawValue: "all")
+    public static let allMentions = PushPreferenceLevel(rawValue: "all_mentions")
+    public static let directMentions = PushPreferenceLevel(rawValue: "direct_mentions")
+    public static let mentions = PushPreferenceLevel(rawValue: "mentions")
+    public static let none = PushPreferenceLevel(rawValue: "none")
 }
 
 final class PushPreferenceInput: Sendable, Codable, JSONEncodable {

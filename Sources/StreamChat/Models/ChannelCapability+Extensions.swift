@@ -5,7 +5,7 @@
 import Foundation
 
 extension ChannelCapability: ExpressibleByStringLiteral {
-    public init(stringLiteral value: String) {
+    public convenience init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
@@ -13,9 +13,9 @@ extension ChannelCapability: ExpressibleByStringLiteral {
 public extension ChannelCapability {
     /// Ability to join a call.
     @available(*, deprecated, message: "Calling capabilities are no longer part of channel capabilities.")
-    static let joinCall: Self = "join-call"
+    static let joinCall: ChannelCapability = "join-call"
 
     /// Ability to create a call.
     @available(*, deprecated, message: "Calling capabilities are no longer part of channel capabilities.")
-    static let createCall: Self = "create-call"
+    static let createCall: ChannelCapability = "create-call"
 }
