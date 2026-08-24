@@ -624,24 +624,22 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         }
 
         // Set the text content
-        if textView?.text != text {
-            let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: messageTextColor,
-                .font: messageTextFont
-            ]
-            if isMarkdownEnabled {
-                textView?.attributedText = markdownFormatter.format(text, attributes: attributes)
-            } else {
-                let attributedText = NSAttributedString(string: text, attributes: attributes)
-                textView?.attributedText = attributedText
-            }
-    
-            // Link Detection (Must be after Markdown)
-            if let attributedText = textView?.attributedText {
-                let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
-                mutableAttributedText.addLinks(detectedBy: linkDetector)
-                textView?.attributedText = mutableAttributedText
-            }
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: messageTextColor,
+            .font: messageTextFont
+        ]
+        if isMarkdownEnabled {
+            textView?.attributedText = markdownFormatter.format(text, attributes: attributes)
+        } else {
+            let attributedText = NSAttributedString(string: text, attributes: attributes)
+            textView?.attributedText = attributedText
+        }
+
+        // Link Detection (Must be after Markdown)
+        if let attributedText = textView?.attributedText {
+            let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
+            mutableAttributedText.addLinks(detectedBy: linkDetector)
+            textView?.attributedText = mutableAttributedText
         }
 
         // Mentions

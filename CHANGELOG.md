@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ⚡ Performance
 - Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 ### 🐞 Fixed
+- Fix reused message cells keeping Markdown or mention styling when the next message has the same visible text [#4231](https://github.com/GetStream/stream-chat-swift/pull/4231)
 - Fix the scroll-to-bottom button not disappearing after sending a message from a mid-page jump [#4229](https://github.com/GetStream/stream-chat-swift/pull/4229)
 - Fix audio attachments rendering as empty message bubbles [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 - Fix multiple messages staying highlighted when jumping to a message in a thread [#4216](https://github.com/GetStream/stream-chat-swift/pull/4216)
