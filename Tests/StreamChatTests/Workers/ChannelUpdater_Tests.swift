@@ -1153,7 +1153,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.unmuteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .unmuteChannel(
+        let referenceEndpoint: Endpoint<UnmuteUsersResponse> = .unmuteChannel(
             unmuteChannelRequest: .init(channelCids: [channelID.rawValue])
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -1188,7 +1188,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<UnmuteUsersResponse, Error>.success(.init()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -1206,7 +1206,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UnmuteUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

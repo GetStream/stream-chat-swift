@@ -291,7 +291,7 @@ public final class NotificationMutesUpdatedEvent: Event {
 }
 
 final class NotificationMutesUpdatedEventDTO: EventDTO {
-    let currentUser: CurrentUserPayload
+    let currentUser: OwnUserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -443,7 +443,7 @@ public final class NotificationChannelMutesUpdatedEvent: Event {
 }
 
 final class NotificationChannelMutesUpdatedEventDTO: EventDTO {
-    let currentUser: CurrentUserPayload
+    let currentUser: OwnUserResponse
     let createdAt: Date
     let payload: EventPayload
 

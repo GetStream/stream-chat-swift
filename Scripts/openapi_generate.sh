@@ -38,6 +38,7 @@ allowed_endpoints=(
     listDevices
     listUserGroups
     markDelivered
+    mute
     muteChannel
     queryMembers
     queryPollVotes
@@ -49,6 +50,7 @@ allowed_endpoints=(
     showChannel
     stopWatchingChannel
     unblockUsers
+    unmute
     unmuteChannel
     unreadCounts
     updateLiveLocation
@@ -87,6 +89,7 @@ allowed_models=(
   CreateUserGroupRequest
   DeleteChannelResponse
   DeliveredMessagePayload
+  DeliveryReceiptsResponse
   DeviceResponse
   DraftPayloadResponse
   DraftResponse
@@ -112,6 +115,9 @@ allowed_models=(
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
+  MuteRequest
+  MuteResponse
+  OwnUserResponse
   PollOptionInput
   PollOptionResponse
   PollOptionResponseData
@@ -120,6 +126,7 @@ allowed_models=(
   PollVoteResponse
   PollVoteResponseData
   PollVotesResponse
+  PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
   QueryMembersPayload
@@ -127,6 +134,7 @@ allowed_models=(
   QueryReactionsRequest
   ReactionGroupResponse
   ReactionResponse
+  ReadReceiptsResponse
   ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
@@ -138,9 +146,12 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  TypingIndicatorsResponse
   UnblockUsersRequest
   UnblockUsersResponse
   UnmuteChannelRequest
+  UnmuteRequest
+  UnmuteResponse
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
@@ -159,6 +170,7 @@ allowed_models=(
   UpsertPushPreferencesResponse
   UserGroupMember
   UserGroupResponse
+  UserMuteResponse
   UserResponse
   VoteData
   WrappedUnreadCountsResponse
@@ -433,12 +445,17 @@ rename_generated ModerationV2Response MessageModerationDetailsPayload
 rename_generated ReactionGroupResponse MessageReactionGroupPayload
 rename_generated ReminderResponseData ReminderPayload
 rename_generated SendMessageResponse SendMessageResponsePayload
+rename_generated UnmuteResponse UnmuteUsersResponse
+rename_generated UserMuteResponse MutedUserPayload
+rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
+rename_generated PrivacySettingsResponse UserPrivacySettings
+rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
+rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
-rename_generated_type UnmuteResponse EmptyResponse
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -471,6 +488,17 @@ optionalize_property MemberPayload banned
 optionalize_property MemberPayload channelRole
 optionalize_property MemberPayload notificationsMuted
 optionalize_property MemberPayload shadowBanned
+
+optionalize_property OwnUserResponse banned
+optionalize_property OwnUserResponse channelMutes
+optionalize_property OwnUserResponse devices
+optionalize_property OwnUserResponse invisible
+optionalize_property OwnUserResponse language
+optionalize_property OwnUserResponse mutes
+optionalize_property OwnUserResponse teams
+optionalize_property OwnUserResponse totalUnreadCount
+optionalize_property OwnUserResponse unreadChannels
+optionalize_property OwnUserResponse unreadThreads
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case). Runs before publicize, so there are no access modifiers to
@@ -512,6 +540,8 @@ remove_property DeleteChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
+remove_property OwnUserResponse unreadCount
+remove_property UnmuteUsersResponse duration
 remove_property CreateDraftResponse duration
 remove_property SendMessageResponsePayload duration
 remove_property UpdateMessagePartialResponse duration
@@ -546,7 +576,23 @@ remove_nested_enum() {
 remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
 remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
 
-# 4c. Expose selected generated models as public API. The class and its stored
+# Give a generated model mutable stored properties, so it can replace a hand-written
+#     public type whose properties were var. Mutable state rules out checked Sendable,
+#     hence the relaxed conformance. Runs before publicize_model, which anchors on the
+#     resulting var lines.
+make_model_mutable() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  sed -i '' -E \
+    -e 's/^(final class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
+    -e 's/^    let /    var /' \
+    "$file"
+}
+make_model_mutable DeliveryReceiptsPrivacySettings
+make_model_mutable ReadReceiptsPrivacySettings
+make_model_mutable TypingIndicatorPrivacySettings
+make_model_mutable UserPrivacySettings
+
+# 4c. Expose selected generated models as public API. The type and its stored
 #     properties become public, along with the generated Hashable conformance
 #     (== and hash(into:)); the memberwise init and CodingKeys stay internal.
 publicize_model() {
@@ -554,32 +600,51 @@ publicize_model() {
   sed -i '' -E \
     -e 's/^final class /public final class /' \
     -e 's/^    let /    public let /' \
+    -e 's/^    var /    public var /' \
     -e 's/^    static func == /    public static func == /' \
     -e 's/^    func hash\(into /    public func hash(into /' \
     "$file"
 }
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
+publicize_model DeliveryReceiptsPrivacySettings
 publicize_model Device
 publicize_model PushPreference
+publicize_model ReadReceiptsPrivacySettings
 publicize_model Role
 publicize_model SharedLocation
+publicize_model TypingIndicatorPrivacySettings
+publicize_model UnmuteUsersResponse
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType
 publicize_model UnreadThread
 publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
+publicize_model UserPrivacySettings
 
-# Drop `final` from a generated model so hand-written payloads can subclass it.
-unfinalize_model() {
+# Expose a generated model's memberwise init, for models whose hand-written public
+#     counterpart had a public init.
+publicize_init() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E \
-    -e 's/^final class /class /' \
-    -e 's/^(class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
-    "$file"
+  sed -i '' -E 's/^    init\(/    public init(/' "$file"
 }
-unfinalize_model UserPayload
+publicize_init DeliveryReceiptsPrivacySettings
+publicize_init ReadReceiptsPrivacySettings
+publicize_init TypingIndicatorPrivacySettings
+
+# Give a generated memberwise init parameter a default value, restoring one the
+#     hand-written public init had.
+default_init_parameter() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  P="$2" D="$3" perl -0777 -pi -e '
+    my ($p, $d) = ($ENV{P}, $ENV{D});
+    s/([(,]\s*)\Q$p\E: ([^,)\n=]+)(?=[,)])/${1}$p: $2 = $d/;
+  ' "$file"
+}
+default_init_parameter DeliveryReceiptsPrivacySettings enabled true
+default_init_parameter ReadReceiptsPrivacySettings enabled true
+default_init_parameter TypingIndicatorPrivacySettings enabled true
 
 # 4d. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
@@ -658,7 +723,6 @@ inject_v1_endpoint_paths() {
     case banMember
     case flagUser
     case flagMessage
-    case muteUser(Bool)
 
 EOF
 
@@ -708,7 +772,6 @@ EOF
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"
         case .flagMessage: return "moderation/flag"
-        case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
 
 EOF
 

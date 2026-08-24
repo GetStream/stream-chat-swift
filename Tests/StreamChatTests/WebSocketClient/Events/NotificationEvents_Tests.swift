@@ -139,14 +139,14 @@ final class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.currentUser.id, "luke_skywalker")
-        XCTAssertEqual(event?.payload.currentUser?.mutedChannels.isEmpty, false)
+        XCTAssertEqual(event?.payload.currentUser?.channelMutes?.isEmpty, false)
     }
 
     func test_channelNoMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.currentUser.id, "luke_skywalker")
-        XCTAssertEqual(event?.payload.currentUser?.mutedChannels.isEmpty, true)
+        XCTAssertEqual(event?.payload.currentUser?.channelMutes?.isEmpty, true)
     }
 
     func test_addToChannel() throws {

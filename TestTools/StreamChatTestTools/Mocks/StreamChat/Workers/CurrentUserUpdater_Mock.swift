@@ -41,6 +41,15 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
     @Atomic var setPushPreference_completion: ((Result<PushPreference, Error>) -> Void)?
     @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
 
+    @Atomic var muteUsers_userIds: Set<UserId>?
+    @Atomic var muteUsers_expiration: Int?
+    @Atomic var muteUsers_completion: ((Result<MuteUsersResponse, Error>) -> Void)?
+    @Atomic var muteUsers_completion_result: Result<MuteUsersResponse, Error>?
+
+    @Atomic var unmuteUsers_userIds: Set<UserId>?
+    @Atomic var unmuteUsers_completion: ((Result<UnmuteUsersResponse, Error>) -> Void)?
+    @Atomic var unmuteUsers_completion_result: Result<UnmuteUsersResponse, Error>?
+
     @Atomic var markChannelsDelivered_deliveredMessages: [MessageDeliveryInfo]?
     @Atomic var markChannelsDelivered_callCount = 0
     @Atomic var markChannelsDelivered_completion: ((Error?) -> Void)?
@@ -114,6 +123,26 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
         setPushPreference_completion_result?.invoke(with: completion)
     }
 
+    override func muteUsers(
+        _ userIds: Set<UserId>,
+        expiration expirationInMinutes: Int? = nil,
+        completion: @escaping (Result<MuteUsersResponse, Error>) -> Void
+    ) {
+        muteUsers_userIds = userIds
+        muteUsers_expiration = expirationInMinutes
+        muteUsers_completion = completion
+        muteUsers_completion_result?.invoke(with: completion)
+    }
+
+    override func unmuteUsers(
+        _ userIds: Set<UserId>,
+        completion: @escaping (Result<UnmuteUsersResponse, Error>) -> Void
+    ) {
+        unmuteUsers_userIds = userIds
+        unmuteUsers_completion = completion
+        unmuteUsers_completion_result?.invoke(with: completion)
+    }
+
     override func markMessagesAsDelivered(
         _ messages: [MessageDeliveryInfo],
         completion: ((Error?) -> Void)? = nil
@@ -159,6 +188,15 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
         setPushPreference_preference = nil
         setPushPreference_completion = nil
         setPushPreference_completion_result = nil
+
+        muteUsers_userIds = nil
+        muteUsers_expiration = nil
+        muteUsers_completion = nil
+        muteUsers_completion_result = nil
+
+        unmuteUsers_userIds = nil
+        unmuteUsers_completion = nil
+        unmuteUsers_completion_result = nil
 
         markChannelsDelivered_deliveredMessages = nil
         markChannelsDelivered_completion = nil

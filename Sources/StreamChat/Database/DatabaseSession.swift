@@ -52,7 +52,7 @@ protocol CurrentUserDatabaseSession {
     /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO
+    func saveCurrentUser(payload: OwnUserResponse) throws -> CurrentUserDTO
 
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
@@ -64,6 +64,11 @@ protocol CurrentUserDatabaseSession {
 
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
+
+    /// Adds the provided muted users to `CurrentUserDTO.mutedUsers`.
+    /// If there's no current user set, an error will be thrown.
+    @discardableResult
+    func saveCurrentUserMutedUsers(_ mutedUsers: [MutedUserPayload]) throws -> [UserDTO]
 
     /// Updates the `CurrentUserDTO.devices` with the provided devices.
     /// If there's no current user set, an error will be thrown.

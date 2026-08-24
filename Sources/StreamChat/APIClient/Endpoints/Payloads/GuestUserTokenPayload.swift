@@ -10,12 +10,12 @@ struct GuestUserTokenPayload: Decodable {
         case token = "access_token"
     }
 
-    let user: CurrentUserPayload
+    let user: OwnUserResponse
     let token: Token
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let user = try container.decode(CurrentUserPayload.self, forKey: .user)
+        let user = try container.decode(OwnUserResponse.self, forKey: .user)
         let token = try container.decode(Token.self, forKey: .token)
 
         guard user.id == token.userId else {
@@ -26,7 +26,7 @@ struct GuestUserTokenPayload: Decodable {
     }
 
     init(
-        user: CurrentUserPayload,
+        user: OwnUserResponse,
         token: Token
     ) {
         self.user = user

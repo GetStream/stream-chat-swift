@@ -16,3 +16,4 @@ extension MessagePayload: DecodableEntity {
 extension MessageReactionPayload: DecodableEntity {}
 extension UserPayload: DecodableEntity {}
 extension ChannelDetailPayload: DecodableEntity {}
+extension CurrentUserPayload: DecodableEntity {}

@@ -6,6 +6,7 @@ sources:
   - ./Generated/OpenAPI/models/MessageAttachmentPayload.swift
   - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/MessageResponse.swift
+  - ./Generated/OpenAPI/models/OwnUserResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
   - ./Generated/OpenAPI/models/UserPayload.swift
 templates:
@@ -17,5 +18,6 @@ args:
   # declares, so those have to be excluded too when rebuilding the extra data.
   v1CodingKeys:
     MessageResponse: MessagePayloadsCodingKeys
+    OwnUserResponse: UserPayloadsCodingKeys
     SearchResultMessage: MessagePayloadsCodingKeys
     UserPayload: UserPayloadsCodingKeys

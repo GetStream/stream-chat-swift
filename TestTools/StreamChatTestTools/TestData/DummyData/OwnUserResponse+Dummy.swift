@@ -5,7 +5,63 @@
 import Foundation
 @testable import StreamChat
 
-extension CurrentUserPayload {
+typealias CurrentUserPayload = OwnUserResponse
+
+extension OwnUserResponse {
+    convenience init(
+        id: String,
+        name: String?,
+        imageURL: URL?,
+        role: UserRole,
+        teamsRole: [String: UserRole]?,
+        createdAt: Date,
+        updatedAt: Date,
+        deactivatedAt: Date?,
+        lastActiveAt: Date?,
+        isOnline: Bool,
+        isInvisible: Bool,
+        isBanned: Bool,
+        teams: [TeamId] = [],
+        language: String?,
+        extraData: [String: RawJSON],
+        devices: [Device] = [],
+        mutedUsers: [MutedUserPayload] = [],
+        mutedChannels: [MutedChannelPayload] = [],
+        unreadCount: UnreadCountPayload? = nil,
+        totalUnreadCountByTeam: [TeamId: Int]? = nil,
+        privacySettings: UserPrivacySettings? = nil,
+        blockedUserIds: Set<UserId> = [],
+        pushPreference: PushPreference?
+    ) {
+        self.init(
+            banned: isBanned,
+            blockedUserIds: Array(blockedUserIds),
+            channelMutes: mutedChannels,
+            createdAt: createdAt,
+            custom: extraData,
+            deactivatedAt: deactivatedAt,
+            devices: devices,
+            id: id,
+            image: imageURL?.absoluteString,
+            invisible: isInvisible,
+            language: language,
+            lastActive: lastActiveAt,
+            mutes: mutedUsers,
+            name: name,
+            online: isOnline,
+            privacySettings: privacySettings,
+            pushPreferences: pushPreference,
+            role: role.rawValue,
+            teams: teams,
+            teamsRole: teamsRole?.mapValues(\.rawValue),
+            totalUnreadCount: unreadCount?.messages,
+            totalUnreadCountByTeam: totalUnreadCountByTeam,
+            unreadChannels: unreadCount?.channels,
+            unreadThreads: unreadCount?.threads,
+            updatedAt: updatedAt
+        )
+    }
+
     /// Returns a dummy current user payload with the given UserId and extra data
     static func dummy(
         userId: UserId,
@@ -28,7 +84,7 @@ extension CurrentUserPayload {
         language: String? = nil,
         mutedChannels: [MutedChannelPayload] = [],
         pushPreference: PushPreference? = nil
-    ) -> CurrentUserPayload {
+    ) -> OwnUserResponse {
         .init(
             id: userId,
             name: name,
@@ -60,9 +116,10 @@ extension CurrentUserPayload {
         devices: [Device] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
-        privacySettings: UserPrivacySettingsPayload? = nil,
+        totalUnreadCountByTeam: [TeamId: Int]? = nil,
+        privacySettings: UserPrivacySettings? = nil,
         pushPreference: PushPreference? = nil
-    ) -> CurrentUserPayload {
+    ) -> OwnUserResponse {
         .init(
             id: userPayload.id,
             name: userPayload.name,
@@ -83,6 +140,7 @@ extension CurrentUserPayload {
             mutedUsers: mutedUsers,
             mutedChannels: mutedChannels,
             unreadCount: unreadCount,
+            totalUnreadCountByTeam: totalUnreadCountByTeam,
             privacySettings: privacySettings,
             pushPreference: pushPreference
         )

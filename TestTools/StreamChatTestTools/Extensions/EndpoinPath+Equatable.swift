@@ -48,7 +48,6 @@ extension EndpointPath: Equatable {
         case (.banMember, .banMember): return true
         case (.flagUser, .flagUser): return true
         case (.flagMessage, .flagMessage): return true
-        case let (.muteUser(bool1), .muteUser(bool2)): return bool1 == bool2
         default: return false
         }
     }

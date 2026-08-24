@@ -27,14 +27,17 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         return context
     }()
 
-    /// This is the same thing as `viewContext` only it doesn’t run on main thread.
-    /// It’s just an optimization for removing as much as possible from the main thread.
+    /// The read-only context used for all the background reads and database observers.
+    ///
+    /// The context is refreshed when a write happens, therefore database observers react to changes
+    /// immediately. For example, here the state.messages needs to react before loadMessages finishes.
+    /// ```swift
+    /// try await chat.loadMessages()
+    /// let messages = chat.state.messages
+    /// ```
     ///
     /// Updating DTOs from this context will lead to issues.
     /// Use `writableContext` to mutate database entities.
-    ///
-    /// Use this context to observe non-time sensitive changes.
-    /// If you need a time sensitive context, use `viewContext` instead.
     lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
         // Changes are merged manually (synchronously on save) instead of automatically. This keeps the
@@ -52,30 +55,6 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     }()
 
     private var backgroundReadOnlyContextRefreshObservers = [NSObjectProtocol]()
-    
-    /// An immediately reacting NSManagedObjectContext for the chat state layer.
-    ///
-    /// Chat state layer requires that the context is refreshed when a write happens. Otherwise database observers are too slow to react.
-    ///
-    /// For example, here the state.messages needs to react before loadMessages finishes.
-    /// ```swift
-    /// try await chat.loadMessages()
-    /// let messages = chat.state.messages
-    /// ```
-    private(set) lazy var stateLayerContext: NSManagedObjectContext = {
-        let context = newBackgroundContext()
-        // Context is merged manually since automatically is too slow for reacting to changes needed by the state layer
-        context.automaticallyMergesChangesFromParent = false
-        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        stateLayerContextRefreshObservers = [
-            context.observeChanges(in: writableContext),
-            context.observeChanges(in: viewContext)
-        ]
-        context.setChatClientConfig(chatClientConfig)
-        return context
-    }()
-
-    private var stateLayerContextRefreshObservers = [NSObjectProtocol]()
     private var loggerNotificationObserver: NSObjectProtocol?
 
     let chatClientConfig: ChatClientConfig
@@ -83,7 +62,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     static let cachedModels = AllocatedUnfairLock([String: NSManagedObjectModel]())
 
     /// All `NSManagedObjectContext`s this container owns.
-    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, stateLayerContext, writableContext]
+    private(set) lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
 
     /// Creates a new `DatabaseContainer` instance.
     ///
@@ -158,9 +137,6 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     }
 
     deinit {
-        stateLayerContextRefreshObservers.forEach { observer in
-            NotificationCenter.default.removeObserver(observer)
-        }
         backgroundReadOnlyContextRefreshObservers.forEach { observer in
             NotificationCenter.default.removeObserver(observer)
         }
@@ -252,11 +228,8 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
         
-    private func read<T>(
-        from context: NSManagedObjectContext,
-        _ actions: @escaping @Sendable (DatabaseSession) throws -> T,
-        completion: @escaping @Sendable (Result<T, Error>) -> Void
-    ) {
+    func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T, completion: @escaping @Sendable (Result<T, Error>) -> Void) {
+        let context = backgroundReadOnlyContext
         context.perform {
             do {
                 let changeCounts = context.currentChangeCounts()
@@ -271,13 +244,9 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T, completion: @escaping @Sendable (Result<T, Error>) -> Void) {
-        read(from: backgroundReadOnlyContext, actions, completion: completion)
-    }
-    
     func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T) async throws -> T where T: Sendable {
         try await withCheckedThrowingContinuation { continuation in
-            read(from: stateLayerContext, actions) { result in
+            read(actions) { result in
                 continuation.resume(with: result)
             }
         }

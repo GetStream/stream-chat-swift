@@ -40,9 +40,9 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: .dummy(userId: currentUser.id))
         let currentUserRead: ChannelReadPayload = .init(
-            user: currentUser,
+            user: .dummy(userId: currentUser.id),
             lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(10),
             lastReadMessageId: .unique,
             unreadMessagesCount: 0
@@ -89,14 +89,14 @@ final class MessageDTO_Tests: XCTestCase {
     func test_saveMessage_messageSentByCurrentUser_hasReadsFromOtherMembers() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: .dummy(userId: currentUser.id))
         let currentUserMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: .init()
         )
         let currentUserRead: ChannelReadPayload = .init(
-            user: currentUser,
+            user: .dummy(userId: currentUser.id),
             lastReadAt: currentUserMessage.createdAt,
             lastReadMessageId: .unique,
             unreadMessagesCount: 0

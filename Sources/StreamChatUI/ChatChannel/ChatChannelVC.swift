@@ -136,6 +136,8 @@ open class ChatChannelVC: _ViewController,
     /// The id of the first unread message
     private var firstUnreadMessageId: MessageId?
 
+    private var scrollsToBottomAfterLoadingFirstPage = false
+
     /// In case the given around message id is from a thread, we need to jump to the parent message and then the reply.
     internal var initialReplyId: MessageId?
 
@@ -414,6 +416,7 @@ open class ChatChannelVC: _ViewController,
     open func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     ) {
+        scrollsToBottomAfterLoadingFirstPage = true
         channelController.loadFirstPage()
     }
 
@@ -554,6 +557,8 @@ open class ChatChannelVC: _ViewController,
                     self.updateUnreadMessagesBannerRelatedComponents()
                 }
             }
+
+            self.scrollToBottomAfterLoadingFirstPageIfNeeded()
         }
         viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
     }
@@ -606,7 +611,7 @@ open class ChatChannelVC: _ViewController,
         if let newMessagePendingEvent = event as? NewMessagePendingEvent {
             let newMessage = newMessagePendingEvent.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
-                channelController.loadFirstPage()
+                chatMessageListVCShouldLoadFirstPage(messageListVC)
             }
         }
 
@@ -662,6 +667,13 @@ private extension ChatChannelVC {
         }
 
         return message.parentMessageId
+    }
+
+    func scrollToBottomAfterLoadingFirstPageIfNeeded() {
+        guard scrollsToBottomAfterLoadingFirstPage, isFirstPageLoaded else { return }
+        scrollsToBottomAfterLoadingFirstPage = false
+        messageListVC.scrollToBottom(animated: false)
+        messageListVC.updateScrollToBottomButtonVisibility(animated: false)
     }
 
     func makeChannelController(forParentMessageId parentMessageId: MessageId) -> ChatChannelController {
