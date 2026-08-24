@@ -246,6 +246,11 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             let fileKey = filePayload.file.type.rawValue
             attachmentPreviewView.image = appearance.images.fileIconPreviews[fileKey] ?? appearance.images.iconOther
             textView.text = message.text.isEmpty ? filePayload.title : message.text
+        } else if let audioPayload = message.audioAttachments.first?.payload {
+            attachmentPreviewView.contentMode = .scaleAspectFit
+            let fileKey = audioPayload.file.type.rawValue
+            attachmentPreviewView.image = appearance.images.fileIconPreviews[fileKey] ?? appearance.images.iconAudio
+            textView.text = message.text.isEmpty ? audioPayload.title : message.text
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: imagePayload.imageURL)

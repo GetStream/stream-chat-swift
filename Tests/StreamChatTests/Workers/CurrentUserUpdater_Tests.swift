@@ -496,7 +496,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_removeDevice_successfulResponse_isSavedToDB() throws {
         let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy()])
-        let deviceId = userPayload.devices.first!.id
+        let deviceId = userPayload.devices!.first!.id
 
         // Save user to the db
         try database.writeSynchronously {
@@ -1117,6 +1117,170 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Simulate `loadBlockedUsers` call
         nonisolated(unsafe) var completionCalledError: Error?
         currentUserUpdater.loadBlockedUsers { completionCalledError = $0.error }
+
+        // Assert the completion is called with the error
+        XCTAssertEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Mute Users
+
+    func test_muteUsers_makesCorrectAPICall() {
+        let userIds: Set<UserId> = ["b-user", "a-user"]
+
+        // Simulate `muteUsers` call
+        currentUserUpdater.muteUsers(userIds, expiration: 15) { _ in }
+
+        // Assert correct endpoint is called with sorted target ids
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<MuteResponse>.mute(muteRequest: .init(targetIds: ["a-user", "b-user"], timeout: 15)))
+        )
+    }
+
+    func test_muteUsers_propagatesSuccessfulResponse() throws {
+        // Simulate current user already set
+        let currentUserId: UserId = .unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+        }
+
+        // Mock the API response before the call so the completion is invoked
+        let mutedUserId: UserId = .unique
+        let nonExistingUserId: UserId = .unique
+        let mute = MutedUserPayload.dummy(userId: mutedUserId)
+        let payload = MuteResponse(
+            duration: "",
+            mutes: [mute],
+            nonExistingUsers: [nonExistingUserId]
+        )
+        apiClient.test_mockResponseResult(Result<MuteResponse, Error>.success(payload))
+        let expectation = XCTestExpectation()
+
+        // Simulate `muteUsers` call
+        nonisolated(unsafe) var result: MuteUsersResponse?
+        currentUserUpdater.muteUsers([mutedUserId]) {
+            result = try? $0.get()
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Assert the returned details map the generated response, taking the user from `target`
+        XCTAssertEqual(result?.mutes?.map { $0.user?.id }, [mutedUserId])
+        XCTAssertEqual(result?.mutes?.first?.createdAt, mute.createdAt)
+        XCTAssertEqual(result?.mutes?.first?.updatedAt, mute.updatedAt)
+        XCTAssertEqual(result?.nonExistingUsers, [nonExistingUserId])
+    }
+
+    func test_muteUsers_savesMutedUsersToDatabase() throws {
+        // Simulate current user already set
+        let currentUserId: UserId = .unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+        }
+
+        // Mock the API response before the call so the completion is invoked
+        let mutedUserId: UserId = .unique
+        apiClient.test_mockResponseResult(
+            Result<MuteResponse, Error>.success(
+                .init(duration: "", mutes: [.dummy(userId: mutedUserId)])
+            )
+        )
+        let expectation = XCTestExpectation()
+
+        // Simulate `muteUsers` call
+        currentUserUpdater.muteUsers([mutedUserId]) { _ in expectation.fulfill() }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Assert only the target is saved to the database
+        let mutedUserIds = try database.readSynchronously { $0.currentUser?.mutedUsers.map(\.id) }
+        XCTAssertEqual(mutedUserIds, [mutedUserId])
+    }
+
+    func test_muteUsers_whenResponseContainsOwnUserOnly_savesMutedUsersToDatabase() throws {
+        // Simulate current user already set
+        let currentUserId: UserId = .unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+        }
+
+        // Mock the API response where the mute already existed, therefore only `own_user` carries it
+        let mutedUserId: UserId = .unique
+        apiClient.test_mockResponseResult(
+            Result<MuteResponse, Error>.success(
+                .init(
+                    duration: "",
+                    mutes: nil,
+                    ownUser: .dummy(
+                        userId: currentUserId,
+                        role: .user,
+                        mutedUsers: [.dummy(userId: mutedUserId)]
+                    )
+                )
+            )
+        )
+        let expectation = XCTestExpectation()
+
+        // Simulate `muteUsers` call
+        currentUserUpdater.muteUsers([mutedUserId]) { _ in expectation.fulfill() }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Assert the muted user from `own_user` is saved to the database
+        let mutedUserIds = try database.readSynchronously { $0.currentUser?.mutedUsers.map(\.id) }
+        XCTAssertEqual(mutedUserIds, [mutedUserId])
+    }
+
+    func test_unmuteUsers_makesCorrectAPICall() {
+        let userIds: Set<UserId> = [.unique, .unique]
+
+        // Simulate `unmuteUsers` call
+        currentUserUpdater.unmuteUsers(userIds) { _ in }
+
+        // Assert correct endpoint is called
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(.unmute(unmuteRequest: .init(targetIds: userIds.sorted())))
+        )
+    }
+
+    func test_unmuteUsers_propagatesSuccessfulResponse() throws {
+        let nonExistingUserId: UserId = .unique
+
+        // Mock the API response before the call so the completion is invoked
+        apiClient.test_mockResponseResult(
+            Result<UnmuteUsersResponse, Error>.success(.init(nonExistingUsers: [nonExistingUserId]))
+        )
+
+        // Simulate `unmuteUsers` call
+        let result: Result<UnmuteUsersResponse, Error> = try waitFor { currentUserUpdater.unmuteUsers([.unique], completion: $0) }
+
+        // Assert the returned details map the generated response
+        XCTAssertEqual(result.value?.nonExistingUsers, [nonExistingUserId])
+    }
+
+    func test_unmuteUsers_propagatesError() throws {
+        let error = TestError()
+
+        // Mock the API failure before the call so the completion is invoked
+        apiClient.test_mockResponseResult(Result<UnmuteUsersResponse, Error>.failure(error))
+
+        // Simulate `unmuteUsers` call
+        let result: Result<UnmuteUsersResponse, Error> = try waitFor { currentUserUpdater.unmuteUsers([.unique], completion: $0) }
+
+        // Assert the completion is called with the error
+        XCTAssertEqual(result.error as? TestError, error)
+    }
+
+    func test_muteUsers_propagatesError() {
+        // Mock the API failure before the call so the completion is invoked synchronously
+        let error = TestError()
+        apiClient.test_mockResponseResult(Result<MuteResponse, Error>.failure(error))
+
+        // Simulate `muteUsers` call
+        nonisolated(unsafe) var completionCalledError: Error?
+        currentUserUpdater.muteUsers([.unique]) { completionCalledError = $0.error }
 
         // Assert the completion is called with the error
         XCTAssertEqual(completionCalledError as? TestError, error)

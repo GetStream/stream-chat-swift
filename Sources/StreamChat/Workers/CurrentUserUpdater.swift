@@ -40,7 +40,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         let payload = UserUpdateRequestBody(
             name: name,
             imageURL: imageURL,
-            privacySettings: privacySettings.map { UserPrivacySettingsPayload(settings: $0) },
+            privacySettings: privacySettings,
             role: role,
             teamsRole: teamsRole,
             extraData: userExtraData
@@ -260,6 +260,48 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         }
     }
 
+    /// Mutes the users with the provided identifiers.
+    ///
+    /// - Parameters:
+    ///   - userIds: The identifiers of the users to mute.
+    ///   - expirationInMinutes: The duration of the mute in minutes. When `nil`, the mute does not expire.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func muteUsers(
+        _ userIds: Set<UserId>,
+        expiration expirationInMinutes: Int? = nil,
+        completion: @escaping @Sendable (Result<MuteUsersResponse, Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .mute(muteRequest: .init(targetIds: userIds.sorted(), timeout: expirationInMinutes))) { result in
+            switch result {
+            case let .success(payload):
+                self.database.write(converting: { session in
+                    try session.saveCurrentUserMutedUsers(payload.ownUser?.mutes ?? payload.mutes ?? [])
+                    return payload.asModel()
+                }, completion: { databaseResult in
+                    completion(databaseResult)
+                })
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    /// Unmutes the users with the provided identifiers.
+    ///
+    /// - Parameters:
+    ///   - userIds: The identifiers of the users to unmute.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func unmuteUsers(
+        _ userIds: Set<UserId>,
+        completion: @escaping @Sendable (Result<UnmuteUsersResponse, Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .unmute(unmuteRequest: .init(targetIds: userIds.sorted()))) { result in
+            completion(result)
+        }
+    }
+
     func loadActiveLiveLocations(completion: @escaping @Sendable (Result<[SharedLocation], Error>) -> Void) {
         apiClient.request(endpoint: .getUserLiveLocations()) { result in
             switch result {
@@ -345,6 +387,22 @@ extension CurrentUserUpdater {
     func loadBlockedUsers() async throws -> [BlockedUserDetails] {
         try await withCheckedThrowingContinuation { continuation in
             loadBlockedUsers { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
+    func muteUsers(_ userIds: Set<UserId>, expiration expirationInMinutes: Int? = nil) async throws -> MuteUsersResponse {
+        try await withCheckedThrowingContinuation { continuation in
+            muteUsers(userIds, expiration: expirationInMinutes) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
+    func unmuteUsers(_ userIds: Set<UserId>) async throws -> UnmuteUsersResponse {
+        try await withCheckedThrowingContinuation { continuation in
+            unmuteUsers(userIds) { result in
                 continuation.resume(with: result)
             }
         }

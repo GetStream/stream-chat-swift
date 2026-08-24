@@ -15,7 +15,7 @@ class ListResult: DatabaseObserverType {}
     
 /// A CoreData store observer which immediately reports changes as soon as the store has been changed.
 ///
-/// - Note: Requires the ``DatabaseContainer/stateLayerContext`` which is immediately synchronized.
+/// - Note: Requires a synchronously merged context, like ``DatabaseContainer/backgroundReadOnlyContext``.
 final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, DTO: NSManagedObject>: @unchecked Sendable {
     private let changeAggregator: ListChangeAggregator<DTO, Item>
     private let frc: NSFetchedResultsController<DTO>
@@ -59,7 +59,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
         entityItemReuseKeyPaths itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil
     ) {
         self.init(
-            context: database.stateLayerContext,
+            context: database.backgroundReadOnlyContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
@@ -140,7 +140,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         runtimeSorting: [SortValue<Item>] = []
     ) {
         self.init(
-            context: database.stateLayerContext,
+            context: database.backgroundReadOnlyContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,

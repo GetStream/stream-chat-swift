@@ -58,21 +58,36 @@ extension ChatThread {
         reads: [ThreadRead]? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatThread {
-        .mock(
-            parentMessage: parentMessage ?? self.parentMessage,
-            channel: channel ?? self.channel,
-            createdBy: createdBy ?? self.createdBy,
-            replyCount: replyCount ?? self.replyCount,
-            participantCount: participantCount ?? self.replyCount,
-            activeParticipantCount: activeParticipantCount ?? self.activeParticipantCount,
-            threadParticipants: threadParticipants ?? self.threadParticipants,
-            lastMessageAt: lastMessageAt ?? self.lastMessageAt,
-            createdAt: createdAt ?? self.createdAt,
-            updatedAt: updatedAt ?? self.updatedAt,
-            title: title ?? self.title,
-            latestReplies: latestReplies ?? self.latestReplies,
-            reads: reads ?? self.reads,
-            extraData: extraData ?? self.extraData
+        let parentMsg = parentMessage ?? self.parentMessage
+        let ch = channel ?? self.channel
+        let creator = createdBy ?? self.createdBy
+        let replies = replyCount ?? self.replyCount
+        let participants = participantCount ?? self.participantCount
+        let activeParticipants = activeParticipantCount ?? self.activeParticipantCount
+        let threadParts = threadParticipants ?? self.threadParticipants
+        let lastMsg = lastMessageAt ?? self.lastMessageAt
+        let created = createdAt ?? self.createdAt
+        let updated = updatedAt ?? self.updatedAt
+        let threadTitle = title ?? self.title
+        let latestMsgs = latestReplies ?? self.latestReplies
+        let threadReads = reads ?? self.reads
+        let extra = extraData ?? self.extraData
+
+        return .mock(
+            parentMessage: parentMsg,
+            channel: ch,
+            createdBy: creator,
+            replyCount: replies,
+            participantCount: participants,
+            activeParticipantCount: activeParticipants,
+            threadParticipants: threadParts,
+            lastMessageAt: lastMsg,
+            createdAt: created,
+            updatedAt: updated,
+            title: threadTitle,
+            latestReplies: latestMsgs,
+            reads: threadReads,
+            extraData: extra
         )
     }
 }

@@ -87,7 +87,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         )
         savePayload(payload: channelList, database: database)
 
-        let contexts = [database.writableContext, database.backgroundReadOnlyContext, database.stateLayerContext]
+        let contexts = [database.writableContext, database.backgroundReadOnlyContext]
         let iterations = 2000
         var caches: [PreWarmedCache] = (0..<iterations).map { _ in [:] }
         DispatchQueue.concurrentPerform(iterations: iterations) { index in

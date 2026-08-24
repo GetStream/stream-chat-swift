@@ -468,6 +468,44 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Mutes the users with the given identifiers.
+    ///
+    /// - Note: Messages from muted users are not delivered via push notifications.
+    ///
+    /// - Parameters:
+    ///   - userIds: The identifiers of the users to mute.
+    ///   - expirationInMinutes: The duration of the mute in minutes. When `nil`, the mute does not expire.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func muteUsers(
+        _ userIds: Set<UserId>,
+        expiration expirationInMinutes: Int? = nil,
+        completion: @escaping @MainActor (Result<MuteUsersResponse, Error>) -> Void
+    ) {
+        currentUserUpdater.muteUsers(userIds, expiration: expirationInMinutes) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
+    /// Unmutes the users with the given identifiers.
+    ///
+    /// - Parameters:
+    ///   - userIds: The identifiers of the users to unmute.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func unmuteUsers(
+        _ userIds: Set<UserId>,
+        completion: @escaping @MainActor (Result<UnmuteUsersResponse, Error>) -> Void
+    ) {
+        currentUserUpdater.unmuteUsers(userIds) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
     /// Set global push preferences that apply to all channels for the current user.
     /// - Parameters:
     ///   - level: The scope level of the push notifications.

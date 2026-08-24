@@ -39,6 +39,21 @@ extension FileAttachmentPayload: AttachmentPreviewProvider {
     }
 }
 
+extension AudioAttachmentPayload: AttachmentPreviewProvider {
+    public static var preferredAxis: NSLayoutConstraint.Axis { .vertical }
+
+    /// The view representing the audio attachment.
+    @MainActor public func previewView(components: Components) -> UIView {
+        let view = components.messageComposerFileAttachmentView.init()
+        view.content = .init(
+            title: title ?? "",
+            size: file.size,
+            iconName: audioURL.pathExtension
+        )
+        return view
+    }
+}
+
 extension VideoAttachmentPayload: AttachmentPreviewProvider {
     public static var preferredAxis: NSLayoutConstraint.Axis { .horizontal }
 

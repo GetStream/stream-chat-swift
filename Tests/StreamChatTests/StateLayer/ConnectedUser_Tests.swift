@@ -111,6 +111,22 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(id, env.userUpdaterMock.muteUser_userId)
     }
     
+    func test_muteUsers_whenUpdatedSucceeds_thenMuteUsersSucceeds() async throws {
+        try await setUpConnectedUser(usesMockedUpdaters: true)
+
+        let mutedUserId = UserId.unique
+        env.currentUserUpdaterMock.muteUsers_completion_result = .success(
+            MuteUsersResponse(
+                mutes: [.init(createdAt: .unique, expires: nil, user: .mock(id: mutedUserId), updatedAt: .unique)],
+                nonExistingUsers: nil
+            )
+        )
+        let mutedUsers = try await connectedUser.muteUsers([mutedUserId], expiration: 30)
+        XCTAssertEqual([mutedUserId], env.currentUserUpdaterMock.muteUsers_userIds.map(Array.init))
+        XCTAssertEqual(30, env.currentUserUpdaterMock.muteUsers_expiration)
+        XCTAssertEqual([mutedUserId], mutedUsers.mutes?.map { $0.user?.id })
+    }
+
     func test_unmuteUser_whenUpdatedSucceeds_thenUnmuteUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         
@@ -119,7 +135,20 @@ final class ConnectedUser_Tests: XCTestCase {
         try await connectedUser.unmuteUser(id)
         XCTAssertEqual(id, env.userUpdaterMock.unmuteUser_userId)
     }
-    
+
+    func test_unmuteUsers_whenUpdatedSucceeds_thenUnmuteUsersSucceeds() async throws {
+        try await setUpConnectedUser(usesMockedUpdaters: true)
+
+        let nonExistingUserId = UserId.unique
+        env.currentUserUpdaterMock.unmuteUsers_completion_result = .success(
+            UnmuteUsersResponse(nonExistingUsers: [nonExistingUserId])
+        )
+        let unmutedUserId = UserId.unique
+        let response = try await connectedUser.unmuteUsers([unmutedUserId])
+        XCTAssertEqual([unmutedUserId], env.currentUserUpdaterMock.unmuteUsers_userIds.map(Array.init))
+        XCTAssertEqual([nonExistingUserId], response.nonExistingUsers)
+    }
+
     func test_flagUser_whenUpdatedSucceeds_thenFlagUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         
@@ -134,6 +163,7 @@ final class ConnectedUser_Tests: XCTestCase {
         XCTAssertEqual(extraData, env.userUpdaterMock.flagUser_extraData)
     }
     
+    @available(*, deprecated, message: "Tests deprecated unflag API")
     func test_unflagUser_whenUpdatedSucceeds_thenUnflagUserSucceeds() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: true)
         

@@ -78,6 +78,7 @@ open class ChatThreadVC: _ViewController,
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     private var currentlyTypingUsers: Set<ChatUser> = []
+    private var scrollsToBottomAfterLoadingFirstPage = false
 
     /// A boolean value that determines whether the thread view renders the parent message at the top.
     open var shouldRenderParentMessage: Bool {
@@ -383,6 +384,7 @@ open class ChatThreadVC: _ViewController,
     }
 
     open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
+        scrollsToBottomAfterLoadingFirstPage = true
         messageController.loadFirstPage()
     }
 
@@ -484,8 +486,8 @@ open class ChatThreadVC: _ViewController,
             }
         case let event as NewMessagePendingEvent:
             let newMessage = event.message
-            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
-                messageController.loadFirstPage()
+            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.parentMessageId == messageController.messageId {
+                chatMessageListVCShouldLoadFirstPage(messageListVC)
             }
         case let event as DraftUpdatedEvent where event.draftMessage.threadId == messageController.messageId:
             if let draft = messageController.message?.draftReply {
@@ -502,8 +504,17 @@ open class ChatThreadVC: _ViewController,
         messageListVC.setPreviousMessagesSnapshot(self.messages)
         let messages = getMessages(from: messageController)
         messageListVC.setNewMessagesSnapshot(messages)
-        messageListVC.updateMessages(with: changes)
+        messageListVC.updateMessages(with: changes) { [weak self] in
+            self?.scrollToBottomAfterLoadingFirstPageIfNeeded()
+        }
         viewPaginationHandler.updateElementsCount(with: messages.count)
+    }
+
+    private func scrollToBottomAfterLoadingFirstPageIfNeeded() {
+        guard scrollsToBottomAfterLoadingFirstPage, isFirstPageLoaded else { return }
+        scrollsToBottomAfterLoadingFirstPage = false
+        messageListVC.scrollToBottom(animated: false)
+        messageListVC.updateScrollToBottomButtonVisibility(animated: false)
     }
 
     /// Gets the replies of the thread, plus the parent message if needed.

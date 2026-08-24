@@ -10,9 +10,10 @@ extension MutedUserPayload {
     static func dummy(
         userId: UserId,
         extraData: [String: RawJSON] = [:]
-    ) -> Self {
+    ) -> MutedUserPayload {
         .init(
-            mutedUser: .init(
+            createdAt: .unique,
+            target: .init(
                 id: userId,
                 name: .unique,
                 imageURL: .unique(),
@@ -28,8 +29,7 @@ extension MutedUserPayload {
                 language: nil,
                 extraData: extraData
             ),
-            created: .unique,
-            updated: .unique
+            updatedAt: .unique
         )
     }
 }

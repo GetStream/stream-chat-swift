@@ -4,18 +4,6 @@
 
 import Foundation
 
-// MARK: - User muting
-
-extension Endpoint {
-    static func muteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
-        muteUser(true, with: userId)
-    }
-
-    static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
-        muteUser(false, with: userId)
-    }
-}
-
 // MARK: - User banning
 
 extension Endpoint {
@@ -56,13 +44,12 @@ extension Endpoint {
 
 extension Endpoint {
     static func flagUser(
-        _ flag: Bool,
         with userId: UserId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> Endpoint<FlagUserPayload> {
         .init(
-            path: .flagUser(flag),
+            path: .flagUser,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -80,13 +67,12 @@ extension Endpoint {
 
 extension Endpoint {
     static func flagMessage(
-        _ flag: Bool,
         with messageId: MessageId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> Endpoint<FlagMessagePayload> {
         .init(
-            path: .flagMessage(flag),
+            path: .flagMessage,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -96,20 +82,6 @@ extension Endpoint {
                 targetUserId: nil,
                 custom: extraData
             )
-        )
-    }
-}
-
-// MARK: - Private
-
-private extension Endpoint {
-    static func muteUser(_ mute: Bool, with userId: UserId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .muteUser(mute),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["target_id": userId]
         )
     }
 }

@@ -165,8 +165,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var loadMembersWithReads_completion: ((Result<[ChatChannelMember], Error>) -> Void)?
     @Atomic var loadMembersWithReads_completion_result: Result<[ChatChannelMember], Error>?
     
-    @Atomic var createCall_cid: ChannelId?
-
     @Atomic var enrichUrl_url: URL?
     @Atomic var enrichUrl_callCount = 0
     @Atomic var enrichUrl_completion: ((Result<LinkAttachmentPayload, Error>) -> Void)?
@@ -330,8 +328,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         loadMembersWithReads_sorting = nil
         loadMembersWithReads_completion = nil
         loadMembersWithReads_completion_result = nil
-
-        createCall_cid = nil
 
         enrichUrl_url = nil
         enrichUrl_completion = nil

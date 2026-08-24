@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension EndpointPath: @retroactive Equatable {
+extension EndpointPath: Equatable {
     public static func == (_ lhs: EndpointPath, _ rhs: EndpointPath) -> Bool {
         switch (lhs, rhs) {
         case (.connect, .connect): return true
@@ -44,9 +44,8 @@ extension EndpointPath: @retroactive Equatable {
             messageReactionType2
         case let (.messageAction(messageId1), .messageAction(messageId2)): return messageId1 == messageId2
         case (.banMember, .banMember): return true
-        case let (.flagUser(bool1), .flagUser(bool2)): return bool1 == bool2
-        case let (.flagMessage(bool1), .flagMessage(bool2)): return bool1 == bool2
-        case let (.muteUser(bool1), .muteUser(bool2)): return bool1 == bool2
+        case (.flagUser, .flagUser): return true
+        case (.flagMessage, .flagMessage): return true
         default: return false
         }
     }

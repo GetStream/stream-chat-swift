@@ -4,7 +4,7 @@
 
 import Foundation
 
-class UserPayload: @unchecked Sendable, Codable, JSONEncodable {
+final class UserPayload: Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?
     /// Whether a user is banned or not
     let banned: Bool?
@@ -100,7 +100,7 @@ class UserPayload: @unchecked Sendable, Codable, JSONEncodable {
             .union(UserPayloadsCodingKeys.allCases.map(\.rawValue))
     }
 
-    required init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned)

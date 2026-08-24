@@ -473,6 +473,50 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Mute All Channel Members", handler: { [unowned self] _ in
+                let memberIds = Set(channelController.channel?.lastActiveMembers.map(\.id) ?? [])
+                    .subtracting([client.currentUserId ?? ""])
+                guard !memberIds.isEmpty else {
+                    self.rootViewController.presentAlert(title: "Channel \(cid) has no other members")
+                    return
+                }
+                client.currentUserController().muteUsers(memberIds) { [unowned self] result in
+                    switch result {
+                    case .success(let mutedUsers):
+                        self.rootViewController.presentAlert(
+                            title: "Muted \(mutedUsers.mutes?.count ?? 0) of \(memberIds.count) members",
+                            message: mutedUsers.nonExistingUsers.map { "Not found: \($0.joined(separator: ", "))" }
+                        )
+                    case .failure(let error):
+                        self.rootViewController.presentAlert(
+                            title: "Couldn't mute the members of channel \(cid)",
+                            message: "\(error)"
+                        )
+                    }
+                }
+            }),
+            .init(title: "Unmute All Channel Members", handler: { [unowned self] _ in
+                let memberIds = Set(channelController.channel?.lastActiveMembers.map(\.id) ?? [])
+                    .subtracting([client.currentUserId ?? ""])
+                guard !memberIds.isEmpty else {
+                    self.rootViewController.presentAlert(title: "Channel \(cid) has no other members")
+                    return
+                }
+                client.currentUserController().unmuteUsers(memberIds) { [unowned self] result in
+                    switch result {
+                    case .success(let response):
+                        self.rootViewController.presentAlert(
+                            title: "Unmuted \(memberIds.count) members",
+                            message: response.nonExistingUsers.map { "Not found: \($0.joined(separator: ", "))" }
+                        )
+                    case .failure(let error):
+                        self.rootViewController.presentAlert(
+                            title: "Couldn't unmute the members of channel \(cid)",
+                            message: "\(error)"
+                        )
+                    }
+                }
+            }),
             .init(title: "Mark channel unread with timestamp", isEnabled: true, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Mark messages as unread with timestamp", message: "Marks messages as unread from the last number of days", textFieldPlaceholder: "Days") { offsetInDaysString in
                     let calendar = Calendar.current

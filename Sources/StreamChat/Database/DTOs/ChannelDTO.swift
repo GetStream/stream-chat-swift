@@ -578,7 +578,11 @@ extension ChatChannel {
             extraData = [:]
         }
         
-        let allSortedMessageDTOs = dto.messages.sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
+        // Hard-deleted messages stay in the DB (deleting them crashes; see CIS-1963)
+        // but must not appear in latestMessages or lastMessageFromCurrentUser.
+        let allSortedMessageDTOs = dto.messages
+            .filter { !$0.isHardDeleted }
+            .sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
         let channelMessageDTOs = allSortedMessageDTOs
             .filter { $0.parentMessageId == nil || $0.showReplyInChannel }
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }

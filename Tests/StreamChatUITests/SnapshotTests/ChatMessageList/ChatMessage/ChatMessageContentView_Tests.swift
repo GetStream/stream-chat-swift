@@ -237,7 +237,118 @@ import XCTest
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
+    func test_updateContent_whenMarkdownAndPlainTextHaveSameRenderedString_resetsFont() throws {
+        let view = contentView(message: .mock(text: "**test**"))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let markdownText = try XCTUnwrap(view.textView?.attributedText)
+        let markdownFont = try XCTUnwrap(markdownText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertTrue(markdownFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+
+        view.content = .mock(text: "test")
+
+        let plainText = try XCTUnwrap(view.textView?.attributedText)
+        let plainFont = try XCTUnwrap(plainText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertEqual(plainText.string, "test")
+        XCTAssertFalse(plainFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenMixedMarkdownAndPlainTextHaveSameRenderedString_resetsFont() throws {
+        let view = contentView(message: .mock(text: "hello **world**"))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let markdownText = try XCTUnwrap(view.textView?.attributedText)
+        let worldRange = (markdownText.string as NSString).range(of: "world")
+        let markdownWorldFont = try XCTUnwrap(markdownText.attribute(.font, at: worldRange.location, effectiveRange: nil) as? UIFont)
+        XCTAssertTrue(markdownWorldFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+
+        view.content = .mock(text: "hello world")
+
+        let plainText = try XCTUnwrap(view.textView?.attributedText)
+        let plainWorldRange = (plainText.string as NSString).range(of: "world")
+        let plainWorldFont = try XCTUnwrap(plainText.attribute(.font, at: plainWorldRange.location, effectiveRange: nil) as? UIFont)
+        XCTAssertEqual(plainText.string, "hello world")
+        XCTAssertFalse(plainWorldFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenMarkdownIsDisabled_resetsPreviouslyBoldFont() throws {
+        let appearance = Appearance.default
+        let view = contentView(message: .mock(text: "**test**"), appearance: appearance)
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let markdownText = try XCTUnwrap(view.textView?.attributedText)
+        let markdownFont = try XCTUnwrap(markdownText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertTrue(markdownFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+
+        appearance.formatters.isMarkdownEnabled = false
+        view.content = .mock(text: "test")
+
+        let plainText = try XCTUnwrap(view.textView?.attributedText)
+        let plainFont = try XCTUnwrap(plainText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        XCTAssertEqual(plainText.string, "test")
+        XCTAssertFalse(plainFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenRebuildingMarkdownText_appliesMarkdownAndLinkDetection() throws {
+        let view = contentView(message: .mock(text: "Initial text"))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        view.content = .mock(text: "**test** https://getstream.io")
+
+        let attributedText = try XCTUnwrap(view.textView?.attributedText)
+        let boldFont = try XCTUnwrap(attributedText.attribute(.font, at: 0, effectiveRange: nil) as? UIFont)
+        let linkRange = (attributedText.string as NSString).range(of: "https://getstream.io")
+        XCTAssertTrue(boldFont.fontDescriptor.symbolicTraits.contains(.traitBold))
+        XCTAssertEqual(attributedText.attribute(.link, at: linkRange.location, effectiveRange: nil) as? URL, URL(string: "https://getstream.io"))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenMentionedUsersAreRemoved_resetsMentionLinks() throws {
+        let mentionedUser = ChatUser.mock(id: .unique, name: "alice")
+        let view = contentView(message: .mock(text: "hey @alice", mentionedUsers: [mentionedUser]))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let mentionedText = try XCTUnwrap(view.textView?.attributedText)
+        let mentionRange = (mentionedText.string as NSString).range(of: "@alice")
+        XCTAssertNotNil(mentionedText.attribute(.link, at: mentionRange.location, effectiveRange: nil))
+
+        view.content = .mock(text: "hey @alice")
+
+        let plainText = try XCTUnwrap(view.textView?.attributedText)
+        let plainMentionRange = (plainText.string as NSString).range(of: "@alice")
+        XCTAssertNil(plainText.attribute(.link, at: plainMentionRange.location, effectiveRange: nil))
+        withExtendedLifetime(hostView) {}
+    }
+
+    func test_updateContent_whenMentionedUsersAreAdded_appliesMentionLinks() throws {
+        let view = contentView(message: .mock(text: "hey @alice"))
+        let hostView = UIView()
+        hostView.addSubview(view)
+
+        let initialText = try XCTUnwrap(view.textView?.attributedText)
+        let initialRange = (initialText.string as NSString).range(of: "@alice")
+        XCTAssertNil(initialText.attribute(.link, at: initialRange.location, effectiveRange: nil))
+
+        view.content = .mock(
+            text: "hey @alice",
+            mentionedUsers: [ChatUser.mock(id: .unique, name: "alice")]
+        )
+
+        let mentionedText = try XCTUnwrap(view.textView?.attributedText)
+        let mentionRange = (mentionedText.string as NSString).range(of: "@alice")
+        XCTAssertNotNil(mentionedText.attribute(.link, at: mentionRange.location, effectiveRange: nil))
+        withExtendedLifetime(hostView) {}
+    }
+
     func test_appearance_whenMessageWithMarkdownOrderedListFromTheCurrentUserIsSent() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
@@ -1160,6 +1271,56 @@ extension ChatMessageContentView_Tests {
             layout: message.layout(isLastInGroup: true),
             components: .mock,
             attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+}
+
+// MARK: - Audio Attachment
+
+extension ChatMessageContentView_Tests {
+    func test_appearance_whenMessageWithAudioAttachment_incoming() {
+        let audioAttachment: ChatMessageAudioAttachment = .mock(id: .unique)
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: myFriend,
+            createdAt: createdAt,
+            attachments: [audioAttachment.asAnyAttachment],
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: FilesAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageWithAudioAttachment_outgoing() {
+        let audioAttachment: ChatMessageAudioAttachment = .mock(id: .unique)
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: me,
+            createdAt: createdAt,
+            attachments: [audioAttachment.asAnyAttachment],
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: FilesAttachmentViewInjector.self
         )
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)

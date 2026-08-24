@@ -746,6 +746,50 @@ import XCTest
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
     }
 
+    func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_thenScrollsToBottomAfterFirstPageLoads() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let mockedListView = makeMockMessageListView()
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: cid)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
+        XCTAssertEqual(mockedListView.scrollToBottomCallCount, 0)
+
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        vc.channelController(channelControllerMock, didUpdateMessages: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 1, section: 0)),
+            .insert(message, index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToBottomCallCount, 1)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessagesUpdateBeforeFirstPage_thenDoesNotScrollToBottom() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let mockedListView = makeMockMessageListView()
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: cid)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        vc.channelController(channelControllerMock, didUpdateMessages: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 1, section: 0)),
+            .insert(message, index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToBottomCallCount, 0)
+    }
+
     func test_shouldLoadFirstPage_thenLoadFirstPage() {
         vc.chatMessageListVCShouldLoadFirstPage(vc.messageListVC)
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)

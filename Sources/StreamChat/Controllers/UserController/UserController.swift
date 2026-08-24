@@ -203,6 +203,7 @@ public extension ChatUserController {
     /// Unflags the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
+    @available(*, deprecated, message: "Unflagging a user is not supported")
     func unflag(completion: (@MainActor (Error?) -> Void)? = nil) {
         userUpdater.flagUser(false, with: userId, reason: nil, extraData: nil) { error in
             self.callback {

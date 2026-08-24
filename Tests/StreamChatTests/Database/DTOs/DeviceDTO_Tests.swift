@@ -25,7 +25,7 @@ final class DeviceDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { (session) in
             // Save a current user to db for testing
-            try session.saveCurrentUser(payload: self.dummyCurrentUser)
+            try session.saveCurrentUser(payload: self.dummyCurrentUserPayload)
 
             // Save dummy devices
             try session.saveCurrentUserDevices(dummyDevices.devices)
@@ -56,7 +56,7 @@ final class DeviceDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { (session) in
-            try session.saveCurrentUser(payload: self.dummyCurrentUser)
+            try session.saveCurrentUser(payload: self.dummyCurrentUserPayload)
             try session.saveCurrentUserDevices([device])
         }
 

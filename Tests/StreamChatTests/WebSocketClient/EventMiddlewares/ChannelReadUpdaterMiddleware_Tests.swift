@@ -12,7 +12,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     fileprivate var database: DatabaseContainer_Spy!
 
     var channelPayload: ChannelPayload!
-    var currentUserPayload: CurrentUserPayload!
+    var currentUserPayload: UserPayload!
     var currentUserReadPayload: ChannelReadPayload!
     var anotherUserPayload: UserPayload!
 
@@ -60,7 +60,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try! database.writeSynchronously { session in
-            try! session.saveCurrentUser(payload: self.currentUserPayload)
+            try! session.saveCurrentUser(payload: .dummy(userPayload: self.currentUserPayload))
             try! session.saveChannel(payload: self.channelPayload)
         }
     }
@@ -913,7 +913,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Save dummy payload to database
         try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: self.dummyCurrentUser)
+            try $0.saveCurrentUser(payload: self.dummyCurrentUserPayload)
             try $0.saveChannel(payload: payload)
         }
 
@@ -997,7 +997,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Save dummy payload to database
         try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: self.dummyCurrentUser)
+            try $0.saveCurrentUser(payload: self.dummyCurrentUserPayload)
             try $0.saveChannel(payload: payload)
         }
 
