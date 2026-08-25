@@ -399,9 +399,9 @@ final class DemoChatChannelInfoVC: UIViewController,
         let memberListVC = DemoChannelMemberListVC(
             memberListController: client.memberListController(query: .init(cid: channel.cid))
         )
-        memberListVC.onMemberSelected = { [weak self, weak memberListVC] participant, sourceView in
+        memberListVC.onMemberSelected = { [weak self, weak memberListVC] participant in
             guard let self, let memberListVC else { return }
-            presentActions(for: participant, in: memberListVC, sourceView: sourceView)
+            presentParticipantInfo(for: participant, from: memberListVC)
         }
         navigationController?.pushViewController(memberListVC, animated: true)
     }
@@ -416,99 +416,108 @@ final class DemoChatChannelInfoVC: UIViewController,
         channelVC.jumpToMessage(id: messageId)
     }
 
-    private func presentActions(
+    private func presentParticipantInfo(
         for participant: DemoParticipantInfo,
-        in viewController: UIViewController,
-        sourceView: UIView?
+        from viewController: UIViewController
     ) {
         let actions = participantActions(for: participant)
         guard !actions.isEmpty else { return }
 
-        viewController.presentAlert(
-            title: participant.displayName,
-            actions: actions,
-            preferredStyle: .actionSheet,
-            sourceView: sourceView ?? viewController.view
-        )
+        let participantInfoVC = DemoParticipantInfoVC(participant: participant, actions: actions)
+        viewController.present(participantInfoVC, animated: true)
     }
 
-    private func participantActions(for participant: DemoParticipantInfo) -> [UIAlertAction] {
+    private func participantActions(for participant: DemoParticipantInfo) -> [DemoParticipantAction] {
         guard let channel else { return [] }
 
         if participant.id == currentUserId {
             guard !showsSingleMemberDMView, canLeaveConversation else { return [] }
             return [
-                .init(title: "Leave group", style: .destructive, handler: { [weak self] _ in
-                    self?.leaveConversationTapped()
-                })
+                .init(
+                    title: "Leave group",
+                    iconName: "rectangle.portrait.and.arrow.right",
+                    isDestructive: true,
+                    confirmation: .init(
+                        title: "Leave group",
+                        message: "Are you sure you want to leave this group?",
+                        buttonTitle: "Leave"
+                    ),
+                    action: { [weak self] in self?.leaveConversation() }
+                )
             ]
         }
 
-        var actions: [UIAlertAction] = []
+        var actions: [DemoParticipantAction] = []
 
-        actions.append(.init(title: "Send direct message", style: .default, handler: { [weak self] _ in
-            self?.showDirectMessageChannel(with: participant)
-        }))
+        actions.append(.init(
+            title: "Send Direct Message",
+            iconName: "message",
+            action: { [weak self] in self?.showDirectMessageChannel(with: participant) }
+        ))
 
         if channel.config.mutesEnabled {
             let isMuted = mutedUserIds.contains(participant.id)
-            actions.append(.init(title: isMuted ? "Unmute user" : "Mute user", style: .default, handler: { [weak self] _ in
-                guard let self else { return }
-                let userController = client.userController(userId: participant.id)
-                let completion: @MainActor (Error?) -> Void = { [weak self] error in
-                    if error != nil {
-                        self?.presentErrorAlert()
+            actions.append(.init(
+                title: isMuted ? "Unmute \(participant.displayName)" : "Mute \(participant.displayName)",
+                iconName: isMuted ? "speaker.wave.1" : "speaker.slash",
+                action: { [weak self] in
+                    guard let self else { return }
+                    let userController = client.userController(userId: participant.id)
+                    if isMuted {
+                        userController.unmute(completion: handleUserActionResult)
+                    } else {
+                        userController.mute(completion: handleUserActionResult)
                     }
                 }
-                if isMuted {
-                    userController.unmute(completion: completion)
-                } else {
-                    userController.mute(completion: completion)
-                }
-            }))
+            ))
         }
 
         let isBlocked = blockedUserIds.contains(participant.id)
-        actions.append(.init(title: isBlocked ? "Unblock user" : "Block user", style: .default, handler: { [weak self] _ in
-            guard let self else { return }
-            let userController = client.userController(userId: participant.id)
-            let completion: @MainActor (Error?) -> Void = { [weak self] error in
-                if error != nil {
-                    self?.presentErrorAlert()
+        actions.append(.init(
+            title: isBlocked ? "Unblock User" : "Block User",
+            iconName: "nosign",
+            confirmation: isBlocked ? nil : .init(
+                title: "Block User",
+                message: "Are you sure you want to block this user?",
+                buttonTitle: "Block User"
+            ),
+            action: { [weak self] in
+                guard let self else { return }
+                let userController = client.userController(userId: participant.id)
+                if isBlocked {
+                    userController.unblock(completion: handleUserActionResult)
+                } else {
+                    userController.block(completion: handleUserActionResult)
                 }
             }
-            if isBlocked {
-                userController.unblock(completion: completion)
-            } else {
-                userController.block(completion: completion)
-            }
-        }))
+        ))
 
         if channel.canUpdateChannelMembers {
-            actions.append(.init(title: "Remove user", style: .destructive, handler: { [weak self] _ in
-                self?.removeUserTapped(participant)
-            }))
+            actions.append(.init(
+                title: "Remove User",
+                iconName: "person.badge.minus",
+                isDestructive: true,
+                confirmation: .init(
+                    title: "Remove User",
+                    message: "Are you sure you want to remove \(participant.displayName) "
+                        + "from \(channel.name ?? channel.cid.id)?",
+                    buttonTitle: "Remove User"
+                ),
+                action: { [weak self] in
+                    self?.channelController.removeMembers(
+                        userIds: [participant.id],
+                        completion: self?.handleUserActionResult
+                    )
+                }
+            ))
         }
 
         return actions
     }
 
-    private func removeUserTapped(_ participant: DemoParticipantInfo) {
-        guard let channel else { return }
-
-        presentAlert(
-            title: "Remove User",
-            message: "Are you sure you want to remove \(participant.displayName) from \(channel.name ?? channel.cid.id)?",
-            actions: [
-                .init(title: "Remove User", style: .destructive, handler: { [weak self] _ in
-                    self?.channelController.removeMembers(userIds: [participant.id]) { [weak self] error in
-                        if error != nil {
-                            self?.presentErrorAlert()
-                        }
-                    }
-                })
-            ]
-        )
+    private func handleUserActionResult(_ error: Error?) {
+        guard error != nil else { return }
+        presentErrorAlert()
     }
 
     private func showDirectMessageChannel(with participant: DemoParticipantInfo) {
@@ -652,7 +661,7 @@ final class DemoChatChannelInfoVC: UIViewController,
         case .files:
             showFileAttachments()
         case let .member(participant):
-            presentActions(for: participant, in: self, sourceView: tableView.cellForRow(at: indexPath))
+            presentParticipantInfo(for: participant, from: self)
         case .viewAllMembers:
             showAllMembers()
         case .block:

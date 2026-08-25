@@ -14,7 +14,7 @@ final class DemoChannelMemberListVC: UIViewController,
     UITableViewDataSource,
     UITableViewDelegate {
     /// Called when a member is selected, so that its actions can be shown.
-    var onMemberSelected: ((DemoParticipantInfo, UIView?) -> Void)?
+    var onMemberSelected: ((DemoParticipantInfo) -> Void)?
 
     private let memberListController: ChatChannelMemberListController
     private lazy var currentUserController = memberListController.client.currentUserController()
@@ -113,7 +113,7 @@ final class DemoChannelMemberListVC: UIViewController,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        onMemberSelected?(participants[indexPath.row], tableView.cellForRow(at: indexPath))
+        onMemberSelected?(participants[indexPath.row])
     }
 
     // MARK: - Delegates
