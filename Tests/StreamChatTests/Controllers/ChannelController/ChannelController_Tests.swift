@@ -5377,6 +5377,113 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.staysTrue(weakController() != nil)
     }
 
+    // MARK: - Query banned users
+
+    func test_queryBannedUsers_failsForNewChannel() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `queryBannedUsers` call and assert error is returned
+        let error: Error? = try waitFor { completion in
+            controller.queryBannedUsers { result in
+                completion(result.error)
+            }
+        }
+
+        // Assert `ClientError.ChannelNotCreatedYet` is propagated to completion
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_queryBannedUsers_callsMemberUpdaterWithChannelScopedQuery() throws {
+        // Simulate `queryBannedUsers` call
+        controller.queryBannedUsers(
+            filter: .equal(.bannedById, to: "leia"),
+            sort: [.init(key: .createdAt, isAscending: true)],
+            pagination: Pagination(pageSize: 10, offset: 20),
+            excludeExpiredBans: true
+        ) { _ in }
+
+        // Assert call is propagated to updater with the channel filter applied
+        let query = try XCTUnwrap(env.memberUpdater!.queryBannedUsers_query)
+        XCTAssertEqual(10, query.pagination.pageSize)
+        XCTAssertEqual(20, query.pagination.offset)
+        XCTAssertEqual(true, query.excludeExpiredBans)
+        XCTAssertEqual([Sorting(key: BannedUserListSortingKey.createdAt, isAscending: true)], query.sort)
+        let expectedFilter: [String: Any] = [
+            "$and": [
+                ["channel_cid": ["$eq": channelId.rawValue]],
+                ["banned_by_id": ["$eq": "leia"]]
+            ]
+        ]
+        AssertJSONEqual(
+            try JSONEncoder.default.encode(XCTUnwrap(query.filter)),
+            try JSONSerialization.data(withJSONObject: expectedFilter, options: [])
+        )
+    }
+
+    func test_queryBannedUsers_whenNoFilterIsGiven_thenQueryIsScopedToTheChannel() throws {
+        // Simulate `queryBannedUsers` call
+        controller.queryBannedUsers { _ in }
+
+        // Assert only the channel filter is sent
+        let query = try XCTUnwrap(env.memberUpdater!.queryBannedUsers_query)
+        XCTAssertEqual(Int.bannedUsersPageSize, query.pagination.pageSize)
+        XCTAssertEqual(0, query.pagination.offset)
+        XCTAssertEqual(false, query.excludeExpiredBans)
+        XCTAssertTrue(query.sort.isEmpty)
+        AssertJSONEqual(
+            try JSONEncoder.default.encode(XCTUnwrap(query.filter)),
+            ["channel_cid": ["$eq": channelId.rawValue]]
+        )
+    }
+
+    func test_queryBannedUsers_propagatesResultFromUpdater() {
+        let expectedBans: [BannedUser] = [.mock(user: .mock(id: "1"), cid: channelId)]
+
+        // Simulate `queryBannedUsers` call and catch the completion
+        nonisolated(unsafe) var completionBans: [BannedUser]?
+        controller.queryBannedUsers {
+            completionBans = $0.value
+        }
+
+        // Simulate successful update
+        env.memberUpdater!.queryBannedUsers_completion!(.success(expectedBans))
+
+        // Result is propagated to completion
+        AssertAsync.willBeEqual(completionBans?.map(\.user.id), expectedBans.map(\.user.id))
+    }
+
+    func test_queryBannedUsers_propagatesErrorFromUpdater() {
+        // Simulate `queryBannedUsers` call and catch the completion
+        nonisolated(unsafe) var completionError: Error?
+        controller.queryBannedUsers {
+            completionError = $0.error
+        }
+
+        // Simulate failed update
+        let testError = TestError()
+        env.memberUpdater!.queryBannedUsers_completion!(.failure(testError))
+
+        // Error is propagated to completion
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
+    }
+
+    func test_queryBannedUsers_keepsControllerAlive() {
+        // Simulate `queryBannedUsers` call
+        controller.queryBannedUsers { _ in }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        let weakController = { [weak controller] in controller }
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController() != nil)
+    }
+
     // MARK: Synchronize registers active controller
 
     func test_synchronize_shouldRegistersActiveController() {

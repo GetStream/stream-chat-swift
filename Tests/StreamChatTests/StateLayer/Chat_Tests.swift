@@ -566,6 +566,65 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(memberId, env.memberUpdaterMock.unbanMember_userId)
     }
     
+    func test_queryBannedUsers_whenMemberUpdaterSucceeds_thenQueryBannedUsersSucceeds() async throws {
+        let expectedBans: [BannedUser] = [
+            .mock(user: .mock(id: "1"), cid: channelId),
+            .mock(user: .mock(id: "2"), cid: channelId)
+        ]
+        env.memberUpdaterMock.queryBannedUsers_completion_result = .success(expectedBans)
+
+        let bans = try await chat.queryBannedUsers(
+            filter: .equal(.bannedById, to: "leia"),
+            sort: [Sorting(key: .createdAt, isAscending: true)],
+            pagination: Pagination(pageSize: 10, offset: 20),
+            excludeExpiredBans: true
+        )
+
+        XCTAssertEqual(expectedBans.map(\.user.id), bans.map(\.user.id))
+
+        let query = try XCTUnwrap(env.memberUpdaterMock.queryBannedUsers_query)
+        XCTAssertEqual(10, query.pagination.pageSize)
+        XCTAssertEqual(20, query.pagination.offset)
+        XCTAssertEqual(true, query.excludeExpiredBans)
+        XCTAssertEqual([Sorting(key: BannedUserListSortingKey.createdAt, isAscending: true)], query.sort)
+        let expectedFilter: [String: Any] = [
+            "$and": [
+                ["channel_cid": ["$eq": channelId.rawValue]],
+                ["banned_by_id": ["$eq": "leia"]]
+            ]
+        ]
+        AssertJSONEqual(
+            try JSONEncoder.default.encode(XCTUnwrap(query.filter)),
+            try JSONSerialization.data(withJSONObject: expectedFilter, options: [])
+        )
+    }
+
+    func test_queryBannedUsers_whenNoFilterIsGiven_thenQueryIsScopedToTheChannel() async throws {
+        env.memberUpdaterMock.queryBannedUsers_completion_result = .success([])
+
+        let bans = try await chat.queryBannedUsers()
+
+        XCTAssertTrue(bans.isEmpty)
+
+        let query = try XCTUnwrap(env.memberUpdaterMock.queryBannedUsers_query)
+        XCTAssertEqual(Int.bannedUsersPageSize, query.pagination.pageSize)
+        XCTAssertEqual(0, query.pagination.offset)
+        XCTAssertEqual(false, query.excludeExpiredBans)
+        XCTAssertTrue(query.sort.isEmpty)
+        AssertJSONEqual(
+            try JSONEncoder.default.encode(XCTUnwrap(query.filter)),
+            ["channel_cid": ["$eq": channelId.rawValue]]
+        )
+    }
+
+    func test_queryBannedUsers_whenMemberUpdaterFails_thenQueryBannedUsersFails() async throws {
+        env.memberUpdaterMock.queryBannedUsers_completion_result = .failure(expectedTestError)
+
+        await XCTAssertAsyncFailure(try await chat.queryBannedUsers(), expectedTestError)
+
+        XCTAssertNotNil(env.memberUpdaterMock.queryBannedUsers_query)
+    }
+
     // MARK: - Messages
     
     func test_deleteMessage_whenMessageUpdaterSucceeds_thenDeleteMessageSucceeds() async throws {

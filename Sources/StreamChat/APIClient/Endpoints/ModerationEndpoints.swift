@@ -38,6 +38,10 @@ extension Endpoint {
             body: nil
         )
     }
+
+    static func queryBannedUsers(query: BannedUserListQuery) -> Endpoint<QueryBannedUsersResponse> {
+        .queryBannedUsers(payload: query.asQueryBannedUsersPayload())
+    }
 }
 
 // MARK: - User flagging

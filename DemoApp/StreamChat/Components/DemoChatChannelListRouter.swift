@@ -221,6 +221,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     )
                 ), animated: true)
             }),
+            .init(title: "Query Bans", handler: { [unowned self] _ in
+                self.rootViewController.present(
+                    UINavigationController(rootViewController: BannedUsersViewController(channelController: channelController)),
+                    animated: true
+                )
+            }),
             .init(title: "Show Blocked Users", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client

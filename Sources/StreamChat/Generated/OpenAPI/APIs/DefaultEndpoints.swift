@@ -103,6 +103,7 @@ enum EndpointPath: Codable {
     case markDelivered
     case mute
     case muteChannel
+    case queryBannedUsers
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
@@ -270,6 +271,8 @@ enum EndpointPath: Codable {
             return "/api/v2/moderation/mute"
         case .muteChannel:
             return "/api/v2/chat/moderation/mute/channel"
+        case .queryBannedUsers:
+            return "/api/v2/chat/query_banned_users"
         case .queryMembers:
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
@@ -858,6 +861,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: muteChannelRequest
+        )
+    }
+
+    static func queryBannedUsers(
+        payload: QueryBannedUsersPayload?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryBannedUsersResponse> {
+        return .init(
+            path: .queryBannedUsers,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 

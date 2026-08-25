@@ -1396,6 +1396,44 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Queries the bans of the channel.
+    ///
+    /// Both regular and shadow bans are returned, and expired bans are included unless `excludeExpiredBans` is set.
+    ///
+    /// - Parameters:
+    ///   - filter: An additional filter narrowing down the channel's bans (see `Filter`).
+    ///   - sort: The sorting order for the bans. When empty, bans are sorted ascending by ``BannedUserListSortingKey/createdAt``.
+    ///   - pagination: The pagination option used for retrieving the bans. The maximum page size is 300.
+    ///   - excludeExpiredBans: True, if bans which have already expired should be left out of the results.
+    ///   - completion: The completion to be called on **callbackQueue** when the request is completed.
+    public func queryBannedUsers(
+        filter: Filter<BannedUserListFilterScope>? = nil,
+        sort: [Sorting<BannedUserListSortingKey>] = [],
+        pagination: Pagination = Pagination(pageSize: .bannedUsersPageSize),
+        excludeExpiredBans: Bool = false,
+        completion: @escaping @MainActor (Result<[BannedUser], Error>) -> Void
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+
+        let query = BannedUserListQuery.channelBans(
+            cid: cid,
+            filter: filter,
+            sort: sort,
+            pagination: pagination,
+            excludeExpiredBans: excludeExpiredBans
+        )
+
+        channelMemberUpdater.queryBannedUsers(query: query) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
     /// Marks the channel as read.
     ///
     /// - Parameter completion: The completion will be called on a **callbackQueue** when the network request is finished.

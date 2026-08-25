@@ -174,4 +174,37 @@ final class ModerationEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/users/block", endpoint.path.value)
     }
+
+    func test_queryBannedUsers_buildsCorrectly() throws {
+        let cid: ChannelId = .unique
+        let query = BannedUserListQuery(
+            filter: .equal(.cid, to: cid),
+            sort: [.init(key: .createdAt, isAscending: true)],
+            pagination: Pagination(pageSize: 10, offset: 20),
+            excludeExpiredBans: true
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<QueryBannedUsersResponse> = .queryBannedUsers(query: query)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual("/api/v2/chat/query_banned_users", endpoint.path.value)
+        XCTAssertEqual(.get, endpoint.method)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNil(endpoint.body)
+
+        let queryItems = endpoint.queryItems as? [String: String?]
+        let payload = try XCTUnwrap(queryItems?["payload"] ?? nil)
+        let expectedPayload: [String: Any] = [
+            "filter_conditions": ["channel_cid": ["$eq": cid.rawValue]],
+            "sort": [["field": "created_at", "direction": 1]],
+            "limit": 10,
+            "offset": 20,
+            "exclude_expired_bans": true
+        ]
+        AssertJSONEqual(
+            Data(payload.utf8),
+            try JSONSerialization.data(withJSONObject: expectedPayload, options: [])
+        )
+    }
 }

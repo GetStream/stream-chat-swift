@@ -136,6 +136,97 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    // MARK: - Query banned users
+
+    func test_queryBannedUsers_makesCorrectAPICall() {
+        let query = BannedUserListQuery(filter: .equal(.cid, to: .unique))
+
+        // Simulate `queryBannedUsers` call
+        updater.queryBannedUsers(query: query) { _ in }
+
+        // Assert correct endpoint is called
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.queryBannedUsers(query: query)))
+    }
+
+    func test_queryBannedUsers_propagatesSuccessfulResponse() throws {
+        let cid: ChannelId = .unique
+        let bannedUserId: UserId = .unique
+        let bannedById: UserId = .unique
+        let createdAt: Date = .unique
+        let expiresAt: Date = .unique
+        let reason: String = .unique
+
+        // Simulate `queryBannedUsers` call
+        nonisolated(unsafe) var result: Result<[BannedUser], Error>?
+        updater.queryBannedUsers(query: BannedUserListQuery()) { result = $0 }
+
+        // Assert completion is not called yet
+        XCTAssertNil(result)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(
+            Result<QueryBannedUsersResponse, Error>.success(
+                .init(
+                    bans: [
+                        .dummy(
+                            user: .dummy(userId: bannedUserId),
+                            bannedBy: .dummy(userId: bannedById),
+                            channel: .dummy(cid: cid),
+                            createdAt: createdAt,
+                            expires: expiresAt,
+                            reason: reason,
+                            shadow: true
+                        )
+                    ],
+                    duration: "0.1ms"
+                )
+            )
+        )
+
+        // Assert the payload is mapped to models
+        AssertAsync.willBeTrue(result != nil)
+        let bans = try XCTUnwrap(result).get()
+        XCTAssertEqual(bans.count, 1)
+        XCTAssertEqual(bans.first?.user.id, bannedUserId)
+        XCTAssertEqual(bans.first?.bannedBy?.id, bannedById)
+        XCTAssertEqual(bans.first?.cid, cid)
+        XCTAssertEqual(bans.first?.createdAt, createdAt)
+        XCTAssertEqual(bans.first?.expiresAt, expiresAt)
+        XCTAssertEqual(bans.first?.reason, reason)
+        XCTAssertEqual(bans.first?.isShadowBan, true)
+    }
+
+    func test_queryBannedUsers_whenBanHasNoUser_thenBanIsSkipped() throws {
+        // Simulate `queryBannedUsers` call
+        nonisolated(unsafe) var result: Result<[BannedUser], Error>?
+        updater.queryBannedUsers(query: BannedUserListQuery()) { result = $0 }
+
+        // Simulate API response with a ban without a target user
+        apiClient.test_simulateResponse(
+            Result<QueryBannedUsersResponse, Error>.success(
+                .init(bans: [.dummy(user: nil), .dummy()], duration: "0.1ms")
+            )
+        )
+
+        // Assert only the ban with a user is returned
+        AssertAsync.willBeTrue(result != nil)
+        let bans = try XCTUnwrap(result).get()
+        XCTAssertEqual(bans.count, 1)
+    }
+
+    func test_queryBannedUsers_propagatesError() {
+        // Simulate `queryBannedUsers` call
+        nonisolated(unsafe) var completionCalledError: Error?
+        updater.queryBannedUsers(query: BannedUserListQuery()) { completionCalledError = $0.error }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<QueryBannedUsersResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
     // MARK: - Partial Update
 
     func test_partialUpdate_makesCorrectAPICall() {
