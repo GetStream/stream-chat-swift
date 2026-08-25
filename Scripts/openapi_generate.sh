@@ -766,8 +766,11 @@ default_init_parameter DeliveryReceiptsPrivacySettings enabled true
 default_init_parameter ReadReceiptsPrivacySettings enabled true
 default_init_parameter TypingIndicatorPrivacySettings enabled true
 
-# 4d. Keep only the coding direction each internal model needs. Public models and
-#     models shared by requests and responses retain Codable for compatibility.
+# 4d. Keep only the coding direction each internal model needs.
+# Required because OpenAPI generator emits all models with Codable conformance
+# even when it is used for decoding or encoding only. This helps to save
+# SDK size when Codable is reduced to Encodable or Decodable.
+# Requires bigger change in the generator for applying it there.
 apply_directional_coding_conformances() {
   local encodable_csv decodable_csv codable_csv
   encodable_csv="$(IFS=,; echo "${encodable_only_models[*]}")"
