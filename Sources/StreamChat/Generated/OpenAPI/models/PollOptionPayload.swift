@@ -9,11 +9,7 @@ final class PollOptionPayload: Sendable, Codable, JSONEncodable {
     let id: String
     let text: String
 
-    init(
-        custom: [String: RawJSON]? = nil,
-        id: String,
-        text: String
-    ) {
+    init(custom: [String: RawJSON]? = nil, id: String, text: String) {
         self.custom = custom
         self.id = id
         self.text = text

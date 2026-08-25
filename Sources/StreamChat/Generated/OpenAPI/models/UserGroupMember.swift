@@ -10,12 +10,7 @@ public final class UserGroupMember: Sendable, Codable, JSONEncodable {
     public let isAdmin: Bool
     public let userId: String
 
-    init(
-        createdAt: Date,
-        groupId: String,
-        isAdmin: Bool,
-        userId: String
-    ) {
+    init(createdAt: Date, groupId: String, isAdmin: Bool, userId: String) {
         self.createdAt = createdAt
         self.groupId = groupId
         self.isAdmin = isAdmin
@@ -31,10 +26,7 @@ public final class UserGroupMember: Sendable, Codable, JSONEncodable {
 }
 
 extension UserGroupMember: Hashable {
-    public static func == (
-        lhs: UserGroupMember,
-        rhs: UserGroupMember
-    ) -> Bool {
+    public static func == (lhs: UserGroupMember, rhs: UserGroupMember) -> Bool {
         lhs.createdAt == rhs.createdAt &&
             lhs.groupId == rhs.groupId &&
             lhs.isAdmin == rhs.isAdmin &&

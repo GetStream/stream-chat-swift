@@ -9,10 +9,7 @@ final class UpdateMemberPartialResponse: Sendable, Codable, JSONEncodable {
     /// Duration of the request in milliseconds
     let duration: String
 
-    init(
-        channelMember: MemberPayload? = nil,
-        duration: String
-    ) {
+    init(channelMember: MemberPayload? = nil, duration: String) {
         self.channelMember = channelMember
         self.duration = duration
     }

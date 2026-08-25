@@ -424,24 +424,6 @@ rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
 
-# Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
-remove_property() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^self\\." p " = " p "$"       { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-}
-remove_property FileUploadResponse duration
-
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
@@ -488,6 +470,7 @@ remove_property() {
   perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
+remove_property FileUploadResponse duration
 remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
@@ -753,14 +736,7 @@ PY
 }
 inject_v1_endpoint_paths
 
-# 7. Force generated OpenAPI function declarations to wrap one parameter per line.
-swiftformat "$OUTPUT_DIR_CHAT" \
-  --rules wrapArguments \
-  --wrapparameters before-first \
-  --wraparguments preserve \
-  --maxwidth 1
-
-# 8. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
+# 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
 #    body, where a `required` initializer is allowed.
 splice_generated_decoders() {
   local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
@@ -785,3 +761,10 @@ PY
 }
 sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 splice_generated_decoders
+
+# 8. Wrap generated OpenAPI function declarations that exceed the maximum width.
+swiftformat "$OUTPUT_DIR_CHAT" \
+  --rules wrapArguments \
+  --wrapparameters before-first \
+  --wraparguments preserve \
+  --maxwidth 100

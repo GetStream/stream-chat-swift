@@ -45,33 +45,12 @@ final class QueryMembersPayload: Sendable, Encodable, JSONEncodable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(
-            filterConditions,
-            forKey: .filterConditions
-        )
-        try container.encodeIfPresent(
-            id,
-            forKey: .id
-        )
-        try container.encodeIfPresent(
-            limit,
-            forKey: .limit
-        )
-        try container.encodeIfPresent(
-            members,
-            forKey: .members
-        )
-        try container.encodeIfPresent(
-            offset,
-            forKey: .offset
-        )
-        try container.encodeIfPresent(
-            sort,
-            forKey: .sort
-        )
-        try container.encode(
-            type,
-            forKey: .type
-        )
+        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(members, forKey: .members)
+        try container.encodeIfPresent(offset, forKey: .offset)
+        try container.encodeIfPresent(sort, forKey: .sort)
+        try container.encode(type, forKey: .type)
     }
 }

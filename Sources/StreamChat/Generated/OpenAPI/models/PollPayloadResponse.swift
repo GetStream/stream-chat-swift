@@ -9,10 +9,7 @@ final class PollPayloadResponse: Sendable, Codable, JSONEncodable {
     let duration: String
     let poll: PollPayload
 
-    init(
-        duration: String,
-        poll: PollPayload
-    ) {
+    init(duration: String, poll: PollPayload) {
         self.duration = duration
         self.poll = poll
     }

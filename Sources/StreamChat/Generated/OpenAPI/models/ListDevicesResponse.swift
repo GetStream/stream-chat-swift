@@ -9,10 +9,7 @@ final class ListDevicesResponse: Sendable, Codable, JSONEncodable {
     let devices: [Device]
     let duration: String
 
-    init(
-        devices: [Device],
-        duration: String
-    ) {
+    init(devices: [Device], duration: String) {
         self.devices = devices
         self.duration = duration
     }

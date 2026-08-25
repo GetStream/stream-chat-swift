@@ -43,10 +43,7 @@ public final class AppSettings: Sendable, Codable, JSONEncodable {
 }
 
 extension AppSettings: Hashable {
-    public static func == (
-        lhs: AppSettings,
-        rhs: AppSettings
-    ) -> Bool {
+    public static func == (lhs: AppSettings, rhs: AppSettings) -> Bool {
         lhs.asyncUrlEnrichEnabled == rhs.asyncUrlEnrichEnabled &&
             lhs.autoTranslationEnabled == rhs.autoTranslationEnabled &&
             lhs.fileUploadConfig == rhs.fileUploadConfig &&
