@@ -25,7 +25,7 @@ final class DemoChannelFileAttachmentsVC: UIViewController,
 
     private let monthFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
+        formatter.setLocalizedDateFormatFromTemplate("MMMMyyyy")
         return formatter
     }()
 
@@ -50,11 +50,11 @@ final class DemoChannelFileAttachmentsVC: UIViewController,
         return indicator
     }()
 
-    private lazy var emptyStateView = DemoChannelInfoEmptyStateView(
+    private lazy var emptyStateView = DemoChannelInfoEmptyStateView(content: .init(
         icon: appearance.images.folder,
         title: "No files",
         subtitle: "Files sent in this chat will appear here."
-    )
+    ))
 
     init(channel: ChatChannel, client: ChatClient) {
         self.channel = channel

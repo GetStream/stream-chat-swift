@@ -21,6 +21,7 @@ final class DemoChannelMemberListVC: UIViewController,
 
     private var participants: [DemoParticipantInfo] = []
     private var isLoadingNextMembers = false
+    private var hasLoadedAllMembers = false
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -74,11 +75,16 @@ final class DemoChannelMemberListVC: UIViewController,
     }
 
     private func loadNextMembers() {
-        guard !isLoadingNextMembers else { return }
+        guard !hasLoadedAllMembers, !isLoadingNextMembers else { return }
 
         isLoadingNextMembers = true
-        memberListController.loadNextMembers { [weak self] _ in
-            self?.isLoadingNextMembers = false
+        let loadedMemberCount = memberListController.members.count
+        memberListController.loadNextMembers { [weak self] error in
+            guard let self else { return }
+            isLoadingNextMembers = false
+            // The controller has no "loaded everything" flag, so a page that brings
+            // nothing new marks the end of the list.
+            hasLoadedAllMembers = error == nil && memberListController.members.count == loadedMemberCount
         }
     }
 

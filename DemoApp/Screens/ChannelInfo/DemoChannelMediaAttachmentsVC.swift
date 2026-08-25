@@ -54,11 +54,11 @@ final class DemoChannelMediaAttachmentsVC: UIViewController,
         return indicator
     }()
 
-    private lazy var emptyStateView = DemoChannelInfoEmptyStateView(
+    private lazy var emptyStateView = DemoChannelInfoEmptyStateView(content: .init(
         icon: appearance.images.imagePlaceholder,
         title: "No media",
         subtitle: "Photos or videos sent in this chat will appear here."
-    )
+    ))
 
     init(channel: ChatChannel, client: ChatClient) {
         self.channel = channel
@@ -173,7 +173,7 @@ final class DemoChannelMediaAttachmentsVC: UIViewController,
         if let videoAttachment = item.videoAttachment {
             cell.configureVideo(with: videoAttachment, previewURL: item.previewURL)
         } else {
-            cell.configureImage(with: item.previewURL)
+            cell.configureImage(with: item.attachmentId, url: item.previewURL)
         }
         return cell
     }
@@ -240,6 +240,9 @@ final class DemoMediaAttachmentCell: UICollectionViewCell, ThemeProvider {
         return imageView
     }()
 
+    /// The attachment the cell currently shows, so that previews of already reused cells are discarded.
+    private var representedAttachmentId: AttachmentId?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpLayout()
@@ -252,16 +255,20 @@ final class DemoMediaAttachmentCell: UICollectionViewCell, ThemeProvider {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        representedAttachmentId = nil
         imageView.image = nil
         videoIconView.isHidden = true
     }
 
-    func configureImage(with url: URL?) {
+    func configureImage(with attachmentId: AttachmentId, url: URL?) {
+        representedAttachmentId = attachmentId
         videoIconView.isHidden = true
         loadPreview(from: url)
     }
 
     func configureVideo(with attachment: ChatMessageVideoAttachment, previewURL: URL?) {
+        let attachmentId = attachment.id
+        representedAttachmentId = attachmentId
         videoIconView.isHidden = false
 
         if previewURL != nil {
@@ -270,6 +277,7 @@ final class DemoMediaAttachmentCell: UICollectionViewCell, ThemeProvider {
         }
 
         components.mediaLoader.loadVideoPreview(with: attachment) { [weak self] result in
+            guard self?.representedAttachmentId == attachmentId else { return }
             self?.imageView.image = try? result.get().image
         }
     }

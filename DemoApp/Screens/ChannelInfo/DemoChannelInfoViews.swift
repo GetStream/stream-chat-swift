@@ -485,8 +485,21 @@ final class DemoChannelInfoMembersHeaderView: UITableViewHeaderFooterView, Theme
 
 // MARK: - Empty State
 
-/// The placeholder shown by the channel info sub-screens when they have no content.
+/// The placeholder shown by the channel info sub-screens when they have no content,
+/// or when the content could not be loaded.
 final class DemoChannelInfoEmptyStateView: UIView, ThemeProvider {
+    struct Content {
+        let icon: UIImage?
+        let title: String
+        let subtitle: String
+        var actionTitle: String?
+        var action: (() -> Void)?
+    }
+
+    var content: Content? {
+        didSet { updateContent() }
+    }
+
     private lazy var iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -513,18 +526,37 @@ final class DemoChannelInfoEmptyStateView: UIView, ThemeProvider {
         return label
     }()
 
-    init(icon: UIImage?, title: String, subtitle: String) {
+    private lazy var actionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.font = appearance.fonts.bodyBold
+        button.setTitleColor(appearance.colorPalette.buttonSecondaryText, for: .normal)
+        button.addTarget(self, action: #selector(actionTapped), for: .touchUpInside)
+        return button
+    }()
+
+    init(content: Content) {
         super.init(frame: .zero)
 
-        iconView.image = icon?.withRenderingMode(.alwaysTemplate)
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
         setUpLayout()
+        self.content = content
+        updateContent()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func updateContent() {
+        iconView.image = content?.icon?.withRenderingMode(.alwaysTemplate)
+        titleLabel.text = content?.title
+        subtitleLabel.text = content?.subtitle
+        actionButton.setTitle(content?.actionTitle, for: .normal)
+        actionButton.isHidden = content?.actionTitle == nil
+    }
+
+    @objc private func actionTapped() {
+        content?.action?()
     }
 
     private func setUpLayout() {
@@ -543,6 +575,7 @@ final class DemoChannelInfoEmptyStateView: UIView, ThemeProvider {
             iconContainer
             titleLabel
             subtitleLabel
+            actionButton
         }
         addSubview(container)
         NSLayoutConstraint.activate([

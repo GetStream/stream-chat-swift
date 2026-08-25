@@ -18,6 +18,7 @@ final class DemoChannelPinnedMessagesVC: UIViewController,
     private let channelController: ChatChannelController
 
     private var pinnedMessages: [ChatMessage] = []
+    private var loadingFailed = false
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -40,11 +41,25 @@ final class DemoChannelPinnedMessagesVC: UIViewController,
         return indicator
     }()
 
-    private lazy var emptyStateView = DemoChannelInfoEmptyStateView(
-        icon: appearance.images.pin,
-        title: "No pinned messages",
-        subtitle: "Long-press an important message and choose Pin to conversation."
-    )
+    private lazy var emptyStateView = DemoChannelInfoEmptyStateView(content: emptyStateContent)
+
+    private var emptyStateContent: DemoChannelInfoEmptyStateView.Content {
+        guard loadingFailed else {
+            return .init(
+                icon: appearance.images.pin,
+                title: "No pinned messages",
+                subtitle: "Long-press an important message and choose Pin to conversation."
+            )
+        }
+
+        return .init(
+            icon: appearance.images.messageListErrorIndicator,
+            title: "Something went wrong",
+            subtitle: "The pinned messages could not be loaded.",
+            actionTitle: "Try again",
+            action: { [weak self] in self?.loadPinnedMessages() }
+        )
+    }
 
     init(channel: ChatChannel, channelController: ChatChannelController) {
         self.channel = channel
@@ -81,20 +96,31 @@ final class DemoChannelPinnedMessagesVC: UIViewController,
         ])
 
         pinnedMessages = channel.pinnedMessages
+        loadPinnedMessages()
+    }
+
+    private func loadPinnedMessages() {
+        loadingFailed = false
         loadingIndicator.startAnimating()
         updateContent()
 
         channelController.loadPinnedMessages { [weak self] result in
             guard let self else { return }
             loadingIndicator.stopAnimating()
-            if let messages = try? result.get() {
+            switch result {
+            case let .success(messages):
                 pinnedMessages = messages
+            case .failure:
+                // The locally cached messages are still shown, the error state is only
+                // relevant when there is nothing to fall back to.
+                loadingFailed = pinnedMessages.isEmpty
             }
             updateContent()
         }
     }
 
     private func updateContent() {
+        emptyStateView.content = emptyStateContent
         emptyStateView.isHidden = !pinnedMessages.isEmpty || loadingIndicator.isAnimating
         tableView.isHidden = pinnedMessages.isEmpty
         tableView.reloadData()

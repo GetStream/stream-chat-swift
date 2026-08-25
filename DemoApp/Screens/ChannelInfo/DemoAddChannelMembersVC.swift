@@ -21,7 +21,7 @@ final class DemoAddChannelMembersVC: UIViewController,
 
     private var selectedUsers: [ChatUser] = []
     private var isLoadingNextUsers = false
-    private var searchOperation: DispatchWorkItem?
+    private var hasLoadedAllUsers = false
 
     private var users: [ChatUser] {
         searchController.userArray.filter { $0.id != searchController.client.currentUserId }
@@ -113,13 +113,8 @@ final class DemoAddChannelMembersVC: UIViewController,
     // MARK: - UISearchBarDelegate
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchOperation?.cancel()
-
-        let operation = DispatchWorkItem { [weak self] in
-            self?.searchController.search(term: searchText.isEmpty ? nil : searchText)
-        }
-        searchOperation = operation
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300), execute: operation)
+        hasLoadedAllUsers = false
+        searchController.search(term: searchText.isEmpty ? nil : searchText)
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -156,11 +151,17 @@ final class DemoAddChannelMembersVC: UIViewController,
     // MARK: - UITableViewDelegate
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard indexPath.row >= users.count - 10, !isLoadingNextUsers else { return }
+        guard !hasLoadedAllUsers, !isLoadingNextUsers else { return }
+        guard indexPath.row >= users.count - 10 else { return }
 
         isLoadingNextUsers = true
-        searchController.loadNextUsers { [weak self] _ in
-            self?.isLoadingNextUsers = false
+        let loadedUserCount = searchController.userArray.count
+        searchController.loadNextUsers { [weak self] error in
+            guard let self else { return }
+            isLoadingNextUsers = false
+            // The controller has no "loaded everything" flag, so a page that brings
+            // nothing new marks the end of the list.
+            hasLoadedAllUsers = error == nil && searchController.userArray.count == loadedUserCount
         }
     }
 

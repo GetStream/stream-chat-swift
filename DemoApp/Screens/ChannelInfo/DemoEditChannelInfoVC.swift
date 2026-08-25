@@ -145,10 +145,17 @@ final class DemoEditChannelInfoVC: UIViewController,
         saveButton.isEnabled = !name.isEmpty && (name != channel.name || pickedImage != nil)
     }
 
-    private func setLoading(_ isLoading: Bool) {
-        isLoading ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
-        saveButton.isEnabled = !isLoading
-        avatarView.alpha = isLoading ? 0.5 : 1
+    private func setSaving(_ isSaving: Bool) {
+        isSaving ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
+        avatarView.alpha = isSaving ? 0.5 : 1
+        nameTextField.isEnabled = !isSaving
+        uploadButton.isEnabled = !isSaving
+        cancelButton.isEnabled = !isSaving
+        if isSaving {
+            saveButton.isEnabled = false
+        } else {
+            updateSaveButton()
+        }
     }
 
     @objc private func nameChanged() {
@@ -188,24 +195,35 @@ final class DemoEditChannelInfoVC: UIViewController,
 
     @objc private func saveTapped() {
         let name = nameTextField.text ?? ""
+        setSaving(true)
 
-        guard let pickedImage, let localURL = try? saveToTemporaryURL(pickedImage) else {
-            updateChannel(name: name, imageURL: channel.imageURL)
+        guard let pickedImage else {
+            updateChannel(name: name, imageURL: channel.imageURL, uploadedImageURL: nil)
             return
         }
 
-        setLoading(true)
+        let localURL: URL
+        do {
+            localURL = try saveToTemporaryURL(pickedImage)
+        } catch {
+            saveFailed()
+            return
+        }
+
         channelController.client.uploadAttachment(localUrl: localURL, progress: nil) { [weak self] result in
-            let uploadedURL = try? result.get().fileURL
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
-                setLoading(false)
-                updateChannel(name: name, imageURL: uploadedURL ?? channel.imageURL)
+                guard let uploadedURL = try? result.get().fileURL else {
+                    saveFailed()
+                    return
+                }
+                updateChannel(name: name, imageURL: uploadedURL, uploadedImageURL: uploadedURL)
             }
         }
     }
 
-    private func updateChannel(name: String, imageURL: URL?) {
+    /// Updates the channel, deleting the freshly uploaded image again when the update itself fails.
+    private func updateChannel(name: String, imageURL: URL?, uploadedImageURL: URL?) {
         channelController.updateChannel(
             name: name,
             imageURL: imageURL,
@@ -213,12 +231,20 @@ final class DemoEditChannelInfoVC: UIViewController,
             extraData: channel.extraData
         ) { [weak self] error in
             guard let self else { return }
-            if error != nil {
-                presentAlert(title: "Something went wrong.")
-            } else {
-                dismiss(animated: true)
+            guard error == nil else {
+                if let uploadedImageURL {
+                    channelController.client.deleteAttachment(remoteUrl: uploadedImageURL) { _ in }
+                }
+                saveFailed()
+                return
             }
+            dismiss(animated: true)
         }
+    }
+
+    private func saveFailed() {
+        setSaving(false)
+        presentAlert(title: "Something went wrong.")
     }
 
     private func saveToTemporaryURL(_ image: UIImage) throws -> URL {
