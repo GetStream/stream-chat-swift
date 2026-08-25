@@ -4,6 +4,8 @@
 
 import AVFoundation
 import Foundation
+import ImageIO
+import PhotosUI
 import StreamChat
 import UIKit
 
@@ -443,7 +445,24 @@ open class ComposerVC: _ViewController,
         .init()
 
     /// The view controller for selecting image attachments.
-    open private(set) lazy var mediaPickerVC: UIViewController = {
+    ///
+    /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
+    /// faster than `UIImagePickerController` and needs no photo library permission. A new
+    /// picker is created for every presentation, because the system picker keeps showing the
+    /// previous selection when the same instance is reused.
+    open var mediaPickerVC: UIViewController {
+        if #available(iOS 14.0, *) {
+            var configuration = PHPickerConfiguration()
+            configuration.filter = .any(of: [.images, .videos])
+            configuration.selectionLimit = max(1, maxNumberOfAttachments - content.attachments.count)
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            return picker
+        }
+        return legacyMediaPickerVC
+    }
+
+    private lazy var legacyMediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
@@ -1494,6 +1513,17 @@ open class ComposerVC: _ViewController,
         content.attachments.append(attachment)
     }
 
+    /// The maximum number of attachments which can be added to a message.
+    ///
+    /// The limit can be changed with `ChatClientConfig.maxAttachmentCountPerMessage`.
+    open var maxNumberOfAttachments: Int {
+        guard let config = channelController?.client.config else {
+            log.assertionFailure("Channel controller must be set at this point")
+            return 1
+        }
+        return config.maxAttachmentCountPerMessage
+    }
+
     /// The maximum upload file size depending on the attachment type.
     ///
     /// The max attachment size can be set from the Stream's Dashboard App Settings.
@@ -1612,8 +1642,13 @@ open class ComposerVC: _ViewController,
         }
 
         nonisolated(unsafe) var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
-            localAttachmentInfo[.originalImage] = originalImage
+        if urlAndType.1 == .image {
+            if let originalImage = info[.originalImage] {
+                localAttachmentInfo[.originalImage] = originalImage
+            } else if let dimensions = imageDimensions(at: urlAndType.0) {
+                localAttachmentInfo[.originalWidth] = dimensions.width
+                localAttachmentInfo[.originalHeight] = dimensions.height
+            }
         }
         if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
             let asset = AVURLAsset(url: videoURL)
@@ -1660,6 +1695,46 @@ open class ComposerVC: _ViewController,
                     attachmentType: urlAndType.1,
                     error: error
                 )
+            }
+        }
+    }
+
+    /// Adds the media items which were selected in the photos picker to the composer's content.
+    @available(iOS 14.0, *)
+    open func handleMediaPickerResults(_ results: [PHPickerResult]) {
+        let allowedResults = results.prefix(max(0, maxNumberOfAttachments - content.attachments.count))
+        if allowedResults.count < results.count {
+            showAttachmentsCountExceedingLimitAlert(maxNumberOfAttachments)
+        }
+        guard !allowedResults.isEmpty else { return }
+        Task { @MainActor [weak self] in
+            for result in allowedResults {
+                guard let media = await Self.loadMedia(from: result.itemProvider) else { continue }
+                guard let self else { return }
+                handleImagePickerMediaSelected(info: [media.isVideo ? .mediaURL : .imageURL: media.url])
+            }
+        }
+    }
+
+    @available(iOS 14.0, *)
+    @MainActor private static func loadMedia(from itemProvider: NSItemProvider) async -> (url: URL, isVideo: Bool)? {
+        let isVideo = itemProvider.hasItemConformingToTypeIdentifier("public.movie")
+        return await withCheckedContinuation { continuation in
+            itemProvider.loadFileRepresentation(forTypeIdentifier: isVideo ? "public.movie" : "public.image") { url, error in
+                guard let url else {
+                    log.error("Failed to load the media selected in the photos picker: \(error?.localizedDescription ?? "unknown error")")
+                    continuation.resume(returning: nil)
+                    return
+                }
+                do {
+                    // The provided file is deleted as soon as this closure returns, so it needs
+                    // to be copied to a location which is owned by the composer.
+                    let localURL = try copyToTemporaryLocation(url)
+                    continuation.resume(returning: (url: localURL, isVideo: isVideo))
+                } catch {
+                    log.error("Failed to copy the media selected in the photos picker: \(error)")
+                    continuation.resume(returning: nil)
+                }
             }
         }
     }
@@ -1826,6 +1901,38 @@ open class ComposerVC: _ViewController,
     }
 }
 
+/// Reads the dimensions from the image's metadata, without decoding the whole image.
+private func imageDimensions(at url: URL) -> (width: Double, height: Double)? {
+    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+          let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any],
+          let width = (properties[kCGImagePropertyPixelWidth as String] as? NSNumber)?.doubleValue,
+          let height = (properties[kCGImagePropertyPixelHeight as String] as? NSNumber)?.doubleValue
+    else { return nil }
+    let rawOrientation = (properties[kCGImagePropertyOrientation as String] as? NSNumber)?.uint32Value
+    let orientation = rawOrientation.flatMap(CGImagePropertyOrientation.init(rawValue:)) ?? .up
+    switch orientation {
+    case .left, .leftMirrored, .right, .rightMirrored:
+        return (width: height, height: width)
+    default:
+        return (width: width, height: height)
+    }
+}
+
+private func copyToTemporaryLocation(_ url: URL) throws -> URL {
+    let directory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
+    let destination = directory.appendingPathComponent(fileName)
+    do {
+        try FileManager.default.copyItem(at: url, to: destination)
+    } catch {
+        try? FileManager.default.removeItem(at: directory)
+        throw error
+    }
+    return destination
+}
+
 /// searchUsers does an autocomplete search on a list of ChatUser and returns users with `id` or `name` containing the search string
 /// results are returned sorted by their edit distance from the searched string
 /// distance is calculated using the levenshtein algorithm
@@ -1860,5 +1967,14 @@ extension ComposerVC: ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         cooldownTracker.start(with: channelController.currentCooldownTime())
+    }
+}
+
+@available(iOS 14.0, *)
+extension ComposerVC: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true) { [weak self] in
+            self?.handleMediaPickerResults(results)
+        }
     }
 }
