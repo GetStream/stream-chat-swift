@@ -8,10 +8,6 @@ extension SearchResultMessage {
     /// `SearchResultMessage` is `MessageResponse` plus `channel`, which only the search endpoint
     /// returns. Everything downstream works on `MessageResponse`, so the channel is read separately
     /// and the rest is forwarded unchanged.
-    ///
-    /// Adding a field to both schemas without adding it here silently drops it. Two tests guard
-    /// against that: `SearchResultMessage_Tests` compares the two coding-key sets and round-trips a
-    /// fully populated instance through this conversion.
     func asMessageResponse() -> MessageResponse {
         MessageResponse(
             attachments: attachments,

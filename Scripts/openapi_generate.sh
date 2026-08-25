@@ -74,7 +74,6 @@ allowed_models=(
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
-  ChannelContextResponse
   ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
@@ -194,6 +193,9 @@ allowed_hashable_models=(
 # Coding conformances for retained models after the renames in step 4b. Every
 # generated model must belong to exactly one group so new models fail closed until
 # their request/response direction is classified.
+# Required because OpenAPI generator does not currently support emitting models
+# with Encodable or Decodable based on how they are used in API calls. Every model
+# is Codable which makes the SDK size larger.
 encodable_only_models=(
   AddUserGroupMembersRequest
   BlockUsersRequest
@@ -236,7 +238,6 @@ decodable_only_models=(
   AppSettings
   BlockUsersResponse
   BlockedUserResponse
-  ChannelContextResponse
   ChannelDetailPayload
   ChannelOwnCapability
   CreateDraftResponse
@@ -666,6 +667,10 @@ remove_property CreateDraftResponse duration
 remove_property SendMessageResponsePayload duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
+
+# Unused channel context (cid, createdBy, id, type)
+remove_property SendMessageRequest includeChannelContext
+remove_property SendMessageResponsePayload channelContext
 
 # TODO: reaction group reactors need CoreData and public API design first
 remove_property MessageReactionGroupPayload latestReactionsBy
