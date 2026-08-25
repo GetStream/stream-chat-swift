@@ -992,13 +992,22 @@ import XCTest
     }
 
     @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenAttachmentsAreAlreadyAdded_thenSelectionIsLimitedToTheRemainingSlots() throws {
+        try composerVC.addAttachmentToContent(from: makeTemporaryImageFile(width: 10, height: 10), type: .image)
+
+        let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
+        XCTAssertEqual(picker.configuration.selectionLimit, composerVC.maxNumberOfAttachments - 1)
+    }
+
+    @available(iOS 14.0, *)
     func test_mediaPickerVC_whenIOS14AndAbove_thenComposerIsSetAsDelegate() throws {
         let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
         XCTAssertTrue(picker.delegate === composerVC)
     }
 
-    func test_mediaPickerVC_thenTheSameInstanceIsReusedBetweenPresentations() {
-        XCTAssertTrue(composerVC.mediaPickerVC === composerVC.mediaPickerVC)
+    @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenIOS14AndAbove_thenANewPickerIsCreatedForEachPresentation() {
+        XCTAssertFalse(composerVC.mediaPickerVC === composerVC.mediaPickerVC)
     }
 
     // MARK: - imagePickerController(_:didFinishPickingMediaWithInfo:)

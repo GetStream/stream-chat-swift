@@ -447,16 +447,22 @@ open class ComposerVC: _ViewController,
     /// The view controller for selecting image attachments.
     ///
     /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
-    /// faster than `UIImagePickerController` and needs no photo library permission.
-    open private(set) lazy var mediaPickerVC: UIViewController = {
+    /// faster than `UIImagePickerController` and needs no photo library permission. A new
+    /// picker is created for every presentation, because the system picker keeps showing the
+    /// previous selection when the same instance is reused.
+    open var mediaPickerVC: UIViewController {
         if #available(iOS 14.0, *) {
             var configuration = PHPickerConfiguration()
             configuration.filter = .any(of: [.images, .videos])
-            configuration.selectionLimit = self.maxNumberOfAttachments
+            configuration.selectionLimit = max(1, maxNumberOfAttachments - content.attachments.count)
             let picker = PHPickerViewController(configuration: configuration)
             picker.delegate = self
             return picker
         }
+        return legacyMediaPickerVC
+    }
+
+    private lazy var legacyMediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
