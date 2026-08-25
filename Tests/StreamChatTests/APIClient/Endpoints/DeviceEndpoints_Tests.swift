@@ -7,6 +7,12 @@
 import XCTest
 
 final class DeviceEndpoints_Tests: XCTestCase {
+    func test_pushProvider_encodesRawValueAsSingleValue() {
+        let pushProvider = CreateDeviceRequestPushProvider(rawValue: "future-provider")
+
+        XCTAssertEqual(JSONEncoder.default.encodedString(pushProvider), "future-provider")
+    }
+
     func test_addDevice_whenPushProviderIsAPN() {
         let deviceId: String = .unique
         let providerName: String = "Push Configuration Name"

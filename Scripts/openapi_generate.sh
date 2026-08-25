@@ -583,6 +583,36 @@ publicize_raw_representable ChannelCapability
 publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
 
+# Mark a generated RawRepresentable value as deprecated while keeping its legacy
+# raw value available. Fail if the generated declaration changes so the annotation
+# cannot silently disappear from the public API.
+deprecate_raw_representable_value() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  local type="$2"
+  local value="$3"
+  local renamed="$4"
+  if ! awk -v t="$type" -v v="$value" -v r="$renamed" '
+    $0 ~ "^public final class " t ":" { inside = 1 }
+    inside && $0 ~ "^    public static let " v " = " {
+      print "    @available(*, deprecated, renamed: \"" r "\")"
+      matches++
+    }
+    { print }
+    inside && /^}$/ { inside = 0 }
+    END {
+      if (matches != 1) {
+        print "Expected exactly one " t "." v " declaration, found " matches > "/dev/stderr"
+        exit 1
+      }
+    }
+  ' "$file" > "$file.tmp"; then
+    rm -f "$file.tmp"
+    return 1
+  fi
+  mv "$file.tmp" "$file"
+}
+deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
+
 # Drop `final` from a generated model so hand-written payloads can subclass it.
 unfinalize_model() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"

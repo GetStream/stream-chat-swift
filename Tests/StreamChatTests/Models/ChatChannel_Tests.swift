@@ -40,6 +40,12 @@ final class ChatChannel_Tests: XCTestCase {
 
     // MARK: Capabilities
 
+    func test_channelCapability_encodesRawValueAsSingleValue() {
+        let capability: ChannelCapability = "future-capability"
+
+        XCTAssertEqual(JSONEncoder.default.encodedString(capability), "future-capability")
+    }
+
     func test_ownCapabilities() {
         let channel: ChatChannel = .mock(
             cid: .unique,
