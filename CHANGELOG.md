@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `CurrentChatUserController.muteUsers(_:expiration:completion:)` and `ConnectedUser.muteUsers(_:expiration:)` for muting multiple users at once with an optional expiration
 - Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once
 - Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team
+- Add `Chat.queryBannedUsers` and `ChatChannelController.queryBannedUsers` for listing the bans of a channel [#4237](https://github.com/GetStream/stream-chat-swift/pull/4237)
 ### 🐞 Fixed
 - Fix the channel list showing "Message deleted" after hard deleting the last message [#4230](https://github.com/GetStream/stream-chat-swift/pull/4230)
 - Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
