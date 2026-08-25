@@ -429,6 +429,24 @@ rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
 
+# Remove a generated property (declaration, doc comment, init param, assignment,
+#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+remove_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v p="$2" '
+    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+    { s = $0; sub(/^[[:space:]]+/, "", s) }
+    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+    s ~ "^let " p ": "                 { n = 0; next }
+    s ~ "^self\\." p " = " p "$"       { next }
+    s ~ "^case " p "( =|$)"            { next }
+    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+    { flush(); print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+remove_property FileUploadResponse duration
+
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
@@ -475,7 +493,6 @@ remove_property() {
   perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
 }
 remove_property CurrentUserUnreads duration
-remove_property FileUploadResponse duration
 remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
@@ -612,16 +629,6 @@ deprecate_raw_representable_value() {
   mv "$file.tmp" "$file"
 }
 deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
-
-# Drop `final` from a generated model so hand-written payloads can subclass it.
-unfinalize_model() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E \
-    -e 's/^final class /class /' \
-    -e 's/^(class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
-    "$file"
-}
-unfinalize_model UserPayload
 
 # Expose a generated model's memberwise init, for models whose hand-written public
 #     counterpart had a public init.
