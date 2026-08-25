@@ -39,6 +39,7 @@ allowed_endpoints=(
     markDelivered
     mute
     muteChannel
+    queryBannedUsers
     queryMembers
     queryPollVotes
     queryReactions
@@ -65,6 +66,7 @@ allowed_models=(
   Action
   AddUserGroupMembersRequest
   AppResponseFields
+  BanResponse
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
@@ -115,6 +117,8 @@ allowed_models=(
   PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
+  QueryBannedUsersPayload
+  QueryBannedUsersResponse
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest

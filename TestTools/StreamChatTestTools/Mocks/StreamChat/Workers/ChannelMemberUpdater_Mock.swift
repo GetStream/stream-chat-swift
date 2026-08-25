@@ -20,6 +20,10 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater, @unchecked Sendable
     @Atomic var unbanMember_completion: ((Error?) -> Void)?
     @Atomic var unbanMember_completion_result: Result<Void, Error>?
 
+    @Atomic var queryBannedUsers_query: BannedUserListQuery?
+    @Atomic var queryBannedUsers_completion: ((Result<[BannedUser], Error>) -> Void)?
+    @Atomic var queryBannedUsers_completion_result: Result<[BannedUser], Error>?
+
     @Atomic var partialUpdate_userId: UserId?
     @Atomic var partialUpdate_cid: ChannelId?
     @Atomic var partialUpdate_request: UpdateMemberPartialRequest?
@@ -39,6 +43,10 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater, @unchecked Sendable
         unbanMember_cid = nil
         unbanMember_completion = nil
         unbanMember_completion_result = nil
+
+        queryBannedUsers_query = nil
+        queryBannedUsers_completion = nil
+        queryBannedUsers_completion_result = nil
 
         partialUpdate_userId = nil
         partialUpdate_cid = nil
@@ -72,6 +80,15 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater, @unchecked Sendable
         unbanMember_cid = cid
         unbanMember_completion = completion
         unbanMember_completion_result?.invoke(with: completion)
+    }
+
+    override func queryBannedUsers(
+        query: BannedUserListQuery,
+        completion: @escaping ((Result<[BannedUser], Error>) -> Void)
+    ) {
+        queryBannedUsers_query = query
+        queryBannedUsers_completion = completion
+        queryBannedUsers_completion_result?.invoke(with: completion)
     }
 
     override func partialUpdate(

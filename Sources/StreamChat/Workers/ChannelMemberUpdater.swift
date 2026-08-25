@@ -136,6 +136,24 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
             completion?($0.error)
         }
     }
+
+    /// Queries the bans matching the given query.
+    /// - Parameters:
+    ///   - query: The query describing which bans to return.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote fetch fails.
+    func queryBannedUsers(
+        query: BannedUserListQuery,
+        completion: @escaping @Sendable (Result<[BannedUser], Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .queryBannedUsers(query: query)) { result in
+            switch result {
+            case .success(let response):
+                completion(.success(response.bans.compactMap { $0.asModel() }))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 
 extension ChannelMemberUpdater {
@@ -163,6 +181,14 @@ extension ChannelMemberUpdater {
         try await withCheckedThrowingContinuation { continuation in
             unbanMember(userId, in: cid) { error in
                 continuation.resume(with: error)
+            }
+        }
+    }
+
+    func queryBannedUsers(query: BannedUserListQuery) async throws -> [BannedUser] {
+        try await withCheckedThrowingContinuation { continuation in
+            queryBannedUsers(query: query) { result in
+                continuation.resume(with: result)
             }
         }
     }

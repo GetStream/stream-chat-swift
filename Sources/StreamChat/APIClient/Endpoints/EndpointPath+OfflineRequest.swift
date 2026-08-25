@@ -64,6 +64,7 @@ extension EndpointPath {
              .mute,
              .muteChannel,
              .pinnedMessages,
+             .queryBannedUsers,
              .queryMembers,
              .queryPollVotes,
              .queryReactions,

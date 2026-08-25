@@ -221,6 +221,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     )
                 ), animated: true)
             }),
+            .init(title: "Query Bans", handler: { [unowned self] _ in
+                self.rootViewController.present(
+                    UINavigationController(rootViewController: BannedUsersViewController(channelController: channelController)),
+                    animated: true
+                )
+            }),
             .init(title: "Show Blocked Users", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }
                 let client = channelController.client
@@ -327,6 +333,37 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                                     )
                                 }
                             }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
+            .init(title: "Ban member with reason & timeout", isEnabled: canBanChannelMembers, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        self.rootViewController.presentAlert(
+                            title: "Ban \(member.id)",
+                            message: "Enter the ban reason",
+                            textFieldPlaceholder: "Reason"
+                        ) { reason in
+                            self.rootViewController.presentAlert(
+                                title: "Ban \(member.id)",
+                                message: "Enter the ban duration in minutes. Leave empty to ban until unbanned.",
+                                textFieldPlaceholder: "Minutes"
+                            ) { minutes in
+                                channelController.client
+                                    .memberController(userId: member.id, in: channelController.cid!)
+                                    .ban(
+                                        for: minutes.flatMap(Int.init),
+                                        reason: reason?.isEmpty == false ? reason : nil
+                                    ) { error in
+                                        guard let error = error else { return }
+                                        self.rootViewController.presentAlert(
+                                            title: "Couldn't ban user \(member.id) from channel \(cid)",
+                                            message: "\(error)"
+                                        )
+                                    }
+                            }
+                        }
                     }
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
