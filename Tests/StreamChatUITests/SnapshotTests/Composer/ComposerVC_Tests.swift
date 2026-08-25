@@ -60,6 +60,10 @@ import XCTest
         return url
     }
 
+    private var imagePayload: ImageAttachmentPayload? {
+        composerVC.content.attachments.first?.payload as? ImageAttachmentPayload
+    }
+
     private func makeTemporaryFile(named name: String) throws -> URL {
         let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(name)
         try Data(count: 1024).write(to: url)
@@ -975,22 +979,20 @@ import XCTest
 
     // MARK: - mediaPickerVC
 
-    func test_mediaPickerVC_whenIOS14AndAbove_thenUsesSystemPhotosPicker() throws {
-        guard #available(iOS 14.0, *) else { throw XCTSkip("Requires iOS 14") }
-
+    @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenIOS14AndAbove_thenUsesSystemPhotosPicker() {
         XCTAssertTrue(composerVC.mediaPickerVC is PHPickerViewController)
     }
 
-    func test_mediaPickerVC_whenIOS14AndAbove_thenSelectionIsLimitedToOneItem() throws {
-        guard #available(iOS 14.0, *) else { throw XCTSkip("Requires iOS 14") }
-
+    @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenIOS14AndAbove_thenSelectionIsLimitedToTheMaxAttachmentCount() throws {
         let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
-        XCTAssertEqual(picker.configuration.selectionLimit, 1)
+        XCTAssertEqual(picker.configuration.selectionLimit, composerVC.maxNumberOfAttachments)
+        XCTAssertGreaterThan(composerVC.maxNumberOfAttachments, 1)
     }
 
+    @available(iOS 14.0, *)
     func test_mediaPickerVC_whenIOS14AndAbove_thenComposerIsSetAsDelegate() throws {
-        guard #available(iOS 14.0, *) else { throw XCTSkip("Requires iOS 14") }
-
         let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
         XCTAssertTrue(picker.delegate === composerVC)
     }
@@ -1006,12 +1008,12 @@ import XCTest
 
         composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [.imageURL: imageURL])
 
-        AssertAsync.willBeEqual(self.composerVC.content.attachments.count, 1)
-        let attachment = try XCTUnwrap(composerVC.content.attachments.first)
-        XCTAssertEqual(attachment.type, .image)
-        let payload = try XCTUnwrap(attachment.payload as? ImageAttachmentPayload)
-        XCTAssertEqual(payload.originalWidth, 40)
-        XCTAssertEqual(payload.originalHeight, 20)
+        AssertAsync {
+            Assert.willBeEqual(self.composerVC.content.attachments.count, 1)
+            Assert.willBeEqual(self.composerVC.content.attachments.first?.type, .image)
+            Assert.willBeEqual(self.imagePayload?.originalWidth, 40)
+            Assert.willBeEqual(self.imagePayload?.originalHeight, 20)
+        }
     }
 
     func test_didFinishPickingMedia_whenOriginalImageIsProvided_thenResolutionComesFromTheImage() throws {
@@ -1023,10 +1025,11 @@ import XCTest
             didFinishPickingMediaWithInfo: [.imageURL: imageURL, .originalImage: originalImage]
         )
 
-        AssertAsync.willBeEqual(self.composerVC.content.attachments.count, 1)
-        let payload = try XCTUnwrap(composerVC.content.attachments.first?.payload as? ImageAttachmentPayload)
-        XCTAssertEqual(payload.originalWidth, 10)
-        XCTAssertEqual(payload.originalHeight, 30)
+        AssertAsync {
+            Assert.willBeEqual(self.composerVC.content.attachments.count, 1)
+            Assert.willBeEqual(self.imagePayload?.originalWidth, 10)
+            Assert.willBeEqual(self.imagePayload?.originalHeight, 30)
+        }
     }
 
     func test_didFinishPickingMedia_whenVideoURL_thenVideoAttachmentIsAdded() throws {
@@ -1034,14 +1037,16 @@ import XCTest
 
         composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [.mediaURL: videoURL])
 
-        AssertAsync.willBeEqual(self.composerVC.content.attachments.count, 1)
-        XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
+        AssertAsync {
+            Assert.willBeEqual(self.composerVC.content.attachments.count, 1)
+            Assert.willBeEqual(self.composerVC.content.attachments.first?.type, .video)
+        }
     }
 
     func test_didFinishPickingMedia_whenNothingIsPicked_thenNoAttachmentIsAdded() {
         composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [:])
 
-        XCTAssertEqual(composerVC.content.attachments.count, 0)
+        AssertAsync.staysEqual(self.composerVC.content.attachments.count, 0)
     }
 
     // MARK: - maxAttachmentSize

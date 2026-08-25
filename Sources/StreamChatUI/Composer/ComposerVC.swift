@@ -446,12 +446,13 @@ open class ComposerVC: _ViewController,
 
     /// The view controller for selecting image attachments.
     ///
-    /// On iOS 14 and above the system photos picker is used, which is presented considerably
+    /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
     /// faster than `UIImagePickerController` and needs no photo library permission.
     open private(set) lazy var mediaPickerVC: UIViewController = {
         if #available(iOS 14.0, *) {
             var configuration = PHPickerConfiguration()
             configuration.filter = .any(of: [.images, .videos])
+            configuration.selectionLimit = self.maxNumberOfAttachments
             let picker = PHPickerViewController(configuration: configuration)
             picker.delegate = self
             return picker
@@ -1506,6 +1507,17 @@ open class ComposerVC: _ViewController,
         content.attachments.append(attachment)
     }
 
+    /// The maximum number of attachments which can be added to a message.
+    ///
+    /// The limit can be changed with `ChatClientConfig.maxAttachmentCountPerMessage`.
+    open var maxNumberOfAttachments: Int {
+        guard let config = channelController?.client.config else {
+            log.assertionFailure("Channel controller must be set at this point")
+            return 1
+        }
+        return config.maxAttachmentCountPerMessage
+    }
+
     /// The maximum upload file size depending on the attachment type.
     ///
     /// The max attachment size can be set from the Stream's Dashboard App Settings.
@@ -1681,20 +1693,42 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    /// Adds the media item which was selected in the photos picker to the composer's content.
+    /// Adds the media items which were selected in the photos picker to the composer's content.
     @available(iOS 14.0, *)
-    open func handleMediaPickerResult(_ result: PHPickerResult) {
-        let itemProvider = result.itemProvider
-        let isVideo = itemProvider.hasItemConformingToTypeIdentifier("public.movie")
-        itemProvider.loadFileRepresentation(forTypeIdentifier: isVideo ? "public.movie" : "public.image") { url, _ in
-            // The provided file is deleted as soon as this closure returns, so it needs
-            // to be copied to a location which is owned by the composer.
-            guard let localURL = url.flatMap({ try? copyToTemporaryLocation($0) }) else {
-                log.error("Failed to load the media selected in the photos picker")
-                return
+    open func handleMediaPickerResults(_ results: [PHPickerResult]) {
+        let allowedResults = results.prefix(max(0, maxNumberOfAttachments - content.attachments.count))
+        if allowedResults.count < results.count {
+            showAttachmentsCountExceedingLimitAlert(maxNumberOfAttachments)
+        }
+        guard !allowedResults.isEmpty else { return }
+        Task { @MainActor [weak self] in
+            for result in allowedResults {
+                guard let media = await Self.loadMedia(from: result.itemProvider) else { continue }
+                guard let self else { return }
+                handleImagePickerMediaSelected(info: [media.isVideo ? .mediaURL : .imageURL: media.url])
             }
-            Task { @MainActor [weak self] in
-                self?.handleImagePickerMediaSelected(info: [isVideo ? .mediaURL : .imageURL: localURL])
+        }
+    }
+
+    @available(iOS 14.0, *)
+    @MainActor private static func loadMedia(from itemProvider: NSItemProvider) async -> (url: URL, isVideo: Bool)? {
+        let isVideo = itemProvider.hasItemConformingToTypeIdentifier("public.movie")
+        return await withCheckedContinuation { continuation in
+            itemProvider.loadFileRepresentation(forTypeIdentifier: isVideo ? "public.movie" : "public.image") { url, error in
+                guard let url else {
+                    log.error("Failed to load the media selected in the photos picker: \(error?.localizedDescription ?? "unknown error")")
+                    continuation.resume(returning: nil)
+                    return
+                }
+                do {
+                    // The provided file is deleted as soon as this closure returns, so it needs
+                    // to be copied to a location which is owned by the composer.
+                    let localURL = try copyToTemporaryLocation(url)
+                    continuation.resume(returning: (url: localURL, isVideo: isVideo))
+                } catch {
+                    log.error("Failed to copy the media selected in the photos picker: \(error)")
+                    continuation.resume(returning: nil)
+                }
             }
         }
     }
@@ -1884,7 +1918,12 @@ private func copyToTemporaryLocation(_ url: URL) throws -> URL {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
     let destination = directory.appendingPathComponent(fileName)
-    try FileManager.default.copyItem(at: url, to: destination)
+    do {
+        try FileManager.default.copyItem(at: url, to: destination)
+    } catch {
+        try? FileManager.default.removeItem(at: directory)
+        throw error
+    }
     return destination
 }
 
@@ -1929,8 +1968,7 @@ extension ComposerVC: ChatChannelControllerDelegate {
 extension ComposerVC: PHPickerViewControllerDelegate {
     public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true) { [weak self] in
-            guard let result = results.first else { return }
-            self?.handleMediaPickerResult(result)
+            self?.handleMediaPickerResults(results)
         }
     }
 }

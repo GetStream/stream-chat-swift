@@ -29,6 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Appearance.Images.iconAudio` for audio file type artwork [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 
 ## StreamChatUI
+### ✅ Added
+- Support selecting multiple photos and videos at once in the composer, up to the app's maximum attachment count [#4232](https://github.com/GetStream/stream-chat-swift/pull/4232)
 ### ⚡ Performance
 - Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
 ### 🔄 Changed
