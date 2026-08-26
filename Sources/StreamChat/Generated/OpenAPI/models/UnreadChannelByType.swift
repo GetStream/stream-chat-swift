@@ -9,11 +9,7 @@ public final class UnreadChannelByType: Sendable, Decodable {
     public let channelType: ChannelType
     public let unreadCount: Int
 
-    init(
-        channelCount: Int,
-        channelType: ChannelType,
-        unreadCount: Int
-    ) {
+    init(channelCount: Int, channelType: ChannelType, unreadCount: Int) {
         self.channelCount = channelCount
         self.channelType = channelType
         self.unreadCount = unreadCount

@@ -272,7 +272,10 @@ final class MessageResponse: Sendable, Decodable {
         i18n = try container.decodeIfPresent([String: String].self, forKey: .i18n)
         id = try container.decode(String.self, forKey: .id)
         imageLabels = try container.decodeIfPresent([String: [String]].self, forKey: .imageLabels)
-        latestReactions = try container.decode([MessageReactionPayload].self, forKey: .latestReactions)
+        latestReactions = try container.decode(
+            [MessageReactionPayload].self,
+            forKey: .latestReactions
+        )
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
         mentionedChannel = try container.decode(Bool.self, forKey: .mentionedChannel)
         mentionedGroupIds = try container.decodeIfPresent([String].self, forKey: .mentionedGroupIds)
@@ -280,9 +283,15 @@ final class MessageResponse: Sendable, Decodable {
         mentionedHere = try container.decode(Bool.self, forKey: .mentionedHere)
         mentionedRoles = try container.decodeIfPresent([String].self, forKey: .mentionedRoles)
         mentionedUsers = try container.decode([UserPayload].self, forKey: .mentionedUsers)
-        messageTextUpdatedAt = try container.decodeIfPresent(Date.self, forKey: .messageTextUpdatedAt)
+        messageTextUpdatedAt = try container.decodeIfPresent(
+            Date.self,
+            forKey: .messageTextUpdatedAt
+        )
         mml = try container.decodeIfPresent(String.self, forKey: .mml)
-        moderation = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderation)
+        moderation = try container.decodeIfPresent(
+            MessageModerationDetailsPayload.self,
+            forKey: .moderation
+        )
         ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
@@ -294,7 +303,10 @@ final class MessageResponse: Sendable, Decodable {
         quotedMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .quotedMessage)
         quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
         reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts)
-        reactionGroups = try container.decodeIfPresent([String: MessageReactionGroupPayload?].self, forKey: .reactionGroups)
+        reactionGroups = try container.decodeIfPresent(
+            [String: MessageReactionGroupPayload?].self,
+            forKey: .reactionGroups
+        )
         reactionScores = try container.decode([String: Int].self, forKey: .reactionScores)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
@@ -304,7 +316,10 @@ final class MessageResponse: Sendable, Decodable {
         showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
         silent = try container.decode(Bool.self, forKey: .silent)
         text = try container.decode(String.self, forKey: .text)
-        threadParticipants = try container.decodeIfPresent([UserPayload].self, forKey: .threadParticipants)
+        threadParticipants = try container.decodeIfPresent(
+            [UserPayload].self,
+            forKey: .threadParticipants
+        )
         type = try container.decode(String.self, forKey: .type)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         user = try container.decode(UserPayload.self, forKey: .user)

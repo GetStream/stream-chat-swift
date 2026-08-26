@@ -48,10 +48,7 @@ public final class UserGroup: Sendable, Decodable {
 }
 
 extension UserGroup: Hashable {
-    public static func == (
-        lhs: UserGroup,
-        rhs: UserGroup
-    ) -> Bool {
+    public static func == (lhs: UserGroup, rhs: UserGroup) -> Bool {
         lhs.createdAt == rhs.createdAt &&
             lhs.createdBy == rhs.createdBy &&
             lhs.description == rhs.description &&

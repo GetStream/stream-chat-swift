@@ -12,12 +12,7 @@ final class PollVoteListResponse: Sendable, Decodable {
     /// Poll votes
     let votes: [PollVotePayload?]
 
-    init(
-        duration: String,
-        next: String? = nil,
-        prev: String? = nil,
-        votes: [PollVotePayload?]
-    ) {
+    init(duration: String, next: String? = nil, prev: String? = nil, votes: [PollVotePayload?]) {
         self.duration = duration
         self.next = next
         self.prev = prev

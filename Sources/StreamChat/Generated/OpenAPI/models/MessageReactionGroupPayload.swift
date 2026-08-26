@@ -14,12 +14,7 @@ final class MessageReactionGroupPayload: Sendable, Decodable {
     /// SumScores is the sum of all scores of reactions of this type. Medium allows you to clap articles more than once and shows the sum of all claps from all users. For example, you can send `clap` x5 using `score: 5`.
     let sumScores: Int
 
-    init(
-        count: Int,
-        firstReactionAt: Date,
-        lastReactionAt: Date,
-        sumScores: Int
-    ) {
+    init(count: Int, firstReactionAt: Date, lastReactionAt: Date, sumScores: Int) {
         self.count = count
         self.firstReactionAt = firstReactionAt
         self.lastReactionAt = lastReactionAt

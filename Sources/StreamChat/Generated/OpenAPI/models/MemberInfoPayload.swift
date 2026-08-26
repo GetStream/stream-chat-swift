@@ -12,11 +12,7 @@ final class MemberInfoPayload: Sendable, Decodable {
     /// Whether the user muted notifications for this channel
     let notificationsMuted: Bool
 
-    init(
-        channelRole: String,
-        custom: [String: RawJSON]? = nil,
-        notificationsMuted: Bool
-    ) {
+    init(channelRole: String, custom: [String: RawJSON]? = nil, notificationsMuted: Bool) {
         self.channelRole = channelRole
         self.custom = custom
         self.notificationsMuted = notificationsMuted

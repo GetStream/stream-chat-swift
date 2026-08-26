@@ -14,12 +14,7 @@ final class UpdateLiveLocationRequest: Sendable, Encodable, JSONEncodable {
     /// Live location ID
     let messageId: String
 
-    init(
-        endAt: Date? = nil,
-        latitude: Double? = nil,
-        longitude: Double? = nil,
-        messageId: String
-    ) {
+    init(endAt: Date? = nil, latitude: Double? = nil, longitude: Double? = nil, messageId: String) {
         self.endAt = endAt
         self.latitude = latitude
         self.longitude = longitude

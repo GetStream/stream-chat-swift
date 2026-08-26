@@ -157,8 +157,14 @@ final class ChannelDetailPayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        autoTranslationEnabled = try container.decodeIfPresent(Bool.self, forKey: .autoTranslationEnabled)
-        autoTranslationLanguage = try container.decodeIfPresent(String.self, forKey: .autoTranslationLanguage)
+        autoTranslationEnabled = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .autoTranslationEnabled
+        )
+        autoTranslationLanguage = try container.decodeIfPresent(
+            String.self,
+            forKey: .autoTranslationLanguage
+        )
         blocked = try container.decodeIfPresent(Bool.self, forKey: .blocked)
         cid = try container.decode(ChannelId.self, forKey: .cid)
         config = try container.decode(ChannelConfig.self, forKey: .config)
@@ -185,7 +191,10 @@ final class ChannelDetailPayload: Sendable, Decodable {
         messageCount = try container.decodeIfPresent(Int.self, forKey: .messageCount)
         muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
         muted = try container.decodeIfPresent(Bool.self, forKey: .muted)
-        ownCapabilities = try container.decodeIfPresent([ChannelOwnCapability].self, forKey: .ownCapabilities)
+        ownCapabilities = try container.decodeIfPresent(
+            [ChannelOwnCapability].self,
+            forKey: .ownCapabilities
+        )
         team = try container.decodeIfPresent(String.self, forKey: .team)
         truncatedAt = try container.decodeIfPresent(Date.self, forKey: .truncatedAt)
         truncatedBy = try container.decodeIfPresent(UserPayload.self, forKey: .truncatedBy)

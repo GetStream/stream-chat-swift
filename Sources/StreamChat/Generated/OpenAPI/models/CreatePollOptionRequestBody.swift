@@ -10,10 +10,7 @@ final class CreatePollOptionRequestBody: Sendable, Encodable, JSONEncodable {
     /// Option text
     let text: String
 
-    init(
-        custom: [String: RawJSON]? = nil,
-        text: String
-    ) {
+    init(custom: [String: RawJSON]? = nil, text: String) {
         self.custom = custom
         self.text = text
     }

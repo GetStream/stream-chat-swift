@@ -11,11 +11,7 @@ final class UpdateMessageRequest: Sendable, Encodable, JSONEncodable {
     let skipEnrichUrl: Bool?
     let skipPush: Bool?
 
-    init(
-        message: MessageRequest,
-        skipEnrichUrl: Bool? = nil,
-        skipPush: Bool? = nil
-    ) {
+    init(message: MessageRequest, skipEnrichUrl: Bool? = nil, skipPush: Bool? = nil) {
         self.message = message
         self.skipEnrichUrl = skipEnrichUrl
         self.skipPush = skipPush

@@ -9,10 +9,7 @@ final class SearchRolesResponse: Sendable, Decodable {
     /// Matching roles, sorted ascending by name
     let roles: [Role]
 
-    init(
-        duration: String,
-        roles: [Role]
-    ) {
+    init(duration: String, roles: [Role]) {
         self.duration = duration
         self.roles = roles
     }

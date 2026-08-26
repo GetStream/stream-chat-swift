@@ -123,7 +123,10 @@ final class MemberPayload: Sendable, Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
         banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
-        banFromFutureChannels = try container.decodeIfPresent(Bool.self, forKey: .banFromFutureChannels)
+        banFromFutureChannels = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .banFromFutureChannels
+        )
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
         channelRole = try container.decodeIfPresent(String.self, forKey: .channelRole)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
@@ -136,7 +139,10 @@ final class MemberPayload: Sendable, Decodable {
         }
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedMessages = try container.decodeIfPresent([String].self, forKey: .deletedMessages)
-        futureChannelBanExpires = try container.decodeIfPresent(Date.self, forKey: .futureChannelBanExpires)
+        futureChannelBanExpires = try container.decodeIfPresent(
+            Date.self,
+            forKey: .futureChannelBanExpires
+        )
         inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
         inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
         invited = try container.decodeIfPresent(Bool.self, forKey: .invited)

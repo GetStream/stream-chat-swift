@@ -10,12 +10,7 @@ final class NewLocationRequestPayload: Sendable, Encodable, JSONEncodable {
     let latitude: Double
     let longitude: Double
 
-    init(
-        createdByDeviceId: String? = nil,
-        endAt: Date? = nil,
-        latitude: Double,
-        longitude: Double
-    ) {
+    init(createdByDeviceId: String? = nil, endAt: Date? = nil, latitude: Double, longitude: Double) {
         self.createdByDeviceId = createdByDeviceId
         self.endAt = endAt
         self.latitude = latitude

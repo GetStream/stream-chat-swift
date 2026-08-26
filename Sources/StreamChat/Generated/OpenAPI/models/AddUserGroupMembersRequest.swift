@@ -11,11 +11,7 @@ final class AddUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     let memberIds: [String]
     let teamId: String?
 
-    init(
-        asAdmin: Bool? = nil,
-        memberIds: [String],
-        teamId: String? = nil
-    ) {
+    init(asAdmin: Bool? = nil, memberIds: [String], teamId: String? = nil) {
         self.asAdmin = asAdmin
         self.memberIds = memberIds
         self.teamId = teamId

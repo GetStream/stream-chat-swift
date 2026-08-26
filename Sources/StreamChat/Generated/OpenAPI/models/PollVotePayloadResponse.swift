@@ -10,11 +10,7 @@ final class PollVotePayloadResponse: Sendable, Decodable {
     let poll: PollPayload?
     let vote: PollVotePayload?
 
-    init(
-        duration: String,
-        poll: PollPayload? = nil,
-        vote: PollVotePayload? = nil
-    ) {
+    init(duration: String, poll: PollPayload? = nil, vote: PollVotePayload? = nil) {
         self.duration = duration
         self.poll = poll
         self.vote = vote

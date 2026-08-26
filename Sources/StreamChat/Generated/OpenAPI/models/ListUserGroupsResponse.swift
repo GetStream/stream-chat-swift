@@ -9,10 +9,7 @@ final class ListUserGroupsResponse: Sendable, Decodable {
     /// List of user groups
     let userGroups: [UserGroup]
 
-    init(
-        duration: String,
-        userGroups: [UserGroup]
-    ) {
+    init(duration: String, userGroups: [UserGroup]) {
         self.duration = duration
         self.userGroups = userGroups
     }

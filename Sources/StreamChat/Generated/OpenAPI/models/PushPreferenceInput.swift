@@ -60,10 +60,7 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
 }
 
 extension PushPreferenceInput: Hashable {
-    static func == (
-        lhs: PushPreferenceInput,
-        rhs: PushPreferenceInput
-    ) -> Bool {
+    static func == (lhs: PushPreferenceInput, rhs: PushPreferenceInput) -> Bool {
         lhs.channelCid == rhs.channelCid &&
             lhs.chatLevel == rhs.chatLevel &&
             lhs.disabledUntil == rhs.disabledUntil &&

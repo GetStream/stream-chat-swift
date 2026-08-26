@@ -9,10 +9,7 @@ final class RemoveUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     let memberIds: [String]
     let teamId: String?
 
-    init(
-        memberIds: [String],
-        teamId: String? = nil
-    ) {
+    init(memberIds: [String], teamId: String? = nil) {
         self.memberIds = memberIds
         self.teamId = teamId
     }

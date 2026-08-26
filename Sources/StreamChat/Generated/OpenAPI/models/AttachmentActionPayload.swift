@@ -11,13 +11,7 @@ final class AttachmentActionPayload: Sendable, Codable, JSONEncodable {
     let type: String
     let value: String?
 
-    init(
-        name: String,
-        style: String? = nil,
-        text: String,
-        type: String,
-        value: String? = nil
-    ) {
+    init(name: String, style: String? = nil, text: String, type: String, value: String? = nil) {
         self.name = name
         self.style = style
         self.text = text

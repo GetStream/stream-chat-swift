@@ -82,7 +82,10 @@ final class DraftMessagePayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        attachments = try container.decodeIfPresent([MessageAttachmentPayload].self, forKey: .attachments)
+        attachments = try container.decodeIfPresent(
+            [MessageAttachmentPayload].self,
+            forKey: .attachments
+        )
         if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
             custom = decoded
         } else {

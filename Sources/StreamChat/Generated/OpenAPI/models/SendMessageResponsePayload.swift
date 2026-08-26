@@ -10,10 +10,7 @@ final class SendMessageResponsePayload: Sendable, Decodable {
     /// Represents any chat message
     let message: MessageResponse
 
-    init(
-        mentionedMembers: [String: Bool]? = nil,
-        message: MessageResponse
-    ) {
+    init(mentionedMembers: [String: Bool]? = nil, message: MessageResponse) {
         self.mentionedMembers = mentionedMembers
         self.message = message
     }
