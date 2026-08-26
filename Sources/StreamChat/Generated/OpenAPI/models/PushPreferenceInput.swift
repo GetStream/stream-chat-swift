@@ -15,11 +15,7 @@ public final class PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sen
     public static let all = PushPreferenceLevel(rawValue: "all")
     public static let allMentions = PushPreferenceLevel(rawValue: "all_mentions")
     public static let directMentions = PushPreferenceLevel(rawValue: "direct_mentions")
-    @available(
-        *,
-        deprecated,
-        renamed: "directMentions"
-    )
+    @available(*, deprecated, renamed: "directMentions")
     public static let mentions = PushPreferenceLevel(rawValue: "mentions")
     public static let none = PushPreferenceLevel(rawValue: "none")
 }
