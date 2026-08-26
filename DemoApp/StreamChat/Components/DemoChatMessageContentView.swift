@@ -12,6 +12,8 @@ final class DemoChatMessageContentView: ChatMessageContentView {
     private static let premiumBorderColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
     private static let premiumBorderWidth: CGFloat = 2
 
+    private var defaultLinkTextAttributes: [NSAttributedString.Key: Any]?
+
     lazy var saveForLaterView: UIView = {
         HContainer(spacing: 4) {
             saveForLaterIcon
@@ -111,6 +113,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         }
 
         updatePremiumAvatarBorder()
+        updatePremiumMentionColors()
     }
 
     private func updatePremiumAvatarBorder() {
@@ -128,6 +131,62 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             avatarView.layer.cornerRadius = 0
             avatarView.layer.borderWidth = 0
             avatarView.layer.borderColor = nil
+        }
+    }
+
+    private func updatePremiumMentionColors() {
+        guard let textView else { return }
+
+        if defaultLinkTextAttributes == nil {
+            defaultLinkTextAttributes = textView.linkTextAttributes
+        }
+
+        let defaultLinkColor = tintColor ?? appearance.colorPalette.accentPrimary
+        let premiumMentions = premiumMentionTexts()
+
+        guard !premiumMentions.isEmpty, let attributedText = textView.attributedText else {
+            textView.linkTextAttributes = defaultLinkTextAttributes ?? [.foregroundColor: defaultLinkColor]
+            return
+        }
+
+        textView.linkTextAttributes = [:]
+
+        let mutable = NSMutableAttributedString(attributedString: attributedText)
+        let fullRange = NSRange(location: 0, length: mutable.length)
+        mutable.enumerateAttribute(.link, in: fullRange) { value, range, _ in
+            guard value != nil else { return }
+            mutable.addAttribute(.foregroundColor, value: defaultLinkColor, range: range)
+        }
+
+        let string = mutable.string
+        for mention in premiumMentions {
+            var searchStart = string.startIndex
+            while let range = string.range(
+                of: mention,
+                options: [.caseInsensitive],
+                range: searchStart..<string.endIndex
+            ) {
+                mutable.addAttribute(
+                    .foregroundColor,
+                    value: Self.premiumBorderColor,
+                    range: NSRange(range, in: string)
+                )
+                searchStart = range.upperBound
+            }
+        }
+
+        textView.attributedText = mutable
+    }
+
+    private func premiumMentionTexts() -> [String] {
+        guard AppConfig.shared.demoAppConfig.shouldShowPremiumBadge,
+              let message = content else { return [] }
+
+        return message.mentionedUsers.compactMap { user in
+            guard message.mentionedChannelMembers[user.id]?.isPremium == true else {
+                return nil
+            }
+            return "@\(user.name ?? user.id)"
         }
     }
 }

@@ -905,6 +905,44 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData, ["nickname": .string("Marty")])
     }
 
+    func test_saveMessage_whenSending_appliesMentionedChannelMembersFromPayload() throws {
+        let channelId: ChannelId = .unique
+        let mentionedUser = UserPayload.dummy(userId: "u2", name: "Martin")
+        let messageId: MessageId = .unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: channelId), query: nil, cache: nil)
+            let dto = try session.saveMessage(
+                payload: .dummy(messageId: messageId, mentionedUsers: [mentionedUser]),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            dto.localMessageState = .sending
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    mentionedUsers: [mentionedUser],
+                    mentionedChannelMembers: [
+                        "u2": MemberInfoPayload(
+                            channelRole: .member,
+                            extraData: ["is_premium": .bool(true)]
+                        )
+                    ]
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let loadedMessage = try XCTUnwrap(try database.viewContext.message(id: messageId)?.asModel())
+        XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData["is_premium"], .bool(true))
+    }
+
     func test_messagePayload_isPinned_addedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
