@@ -48,6 +48,21 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         )
         navigationItem.leftBarButtonItems = [customBackButton]
         navigationController?.interactivePopGestureRecognizer?.delegate = self
+
+        channelAvatarView.isUserInteractionEnabled = true
+        channelAvatarView.isAccessibilityElement = true
+        channelAvatarView.accessibilityTraits = .button
+        channelAvatarView.accessibilityLabel = "Channel info"
+        channelAvatarView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(channelAvatarTapped))
+        )
+    }
+
+    @objc private func channelAvatarTapped() {
+        guard let cid = channelController.cid else { return }
+
+        let channelInfoVC = DemoChatChannelInfoVC(cid: cid, client: channelController.client)
+        show(channelInfoVC, sender: self)
     }
 
     @objc private func debugTap() {
