@@ -14,12 +14,7 @@ final class ImageSize: Sendable, Codable, JSONEncodable {
     /// Target image width
     let width: Int?
 
-    init(
-        crop: String? = nil,
-        height: Int? = nil,
-        resize: String? = nil,
-        width: Int? = nil
-    ) {
+    init(crop: String? = nil, height: Int? = nil, resize: String? = nil, width: Int? = nil) {
         self.crop = crop
         self.height = height
         self.resize = resize

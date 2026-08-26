@@ -9,11 +9,7 @@ public final class UnreadChannel: Sendable, Codable, JSONEncodable {
     public let lastRead: Date?
     public let unreadCount: Int
 
-    init(
-        channelId: ChannelId,
-        lastRead: Date? = nil,
-        unreadCount: Int
-    ) {
+    init(channelId: ChannelId, lastRead: Date? = nil, unreadCount: Int) {
         self.channelId = channelId
         self.lastRead = lastRead
         self.unreadCount = unreadCount

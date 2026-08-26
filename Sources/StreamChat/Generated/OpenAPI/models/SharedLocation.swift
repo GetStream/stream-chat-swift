@@ -51,10 +51,7 @@ public final class SharedLocation: Sendable, Codable, JSONEncodable {
 }
 
 extension SharedLocation: Hashable {
-    public static func == (
-        lhs: SharedLocation,
-        rhs: SharedLocation
-    ) -> Bool {
+    public static func == (lhs: SharedLocation, rhs: SharedLocation) -> Bool {
         lhs.channelCid == rhs.channelCid &&
             lhs.createdAt == rhs.createdAt &&
             lhs.createdByDeviceId == rhs.createdByDeviceId &&

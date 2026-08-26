@@ -10,10 +10,7 @@ final class MuteRequest: Sendable, Codable, JSONEncodable {
     /// Duration of mute in minutes
     let timeout: Int?
 
-    init(
-        targetIds: [String],
-        timeout: Int? = nil
-    ) {
+    init(targetIds: [String], timeout: Int? = nil) {
         self.targetIds = targetIds
         self.timeout = timeout
     }
