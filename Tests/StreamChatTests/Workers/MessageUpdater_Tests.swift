@@ -3099,16 +3099,10 @@ final class MessageUpdater_Tests: XCTestCase {
         let extraData: [String: RawJSON] = ["custom": .number(1)]
         let attachments: [AnyAttachmentPayload] = [.mockImage]
         
-        // Convert attachments to expected format
         let expectedAttachmentPayloads: [RawJSON] = attachments.compactMap { attachment in
-            guard let payloadData = try? JSONEncoder.default.encode(attachment.payload),
-                  let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
-                return nil
-            }
-            return MessageAttachmentPayload.makeFlattenedRawJSON(
-                type: attachment.type,
-                payload: payloadRawJSON
-            )
+            guard var payload = attachment.payload.rawJSON?.dictionaryValue else { return nil }
+            payload["type"] = .string(attachment.type.rawValue)
+            return .dictionary(payload)
         }
 
         let exp = expectation(description: "updatePartialMessage completes")

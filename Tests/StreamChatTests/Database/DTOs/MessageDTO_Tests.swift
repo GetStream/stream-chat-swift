@@ -1045,12 +1045,12 @@ final class MessageDTO_Tests: XCTestCase {
         let linkAttachmentPayload: MessageAttachmentPayload = .link()
         let videoAttachmentPayload: MessageAttachmentPayload = .video()
         let testPayload = TestAttachmentPayload.unique
-        let testAttachmentPayload: MessageAttachmentPayload = .make(
-            type: TestAttachmentPayload.type,
-            payload: .dictionary([
+        let testAttachmentPayload = MessageAttachmentPayload(
+            custom: [
                 "name": .string(testPayload.name),
                 "number": .number(Double(testPayload.number))
-            ])
+            ],
+            type: TestAttachmentPayload.type.rawValue
         )
 
         let messagePayload: MessagePayload = .dummy(

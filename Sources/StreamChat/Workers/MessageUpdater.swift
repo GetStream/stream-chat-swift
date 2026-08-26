@@ -202,8 +202,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
         }
         if let attachments {
             set["attachments"] = .array(attachments.compactMap { attachment in
-                guard let payload = attachment.payload.rawJSON else { return nil }
-                return MessageAttachmentPayload.makeFlattenedRawJSON(type: attachment.type, payload: payload)
+                // Note: partial update expects flattened data without custom being nested
+                guard var flattenedPayload = attachment.payload.rawJSON?.dictionaryValue else { return nil }
+                flattenedPayload[MessageAttachmentPayload.CodingKeys.type.rawValue] = .string(attachment.type.rawValue)
+                return .dictionary(flattenedPayload)
             })
         }
 

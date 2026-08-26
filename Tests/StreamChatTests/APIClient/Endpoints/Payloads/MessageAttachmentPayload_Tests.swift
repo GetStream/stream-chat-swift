@@ -63,22 +63,6 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.attachmentType, .unknown)
     }
 
-    func test_make_keepsStandardFieldsTyped_andCustomFieldsNested() {
-        let attachment = MessageAttachmentPayload.make(
-            type: .image,
-            payload: .dictionary([
-                "image_url": .string("https://getstream.io/some.jpg"),
-                "fallback": .string("some.jpg"),
-                "my_field": .string("my_value")
-            ])
-        )
-
-        XCTAssertEqual(attachment.type, "image")
-        XCTAssertEqual(attachment.imageUrl, "https://getstream.io/some.jpg")
-        XCTAssertEqual(attachment.fallback, "some.jpg")
-        XCTAssertEqual(attachment.custom, ["my_field": .string("my_value")])
-    }
-
     func test_payload_flattensV2CustomFields_forLocalStorage() {
         let attachment = MessageAttachmentPayload(
             custom: ["my_field": .string("my_value")],
