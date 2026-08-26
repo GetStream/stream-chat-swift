@@ -8,10 +8,7 @@ final class UserGroupResponse: Sendable, Codable, JSONEncodable {
     let duration: String
     let userGroup: UserGroup?
 
-    init(
-        duration: String,
-        userGroup: UserGroup? = nil
-    ) {
+    init(duration: String, userGroup: UserGroup? = nil) {
         self.duration = duration
         self.userGroup = userGroup
     }

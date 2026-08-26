@@ -14,12 +14,7 @@ final class BlockUsersResponse: Sendable, Codable, JSONEncodable {
     /// Duration of the request in milliseconds
     let duration: String
 
-    init(
-        blockedByUserId: String,
-        blockedUserId: String,
-        createdAt: Date,
-        duration: String
-    ) {
+    init(blockedByUserId: String, blockedUserId: String, createdAt: Date, duration: String) {
         self.blockedByUserId = blockedByUserId
         self.blockedUserId = blockedUserId
         self.createdAt = createdAt

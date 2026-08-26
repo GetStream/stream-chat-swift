@@ -8,10 +8,7 @@ final class DeliveredMessagePayload: Sendable, Codable, JSONEncodable {
     let cid: String?
     let id: String?
 
-    init(
-        cid: String? = nil,
-        id: String? = nil
-    ) {
+    init(cid: String? = nil, id: String? = nil) {
         self.cid = cid
         self.id = id
     }

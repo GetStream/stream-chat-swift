@@ -139,7 +139,10 @@ final class OwnUserResponse: Sendable, Codable, JSONEncodable {
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
         blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
-        channelMutes = try container.decodeIfPresent([MutedChannelPayload].self, forKey: .channelMutes)
+        channelMutes = try container.decodeIfPresent(
+            [MutedChannelPayload].self,
+            forKey: .channelMutes
+        )
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
             custom = decoded
@@ -156,18 +159,33 @@ final class OwnUserResponse: Sendable, Codable, JSONEncodable {
         invisible = try container.decodeIfPresent(Bool.self, forKey: .invisible)
         language = try container.decodeIfPresent(String.self, forKey: .language)
         lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
-        latestHiddenChannels = try container.decodeIfPresent([String].self, forKey: .latestHiddenChannels)
+        latestHiddenChannels = try container.decodeIfPresent(
+            [String].self,
+            forKey: .latestHiddenChannels
+        )
         mutes = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutes)
         name = try container.decodeIfPresent(String.self, forKey: .name)
         online = try container.decode(Bool.self, forKey: .online)
-        privacySettings = try container.decodeIfPresent(UserPrivacySettings.self, forKey: .privacySettings)
-        pushPreferences = try container.decodeIfPresent(PushPreference.self, forKey: .pushPreferences)
-        revokeTokensIssuedBefore = try container.decodeIfPresent(Date.self, forKey: .revokeTokensIssuedBefore)
+        privacySettings = try container.decodeIfPresent(
+            UserPrivacySettings.self,
+            forKey: .privacySettings
+        )
+        pushPreferences = try container.decodeIfPresent(
+            PushPreference.self,
+            forKey: .pushPreferences
+        )
+        revokeTokensIssuedBefore = try container.decodeIfPresent(
+            Date.self,
+            forKey: .revokeTokensIssuedBefore
+        )
         role = try container.decode(String.self, forKey: .role)
         teams = try container.decodeIfPresent([String].self, forKey: .teams)
         teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
         totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount)
-        totalUnreadCountByTeam = try container.decodeIfPresent([String: Int].self, forKey: .totalUnreadCountByTeam)
+        totalUnreadCountByTeam = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .totalUnreadCountByTeam
+        )
         unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
         unreadThreads = try container.decodeIfPresent(Int.self, forKey: .unreadThreads)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
