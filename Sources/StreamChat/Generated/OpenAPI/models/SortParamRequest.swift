@@ -12,11 +12,7 @@ final class SortParamRequest: Sendable, Codable, JSONEncodable {
     /// Type of field to sort by. Empty string or omitted means string type (default). One of: number, boolean
     let type: String?
 
-    init(
-        direction: Int? = nil,
-        field: String? = nil,
-        type: String? = nil
-    ) {
+    init(direction: Int? = nil, field: String? = nil, type: String? = nil) {
         self.direction = direction
         self.field = field
         self.type = type

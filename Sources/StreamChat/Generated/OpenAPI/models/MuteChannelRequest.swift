@@ -10,10 +10,7 @@ final class MuteChannelRequest: Sendable, Codable, JSONEncodable {
     /// Duration of mute in milliseconds
     let expiration: Int?
 
-    init(
-        channelCids: [String]? = nil,
-        expiration: Int? = nil
-    ) {
+    init(channelCids: [String]? = nil, expiration: Int? = nil) {
         self.channelCids = channelCids
         self.expiration = expiration
     }

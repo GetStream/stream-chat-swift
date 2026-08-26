@@ -10,10 +10,7 @@ final class MembersResponse: Sendable, Codable, JSONEncodable {
     /// List of found members
     let members: [MemberPayload]
 
-    init(
-        duration: String,
-        members: [MemberPayload]
-    ) {
+    init(duration: String, members: [MemberPayload]) {
         self.duration = duration
         self.members = members
     }

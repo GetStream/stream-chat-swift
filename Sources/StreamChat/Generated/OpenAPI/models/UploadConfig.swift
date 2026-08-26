@@ -35,10 +35,7 @@ public final class UploadConfig: Sendable, Codable, JSONEncodable {
 }
 
 extension UploadConfig: Hashable {
-    public static func == (
-        lhs: UploadConfig,
-        rhs: UploadConfig
-    ) -> Bool {
+    public static func == (lhs: UploadConfig, rhs: UploadConfig) -> Bool {
         lhs.allowedFileExtensions == rhs.allowedFileExtensions &&
             lhs.allowedMimeTypes == rhs.allowedMimeTypes &&
             lhs.blockedFileExtensions == rhs.blockedFileExtensions &&

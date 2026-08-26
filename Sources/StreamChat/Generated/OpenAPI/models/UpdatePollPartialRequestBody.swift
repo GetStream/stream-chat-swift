@@ -10,10 +10,7 @@ final class UpdatePollPartialRequestBody: Sendable, Codable, JSONEncodable {
     /// Array of field names to unset
     let unset: [String]?
 
-    init(
-        set: [String: RawJSON]? = nil,
-        unset: [String]? = nil
-    ) {
+    init(set: [String: RawJSON]? = nil, unset: [String]? = nil) {
         self.set = set
         self.unset = unset
     }
