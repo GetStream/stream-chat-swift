@@ -18,3 +18,9 @@ extension ChatUser {
         return birthLand
     }
 }
+
+extension ChatMessage.MemberInfo {
+    var isPremium: Bool {
+        extraData["is_premium"]?.boolValue == true
+    }
+}

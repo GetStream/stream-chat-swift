@@ -190,9 +190,3 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         }
     }
 }
-
-private extension ChatMessage.MemberInfo {
-    var isPremium: Bool {
-        extraData["is_premium"]?.boolValue == true
-    }
-}
