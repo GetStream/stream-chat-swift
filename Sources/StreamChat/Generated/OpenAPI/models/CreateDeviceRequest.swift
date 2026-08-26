@@ -4,25 +4,20 @@
 
 import Foundation
 
-final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
-    enum CreateDeviceRequestPushProvider: String, Sendable, Codable, CaseIterable {
-        case apn
-        case firebase
-        case huawei
-        case xiaomi
-        case unknown = "_unknown"
+final class CreateDeviceRequestPushProvider: RawRepresentable, Codable, Hashable, Sendable {
+    let rawValue: String
 
-        init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            if let decodedValue = try? container.decode(String.self),
-               let value = Self(rawValue: decodedValue) {
-                self = value
-            } else {
-                self = .unknown
-            }
-        }
+    init(rawValue: String) {
+        self.rawValue = rawValue
     }
 
+    static let apn = CreateDeviceRequestPushProvider(rawValue: "apn")
+    static let firebase = CreateDeviceRequestPushProvider(rawValue: "firebase")
+    static let huawei = CreateDeviceRequestPushProvider(rawValue: "huawei")
+    static let xiaomi = CreateDeviceRequestPushProvider(rawValue: "xiaomi")
+}
+
+final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
     /// Stable physical device identifier used to deduplicate pushes across push providers (e.g. APNs VoIP and Firebase on the same iOS device). Distinct from 'id', which is the push token.
     let hardwareId: String?
     /// Device ID

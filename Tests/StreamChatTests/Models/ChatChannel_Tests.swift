@@ -40,15 +40,21 @@ final class ChatChannel_Tests: XCTestCase {
 
     // MARK: Capabilities
 
+    func test_channelCapability_encodesRawValueAsSingleValue() {
+        let capability: ChannelCapability = "future-capability"
+
+        XCTAssertEqual(JSONEncoder.default.encodedString(capability), "future-capability")
+    }
+
     func test_ownCapabilities() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            ownCapabilities: [.banChannelMembers, .createCall, .deleteAnyMessage],
+            ownCapabilities: [.banChannelMembers, .createAttachment, .deleteAnyMessage],
             unreadCount: .noUnread
         )
 
         XCTAssertTrue(channel.ownCapabilities.contains(.banChannelMembers))
-        XCTAssertTrue(channel.ownCapabilities.contains(.createCall))
+        XCTAssertTrue(channel.ownCapabilities.contains(.createAttachment))
         XCTAssertTrue(channel.ownCapabilities.contains(.deleteAnyMessage))
         XCTAssertFalse(channel.ownCapabilities.contains(.freezeChannel))
     }
@@ -259,22 +265,6 @@ final class ChatChannel_Tests: XCTestCase {
 
         let channelWithoutCapability = setupChannel(withCapabilities: [])
         XCTAssertEqual(channelWithoutCapability.canUploadFile, false)
-    }
-
-    func test_canJoinCall() throws {
-        let channel = setupChannel(withCapabilities: [.joinCall])
-        XCTAssertEqual(channel.canJoinCall, true)
-
-        let channelWithoutCapability = setupChannel(withCapabilities: [])
-        XCTAssertEqual(channelWithoutCapability.canJoinCall, false)
-    }
-
-    func test_canCreateCall() throws {
-        let channel = setupChannel(withCapabilities: [.createCall])
-        XCTAssertEqual(channel.canCreateCall, true)
-
-        let channelWithoutCapability = setupChannel(withCapabilities: [])
-        XCTAssertEqual(channelWithoutCapability.canCreateCall, false)
     }
 
     func test_isSlowMode() throws {

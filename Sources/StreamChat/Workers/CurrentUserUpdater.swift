@@ -86,7 +86,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     endpoint: .createDevice(
                         createDeviceRequest: CreateDeviceRequest(
                             id: deviceId,
-                            pushProvider: .init(rawValue: pushProvider.rawValue) ?? .unknown,
+                            pushProvider: .init(rawValue: pushProvider.rawValue),
                             pushProviderName: providerName
                         )
                     ),

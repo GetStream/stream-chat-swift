@@ -86,7 +86,7 @@ final class UserEndpoints_Tests: XCTestCase {
 
     func test_pushPreferences_buildsCorrectly() {
         let request = UpsertPushPreferencesRequest(preferences: [
-            PushPreferenceInput(chatLevel: .mentions, removeDisable: true),
+            PushPreferenceInput(chatLevel: .directMentions, removeDisable: true),
             PushPreferenceInput(
                 channelCid: "messaging:test-channel",
                 chatLevel: .all,

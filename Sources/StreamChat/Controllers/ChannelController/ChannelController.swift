@@ -1146,7 +1146,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             description: description,
             enforceUniqueVote: enforceUniqueVote,
             maxVotesAllowed: maxVotesAllowed,
-            votingVisibility: votingVisibility?.rawValue,
+            votingVisibility: votingVisibility,
             options: options,
             custom: extraData
         ) { [weak self] result in
@@ -1877,7 +1877,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         let channelPreference = PushPreferenceInput(
             channelCid: channelId.rawValue,
-            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
+            chatLevel: level,
             removeDisable: true
         )
 

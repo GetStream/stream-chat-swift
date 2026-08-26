@@ -203,6 +203,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/chat-manager openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
+    --opt raw_representable_over_enum=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
@@ -410,6 +411,7 @@ rename_generated ReactionResponse MessageReactionPayload
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
+rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 rename_generated UnmuteResponse UnmuteUsersResponse
@@ -418,6 +420,9 @@ rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
 rename_generated PrivacySettingsResponse UserPrivacySettings
 rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
+
+rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
+rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
@@ -498,17 +503,17 @@ retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
 
-remove_nested_enum() {
+remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   awk -v e="$2" '
-    $0 ~ "^    enum " e ":" { skip = 1; next }
-    skip && /^    }$/       { skip = 0; next }
-    skip                    { next }
+    $0 ~ "^final class " e ":" { skip = 1; next }
+    skip && /^}$/               { skip = 0; next }
+    skip                        { next }
     { print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
-remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
-remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
+remove_type PushPreferenceInput PushPreferenceInputCallLevel
+remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
 # Give a generated model mutable stored properties, so it can replace a hand-written
 #     public type whose properties were var. Mutable state rules out checked Sendable,
@@ -556,6 +561,57 @@ publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
 publicize_model UserPrivacySettings
+
+# Expose a generated RawRepresentable class as public API. Unlike publicize_model, the
+#     init must be public too — it is the RawRepresentable requirement — along with every
+#     static let holding a known value. The class is looked up by name, since the file
+#     named after a model also holds the classes generated for its string properties.
+publicize_raw_representable() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v n="${2:-$1}" '
+    $0 ~ "^final class " n ":" { sub(/^final class /, "public final class "); inside = 1; print; next }
+    inside && /^}$/       { inside = 0; print; next }
+    inside {
+      sub(/^    let /, "    public let ")
+      sub(/^    init\(/, "    public init(")
+      sub(/^    static let /, "    public static let ")
+    }
+    { print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+publicize_raw_representable ChannelCapability
+publicize_raw_representable CreatePollRequestBody VotingVisibility
+publicize_raw_representable PushPreferenceInput PushPreferenceLevel
+
+# Mark a generated RawRepresentable value as deprecated while keeping its legacy
+# raw value available. Fail if the generated declaration changes so the annotation
+# cannot silently disappear from the public API.
+deprecate_raw_representable_value() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  local type="$2"
+  local value="$3"
+  local renamed="$4"
+  if ! awk -v t="$type" -v v="$value" -v r="$renamed" '
+    $0 ~ "^public final class " t ":" { inside = 1 }
+    inside && $0 ~ "^    public static let " v " = " {
+      print "    @available(*, deprecated, renamed: \"" r "\")"
+      matches++
+    }
+    { print }
+    inside && /^}$/ { inside = 0 }
+    END {
+      if (matches != 1) {
+        print "Expected exactly one " t "." v " declaration, found " matches > "/dev/stderr"
+        exit 1
+      }
+    }
+  ' "$file" > "$file.tmp"; then
+    rm -f "$file.tmp"
+    return 1
+  fi
+  mv "$file.tmp" "$file"
+}
+deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
 
 # Expose a generated model's memberwise init, for models whose hand-written public
 #     counterpart had a public init.
