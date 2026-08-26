@@ -336,7 +336,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedEndpoint = Endpoint<EmptyResponse>.createDevice(
             createDeviceRequest: CreateDeviceRequest(
                 id: deviceId,
-                pushProvider: .init(rawValue: pushProvider.rawValue) ?? .unknown,
+                pushProvider: .init(rawValue: pushProvider.rawValue),
                 pushProviderName: providerName
             )
         )
@@ -889,7 +889,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_makesCorrectAPICall() throws {
         // GIVEN
-        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
+        let preference = PushPreferenceInput(chatLevel: .directMentions, removeDisable: true)
 
         // WHEN
         currentUserUpdater.setPushPreference(preference) { _ in }
@@ -958,7 +958,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
-        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
+        let preference = PushPreferenceInput(chatLevel: .directMentions, removeDisable: true)
 
         // WHEN
         nonisolated(unsafe) var completionError: Error?
@@ -977,7 +977,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_whenNoUserPreferences_returnsError() {
         // GIVEN
-        let preference = PushPreferenceInput(chatLevel: .mentions, removeDisable: true)
+        let preference = PushPreferenceInput(chatLevel: .directMentions, removeDisable: true)
 
         let response = UpsertPushPreferencesResponse(
             userChannelPreferences: [:],

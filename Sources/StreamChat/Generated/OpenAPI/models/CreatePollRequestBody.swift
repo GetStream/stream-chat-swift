@@ -4,23 +4,18 @@
 
 import Foundation
 
-final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
-    enum CreatePollRequestVotingVisibility: String, Sendable, Encodable, CaseIterable {
-        case `public`
-        case anonymous
-        case unknown = "_unknown"
+public final class VotingVisibility: RawRepresentable, Codable, Hashable, Sendable {
+    public let rawValue: String
 
-        init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            if let decodedValue = try? container.decode(String.self),
-               let value = Self(rawValue: decodedValue) {
-                self = value
-            } else {
-                self = .unknown
-            }
-        }
+    public init(rawValue: String) {
+        self.rawValue = rawValue
     }
 
+    public static let `public` = VotingVisibility(rawValue: "public")
+    public static let anonymous = VotingVisibility(rawValue: "anonymous")
+}
+
+final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     /// Indicates whether users can suggest user defined answers
     let allowAnswers: Bool?
     let allowUserSuggestedOptions: Bool?
@@ -38,7 +33,7 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     /// The name of the poll
     let name: String
     let options: [PollOptionRequestBody]?
-    let votingVisibility: CreatePollRequestVotingVisibility?
+    let votingVisibility: VotingVisibility?
 
     init(
         allowAnswers: Bool? = nil,
@@ -51,7 +46,7 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         maxVotesAllowed: Int? = nil,
         name: String,
         options: [PollOptionRequestBody]? = nil,
-        votingVisibility: CreatePollRequestVotingVisibility? = nil
+        votingVisibility: VotingVisibility? = nil
     ) {
         self.allowAnswers = allowAnswers
         self.allowUserSuggestedOptions = allowUserSuggestedOptions

@@ -48,7 +48,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
     /// Whether this channel is muted or not
     let muted: Bool?
     /// List of channel capabilities of authenticated user
-    let ownCapabilities: [ChannelOwnCapability]?
+    let ownCapabilities: [ChannelCapability]?
     /// Team the channel belongs to (multi-tenant only)
     let team: String?
     /// Date of the latest truncation of the channel
@@ -83,7 +83,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         messageCount: Int? = nil,
         muteExpiresAt: Date? = nil,
         muted: Bool? = nil,
-        ownCapabilities: [ChannelOwnCapability]? = nil,
+        ownCapabilities: [ChannelCapability]? = nil,
         team: String? = nil,
         truncatedAt: Date? = nil,
         truncatedBy: UserPayload? = nil,
@@ -192,7 +192,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
         muted = try container.decodeIfPresent(Bool.self, forKey: .muted)
         ownCapabilities = try container.decodeIfPresent(
-            [ChannelOwnCapability].self,
+            [ChannelCapability].self,
             forKey: .ownCapabilities
         )
         team = try container.decodeIfPresent(String.self, forKey: .team)

@@ -2594,7 +2594,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -2642,7 +2642,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -2666,7 +2666,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -2703,7 +2703,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 

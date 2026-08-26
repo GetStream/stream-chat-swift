@@ -4,23 +4,18 @@
 
 import Foundation
 
-final class MessageRequest: Sendable, Encodable, JSONEncodable {
-    enum MessageRequestType: String, Sendable, Encodable, CaseIterable {
-        case regular
-        case system
-        case unknown = "_unknown"
+final class MessageRequestType: RawRepresentable, Codable, Hashable, Sendable {
+    let rawValue: String
 
-        init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            if let decodedValue = try? container.decode(String.self),
-               let value = Self(rawValue: decodedValue) {
-                self = value
-            } else {
-                self = .unknown
-            }
-        }
+    init(rawValue: String) {
+        self.rawValue = rawValue
     }
 
+    static let regular = MessageRequestType(rawValue: "regular")
+    static let system = MessageRequestType(rawValue: "system")
+}
+
+final class MessageRequest: Sendable, Encodable, JSONEncodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]?
     let custom: [String: RawJSON]?

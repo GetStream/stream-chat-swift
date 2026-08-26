@@ -1633,7 +1633,7 @@ extension MessageDTO {
         }
 
         // At the moment, we only provide the type for system messages when creating a message.
-        let systemType: MessageRequest.MessageRequestType? = type == MessageType.system.rawValue ? .system : nil
+        let systemType: MessageRequestType? = type == MessageType.system.rawValue ? .system : nil
 
         var restrictedVisibilityArray: [UserId]?
         if let restrictedVisibility {
