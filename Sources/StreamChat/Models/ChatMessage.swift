@@ -8,6 +8,9 @@ import Foundation
 /// A unique identifier of a message.
 public typealias MessageId = String
 
+/// Slim channel-member information attached to messages and typing events.
+public typealias ChannelMemberInfo = ChatMessage.MemberInfo
+
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
 ///
 /// `@unchecked Sendable` is safe here because every stored property is `let`, and the type-erased

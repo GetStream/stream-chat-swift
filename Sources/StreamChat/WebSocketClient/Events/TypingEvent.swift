@@ -16,7 +16,7 @@ public final class TypingEvent: ChannelSpecificEvent {
     public let user: ChatUser
 
     /// Slim channel-member information attached to the typing event, when available.
-    public let memberInfo: ChatMessage.MemberInfo?
+    public let memberInfo: ChannelMemberInfo?
 
     /// The typing user together with optional member info from the event.
     public var typingUser: TypingUser {
@@ -36,7 +36,7 @@ public final class TypingEvent: ChannelSpecificEvent {
         isTyping: Bool,
         cid: ChannelId,
         user: ChatUser,
-        memberInfo: ChatMessage.MemberInfo? = nil,
+        memberInfo: ChannelMemberInfo? = nil,
         parentId: MessageId?,
         createdAt: Date
     ) {
