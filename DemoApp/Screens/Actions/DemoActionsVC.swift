@@ -175,6 +175,6 @@ private final class DemoActionCell: UITableViewCell {
 
     private func actionTextColor(for item: DemoActionItem) -> UIColor {
         guard item.isEnabled else { return .tertiaryLabel }
-        return item.isDestructive ? .systemRed : .label
+        return item.isDestructive ? .systemRed : tintColor
     }
 }
