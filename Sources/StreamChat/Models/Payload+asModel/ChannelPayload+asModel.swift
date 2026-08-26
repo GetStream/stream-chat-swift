@@ -43,7 +43,7 @@ extension ChannelPayload {
             createdBy: channelPayload.createdBy?.asModel(),
             config: channelPayload.config,
             filterTags: Set(channelPayload.filterTags ?? []),
-            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0.rawValue) } ?? []),
+            ownCapabilities: Set(channelPayload.ownCapabilities ?? []),
             isFrozen: channelPayload.frozen,
             isDisabled: channelPayload.disabled,
             isBlocked: channelPayload.blocked ?? false,
