@@ -456,8 +456,6 @@ class MessageDTO: NSManagedObject {
         new.id = id
         new.latestReactions = []
         new.ownReactions = []
-        new.reactionCounts = [:]
-        new.showReplyInChannel = false
         return new
     }
 
@@ -687,18 +685,17 @@ extension MessageDTO {
         updateMemberInfo(
             channelRole: MemberRole(rawChannelValue: member.channelRole),
             notificationsMuted: member.notificationsMuted,
-            extraData: member.custom
+            extraData: member.custom ?? [:]
         )
     }
 
     func updateMemberInfo(
         channelRole: MemberRole?,
         notificationsMuted: Bool,
-        extraData: [String: RawJSON]?
+        extraData: [String: RawJSON]
     ) {
         self.channelRole = channelRole?.rawValue
         memberNotificationsMuted = notificationsMuted
-        guard let extraData else { return }
         do {
             memberExtraData = try JSONEncoder.default.encode(extraData)
         } catch {
@@ -967,9 +964,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.command = payload.command
         dto.args = payload.args
         dto.parentMessageId = payload.parentId
-        if let showInChannel = payload.showInChannel {
-            dto.showReplyInChannel = showInChannel
-        }
+        dto.showReplyInChannel = payload.showInChannel ?? false
         dto.replyCount = Int32(payload.replyCount)
         if let member = payload.member {
             dto.updateMemberInfo(from: member)
@@ -1049,20 +1044,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.user = user
 
         dto.reactionScores = payload.reactionScores
-        if let reactionCounts = payload.reactionCounts {
-            dto.reactionCounts = reactionCounts
-        }
-        if let reactionGroups = payload.reactionGroups {
-            dto.reactionGroups = Set(reactionGroups.compactMap { (type, groupPayload) in
-                groupPayload.map {
-                    MessageReactionGroupDTO(
-                        type: .init(rawValue: type),
-                        payload: $0,
-                        context: self
-                    )
-                }
-            })
-        }
+        dto.reactionCounts = payload.reactionCounts ?? [:]
+        dto.reactionGroups = Set((payload.reactionGroups ?? [:]).compactMap { (type, groupPayload) in
+            groupPayload.map {
+                MessageReactionGroupDTO(
+                    type: .init(rawValue: type),
+                    payload: $0,
+                    context: self
+                )
+            }
+        })
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
@@ -1073,20 +1064,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
         dto.mentionedHere = payload.mentionedHere
         dto.mentionedChannel = payload.mentionedChannel
-        if let mentionedGroups = payload.mentionedGroups {
-            dto.mentionedGroupIds = mentionedGroups.map(\.id)
-            dto.mentionedGroups = try Set(mentionedGroups.map { try saveUserGroup(payload: $0) })
-        }
-        if let mentionedRoles = payload.mentionedRoles {
-            dto.mentionedRoles = mentionedRoles
-        }
+        let mentionedGroups = payload.mentionedGroups ?? []
+        dto.mentionedGroupIds = mentionedGroups.map(\.id)
+        dto.mentionedGroups = try Set(mentionedGroups.map { try saveUserGroup(payload: $0) })
+        dto.mentionedRoles = payload.mentionedRoles ?? []
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
-        if let threadParticipants = payload.threadParticipants {
-            dto.threadParticipants = try NSOrderedSet(
-                array: threadParticipants.map { try saveUser(payload: $0) }
-            )
-        }
+        dto.threadParticipants = try NSOrderedSet(
+            array: (payload.threadParticipants ?? []).map { try saveUser(payload: $0) }
+        )
         let restrictedVisibility = Set(payload.restrictedVisibility)
         dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
 
@@ -1232,12 +1218,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.command = draftDetailsPayload.command
         dto.args = draftDetailsPayload.args
         dto.parentMessageId = payload.parentId
-        if let showInChannel = draftDetailsPayload.showInChannel {
-            dto.showReplyInChannel = showInChannel
-        }
-        if let silent = draftDetailsPayload.silent {
-            dto.isSilent = silent
-        }
+        dto.showReplyInChannel = draftDetailsPayload.showInChannel ?? false
+        dto.isSilent = draftDetailsPayload.silent ?? false
         dto.user = user
         dto.channel = channelDTO
         dto.isDraft = true

@@ -68,15 +68,27 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
 extension MessageResponse {
     /// A object describing the incoming JSON format for message payload. Unfortunately, our backend is not consistent
     /// in this and the payload has the form: `{ "message": <message payload> }` rather than `{ <message payload> }`
-    struct Boxed: Decodable {
+    ///
+    /// Replaced by the generated response types when the message CRUD/action endpoints move to v2 (IOS-1835, IOS-1960).
+    final class Boxed: Sendable, Decodable {
         let message: MessageResponse
+
+        init(message: MessageResponse) {
+            self.message = message
+        }
     }
 }
 
 extension SearchResultMessage {
     /// The boxed form of a search result, matching `{ "message": <message payload> }`.
-    struct Boxed: Decodable {
+    ///
+    /// Replaced by the generated `SearchResult` when the search endpoint moves to v2 (IOS-1836).
+    final class Boxed: Sendable, Decodable {
         let message: SearchResultMessage
+
+        init(message: SearchResultMessage) {
+            self.message = message
+        }
     }
 }
 
