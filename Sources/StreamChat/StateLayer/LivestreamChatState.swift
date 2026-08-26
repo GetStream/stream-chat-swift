@@ -23,7 +23,7 @@ import Foundation
         messages = handler.messages
         isPaused = handler.isPaused
         skippedMessagesAmount = handler.skippedMessagesAmount
-        typingUsers = handler.channel?.currentlyTypingUsers ?? []
+        typingUsers = handler.channel?.typingUsers ?? []
         configureHandlerCallbacks()
     }
 
@@ -95,7 +95,7 @@ import Foundation
     // MARK: - Typing
 
     /// The current set of users typing in the channel (excludes thread typing events).
-    @Published public internal(set) var typingUsers: Set<ChatUser> = []
+    @Published public internal(set) var typingUsers: Set<TypingUser> = []
 
     // MARK: - Throttling and Slow Mode
 

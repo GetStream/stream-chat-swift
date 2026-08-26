@@ -628,10 +628,10 @@ extension LivestreamChannelController_Tests {
         controller.delegate = delegate
 
         let typingUser = ChatUser.mock(id: .unique)
-        mockHandler.simulateTypingUsersDidChange([typingUser])
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser)])
 
         AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
-        AssertAsync.willBeEqual(delegate.didChangeTypingUsersCalledWith, [typingUser])
+        AssertAsync.willBeEqual(delegate.didChangeTypingUsersCalledWith, [TypingUser(user: typingUser)])
     }
 }
 
@@ -677,7 +677,7 @@ extension LivestreamChannelController_Tests {
         var didChangeSkippedMessagesAmountCalledWith: Int?
 
         var didChangeTypingUsersCalled = false
-        var didChangeTypingUsersCalledWith: Set<ChatUser>?
+        var didChangeTypingUsersCalledWith: Set<TypingUser>?
 
         func livestreamChannelController(
             _ controller: LivestreamChannelController,
@@ -713,7 +713,7 @@ extension LivestreamChannelController_Tests {
 
         func livestreamChannelController(
             _ controller: LivestreamChannelController,
-            didChangeTypingUsers typingUsers: Set<ChatUser>
+            didChangeTypingUsers typingUsers: Set<TypingUser>
         ) {
             didChangeTypingUsersCalled = true
             didChangeTypingUsersCalledWith = typingUsers

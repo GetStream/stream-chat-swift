@@ -846,6 +846,19 @@ extension LivestreamChatHandler_Tests {
 
         VirtualTimeTimer.invalidate()
     }
+
+    func test_didReceiveEvent_typingStart_carriesMemberInfo() {
+        seedChannel()
+        let memberInfo = ChatMessage.MemberInfo(
+            channelRole: .member,
+            extraData: ["is_premium": .bool(true)]
+        )
+        let typingUser = ChatUser.mock(id: .unique)
+
+        handler.didReceiveEvent(typingEvent(user: typingUser, isTyping: true, memberInfo: memberInfo))
+
+        XCTAssertEqual(handler.channel?.typingUsers.first?.memberInfo, memberInfo)
+    }
 }
 
 // MARK: - Cooldown
@@ -951,7 +964,7 @@ private extension LivestreamChatHandler.Handlers {
         messagesDidChange: @escaping @Sendable @MainActor ([ChatMessage]) -> Void = { _ in },
         pauseDidChange: @escaping @Sendable @MainActor (Bool) -> Void = { _ in },
         skippedMessagesAmountDidChange: @escaping @Sendable @MainActor (Int) -> Void = { _ in },
-        typingUsersDidChange: @escaping @Sendable @MainActor (Set<ChatUser>) -> Void = { _ in }
+        typingUsersDidChange: @escaping @Sendable @MainActor (Set<TypingUser>) -> Void = { _ in }
     ) -> Self {
         .init(
             channelDidChange: channelDidChange,
@@ -1090,11 +1103,12 @@ private extension LivestreamChatHandler_Tests {
         )
     }
 
-    func typingEvent(user: ChatUser, isTyping: Bool) -> TypingEvent {
+    func typingEvent(user: ChatUser, isTyping: Bool, memberInfo: ChatMessage.MemberInfo? = nil) -> TypingEvent {
         TypingEvent(
             isTyping: isTyping,
             cid: cid,
             user: user,
+            memberInfo: memberInfo,
             parentId: nil,
             createdAt: .unique
         )

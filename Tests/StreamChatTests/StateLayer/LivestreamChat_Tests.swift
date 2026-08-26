@@ -460,7 +460,7 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(state.skippedMessagesAmount, 7)
 
         let typingUser = ChatUser.mock(id: "user-1")
-        mockHandler.simulateTypingUsersDidChange([typingUser])
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser)])
         XCTAssertEqual(state.typingUsers.map(\.id), [typingUser.id])
     }
 

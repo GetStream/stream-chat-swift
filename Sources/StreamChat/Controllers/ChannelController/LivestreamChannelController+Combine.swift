@@ -28,12 +28,18 @@ extension LivestreamChannelController {
 
     /// A publisher emitting a new value every time the set of currently typing users changes.
     ///
-    /// The publisher's initial value is captured from `controller.channel?.currentlyTypingUsers`
+    /// The publisher's initial value is captured from `controller.channel?.typingUsers`
     /// at the time the controller's Combine bridge is first accessed. If a subscriber attaches
     /// before `synchronize()` resolves the channel, the initial value will be an empty set;
     /// subsequent updates are still delivered as typing events arrive.
-    public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
+    public var typingUsersPublisher: AnyPublisher<Set<TypingUser>, Never> {
         basePublishers.typingUsers.keepAlive(self)
+    }
+
+    /// A publisher emitting a new value every time the set of currently typing users changes.
+    @available(*, deprecated, message: "Use `typingUsersPublisher` and read `TypingUser.user`.")
+    public var currentlyTypingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
+        typingUsersPublisher.map { $0.chatUsers }.eraseToAnyPublisher()
     }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -56,7 +62,7 @@ extension LivestreamChannelController {
         let skippedMessagesAmount: CurrentValueSubject<Int, Never>
 
         /// A backing subject for `typingUsersPublisher`.
-        let typingUsers: CurrentValueSubject<Set<ChatUser>, Never>
+        let typingUsers: CurrentValueSubject<Set<TypingUser>, Never>
 
         init(controller: LivestreamChannelController) {
             self.controller = controller
@@ -64,7 +70,7 @@ extension LivestreamChannelController {
             messagesChanges = .init(controller.messages)
             skippedMessagesAmount = .init(controller.skippedMessagesAmount)
             isPaused = .init(controller.isPaused)
-            typingUsers = .init(controller.channel?.currentlyTypingUsers ?? [])
+            typingUsers = .init(controller.channel?.typingUsers ?? [])
             controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
@@ -101,7 +107,7 @@ extension LivestreamChannelController.BasePublishers: LivestreamChannelControlle
 
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
+        didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {
         self.typingUsers.send(typingUsers)
     }

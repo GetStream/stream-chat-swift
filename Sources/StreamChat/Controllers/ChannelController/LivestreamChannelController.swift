@@ -229,6 +229,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
                     guard let self else { return }
                     self.multicastDelegate.invoke {
                         $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers)
+                        $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers.chatUsers)
                     }
                 }
             )
@@ -1120,6 +1121,16 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
     ///   - typingUsers: The current set of users typing in the channel (excludes thread typing events).
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    )
+
+    /// Called when the set of currently typing users in the channel changes.
+    /// - Parameters:
+    ///   - controller: The controller that updated.
+    ///   - typingUsers: The current set of users typing in the channel (excludes thread typing events).
+    @available(*, deprecated, message: "Use `livestreamChannelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     )
 }
@@ -1145,6 +1156,11 @@ public extension LivestreamChannelControllerDelegate {
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangeSkippedMessagesAmount skippedMessagesAmount: Int
+    ) {}
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {}
 
     func livestreamChannelController(

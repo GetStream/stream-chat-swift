@@ -134,7 +134,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
         var messagesDidChange: @MainActor ([ChatMessage]) -> Void
         var pauseDidChange: @MainActor (Bool) -> Void
         var skippedMessagesAmountDidChange: @MainActor (Int) -> Void
-        var typingUsersDidChange: @MainActor (Set<ChatUser>) -> Void
+        var typingUsersDidChange: @MainActor (Set<TypingUser>) -> Void
     }
 
     private var handlers: Handlers?
@@ -182,7 +182,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
 
         let newChannel = payload.asModel(
             currentUserId: currentUserId,
-            currentlyTypingUsers: channel?.currentlyTypingUsers,
+            typingUsers: channel?.typingUsers,
             unreadCount: channel?.unreadCount
         )
 
@@ -435,28 +435,25 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
         // Thread typing events should not affect the channel-level typing indicator.
         guard event.parentId == nil else { return }
 
-        let currentTypingUsers = channel?.currentlyTypingUsers ?? []
+        let currentTypingUsers = channel?.typingUsers ?? []
         let userId = event.user.id
 
         if event.isTyping {
-            scheduleTypingCleanup(for: event.user)
-            var nextTypingUsers = currentTypingUsers.filter { $0.id != userId }
-            nextTypingUsers.insert(event.user)
-            updateCurrentlyTypingUsers(nextTypingUsers)
+            scheduleTypingCleanup(for: userId)
+            var nextTypingUsers = currentTypingUsers.filter { $0.user.id != userId }
+            nextTypingUsers.insert(event.typingUser)
+            updateTypingUsers(nextTypingUsers)
         } else {
             cancelTypingCleanup(for: userId)
             // No-op when the user wasn't tracked locally (e.g. we joined mid-typing).
             // Avoids allocating a filtered copy of the set for every spurious stop event.
-            guard currentTypingUsers.contains(where: { $0.id == userId }) else { return }
-            updateCurrentlyTypingUsers(currentTypingUsers.filter { $0.id != userId })
+            guard currentTypingUsers.contains(where: { $0.user.id == userId }) else { return }
+            updateTypingUsers(currentTypingUsers.filter { $0.user.id != userId })
         }
     }
 
-    private func scheduleTypingCleanup(for user: ChatUser) {
-        let userId = user.id
+    private func scheduleTypingCleanup(for userId: UserId) {
         cancelTypingCleanup(for: userId)
-        // Capture only `userId` so the timer doesn't retain a full `ChatUser` value
-        // (and the strings/dates it references) for up to 30 seconds.
         typingCleanupTimers[userId] = timerType.schedule(
             timeInterval: .incomingTypingStartEventTimeout,
             queue: .main
@@ -472,17 +469,18 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
 
     private func removeTypingUser(withId userId: UserId) {
         cancelTypingCleanup(for: userId)
-        guard let currentTypingUsers = channel?.currentlyTypingUsers,
-              currentTypingUsers.contains(where: { $0.id == userId }) else { return }
-        let typingUsers = currentTypingUsers.filter { $0.id != userId }
-        updateCurrentlyTypingUsers(typingUsers)
+        guard let currentTypingUsers = channel?.typingUsers,
+              currentTypingUsers.contains(where: { $0.user.id == userId }) else { return }
+        updateTypingUsers(currentTypingUsers.filter { $0.user.id != userId })
     }
 
-    private func updateCurrentlyTypingUsers(_ typingUsers: Set<ChatUser>) {
-        let previousIds = Set((channel?.currentlyTypingUsers ?? []).map(\.id))
-        let newIds = Set(typingUsers.map(\.id))
-        guard previousIds != newIds else { return }
-        channel = channel?.changing(currentlyTypingUsers: typingUsers)
+    private func updateTypingUsers(_ typingUsers: Set<TypingUser>) {
+        let previousIds = Set((channel?.typingUsers ?? []).map(\.user.id))
+        let newIds = Set(typingUsers.map(\.user.id))
+        let previousById = Dictionary(uniqueKeysWithValues: (channel?.typingUsers ?? []).map { ($0.user.id, $0) })
+        let memberInfoChanged = typingUsers.contains { $0.memberInfo != previousById[$0.user.id]?.memberInfo }
+        guard previousIds != newIds || memberInfoChanged else { return }
+        channel = channel?.changing(typingUsers: typingUsers)
         let captured = typingUsers
         handlerCallback { $0.typingUsersDidChange(captured) }
     }
