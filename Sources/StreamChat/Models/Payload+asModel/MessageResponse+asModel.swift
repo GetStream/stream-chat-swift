@@ -18,6 +18,7 @@ extension MessageResponse {
     ) -> ChatMessage {
         let author = user.asModel()
         let mentionedUsers = Set(mentionedUsers.compactMap { $0.asModel() })
+        let mentionedChannelMembers = (mentionedChannelMembers ?? [:]).mapValues { $0.asModel() }
         let threadParticipants = (threadParticipants ?? []).compactMap { $0.asModel() }
 
         let quotedMessage = quotedMessage?.asModel(
@@ -92,6 +93,7 @@ extension MessageResponse {
             },
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedChannelMembers: mentionedChannelMembers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
             mentionedGroups: Set(mentionedGroups ?? []),
@@ -167,6 +169,16 @@ extension MessageReactionPayload {
             updatedAt: updatedAt,
             author: user.asModel(),
             extraData: extraData
+        )
+    }
+}
+
+extension MemberInfoPayload {
+    func asModel() -> ChatMessage.MemberInfo {
+        ChatMessage.MemberInfo(
+            channelRole: MemberRole(rawChannelValue: channelRole),
+            notificationsMuted: notificationsMuted,
+            extraData: custom ?? [:]
         )
     }
 }

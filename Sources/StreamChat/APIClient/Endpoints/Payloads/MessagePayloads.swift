@@ -25,6 +25,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case quotedMessage = "quoted_message"
     case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
+    case mentionedChannelMembers = "mentioned_channel_members"
     case mentionedHere = "mentioned_here"
     case mentionedChannel = "mentioned_channel"
     case mentionedGroupIds = "mentioned_group_ids"
@@ -240,5 +241,14 @@ public struct Command: Codable, Hashable, Sendable {
         self.description = description
         self.set = set
         self.args = args
+    }
+}
+
+extension MemberInfoPayload: Encodable {
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(channelRole, forKey: .channelRole)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encode(notificationsMuted, forKey: .notificationsMuted)
     }
 }

@@ -108,6 +108,12 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<ChatUser>
 
+    /// Channel-member info for mentioned users, keyed by user id, when `mentioned_channel_members` is present.
+    ///
+    /// This is display-only data (for example a member nickname in `extraData`). Mention highlighting
+    /// and mention links still use ``mentionedUsers``.
+    public let mentionedChannelMembers: [UserId: MemberInfo]
+
     /// Whether all online/active channel members were mentioned (`@here`).
     public let mentionedHere: Bool
 
@@ -212,16 +218,17 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
     /// The role of the member in the channel.
     public var channelRole: MemberRole? { member?.channelRole }
 
-    /// Slim channel-member information attached to a message (`message.member` on the wire).
+    /// Slim channel-member information attached to a message (`message.member` and
+    /// `mentioned_channel_members` values on the wire).
     ///
     /// This is not a full ``ChatChannelMember``. Known fields such as role and notification
     /// mute state are exposed as typed properties; any additional fields land in ``extraData``.
     public struct MemberInfo: Hashable, Sendable {
-        /// The role of the message author in the channel.
+        /// The role of the member in the channel.
         public let channelRole: MemberRole?
-        /// Whether the message author has muted notifications for the channel.
+        /// Whether the member has muted notifications for the channel.
         public let notificationsMuted: Bool
-        /// Additional fields from the author's channel membership on `message.member`.
+        /// Additional inline fields from the channel membership.
         public let extraData: [String: RawJSON]
 
         init(
@@ -260,6 +267,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         reactionGroups: [MessageReactionType: ChatMessageReactionGroup],
         author: ChatUser,
         mentionedUsers: Set<ChatUser>,
+        mentionedChannelMembers: [UserId: MemberInfo] = [:],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
         mentionedGroups: Set<UserGroupMention> = [],
@@ -317,6 +325,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
 
         self.author = author
         self.mentionedUsers = mentionedUsers
+        self.mentionedChannelMembers = mentionedChannelMembers
         self.mentionedHere = mentionedHere
         self.mentionedChannel = mentionedChannel
         self.mentionedGroups = mentionedGroups
@@ -350,7 +359,8 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         readBy: Set<ChatUser>? = nil,
         deletedAt: Date? = nil,
         extraData: [String: RawJSON]? = nil,
-        member: MemberInfo? = nil
+        member: MemberInfo? = nil,
+        mentionedChannelMembers: [UserId: MemberInfo]? = nil
     ) -> ChatMessage {
         // Resolve the coalesced values up front so the type-checker does not
         // have to evaluate all of them inside the single large initializer call.
@@ -367,6 +377,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
         let newModerationDetails = moderationDetails ?? self.moderationDetails
         let newReadBy = readBy ?? self.readBy
         let newMember = member ?? self.member
+        let newMentionedChannelMembers = mentionedChannelMembers ?? self.mentionedChannelMembers
         return .init(
             id: id,
             cid: cid,
@@ -392,6 +403,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedChannelMembers: newMentionedChannelMembers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
             mentionedGroups: mentionedGroups,
@@ -512,6 +524,7 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedChannelMembers: mentionedChannelMembers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
             mentionedGroups: mentionedGroups,
@@ -713,6 +726,7 @@ extension ChatMessage: Hashable {
         guard mentionedGroups == other.mentionedGroups else { return false }
         guard mentionedRoles == other.mentionedRoles else { return false }
         guard member == other.member else { return false }
+        guard mentionedChannelMembers == other.mentionedChannelMembers else { return false }
         return true
     }
 

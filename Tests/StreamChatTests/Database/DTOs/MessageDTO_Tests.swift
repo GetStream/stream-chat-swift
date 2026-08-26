@@ -832,6 +832,79 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage?.memberNotificationsMuted, true)
     }
 
+    func test_messagePayload_withMentionedChannelMembers_isStoredAndLoadedFromDB() throws {
+        let channelId: ChannelId = .unique
+        let mentionedUser = UserPayload.dummy(userId: "u2", name: "Martin")
+        let messagePayload: MessagePayload = .dummy(
+            mentionedUsers: [mentionedUser],
+            mentionedChannelMembers: [
+                "u2": MemberInfoPayload(
+                    channelRole: "channel_member",
+                    custom: ["nickname": .string("Marty")],
+                    notificationsMuted: false
+                )
+            ]
+        )
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+            try session.saveMessage(
+                payload: messagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let loadedMessage = try XCTUnwrap(try database.viewContext.message(id: messagePayload.id)?.asModel())
+        XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.channelRole, .member)
+        XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData, ["nickname": .string("Marty")])
+    }
+
+    func test_saveMessage_preservesMentionedChannelMembers_whenFieldIsOmitted() throws {
+        let channelId: ChannelId = .unique
+        let mentionedUser = UserPayload.dummy(userId: "u2", name: "Martin")
+        let messageId: MessageId = .unique
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    mentionedUsers: [mentionedUser],
+                    mentionedChannelMembers: [
+                        "u2": MemberInfoPayload(
+                            channelRole: "channel_member",
+                            custom: ["nickname": .string("Marty")],
+                            notificationsMuted: false
+                        )
+                    ]
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    mentionedUsers: [mentionedUser],
+                    mentionedChannelMembers: nil
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let loadedMessage = try XCTUnwrap(try database.viewContext.message(id: messageId)?.asModel())
+        XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData, ["nickname": .string("Marty")])
+    }
+
     func test_messagePayload_isPinned_addedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
