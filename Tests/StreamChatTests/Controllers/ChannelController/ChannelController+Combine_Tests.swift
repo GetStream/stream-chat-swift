@@ -115,7 +115,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
 
     func test_typingUsersPublisher() {
         // Setup Recording publishers
-        var recording = Record<Set<ChatUser>, Never>.Recording()
+        var recording = Record<Set<TypingUser>, Never>.Recording()
 
         // Setup the chain
         channelController
@@ -147,9 +147,9 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
         )
 
         controller()?.delegateCallback { [controller = controller()] in
-            $0.channelController(controller!, didChangeTypingUsers: [typingUser])
+            $0.channelController(controller!, didChangeTypingUsers: [TypingUser(user: typingUser)])
         }
 
-        XCTAssertEqual(recording.output, [[typingUser]])
+        XCTAssertEqual(recording.output, [[TypingUser(user: typingUser)]])
     }
 }

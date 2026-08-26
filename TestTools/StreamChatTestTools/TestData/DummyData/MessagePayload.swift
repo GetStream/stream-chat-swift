@@ -237,6 +237,20 @@ extension MessagePayload {
     }
 }
 
+extension MemberInfoPayload {
+    convenience init(
+        channelRole: MemberRole? = nil,
+        extraData: [String: RawJSON] = [:],
+        notificationsMuted: Bool = false
+    ) {
+        self.init(
+            channelRole: channelRole?.rawChannelValue ?? "channel_member",
+            custom: extraData,
+            notificationsMuted: notificationsMuted
+        )
+    }
+}
+
 extension MessageModerationDetailsPayload {
     static func dummy(
         originalText: String,

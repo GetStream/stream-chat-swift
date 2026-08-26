@@ -550,7 +550,18 @@ open class ChatMessageListVC: _ViewController,
 
     /// Shows typing Indicator.
     /// - Parameter typingUsers: typing users gotten from `channelController`
+    open func showTypingIndicator(typingUsers: [TypingUser]) {
+        updateTypingIndicator(with: typingUsers.map(\.user))
+    }
+
+    /// Shows typing Indicator.
+    /// - Parameter typingUsers: typing users gotten from `channelController`
+    @available(*, deprecated, message: "Use `showTypingIndicator(typingUsers:)` with `[TypingUser]` instead.")
     open func showTypingIndicator(typingUsers: [ChatUser]) {
+        updateTypingIndicator(with: typingUsers)
+    }
+
+    private func updateTypingIndicator(with typingUsers: [ChatUser]) {
         guard isTypingEventsEnabled else { return }
 
         if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {

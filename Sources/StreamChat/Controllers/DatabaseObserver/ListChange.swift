@@ -119,6 +119,20 @@ extension ListChange {
         }
     }
 
+    /// Returns a `ListChange` of the same kind, transforming the underlying item.
+    func map<T>(_ transform: (Item) -> T) -> ListChange<T> {
+        switch self {
+        case let .insert(item, index):
+            return .insert(transform(item), index: index)
+        case let .move(item, fromIndex, toIndex):
+            return .move(transform(item), fromIndex: fromIndex, toIndex: toIndex)
+        case let .remove(item, index):
+            return .remove(transform(item), index: index)
+        case let .update(item, index):
+            return .update(transform(item), index: index)
+        }
+    }
+
     /// Returns `ListChange` of the same type but for the specific `Item` field.
     func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> ListChange<Value> {
         let field = item[keyPath: path]

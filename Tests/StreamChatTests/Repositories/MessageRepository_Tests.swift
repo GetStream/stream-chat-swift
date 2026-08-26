@@ -231,7 +231,6 @@ final class MessageRepositoryTests: XCTestCase {
         let payload = MessagePayload.dummy(
             messageId: id,
             authorUserId: .anonymous,
-            channel: nil,
             mentionedUsers: [mentionedUser],
             mentionedChannelMembers: [
                 "u2": MemberInfoPayload(

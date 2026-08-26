@@ -63,7 +63,6 @@ final class TypingEvents_IntegrationTests: XCTestCase {
 
         try client.databaseContainer.createUser(id: "luke_skywalker")
 
-        // Insert synchronously typing member into channel:
         try client.databaseContainer.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: channelId))
             let user = try XCTUnwrap(session.user(id: "luke_skywalker"))

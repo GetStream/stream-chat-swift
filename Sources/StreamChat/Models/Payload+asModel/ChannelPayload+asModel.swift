@@ -9,7 +9,8 @@ extension ChannelPayload {
     /// - Returns: A ChatChannel instance
     func asModel(
         currentUserId: UserId?,
-        currentlyTypingUsers: Set<ChatUser>?,
+        currentlyTypingUsers: Set<ChatUser>? = nil,
+        typingUsers: Set<TypingUser>? = nil,
         unreadCount: ChannelUnreadCount?
     ) -> ChatChannel {
         let channelPayload = channel
@@ -49,7 +50,7 @@ extension ChannelPayload {
             isBlocked: channelPayload.blocked ?? false,
             lastActiveMembers: Array(mappedMembers),
             membership: membership?.asModel(channelId: channelPayload.cid),
-            currentlyTypingUsers: currentlyTypingUsers ?? [],
+            typingUsers: typingUsers ?? currentlyTypingUsers?.asTypingUsers ?? [],
             lastActiveWatchers: Array(mappedWatchers),
             team: channelPayload.team,
             isAutoTranslationEnabled: channelPayload.autoTranslationEnabled ?? false,

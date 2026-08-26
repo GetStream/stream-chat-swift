@@ -27,8 +27,14 @@ extension ChatChannelController {
     }
 
     /// A publisher emitting a new value every time typing users change.
-    public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
+    public var typingUsersPublisher: AnyPublisher<Set<TypingUser>, Never> {
         basePublishers.typingUsers.keepAlive(self)
+    }
+
+    /// A publisher emitting a new value every time typing users change.
+    @available(*, deprecated, message: "Use `typingUsersPublisher` and read `TypingUser.user`.")
+    public var currentlyTypingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
+        typingUsersPublisher.map { $0.chatUsers }.eraseToAnyPublisher()
     }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -51,7 +57,7 @@ extension ChatChannelController {
         let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
 
         /// A backing subject for `typingUsersPublisher`.
-        let typingUsers: PassthroughSubject<Set<ChatUser>, Never> = .init()
+        let typingUsers: PassthroughSubject<Set<TypingUser>, Never> = .init()
 
         init(controller: ChatChannelController) {
             self.controller = controller
@@ -87,7 +93,7 @@ extension ChatChannelController.BasePublishers: ChatChannelControllerDelegate {
 
     func channelController(
         _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
+        didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {
         self.typingUsers.send(typingUsers)
     }

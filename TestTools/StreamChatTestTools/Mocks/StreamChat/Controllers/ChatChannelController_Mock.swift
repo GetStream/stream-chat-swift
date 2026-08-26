@@ -206,7 +206,9 @@ extension ChatChannelController_Mock {
         delegateCallback {
             $0.channelController(self, didUpdateChannel: change)
             if let typingUsers = typingUsers {
-                $0.channelController(self, didChangeTypingUsers: typingUsers)
+                let users = Set(typingUsers.map { $0 as ChatUser })
+                $0.channelController(self, didChangeTypingUsers: users.asTypingUsers)
+                $0.channelController(self, didChangeTypingUsers: users)
             }
         }
     }

@@ -83,8 +83,15 @@ public final class ChatChannel: @unchecked Sendable {
     ///
     public let lastActiveMembers: [ChatChannelMember]
 
+    /// Users currently typing in the channel, including optional slim member info from the typing event.
+    public let typingUsers: Set<TypingUser>
+
     /// A list of currently typing users.
-    public let currentlyTypingUsers: Set<ChatUser>
+    ///
+    /// Prefer ``typingUsers`` when you need channel-member info from the typing event, such as custom extra data.
+    public var currentlyTypingUsers: Set<ChatUser> {
+        typingUsers.chatUsers
+    }
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: ChatChannelMember?
@@ -210,7 +217,7 @@ public final class ChatChannel: @unchecked Sendable {
         isBlocked: Bool = false,
         lastActiveMembers: [ChatChannelMember],
         membership: ChatChannelMember? = nil,
-        currentlyTypingUsers: Set<ChatUser>,
+        typingUsers: Set<TypingUser> = [],
         lastActiveWatchers: [ChatUser],
         team: TeamId? = nil,
         isAutoTranslationEnabled: Bool = false,
@@ -262,7 +269,7 @@ public final class ChatChannel: @unchecked Sendable {
         self.latestMessages = latestMessages
         self.lastMessageFromCurrentUser = lastMessageFromCurrentUser
         self.lastActiveMembers = lastActiveMembers
-        self.currentlyTypingUsers = currentlyTypingUsers
+        self.typingUsers = typingUsers
         self.lastActiveWatchers = lastActiveWatchers
         self.pinnedMessages = pinnedMessages
         self.muteDetails = muteDetails
@@ -298,7 +305,7 @@ public final class ChatChannel: @unchecked Sendable {
             isBlocked: isBlocked,
             lastActiveMembers: lastActiveMembers,
             membership: membership,
-            currentlyTypingUsers: currentlyTypingUsers,
+            typingUsers: typingUsers,
             lastActiveWatchers: lastActiveWatchers,
             team: team,
             isAutoTranslationEnabled: isAutoTranslationEnabled,
@@ -348,6 +355,7 @@ public final class ChatChannel: @unchecked Sendable {
         pinnedMessages: [ChatMessage]? = nil,
         pushPreference: PushPreference? = nil,
         currentlyTypingUsers: Set<ChatUser>? = nil,
+        typingUsers: Set<TypingUser>? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         // Resolve the coalesced values up front so the type-checker does not
@@ -369,7 +377,14 @@ public final class ChatChannel: @unchecked Sendable {
         let newIsBlocked = isBlocked ?? self.isBlocked
         let newMembers = members ?? lastActiveMembers
         let newMembership = membership ?? self.membership
-        let newCurrentlyTypingUsers = currentlyTypingUsers ?? self.currentlyTypingUsers
+        let newTypingUsers: Set<TypingUser>
+        if let typingUsers {
+            newTypingUsers = typingUsers
+        } else if let currentlyTypingUsers {
+            newTypingUsers = currentlyTypingUsers.asTypingUsers
+        } else {
+            newTypingUsers = self.typingUsers
+        }
         let newWatchers = watchers ?? lastActiveWatchers
         let newTeam = team ?? self.team
         let newWatcherCount = watcherCount ?? self.watcherCount
@@ -398,7 +413,7 @@ public final class ChatChannel: @unchecked Sendable {
             isBlocked: newIsBlocked,
             lastActiveMembers: newMembers,
             membership: newMembership,
-            currentlyTypingUsers: newCurrentlyTypingUsers,
+            typingUsers: newTypingUsers,
             lastActiveWatchers: newWatchers,
             team: newTeam,
             isAutoTranslationEnabled: isAutoTranslationEnabled,
@@ -506,6 +521,7 @@ extension ChatChannel: Hashable {
         guard lhs.isHidden == rhs.isHidden else { return false }
         guard lhs.memberCount == rhs.memberCount else { return false }
         guard lhs.membership == rhs.membership else { return false }
+        guard lhs.typingUsers == rhs.typingUsers else { return false }
         guard lhs.team == rhs.team else { return false }
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
         guard lhs.truncatedBy == rhs.truncatedBy else { return false }
