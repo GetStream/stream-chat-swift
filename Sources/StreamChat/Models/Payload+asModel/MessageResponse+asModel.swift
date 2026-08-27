@@ -4,8 +4,8 @@
 
 import Foundation
 
-extension MessagePayload {
-    /// Converts the MessagePayload to a ChatMessage model.
+extension MessageResponse {
+    /// Converts the MessageResponse to a ChatMessage model.
     /// - Parameters:
     ///   - cid: The channel ID the message belongs to.
     ///   - currentUserId: The current user's ID for determining sent status.
@@ -18,7 +18,7 @@ extension MessagePayload {
     ) -> ChatMessage {
         let author = user.asModel()
         let mentionedUsers = Set(mentionedUsers.compactMap { $0.asModel() })
-        let threadParticipants = threadParticipants.compactMap { $0.asModel() }
+        let threadParticipants = (threadParticipants ?? []).compactMap { $0.asModel() }
 
         let quotedMessage = quotedMessage?.asModel(
             cid: cid,
@@ -44,7 +44,7 @@ extension MessagePayload {
                 }
                 return AnyChatMessageAttachment(
                     id: .init(cid: cid, messageId: id, index: offset),
-                    type: attachmentPayload.type,
+                    type: attachmentPayload.attachmentType,
                     payload: payloadData,
                     downloadingState: nil,
                     uploadingState: nil
@@ -60,8 +60,8 @@ extension MessagePayload {
         return ChatMessage(
             id: id,
             cid: cid,
-            text: text,
-            type: type,
+            text: text.trimmingCharacters(in: .whitespacesAndNewlines),
+            type: MessageType(rawValue: type) ?? .regular,
             command: command,
             createdAt: createdAt,
             locallyCreatedAt: nil,
@@ -69,31 +69,33 @@ extension MessagePayload {
             deletedAt: deletedAt,
             arguments: args,
             parentMessageId: parentId,
-            showReplyInChannel: showReplyInChannel,
+            showReplyInChannel: showInChannel ?? false,
             replyCount: replyCount,
-            extraData: extraData,
+            extraData: custom,
             quotedMessage: quotedMessage,
-            isBounced: moderationDetails?.action == MessageModerationAction.bounce.rawValue,
-            isSilent: isSilent,
-            isShadowed: isShadowed,
+            isBounced: moderation?.action == MessageModerationAction.bounce.rawValue,
+            isSilent: silent,
+            isShadowed: shadowed,
             deletedForMe: deletedForMe ?? false,
-            reactionScores: reactionScores,
-            reactionCounts: reactionCounts,
-            reactionGroups: reactionGroups.reduce(into: [:]) { acc, element in
-                acc[element.key] = ChatMessageReactionGroup(
-                    type: element.key,
-                    sumScores: element.value.sumScores,
-                    count: element.value.count,
-                    firstReactionAt: element.value.firstReactionAt,
-                    lastReactionAt: element.value.lastReactionAt
+            reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
+            reactionCounts: (reactionCounts ?? [:]).mapKeys(MessageReactionType.init(rawValue:)),
+            reactionGroups: (reactionGroups ?? [:]).reduce(into: [:]) { acc, element in
+                guard let group = element.value else { return }
+                let type = MessageReactionType(rawValue: element.key)
+                acc[type] = ChatMessageReactionGroup(
+                    type: type,
+                    sumScores: group.sumScores,
+                    count: group.count,
+                    firstReactionAt: group.firstReactionAt,
+                    lastReactionAt: group.lastReactionAt
                 )
             },
             author: author,
             mentionedUsers: mentionedUsers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
-            mentionedGroups: Set(mentionedGroups),
-            mentionedRoles: mentionedRoles,
+            mentionedGroups: Set(mentionedGroups ?? []),
+            mentionedRoles: mentionedRoles ?? [],
             threadParticipants: threadParticipants,
             attachments: attachments,
             latestReplies: [],
@@ -109,14 +111,14 @@ extension MessagePayload {
             ) : nil,
             translations: translations,
             originalLanguage: originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
-            moderationDetails: moderationDetails.map { .init(
+            moderationDetails: moderation.map { .init(
                 originalText: $0.originalText,
                 action: .init(rawValue: $0.action),
+                blocklistsMatched: $0.blocklistsMatched,
                 textHarms: $0.textHarms,
                 imageHarms: $0.imageHarms,
-                blocklistMatched: $0.blocklistMatched,
                 semanticFilterMatched: $0.semanticFilterMatched,
-                platformCircumvented: $0.platformCircumvented
+                platformCircumvented: $0.platformCircumvented ?? false
             ) },
             readBy: Set(readBy.map(\.user)),
             poll: nil,
@@ -129,7 +131,7 @@ extension MessagePayload {
                     updatedAt: $0.updatedAt
                 )
             },
-            sharedLocation: location.map {
+            sharedLocation: sharedLocation.map {
                 .init(
                     messageId: $0.messageId,
                     channelId: cid,
@@ -144,9 +146,9 @@ extension MessagePayload {
             },
             member: member.map {
                 ChatMessage.MemberInfo(
-                    channelRole: $0.channelRole,
+                    channelRole: MemberRole(rawChannelValue: $0.channelRole),
                     notificationsMuted: $0.notificationsMuted,
-                    extraData: $0.extraData
+                    extraData: $0.custom ?? [:]
                 )
             }
         )

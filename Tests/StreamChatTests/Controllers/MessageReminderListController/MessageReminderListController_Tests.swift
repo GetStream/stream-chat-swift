@@ -194,9 +194,9 @@ final class MessageReminderListController_Tests: XCTestCase {
             
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
-            try session.saveMessage(payload: .dummy(messageId: messageId1), for: cid, syncOwnReactions: false, cache: nil)
-            try session.saveMessage(payload: .dummy(messageId: messageId2), for: cid, syncOwnReactions: false, cache: nil)
-            try session.saveMessage(payload: .dummy(messageId: messageId3), for: cid, syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: .dummy(messageId: messageId1, cid: cid), syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: .dummy(messageId: messageId2, cid: cid), syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: .dummy(messageId: messageId3, cid: cid), syncOwnReactions: false, cache: nil)
 
             let reminders = [
                 ReminderPayload(

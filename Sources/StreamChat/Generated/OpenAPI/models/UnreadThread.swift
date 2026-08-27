@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UnreadThread: Sendable, Codable, JSONEncodable {
+public final class UnreadThread: Sendable, Decodable {
     public let lastRead: Date?
     public let lastReadMessageId: String?
     public let parentMessageId: String

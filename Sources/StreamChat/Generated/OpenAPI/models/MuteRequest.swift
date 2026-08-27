@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MuteRequest: Sendable, Codable, JSONEncodable {
+final class MuteRequest: Sendable, Encodable, JSONEncodable {
     /// User IDs to mute (if multiple users)
     let targetIds: [String]
     /// Duration of mute in minutes

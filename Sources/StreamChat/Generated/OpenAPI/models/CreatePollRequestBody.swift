@@ -15,7 +15,7 @@ public final class VotingVisibility: RawRepresentable, Codable, Hashable, Sendab
     public static let anonymous = VotingVisibility(rawValue: "anonymous")
 }
 
-final class CreatePollRequestBody: Sendable, Codable, JSONEncodable {
+final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     /// Indicates whether users can suggest user defined answers
     let allowAnswers: Bool?
     let allowUserSuggestedOptions: Bool?

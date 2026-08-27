@@ -48,7 +48,7 @@ struct ThreadListPayload: Decodable {
 
 struct ThreadPayload: Decodable {
     let parentMessageId: MessageId
-    let parentMessage: MessagePayload
+    let parentMessage: MessageResponse
     let channel: ChannelDetailPayload
     let createdBy: UserPayload
     let replyCount: Int
@@ -59,14 +59,14 @@ struct ThreadPayload: Decodable {
     let createdAt: Date
     let updatedAt: Date?
     let title: String?
-    let latestReplies: [MessagePayload]
+    let latestReplies: [MessageResponse]
     let read: [ThreadReadPayload]
     let draft: DraftPayload?
     let extraData: [String: RawJSON]
 
     init(
         parentMessageId: MessageId,
-        parentMessage: MessagePayload,
+        parentMessage: MessageResponse,
         channel: ChannelDetailPayload,
         createdBy: UserPayload,
         replyCount: Int,
@@ -77,7 +77,7 @@ struct ThreadPayload: Decodable {
         createdAt: Date,
         updatedAt: Date?,
         title: String?,
-        latestReplies: [MessagePayload],
+        latestReplies: [MessageResponse],
         read: [ThreadReadPayload],
         draft: DraftPayload?,
         extraData: [String: RawJSON]
@@ -105,7 +105,7 @@ struct ThreadPayload: Decodable {
 
         channel = try container.decode(ChannelDetailPayload.self, forKey: ThreadCodingKeys.channel)
         parentMessageId = try container.decode(String.self, forKey: ThreadCodingKeys.parentMessageId)
-        parentMessage = try container.decode(MessagePayload.self, forKey: ThreadCodingKeys.parentMessage)
+        parentMessage = try container.decode(MessageResponse.self, forKey: ThreadCodingKeys.parentMessage)
         createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
         replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
         participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)
@@ -120,7 +120,7 @@ struct ThreadPayload: Decodable {
         title = try container.decodeIfPresent(String.self, forKey: ThreadCodingKeys.title)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
-            [MessagePayload].self,
+            [MessageResponse].self,
             forKey: ThreadCodingKeys.latestReplies
         ) ?? []
         read = try container.decodeArrayIfPresentIgnoringFailures(
@@ -140,7 +140,7 @@ struct ThreadPayload: Decodable {
 // Payload return in partial update response or thread.updated event.
 struct ThreadPartialPayload: Decodable {
     let parentMessageId: MessageId
-    let parentMessage: MessagePayload
+    let parentMessage: MessageResponse
     let channel: ChannelDetailPayload
     let createdBy: UserPayload
     let replyCount: Int
@@ -154,7 +154,7 @@ struct ThreadPartialPayload: Decodable {
 
     init(
         parentMessageId: MessageId,
-        parentMessage: MessagePayload,
+        parentMessage: MessageResponse,
         channel: ChannelDetailPayload,
         createdBy: UserPayload,
         replyCount: Int,
@@ -185,7 +185,7 @@ struct ThreadPartialPayload: Decodable {
 
         channel = try container.decode(ChannelDetailPayload.self, forKey: ThreadCodingKeys.channel)
         parentMessageId = try container.decode(String.self, forKey: ThreadCodingKeys.parentMessageId)
-        parentMessage = try container.decode(MessagePayload.self, forKey: ThreadCodingKeys.parentMessage)
+        parentMessage = try container.decode(MessageResponse.self, forKey: ThreadCodingKeys.parentMessage)
         createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
         replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
         participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)

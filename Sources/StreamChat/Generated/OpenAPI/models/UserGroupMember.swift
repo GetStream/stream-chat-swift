@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UserGroupMember: Sendable, Codable, JSONEncodable {
+public final class UserGroupMember: Sendable, Decodable {
     public let createdAt: Date
     public let groupId: String
     public let isAdmin: Bool

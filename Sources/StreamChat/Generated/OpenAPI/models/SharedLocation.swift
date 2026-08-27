@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class SharedLocation: Sendable, Codable, JSONEncodable {
+public final class SharedLocation: Sendable, Decodable {
     public let channelCid: ChannelId
     public let createdAt: Date
     public let createdByDeviceId: DeviceId

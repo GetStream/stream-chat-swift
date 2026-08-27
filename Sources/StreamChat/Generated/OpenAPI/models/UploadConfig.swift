@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UploadConfig: Sendable, Codable, JSONEncodable {
+public final class UploadConfig: Sendable, Decodable {
     public let allowedFileExtensions: [String]
     public let allowedMimeTypes: [String]
     public let blockedFileExtensions: [String]

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateLiveLocationRequest: Sendable, Codable, JSONEncodable {
+final class UpdateLiveLocationRequest: Sendable, Encodable, JSONEncodable {
     /// Time when the live location expires
     let endAt: Date?
     /// Latitude coordinate

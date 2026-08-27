@@ -6,6 +6,12 @@
       "channel_id": "A2F4393C-D656-46B8-9A43-6148E9E62D7F",
       "channel_type": "messaging",
       "message": {
+        "cid": "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F",
+        "deleted_reply_count": 0,
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": [],
+        "shadowed": false,
         "id": "AD6B64F8-1A12-48AF-B246-09774FD1B748",
         "text": "How are you?",
         "html": "<p>How are you?</p>\n",

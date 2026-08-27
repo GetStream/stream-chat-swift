@@ -802,16 +802,16 @@ import XCTest
 
     // This test is temporary until we support jumping to inside a thread.
     func test_shouldLoadPageAroundMessageId_whenMessageIsInsideThread_thenDontLoadPageAroundMessageId() throws {
+        let cid = self.cid!
         let messageInsideThread = MessagePayload.dummy(
             parentId: .unique,
-            showReplyInChannel: false
+            showReplyInChannel: false,
+            cid: cid
         )
-        let cid = self.cid!
         try channelControllerMock.client.databaseContainer.writeSynchronously { [cid] session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveMessage(
                 payload: messageInsideThread,
-                for: cid,
                 syncOwnReactions: false,
                 cache: nil
             )

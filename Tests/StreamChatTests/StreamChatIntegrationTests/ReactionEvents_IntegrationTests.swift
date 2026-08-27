@@ -144,7 +144,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channel.cid)
         let user: UserPayload = .dummy(userId: .unique)
         let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
 
@@ -167,7 +167,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
@@ -186,7 +186,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channel.cid)
         let user: UserPayload = .dummy(userId: .unique)
         let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
 
@@ -209,7 +209,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
@@ -228,7 +228,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channel.cid)
         let user: UserPayload = .dummy(userId: .unique)
         let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
 
@@ -251,7 +251,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channel.cid, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields

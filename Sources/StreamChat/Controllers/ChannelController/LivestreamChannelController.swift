@@ -635,9 +635,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         messageId: MessageId,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
+        apiClient.request(endpoint: .updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )) { [weak self] result in
             self?.callback {
                 completion?(result.error)
@@ -654,9 +654,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: false))
+            endpoint: .updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
             )
         ) { [weak self] result in
             self?.callback {

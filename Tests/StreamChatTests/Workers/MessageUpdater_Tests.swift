@@ -198,17 +198,12 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
-                    moderationDetails: .init(
-                        originalText: "",
+                    cid: channelId,
+                    moderation: .init(
                         action: MessageModerationAction.bounce.rawValue,
-                        textHarms: nil,
-                        imageHarms: nil,
-                        blocklistMatched: nil,
-                        semanticFilterMatched: nil,
-                        platformCircumvented: nil
+                        originalText: ""
                     )
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -725,7 +720,6 @@ final class MessageUpdater_Tests: XCTestCase {
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
                 from: .dummy(originalText: "", action: MessageModerationAction.bounce.rawValue),
-                isV1: false,
                 context: self.database.writableContext
             )
             messageDTO.localMessageState = .sendingFailed
@@ -770,7 +764,6 @@ final class MessageUpdater_Tests: XCTestCase {
 
             messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
                 from: .dummy(originalText: "", action: MessageModerationAction.bounce.rawValue),
-                isV1: false,
                 context: self.database.writableContext
             )
         }
@@ -1037,10 +1030,10 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [
-            .dummy(messageId: .unique, authorUserId: .unique)
-        ])
         let cid = ChannelId.unique
+        let repliesPayload: MessageRepliesPayload = .init(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid)
+        ])
 
         // Create channel in the database
         try database.createChannel(cid: cid)
@@ -1081,7 +1074,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
-            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
+            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique, cid: cid) }
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
 
@@ -1095,34 +1088,36 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_shouldSetNewestReplyAt() throws {
+        let cid: ChannelId = .unique
         let pagination = MessagesPagination(pageSize: 3, parameter: .around(.unique))
         let expectedNewestReplyAt = Date.unique
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
-                .dummy(),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
         )
 
         paginationStateHandler.mockState.newestFetchedMessage = .dummy(createdAt: expectedNewestReplyAt)
 
-        try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: pagination)
+        try AssertLoadReplies(cid: cid, expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: pagination)
     }
 
     func test_loadReplies_whenNewestFetchedMessageIsNil_shouldSetNewestReplyAtToNil() throws {
+        let cid: ChannelId = .unique
         let pagination = MessagesPagination(pageSize: 3, parameter: nil)
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
-                .dummy(),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
         )
 
         paginationStateHandler.mockState.newestFetchedMessage = nil
 
-        try AssertLoadReplies(expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
+        try AssertLoadReplies(cid: cid, expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
     }
 
     func test_loadReplies_whenIsFirstPage_shouldClearCurrentMessagesExcludingLocalOnly() throws {
@@ -1266,8 +1261,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Add it to DB as it is as expected after a successful getMessage call
         try database.writeSynchronously { session in
             try session.saveMessage(
-                payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId),
-                for: cid,
+                payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId, cid: cid),
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -1973,7 +1967,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: userId)
         try database.createMessage(id: messageId, authorId: userId)
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(UpdateMessagePartialResponse.dummy(message: nil)))
 
         let expiration: MessagePinning = .expirationDate(.unique)
         let result = try waitFor {
@@ -1994,7 +1988,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId, authorId: userId)
         
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.failure(expectedError))
 
         let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: messageId, pinning: .expirationDate(.unique), completion: $0)
@@ -2027,7 +2021,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: userId)
         try database.createMessage(id: messageId, authorId: userId)
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(.success(UpdateMessagePartialResponse.dummy(message: nil)))
 
         let result = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
@@ -2055,7 +2049,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
         
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.failure(expectedError))
 
         let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
@@ -2468,17 +2462,12 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
-                    moderationDetails: .init(
-                        originalText: "",
+                    cid: channelId,
+                    moderation: .init(
                         action: MessageModerationAction.bounce.rawValue,
-                        textHarms: nil,
-                        imageHarms: nil,
-                        blocklistMatched: nil,
-                        semanticFilterMatched: nil,
-                        platformCircumvented: nil
+                        originalText: ""
                     )
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -2641,7 +2630,8 @@ final class MessageUpdater_Tests: XCTestCase {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
-                authorUserId: currentUserId
+                authorUserId: currentUserId,
+                cid: cid
             )
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -2654,7 +2644,7 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(completionCalledError == nil)
             // Assert message is updated.
-            Assert.willBeEqual(message.type, messagePayload.message.type.rawValue)
+            Assert.willBeEqual(message.type, messagePayload.message.type)
             Assert.willBeEqual(message.text, messagePayload.message.text)
         }
     }
@@ -2849,7 +2839,8 @@ final class MessageUpdater_Tests: XCTestCase {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
-                authorUserId: currentUserId
+                authorUserId: currentUserId,
+                cid: cid
             )
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -3108,16 +3099,10 @@ final class MessageUpdater_Tests: XCTestCase {
         let extraData: [String: RawJSON] = ["custom": .number(1)]
         let attachments: [AnyAttachmentPayload] = [.mockImage]
         
-        // Convert attachments to expected format
-        let expectedAttachmentPayloads: [MessageAttachmentPayload] = attachments.compactMap { attachment in
-            guard let payloadData = try? JSONEncoder.default.encode(attachment.payload),
-                  let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
-                return nil
-            }
-            return MessageAttachmentPayload(
-                type: attachment.type,
-                payload: payloadRawJSON
-            )
+        let expectedAttachmentPayloads: [RawJSON] = attachments.compactMap { attachment in
+            guard var payload = attachment.payload.rawJSON?.dictionaryValue else { return nil }
+            payload["type"] = .string(attachment.type.rawValue)
+            return .dictionary(payload)
         }
 
         let exp = expectation(description: "updatePartialMessage completes")
@@ -3134,23 +3119,58 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful API response
         apiClient.test_simulateResponse(
-            .success(MessagePayload.Boxed(message: .dummy(messageId: messageId)))
+            .success(UpdateMessagePartialResponse.dummy(message: .dummy(messageId: messageId)))
         )
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .partialUpdateMessage(
-            messageId: messageId,
-            request: .init(
-                set: .init(
-                    text: text,
-                    extraData: extraData,
-                    attachments: expectedAttachmentPayloads
-                )
-            )
+        var expectedSet: [String: RawJSON] = extraData
+        expectedSet["text"] = .string(text)
+        expectedSet["attachments"] = .array(expectedAttachmentPayloads)
+        let expectedEndpoint: Endpoint<UpdateMessagePartialResponse> = .updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: expectedSet)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         
         wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    // The backend parses the `set` map with flattened semantics, therefore attachment
+    // custom fields must not be nested under `custom`.
+    func test_updatePartialMessage_encodesSetWithFlattenedCustomFields() throws {
+        let messageId: MessageId = .unique
+        let text: String = .unique
+        let extraData: [String: RawJSON] = ["secret": .number(42)]
+        let attachmentPayload = TestAttachmentPayload.unique
+
+        let exp = expectation(description: "updatePartialMessage completes")
+        messageUpdater.updatePartialMessage(
+            messageId: messageId,
+            text: text,
+            attachments: [AnyAttachmentPayload(payload: attachmentPayload)],
+            extraData: extraData
+        ) { _ in
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(
+            .success(UpdateMessagePartialResponse.dummy(message: .dummy(messageId: messageId)))
+        )
+        wait(for: [exp], timeout: defaultTimeout)
+
+        let body = try XCTUnwrap(apiClient.request_endpoint?.body)
+        let encodedBody = try JSONEncoder.default.encode(body)
+        let json = try JSONDecoder.default.decode(RawJSON.self, from: encodedBody)
+
+        let set = try XCTUnwrap(json["set"])
+        XCTAssertEqual(.string(text), set["text"])
+        XCTAssertEqual(.number(42), set["secret"])
+
+        let encodedAttachment = try XCTUnwrap(set["attachments"]?[0])
+        XCTAssertEqual(.string(TestAttachmentPayload.type.rawValue), encodedAttachment["type"])
+        XCTAssertEqual(.string(attachmentPayload.name), encodedAttachment["name"])
+        XCTAssertEqual(.number(Double(attachmentPayload.number)), encodedAttachment["number"])
+        XCTAssertNil(encodedAttachment["custom"])
     }
 
     func test_updatePartialMessage_propagatesNetworkError() throws {
@@ -3169,7 +3189,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with error
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.failure(networkError))
 
         wait(for: [exp], timeout: defaultTimeout)
         
@@ -3207,7 +3227,7 @@ final class MessageUpdater_Tests: XCTestCase {
             text: text,
             cid: cid
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(.init(message: messagePayload)))
+        apiClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: messagePayload)))
 
         wait(for: [exp], timeout: defaultTimeout)
         
@@ -3464,6 +3484,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
 extension MessageUpdater_Tests {
     private func AssertLoadReplies(
+        cid: ChannelId,
         expectedNewestReplyAt: Date?,
         for repliesPayload: MessageRepliesPayload,
         with pagination: MessagesPagination,
@@ -3472,12 +3493,10 @@ extension MessageUpdater_Tests {
     ) throws {
         // GIVEN
         let parentMessageId = MessageId.unique
-        let cid: ChannelId = .unique
         try database.createChannel(cid: cid)
         try database.writeSynchronously { session in
             try session.saveMessage(
-                payload: .dummy(messageId: parentMessageId, text: "Example"),
-                for: cid,
+                payload: .dummy(messageId: parentMessageId, text: "Example", cid: cid),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3521,14 +3540,14 @@ extension MessageUpdater_Tests {
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
             let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             let parentMessage = try session.saveMessage(
-                payload: .dummy(messageId: parentMessageId),
+                payload: .dummy(messageId: parentMessageId, cid: cid),
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
                 cache: nil
             )
             try currentMessageIds.enumerated().forEach { index, message in
                 let currentMessage = try session.saveMessage(
-                    payload: .dummy(type: index == 0 ? .error : .regular, messageId: message),
+                    payload: .dummy(type: index == 0 ? .error : .regular, messageId: message, cid: cid),
                     channelDTO: channelDTO,
                     syncOwnReactions: false,
                     cache: nil
@@ -3548,7 +3567,7 @@ extension MessageUpdater_Tests {
 
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
-            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
+            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique, cid: cid) }
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
 

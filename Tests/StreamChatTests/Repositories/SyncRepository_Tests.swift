@@ -979,7 +979,7 @@ extension SyncRepository_Tests {
                 eventType: .messageNew,
                 cid: cid,
                 user: .dummy(userId: ""),
-                message: .dummy(messageId: "\($0)", authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
+                message: .dummy(messageId: "\($0)", authorUserId: .unique, latestReactions: [], cid: cid),
                 createdAt: $0
             )
         })

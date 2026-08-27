@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdatePollPartialRequestBody: Sendable, Codable, JSONEncodable {
+final class UpdatePollPartialRequestBody: Sendable, Encodable, JSONEncodable {
     /// Sets new field values
     let set: [String: RawJSON]?
     /// Array of field names to unset

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelMemberRequest: Sendable, Codable, JSONEncodable {
+final class ChannelMemberRequest: Sendable, Encodable, JSONEncodable {
     /// Role of the member in the channel
     let channelRole: String?
     let custom: [String: RawJSON]?

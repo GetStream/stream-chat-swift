@@ -6,7 +6,115 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
+/// The generated model is `MessageResponse`; tests keep the historical name.
+typealias MessagePayload = MessageResponse
+
 extension MessagePayload {
+    convenience init(
+        id: String,
+        cid: ChannelId = .unique,
+        type: MessageType,
+        user: UserPayload,
+        createdAt: Date,
+        updatedAt: Date,
+        deletedAt: Date? = nil,
+        text: String,
+        command: String? = nil,
+        args: String? = nil,
+        parentId: String? = nil,
+        showReplyInChannel: Bool,
+        quotedMessageId: String? = nil,
+        quotedMessage: MessagePayload? = nil,
+        mentionedUsers: [UserPayload],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroups: [UserGroup] = [],
+        mentionedRoles: [String] = [],
+        threadParticipants: [UserPayload] = [],
+        replyCount: Int,
+        restrictedVisibility: [UserId] = [],
+        extraData: [String: RawJSON],
+        latestReactions: [MessageReactionPayload] = [],
+        ownReactions: [MessageReactionPayload] = [],
+        reactionScores: [MessageReactionType: Int],
+        reactionCounts: [MessageReactionType: Int],
+        reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
+        isSilent: Bool,
+        isShadowed: Bool,
+        attachments: [MessageAttachmentPayload],
+        pinned: Bool = false,
+        pinnedBy: UserPayload? = nil,
+        pinnedAt: Date? = nil,
+        pinExpires: Date? = nil,
+        translations: [TranslationLanguage: String]? = nil,
+        originalLanguage: String? = nil,
+        moderation: MessageModerationDetailsPayload? = nil,
+        messageTextUpdatedAt: Date? = nil,
+        poll: PollPayload? = nil,
+        draft: DraftPayload? = nil,
+        reminder: ReminderPayload? = nil,
+        location: SharedLocation? = nil,
+        member: MemberInfoPayload? = nil,
+        deletedForMe: Bool? = nil,
+        campaignId: String? = nil
+    ) {
+        var custom = extraData
+        if let campaignId {
+            custom["created_by_campaign_id"] = .string(campaignId)
+        }
+        var i18n = translations?.mapKeys { $0.languageCode + "_text" } ?? [:]
+        if let originalLanguage {
+            i18n["language"] = originalLanguage
+        }
+        self.init(
+            attachments: attachments,
+            cid: cid.rawValue,
+            command: command,
+            createdAt: createdAt,
+            custom: custom,
+            deletedAt: deletedAt,
+            deletedForMe: deletedForMe,
+            deletedReplyCount: 0,
+            draft: draft,
+            html: "",
+            i18n: i18n.isEmpty ? nil : i18n,
+            id: id,
+            latestReactions: latestReactions,
+            member: member,
+            mentionedChannel: mentionedChannel,
+            mentionedGroups: mentionedGroups,
+            mentionedHere: mentionedHere,
+            mentionedRoles: mentionedRoles,
+            mentionedUsers: mentionedUsers,
+            messageTextUpdatedAt: messageTextUpdatedAt,
+            moderation: moderation,
+            ownReactions: ownReactions,
+            parentId: parentId,
+            pinExpires: pinExpires,
+            pinned: pinned,
+            pinnedAt: pinnedAt,
+            pinnedBy: pinnedBy,
+            poll: poll,
+            quotedMessage: quotedMessage,
+            quotedMessageId: quotedMessageId,
+            reactionCounts: reactionCounts.mapKeys(\.rawValue),
+            reactionGroups: reactionGroups.mapKeys(\.rawValue),
+            reactionScores: reactionScores.mapKeys(\.rawValue),
+            reminder: reminder,
+            replyCount: replyCount,
+            restrictedVisibility: restrictedVisibility,
+            shadowed: isShadowed,
+            sharedLocation: location,
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text,
+            threadParticipants: threadParticipants,
+            type: type.rawValue,
+            updatedAt: updatedAt,
+            user: user
+        )
+    }
+
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
     static func dummy(
         type: MessageType? = nil,
@@ -33,8 +141,7 @@ extension MessagePayload {
         createdAt: Date? = .unique,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
-        channel: ChannelDetailPayload? = nil,
-        cid: ChannelId? = nil,
+        cid: ChannelId = .unique,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
@@ -47,7 +154,6 @@ extension MessagePayload {
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
         moderation: MessageModerationDetailsPayload? = nil,
-        moderationDetails: MessageModerationDetailsPayload? = nil,
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
@@ -94,7 +200,6 @@ extension MessagePayload {
             isSilent: isSilent,
             isShadowed: isShadowed,
             attachments: attachments,
-            channel: channel,
             pinned: pinned,
             pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
             pinnedAt: pinnedAt,
@@ -102,7 +207,6 @@ extension MessagePayload {
             translations: translations,
             originalLanguage: originalLanguage,
             moderation: moderation,
-            moderationDetails: moderationDetails,
             messageTextUpdatedAt: messageTextUpdatedAt,
             poll: poll,
             draft: draft,
@@ -134,18 +238,18 @@ extension MessageModerationDetailsPayload {
         action: String,
         textHarms: [String]? = nil,
         imageHarms: [String]? = nil,
-        blocklistMatched: String? = nil,
+        blocklistsMatched: [String]? = nil,
         semanticFilterMatched: String? = nil,
         platformCircumvented: Bool? = nil
     ) -> Self {
         .init(
-            originalText: originalText,
             action: action,
-            textHarms: textHarms,
+            blocklistsMatched: blocklistsMatched,
             imageHarms: imageHarms,
-            blocklistMatched: blocklistMatched,
+            originalText: originalText,
+            platformCircumvented: platformCircumvented,
             semanticFilterMatched: semanticFilterMatched,
-            platformCircumvented: platformCircumvented
+            textHarms: textHarms
         )
     }
 }

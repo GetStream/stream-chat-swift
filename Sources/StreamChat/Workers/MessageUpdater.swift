@@ -196,55 +196,37 @@ class MessageUpdater: Worker, @unchecked Sendable {
         unset: [String]? = nil,
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
-            guard let payloadData = try? JSONEncoder.default.encode(attachment.payload) else {
-                return nil
-            }
-            guard let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
-                return nil
-            }
-            return MessageAttachmentPayload(
-                type: attachment.type,
-                payload: payloadRawJSON
-            )
+        var set: [String: RawJSON] = extraData ?? [:]
+        if let text {
+            set["text"] = .string(text)
+        }
+        if let attachments {
+            set["attachments"] = .array(attachments.compactMap { attachment in
+                // Note: partial update expects flattened data without custom being nested
+                guard var flattenedPayload = attachment.payload.rawJSON?.dictionaryValue else { return nil }
+                flattenedPayload[MessageAttachmentPayload.CodingKeys.type.rawValue] = .string(attachment.type.rawValue)
+                return .dictionary(flattenedPayload)
+            })
         }
 
         apiClient.request(
-            endpoint: .partialUpdateMessage(
-                messageId: messageId,
-                request: .init(
-                    set: .init(
-                        text: text,
-                        extraData: extraData,
-                        attachments: attachmentPayloads
-                    ),
+            endpoint: .updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(
+                    set: set,
                     unset: unset
                 )
             )
         ) { [weak self] result in
             switch result {
-            case .success(let messagePayloadBoxed):
-                let messagePayload = messagePayloadBoxed.message
+            case .success(let response):
+                guard let messagePayload = response.message else {
+                    completion?(.failure(ClientError.Unknown()))
+                    return
+                }
                 self?.database.write { session in
-                    let cid: ChannelId?
-
-                    if let payloadCid = messagePayloadBoxed.message.cid {
-                        cid = payloadCid
-                    } else if let cidFromLocal = session.message(id: messageId)?.cid,
-                              let localCid = try? ChannelId(cid: cidFromLocal) {
-                        cid = localCid
-                    } else {
-                        cid = nil
-                    }
-
-                    guard let cid = cid else {
-                        completion?(.failure(ClientError.ChannelNotCreatedYet()))
-                        return
-                    }
-                    
                     let messageDTO = try session.saveMessage(
                         payload: messagePayload,
-                        for: cid,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil
@@ -467,7 +449,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
-                    let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
+                    let replies = session.saveMessages(messagesPayload: payload, syncOwnReactions: true)
                     replies.forEach {
                         $0.showInsideThread = true
                     }
@@ -672,9 +654,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let pinError):
                 completion?(.failure(pinError))
             case .success(let message):
-                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                    messageId: messageId,
-                    request: .init(set: .init(pinned: true))
+                let endpoint: Endpoint<UpdateMessagePartialResponse> = .updateMessagePartial(
+                    id: messageId,
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -701,9 +683,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let unpinError):
                 completion?(.failure(unpinError))
             case .success(let message):
-                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                    messageId: messageId,
-                    request: .init(set: .init(pinned: false))
+                let endpoint: Endpoint<UpdateMessagePartialResponse> = .updateMessagePartial(
+                    id: messageId,
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -946,7 +928,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 if action.isCancel {
                     completion?(nil)
                 } else {
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                    let endpoint: Endpoint<MessageResponse.Boxed> = .dispatchEphemeralMessageAction(
                         cid: cid,
                         messageId: messageId,
                         action: action
@@ -957,7 +939,6 @@ class MessageUpdater: Worker, @unchecked Sendable {
                             self.database.write({ session in
                                 try session.saveMessage(
                                     payload: payload.message,
-                                    for: cid,
                                     syncOwnReactions: true,
                                     skipDraftUpdate: true,
                                     cache: nil
@@ -1019,7 +1000,6 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 self.database.write { session in
                     let messageDTO = try session.saveMessage(
                         payload: boxedMessage.message,
-                        for: boxedMessage.message.cid,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil

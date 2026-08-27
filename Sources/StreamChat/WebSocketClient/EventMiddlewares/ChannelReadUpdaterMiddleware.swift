@@ -177,7 +177,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
     private func incrementUnreadCountIfNeeded(
         for cid: ChannelId,
-        message: MessagePayload,
+        message: MessageResponse,
         session: DatabaseSession
     ) {
         guard let currentUser = session.currentUser else {
@@ -249,7 +249,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     private func unreadCountUpdateSkippingReason(
         currentUser: CurrentUserDTO,
         channelRead: ChannelReadDTO,
-        message: MessagePayload
+        message: MessageResponse
     ) -> UnreadSkippingReason? {
         if let mute = channelRead.channel.mute {
             guard let expiredDate = mute.expiresAt, expiredDate.bridgeDate <= Date() else {
@@ -265,15 +265,15 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return .authorIsMuted
         }
 
-        if message.isSilent {
+        if message.silent {
             return .messageIsSilent
         }
 
-        if message.parentId != nil && !message.showReplyInChannel {
+        if message.parentId != nil && message.showInChannel != true {
             return .messageIsThreadReply
         }
 
-        if message.isShadowed {
+        if message.shadowed == true {
             return .messageIsShadowed
         }
 

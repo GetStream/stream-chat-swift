@@ -36,7 +36,6 @@ final class MessageRepository_Mock: MessageRepository, Spy, @unchecked Sendable 
     }
 
     override func saveSuccessfullySentMessage(
-        cid: ChannelId,
         message: MessagePayload,
         completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {

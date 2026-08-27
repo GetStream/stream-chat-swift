@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpsertPushPreferencesResponse: Sendable, Codable, JSONEncodable {
+final class UpsertPushPreferencesResponse: Sendable, Decodable {
     /// The channel specific push notification preferences, only returned for channels you've edited.
     let userChannelPreferences: [String: [String: PushPreference]]
     /// The user preferences, always returned regardless if you edited it

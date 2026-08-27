@@ -54,7 +54,7 @@ class MessageRepository: @unchecked Sendable {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as MessageRequestBody
+            let requestBody = dto.asMessageRequest()
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
@@ -80,14 +80,17 @@ class MessageRepository: @unchecked Sendable {
                         return
                     }
 
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                        cid: cid,
-                        messagePayload: requestBody,
-                        skipPush: skipPush,
-                        skipEnrichUrl: skipEnrichUrl
+                    let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
+                        type: cid.type.rawValue,
+                        id: cid.id,
+                        sendMessageRequest: SendMessageRequest(
+                            message: requestBody,
+                            skipEnrichUrl: skipEnrichUrl,
+                            skipPush: skipPush
+                        )
                     )
                     self?.apiClient.request(endpoint: endpoint) { [weak self] result in
-                        self?.handleSentMessage(result, cid: cid, messageId: messageId, completion: completion)
+                        self?.handleSentMessage(result, messageId: messageId, completion: completion)
                     }
                 case let .failure(error):
                     log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
@@ -112,12 +115,15 @@ class MessageRepository: @unchecked Sendable {
             }
 
             // Send the message to offline handling
-            let requestBody = dto.asRequestBody() as MessageRequestBody
-            let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                cid: cid,
-                messagePayload: requestBody,
-                skipPush: dto.skipPush,
-                skipEnrichUrl: dto.skipEnrichUrl
+            let requestBody = dto.asMessageRequest()
+            let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendMessageRequest: SendMessageRequest(
+                    message: requestBody,
+                    skipEnrichUrl: dto.skipEnrichUrl,
+                    skipPush: dto.skipPush
+                )
             )
             dataEndpoint = endpoint.withDataResponse
 
@@ -141,15 +147,13 @@ class MessageRepository: @unchecked Sendable {
     }
 
     func saveSuccessfullySentMessage(
-        cid: ChannelId,
-        message: MessagePayload,
+        message: MessageResponse,
         completion: @escaping @Sendable (Result<ChatMessage, Error>) -> Void
     ) {
         nonisolated(unsafe) var messageModel: ChatMessage!
         database.write({
             let messageDTO = try $0.saveMessage(
                 payload: message,
-                for: cid,
                 syncOwnReactions: false,
                 skipDraftUpdate: false,
                 cache: nil
@@ -170,14 +174,13 @@ class MessageRepository: @unchecked Sendable {
 
     /// Handles the result when sending the message to the server.
     private func handleSentMessage(
-        _ result: Result<MessagePayload.Boxed, Error>,
-        cid: ChannelId,
+        _ result: Result<SendMessageResponsePayload, Error>,
         messageId: MessageId,
         completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         switch result {
         case let .success(payload):
-            saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
+            saveSuccessfullySentMessage(message: payload.message) { result in
                 switch result {
                 case let .success(message):
                     completion(.success(message))
@@ -272,12 +275,11 @@ class MessageRepository: @unchecked Sendable {
         updateMessage(withID: id, localState: nil, completion: { _ in completion() })
     }
 
-    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: (@Sendable (Error?) -> Void)? = nil) {
+    func saveSuccessfullyDeletedMessage(message: MessageResponse, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write({ session in
-            guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
+            guard let messageDTO = session.message(id: message.id) else { return }
             let deletedMessage = try session.saveMessage(
                 payload: message,
-                for: ChannelId(cid: cid),
                 syncOwnReactions: false,
                 skipDraftUpdate: false,
                 cache: nil
@@ -302,7 +304,7 @@ class MessageRepository: @unchecked Sendable {
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<MessageResponse.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(boxed):
@@ -310,7 +312,6 @@ class MessageRepository: @unchecked Sendable {
                 self.database.write({ session in
                     message = try session.saveMessage(
                         payload: boxed.message,
-                        for: cid,
                         syncOwnReactions: true,
                         skipDraftUpdate: false,
                         cache: nil

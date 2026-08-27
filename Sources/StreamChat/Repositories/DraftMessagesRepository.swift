@@ -28,7 +28,7 @@ class DraftMessagesRepository: @unchecked Sendable {
                 nonisolated(unsafe) var drafts: [DraftMessage] = []
                 self?.database.write({ session in
                     drafts = try response.drafts.compactMap {
-                        guard let channelId = $0.channelPayload?.cid else {
+                        guard let channelId = $0.channel?.cid else {
                             return nil
                         }
                         return DraftMessage(try session
@@ -62,7 +62,7 @@ class DraftMessagesRepository: @unchecked Sendable {
         extraData: [String: RawJSON],
         completion: (@Sendable (Result<DraftMessage, Error>) -> Void)?
     ) {
-        nonisolated(unsafe) var draftRequestBody: DraftMessageRequestBody?
+        nonisolated(unsafe) var draftRequestBody: MessageRequest?
         database.write({ (session) in
             let newMessageDTO = try session.createNewDraftMessage(
                 in: cid,
@@ -77,7 +77,7 @@ class DraftMessagesRepository: @unchecked Sendable {
                 quotedMessageId: quotedMessageId,
                 extraData: extraData
             )
-            draftRequestBody = newMessageDTO.asDraftRequestBody()
+            draftRequestBody = newMessageDTO.asDraftMessageRequest()
         }) { error in
             guard let requestBody = draftRequestBody, error == nil else {
                 completion?(.failure(error ?? ClientError.Unknown()))
@@ -85,7 +85,11 @@ class DraftMessagesRepository: @unchecked Sendable {
             }
 
             self.apiClient.request(
-                endpoint: .updateDraftMessage(channelId: cid, requestBody: requestBody)
+                endpoint: .createDraft(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    createDraftRequest: CreateDraftRequest(message: requestBody)
+                )
             ) { [weak self] result in
                 switch result {
                 case .success(let response):

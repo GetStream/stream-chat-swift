@@ -28,7 +28,7 @@ extension ThreadPayload {
     ) -> Self {
         .init(
             parentMessageId: parentMessageId,
-            parentMessage: .dummy(messageId: parentMessageId),
+            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
             channel: channel,
             createdBy: createdBy,
             replyCount: replyCount,
@@ -64,7 +64,7 @@ extension ThreadPartialPayload {
     ) -> ThreadPartialPayload {
         .init(
             parentMessageId: parentMessageId,
-            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId),
+            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
             channel: channel,
             createdBy: createdBy,
             replyCount: replyCount,

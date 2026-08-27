@@ -120,16 +120,16 @@ extension MessageModerationDetails {
         action: MessageModerationAction,
         textHarms: [String]? = nil,
         imageHarms: [String]? = nil,
-        blocklistMatched: String? = nil,
+        blocklistsMatched: [String]? = nil,
         semanticFilterMatched: String? = nil,
-        platformCircumvented: Bool? = nil
+        platformCircumvented: Bool = false
     ) -> Self {
         .init(
             originalText: originalText,
             action: action,
+            blocklistsMatched: blocklistsMatched,
             textHarms: textHarms,
             imageHarms: imageHarms,
-            blocklistMatched: blocklistMatched,
             semanticFilterMatched: semanticFilterMatched,
             platformCircumvented: platformCircumvented
         )

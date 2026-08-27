@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UserGroup: Sendable, Codable, JSONEncodable {
+public final class UserGroup: Sendable, Decodable {
     public let createdAt: Date
     public let createdBy: String?
     public let description: String?

@@ -41,7 +41,7 @@ public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadC
 
 final class NotificationMessageNewEventDTO: EventDTO {
     let channel: ChannelDetailPayload
-    let message: MessagePayload
+    let message: MessageResponse
     let unreadCount: UnreadCountPayload?
     let createdAt: Date
     let payload: EventPayload

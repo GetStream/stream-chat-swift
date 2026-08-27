@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class PollOptionPayload: Sendable, Codable, JSONEncodable {
+final class PollOptionPayload: Sendable, Decodable {
     let custom: [String: RawJSON]?
     let id: String
     let text: String

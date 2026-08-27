@@ -15,6 +15,7 @@ allowed_endpoints=(
     blockUsers
     castPollVote
     createDevice
+    createDraft
     createPoll
     createPollOption
     createUserGroup
@@ -45,6 +46,7 @@ allowed_endpoints=(
     removeUserGroupMembers
     searchRoles
     searchUserGroups
+    sendMessage
     showChannel
     stopWatchingChannel
     unblockUsers
@@ -53,6 +55,8 @@ allowed_endpoints=(
     unreadCounts
     updateLiveLocation
     updateMemberPartial
+    updateMessage
+    updateMessagePartial
     updatePollPartial
     updatePushNotificationPreferences
     updateUserGroup
@@ -65,16 +69,20 @@ allowed_models=(
   Action
   AddUserGroupMembersRequest
   AppResponseFields
+  Attachment
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
+  ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
   ChannelMute
   ChannelOwnCapability
   ChannelResponse
   CreateDeviceRequest
+  CreateDraftRequest
+  CreateDraftResponse
   CreatePollOptionRequest
   CreatePollRequest
   CreateUserGroupRequest
@@ -82,6 +90,8 @@ allowed_models=(
   DeliveredMessagePayload
   DeliveryReceiptsResponse
   DeviceResponse
+  DraftPayloadResponse
+  DraftResponse
   Field
   FileUploadConfig
   FileUploadResponse
@@ -99,6 +109,9 @@ allowed_models=(
   ListUserGroupsResponse
   MarkDeliveredRequest
   MembersResponse
+  MessageRequest
+  MessageResponse
+  ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
   MuteRequest
@@ -118,11 +131,17 @@ allowed_models=(
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest
+  ReactionGroupResponse
   ReactionResponse
   ReadReceiptsResponse
+  ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  SearchResultMessage
   SearchRolesResponse
+  SendMessageRequest
+  SendMessageResponse
+  SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
@@ -138,6 +157,10 @@ allowed_models=(
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
+  UpdateMessagePartialRequest
+  UpdateMessagePartialResponse
+  UpdateMessageRequest
+  UpdateMessageResponse
   UpdatePollPartialRequest
   UpdateUserGroupRequest
   UploadChannelFileResponse
@@ -165,6 +188,128 @@ allowed_hashable_models=(
   UploadConfig
   UserGroup
   UserGroupMember
+)
+
+# Coding conformances for retained models after the renames in step 4b. Every
+# generated model must belong to exactly one group so new models fail closed until
+# their request/response direction is classified.
+# Required because OpenAPI generator does not currently support emitting models
+# with Encodable or Decodable based on how they are used in API calls. Every model
+# is Codable which makes the SDK size larger.
+encodable_only_models=(
+  AddUserGroupMembersRequest
+  BlockUsersRequest
+  CastPollVoteRequestBody
+  ChannelDeliveredRequestPayload
+  ChannelMemberRequest
+  CreateDeviceRequest
+  CreateDraftRequest
+  CreatePollOptionRequestBody
+  CreatePollRequestBody
+  CreateUserGroupRequest
+  DeliveredMessagePayload
+  HideChannelRequest
+  MessageRequest
+  MuteChannelRequest
+  MuteRequest
+  NewLocationRequestPayload
+  PollOptionRequestBody
+  PushPreferenceInput
+  QueryMembersPayload
+  QueryPollVotesRequestBody
+  QueryReactionsRequest
+  RemoveUserGroupMembersRequest
+  SendMessageRequest
+  SortParamRequest
+  UnblockUsersRequest
+  UnmuteChannelRequest
+  UnmuteRequest
+  UpdateLiveLocationRequest
+  UpdateMemberPartialRequest
+  UpdateMessagePartialRequest
+  UpdateMessageRequest
+  UpdatePollPartialRequestBody
+  UpdateUserGroupRequest
+  UpsertPushPreferencesRequest
+  VoteDataRequestBody
+)
+
+decodable_only_models=(
+  AppSettings
+  BlockUsersResponse
+  BlockedUserResponse
+  ChannelDetailPayload
+  CreateDraftResponse
+  CurrentUserUnreads
+  DeleteChannelResponse
+  DraftMessagePayload
+  DraftPayload
+  FileUploadResponse
+  GetApplicationResponse
+  GetBlockedUsersResponse
+  GetOGResponse
+  ImageSize
+  ImageUploadResponse
+  ListDevicesResponse
+  ListUserGroupsResponse
+  MemberInfoPayload
+  MemberPayload
+  MembersResponse
+  MessageModerationDetailsPayload
+  MessageReactionGroupPayload
+  MessageReactionPayload
+  MessageReactionsPayload
+  MessageResponse
+  MuteResponse
+  MutedChannelPayload
+  MutedChannelPayloadResponse
+  MutedUserPayload
+  OwnUserResponse
+  PollOptionPayload
+  PollOptionResponse
+  PollPayload
+  PollPayloadResponse
+  PollVoteListResponse
+  PollVotePayload
+  PollVotePayloadResponse
+  PushPreference
+  ReminderPayload
+  SearchResultMessage
+  SearchRolesResponse
+  SendMessageResponsePayload
+  SharedLocation
+  SharedLocationsResponse
+  UnblockUsersResponse
+  UnmuteUsersResponse
+  UnreadChannel
+  UnreadChannelByType
+  UnreadThread
+  UpdateMemberPartialResponse
+  UpdateMessagePartialResponse
+  UpdateMessageResponse
+  UploadChannelFileResponse
+  UploadChannelResponse
+  UploadConfig
+  UpsertPushPreferencesResponse
+  UserGroup
+  UserGroupMember
+  UserGroupResponse
+)
+
+codable_models=(
+  AttachmentActionPayload
+  AttachmentFieldPayload
+  ChannelCapability
+  DeliveryReceiptsPrivacySettings
+  Device
+  GiphyImageData
+  GiphyImages
+  MessageAttachmentPayload
+  ReadReceiptsPrivacySettings
+  Role
+  TypingIndicatorPrivacySettings
+  UserPayload
+  UserPrivacySettings
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -390,6 +535,7 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated SharedLocation NewLocationRequestPayload
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 rename_generated MarkDeliveredRequest ChannelDeliveredRequestPayload
@@ -414,6 +560,14 @@ rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
+rename_generated Attachment MessageAttachmentPayload
+rename_generated ChannelMemberPartialResponse MemberInfoPayload
+rename_generated DraftPayloadResponse DraftMessagePayload
+rename_generated DraftResponse DraftPayload
+rename_generated ModerationV2Response MessageModerationDetailsPayload
+rename_generated ReactionGroupResponse MessageReactionGroupPayload
+rename_generated ReminderResponseData ReminderPayload
+rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated UnmuteResponse UnmuteUsersResponse
 rename_generated UserMuteResponse MutedUserPayload
 rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
@@ -497,11 +651,26 @@ remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
 remove_property UnmuteUsersResponse duration
+remove_property CreateDraftResponse duration
+remove_property SendMessageResponsePayload duration
+remove_property UpdateMessagePartialResponse duration
+remove_property UpdateMessageResponse duration
+
+# Unused channel context (cid, createdBy, id, type)
+remove_property SendMessageRequest includeChannelContext
+remove_property SendMessageResponsePayload channelContext
+
+# TODO: reaction group reactors need CoreData and public API design first
+remove_property MessageReactionGroupPayload latestReactionsBy
 
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
+
+# TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
+optionalize_property MessageResponse reactionCounts
+optionalize_property SearchResultMessage reactionCounts
 
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -636,7 +805,89 @@ default_init_parameter DeliveryReceiptsPrivacySettings enabled true
 default_init_parameter ReadReceiptsPrivacySettings enabled true
 default_init_parameter TypingIndicatorPrivacySettings enabled true
 
-# 4d. Strip the generated Hashable conformance from every model not in
+# 4d. Keep only the coding direction each internal model needs.
+# Required because OpenAPI generator emits all models with Codable conformance
+# even when it is used for decoding or encoding only. This helps to save
+# SDK size when Codable is reduced to Encodable or Decodable.
+# Requires bigger change in the generator for applying it there.
+apply_directional_coding_conformances() {
+  local encodable_csv decodable_csv codable_csv
+  encodable_csv="$(IFS=,; echo "${encodable_only_models[*]}")"
+  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]}")"
+  codable_csv="$(IFS=,; echo "${codable_models[*]}")"
+
+  python3 - \
+    "$OUTPUT_DIR_CHAT/models" \
+    "$encodable_csv" \
+    "$decodable_csv" \
+    "$codable_csv" <<'PY'
+import pathlib
+import re
+import sys
+
+models_dir = pathlib.Path(sys.argv[1])
+groups = {
+    "Encodable": set(filter(None, sys.argv[2].split(","))),
+    "Decodable": set(filter(None, sys.argv[3].split(","))),
+    "Codable": set(filter(None, sys.argv[4].split(","))),
+}
+
+all_classified = set()
+for direction, names in groups.items():
+    overlap = all_classified.intersection(names)
+    if overlap:
+        raise SystemExit(f"Models classified more than once: {sorted(overlap)}")
+    all_classified.update(names)
+
+generated = {path.stem for path in models_dir.glob("*.swift")}
+unclassified = generated - all_classified
+missing = all_classified - generated
+if unclassified:
+    raise SystemExit(f"Unclassified generated models: {sorted(unclassified)}")
+if missing:
+    raise SystemExit(f"Classified models missing from generated output: {sorted(missing)}")
+
+declaration = re.compile(
+    r"^(\s*(?:public )?(?:final )?(?:class|struct|enum)\s+([A-Za-z0-9_]+)[^:\n]*:\s*)(.*)$"
+)
+
+for direction, names in groups.items():
+    for name in sorted(names):
+        path = models_dir / f"{name}.swift"
+        lines = path.read_text().splitlines(keepends=True)
+        output = []
+        top_level_conformances = None
+
+        for line in lines:
+            ending = "\n" if line.endswith("\n") else ""
+            content = line[:-1] if ending else line
+            match = declaration.match(content)
+            if match:
+                prefix, declared_name, conformances = match.groups()
+                if declared_name == name:
+                    if direction != "Codable":
+                        conformances = re.sub(r"\bCodable\b", direction, conformances)
+                        if direction == "Decodable":
+                            conformances = re.sub(r",\s*JSONEncodable\b", "", conformances)
+                    content = f"{prefix}{conformances}"
+                    top_level_conformances = conformances
+            output.append(content + ending)
+
+        if top_level_conformances is None:
+            raise SystemExit(f"Could not find the top-level declaration for {name}")
+        if not re.search(rf"\b{direction}\b", top_level_conformances):
+            raise SystemExit(f"{name} does not conform to {direction}")
+        if direction == "Decodable" and re.search(
+            r"\bEncodable\b|\bJSONEncodable\b", top_level_conformances
+        ):
+            raise SystemExit(f"{name} retains an encoding conformance")
+
+        path.write_text("".join(output))
+PY
+}
+apply_directional_coding_conformances
+
+# 4e. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
 #     the file (opening at column 0, running to EOF), so delete from its opening
 #     line to end of file; swiftformat (step 5) tidies the leftover blank line.
@@ -694,12 +945,8 @@ inject_v1_endpoint_paths() {
     case channelEvent(String)
     case pinnedMessages(String)
 
-    case sendMessage(ChannelId)
     case message(MessageId)
-    case editMessage(MessageId)
     case deleteMessage(MessageId)
-    case pinMessage(MessageId)
-    case unpinMessage(MessageId)
     case replies(MessageId)
     case addReaction(MessageId)
     case deleteReaction(MessageId, MessageReactionType)
@@ -749,12 +996,8 @@ EOF
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
-        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
-        case let .editMessage(messageId): return "messages/\(messageId)"
         case let .deleteMessage(messageId): return "messages/\(messageId)"
-        case let .pinMessage(messageId): return "messages/\(messageId)"
-        case let .unpinMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"

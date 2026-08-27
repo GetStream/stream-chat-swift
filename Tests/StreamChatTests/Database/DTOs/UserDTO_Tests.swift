@@ -363,13 +363,14 @@ final class UserDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
-            text: "Yo"
+            text: "Yo",
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
             try session.saveMember(payload: memberPayload, channelId: channelId)
-            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: payload, syncOwnReactions: false, cache: nil)
         }
 
         // Arrange: Observe changes on channel
@@ -400,13 +401,14 @@ final class UserDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
-            text: "Yo"
+            text: "Yo",
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
             try session.saveUser(payload: userPayload)
-            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: payload, syncOwnReactions: false, cache: nil)
         }
 
         // Arrange: Observe changes on messages

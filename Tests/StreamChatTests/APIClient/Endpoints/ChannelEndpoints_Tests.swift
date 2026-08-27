@@ -194,41 +194,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/truncate", endpoint.path.value)
     }
 
-    func test_sendMessage_buildsCorrectly() {
-        let cid = ChannelId.unique
-
-        let messageBody = MessageRequestBody(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            command: .unique,
-            args: .unique,
-            parentId: .unique,
-            showReplyInChannel: true,
-            extraData: [:]
-        )
-
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: .sendMessage(cid),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: [
-                "message": AnyEncodable(messageBody),
-                "skip_push": AnyEncodable(true),
-                "skip_enrich_url": AnyEncodable(false)
-            ]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: messageBody, skipPush: true, skipEnrichUrl: false)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/message", endpoint.path.value)
-    }
-
     func test_addMembers_buildsCorrectly() {
         let cid = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])

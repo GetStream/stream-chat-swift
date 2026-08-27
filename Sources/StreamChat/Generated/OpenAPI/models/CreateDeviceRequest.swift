@@ -17,7 +17,7 @@ final class CreateDeviceRequestPushProvider: RawRepresentable, Codable, Hashable
     static let xiaomi = CreateDeviceRequestPushProvider(rawValue: "xiaomi")
 }
 
-final class CreateDeviceRequest: Sendable, Codable, JSONEncodable {
+final class CreateDeviceRequest: Sendable, Encodable, JSONEncodable {
     /// Stable physical device identifier used to deduplicate pushes across push providers (e.g. APNs VoIP and Firebase on the same iOS device). Distinct from 'id', which is the push token.
     let hardwareId: String?
     /// Device ID

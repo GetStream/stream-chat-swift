@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateMemberPartialResponse: Sendable, Codable, JSONEncodable {
+final class UpdateMemberPartialResponse: Sendable, Decodable {
     let channelMember: MemberPayload?
     /// Duration of the request in milliseconds
     let duration: String

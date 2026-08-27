@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ImageUploadResponse: Sendable, Codable, JSONEncodable {
+final class ImageUploadResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds
     let duration: String
     let file: String?

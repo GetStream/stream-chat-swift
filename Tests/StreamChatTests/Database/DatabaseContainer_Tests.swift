@@ -396,17 +396,19 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveUser(payload: .dummy(userId: .unique))
             let messages: [MessagePayload] = [
                 .dummy(
+                    cid: cid,
                     reactionGroups: [
                         "like": MessageReactionGroupPayload(
-                            sumScores: 1,
                             count: 1,
                             firstReactionAt: .unique,
-                            lastReactionAt: .unique
+                            lastReactionAt: .unique,
+                            sumScores: 1
                         )
                     ],
-                    moderationDetails: .dummy(originalText: "yo", action: "spam")
+                    moderation: .dummy(originalText: "yo", action: "spam")
                 ),
                 .dummy(
+                    cid: cid,
                     poll: self.dummyPollPayload(
                         createdById: currentUserId,
                         id: "pollId",
@@ -415,12 +417,12 @@ final class DatabaseContainer_Tests: XCTestCase {
                         user: .dummy(userId: currentUserId)
                     )
                 ),
-                .dummy(mentionedGroups: [.dummy()]),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid, mentionedGroups: [.dummy()]),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
             try messages.forEach {
-                let message = try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true, cache: nil)
+                let message = try session.saveMessage(payload: $0, syncOwnReactions: true, cache: nil)
                 try session.saveReaction(
                     payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)),
                     query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
@@ -438,7 +440,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                 )
             }
             try session.saveMessage(
-                payload: .dummy(channel: .dummy(cid: cid)),
+                payload: .dummy(cid: cid, channel: .dummy(cid: cid)),
                 for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
                 cache: nil
             )

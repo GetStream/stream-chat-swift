@@ -623,7 +623,7 @@ final class DatabaseSession_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
-            channel: channel.channel
+            cid: channel.channel.cid
         )
 
         // Save a message in pending state (SendMessageInterceptor use case)
@@ -631,7 +631,6 @@ final class DatabaseSession_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
             let dto = try session.saveMessage(
                 payload: newMessage,
-                for: nil,
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil

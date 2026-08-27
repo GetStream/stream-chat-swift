@@ -146,16 +146,14 @@ protocol MessageDatabaseSession {
     /// Saves the provided messages list payload to the DB. Return's the matching `MessageDTO`s if the save was successful.
     /// Ignores messages that failed to be saved
     ///
-    /// You must either provide `cid` or `payload.channel` value must not be `nil`.
     /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
     /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO]
+    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO]
 
     /// Saves a message into the local DB.
     /// - Parameters:
     ///   - payload: The message payload
-    ///   - cid: The channel ID.
     ///   - syncOwnReactions: Whether to sync own reactions. It should be set to `true` when the payload comes from an API response and `false` when the payload is received via WS events. For performance reasons the API
     ///   does not populate the `message.own_reactions` when sending events
     ///   - skipDraftUpdate: Whether to skip draft update. This is used when saving quoted and parent messages from
@@ -163,8 +161,7 @@ protocol MessageDatabaseSession {
     ///   - cache: The pre-warmed cache.
     @discardableResult
     func saveMessage(
-        payload: MessagePayload,
-        for cid: ChannelId?,
+        payload: MessageResponse,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
         cache: PreWarmedCache?
@@ -190,7 +187,7 @@ protocol MessageDatabaseSession {
     ///   - cache: The pre-warmed cache.
     @discardableResult
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
@@ -198,7 +195,7 @@ protocol MessageDatabaseSession {
     ) throws -> MessageDTO
 
     @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
+    func saveMessage(payload: SearchResultMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 
     func addReaction(
         to messageId: MessageId,

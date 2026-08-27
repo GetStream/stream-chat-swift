@@ -31,7 +31,7 @@ public final class ThreadMessageNewEvent: Event {
 
 final class ThreadMessageNewEventDTO: EventDTO {
     let cid: ChannelId
-    let message: MessagePayload
+    let message: MessageResponse
     let channel: ChannelDetailPayload
     let unreadCount: UnreadCountPayload?
     let createdAt: Date

@@ -956,11 +956,12 @@ final class ChannelController_Tests: XCTestCase {
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!),
+            cid: channelId
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
         writeAndWaitForMessageUpdates(count: 6) {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: newerMessagePayload, syncOwnReactions: true, cache: nil)
         }
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: channelId))
@@ -1082,11 +1083,12 @@ final class ChannelController_Tests: XCTestCase {
         let newMessagePayload: MessagePayload = .dummy(
             messageId: newMessageId,
             authorUserId: .unique,
-            createdAt: Date()
+            createdAt: Date(),
+            cid: channelId
         )
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                try session.saveMessage(payload: newMessagePayload, syncOwnReactions: true, cache: nil)
             }, completion: $0)
         }
 
@@ -1108,12 +1110,12 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
+        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, syncOwnReactions: true, cache: nil)
         }
 
         // Check the order of messages is correct
@@ -1135,12 +1137,12 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
+        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, syncOwnReactions: true, cache: nil)
         }
 
         // Check the order of messages is correct
@@ -1158,15 +1160,16 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: "msg1-" + .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: "msg2-" + .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: "msg1-" + .unique, authorUserId: .unique, cid: channelId)
+        let message2: MessagePayload = .dummy(messageId: "msg2-" + .unique, authorUserId: .unique, cid: channelId)
 
         // Insert reply that should be shown in channel.
         let reply1: MessagePayload = .dummy(
             messageId: "reply1-" + .unique,
             parentId: message2.id,
             showReplyInChannel: true,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: channelId
         )
 
         // Insert reply that should be visible only in thread.
@@ -1174,14 +1177,15 @@ final class ChannelController_Tests: XCTestCase {
             messageId: "reply2-" + .unique,
             parentId: message2.id,
             showReplyInChannel: false,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: channelId
         )
 
         writeAndWaitForMessageUpdates(count: 3) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply2, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message2, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: reply2, syncOwnReactions: true, cache: nil)
         }
 
         // Check the relevant reply is shown in channel
@@ -1199,19 +1203,20 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert a message
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
 
         // Insert ephemeral message in message1's thread
         let ephemeralMessage: MessagePayload = .dummy(
             type: .ephemeral,
             messageId: .unique,
             parentId: message1.id,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: channelId
         )
 
         writeAndWaitForMessageUpdates(count: 1) {
-            try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: ephemeralMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: message1, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: ephemeralMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Check the relevant ephemeral message is not shown in channel
@@ -1231,19 +1236,21 @@ final class ChannelController_Tests: XCTestCase {
         let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            deletedAt: .unique
+            deletedAt: .unique,
+            cid: channelId
         )
 
         // Create outgoing deleted message
         let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
-            deletedAt: .unique
+            deletedAt: .unique,
+            cid: channelId
         )
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: incomingDeletedMessage, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: outgoingDeletedMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Both outgoing and incoming messages should be visible
@@ -1268,6 +1275,7 @@ final class ChannelController_Tests: XCTestCase {
         let shadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
+            cid: channelId,
             isShadowed: true
         )
 
@@ -1275,12 +1283,13 @@ final class ChannelController_Tests: XCTestCase {
         let nonShadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
+            cid: channelId,
             isShadowed: false
         )
 
         writeAndWaitForMessageUpdates(count: 2) {
-            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: shadowedMessage, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: nonShadowedMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Both messages should be visible
@@ -1300,6 +1309,7 @@ final class ChannelController_Tests: XCTestCase {
         let shadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
+            cid: channelId,
             isShadowed: true
         )
 
@@ -1307,12 +1317,13 @@ final class ChannelController_Tests: XCTestCase {
         let nonShadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
+            cid: channelId,
             isShadowed: false
         )
 
         writeAndWaitForMessageUpdates(count: 1) {
-            try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: shadowedMessage, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: nonShadowedMessage, syncOwnReactions: true, cache: nil)
         }
 
         // Only non-shadowed message should be visible
@@ -5696,6 +5707,7 @@ final class ChannelController_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: existingMessageId,
                     authorUserId: userId,
+                    cid: self.channelId,
                     sharedLocation: .dummy(
                         channelId: self.channelId,
                         endAt: .distantFuture,
@@ -5704,7 +5716,6 @@ final class ChannelController_Tests: XCTestCase {
                         messageId: existingMessageId
                     )
                 ),
-                for: self.channelId,
                 syncOwnReactions: false,
                 cache: nil
             )

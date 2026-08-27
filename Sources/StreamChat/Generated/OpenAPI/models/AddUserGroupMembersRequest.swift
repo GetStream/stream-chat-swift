@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class AddUserGroupMembersRequest: Sendable, Codable, JSONEncodable {
+final class AddUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to add the members as group admins. Defaults to false
     let asAdmin: Bool?
     /// List of user IDs to add as members

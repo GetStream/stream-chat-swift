@@ -101,7 +101,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
         XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
         XCTAssertEqual(event?.message?.text, "Channel truncated")
-        XCTAssertEqual(event?.message?.type, .system)
+        XCTAssertEqual(event?.message?.type, MessageType.system.rawValue)
     }
 
     // MARK: DTO -> Event
@@ -117,7 +117,7 @@ final class ChannelEvents_Tests: XCTestCase {
             cid: cid,
             user: .dummy(userId: .unique),
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, authorUserId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             createdAt: .unique
         )
 
@@ -130,7 +130,7 @@ final class ChannelEvents_Tests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelUpdatedEvent)

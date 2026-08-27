@@ -581,19 +581,18 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
-            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel.latestMessages.first?.type.rawValue)
+            Assert.willBeEqual(payload.messages[0].type, loadedChannel.latestMessages.first?.type.rawValue)
             Assert.willBeEqual(payload.messages[0].text, loadedChannel.latestMessages.first?.text)
             Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel.latestMessages.first?.updatedAt)
             Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel.latestMessages.first?.createdAt)
             Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel.latestMessages.first?.deletedAt)
-            Assert.willBeEqual(payload.messages[0].args, loadedChannel.latestMessages.first?.arguments)
             Assert.willBeEqual(payload.messages[0].command, loadedChannel.latestMessages.first?.command)
-            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel.latestMessages.first?.extraData)
-            Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel.latestMessages.first?.isSilent)
+            Assert.willBeEqual(payload.messages[0].custom, loadedChannel.latestMessages.first?.extraData)
+            Assert.willBeEqual(payload.messages[0].silent, loadedChannel.latestMessages.first?.isSilent)
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel.latestMessages.first?.mentionedUsers.count)
             Assert.willBeEqual(payload.messages[0].parentId, loadedChannel.latestMessages.first?.parentMessageId)
-            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores)
-            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts)
+            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores.mapKeys(\.rawValue))
+            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts.mapKeys(\.rawValue))
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
 
             // Pinned Messages
@@ -1694,7 +1693,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1718,7 +1717,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let draftMessage = try XCTUnwrap(channel.draftMessage)
         XCTAssertEqual(draftMessage.id, draftMessagePayload.id)
         XCTAssertEqual(draftMessage.text, draftMessagePayload.text)
-        XCTAssertEqual(draftMessage.extraData, draftMessagePayload.extraData)
+        XCTAssertEqual(draftMessage.extraData, draftMessagePayload.custom)
         XCTAssertEqual(channel.activeLiveLocations.first?.latitude, 10)
         XCTAssertEqual(channel.activeLiveLocations.first?.longitude, 10)
     }
@@ -1749,7 +1748,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1829,7 +1828,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1887,7 +1886,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),

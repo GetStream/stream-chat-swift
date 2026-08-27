@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class GetBlockedUsersResponse: Sendable, Codable, JSONEncodable {
+final class GetBlockedUsersResponse: Sendable, Decodable {
     /// Array of blocked user object
     let blocks: [BlockedUserResponse]
     /// Duration of the request in milliseconds

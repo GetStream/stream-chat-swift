@@ -1140,13 +1140,13 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: nil)))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(pinError)
@@ -1163,13 +1163,13 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: nil)))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: false))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unpinError)

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class PushPreference: Sendable, Codable, JSONEncodable {
+public final class PushPreference: Sendable, Decodable {
     private let _level: PushPreferenceLevel?
     public var level: PushPreferenceLevel { _level ?? .all }
     public let disabledUntil: Date?

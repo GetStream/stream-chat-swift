@@ -144,7 +144,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             eventType: .messageNew,
             cid: cid,
             user: .dummy(userId: .unique),
-            message: .dummy(messageId: .unique, authorUserId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             watcherCount: 10,
             unreadCount: .init(channels: 14, messages: 12, threads: 10),
             createdAt: .unique
@@ -163,7 +163,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)
@@ -185,7 +185,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             eventType: .messageUpdated,
             cid: cid,
             user: .dummy(userId: .unique),
-            message: .dummy(messageId: .unique, authorUserId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             createdAt: .unique
         )
 
@@ -200,7 +200,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageUpdatedEvent)
@@ -220,7 +220,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             eventType: .messageDeleted,
             cid: cid,
             user: .dummy(userId: .unique),
-            message: .dummy(messageId: .unique, authorUserId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             createdAt: .unique
         )
 
@@ -235,7 +235,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageDeletedEvent)

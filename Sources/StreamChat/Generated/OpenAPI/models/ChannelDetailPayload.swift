@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
+final class ChannelDetailPayload: Sendable, Decodable {
     /// Whether auto translation is enabled or not
     let autoTranslationEnabled: Bool?
     /// Language (or comma-separated list of languages) to translate to when auto translation is active

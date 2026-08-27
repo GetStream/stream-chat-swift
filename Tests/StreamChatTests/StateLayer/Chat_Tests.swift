@@ -705,7 +705,7 @@ final class Chat_Tests: XCTestCase {
         let typingIndicatorResponse = EmptyResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         // Fail the send message call
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(expectedTestError))
         let text = "Text"
         let messageId: MessageId = "abc"
         await XCTAssertAsyncFailure(
@@ -719,10 +719,11 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(LocalMessageState.sendingFailed, chat.state.messages.first?.localState)
         
         // Resend and sending succeeds
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponsePayload.dummy(
             message: .dummy(
                 messageId: messageId,
-                text: text
+                text: text,
+                cid: channelId
             )
         )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
@@ -762,7 +763,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
         
-        let apiResponse = MessagePayload.Boxed(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged"))
+        let apiResponse = MessagePayload.Boxed(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged", cid: channelId))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         try await chat.sendMessageAction(in: messageId, action: action)
         let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
@@ -799,10 +800,11 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         
         let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponsePayload.dummy(
             message: .dummy(
                 messageId: "0",
-                text: text
+                text: text,
+                cid: channelId
             )
         )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
@@ -827,13 +829,13 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         
         let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponsePayload.dummy(
             message: .dummy(
                 messageId: "0",
                 text: text
             )
         )
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(expectedTestError))
         await XCTAssertAsyncFailure(
             try await chat.sendMessage(
                 with: apiResponse.message.text,
@@ -853,11 +855,12 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(0, chat.state.messages.count)
 
         let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponsePayload.dummy(
             message: .dummy(
                 type: .system,
                 messageId: "0",
-                text: text
+                text: text,
+                cid: channelId
             )
         )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
@@ -867,9 +870,8 @@ final class Chat_Tests: XCTestCase {
             messageId: "0"
         )
 
-        let body = env.client.mockAPIClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
-        let messageRequestBody = body?["message"]?.encodable as? MessageRequestBody
-        XCTAssertEqual(messageRequestBody?.type, MessageType.system.rawValue)
+        let body = env.client.mockAPIClient.request_endpoint?.body?.encodable as? SendMessageRequest
+        XCTAssertEqual(body?.message.type, .system)
         
         XCTAssertEqual(text, message.text)
         XCTAssertEqual(.system, message.type)
@@ -887,7 +889,7 @@ final class Chat_Tests: XCTestCase {
         
         // Typing indicator and edit message
         env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessageResponse.dummy(message: .dummy())))
         
         let message = try await chat.updateMessage(messageId, text: "New Text")
         XCTAssertEqual("New Text", message.text)
@@ -906,7 +908,7 @@ final class Chat_Tests: XCTestCase {
         // Edit the message twice before web-socket event comes for these edits
         let textUpdate1 = "Editted text 1"
         env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // typing indicator
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // update message
+        env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessageResponse.dummy(message: .dummy()))) // update message
         try await chat.updateMessage(messageId, text: textUpdate1)
         let queuedWSEventPayload1 = EventPayload(
             eventType: .messageUpdated,
@@ -920,7 +922,7 @@ final class Chat_Tests: XCTestCase {
         )
 
         env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // typing indicator
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // update message
+        env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessageResponse.dummy(message: .dummy()))) // update message
         let textUpdate2 = "Editted text 2"
         try await chat.updateMessage(messageId, text: textUpdate2)
         let queuedWSEventPayload2 = EventPayload(
@@ -1231,7 +1233,7 @@ final class Chat_Tests: XCTestCase {
         }
         
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessagePartialResponse.dummy(message: nil)))
         let pinnedMessage = try await chat.pinMessage(messageId, pinning: .noExpiration)
         XCTAssertEqual(messageId, pinnedMessage.id)
         XCTAssertEqual(true, pinnedMessage.isPinned)
@@ -1246,7 +1248,7 @@ final class Chat_Tests: XCTestCase {
         }
         
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessagePartialResponse.dummy(message: nil)))
         let unpinnedMessage = try await chat.unpinMessage(messageId)
         XCTAssertEqual(messageId, unpinnedMessage.id)
         XCTAssertEqual(false, unpinnedMessage.isPinned)
@@ -1582,10 +1584,11 @@ final class Chat_Tests: XCTestCase {
         
         let typingIndicatorResponse = EmptyResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponsePayload.dummy(
             message: .dummy(
                 messageId: "reply_0",
-                parentId: lastMessageId
+                parentId: lastMessageId,
+                cid: channelId
             )
         )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))

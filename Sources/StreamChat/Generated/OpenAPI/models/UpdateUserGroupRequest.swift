@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateUserGroupRequest: Sendable, Codable, JSONEncodable {
+final class UpdateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// The new description for the group
     let description: String?
     /// The new name of the user group

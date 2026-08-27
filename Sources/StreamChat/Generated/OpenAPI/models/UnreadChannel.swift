@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UnreadChannel: Sendable, Codable, JSONEncodable {
+public final class UnreadChannel: Sendable, Decodable {
     public let channelId: ChannelId
     public let lastRead: Date?
     public let unreadCount: Int

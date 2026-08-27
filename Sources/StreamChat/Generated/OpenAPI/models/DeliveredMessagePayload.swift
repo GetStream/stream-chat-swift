@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class DeliveredMessagePayload: Sendable, Codable, JSONEncodable {
+final class DeliveredMessagePayload: Sendable, Encodable, JSONEncodable {
     let cid: String?
     let id: String?
 

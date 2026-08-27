@@ -41,7 +41,7 @@ final class DraftEvents_Tests: XCTestCase {
         
         // Save required data
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
-        _ = try session.saveMessage(payload: .dummy(messageId: draftId, authorUserId: "test-user"), for: cid, cache: nil)
+        _ = try session.saveMessage(payload: .dummy(messageId: draftId, authorUserId: "test-user", cid: cid), cache: nil)
         
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? DraftUpdatedEvent)
         XCTAssertEqual(domainEvent.cid, cid)

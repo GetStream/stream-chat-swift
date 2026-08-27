@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UploadChannelResponse: Sendable, Codable, JSONEncodable {
+final class UploadChannelResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds
     let duration: String
     let file: String?

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class PollPayload: Sendable, Codable, JSONEncodable {
+final class PollPayload: Sendable, Decodable {
     let allowAnswers: Bool
     let allowUserSuggestedOptions: Bool
     let answersCount: Int

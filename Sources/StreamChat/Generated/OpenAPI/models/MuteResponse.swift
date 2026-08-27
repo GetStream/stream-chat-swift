@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MuteResponse: Sendable, Codable, JSONEncodable {
+final class MuteResponse: Sendable, Decodable {
     let duration: String
     /// Object with mutes (if multiple users were muted)
     let mutes: [MutedUserPayload]?

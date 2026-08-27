@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateMemberPartialRequest: Sendable, Codable, JSONEncodable {
+final class UpdateMemberPartialRequest: Sendable, Encodable, JSONEncodable {
     let set: [String: RawJSON]?
     let unset: [String]?
 
