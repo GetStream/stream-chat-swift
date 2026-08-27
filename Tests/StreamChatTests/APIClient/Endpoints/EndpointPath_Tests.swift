@@ -231,7 +231,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.channelUpdate("channel_idq"))
         assertResultEncodingAndDecoding(.hideChannel(type: "messaging", id: "channel_id"))
         assertResultEncodingAndDecoding(.showChannel(type: "messaging", id: "channel_id"))
-        assertResultEncodingAndDecoding(.truncateChannel("channel_idq"))
+        assertResultEncodingAndDecoding(.truncateChannel(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.markChannelRead("channel_idq"))
         assertResultEncodingAndDecoding(.markAllChannelsRead)
         assertResultEncodingAndDecoding(.markDelivered)

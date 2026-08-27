@@ -82,25 +82,6 @@ extension Endpoint {
         )
     }
     
-    static func truncateChannel(
-        cid: ChannelId,
-        skipPush: Bool,
-        hardDelete: Bool,
-        message: MessageRequestBody?
-    ) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .truncateChannel(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ChannelTruncateRequestPayload(
-                skipPush: skipPush,
-                hardDelete: hardDelete,
-                message: message
-            )
-        )
-    }
-
     static func addMembers(
         cid: ChannelId,
         members: [MemberInfoRequest],
