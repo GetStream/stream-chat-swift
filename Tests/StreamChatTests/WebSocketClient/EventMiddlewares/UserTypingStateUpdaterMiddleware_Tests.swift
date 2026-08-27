@@ -165,6 +165,32 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertTrue(try channel(with: cidB).typingUsers.isEmpty)
         XCTAssertTrue(try XCTUnwrap(database.viewContext.channel(cid: cidB)).typingMemberInfos.isEmpty)
     }
+
+    func test_middleware_clearsMemberInfoFromPreviousChannelWhenUserMoves() throws {
+        let cidA: ChannelId = .unique
+        let cidB: ChannelId = .unique
+        let userId: UserId = .unique
+        let member = MemberInfoPayload(extraData: ["is_premium": .bool(true)])
+
+        try database.createChannel(cid: cidA)
+        try database.createChannel(cid: cidB)
+        try database.createUser(id: userId)
+
+        _ = middleware.handle(
+            event: TypingEventDTO.startTyping(cid: cidA, userId: userId, member: member),
+            session: database.viewContext
+        )
+        _ = middleware.handle(
+            event: TypingEventDTO.startTyping(cid: cidB, userId: userId, member: member),
+            session: database.viewContext
+        )
+
+        let channelA = try XCTUnwrap(database.viewContext.channel(cid: cidA))
+        let channelB = try XCTUnwrap(database.viewContext.channel(cid: cidB))
+        XCTAssertTrue(channelA.typingMemberInfos.isEmpty)
+        XCTAssertEqual(channelB.typingMemberInfos.count, 1)
+        XCTAssertEqual(try channel(with: cidB).typingUsers.first?.memberInfo?.extraData["is_premium"], .bool(true))
+    }
 }
 
 private extension ChannelUserTypingStateUpdaterMiddleware_Tests {
