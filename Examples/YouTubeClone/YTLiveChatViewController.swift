@@ -200,6 +200,7 @@ final class YTLiveChatViewController: _ViewController,
         let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }
             .filter { $0.id != currentUserId }
+            .map { TypingUser(user: $0, memberInfo: livestreamChat.state.typingMemberInfos[$0.id]) }
 
         if typingUsersWithoutCurrentUser.isEmpty {
             messageListVC.hideTypingIndicator()
@@ -395,6 +396,8 @@ final class YTLiveChatViewController: _ViewController,
 // MARK: - Message List
 
 final class YTLiveChatMessageListViewController: ChatMessageListVC {
+    private static let premiumTypingColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
+
     override func setUpLayout() {
         super.setUpLayout()
 
@@ -413,6 +416,23 @@ final class YTLiveChatMessageListViewController: ChatMessageListVC {
     }
 
     override func didSelectMessageCell(at indexPath: IndexPath) {}
+
+    override func showTypingIndicator(typingUsers: [TypingUser]) {
+        super.showTypingIndicator(typingUsers: typingUsers)
+        applyPremiumTypingAppearance(typingUsers: typingUsers)
+    }
+
+    override func hideTypingIndicator() {
+        super.hideTypingIndicator()
+        applyPremiumTypingAppearance(typingUsers: [])
+    }
+
+    private func applyPremiumTypingAppearance(typingUsers: [TypingUser]) {
+        let isPremium = typingUsers.contains { $0.memberInfo?.extraData["is_premium"]?.boolValue == true }
+        let color = isPremium ? Self.premiumTypingColor : appearance.colorPalette.chatTextTypingIndicator
+        typingIndicatorView.informationLabel.textColor = color
+        typingIndicatorView.typingAnimationView.dotLayer.backgroundColor = color.cgColor
+    }
 }
 
 // MARK: - Composer

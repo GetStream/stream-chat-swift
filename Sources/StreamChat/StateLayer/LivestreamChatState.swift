@@ -134,9 +134,9 @@ import Foundation
     }
 
     private func applyTypingUsersUpdate(_ typingUsers: Set<TypingUser>) {
-        self.typingUsers = typingUsers.chatUsers
         typingMemberInfos = Dictionary(uniqueKeysWithValues: typingUsers.compactMap { typingUser in
             typingUser.memberInfo.map { (typingUser.id, $0) }
         })
+        self.typingUsers = typingUsers.chatUsers
     }
 }
