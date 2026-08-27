@@ -12,17 +12,6 @@ class MemberInfoDTO: NSManagedObject {
     @NSManaged var notificationsMuted: Bool
     @NSManaged var extraData: Data?
     @NSManaged var channel: ChannelDTO?
-
-    override func willSave() {
-        super.willSave()
-
-        guard !isDeleted, hasPersistentChangedValues else { return }
-
-        if let channel, !channel.hasChanges && !channel.isDeleted {
-            let fakeCid = channel.cid
-            channel.cid = fakeCid
-        }
-    }
 }
 
 extension MemberInfoDTO {
@@ -60,7 +49,8 @@ extension ChannelDTO {
         if let existing = typingMemberInfos.first(where: { $0.userId == userId }) {
             dto = existing
         } else {
-            dto = MemberInfoDTO(context: managedObjectContext!)
+            guard let managedObjectContext else { return }
+            dto = MemberInfoDTO(context: managedObjectContext)
             dto.userId = userId
             dto.channel = self
             typingMemberInfos.insert(dto)
