@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension DraftMessage {
     /// Creates a new `ChatMessage` object from the provided data.

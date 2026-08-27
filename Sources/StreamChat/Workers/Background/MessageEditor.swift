@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// Observers the storage for messages in a `pendingSync` state and updates them on the backend.
 ///

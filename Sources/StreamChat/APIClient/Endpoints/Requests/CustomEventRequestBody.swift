@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A type used to send custom event payload to backend.
 struct CustomEventRequestBody<Payload: CustomEventPayload>: Encodable {

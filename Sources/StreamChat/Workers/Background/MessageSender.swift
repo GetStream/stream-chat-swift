@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// Observers the storage for messages pending send and sends them.
 ///

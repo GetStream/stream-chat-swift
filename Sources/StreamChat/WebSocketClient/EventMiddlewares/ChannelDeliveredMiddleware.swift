@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A middleware that automatically marks channels as delivered when new messages are received.
 class ChannelDeliveredMiddleware: EventMiddleware {

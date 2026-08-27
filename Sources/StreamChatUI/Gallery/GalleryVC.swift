@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamCore
 import UIKit
 
 /// A viewcontroller to showcase and slide through multiple attachments

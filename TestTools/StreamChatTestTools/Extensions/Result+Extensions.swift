@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension Result {
     func invoke(with completion: ((Self) -> Void)? = nil) {

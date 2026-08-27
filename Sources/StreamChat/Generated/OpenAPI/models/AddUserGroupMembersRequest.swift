@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class AddUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to add the members as group admins. Defaults to false

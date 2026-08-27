@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when a new message is sent to a channel the current user is member of.
 public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasUnreadChannelCountsByGroup {

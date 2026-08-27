@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 final class ManualEventHandler_Mock: ManualEventHandler, @unchecked Sendable {

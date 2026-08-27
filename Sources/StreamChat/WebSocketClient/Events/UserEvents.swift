@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when user status changes (eg. online, offline, away, etc.)
 public final class UserPresenceChangedEvent: Event {

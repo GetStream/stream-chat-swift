@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatCommonUI
+import StreamCore
 import UIKit
 
 extension MediaLoader {

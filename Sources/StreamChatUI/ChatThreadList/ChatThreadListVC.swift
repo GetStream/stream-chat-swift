@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// The view controller used to display the list of threads the current user is participating.

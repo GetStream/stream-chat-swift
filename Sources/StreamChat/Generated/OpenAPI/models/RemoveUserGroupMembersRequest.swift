@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class RemoveUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// List of user IDs to remove

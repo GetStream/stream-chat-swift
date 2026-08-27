@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 @objc(PollVoteDTO)
 class PollVoteDTO: NSManagedObject {

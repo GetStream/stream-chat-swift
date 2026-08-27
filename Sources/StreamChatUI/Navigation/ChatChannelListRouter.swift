@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 /// A mock for `ChatChannelWatcherListController`.

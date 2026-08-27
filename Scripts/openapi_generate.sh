@@ -915,11 +915,6 @@ strip_hashable_conformance() {
 }
 strip_hashable_conformance
 
-strip_streamcore_imports() {
-  find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' '/^import StreamCore$/d' {} +
-}
-strip_streamcore_imports
-
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 

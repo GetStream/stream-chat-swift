@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension MemberPayload {
     /// Returns a dummy member payload with the given `userId` and `role`

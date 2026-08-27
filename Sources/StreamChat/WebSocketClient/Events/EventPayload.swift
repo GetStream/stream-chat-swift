@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // MARK: - Temporary
 
@@ -298,9 +299,9 @@ extension Array where Element == EventPayload {
                 return try $0.event()
             } catch {
                 if error is ClientError.IgnoredEventType {
-                    StreamChat.log.info("Skipping unsupported event type: \($0.eventType)")
+                    StreamCore.log.info("Skipping unsupported event type: \($0.eventType)")
                 } else {
-                    StreamChat.log.error("Failed to decode event from event payload: \($0), error: \(error)")
+                    StreamCore.log.error("Failed to decode event from event payload: \($0), error: \(error)")
                 }
                 return nil
             }

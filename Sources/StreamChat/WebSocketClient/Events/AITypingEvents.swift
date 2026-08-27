@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An event that provides updates about the state of the AI typing indicator.
 public final class AIIndicatorUpdateEvent: Event {

@@ -5,6 +5,7 @@
 import CoreData.NSManagedObjectContext
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension ChatMessage {
     /// Creates a new `ChatMessage` object from the provided data.

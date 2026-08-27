@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// `ChatReactionListController` uses this protocol to communicate changes to its delegate.
 public protocol ChatReactionListControllerDelegate: DataControllerStateDelegate {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class QueryPollVotesRequestBody: Sendable, Encodable, JSONEncodable {
     /// Filter to apply to the query

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 class PollsRepository: @unchecked Sendable {
     let database: DatabaseContainer

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object which represents a list of `ChatMessageReaction` for the specified query.
 public final class ReactionList: Sendable {

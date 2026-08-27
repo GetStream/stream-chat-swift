@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 /// Mock implementation of `InternetConnection`
 final class InternetConnection_Mock: InternetConnection, @unchecked Sendable {

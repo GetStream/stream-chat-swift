@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension Endpoint {
     /// Builds the endpoint to obtain an access-token for a guest user.

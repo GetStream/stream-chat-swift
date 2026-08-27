@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Handles manual event processing for channels that opt out of middleware processing.
 class ManualEventHandler: @unchecked Sendable {

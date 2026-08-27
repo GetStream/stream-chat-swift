@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class LivestreamChannelController_Spy: LivestreamChannelController, Spy, @unchecked Sendable {
     var startWatchingError: Error?

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MessageRequestType: RawRepresentable, Codable, Hashable, Sendable {
     let rawValue: String

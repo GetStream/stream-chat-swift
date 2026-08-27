@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An enum describing possible types of a channel.
 public enum ChannelType: Codable, Hashable, Sendable {

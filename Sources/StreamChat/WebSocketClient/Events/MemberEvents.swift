@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when a new member is added to a channel.
 public final class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 class ConnectionRepository: @unchecked Sendable {
     private let connectionQueue: DispatchQueue = DispatchQueue(label: "io.getstream.connection-repository", attributes: .concurrent)

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SortParamRequest: Sendable, Encodable, JSONEncodable {
     /// Direction of sorting, 1 for Ascending, -1 for Descending, default is 1. One of: -1, 1

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import enum StreamCore.RawJSON
 import XCTest
 
 extension XCTestCase {

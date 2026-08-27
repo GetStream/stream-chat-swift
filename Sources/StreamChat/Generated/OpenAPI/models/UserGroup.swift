@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class UserGroup: Sendable, Decodable {
     public let createdAt: Date

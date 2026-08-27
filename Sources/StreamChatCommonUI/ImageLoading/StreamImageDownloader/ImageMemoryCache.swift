@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// A cost-bounded, in-memory LRU cache for decoded images.

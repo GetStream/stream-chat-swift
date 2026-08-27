@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class QueryMembersPayload: Sendable, Encodable, JSONEncodable {
     /// Filter conditions to apply to the query

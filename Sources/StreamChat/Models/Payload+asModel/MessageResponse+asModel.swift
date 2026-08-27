@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension MessageResponse {
     /// Converts the MessageResponse to a ChatMessage model.

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension UserRequestBody {
     /// Returns a dummy user payload with the given UserId

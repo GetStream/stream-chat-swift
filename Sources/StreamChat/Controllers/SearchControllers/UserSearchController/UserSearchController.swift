@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 extension ChatClient {
     /// Creates a new `ChatUserSearchController` with the provided user query.

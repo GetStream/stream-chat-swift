@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when a message reminder is created.
 public final class MessageReminderCreatedEvent: Event {

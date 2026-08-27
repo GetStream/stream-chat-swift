@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 /// Mock implementation of `ChatClientUpdater`
 final class ConnectionRepository_Mock: ConnectionRepository, Spy, @unchecked Sendable {

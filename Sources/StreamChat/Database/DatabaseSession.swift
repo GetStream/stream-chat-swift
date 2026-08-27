@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 extension NSManagedObjectContext: DatabaseSession {
     private static let chatClientConfigKey = "io.getStream.StreamChat.config.key"

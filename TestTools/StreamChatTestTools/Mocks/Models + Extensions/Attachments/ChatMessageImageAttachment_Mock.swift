@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension ChatMessageImageAttachment {
     /// Creates a new `ChatMessageImageAttachment` object from the provided data.

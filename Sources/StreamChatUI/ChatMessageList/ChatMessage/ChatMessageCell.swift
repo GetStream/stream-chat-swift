@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// The cell that displays the message content of a dynamic type and layout.

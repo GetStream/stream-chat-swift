@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 @objc(MessageReactionDTO)
 final class MessageReactionDTO: NSManagedObject {

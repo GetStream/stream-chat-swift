@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
 class UserUpdater: Worker, @unchecked Sendable {

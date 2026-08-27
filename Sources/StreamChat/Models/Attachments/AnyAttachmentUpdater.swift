@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Helper component to update the payload of a type-erased attachment.
 public struct AnyAttachmentUpdater: Sendable {

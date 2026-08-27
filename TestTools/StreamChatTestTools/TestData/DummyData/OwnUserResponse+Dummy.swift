@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import enum StreamCore.RawJSON
 
 typealias CurrentUserPayload = OwnUserResponse
 

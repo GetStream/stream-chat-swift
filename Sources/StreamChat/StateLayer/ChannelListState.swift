@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 /// Represents a list of channels matching to the specified query.
 @MainActor public final class ChannelListState: ObservableObject {

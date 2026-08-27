@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ChannelMemberRequest: Sendable, Encodable, JSONEncodable {
     /// Role of the member in the channel

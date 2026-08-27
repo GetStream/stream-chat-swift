@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public extension Event {
     var name: String {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The external contract used by ``LivestreamChannelController`` and ``LivestreamChat``
 /// when collaborating with a livestream channel handler.

@@ -3,4 +3,6 @@
 //
 
 @_exported import StreamChatCommonUI
-@_exported import StreamCore
+import StreamCore
+
+typealias StreamConcurrency = StreamCore.StreamConcurrency

@@ -3,6 +3,7 @@
 //
 
 import AVFoundation
+import StreamCore
 
 /// Describes an object that will be asked to provided the URL of the next AudioTrack to play whenever
 /// the current one's playback has been completed.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A type alias for attachment with `ImageAttachmentPayload` payload type.
 ///

@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 class ChannelRepository: @unchecked Sendable {
     let database: DatabaseContainer

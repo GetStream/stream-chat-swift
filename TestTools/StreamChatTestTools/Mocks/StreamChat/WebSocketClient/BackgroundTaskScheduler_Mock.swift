@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 /// Mock implementation of `BackgroundTaskScheduler`.
 final class BackgroundTaskScheduler_Mock: BackgroundTaskScheduler, @unchecked Sendable {

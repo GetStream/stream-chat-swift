@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class NewLocationRequestPayload: Sendable, Encodable, JSONEncodable {
     let createdByDeviceId: String?

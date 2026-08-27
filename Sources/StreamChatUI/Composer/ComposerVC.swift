@@ -5,6 +5,7 @@
 import AVFoundation
 import Foundation
 import StreamChat
+import StreamCore
 import UIKit
 
 /// The possible errors that can occur in attachment validation

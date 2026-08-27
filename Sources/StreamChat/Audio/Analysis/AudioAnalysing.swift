@@ -3,6 +3,7 @@
 //
 
 import AVFoundation
+import StreamCore
 
 /// Describes an object that given an `AudioAnalysisContext` will analyse and process it in order to
 /// generate a set of data points that describe some characteristics of the audio track provided from the

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ReactionRequest: Sendable, Encodable, JSONEncodable {
     /// Date/time of creation

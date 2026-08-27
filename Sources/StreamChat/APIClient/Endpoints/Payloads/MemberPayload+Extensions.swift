@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // Generated properties are slightly different from the previously hand-written ones.
 extension MemberPayload {

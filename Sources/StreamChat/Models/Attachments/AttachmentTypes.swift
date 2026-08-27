@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case title

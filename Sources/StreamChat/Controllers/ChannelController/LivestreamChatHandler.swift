@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Shared in-memory state and event handling for livestream channels.
 ///

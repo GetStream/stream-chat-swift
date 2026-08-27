@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 /// A mock `LivestreamChatHandling` implementation used to verify that the higher-level
 /// `LivestreamChannelController` and `LivestreamChat` correctly forward configuration,

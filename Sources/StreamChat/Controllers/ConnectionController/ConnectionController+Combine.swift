@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 extension ChatConnectionController {
     /// A publisher emitting a new value every time the connection status changes.

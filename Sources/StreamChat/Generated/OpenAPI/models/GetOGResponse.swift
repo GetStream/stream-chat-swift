@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class GetOGResponse: Sendable, Decodable {
     let actions: [AttachmentActionPayload]?

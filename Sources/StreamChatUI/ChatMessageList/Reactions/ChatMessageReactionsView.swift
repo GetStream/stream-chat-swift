@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// The view that shows the list of reactions attached to the message.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The middleware listens for `ChannelHidden/Visible` events and updates `ChannelDTO` accordingly.
 struct ChannelVisibilityEventMiddleware: EventMiddleware {

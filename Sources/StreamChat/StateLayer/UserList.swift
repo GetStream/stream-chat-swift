@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object which represents a list of `ChatUser`.
 public final class UserList: Sendable {

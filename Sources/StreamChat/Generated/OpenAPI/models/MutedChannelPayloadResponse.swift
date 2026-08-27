@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MutedChannelPayloadResponse: Sendable, Decodable {
     let channelMute: MutedChannelPayload?

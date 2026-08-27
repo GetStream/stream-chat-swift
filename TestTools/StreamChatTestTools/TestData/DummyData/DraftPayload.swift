@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension DraftPayload {
     // Generated properties are slightly different from the previously hand-written ones.

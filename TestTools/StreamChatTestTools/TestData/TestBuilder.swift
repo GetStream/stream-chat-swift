@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class TestBuilder {
     let encoder = RequestEncoder_Spy(

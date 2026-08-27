@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A struct containing information about unread counts of channels and messages.
 public struct UnreadCount: Decodable, Equatable, Sendable {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class FileUploadResponse: Sendable, Decodable {
     /// URL to the uploaded asset. Should be used to put to `asset_url` attachment field

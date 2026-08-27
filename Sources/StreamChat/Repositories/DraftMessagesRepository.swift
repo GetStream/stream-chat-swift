@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 struct DraftListResponse: Sendable {
     var drafts: [DraftMessage]

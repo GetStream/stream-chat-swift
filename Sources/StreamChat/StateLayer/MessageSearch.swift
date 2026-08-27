@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object which represents a list of ``ChatMessage`` for the specified search query.
 ///

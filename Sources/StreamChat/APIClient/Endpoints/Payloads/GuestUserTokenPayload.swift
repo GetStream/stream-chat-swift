@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 struct GuestUserTokenPayload: Decodable {
     private enum CodingKeys: String, CodingKey {

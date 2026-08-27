@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UnblockUsersResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds

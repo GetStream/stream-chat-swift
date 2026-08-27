@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class ChatChannelController_Spy: ChatChannelController, Spy, @unchecked Sendable {
     var watchActiveChannelError: Error?

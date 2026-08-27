@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class CreatePollOptionRequestBody: Sendable, Encodable, JSONEncodable {
     /// Custom data for this object

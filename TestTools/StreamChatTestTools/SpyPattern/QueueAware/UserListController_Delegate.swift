@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 // A concrete `UserListControllerDelegate` implementation allowing capturing the delegate calls
 final class UserListController_Delegate: QueueAwareDelegate, ChatUserListControllerDelegate {

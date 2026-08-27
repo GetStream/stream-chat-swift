@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ListUserGroupsResponse: Sendable, Decodable {
     let duration: String

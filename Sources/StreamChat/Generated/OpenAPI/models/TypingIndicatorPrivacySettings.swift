@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class TypingIndicatorPrivacySettings: @unchecked Sendable, Codable, JSONEncodable {
     public var enabled: Bool

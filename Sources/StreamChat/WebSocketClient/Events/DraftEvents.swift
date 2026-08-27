@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when a draft message is updated or created.
 public final class DraftUpdatedEvent: Event {

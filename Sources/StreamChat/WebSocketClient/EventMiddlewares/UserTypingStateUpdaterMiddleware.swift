@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 /// A middleware which updates `currentlyTypingUsers` for a specific channel based on received `TypingEvent`.
 struct UserTypingStateUpdaterMiddleware: EventMiddleware {

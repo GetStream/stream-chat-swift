@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // swiftlint:disable force_cast
 /// Responsible to hold a collection of delegates and call all of them when the multicast delegate is invoked.

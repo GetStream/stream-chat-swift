@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 struct ChannelListUpdateResult: Sendable {
     let channels: [ChatChannel]

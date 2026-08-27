@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension ChatMessageVideoAttachment {
     static func mock(

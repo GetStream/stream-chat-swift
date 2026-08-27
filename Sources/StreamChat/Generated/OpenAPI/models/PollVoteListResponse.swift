@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class PollVoteListResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds

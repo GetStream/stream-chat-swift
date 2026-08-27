@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 /// An object which represents a livestream ``ChatChannel`` and its state.
 ///

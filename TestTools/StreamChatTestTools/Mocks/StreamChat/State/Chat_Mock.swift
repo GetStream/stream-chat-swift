@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public class Chat_Mock: Chat, Spy, @unchecked Sendable {
     public let spyState = SpyState()

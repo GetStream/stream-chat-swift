@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // MARK: - Factory Methods for Currently Logged In User
 

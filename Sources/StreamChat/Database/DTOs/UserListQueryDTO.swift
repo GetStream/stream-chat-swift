@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 @objc(UserListQueryDTO)
 class UserListQueryDTO: NSManagedObject {

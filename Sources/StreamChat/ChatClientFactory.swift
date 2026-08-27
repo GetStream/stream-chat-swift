@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A factory component to help build all `ChatClient` dependencies.
 class ChatClientFactory {

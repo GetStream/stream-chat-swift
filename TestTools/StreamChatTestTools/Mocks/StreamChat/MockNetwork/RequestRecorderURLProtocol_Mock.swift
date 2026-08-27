@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 /// This URLProtocol subclass allows to intercept the network communication

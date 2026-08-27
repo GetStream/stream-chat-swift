@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 extension UserId {
     /// The prefix used for anonymous user ids

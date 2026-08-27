@@ -5,6 +5,7 @@
 import AVFoundation
 import Foundation
 import StreamChat
+import StreamCore
 import UniformTypeIdentifiers
 
 @available(iOS 14.0, *)

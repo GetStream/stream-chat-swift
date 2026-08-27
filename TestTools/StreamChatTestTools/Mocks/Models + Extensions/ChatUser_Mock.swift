@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension ChatUser {
     /// Creates a new `ChatUser` object from the provided data.

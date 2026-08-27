@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class PollOptionRequestBody: Sendable, Encodable, JSONEncodable {
     let custom: [String: RawJSON]?

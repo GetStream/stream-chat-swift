@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sendable {
     public let rawValue: String

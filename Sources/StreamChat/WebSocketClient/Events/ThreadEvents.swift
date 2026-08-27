@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when a new message is sent to a thread.
 public final class ThreadMessageNewEvent: Event {

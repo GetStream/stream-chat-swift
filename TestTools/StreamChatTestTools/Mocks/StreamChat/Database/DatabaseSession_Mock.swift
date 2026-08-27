@@ -4,6 +4,8 @@
 
 import Foundation
 @testable import StreamChat
+import class StreamCore.Atomic
+import enum StreamCore.RawJSON
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
 class DatabaseSession_Mock: DatabaseSession {

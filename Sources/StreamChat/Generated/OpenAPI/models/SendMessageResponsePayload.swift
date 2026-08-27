@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SendMessageResponsePayload: Sendable, Decodable {
     /// Map of mentioned user ID to whether that user is currently an active channel member. Only set when include_mentioned_members was requested; omitted when the message has no mentions or the membership lookup failed

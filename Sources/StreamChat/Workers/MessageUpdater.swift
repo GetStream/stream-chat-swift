@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// The type provides the API for getting/editing/deleting a message
 class MessageUpdater: Worker, @unchecked Sendable {

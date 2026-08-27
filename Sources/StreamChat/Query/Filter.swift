@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An enum with possible operators to use in filters.
 public enum FilterOperator: String {

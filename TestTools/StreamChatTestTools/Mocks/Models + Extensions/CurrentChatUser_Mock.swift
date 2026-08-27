@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import enum StreamCore.RawJSON
 
 public extension CurrentChatUser {
     /// Creates a new `CurrentChatUser` object from the provided data.

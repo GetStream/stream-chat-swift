@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SharedLocationsResponse: Sendable, Decodable {
     let activeLiveLocations: [SharedLocation]

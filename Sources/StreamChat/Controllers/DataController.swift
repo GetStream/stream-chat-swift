@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The base class for controllers which represent and control a data entity. Not meant to be used directly.
 public class DataController: Controller, @unchecked Sendable {

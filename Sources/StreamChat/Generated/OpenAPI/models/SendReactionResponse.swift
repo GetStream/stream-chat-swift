@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SendReactionResponse: Sendable, Decodable {
     /// Represents any chat message

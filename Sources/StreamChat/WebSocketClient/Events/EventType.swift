@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An event type.
 public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {

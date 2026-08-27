@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 /// A response containing a list of reminders and pagination information.
 struct ReminderListResponse: Sendable {

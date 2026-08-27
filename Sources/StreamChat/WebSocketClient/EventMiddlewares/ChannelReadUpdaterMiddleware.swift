@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A middleware which updates a channel's read events as websocket events arrive.
 struct ChannelReadUpdaterMiddleware: EventMiddleware {

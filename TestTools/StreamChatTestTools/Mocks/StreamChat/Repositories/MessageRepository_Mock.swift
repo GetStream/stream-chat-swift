@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class MessageRepository_Mock: MessageRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()

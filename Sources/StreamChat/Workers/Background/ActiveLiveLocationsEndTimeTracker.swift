@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An observer type that observes all active live locations in the database.
 typealias ActiveLiveLocationsObserver = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>

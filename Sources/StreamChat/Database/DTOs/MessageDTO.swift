@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// A reaction is represented by a String with the following format: "userId/messageId/reactionType"
 typealias ReactionString = String

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A middleware which saves the incoming data from the Event to the database.
 struct EventDataProcessorMiddleware: EventMiddleware {

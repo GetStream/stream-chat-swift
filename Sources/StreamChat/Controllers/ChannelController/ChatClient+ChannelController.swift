@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // MARK: - Factory methods to create the controller.
 

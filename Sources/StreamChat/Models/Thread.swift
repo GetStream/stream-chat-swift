@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A type representing a thread. `ChatThread` is an immutable snapshot of a thread entity at the given time.
 public final class ChatThread: Identifiable, Sendable {

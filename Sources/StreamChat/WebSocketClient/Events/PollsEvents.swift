@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 protocol PollEventDTO: EventDTO {
     var poll: PollPayload? { get }

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public typealias TokenProvider = @Sendable (@escaping @Sendable (Result<Token, Error>) -> Void) -> Void
 

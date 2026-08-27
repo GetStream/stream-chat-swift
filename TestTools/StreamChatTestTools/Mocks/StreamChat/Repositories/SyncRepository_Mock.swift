@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
     enum Signature {

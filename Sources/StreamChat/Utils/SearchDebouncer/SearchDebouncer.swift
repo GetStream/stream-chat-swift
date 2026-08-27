@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Schedules search work using a ``SearchDebouncePolicy``, cancelling work that has not run yet
 /// when a newer search is scheduled.

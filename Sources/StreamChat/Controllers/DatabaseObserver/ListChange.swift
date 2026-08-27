@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 /// This enum describes the changes of the given collections of items.
 public enum ListChange<Item> {

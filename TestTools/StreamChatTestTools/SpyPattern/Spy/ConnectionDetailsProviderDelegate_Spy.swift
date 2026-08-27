@@ -4,6 +4,9 @@
 
 import Foundation
 @testable import StreamChat
+import class StreamCore.Atomic
+import class StreamCore.ClientError
+import typealias StreamCore.ConnectionId
 
 // A concrete `ConnectionDetailsProviderDelegate` implementation allowing capturing the delegate calls
 final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDelegate, Spy {
@@ -20,9 +23,9 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
         tokenWaiters.removeAll()
     }
 
-    func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<StreamChat.ConnectionId, Error>) -> Void) {
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         let waiterToken = String.newUniqueId
-        let valueCompletion: (StreamChat.ConnectionId?) -> Void = { value in
+        let valueCompletion: (ConnectionId?) -> Void = { value in
             completion(value.map { .success($0) } ?? .failure(ClientError.MissingConnectionId()))
         }
         _connectionWaiters.mutate {

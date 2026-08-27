@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MuteRequest: Sendable, Encodable, JSONEncodable {
     /// User IDs to mute (if multiple users)

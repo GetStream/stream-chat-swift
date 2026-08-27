@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
     let actions: [AttachmentActionPayload]?

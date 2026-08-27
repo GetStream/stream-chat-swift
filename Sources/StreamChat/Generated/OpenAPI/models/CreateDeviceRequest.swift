@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class CreateDeviceRequestPushProvider: RawRepresentable, Codable, Hashable, Sendable {
     let rawValue: String

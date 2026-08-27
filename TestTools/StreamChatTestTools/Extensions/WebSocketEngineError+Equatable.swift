@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension WebSocketEngineError: Equatable {
     public static func == (lhs: WebSocketEngineError, rhs: WebSocketEngineError) -> Bool {

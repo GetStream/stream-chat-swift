@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The model for an option in a poll.
 public struct PollOption: Hashable, Equatable, Identifiable, Sendable {

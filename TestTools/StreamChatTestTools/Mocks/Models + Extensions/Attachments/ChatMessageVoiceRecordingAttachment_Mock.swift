@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension ChatMessageVoiceRecordingAttachment {
     /// Creates a new `ChatMessageVoiceRecordingAttachment` object from the provided data.

@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates a new `LivestreamChannelController` for the given channel query.

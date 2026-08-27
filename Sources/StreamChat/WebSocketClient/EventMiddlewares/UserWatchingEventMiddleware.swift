@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The middleware listens for `UserWatchingEvent`s and updates `ChannelDTO`s accordingly.
 struct UserWatchingEventMiddleware: EventMiddleware {

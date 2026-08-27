@@ -4,6 +4,7 @@
 
 @preconcurrency import CoreData
 import Foundation
+import StreamCore
 
 /// Convenience subclass of `NSPersistentContainer` allowing easier setup of the database stack.
 class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {

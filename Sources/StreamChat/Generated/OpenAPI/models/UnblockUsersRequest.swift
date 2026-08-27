@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UnblockUsersRequest: Sendable, Encodable, JSONEncodable {
     let blockedUserId: String

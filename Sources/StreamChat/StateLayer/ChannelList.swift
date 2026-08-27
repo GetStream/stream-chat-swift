@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object which represents a list of `ChatChannel`s for the specified  channel query.
 public class ChannelList: @unchecked Sendable {

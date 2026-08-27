@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ChannelDeliveredRequestPayload: Sendable, Encodable, JSONEncodable {
     let latestDeliveredMessages: [DeliveredMessagePayload]?

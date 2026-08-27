@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 /// An object which represents a `ChatChannel`.
 public class Chat: @unchecked Sendable {

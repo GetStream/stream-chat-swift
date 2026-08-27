@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class UserPrivacySettings: @unchecked Sendable, Codable, JSONEncodable {
     public var deliveryReceipts: DeliveryReceiptsPrivacySettings?

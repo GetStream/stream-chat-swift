@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 private struct ElementWrapper<T: Decodable>: Decodable {
     let value: T?

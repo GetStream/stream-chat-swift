@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class AppSettings: Sendable, Decodable {
     public let asyncUrlEnrichEnabled: Bool

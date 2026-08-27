@@ -3,6 +3,7 @@
 //
 
 import AVFoundation
+import StreamCore
 
 /// An object responsible to coordinate the audio analysis pipeline
 public struct AudioAnalysisEngine: Sendable {

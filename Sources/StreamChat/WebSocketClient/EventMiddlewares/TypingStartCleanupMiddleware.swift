@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension TimeInterval {
     /// The maximum time the incoming `typingStart` event is valid before a `typingStop` event is emitted automatically.

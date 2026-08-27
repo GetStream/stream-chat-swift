@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A type representing a chat channel member. `ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 public class ChatChannelMember: ChatUser, @unchecked Sendable {

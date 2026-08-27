@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SearchResultMessage: Sendable, Decodable {
     let attachments: [MessageAttachmentPayload]

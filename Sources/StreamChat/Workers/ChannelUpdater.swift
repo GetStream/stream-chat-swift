@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater: Worker, @unchecked Sendable {

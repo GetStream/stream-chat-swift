@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The model for a poll. `Poll` is an immutable snapshot of a poll entity at the given time.
 public final class Poll: Identifiable, Sendable {

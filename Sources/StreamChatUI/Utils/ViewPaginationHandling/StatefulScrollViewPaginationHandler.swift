@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import UIKit
 
 /// A component responsible to handle when to load new pages in a scrollView holding state associated to the content view

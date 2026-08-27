@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ImageSize: Sendable, Decodable {
     /// Crop mode. One of: top, bottom, left, right, center

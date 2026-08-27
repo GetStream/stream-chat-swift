@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Makes channel member related calls to the backend.
 class ChannelMemberUpdater: Worker, @unchecked Sendable {

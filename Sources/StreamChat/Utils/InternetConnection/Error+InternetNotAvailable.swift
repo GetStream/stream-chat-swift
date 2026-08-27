@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The list of know n"internet connection is not available" errors. This list is hardly completely and it's meant
 /// to be extended as needed.

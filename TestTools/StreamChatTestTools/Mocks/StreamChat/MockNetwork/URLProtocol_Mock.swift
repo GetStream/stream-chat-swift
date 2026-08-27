@@ -6,6 +6,7 @@ import Foundation
 import XCTest
 
 @testable import StreamChat
+import StreamCore
 
 /// This URLProtocol intercepts the network communication and provides mock responses for the registered endpoints.
 final class URLProtocol_Mock: URLProtocol {

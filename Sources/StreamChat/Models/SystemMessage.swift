@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A model describing a system message that can be sent alongside channel actions
 /// such as adding members, removing members, or truncating a channel.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension TimeInterval {
     /// The number of seconds from the last `typingStart` event until the `typingStop` event is automatically sent.

@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 @objc(ThreadDTO)
 class ThreadDTO: NSManagedObject {

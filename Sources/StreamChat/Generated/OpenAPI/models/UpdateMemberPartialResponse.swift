@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UpdateMemberPartialResponse: Sendable, Decodable {
     let channelMember: MemberPayload?

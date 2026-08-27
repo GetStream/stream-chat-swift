@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// `ChatChannelController` is a controller class which allows mutating and observing changes of a specific chat channel.
 ///

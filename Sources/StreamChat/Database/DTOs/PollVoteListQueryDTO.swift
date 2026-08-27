@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 @objc(PollVoteListQueryDTO)
 class PollVoteListQueryDTO: NSManagedObject {

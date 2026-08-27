@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class VotingVisibility: RawRepresentable, Codable, Hashable, Sendable {
     public let rawValue: String

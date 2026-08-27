@@ -4,6 +4,7 @@
 
 import AVFoundation
 @testable import StreamChat
+import StreamCore
 
 public class MockAVPlayer: AVPlayer {
     public nonisolated(unsafe) var playWasCalled = false

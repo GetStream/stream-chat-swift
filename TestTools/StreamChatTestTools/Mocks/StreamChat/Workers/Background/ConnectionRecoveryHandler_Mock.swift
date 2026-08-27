@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 /// Mock implementation of `ConnectionRecoveryHandler`

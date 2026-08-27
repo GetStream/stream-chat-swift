@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class BlockUsersResponse: Sendable, Decodable {
     /// User id who blocked another user

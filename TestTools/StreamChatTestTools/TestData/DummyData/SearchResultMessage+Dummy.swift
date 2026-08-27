@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension SearchResultMessage {
     /// The search endpoint is the only one returning a message with an embedded channel, so this is

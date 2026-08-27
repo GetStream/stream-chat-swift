@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class GetBlockedUsersResponse: Sendable, Decodable {
     /// Array of blocked user object

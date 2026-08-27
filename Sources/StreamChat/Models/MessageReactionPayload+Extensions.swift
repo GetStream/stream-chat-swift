@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // Extra glue for reducing the git diff: the generated model nests the custom data
 // under `custom` and orders its init differently from the previously hand-written

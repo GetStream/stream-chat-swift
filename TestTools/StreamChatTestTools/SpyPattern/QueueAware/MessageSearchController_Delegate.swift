@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 // A concrete `MessageSearchControllerDelegate` implementation allowing capturing the delegate calls

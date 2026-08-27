@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UpdatePollPartialRequestBody: Sendable, Encodable, JSONEncodable {
     /// Sets new field values

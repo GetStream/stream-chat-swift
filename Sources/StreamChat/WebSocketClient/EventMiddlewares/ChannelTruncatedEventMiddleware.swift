@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The middleware listens for `ChannelTruncatedEventMiddleware` events and updates `ChannelDTO` accordingly.
 struct ChannelTruncatedEventMiddleware: EventMiddleware {

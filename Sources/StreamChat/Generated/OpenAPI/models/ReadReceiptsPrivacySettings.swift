@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class ReadReceiptsPrivacySettings: @unchecked Sendable, Codable, JSONEncodable {
     public var enabled: Bool

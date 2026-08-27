@@ -5,6 +5,7 @@
 import CryptoKit
 import Foundation
 import StreamChat
+import StreamCore
 
 public final class StreamVideoCache: @unchecked Sendable {
     public let maxSizeInBytes: Int

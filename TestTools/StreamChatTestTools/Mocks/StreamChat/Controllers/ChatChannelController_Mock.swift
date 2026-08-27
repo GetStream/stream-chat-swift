@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     var mockCid: ChannelId?

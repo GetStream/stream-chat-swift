@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Coding keys for message-related JSON payloads
 enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 /// The generated model is `MessageResponse`; tests keep the historical name.

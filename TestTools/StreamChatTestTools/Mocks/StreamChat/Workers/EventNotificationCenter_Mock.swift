@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 /// Mock implementation of `EventNotificationCenter`
 final class EventNotificationCenter_Mock: PersistentEventNotificationCenter, @unchecked Sendable {

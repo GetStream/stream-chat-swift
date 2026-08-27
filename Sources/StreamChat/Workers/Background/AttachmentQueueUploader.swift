@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// Observers the storage for attachments in a `.pendingUpload` state and uploads data from `localURL` to backend.
 ///

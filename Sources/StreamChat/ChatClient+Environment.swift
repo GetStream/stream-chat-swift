@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension ChatClient {
     /// An object containing all dependencies of `Client`

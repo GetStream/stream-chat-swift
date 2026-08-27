@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 struct ChannelListPayload {
     /// A list of channels response (see `ChannelQuery`).

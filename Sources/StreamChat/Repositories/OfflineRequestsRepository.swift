@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 typealias QueueOfflineRequestBlock = (DataEndpoint) -> Void
 typealias DataEndpoint = Endpoint<Data>

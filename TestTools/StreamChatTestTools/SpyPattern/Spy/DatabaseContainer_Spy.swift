@@ -4,6 +4,8 @@
 
 import CoreData
 @testable import StreamChat
+import class StreamCore.Atomic
+import enum StreamCore.RawJSON
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The enhanced mention suggestions provider.
 ///

@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates and returns a `MessageReminderListController` for the specified query.

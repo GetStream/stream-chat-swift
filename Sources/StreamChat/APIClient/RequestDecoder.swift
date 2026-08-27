@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object responsible for handling incoming URL request response and decoding it.
 protocol RequestDecoder: Sendable {

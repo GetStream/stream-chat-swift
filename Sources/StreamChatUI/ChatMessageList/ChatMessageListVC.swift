@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// Controller that shows list of messages and composer together in the selected channel.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object which represents the currently logged in user.
 public final class ConnectedUser: Sendable {

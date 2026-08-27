@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MemberInfoPayload: Sendable, Decodable {
     /// Role of the member in the channel

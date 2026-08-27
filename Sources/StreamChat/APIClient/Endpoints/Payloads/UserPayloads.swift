@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id

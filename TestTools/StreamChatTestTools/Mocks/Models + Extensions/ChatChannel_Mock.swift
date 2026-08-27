@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension ChannelConfig {
     /// Creates a new `ChannelConfig` object from the provided data.

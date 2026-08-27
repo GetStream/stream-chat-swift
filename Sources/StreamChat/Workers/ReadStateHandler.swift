@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A handler which enables marking channels read and unread.
 ///

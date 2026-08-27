@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UpdateLiveLocationRequest: Sendable, Encodable, JSONEncodable {
     /// Time when the live location expires

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UpdateMemberPartialRequest: Sendable, Encodable, JSONEncodable {
     let set: [String: RawJSON]?

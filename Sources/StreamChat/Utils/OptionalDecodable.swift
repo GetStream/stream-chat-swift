@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// This structure is a wrapper for all decodable object
 /// What it does is that it stores the optional Decodable object into

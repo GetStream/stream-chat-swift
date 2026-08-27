@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// On object responsible for creating a `URLRequest`, and encoding all required and `Endpoint` specific data to it.
 protocol RequestEncoder: Sendable {

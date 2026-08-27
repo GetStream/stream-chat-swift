@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A component that tracks pending channel deliveries and manages throttled requests to mark messages as delivered.
 ///

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class EventBatcher_Mock: EventBatcher, @unchecked Sendable {
     var currentBatch: [Event] = []

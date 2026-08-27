@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public extension AnyAttachmentPayload {
     static let mockFile = try! Self(localFileURL: .localYodaQuote, attachmentType: .file)

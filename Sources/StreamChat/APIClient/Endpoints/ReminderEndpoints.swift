@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension Endpoint {
     // Creates or updates a reminder for a message

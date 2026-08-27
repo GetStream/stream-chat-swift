@@ -5,6 +5,7 @@
 import Combine
 import CoreData
 import Foundation
+import StreamCore
 
 /// The root object representing a Stream Chat.
 ///

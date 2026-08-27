@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class CurrentUserUnreads: Sendable, Decodable {
     public let channelType: [UnreadChannelByType]

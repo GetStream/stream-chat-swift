@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import enum StreamCore.RawJSON
 
 extension UserPayload {
     /// Returns a dummy user payload with the given `id` and `extraData`

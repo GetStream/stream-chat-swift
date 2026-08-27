@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The middleware listens for `UserChannelBanEventMiddleware` events and updates `MemberDTO` accordingly.
 struct UserChannelBanEventsMiddleware: EventMiddleware {

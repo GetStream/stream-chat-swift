@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An uploaded file.
 public struct UploadedFile: Sendable, Decodable {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates a new `EventsController` that can be used for event listening.

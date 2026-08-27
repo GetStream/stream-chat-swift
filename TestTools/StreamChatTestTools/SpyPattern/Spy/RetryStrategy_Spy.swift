@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 /// Mock implementation of `RetryStrategy`.
 final class RetryStrategy_Spy: RetryStrategy, Spy, @unchecked Sendable {

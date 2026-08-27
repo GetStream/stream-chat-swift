@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public protocol ConnectionEvent: Event {
     var connectionId: String { get }

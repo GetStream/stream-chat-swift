@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 struct FlagRequestBody: Codable, Hashable {
     let reason: String?

@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 /// Makes a users query call to the backend and updates the local storage with the results.
 class UserListUpdater: Worker, @unchecked Sendable {

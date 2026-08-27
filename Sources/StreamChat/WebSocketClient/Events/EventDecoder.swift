@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A lightweight object for decoding incoming events.
 struct EventDecoder {

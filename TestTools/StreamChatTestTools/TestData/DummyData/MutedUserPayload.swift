@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension MutedUserPayload {
     /// Returns a muted user with the given `userId` and `extraData`

@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 extension ChatState {
     final class Observer {

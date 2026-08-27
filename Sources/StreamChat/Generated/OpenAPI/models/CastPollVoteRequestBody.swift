@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class CastPollVoteRequestBody: Sendable, Encodable, JSONEncodable {
     let vote: VoteDataRequestBody?

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public struct TestEvent: Event, Equatable {
     let uuid: UUID = .init()

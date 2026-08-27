@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum EndpointPath: Codable {
     case custom(String)

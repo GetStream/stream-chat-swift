@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class Role: Sendable, Codable, JSONEncodable {
     /// Date/time of creation

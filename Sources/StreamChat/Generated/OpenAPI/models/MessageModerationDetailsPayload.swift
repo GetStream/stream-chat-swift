@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MessageModerationDetailsPayload: Sendable, Decodable {
     let action: String

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A configuration object used to configure a `ChatClient` instance.
 ///

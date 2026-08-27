@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// When we receive events, we need to check if a channel should be added or removed from
 /// the current query depending on the following events:

@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamCore
 import UIKit
 
 @MainActor public protocol MarkdownFormatter {

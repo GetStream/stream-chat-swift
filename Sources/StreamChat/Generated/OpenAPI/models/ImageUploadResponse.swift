@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ImageUploadResponse: Sendable, Decodable {
     /// Duration of the request in milliseconds

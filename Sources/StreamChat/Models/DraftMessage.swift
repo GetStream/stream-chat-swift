@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public struct DraftMessage: Sendable, Identifiable {
     /// A unique identifier of the message.

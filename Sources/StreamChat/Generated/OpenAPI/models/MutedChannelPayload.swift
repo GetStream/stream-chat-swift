@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MutedChannelPayload: Sendable, Decodable {
     /// Represents channel in chat

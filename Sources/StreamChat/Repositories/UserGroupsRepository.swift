@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A response containing a list of user groups.
 struct UserGroupListResponse: Sendable {

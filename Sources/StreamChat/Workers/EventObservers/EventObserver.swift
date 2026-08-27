@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The type is designed to observe events conforming to `Event` protocol delivered via `NotificationCenter`
 class EventObserver {

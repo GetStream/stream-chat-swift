@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 /// A unique identifier of a message.
 public typealias MessageId = String

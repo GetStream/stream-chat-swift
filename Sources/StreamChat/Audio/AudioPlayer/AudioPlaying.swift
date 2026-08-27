@@ -4,6 +4,7 @@
 
 import AVFoundation
 import Foundation
+import StreamCore
 
 /// A protocol describing an object that can be manage the playback of an audio file or stream.
 public protocol AudioPlaying: AnyObject, Sendable {

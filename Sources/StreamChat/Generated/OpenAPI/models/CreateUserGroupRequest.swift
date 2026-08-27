@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class CreateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// An optional description for the group

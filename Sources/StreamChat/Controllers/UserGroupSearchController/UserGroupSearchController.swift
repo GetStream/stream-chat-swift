@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates a new `UserGroupSearchController`.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class PollVotePayload: Sendable, Decodable {
     let answerText: String?

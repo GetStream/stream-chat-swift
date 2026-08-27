@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MessageReactionsPayload: Sendable, Decodable {
     /// List of reactions

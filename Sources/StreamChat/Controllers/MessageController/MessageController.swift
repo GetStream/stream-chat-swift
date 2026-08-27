@@ -5,6 +5,7 @@
 import Combine
 import CoreData
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates a new `MessageController` for the message with the provided id.

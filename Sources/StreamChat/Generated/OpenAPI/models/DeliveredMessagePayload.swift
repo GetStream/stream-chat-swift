@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class DeliveredMessagePayload: Sendable, Encodable, JSONEncodable {
     let cid: String?

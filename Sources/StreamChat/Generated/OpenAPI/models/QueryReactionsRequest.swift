@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class QueryReactionsRequest: Sendable, Encodable, JSONEncodable {
     /// Filter to apply to the query

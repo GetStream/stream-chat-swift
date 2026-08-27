@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class BlockUsersRequest: Sendable, Encodable, JSONEncodable {
     /// User id to block

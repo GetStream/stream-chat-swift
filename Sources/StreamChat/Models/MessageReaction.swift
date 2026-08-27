@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A type representing a message reaction. `ChatMessageReaction` is an immutable snapshot
 /// of a message reaction entity at the given time.

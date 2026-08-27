@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {

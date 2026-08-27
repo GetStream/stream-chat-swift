@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class PushPreference: Sendable, Decodable {
     private let _level: PushPreferenceLevel?

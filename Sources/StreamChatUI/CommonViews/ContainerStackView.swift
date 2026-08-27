@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 // swiftlint:disable regular_constraints_forbidden

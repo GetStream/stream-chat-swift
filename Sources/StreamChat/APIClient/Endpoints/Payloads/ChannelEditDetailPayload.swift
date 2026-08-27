@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 struct ChannelEditDetailPayload: Encodable {
     let id: String?

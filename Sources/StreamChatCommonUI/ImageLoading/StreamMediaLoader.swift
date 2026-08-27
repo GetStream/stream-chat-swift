@@ -4,6 +4,7 @@
 
 import AVKit
 import StreamChat
+import StreamCore
 import UIKit
 
 /// The default ``MediaLoader`` implementation.

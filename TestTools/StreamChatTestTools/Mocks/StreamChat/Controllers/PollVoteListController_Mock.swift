@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class PollVoteListController_Mock: PollVoteListController, @unchecked Sendable {
     @Atomic var synchronize_called = false

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 struct DraftUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {

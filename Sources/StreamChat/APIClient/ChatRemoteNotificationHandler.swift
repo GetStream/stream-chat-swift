@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 import UserNotifications
 
 public class MessageNotificationContent {

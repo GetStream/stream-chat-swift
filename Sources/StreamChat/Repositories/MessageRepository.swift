@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 enum MessageRepositoryError: Error {
     case messageDoesNotExist

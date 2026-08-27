@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum ThreadCodingKeys: String, CodingKey, CaseIterable {
     case channel

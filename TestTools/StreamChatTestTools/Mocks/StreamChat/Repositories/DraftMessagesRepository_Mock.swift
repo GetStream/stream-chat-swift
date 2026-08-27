@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 final class DraftMessagesRepository_Mock: DraftMessagesRepository, @unchecked Sendable {

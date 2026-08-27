@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The component responsible for downloading files.
 protocol AttachmentDownloader {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The middleware listens for `UserUpdatedEvent`s and updates the database accordingly.
 struct UserUpdateMiddleware: EventMiddleware {

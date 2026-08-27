@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 extension TypingEventDTO {
     static let unique: TypingEventDTO = try!

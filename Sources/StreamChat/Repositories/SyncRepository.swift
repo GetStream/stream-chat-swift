@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 enum SyncError: Error, Sendable {
     case noNeedToSync

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UpdateMessageRequest: Sendable, Encodable, JSONEncodable {
     /// Message data for creating or updating a message

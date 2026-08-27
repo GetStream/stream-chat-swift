@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension Filter {
     /// Converts the current filter into an NSPredicate if it can be translated.

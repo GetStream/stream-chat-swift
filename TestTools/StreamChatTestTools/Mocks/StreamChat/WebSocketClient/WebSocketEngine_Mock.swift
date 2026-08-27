@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 final class WebSocketEngine_Mock: WebSocketEngine, @unchecked Sendable {
     var request: URLRequest

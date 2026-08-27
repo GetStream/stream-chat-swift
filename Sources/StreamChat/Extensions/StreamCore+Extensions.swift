@@ -3,4 +3,4 @@
 //
 
 import Foundation
-@_exported import StreamCore
+import StreamCore

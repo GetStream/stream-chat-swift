@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MessageReactionPayload: Sendable, Decodable {
     /// Date/time of creation

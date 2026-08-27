@@ -46,18 +46,28 @@ let package = Package(
         ),
         .target(
             name: "StreamChatUI",
-            dependencies: ["StreamChat", "StreamChatCommonUI"],
+            dependencies: [
+                "StreamChat",
+                "StreamChatCommonUI",
+                .product(name: "StreamCore", package: "stream-core-swift")
+            ],
             exclude: ["Info.plist"]
         ),
         .target(
             name: "StreamChatCommonUI",
-            dependencies: ["StreamChat"],
+            dependencies: [
+                "StreamChat",
+                .product(name: "StreamCore", package: "stream-core-swift")
+            ],
             exclude: ["Info.plist", "Generated/L10n_template.stencil"],
             resources: [.process("Resources")]
         ),
         .target(
             name: "StreamChatTestTools",
-            dependencies: ["StreamChat"],
+            dependencies: [
+                "StreamChat",
+                .product(name: "StreamCore", package: "stream-core-swift")
+            ],
             path: "TestTools/StreamChatTestTools",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]

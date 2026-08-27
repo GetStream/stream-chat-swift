@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension Endpoint {
     static func drafts(query: DraftListQuery) -> Endpoint<DraftListPayloadResponse> {

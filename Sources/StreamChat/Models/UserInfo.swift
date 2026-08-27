@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The user information used to connect the user to chat.
 public struct UserInfo: Identifiable, Sendable {

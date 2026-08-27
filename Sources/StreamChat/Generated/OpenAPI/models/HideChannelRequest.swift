@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class HideChannelRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to clear message history of the channel or not

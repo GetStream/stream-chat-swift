@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class SharedLocation: Sendable, Decodable {
     public let channelCid: ChannelId

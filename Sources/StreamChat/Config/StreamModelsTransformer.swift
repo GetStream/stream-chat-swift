@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object that provides a way to transform Stream Chat models.
 ///

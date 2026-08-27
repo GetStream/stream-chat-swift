@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered a new reaction is added.
 public final class ReactionNewEvent: ChannelSpecificEvent {

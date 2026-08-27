@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SendReactionRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to replace all existing user reactions

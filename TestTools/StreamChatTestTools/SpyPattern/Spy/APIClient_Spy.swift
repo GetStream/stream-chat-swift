@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.

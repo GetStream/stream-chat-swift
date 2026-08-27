@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @unchecked Sendable {
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`

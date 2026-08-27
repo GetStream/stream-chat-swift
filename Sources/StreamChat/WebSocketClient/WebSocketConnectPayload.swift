@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class WebSocketConnectPayload: Encodable, Sendable {
     enum CodingKeys: String, CodingKey {

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MessageReactionGroupPayload: Sendable, Decodable {
     /// Count is the number of reactions of this type.

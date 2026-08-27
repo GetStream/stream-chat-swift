@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// The type is designed to store the JWT and the user it is related to.
 public struct Token: Decodable, Equatable, ExpressibleByStringLiteral, Sendable {

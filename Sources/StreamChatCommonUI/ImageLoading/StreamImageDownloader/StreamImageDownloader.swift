@@ -4,6 +4,7 @@
 
 import CryptoKit
 import StreamChat
+import StreamCore
 import UIKit
 
 /// The default image loading pipeline used by the Stream UI SDKs.

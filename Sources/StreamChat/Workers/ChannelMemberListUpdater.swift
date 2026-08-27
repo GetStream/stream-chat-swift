@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 /// Makes a channel members query call to the backend and updates the local storage with the results.
 class ChannelMemberListUpdater: Worker, @unchecked Sendable {

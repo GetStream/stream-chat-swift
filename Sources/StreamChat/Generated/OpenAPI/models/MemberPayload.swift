@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class MemberPayload: Sendable, Decodable {
     let archivedAt: Date?

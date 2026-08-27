@@ -5,6 +5,7 @@
 import Combine
 import CoreData
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates and returns a `PollController` for the specified message and poll.

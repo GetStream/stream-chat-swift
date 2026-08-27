@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class DeleteChannelResponse: Sendable, Decodable {
     /// Represents channel in chat

@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.

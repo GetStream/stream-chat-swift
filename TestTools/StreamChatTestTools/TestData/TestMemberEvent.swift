@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public struct TestMemberEvent: MemberEvent, ChannelSpecificEvent, Hashable {
     public static var unique: TestMemberEvent { .init(cid: .unique, memberUserId: .unique) }

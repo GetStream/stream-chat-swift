@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object allowing making request to Stream Chat servers.
 class APIClient: @unchecked Sendable {

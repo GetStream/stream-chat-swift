@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An object used to pre-process incoming `Event`.
 protocol EventMiddleware {

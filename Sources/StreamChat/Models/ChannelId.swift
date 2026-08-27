@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A type representing a unique identifier of a `ChatChannel`.
 ///

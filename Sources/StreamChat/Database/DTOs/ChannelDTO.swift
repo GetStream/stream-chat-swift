@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {

@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 extension NSManagedObject {
     @objc class var entityName: String {

@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 extension ChatClient {
     /// Creates a new `ChannelListController` with the provided channel query.

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 struct VirtualTimeTimer: TimerScheduling {
     nonisolated(unsafe) static var time: VirtualTime!

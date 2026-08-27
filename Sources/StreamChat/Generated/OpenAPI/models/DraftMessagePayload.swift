@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class DraftMessagePayload: Sendable, Decodable {
     /// Array of message attachments

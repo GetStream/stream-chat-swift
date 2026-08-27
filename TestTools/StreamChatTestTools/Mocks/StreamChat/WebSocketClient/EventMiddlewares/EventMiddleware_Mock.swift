@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import protocol StreamCore.Event
 
 /// A test middleware that can be initiated with a closure
 final class EventMiddleware_Mock: EventMiddleware {

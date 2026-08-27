@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// An event type SDK fallbacks to if incoming event was failed to be
 /// decoded as a system event.

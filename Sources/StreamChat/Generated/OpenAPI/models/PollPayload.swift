@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class PollPayload: Sendable, Decodable {
     let allowAnswers: Bool

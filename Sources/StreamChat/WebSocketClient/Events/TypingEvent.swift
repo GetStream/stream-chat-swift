@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when user starts/stops typing in a channel.
 public final class TypingEvent: ChannelSpecificEvent {

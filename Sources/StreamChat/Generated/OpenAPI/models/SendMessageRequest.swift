@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class SendMessageRequest: Sendable, Encodable, JSONEncodable {
     /// When true, the response includes mentioned_members: for each mentioned user, whether that user is currently a channel member. Requires the ReadChannelMembers permission

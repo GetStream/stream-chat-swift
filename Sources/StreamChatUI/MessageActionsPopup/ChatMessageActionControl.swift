@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamCore
 import UIKit
 
 /// Button for action displayed in `ChatMessageActionsView`.

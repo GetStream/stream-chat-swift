@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UnmuteRequest: Sendable, Encodable, JSONEncodable {
     /// User IDs to unmute

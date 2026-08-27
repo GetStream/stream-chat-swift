@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UnmuteChannelRequest: Sendable, Encodable, JSONEncodable {
     /// Channel CIDs to mute (if multiple channels)

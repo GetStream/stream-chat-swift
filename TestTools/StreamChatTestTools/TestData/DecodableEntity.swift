@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 protocol DecodableEntity: Decodable {
     var extraData: [String: RawJSON] { get }

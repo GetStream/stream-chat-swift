@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 extension EventsController {
     /// A publisher emitting a new value every time an event is observed.

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class VoteDataRequestBody: Sendable, Encodable, JSONEncodable {
     let answerText: String?

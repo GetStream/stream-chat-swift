@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 extension MessageSearchState {
     final class Observer {

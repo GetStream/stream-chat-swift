@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 // A concrete `ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls
 final class ChannelMemberController_Delegate: QueueAwareDelegate, ChatChannelMemberControllerDelegate {

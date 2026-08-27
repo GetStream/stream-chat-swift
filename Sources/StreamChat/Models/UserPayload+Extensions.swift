@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 // The fields shared by the generated UserPayload and OwnUserResponse, which do
 // not have a common base class.

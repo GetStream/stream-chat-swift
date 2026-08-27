@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// A unique identifier of a user.
 public typealias UserId = String

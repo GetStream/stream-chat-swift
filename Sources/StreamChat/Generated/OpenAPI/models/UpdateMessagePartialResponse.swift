@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class UpdateMessagePartialResponse: Sendable, Decodable {
     /// Represents any chat message

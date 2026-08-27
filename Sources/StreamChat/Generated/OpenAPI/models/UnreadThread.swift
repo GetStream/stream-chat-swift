@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 public final class UnreadThread: Sendable, Decodable {
     public let lastRead: Date?

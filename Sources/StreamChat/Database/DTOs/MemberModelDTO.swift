@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 @objc(MemberDTO)
 class MemberDTO: NSManagedObject {

@@ -4,6 +4,7 @@
 
 import CoreData
 import Foundation
+import StreamCore
 
 public extension ChatClient {
     /// Creates a new `UserGroupListController` with the provided query.

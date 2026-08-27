@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 
 public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     public static func mock(

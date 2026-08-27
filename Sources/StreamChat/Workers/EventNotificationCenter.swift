@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 /// The type is designed to pre-process some incoming `Event` via middlewares before being published
 class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCenter, @unchecked Sendable {

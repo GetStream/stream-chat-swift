@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import StreamCore
 import XCTest
 
 final class RequestDecoder_Spy: RequestDecoder, Spy, @unchecked Sendable {

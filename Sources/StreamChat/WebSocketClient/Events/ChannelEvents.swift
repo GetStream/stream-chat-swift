@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Triggered when a channel is updated.
 public final class ChannelUpdatedEvent: ChannelSpecificEvent {

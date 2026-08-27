@@ -3,6 +3,7 @@
 //
 
 import CoreData
+import StreamCore
 
 @objc(ChannelListQueryDTO)
 class ChannelListQueryDTO: NSManagedObject {

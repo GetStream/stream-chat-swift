@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 final class ChannelDetailPayload: Sendable, Decodable {
     /// Whether auto translation is enabled or not
