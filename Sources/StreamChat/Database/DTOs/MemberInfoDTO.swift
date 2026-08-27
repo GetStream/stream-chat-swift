@@ -53,7 +53,6 @@ extension ChannelDTO {
             dto = MemberInfoDTO(context: managedObjectContext)
             dto.userId = userId
             dto.channel = self
-            typingMemberInfos.insert(dto)
         }
         dto.update(from: member)
     }
