@@ -1427,10 +1427,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
     // MARK: - Add reaction
 
-    func setupReactionData(userId: UserId = .unique) throws -> MessageId {
+    func setupReactionData(userId: UserId = .unique, cid: ChannelId = .unique) throws -> MessageId {
         let messageId: MessageId = .unique
         try database.createCurrentUser(id: userId)
-        try database.createMessage(id: messageId, authorId: userId)
+        try database.createMessage(id: messageId, authorId: userId, cid: cid)
         return messageId
     }
 
@@ -1466,25 +1466,31 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called.
         XCTAssertEqual(
             request,
-            AnyEndpoint(.addReaction(
-                reactionType,
-                score: reactionScore,
-                enforceUnique: false,
-                extraData: reactionExtraData,
-                skipPush: false,
-                emojiCode: nil,
-                messageId: messageId
+            AnyEndpoint(.sendReaction(
+                id: messageId,
+                sendReactionRequest: SendReactionRequest(
+                    enforceUnique: false,
+                    reaction: ReactionRequest(
+                        custom: reactionExtraData,
+                        score: reactionScore,
+                        type: reactionType
+                    ),
+                    skipPush: false
+                )
             ))
         )
     }
 
     func test_addReaction_propagatesSuccessfulResponse() throws {
-        let messageId: MessageId = try setupReactionData()
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+        let messageId: MessageId = try setupReactionData(userId: userId, cid: cid)
         let dbCall = XCTestExpectation(description: "database call")
 
         // Simulate `addReaction` call
         messageUpdater.addReaction(
-            .init(rawValue: .unique),
+            reactionType,
             score: 1,
             enforceUnique: false,
             skipPush: false,
@@ -1502,7 +1508,10 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient.waitForRequest()
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: messageId, authorUserId: userId, cid: cid),
+            reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId))
+        )))
     }
 
     func test_addReaction_retry() throws {
@@ -1536,7 +1545,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .sending)
 
         // Simulate API response with failure - this kind of error is not retried
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.failure(TestError()))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1582,7 +1591,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .sending)
         // Simulate API response with failure - this kind of error is not retried
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1629,7 +1638,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .sending)
         // Simulate API response with failure - this kind of error is not retried
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1663,12 +1672,15 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Assert correct endpoint is called.
         apiClient.waitForRequest()
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.deleteReaction(reactionType, messageId: messageId)))
+        let referenceEndpoint: Endpoint<DeleteReactionResponse> = .deleteReaction(id: messageId, type: reactionType.rawValue)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
     func test_deleteReaction_propagatesSuccessfulResponse() throws {
         let reactionType: MessageReactionType = "like"
-        let messageId: MessageId = try setupReactionData()
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId, cid: cid)
 
         // Simulate `deleteReaction` call.
         let dbCall = XCTestExpectation(description: "database call")
@@ -1682,7 +1694,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with success.
         apiClient.waitForRequest()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: messageId, authorUserId: userId, cid: cid),
+            reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId))
+        )))
     }
 
     func test_deleteReaction_propagatesError() throws {
@@ -1719,7 +1734,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(error))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1770,7 +1785,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1822,7 +1837,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1877,7 +1892,7 @@ final class MessageUpdater_Tests: XCTestCase {
             message: .unique,
             statusCode: 400
         ))
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(clientError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1933,7 +1948,7 @@ final class MessageUpdater_Tests: XCTestCase {
             message: .unique,
             statusCode: 404
         ))
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(clientError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in

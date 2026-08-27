@@ -26,12 +26,12 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertTrue(EndpointPath.deleteMessage("").shouldBeQueuedOffline)
     }
 
-    func test_addReaction_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.addReaction("").shouldBeQueuedOffline)
+    func test_sendReaction_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.sendReaction(id: "").shouldBeQueuedOffline)
     }
 
     func test_deleteReaction_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.deleteReaction("", "").shouldBeQueuedOffline)
+        XCTAssertTrue(EndpointPath.deleteReaction(id: "", type: "").shouldBeQueuedOffline)
     }
 
     func test_createChannel_shouldNOTBeQueuedOffline() {
@@ -249,8 +249,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.replies("message_idr"))
         assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))
-        assertResultEncodingAndDecoding(.addReaction("message_ida"))
-        assertResultEncodingAndDecoding(.deleteReaction("message_id", MessageReactionType(rawValue: "love")))
+        assertResultEncodingAndDecoding(.sendReaction(id: "message_ida"))
+        assertResultEncodingAndDecoding(.deleteReaction(id: "message_id", type: "love"))
         assertResultEncodingAndDecoding(.messageAction("message_ida"))
 
         assertResultEncodingAndDecoding(.banMember)

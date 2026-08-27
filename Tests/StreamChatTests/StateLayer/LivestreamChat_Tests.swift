@@ -536,9 +536,12 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Message Reactions
 
     func test_sendReaction_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
-
         let reactionType = MessageReactionType(rawValue: "like")
+        client.mockAPIClient.test_mockResponseResult(Result<SendReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: "msg-1"),
+            reaction: .dummy(type: reactionType, messageId: "msg-1", user: .dummy(userId: .unique))
+        )))
+
         try await livestreamChat.sendReaction(
             to: "msg-1",
             with: reactionType,
@@ -549,25 +552,31 @@ final class LivestreamChat_Tests: XCTestCase {
             extraData: ["k": .string("v")]
         )
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
-            reactionType,
-            score: 2,
-            enforceUnique: true,
-            extraData: ["k": .string("v")],
-            skipPush: true,
-            emojiCode: "👍",
-            messageId: "msg-1"
+        let expectedEndpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: "msg-1",
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: true,
+                reaction: ReactionRequest(
+                    custom: ["k": .string("v"), "emoji_code": .string("👍")],
+                    score: 2,
+                    type: reactionType
+                ),
+                skipPush: true
+            )
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_deleteReaction_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
-
         let reactionType = MessageReactionType(rawValue: "like")
+        client.mockAPIClient.test_mockResponseResult(Result<DeleteReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: "msg-1"),
+            reaction: .dummy(type: reactionType, messageId: "msg-1", user: .dummy(userId: .unique))
+        )))
+
         try await livestreamChat.deleteReaction(from: "msg-1", with: reactionType)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteReaction(reactionType, messageId: "msg-1")
+        let expectedEndpoint = Endpoint<DeleteReactionResponse>.deleteReaction(id: "msg-1", type: reactionType.rawValue)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

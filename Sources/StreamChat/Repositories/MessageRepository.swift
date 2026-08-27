@@ -406,6 +406,58 @@ class MessageRepository: @unchecked Sendable {
         }, completion: completion)
     }
 
+    func saveSentReaction(
+        message: MessageResponse,
+        reaction: MessageReactionPayload,
+        version: String?,
+        completion: (@Sendable () -> Void)? = nil
+    ) {
+        database.write { session in
+            try session.saveMessage(
+                payload: message,
+                syncOwnReactions: false,
+                skipDraftUpdate: true,
+                cache: nil
+            )
+            let dto = session.reaction(messageId: reaction.messageId, userId: reaction.userId, type: reaction.type)
+            guard dto?.localState != .pendingDelete else { return }
+            guard dto?.version == nil || dto?.version == version else { return }
+            try session.saveReaction(payload: reaction, query: nil, cache: nil)
+        } completion: { error in
+            if let error = error {
+                log.error("Error saving sent reaction for message with id \(message.id): \(error)")
+            }
+            completion?()
+        }
+    }
+
+    func saveDeletedReaction(
+        message: MessageResponse,
+        reaction: MessageReactionPayload,
+        completion: (@Sendable () -> Void)? = nil
+    ) {
+        database.write { session in
+            try session.saveMessage(
+                payload: message,
+                syncOwnReactions: false,
+                skipDraftUpdate: true,
+                cache: nil
+            )
+            guard let dto = session.reaction(
+                messageId: reaction.messageId,
+                userId: reaction.userId,
+                type: reaction.type
+            ) else { return }
+            guard dto.localState == .pendingDelete else { return }
+            session.delete(reaction: dto)
+        } completion: { error in
+            if let error = error {
+                log.error("Error saving deleted reaction for message with id \(message.id): \(error)")
+            }
+            completion?()
+        }
+    }
+
     func undoReactionAddition(
         on messageId: MessageId,
         type: MessageReactionType,

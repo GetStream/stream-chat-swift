@@ -629,6 +629,192 @@ final class MessageRepositoryTests: XCTestCase {
         return dbMessage
     }
 
+    // MARK: saveSentReaction
+
+    func test_saveSentReaction_savesReactionAndReconcilesMessage() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+        let version = "version"
+
+        try setUpReactionMessage(cid: cid, messageId: messageId, userId: userId)
+        try database.writeSynchronously { session in
+            let reaction = try session.addReaction(
+                to: messageId,
+                type: reactionType,
+                score: 1,
+                enforceUnique: false,
+                extraData: [:],
+                localState: .sending
+            )
+            reaction.version = version
+        }
+
+        try waitFor { done in
+            repository.saveSentReaction(
+                message: .dummy(messageId: messageId, authorUserId: userId, cid: cid, reactionScores: [reactionType: 3]),
+                reaction: .dummy(type: reactionType, score: 3, messageId: messageId, user: .dummy(userId: userId)),
+                version: version
+            ) { done(()) }
+        }
+
+        let reaction = try reactionState(messageId: messageId, userId: userId, type: reactionType)
+        XCTAssertEqual(reaction?.localState, .unknown)
+        XCTAssertEqual(reaction?.version, nil)
+        XCTAssertEqual(reaction?.score, 3)
+        XCTAssertEqual(message(for: messageId)?.reactionScores, [reactionType: 3])
+    }
+
+    func test_saveSentReaction_whenNewerLocalVersionExists_keepsLocalReactionState() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+
+        try setUpReactionMessage(cid: cid, messageId: messageId, userId: userId)
+        try database.writeSynchronously { session in
+            let reaction = try session.addReaction(
+                to: messageId,
+                type: reactionType,
+                score: 1,
+                enforceUnique: false,
+                extraData: [:],
+                localState: .sending
+            )
+            reaction.version = "newer_version"
+        }
+
+        try waitFor { done in
+            repository.saveSentReaction(
+                message: .dummy(messageId: messageId, authorUserId: userId, cid: cid),
+                reaction: .dummy(type: reactionType, score: 3, messageId: messageId, user: .dummy(userId: userId)),
+                version: "older_version"
+            ) { done(()) }
+        }
+
+        let reaction = try reactionState(messageId: messageId, userId: userId, type: reactionType)
+        XCTAssertEqual(reaction?.localState, .sending)
+        XCTAssertEqual(reaction?.version, "newer_version")
+        XCTAssertEqual(reaction?.score, 1)
+    }
+
+    func test_saveSentReaction_whenReactionIsPendingDelete_keepsPendingDelete() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+        let version = "version"
+
+        try setUpReactionMessage(cid: cid, messageId: messageId, userId: userId)
+        try database.writeSynchronously { session in
+            let reaction = try session.addReaction(
+                to: messageId,
+                type: reactionType,
+                score: 1,
+                enforceUnique: false,
+                extraData: [:],
+                localState: .pendingDelete
+            )
+            reaction.version = version
+        }
+
+        try waitFor { done in
+            repository.saveSentReaction(
+                message: .dummy(messageId: messageId, authorUserId: userId, cid: cid),
+                reaction: .dummy(type: reactionType, score: 3, messageId: messageId, user: .dummy(userId: userId)),
+                version: version
+            ) { done(()) }
+        }
+
+        let reaction = try reactionState(messageId: messageId, userId: userId, type: reactionType)
+        XCTAssertEqual(reaction?.localState, .pendingDelete)
+    }
+
+    // MARK: saveDeletedReaction
+
+    func test_saveDeletedReaction_deletesPendingDeleteReaction() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+
+        try setUpReactionMessage(cid: cid, messageId: messageId, userId: userId)
+        try database.writeSynchronously { session in
+            let reaction = try session.addReaction(
+                to: messageId,
+                type: reactionType,
+                score: 1,
+                enforceUnique: false,
+                extraData: [:],
+                localState: nil
+            )
+            reaction.localState = .pendingDelete
+        }
+
+        try waitFor { done in
+            repository.saveDeletedReaction(
+                message: .dummy(messageId: messageId, authorUserId: userId, cid: cid, reactionScores: [:]),
+                reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId))
+            ) { done(()) }
+        }
+
+        XCTAssertNil(try reactionState(messageId: messageId, userId: userId, type: reactionType))
+        XCTAssertEqual(message(for: messageId)?.reactionScores, [:])
+    }
+
+    func test_saveDeletedReaction_whenReactionIsReAdded_keepsNewReaction() throws {
+        let cid = ChannelId(type: .messaging, id: "c")
+        let messageId = "message_id"
+        let userId = "user_id"
+        let reactionType: MessageReactionType = "reaction"
+
+        try setUpReactionMessage(cid: cid, messageId: messageId, userId: userId)
+        try database.writeSynchronously { session in
+            _ = try session.addReaction(
+                to: messageId,
+                type: reactionType,
+                score: 1,
+                enforceUnique: false,
+                extraData: [:],
+                localState: .sending
+            )
+        }
+
+        try waitFor { done in
+            repository.saveDeletedReaction(
+                message: .dummy(messageId: messageId, authorUserId: userId, cid: cid),
+                reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId))
+            ) { done(()) }
+        }
+
+        let reaction = try reactionState(messageId: messageId, userId: userId, type: reactionType)
+        XCTAssertEqual(reaction?.localState, .sending)
+    }
+
+    private func setUpReactionMessage(cid: ChannelId, messageId: MessageId, userId: UserId) throws {
+        try database.createCurrentUser(id: userId)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: userId, cid: cid),
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+    }
+
+    private func reactionState(
+        messageId: MessageId,
+        userId: UserId,
+        type: MessageReactionType
+    ) throws -> (localState: LocalReactionState?, version: String?, score: Int64)? {
+        try database.readSynchronously { session in
+            session.reaction(messageId: messageId, userId: userId, type: type)
+                .map { ($0.localState, $0.version, $0.score) }
+        }
+    }
+
     // MARK: undoReactionAddition
 
     func test_undoReactionAddition_nonExistingReaction() {

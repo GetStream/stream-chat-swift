@@ -943,18 +943,24 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<SendReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: messageId),
+            reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: .unique))
+        )))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
-            reactionType,
-            score: 5,
-            enforceUnique: true,
-            extraData: ["key": .string("value")],
-            skipPush: true,
-            emojiCode: "👍",
-            messageId: messageId
+        let expectedEndpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: true,
+                reaction: ReactionRequest(
+                    custom: ["key": .string("value"), "emoji_code": .string("👍")],
+                    score: 5,
+                    type: reactionType
+                ),
+                skipPush: true
+            )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(reactionError)
@@ -967,14 +973,17 @@ extension LivestreamChannelController_Tests {
 
         controller.addReaction(reactionType, to: messageId) { _ in }
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
-            reactionType,
-            score: 1,
-            enforceUnique: false,
-            extraData: [:],
-            skipPush: false,
-            emojiCode: nil,
-            messageId: messageId
+        let expectedEndpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: false,
+                reaction: ReactionRequest(
+                    custom: [:],
+                    score: 1,
+                    type: reactionType
+                ),
+                skipPush: false
+            )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -991,11 +1000,14 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: messageId),
+            reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: .unique))
+        )))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteReaction(reactionType, messageId: messageId)
+        let expectedEndpoint = Endpoint<DeleteReactionResponse>.deleteReaction(id: messageId, type: reactionType.rawValue)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(reactionError)
     }

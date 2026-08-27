@@ -27,6 +27,7 @@ allowed_endpoints=(
     deletePollVote
     deleteFile
     deleteImage
+    deleteReaction
     deleteUserGroup
     getApp
     getBlockedUsers
@@ -47,6 +48,7 @@ allowed_endpoints=(
     searchRoles
     searchUserGroups
     sendMessage
+    sendReaction
     showChannel
     stopWatchingChannel
     unblockUsers
@@ -87,6 +89,7 @@ allowed_models=(
   CreatePollRequest
   CreateUserGroupRequest
   DeleteChannelResponse
+  DeleteReactionResponse
   DeliveredMessagePayload
   DeliveryReceiptsResponse
   DeviceResponse
@@ -132,6 +135,7 @@ allowed_models=(
   QueryPollVotesRequest
   QueryReactionsRequest
   ReactionGroupResponse
+  ReactionRequest
   ReactionResponse
   ReadReceiptsResponse
   ReminderResponseData
@@ -141,6 +145,8 @@ allowed_models=(
   SearchRolesResponse
   SendMessageRequest
   SendMessageResponse
+  SendReactionRequest
+  SendReactionResponse
   SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
@@ -218,8 +224,10 @@ encodable_only_models=(
   QueryMembersPayload
   QueryPollVotesRequestBody
   QueryReactionsRequest
+  ReactionRequest
   RemoveUserGroupMembersRequest
   SendMessageRequest
+  SendReactionRequest
   SortParamRequest
   UnblockUsersRequest
   UnmuteChannelRequest
@@ -242,6 +250,7 @@ decodable_only_models=(
   CreateDraftResponse
   CurrentUserUnreads
   DeleteChannelResponse
+  DeleteReactionResponse
   DraftMessagePayload
   DraftPayload
   FileUploadResponse
@@ -277,6 +286,7 @@ decodable_only_models=(
   SearchResultMessage
   SearchRolesResponse
   SendMessageResponsePayload
+  SendReactionResponse
   SharedLocation
   SharedLocationsResponse
   UnblockUsersResponse
@@ -476,6 +486,7 @@ retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVo
 retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
 retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
+retype_property ReactionRequest type String MessageReactionType
 retype_property ReactionResponse type String MessageReactionType
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
@@ -652,7 +663,9 @@ remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
 remove_property UnmuteUsersResponse duration
 remove_property CreateDraftResponse duration
+remove_property DeleteReactionResponse duration
 remove_property SendMessageResponsePayload duration
+remove_property SendReactionResponse duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
 
@@ -948,8 +961,6 @@ inject_v1_endpoint_paths() {
     case message(MessageId)
     case deleteMessage(MessageId)
     case replies(MessageId)
-    case addReaction(MessageId)
-    case deleteReaction(MessageId, MessageReactionType)
     case messageAction(MessageId)
     case translateMessage(MessageId)
 
@@ -999,8 +1010,6 @@ EOF
         case let .message(messageId): return "messages/\(messageId)"
         case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .addReaction(messageId): return "messages/\(messageId)/reaction"
-        case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
         case let .translateMessage(messageId): return "messages/\(messageId)/translate"
 

@@ -420,14 +420,16 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await apiClient.request(
-            endpoint: .addReaction(
-                type,
-                score: score,
-                enforceUnique: enforceUnique,
-                extraData: extraData,
-                skipPush: skipPush,
-                emojiCode: pushEmojiCode,
-                messageId: messageId
+            endpoint: .sendReaction(
+                id: messageId,
+                sendReactionRequest: SendReactionRequest(
+                    enforceUnique: enforceUnique,
+                    extraData: extraData,
+                    pushEmojiCode: pushEmojiCode,
+                    score: score,
+                    skipPush: skipPush,
+                    type: type
+                )
             )
         )
     }
@@ -440,7 +442,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteReaction(from messageId: MessageId, with type: MessageReactionType) async throws {
-        try await apiClient.request(endpoint: .deleteReaction(type, messageId: messageId))
+        try await apiClient.request(endpoint: .deleteReaction(id: messageId, type: type.rawValue))
     }
 
     /// Loads reactions for the specified message.

@@ -572,14 +572,16 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ) {
         let version = UUID().uuidString
 
-        let endpoint: Endpoint<EmptyResponse> = .addReaction(
-            type,
-            score: score,
-            enforceUnique: enforceUnique,
-            extraData: extraData,
-            skipPush: skipPush,
-            emojiCode: pushEmojiCode,
-            messageId: messageId
+        let endpoint: Endpoint<SendReactionResponse> = .sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: enforceUnique,
+                extraData: extraData,
+                pushEmojiCode: pushEmojiCode,
+                score: score,
+                skipPush: skipPush,
+                type: type
+            )
         )
 
         database.write { session in
@@ -598,11 +600,14 @@ class MessageUpdater: Worker, @unchecked Sendable {
             }
         } completion: { [weak self, weak repository] error in
             self?.apiClient.request(endpoint: endpoint) { [weak self, weak repository] result in
-                guard let error = result.error else { return }
+                switch result {
+                case .success(let response):
+                    repository?.saveSentReaction(message: response.message, reaction: response.reaction, version: version)
+                case .failure(let error):
+                    if self?.canKeepReactionState(for: error) == true { return }
 
-                if self?.canKeepReactionState(for: error) == true { return }
-
-                repository?.undoReactionAddition(on: messageId, type: type)
+                    repository?.undoReactionAddition(on: messageId, type: type)
+                }
             }
             completion?(error)
         }
@@ -628,13 +633,17 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self, weak repository] result in
-                guard let error = result.error else { return }
+            let endpoint: Endpoint<DeleteReactionResponse> = .deleteReaction(id: messageId, type: type.rawValue)
+            self?.apiClient.request(endpoint: endpoint) { [weak self, weak repository] result in
+                switch result {
+                case .success(let response):
+                    repository?.saveDeletedReaction(message: response.message, reaction: response.reaction)
+                case .failure(let error):
+                    if self?.canKeepReactionState(for: error) == true { return }
+                    if error.isClientError { return }
 
-                if self?.canKeepReactionState(for: error) == true { return }
-                if error.isClientError { return }
-
-                repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
+                    repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
+                }
             }
             completion?(error)
         }

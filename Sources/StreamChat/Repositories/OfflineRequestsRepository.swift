@@ -210,7 +210,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
                 return
             }
             messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
-        case .addReaction, .deleteReaction:
+        case .sendReaction, .deleteReaction:
             // No further action
             completion()
         default:

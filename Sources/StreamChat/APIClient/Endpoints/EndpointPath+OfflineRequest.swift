@@ -7,12 +7,12 @@ import Foundation
 extension EndpointPath {
     var shouldBeQueuedOffline: Bool {
         switch self {
-        case .addReaction,
-             .createDraft,
+        case .createDraft,
              .deleteMessage,
              .deleteReaction,
              .draftMessage,
              .sendMessage,
+             .sendReaction,
              .updateMessage,
              .updateMessagePartial:
             return true

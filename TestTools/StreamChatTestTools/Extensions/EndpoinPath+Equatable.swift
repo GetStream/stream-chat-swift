@@ -38,12 +38,11 @@ extension EndpointPath: Equatable {
         case let (.replies(messageId1), .replies(messageId2)): return messageId1 == messageId2
         case let (.getReactions(messageId1), .getReactions(messageId2)): return messageId1 == messageId2
         case let (.queryReactions(messageId1), .queryReactions(messageId2)): return messageId1 == messageId2
-        case let (.addReaction(messageId1), .addReaction(messageId2)): return messageId1 == messageId2
+        case let (.sendReaction(messageId1), .sendReaction(messageId2)): return messageId1 == messageId2
         case let (
-            .deleteReaction(messageId1, messageReactionType1),
-            .deleteReaction(messageId2, messageReactionType2)
-        ): return messageId1 == messageId2 && messageReactionType1 ==
-            messageReactionType2
+            .deleteReaction(messageId1, type1),
+            .deleteReaction(messageId2, type2)
+        ): return messageId1 == messageId2 && type1 == type2
         case let (.messageAction(messageId1), .messageAction(messageId2)): return messageId1 == messageId2
         case (.banMember, .banMember): return true
         case (.flagUser, .flagUser): return true

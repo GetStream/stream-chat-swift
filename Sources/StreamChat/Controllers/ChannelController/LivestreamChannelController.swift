@@ -594,14 +594,16 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .addReaction(
-                type,
-                score: score,
-                enforceUnique: enforceUnique,
-                extraData: extraData,
-                skipPush: skipPush,
-                emojiCode: pushEmojiCode,
-                messageId: messageId
+            endpoint: .sendReaction(
+                id: messageId,
+                sendReactionRequest: SendReactionRequest(
+                    enforceUnique: enforceUnique,
+                    extraData: extraData,
+                    pushEmojiCode: pushEmojiCode,
+                    score: score,
+                    skipPush: skipPush,
+                    type: type
+                )
             )
         ) { [weak self] result in
             self?.callback {
@@ -620,7 +622,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         from messageId: MessageId,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
+        apiClient.request(endpoint: .deleteReaction(id: messageId, type: type.rawValue)) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
