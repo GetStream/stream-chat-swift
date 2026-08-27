@@ -23,7 +23,7 @@ import Foundation
         messages = handler.messages
         isPaused = handler.isPaused
         skippedMessagesAmount = handler.skippedMessagesAmount
-        typingUsers = handler.channel?.typingUsers ?? []
+        applyTypingUsersUpdate(handler.channel?.typingUsers ?? [])
         configureHandlerCallbacks()
     }
 
@@ -95,7 +95,10 @@ import Foundation
     // MARK: - Typing
 
     /// The current set of users typing in the channel (excludes thread typing events).
-    @Published public internal(set) var typingUsers: Set<TypingUser> = []
+    @Published public internal(set) var typingUsers: Set<ChatUser> = []
+
+    /// Slim channel-member info for currently typing users, keyed by user id, when present on the typing event.
+    public private(set) var typingMemberInfos: [UserId: ChannelMemberInfo] = [:]
 
     // MARK: - Throttling and Slow Mode
 
@@ -124,9 +127,16 @@ import Foundation
                     self?.skippedMessagesAmount = skipped
                 },
                 typingUsersDidChange: { [weak self] typingUsers in
-                    self?.typingUsers = typingUsers
+                    self?.applyTypingUsersUpdate(typingUsers)
                 }
             )
         )
+    }
+
+    private func applyTypingUsersUpdate(_ typingUsers: Set<TypingUser>) {
+        self.typingUsers = typingUsers.chatUsers
+        typingMemberInfos = Dictionary(uniqueKeysWithValues: typingUsers.compactMap { typingUser in
+            typingUser.memberInfo.map { (typingUser.id, $0) }
+        })
     }
 }

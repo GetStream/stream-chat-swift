@@ -76,6 +76,7 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertFalse(state.isPaused)
         XCTAssertEqual(state.skippedMessagesAmount, 0)
         XCTAssertTrue(state.typingUsers.isEmpty)
+        XCTAssertTrue(state.typingMemberInfos.isEmpty)
         XCTAssertEqual(state.remainingCooldownDuration, 0)
         XCTAssertTrue(state.client === client)
 
@@ -460,8 +461,13 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(state.skippedMessagesAmount, 7)
 
         let typingUser = ChatUser.mock(id: "user-1")
-        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser)])
+        let memberInfo = ChatMessage.MemberInfo(
+            channelRole: .member,
+            extraData: ["is_premium": .bool(true)]
+        )
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser, memberInfo: memberInfo)])
         XCTAssertEqual(state.typingUsers.map(\.id), [typingUser.id])
+        XCTAssertEqual(state.typingMemberInfos[typingUser.id], memberInfo)
     }
 
     func test_remainingCooldownDuration_returnsValueFromHandler() {
