@@ -475,14 +475,9 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
     }
 
     private func updateTypingUsers(_ typingUsers: Set<TypingUser>) {
-        let previousIds = Set((channel?.typingUsers ?? []).map(\.user.id))
-        let newIds = Set(typingUsers.map(\.user.id))
-        let previousById = Dictionary(uniqueKeysWithValues: (channel?.typingUsers ?? []).map { ($0.user.id, $0) })
-        let memberInfoChanged = typingUsers.contains { $0.memberInfo != previousById[$0.user.id]?.memberInfo }
-        guard previousIds != newIds || memberInfoChanged else { return }
+        guard channel?.typingUsers != typingUsers else { return }
         channel = channel?.changing(typingUsers: typingUsers)
-        let captured = typingUsers
-        handlerCallback { $0.typingUsersDidChange(captured) }
+        handlerCallback { $0.typingUsersDidChange(typingUsers) }
     }
 
     private func handleNewMessage(_ message: ChatMessage) {
