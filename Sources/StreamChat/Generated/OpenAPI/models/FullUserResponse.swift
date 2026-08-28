@@ -32,6 +32,7 @@ final class FullUserResponse: Sendable, Decodable {
     let teamsRole: [String: String]?
     let totalUnreadCount: Int
     let unreadChannels: Int
+    let unreadCount: Int
     let unreadThreads: Int
     let updatedAt: Date
 
@@ -63,6 +64,7 @@ final class FullUserResponse: Sendable, Decodable {
         teamsRole: [String: String]? = nil,
         totalUnreadCount: Int,
         unreadChannels: Int,
+        unreadCount: Int,
         unreadThreads: Int,
         updatedAt: Date
     ) {
@@ -93,6 +95,7 @@ final class FullUserResponse: Sendable, Decodable {
         self.teamsRole = teamsRole
         self.totalUnreadCount = totalUnreadCount
         self.unreadChannels = unreadChannels
+        self.unreadCount = unreadCount
         self.unreadThreads = unreadThreads
         self.updatedAt = updatedAt
     }
@@ -125,6 +128,7 @@ final class FullUserResponse: Sendable, Decodable {
         case teamsRole = "teams_role"
         case totalUnreadCount = "total_unread_count"
         case unreadChannels = "unread_channels"
+        case unreadCount = "unread_count"
         case unreadThreads = "unread_threads"
         case updatedAt = "updated_at"
     }

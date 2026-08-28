@@ -52,6 +52,7 @@ extension FullUserResponse {
             teamsRole: teamsRole?.mapValues(\.rawValue),
             totalUnreadCount: unreadCount?.messages ?? 0,
             unreadChannels: unreadCount?.channels ?? 0,
+            unreadCount: unreadCount?.messages ?? 0,
             unreadThreads: unreadCount?.threads ?? 0,
             updatedAt: updatedAt
         )
@@ -81,6 +82,7 @@ extension FullUserResponse {
             teamsRole: userPayload.teamsRole,
             totalUnreadCount: 0,
             unreadChannels: 0,
+            unreadCount: 0,
             unreadThreads: 0,
             updatedAt: userPayload.updatedAt
         )

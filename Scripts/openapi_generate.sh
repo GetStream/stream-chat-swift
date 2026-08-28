@@ -683,7 +683,6 @@ remove_property TruncateChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
-remove_property FullUserResponse unreadCount
 remove_property OwnUserResponse unreadCount
 remove_property UnmuteUsersResponse duration
 remove_property CreateDraftResponse duration
