@@ -67,6 +67,7 @@ extension EndpointPath {
              .queryMembers,
              .queryPollVotes,
              .queryReactions,
+             .queryUsers,
              .reminder,
              .reminders,
              .removeUserGroupMembers,
@@ -91,11 +92,11 @@ extension EndpointPath {
              .updatePollPartial,
              .updatePushNotificationPreferences,
              .updateUserGroup,
+             .updateUsersPartial,
              .uploadChannelFile,
              .uploadChannelImage,
              .uploadFile,
-             .uploadImage,
-             .users:
+             .uploadImage:
             return false
         }
     }

@@ -203,7 +203,7 @@ final class MessageEvents_Tests: XCTestCase {
         let channelId = try XCTUnwrap(event?.cid)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: UserPayload.dummy(userId: event?.user.id ?? ""))
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
@@ -217,7 +217,7 @@ final class MessageEvents_Tests: XCTestCase {
         let channelId = try XCTUnwrap(event?.cid)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: UserPayload.dummy(userId: event?.user.id ?? ""))
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
@@ -241,7 +241,7 @@ final class MessageEvents_Tests: XCTestCase {
         let channelId = try XCTUnwrap(event?.cid)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: UserPayload.dummy(userId: event?.user.id ?? ""))
 
         let domainEvent = event?.toDomainEvent(session: session)
         XCTAssertEqual(domainEvent is MessageDeliveredEvent, true)

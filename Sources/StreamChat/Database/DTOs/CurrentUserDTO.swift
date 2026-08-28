@@ -94,9 +94,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        let userDTO = UserDTO.loadOrCreate(id: payload.id, context: self, cache: nil)
-        userDTO.saveCommonUserFields(from: payload)
-        dto.user = userDTO
+        dto.user = try saveUser(ownResponse: payload)
         dto.isInvisible = payload.invisible ?? false
 
         // If not privacy setting is provided by the backend then we treat as enabled by default.
@@ -135,6 +133,44 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.totalUnreadCountByTeam = payload.totalUnreadCountByTeam
 
         _ = try saveCurrentUserDevices(payload.devices ?? [], clearExisting: true)
+
+        return dto
+    }
+
+    func saveCurrentUser(fullResponse: FullUserResponse) throws -> CurrentUserDTO {
+        invalidateCurrentUserCache()
+
+        let dto = CurrentUserDTO.loadOrCreate(context: self)
+        dto.user = try saveUser(fullResponse: fullResponse)
+        dto.isInvisible = fullResponse.invisible
+
+        // If not privacy setting is provided by the backend then we treat as enabled by default.
+        // This is a bit different than the rest of the backend responses, but it was done like this
+        // for backwards compatibility reasons on the server side.
+        dto.isReadReceiptsEnabled = fullResponse.privacySettings?.readReceipts?.enabled ?? true
+        dto.isTypingIndicatorsEnabled = fullResponse.privacySettings?.typingIndicators?.enabled ?? true
+        dto.isDeliveryReceiptsEnabled = fullResponse.privacySettings?.deliveryReceipts?.enabled ?? true
+
+        let mutedUsers = try fullResponse.mutes.compactMap { $0.target }.map { try saveUser(payload: $0) }
+        dto.mutedUsers = Set(mutedUsers)
+
+        dto.blockedUserIds = Set(fullResponse.blockedUserIds)
+
+        let channelMutes = Set(
+            try fullResponse.channelMutes.map { try saveChannelMute(payload: $0) }
+        )
+        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
+        dto.channelMutes = channelMutes
+
+        try saveCurrentUserUnreadCount(
+            count: UnreadCountPayload(
+                channels: fullResponse.unreadChannels,
+                messages: fullResponse.totalUnreadCount,
+                threads: fullResponse.unreadThreads
+            )
+        )
+
+        _ = try saveCurrentUserDevices(fullResponse.devices, clearExisting: true)
 
         return dto
     }

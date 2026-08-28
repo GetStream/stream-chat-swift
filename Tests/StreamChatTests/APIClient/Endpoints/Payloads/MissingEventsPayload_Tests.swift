@@ -12,20 +12,15 @@ final class MissingEventsPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 1)
 
-        let expectedUser = UserPayload(
-            id: "broken-waterfall-5",
+        let expectedUser = UserPayload.dummy(
+            userId: "broken-waterfall-5",
             name: "Broken Waterfall",
-            imageURL: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png"),
+            imageUrl: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png"),
             role: .user,
-            teamsRole: nil,
+            teams: [],
             createdAt: "2019-12-12T15:33:46.488935Z".toDate(),
             updatedAt: "2020-09-07T12:27:43.096437Z".toDate(),
-            deactivatedAt: nil,
-            lastActiveAt: "2020-09-07T12:25:41.501574Z".toDate(),
-            isOnline: true,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
+            lastActiveAt: "2020-09-07T12:25:41.501574Z".toDate()
         )
 
         let event = try XCTUnwrap(payload.eventPayloads.first)

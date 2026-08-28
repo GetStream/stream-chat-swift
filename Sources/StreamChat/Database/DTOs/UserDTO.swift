@@ -145,7 +145,30 @@ extension NSManagedObjectContext: UserDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
-        dto.saveCommonUserFields(from: payload)
+        dto.name = payload.name
+        dto.imageURL = payload.image.flatMap(URL.init(string:))
+        dto.isBanned = payload.banned ?? false
+        dto.isOnline = payload.online
+        dto.lastActivityAt = payload.lastActive?.bridgeDate
+        dto.userCreatedAt = payload.createdAt.bridgeDate
+        dto.userRoleRaw = payload.role
+        dto.userUpdatedAt = payload.updatedAt.bridgeDate
+        dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
+        dto.language = payload.language.flatMap { $0.isEmpty ? nil : $0 }
+        dto.teamsRole = payload.teamsRole
+        if let avgResponseTime = payload.avgResponseTime {
+            dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
+        }
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+        dto.teams = payload.teams ?? []
 
         // payloadHash doesn't cover the query
         if let query = query, let queryDTO = try saveQuery(query: query) {
@@ -154,46 +177,83 @@ extension NSManagedObjectContext: UserDatabaseSession {
         return dto
     }
 
+    func saveUser(
+        fullResponse: FullUserResponse,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO {
+        let dto = UserDTO.loadOrCreate(id: fullResponse.id, context: self, cache: cache)
+        dto.name = fullResponse.name
+        dto.imageURL = fullResponse.image.flatMap(URL.init(string:))
+        dto.isBanned = fullResponse.banned
+        dto.isOnline = fullResponse.online
+        dto.lastActivityAt = fullResponse.lastActive?.bridgeDate
+        dto.userCreatedAt = fullResponse.createdAt.bridgeDate
+        dto.userRoleRaw = fullResponse.role
+        dto.userUpdatedAt = fullResponse.updatedAt.bridgeDate
+        dto.userDeactivatedAt = fullResponse.deactivatedAt?.bridgeDate
+        dto.language = fullResponse.language.isEmpty ? nil : fullResponse.language
+        dto.teamsRole = fullResponse.teamsRole
+        if let avgResponseTime = fullResponse.avgResponseTime {
+            dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
+        }
+        do {
+            dto.extraData = try JSONEncoder.default.encode(fullResponse.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(fullResponse.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+        dto.teams = fullResponse.teams
+
+        // payloadHash doesn't cover the query
+        if let query = query, let queryDTO = try saveQuery(query: query) {
+            queryDTO.users.insert(dto)
+        }
+        return dto
+    }
+
+    func saveUser(ownResponse: OwnUserResponse) throws -> UserDTO {
+        let dto = UserDTO.loadOrCreate(id: ownResponse.id, context: self, cache: nil)
+        dto.name = ownResponse.name
+        dto.imageURL = ownResponse.image.flatMap(URL.init(string:))
+        dto.isBanned = ownResponse.banned ?? false
+        dto.isOnline = ownResponse.online
+        dto.lastActivityAt = ownResponse.lastActive?.bridgeDate
+        dto.userCreatedAt = ownResponse.createdAt.bridgeDate
+        dto.userRoleRaw = ownResponse.role
+        dto.userUpdatedAt = ownResponse.updatedAt.bridgeDate
+        dto.userDeactivatedAt = ownResponse.deactivatedAt?.bridgeDate
+        dto.language = ownResponse.language.flatMap { $0.isEmpty ? nil : $0 }
+        dto.teamsRole = ownResponse.teamsRole
+        if let avgResponseTime = ownResponse.avgResponseTime {
+            dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
+        }
+        do {
+            dto.extraData = try JSONEncoder.default.encode(ownResponse.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(ownResponse.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+        dto.teams = ownResponse.teams ?? []
+        return dto
+    }
+
     @discardableResult
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+    func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.users.compactMapLoggingError {
-            try saveUser(payload: $0, query: query, cache: cache)
+            try saveUser(fullResponse: $0, query: query, cache: cache)
         }
     }
 }
 
 extension UserDTO {
-    /// Assigns the fields shared by `UserPayload` and `OwnUserResponse`.
-    func saveCommonUserFields(from payload: some UserPayloadFields) {
-        name = payload.name
-        imageURL = payload.imageURL
-        isBanned = payload.isBanned
-        isOnline = payload.isOnline
-        lastActivityAt = payload.lastActiveAt?.bridgeDate
-        userCreatedAt = payload.createdAt.bridgeDate
-        userRoleRaw = payload.role
-        userUpdatedAt = payload.updatedAt.bridgeDate
-        userDeactivatedAt = payload.deactivatedAt?.bridgeDate
-        language = payload.language.flatMap { $0.isEmpty ? nil : $0 }
-        teamsRole = payload.teamsRole
-        if let avgResponseTime = payload.avgResponseTime {
-            self.avgResponseTime = .init(integerLiteral: avgResponseTime)
-        }
-
-        do {
-            extraData = try JSONEncoder.default.encode(payload.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            extraData = Data()
-        }
-
-        teams = payload.teams ?? []
-    }
-
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatUser { try .create(fromDTO: self) }
 

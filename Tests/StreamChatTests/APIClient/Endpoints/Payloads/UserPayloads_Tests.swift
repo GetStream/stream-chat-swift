@@ -162,22 +162,22 @@ final class UserPayload_Tests: XCTestCase {
         let avgResponseTime = 30
         let extraData: [String: RawJSON] = ["custom_field": .string("custom_value")]
         
-        let payload = UserPayload(
-            id: userId,
+        let payload = UserPayload.dummy(
+            userId: userId,
             name: name,
-            imageURL: imageURL,
+            imageUrl: imageURL,
             role: role,
             teamsRole: teamsRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isBanned: isBanned,
+            extraData: extraData,
             teams: teams,
             language: language,
             avgResponseTime: avgResponseTime,
-            extraData: extraData
+            isOnline: isOnline,
+            isBanned: isBanned,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
+            lastActiveAt: lastActiveAt
         )
         
         // When: Converting to ChatUser model
@@ -210,22 +210,18 @@ final class UserPayload_Tests: XCTestCase {
         let updatedAt = Date()
         let extraData: [String: RawJSON] = [:]
         
-        let payload = UserPayload(
-            id: userId,
+        let payload = UserPayload.dummy(
+            userId: userId,
             name: nil,
-            imageURL: nil,
+            imageUrl: nil,
             role: role,
-            teamsRole: nil,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: nil,
-            lastActiveAt: nil,
+            extraData: extraData,
+            teams: [],
             isOnline: false,
             isBanned: true,
-            teams: [],
-            language: nil,
-            avgResponseTime: nil,
-            extraData: extraData
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            lastActiveAt: nil
         )
         
         // When: Converting to ChatUser model
@@ -271,70 +267,32 @@ final class UserRequestBody_Tests: XCTestCase {
     }
 }
 
-final class UserUpdateRequestBody_Tests: XCTestCase {
-    func test_isSerialized() throws {
-        let value = String.unique
-
-        let payload: UserUpdateRequestBody = .init(
-            name: .unique,
-            imageURL: .unique(),
-            privacySettings: .init(
-                typingIndicators: .init(enabled: true),
-                readReceipts: .init(enabled: true),
-                deliveryReceipts: .init(enabled: false)
-            ),
-            role: .admin,
-            teamsRole: ["ios": "guest"],
-            extraData: ["secret_note": .string(value)]
-        )
-
-        let expected: [String: Any] = [
-            "name": payload.name!,
-            "image": payload.imageURL!.absoluteString,
-            "privacy_settings": [
-                "typing_indicators": ["enabled": true],
-                "read_receipts": ["enabled": true],
-                "delivery_receipts": ["enabled": false]
-            ],
-            "role": UserRole.admin.rawValue,
-            "secret_note": value,
-            "teams_role": [
-                "ios": "guest"
-            ]
-        ]
-
-        let encodedJSON = try JSONEncoder.default.encode(payload)
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-
-        AssertJSONEqual(encodedJSON, expectedJSON)
-    }
-}
-
 final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse")
         let payload = try JSONDecoder.default.decode(
             CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
         )
-        let user = payload.user
+        let user = try XCTUnwrap(payload.users.first?.value)
         XCTAssertEqual(user.id, "luke_skywalker")
         XCTAssertEqual(user.role, "user")
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
         XCTAssertEqual(user.updatedAt, "2021-01-11T10:36:24.488391Z".toDate())
-        XCTAssertEqual(user.lastActiveAt, "2021-01-08T19:16:54.380686Z".toDate())
-        XCTAssertEqual(user.isBanned, false)
-        XCTAssertEqual(user.isOnline, false)
+        XCTAssertEqual(user.lastActive, "2021-01-08T19:16:54.380686Z".toDate())
+        XCTAssertEqual(user.banned, false)
+        XCTAssertEqual(user.online, false)
         XCTAssertEqual(user.name, "Luke")
         let expectedImage = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
-        XCTAssertEqual(user.imageURL?.absoluteString, expectedImage)
-        XCTAssertEqual(user.extraData, ["secret_note": .string("Anaking is Vader!")])
-        XCTAssertEqual(user.teams?.count, 3)
+        XCTAssertEqual(user.image, expectedImage)
+        XCTAssertEqual(user.custom, ["secret_note": .string("Anaking is Vader!")])
+        XCTAssertEqual(user.teams.count, 3)
     }
 
-    func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
+    func test_currentUserUpdateResponseJSON_whenMissingUser_hasNoUser() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
-        XCTAssertThrowsError(try JSONDecoder.default.decode(
+        let payload = try JSONDecoder.default.decode(
             CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
-        ))
+        )
+        XCTAssertTrue(payload.users.isEmpty)
     }
 }

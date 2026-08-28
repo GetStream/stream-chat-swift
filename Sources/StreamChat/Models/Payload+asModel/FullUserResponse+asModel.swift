@@ -4,8 +4,8 @@
 
 import Foundation
 
-extension UserPayload {
-    /// Converts the UserPayload to a ChatUser model.
+extension FullUserResponse {
+    /// Converts the FullUserResponse to a ChatUser model.
     /// - Returns: A ChatUser instance.
     func asModel() -> ChatUser {
         ChatUser(
@@ -13,7 +13,7 @@ extension UserPayload {
             name: name,
             imageURL: image.flatMap(URL.init(string:)),
             isOnline: online,
-            isBanned: banned ?? false,
+            isBanned: banned,
             isFlaggedByCurrentUser: false,
             userRole: UserRole(rawValue: role),
             teamsRole: teamsRole?.mapValues { UserRole(rawValue: $0) },
@@ -21,8 +21,8 @@ extension UserPayload {
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActive,
-            teams: Set(teams ?? []),
-            language: language.flatMap { $0.isEmpty ? nil : TranslationLanguage(languageCode: $0) },
+            teams: Set(teams),
+            language: language.isEmpty ? nil : TranslationLanguage(languageCode: language),
             avgResponseTime: avgResponseTime,
             extraData: custom
         )

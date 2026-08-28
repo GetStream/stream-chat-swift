@@ -44,6 +44,7 @@ allowed_endpoints=(
     queryMembers
     queryPollVotes
     queryReactions
+    queryUsers
     removeUserGroupMembers
     searchRoles
     searchUserGroups
@@ -63,6 +64,7 @@ allowed_endpoints=(
     updatePollPartial
     updatePushNotificationPreferences
     updateUserGroup
+    updateUsersPartial
     uploadChannelFile
     uploadChannelImage
     uploadFile
@@ -99,6 +101,7 @@ allowed_models=(
   Field
   FileUploadConfig
   FileUploadResponse
+  FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
@@ -135,6 +138,8 @@ allowed_models=(
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest
+  QueryUsersPayload
+  QueryUsersResponse
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
@@ -172,6 +177,9 @@ allowed_models=(
   UpdateMessageResponse
   UpdatePollPartialRequest
   UpdateUserGroupRequest
+  UpdateUserPartialRequest
+  UpdateUsersPartialRequest
+  UpdateUsersResponse
   UploadChannelFileResponse
   UploadChannelResponse
   UpsertPushPreferencesRequest
@@ -227,6 +235,7 @@ encodable_only_models=(
   QueryMembersPayload
   QueryPollVotesRequestBody
   QueryReactionsRequest
+  QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
   SendMessageRequest
@@ -242,6 +251,8 @@ encodable_only_models=(
   UpdateMessageRequest
   UpdatePollPartialRequestBody
   UpdateUserGroupRequest
+  UpdateUserPartialRequest
+  UpdateUsersPartialRequest
   UpsertPushPreferencesRequest
   VoteDataRequestBody
 )
@@ -258,6 +269,7 @@ decodable_only_models=(
   DraftMessagePayload
   DraftPayload
   FileUploadResponse
+  FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
   GetOGResponse
@@ -286,6 +298,7 @@ decodable_only_models=(
   PollVotePayload
   PollVotePayloadResponse
   PushPreference
+  QueryUsersResponse
   ReminderPayload
   SearchResultMessage
   SearchRolesResponse
@@ -302,6 +315,7 @@ decodable_only_models=(
   UpdateMemberPartialResponse
   UpdateMessagePartialResponse
   UpdateMessageResponse
+  UpdateUsersResponse
   UploadChannelFileResponse
   UploadChannelResponse
   UploadConfig
@@ -655,6 +669,9 @@ remove_property PushPreference callLevel
 remove_property PushPreference chatPreferences
 remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
+remove_property QueryUsersResponse duration
+remove_property UpdateUsersResponse duration
+remove_property UpdateUsersResponse membershipDeletionTaskId
 remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
 remove_property UserPayload blockedUserIds
@@ -666,6 +683,7 @@ remove_property TruncateChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
+remove_property FullUserResponse unreadCount
 remove_property OwnUserResponse unreadCount
 remove_property UnmuteUsersResponse duration
 remove_property CreateDraftResponse duration
@@ -943,7 +961,6 @@ inject_v1_endpoint_paths() {
     case custom(String)
     case connect
     case sync
-    case users
     case guest
     case search
 
@@ -987,7 +1004,6 @@ EOF
         case let .custom(path): return path
         case .connect: return "connect"
         case .sync: return "sync"
-        case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
 
