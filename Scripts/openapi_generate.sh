@@ -51,6 +51,7 @@ allowed_endpoints=(
     sendReaction
     showChannel
     stopWatchingChannel
+    truncateChannel
     unblockUsers
     unmute
     unmuteChannel
@@ -151,6 +152,8 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  TruncateChannelRequest
+  TruncateChannelResponse
   TypingIndicatorsResponse
   UnblockUsersRequest
   UnblockUsersResponse
@@ -229,6 +232,7 @@ encodable_only_models=(
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
+  TruncateChannelRequest
   UnblockUsersRequest
   UnmuteChannelRequest
   UnmuteRequest
@@ -289,6 +293,7 @@ decodable_only_models=(
   SendReactionResponse
   SharedLocation
   SharedLocationsResponse
+  TruncateChannelResponse
   UnblockUsersResponse
   UnmuteUsersResponse
   UnreadChannel
@@ -657,6 +662,7 @@ remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property SharedLocationsResponse duration
 remove_property DeleteChannelResponse duration
+remove_property TruncateChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
@@ -951,7 +957,6 @@ inject_v1_endpoint_paths() {
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case truncateChannel(String)
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
@@ -1000,7 +1005,6 @@ EOF
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
