@@ -183,12 +183,16 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(path, "/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/member")
     }
 
-    func test_drafts_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.drafts.shouldBeQueuedOffline)
+    func test_queryDrafts_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.queryDrafts.shouldBeQueuedOffline)
     }
 
-    func test_draftMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
+    func test_getDraft_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getDraft(type: "messaging", id: "").shouldBeQueuedOffline)
+    }
+
+    func test_deleteDraft_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.deleteDraft(type: "messaging", id: "").shouldBeQueuedOffline)
     }
 
     func test_markDelivered_value() {
@@ -269,8 +273,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.castPollVote(messageId: "test_message", pollId: "test_poll"))
         assertResultEncodingAndDecoding(.deletePollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote"))
 
-        assertResultEncodingAndDecoding(.drafts)
-        assertResultEncodingAndDecoding(.draftMessage(ChannelId(type: .messaging, id: "test_channel")))
+        assertResultEncodingAndDecoding(.queryDrafts)
+        assertResultEncodingAndDecoding(.getDraft(type: "messaging", id: "draft_channel"))
+        assertResultEncodingAndDecoding(.deleteDraft(type: "messaging", id: "draft_channel"))
         
         assertResultEncodingAndDecoding(.reminders)
         assertResultEncodingAndDecoding(.reminder("test_message"))

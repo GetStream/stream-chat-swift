@@ -739,7 +739,6 @@
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ChannelEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/DeviceEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/DraftEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Endpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/EndpointPath_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/GuestEndpoints_Tests.swift,

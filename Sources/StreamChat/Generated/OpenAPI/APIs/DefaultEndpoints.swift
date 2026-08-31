@@ -32,10 +32,6 @@ enum EndpointPath: Codable {
     case replies(MessageId)
     case messageAction(MessageId)
 
-    // Drafts
-    case drafts
-    case draftMessage(ChannelId)
-
     // Reminders
     case reminders
     case reminder(MessageId)
@@ -56,6 +52,7 @@ enum EndpointPath: Codable {
     case deleteChannelFile(type: String, id: String)
     case deleteChannelImage(type: String, id: String)
     case deleteDevice
+    case deleteDraft(type: String, id: String)
     case deleteFile
     case deleteImage
     case deletePoll(pollId: String)
@@ -64,6 +61,7 @@ enum EndpointPath: Codable {
     case deleteUserGroup(id: String)
     case getApp
     case getBlockedUsers
+    case getDraft(type: String, id: String)
     case getOG
     case getReactions(id: String)
     case getUserGroup(id: String)
@@ -74,6 +72,7 @@ enum EndpointPath: Codable {
     case markDelivered
     case mute
     case muteChannel
+    case queryDrafts
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
@@ -137,9 +136,6 @@ enum EndpointPath: Codable {
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
 
-        case .drafts: return "drafts/query"
-        case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
-
         case .reminders: return "reminders/query"
         case let .reminder(messageId): return "messages/\(messageId)/reminders"
 
@@ -171,6 +167,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/image"
         case .deleteDevice:
             return "/api/v2/devices"
+        case let .deleteDraft(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .deleteFile:
             return "/api/v2/uploads/file"
         case .deleteImage:
@@ -187,6 +185,8 @@ enum EndpointPath: Codable {
             return "/api/v2/app"
         case .getBlockedUsers:
             return "/api/v2/users/block"
+        case let .getDraft(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .getOG:
             return "/api/v2/og"
         case let .getReactions(id: id):
@@ -207,6 +207,8 @@ enum EndpointPath: Codable {
             return "/api/v2/moderation/mute"
         case .muteChannel:
             return "/api/v2/chat/moderation/mute/channel"
+        case .queryDrafts:
+            return "/api/v2/chat/drafts/query"
         case .queryMembers:
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
@@ -515,6 +517,23 @@ extension Endpoint {
         )
     }
 
+    static func deleteDraft(
+        type: String,
+        id: String,
+        parentId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteDraft(type: type, id: id),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "parent_id": parentId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func deleteFile(url: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteFile,
@@ -601,6 +620,23 @@ extension Endpoint {
             path: .getBlockedUsers,
             method: .get,
             queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getDraft(
+        type: String,
+        id: String,
+        parentId: String?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetDraftResponse> {
+        return .init(
+            path: .getDraft(type: type, id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "parent_id": parentId
+            ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
@@ -737,6 +773,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: muteChannelRequest
+        )
+    }
+
+    static func queryDrafts(
+        queryDraftsRequest: QueryDraftsRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryDraftsResponse> {
+        return .init(
+            path: .queryDrafts,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryDraftsRequest
         )
     }
 
