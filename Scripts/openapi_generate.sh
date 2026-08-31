@@ -23,6 +23,7 @@ allowed_endpoints=(
     deleteChannelFile
     deleteChannelImage
     deleteDevice
+    deleteDraft
     deletePoll
     deletePollVote
     deleteFile
@@ -31,6 +32,7 @@ allowed_endpoints=(
     deleteReaction
     deleteUserGroup
     getApp
+    getDraft
     getBlockedUsers
     getOG
     getReactions
@@ -42,6 +44,7 @@ allowed_endpoints=(
     markDelivered
     mute
     muteChannel
+    queryDrafts
     queryMembers
     queryPollVotes
     queryReactions
@@ -106,6 +109,7 @@ allowed_models=(
   FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
+  GetDraftResponse
   GetOGResponse
   GetReactionsResponse
   GetUserGroupResponse
@@ -137,6 +141,8 @@ allowed_models=(
   PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
+  QueryDraftsRequest
+  QueryDraftsResponse
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest
@@ -234,6 +240,7 @@ encodable_only_models=(
   NewLocationRequestPayload
   PollOptionRequestBody
   PushPreferenceInput
+  QueryDraftsRequest
   QueryMembersPayload
   QueryPollVotesRequestBody
   QueryReactionsRequest
@@ -275,6 +282,7 @@ decodable_only_models=(
   FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
+  GetDraftResponse
   GetOGResponse
   ImageSize
   ImageUploadResponse
@@ -301,6 +309,7 @@ decodable_only_models=(
   PollVotePayload
   PollVotePayloadResponse
   PushPreference
+  QueryDraftsResponse
   QueryUsersResponse
   ReminderPayload
   SearchResultMessage
@@ -690,6 +699,8 @@ remove_property OwnUserResponse unreadCount
 remove_property UnmuteUsersResponse duration
 remove_property CreateDraftResponse duration
 remove_property DeleteMessageResponse duration
+remove_property GetDraftResponse duration
+remove_property QueryDraftsResponse duration
 remove_property DeleteReactionResponse duration
 remove_property SendMessageResponsePayload duration
 remove_property SendReactionResponse duration
@@ -988,10 +999,6 @@ inject_v1_endpoint_paths() {
     case messageAction(MessageId)
     case translateMessage(MessageId)
 
-    // Drafts
-    case drafts
-    case draftMessage(ChannelId)
-
     // Reminders
     case reminders
     case reminder(MessageId)
@@ -1033,9 +1040,6 @@ EOF
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
         case let .translateMessage(messageId): return "messages/\(messageId)/translate"
-
-        case .drafts: return "drafts/query"
-        case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
 
         case .reminders: return "reminders/query"
         case let .reminder(messageId): return "messages/\(messageId)/reminders"

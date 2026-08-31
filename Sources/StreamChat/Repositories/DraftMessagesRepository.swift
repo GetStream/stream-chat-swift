@@ -22,7 +22,7 @@ class DraftMessagesRepository: @unchecked Sendable {
         query: DraftListQuery,
         completion: @escaping @Sendable (Result<DraftListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .drafts(query: query)) { [weak self] result in
+        apiClient.request(endpoint: .queryDrafts(queryDraftsRequest: query.toRequest())) { [weak self] result in
             switch result {
             case .success(let response):
                 nonisolated(unsafe) var drafts: [DraftMessage] = []
@@ -122,7 +122,7 @@ class DraftMessagesRepository: @unchecked Sendable {
         completion: (@Sendable (Result<DraftMessage?, Error>) -> Void)?
     ) {
         apiClient.request(
-            endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
+            endpoint: .getDraft(type: cid.type.rawValue, id: cid.id, parentId: threadId)
         ) { [weak self] result in
             switch result {
             case .success(let response):
@@ -156,7 +156,7 @@ class DraftMessagesRepository: @unchecked Sendable {
             session.deleteDraftMessage(in: cid, threadId: threadId)
         }
         apiClient.request(
-            endpoint: .deleteDraftMessage(channelId: cid, threadId: threadId)
+            endpoint: .deleteDraft(type: cid.type.rawValue, id: cid.id, parentId: threadId)
         ) { result in
             completion(result.error)
         }

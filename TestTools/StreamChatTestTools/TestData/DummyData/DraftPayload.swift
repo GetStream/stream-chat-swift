@@ -5,6 +5,9 @@
 import Foundation
 @testable import StreamChat
 
+typealias DraftListPayloadResponse = QueryDraftsResponse
+typealias DraftPayloadResponse = GetDraftResponse
+
 extension DraftPayload {
     // Generated properties are slightly different from the previously hand-written ones.
     convenience init(
