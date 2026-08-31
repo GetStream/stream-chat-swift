@@ -30,28 +30,48 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         unset: Set<String>,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        let params: [Any?] = [name, imageURL, userExtraData]
+        let params: [Any?] = [imageURL, name, privacySettings, role, teamsRole, userExtraData]
         guard !params.allSatisfy({ $0 == nil }) || !unset.isEmpty else {
             log.warning("Update user request not performed. All provided data was nil.")
             completion?(nil)
             return
         }
 
-        let payload = UserUpdateRequestBody(
-            name: name,
-            imageURL: imageURL,
-            privacySettings: privacySettings,
-            role: role,
-            teamsRole: teamsRole,
-            extraData: userExtraData
-        )
+        var set = userExtraData ?? [:]
+        if let name = name {
+            set[UserPayloadsCodingKeys.name.rawValue] = .string(name)
+        }
+        if let imageURL = imageURL {
+            set[UserPayloadsCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+        }
+        if let privacySettings = privacySettings {
+            guard let rawJSON = privacySettings.rawJSON else {
+                completion?(ClientError.InvalidJSON("Failed to encode privacy settings: \(privacySettings)"))
+                return
+            }
+            set[UserPayloadsCodingKeys.privacySettings.rawValue] = rawJSON
+        }
+        if let role = role {
+            set[UserPayloadsCodingKeys.role.rawValue] = .string(role.rawValue)
+        }
+        if let teamsRole = teamsRole {
+            set[UserPayloadsCodingKeys.teamsRole.rawValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
+        }
+
+        let request = UpdateUsersPartialRequest(users: [
+            UpdateUserPartialRequest(id: currentUserId, set: set, unset: Array(unset))
+        ])
 
         apiClient
-            .request(endpoint: .updateUser(id: currentUserId, payload: payload, unset: Array(unset))) { [weak self] in
+            .request(endpoint: .updateUsersPartial(updateUsersPartialRequest: request)) { [weak self] in
                 switch $0 {
                 case let .success(response):
+                    guard let user = response.users[currentUserId] else {
+                        completion?(ClientError.UserDoesNotExist(userId: currentUserId))
+                        return
+                    }
                     self?.database.write({ (session) in
-                        try session.saveCurrentUser(payload: response.user)
+                        try session.saveCurrentUser(fullResponse: user)
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)

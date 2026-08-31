@@ -56,6 +56,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
         let expectedRole = UserRole.guest
+        let expectedNote = String.unique
 
         // Call update user
         currentUserUpdater.updateUserData(
@@ -68,7 +69,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             ),
             role: expectedRole,
             teamsRole: ["ios": "guest"],
-            userExtraData: nil,
+            userExtraData: ["secret_note": .string(expectedNote)],
             unset: ["image"],
             completion: { error in
                 XCTAssertNil(error)
@@ -76,38 +77,43 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = CurrentUserUpdateResponse(
-            user: CurrentUserPayload.dummy(
-                userId: userPayload.id,
-                name: expectedName,
-                imageUrl: expectedImageUrl,
-                role: expectedRole,
-                teamsRole: ["ios": "guest"],
-                privacySettings: .init(
-                    typingIndicators: .init(enabled: true),
-                    readReceipts: .init(enabled: true)
-                )
+        let updatedUser = FullUserResponse.dummy(
+            userId: userPayload.id,
+            name: expectedName,
+            imageUrl: expectedImageUrl,
+            role: expectedRole,
+            teamsRole: ["ios": "guest"],
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true)
             )
         )
+        let currentUserUpdateResponse = CurrentUserUpdateResponse(users: [updatedUser.id: updatedUser])
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 
-        // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(
-            id: expectedId,
-            payload: .init(
-                name: expectedName,
-                imageURL: expectedImageUrl,
-                privacySettings: .init(
-                    typingIndicators: .init(enabled: true),
-                    readReceipts: .init(enabled: true)
-                ),
-                role: expectedRole,
-                teamsRole: ["ios": "guest"],
-                extraData: [:]
-            ),
-            unset: ["image"]
-        )
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        // Assert that request is made to the correct endpoint with the correct body
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
+        XCTAssertEqual(endpoint.path.value, EndpointPath.updateUsersPartial.value)
+        XCTAssertEqual(endpoint.method, .patch)
+        AssertDictionary(try endpoint.bodyAsDictionary(), [
+            "users": [
+                [
+                    "id": expectedId,
+                    "set": [
+                        "name": expectedName,
+                        "image": expectedImageUrl.absoluteString,
+                        "privacy_settings": [
+                            "typing_indicators": ["enabled": true],
+                            "read_receipts": ["enabled": true]
+                        ],
+                        "role": expectedRole.rawValue,
+                        "teams_role": ["ios": "guest"],
+                        "secret_note": expectedNote
+                    ],
+                    "unset": ["image"]
+                ]
+            ]
+        ])
     }
     
     func test_updateUser_makesCorrectAPICall_whenOnlyUnsetProperties() throws {
@@ -129,20 +135,19 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             completion: { _ in }
         )
         
-        // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(
-            id: userPayload.id,
-            payload: .init(
-                name: nil,
-                imageURL: nil,
-                privacySettings: nil,
-                role: nil,
-                teamsRole: nil,
-                extraData: nil
-            ),
-            unset: ["image"]
-        )
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        // Assert that request is made to the correct endpoint with the correct body
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
+        XCTAssertEqual(endpoint.path.value, EndpointPath.updateUsersPartial.value)
+        XCTAssertEqual(endpoint.method, .patch)
+        AssertDictionary(try endpoint.bodyAsDictionary(), [
+            "users": [
+                [
+                    "id": userPayload.id,
+                    "set": [String: Any](),
+                    "unset": ["image"]
+                ]
+            ]
+        ])
     }
 
     func test_updateUser_updatesCurrentUserToDatabase() throws {
@@ -178,18 +183,17 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = CurrentUserUpdateResponse(
-            user: CurrentUserPayload.dummy(
-                userId: userPayload.id,
-                name: expectedName,
-                imageUrl: expectedImageUrl,
-                role: expectedRole,
-                privacySettings: .init(
-                    typingIndicators: .init(enabled: false),
-                    readReceipts: .init(enabled: false)
-                )
+        let updatedUser = FullUserResponse.dummy(
+            userId: userPayload.id,
+            name: expectedName,
+            imageUrl: expectedImageUrl,
+            role: expectedRole,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: false),
+                readReceipts: .init(enabled: false)
             )
         )
+        let currentUserUpdateResponse = CurrentUserUpdateResponse(users: [updatedUser.id: updatedUser])
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 
         var currentUser: CurrentChatUser? {
@@ -205,6 +209,47 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             Assert.willBeEqual(currentUser?.privacySettings.readReceipts?.enabled, false)
             Assert.willBeEqual(currentUser?.privacySettings.typingIndicators?.enabled, false)
         }
+    }
+
+    func test_updateUser_keepsPushPreferenceAndPerTeamUnreadCounts() throws {
+        // Simulate user already set, carrying data the users endpoint does not return
+        let userPayload = CurrentUserPayload.dummy(
+            userPayload: .dummy(userId: .unique),
+            totalUnreadCountByTeam: ["ios": 3],
+            pushPreference: .init(level: .allMentions)
+        )
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+
+        // Call update user
+        let completionCalled = expectation(description: "completion called")
+        currentUserUpdater.updateUserData(
+            currentUserId: userPayload.id,
+            name: .unique,
+            imageURL: nil,
+            privacySettings: nil,
+            role: nil,
+            teamsRole: nil,
+            userExtraData: nil,
+            unset: [],
+            completion: { error in
+                XCTAssertNil(error)
+                completionCalled.fulfill()
+            }
+        )
+
+        // Simulate API response, which never contains push preferences nor per team unread counts
+        let updatedUser = FullUserResponse.dummy(userId: userPayload.id, role: .user)
+        apiClient.test_simulateResponse(
+            .success(CurrentUserUpdateResponse(users: [updatedUser.id: updatedUser]))
+        )
+        wait(for: [completionCalled], timeout: defaultTimeout)
+
+        let currentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
+        XCTAssertEqual(currentUser.name, updatedUser.name)
+        XCTAssertEqual(currentUser.totalUnreadCountByTeam, ["ios": 3])
+        XCTAssertEqual(currentUser.pushPreference?.level, .allMentions)
     }
 
     func test_updateUser_propogatesNetworkError() throws {
@@ -282,7 +327,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Call update user
         nonisolated(unsafe) var completionError: Error?
         currentUserUpdater.updateUserData(
-            currentUserId: .unique,
+            currentUserId: userPayload.id,
             name: .unique,
             imageURL: nil,
             privacySettings: nil,
@@ -296,9 +341,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = CurrentUserUpdateResponse(
-            user: userPayload
-        )
+        let updatedUser = FullUserResponse.dummy(userId: userPayload.id, role: .user)
+        let currentUserUpdateResponse = CurrentUserUpdateResponse(users: [updatedUser.id: updatedUser])
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 
         // Check returned error

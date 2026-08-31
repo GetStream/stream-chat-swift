@@ -204,7 +204,11 @@ final class UserUpdater_Tests: XCTestCase {
         userUpdater.loadUser(userId)
 
         // Assert correct endpoint is called.
-        let expectedEndpoint: Endpoint<UserListPayload> = .users(query: .user(withID: userId))
+        let query = UserListQuery.user(withID: userId)
+        let expectedEndpoint: Endpoint<UserListPayload> = .queryUsers(
+            payload: query.asQueryUsersPayload(),
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -279,7 +283,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with one user
-        let userPayload = UserPayload.dummy(userId: .unique)
+        let userPayload = FullUserResponse.dummy(userId: .unique)
         let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
@@ -295,7 +299,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with empty users list
-        let userPayload = UserPayload.dummy(userId: .unique)
+        let userPayload = FullUserResponse.dummy(userId: .unique)
         let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 

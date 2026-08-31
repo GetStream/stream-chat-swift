@@ -94,49 +94,96 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        let userDTO = UserDTO.loadOrCreate(id: payload.id, context: self, cache: nil)
-        userDTO.saveCommonUserFields(from: payload)
-        dto.user = userDTO
-        dto.isInvisible = payload.invisible ?? false
-
-        // If not privacy setting is provided by the backend then we treat as enabled by default.
-        // This is a bit different than the rest of the backend responses, but it was done like this
-        // for backwards compatibility reasons on the server side.
-        dto.isReadReceiptsEnabled = payload.privacySettings?.readReceipts?.enabled ?? true
-        dto.isTypingIndicatorsEnabled = payload.privacySettings?.typingIndicators?.enabled ?? true
-        dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? true
+        dto.user = try saveUser(ownResponse: payload)
 
         // Save push preference
         if let pushPreference = payload.pushPreferences {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
         }
 
-        let mutedUsers = try (payload.mutes ?? []).compactMap { $0.target }.map { try saveUser(payload: $0) }
-        dto.mutedUsers = Set(mutedUsers)
-        
-        dto.blockedUserIds = Set(payload.blockedUserIds ?? [])
+        dto.totalUnreadCountByTeam = payload.totalUnreadCountByTeam
 
-        let channelMutes = Set(
-            try (payload.channelMutes ?? []).map { try saveChannelMute(payload: $0) }
+        try saveCurrentUserCommonFields(
+            blockedUserIds: payload.blockedUserIds ?? [],
+            channelMutes: payload.channelMutes ?? [],
+            devices: payload.devices ?? [],
+            dto: dto,
+            isInvisible: payload.invisible ?? false,
+            mutes: payload.mutes ?? [],
+            privacySettings: payload.privacySettings,
+            totalUnreadCount: payload.totalUnreadCount,
+            unreadChannels: payload.unreadChannels,
+            unreadThreads: payload.unreadThreads
         )
-        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
-        dto.channelMutes = channelMutes
 
-        if let unreadChannels = payload.unreadChannels, let totalUnreadCount = payload.totalUnreadCount {
+        return dto
+    }
+
+    func saveCurrentUser(fullResponse: FullUserResponse) throws -> CurrentUserDTO {
+        invalidateCurrentUserCache()
+
+        let dto = CurrentUserDTO.loadOrCreate(context: self)
+        dto.user = try saveUser(fullResponse: fullResponse)
+
+        try saveCurrentUserCommonFields(
+            blockedUserIds: fullResponse.blockedUserIds,
+            channelMutes: fullResponse.channelMutes,
+            devices: fullResponse.devices,
+            dto: dto,
+            isInvisible: fullResponse.invisible,
+            mutes: fullResponse.mutes,
+            privacySettings: fullResponse.privacySettings,
+            totalUnreadCount: fullResponse.totalUnreadCount,
+            unreadChannels: fullResponse.unreadChannels,
+            unreadThreads: fullResponse.unreadThreads
+        )
+
+        return dto
+    }
+
+    private func saveCurrentUserCommonFields(
+        blockedUserIds: [String],
+        channelMutes: [MutedChannelPayload],
+        devices: [Device],
+        dto: CurrentUserDTO,
+        isInvisible: Bool,
+        mutes: [MutedUserPayload],
+        privacySettings: UserPrivacySettings?,
+        totalUnreadCount: Int?,
+        unreadChannels: Int?,
+        unreadThreads: Int?
+    ) throws {
+        dto.isInvisible = isInvisible
+
+        // If no privacy setting is provided by the backend then we treat as enabled by default.
+        // This is a bit different than the rest of the backend responses, but it was done like this
+        // for backwards compatibility reasons on the server side.
+        dto.isReadReceiptsEnabled = privacySettings?.readReceipts?.enabled ?? true
+        dto.isTypingIndicatorsEnabled = privacySettings?.typingIndicators?.enabled ?? true
+        dto.isDeliveryReceiptsEnabled = privacySettings?.deliveryReceipts?.enabled ?? true
+
+        let mutedUsers = try mutes.compactMap { $0.target }.map { try saveUser(payload: $0) }
+        dto.mutedUsers = Set(mutedUsers)
+
+        dto.blockedUserIds = Set(blockedUserIds)
+
+        let channelMuteDTOs = Set(
+            try channelMutes.map { try saveChannelMute(payload: $0) }
+        )
+        dto.channelMutes.subtracting(channelMuteDTOs).forEach { delete($0) }
+        dto.channelMutes = channelMuteDTOs
+
+        if let unreadChannels, let totalUnreadCount {
             try saveCurrentUserUnreadCount(
                 count: UnreadCountPayload(
                     channels: unreadChannels,
                     messages: totalUnreadCount,
-                    threads: payload.unreadThreads
+                    threads: unreadThreads
                 )
             )
         }
 
-        dto.totalUnreadCountByTeam = payload.totalUnreadCountByTeam
-
-        _ = try saveCurrentUserDevices(payload.devices ?? [], clearExisting: true)
-
-        return dto
+        _ = try saveCurrentUserDevices(devices, clearExisting: true)
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {

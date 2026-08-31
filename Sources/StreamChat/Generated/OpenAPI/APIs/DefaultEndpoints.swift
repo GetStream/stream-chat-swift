@@ -8,7 +8,6 @@ enum EndpointPath: Codable {
     case custom(String)
     case connect
     case sync
-    case users
     case guest
     case search
 
@@ -78,6 +77,7 @@ enum EndpointPath: Codable {
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
+    case queryUsers
     case removeUserGroupMembers(id: String)
     case searchRoles
     case searchUserGroups
@@ -97,6 +97,7 @@ enum EndpointPath: Codable {
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
     case updateUserGroup(id: String)
+    case updateUsersPartial
     case uploadChannelFile(type: String, id: String)
     case uploadChannelImage(type: String, id: String)
     case uploadFile
@@ -107,7 +108,6 @@ enum EndpointPath: Codable {
         case let .custom(path): return path
         case .connect: return "connect"
         case .sync: return "sync"
-        case .users: return "users"
         case .guest: return "guest"
         case .search: return "search"
 
@@ -216,6 +216,8 @@ enum EndpointPath: Codable {
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
         case let .queryReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case .queryUsers:
+            return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case .searchRoles:
@@ -254,6 +256,8 @@ enum EndpointPath: Codable {
             return "/api/v2/push_preferences"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
+        case .updateUsersPartial:
+            return "/api/v2/users"
         case let .uploadChannelFile(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/file"
         case let .uploadChannelImage(type: type, id: id):
@@ -827,6 +831,21 @@ extension Endpoint {
         )
     }
 
+    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false) -> Endpoint<QueryUsersResponse> {
+        return .init(
+            path: .queryUsers,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func removeUserGroupMembers(
         id: String,
         removeUserGroupMembersRequest: RemoveUserGroupMembersRequest,
@@ -1091,6 +1110,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateUserGroupRequest
+        )
+    }
+
+    static func updateUsersPartial(
+        updateUsersPartialRequest: UpdateUsersPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateUsersResponse> {
+        return .init(
+            path: .updateUsersPartial,
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateUsersPartialRequest
         )
     }
 

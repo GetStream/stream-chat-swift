@@ -29,12 +29,12 @@ final class ConnectedUser_Tests: XCTestCase {
         await XCTAssertEqual(UserRole.admin, connectedUser.state.user.userRole)
         
         let changedName = "Name"
-        let apiResult = CurrentUserUpdateResponse(
-            user: currentUserPayload(
-                name: changedName,
-                role: .user
-            )
+        let updatedUser = FullUserResponse.dummy(
+            userId: connectedUserId,
+            name: changedName,
+            role: .user
         )
+        let apiResult = CurrentUserUpdateResponse(users: [updatedUser.id: updatedUser])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         try await connectedUser.update(
             name: changedName,
