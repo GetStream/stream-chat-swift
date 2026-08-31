@@ -52,6 +52,7 @@ allowed_endpoints=(
     sendReaction
     showChannel
     stopWatchingChannel
+    translateMessage
     truncateChannel
     unblockUsers
     unmute
@@ -116,6 +117,7 @@ allowed_models=(
   ListUserGroupsResponse
   MarkDeliveredRequest
   MembersResponse
+  MessageActionResponse
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -157,6 +159,7 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  TranslateMessageRequest
   TruncateChannelRequest
   TruncateChannelResponse
   TypingIndicatorsResponse
@@ -241,6 +244,7 @@ encodable_only_models=(
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
+  TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
   UnmuteChannelRequest
@@ -280,6 +284,7 @@ decodable_only_models=(
   MemberInfoPayload
   MemberPayload
   MembersResponse
+  MessageActionResponse
   MessageModerationDetailsPayload
   MessageReactionGroupPayload
   MessageReactionPayload
@@ -607,6 +612,7 @@ rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
+rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
@@ -691,6 +697,7 @@ remove_property SendMessageResponsePayload duration
 remove_property SendReactionResponse duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
+remove_property MessageActionResponse duration
 
 # Unused channel context (cid, createdBy, id, type)
 remove_property SendMessageRequest includeChannelContext
@@ -703,6 +710,8 @@ retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
+
+require_property MessageActionResponse message
 
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessageResponse reactionCounts
@@ -787,6 +796,7 @@ publicize_raw_representable() {
 publicize_raw_representable ChannelCapability
 publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
+publicize_raw_representable TranslateMessageRequest TranslationLanguage
 
 # Mark a generated RawRepresentable value as deprecated while keeping its legacy
 # raw value available. Fail if the generated declaration changes so the annotation
@@ -983,7 +993,6 @@ inject_v1_endpoint_paths() {
     case deleteMessage(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
-    case translateMessage(MessageId)
 
     // Drafts
     case drafts
@@ -1030,7 +1039,6 @@ EOF
         case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
-        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
 
         case .drafts: return "drafts/query"
         case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"

@@ -1002,13 +1002,17 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
+        let endpoint: Endpoint<MessageActionResponse> = .translateMessage(
+            id: messageId,
+            translateMessageRequest: TranslateMessageRequest(language: language)
+        )
+        apiClient.request(endpoint: endpoint, completion: { result in
             switch result {
-            case let .success(boxedMessage):
+            case let .success(response):
                 nonisolated(unsafe) var translatedMessage: ChatMessage?
                 self.database.write { session in
                     let messageDTO = try session.saveMessage(
-                        payload: boxedMessage.message,
+                        payload: response.message,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil

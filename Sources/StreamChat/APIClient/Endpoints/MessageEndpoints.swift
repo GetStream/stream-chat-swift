@@ -61,14 +61,4 @@ extension Endpoint {
     static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
         .init(path: .search, method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
     }
-
-    static func translate(messageId: MessageId, to language: TranslationLanguage) -> Endpoint<MessageResponse.Boxed> {
-        .init(
-            path: .translateMessage(messageId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["language": language.languageCode]
-        )
-    }
 }

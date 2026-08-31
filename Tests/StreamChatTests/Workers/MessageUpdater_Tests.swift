@@ -2874,7 +2874,15 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.translate(messageId: messageId, to: language)
 
         // Assert correct endpoint is called.
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.translate(messageId: messageId, to: language)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(
+                .translateMessage(
+                    id: messageId,
+                    translateMessageRequest: TranslateMessageRequest(language: language)
+                )
+            )
+        )
     }
 
     func test_translate_propagatesSuccessfulResponse() throws {
@@ -2893,8 +2901,8 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.success(
-                .init(
+            Result<MessageActionResponse, Error>.success(
+                .dummy(
                     message: .dummy(
                         messageId: messageId,
                         authorUserId: .unique,
@@ -2921,7 +2929,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate failure response
         apiClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.failure(testError)
+            Result<MessageActionResponse, Error>.failure(testError)
         )
 
         AssertAsync.willBeTrue(completionCalled)
@@ -2947,8 +2955,8 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.success(
-                .init(
+            Result<MessageActionResponse, Error>.success(
+                .dummy(
                     message: .dummy(
                         messageId: messageId,
                         authorUserId: .unique,

@@ -340,7 +340,7 @@ extension ChatUser {
             extraData = [:]
         }
 
-        let language: TranslationLanguage? = dto.language.map(TranslationLanguage.init)
+        let language: TranslationLanguage? = dto.language.map { TranslationLanguage(languageCode: $0) }
 
         return ChatUser(
             id: dto.id,

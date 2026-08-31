@@ -1766,7 +1766,7 @@ private extension ChatMessage {
         let reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         let reactionGroups = dto.reactionGroups.asModel()
         let translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
-        let originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
+        let originalLanguage = dto.originalLanguage.map { TranslationLanguage(languageCode: $0) }
         let moderationDetails = dto.moderationDetails.map { MessageModerationDetails(fromDTO: $0) }
         let textUpdatedAt = dto.textUpdatedAt?.bridgeDate
         let chatClientConfig = context.chatClientConfig

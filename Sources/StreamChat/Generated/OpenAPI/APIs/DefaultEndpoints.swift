@@ -31,7 +31,6 @@ enum EndpointPath: Codable {
     case deleteMessage(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
-    case translateMessage(MessageId)
 
     // Drafts
     case drafts
@@ -86,6 +85,7 @@ enum EndpointPath: Codable {
     case sendReaction(id: String)
     case showChannel(type: String, id: String)
     case stopWatchingChannel(type: String, id: String)
+    case translateMessage(id: String)
     case truncateChannel(type: String, id: String)
     case unblockUsers
     case unmute
@@ -136,7 +136,6 @@ enum EndpointPath: Codable {
         case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
-        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
 
         case .drafts: return "drafts/query"
         case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
@@ -230,6 +229,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
         case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
+        case let .translateMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
         case let .truncateChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/truncate"
         case .unblockUsers:
@@ -903,6 +904,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func translateMessage(
+        id: String,
+        translateMessageRequest: TranslateMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageActionResponse> {
+        return .init(
+            path: .translateMessage(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: translateMessageRequest
         )
     }
 
