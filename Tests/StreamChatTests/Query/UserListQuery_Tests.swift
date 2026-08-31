@@ -33,6 +33,73 @@ final class UserListQuery_Tests: XCTestCase {
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
 
+    func test_asQueryUsersPayload_encodedCorrectly() throws {
+        let query = UserListQuery(
+            filter: .equal(.id, to: "luke"),
+            sort: [.init(key: .lastActivityAt)],
+            pageSize: 23
+        )
+
+        let expectedData: [String: Any] = [
+            "presence": true,
+            "limit": 23,
+            "filter_conditions": ["id": ["$eq": "luke"]],
+            "sort": [["field": "last_active", "direction": -1] as [String: Any]]
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asQueryUsersPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
+    func test_asQueryUsersPayload_whenSortIsAscending_encodesPositiveDirection() throws {
+        let query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
+
+        let expectedData: [String: Any] = [
+            "presence": true,
+            "limit": Int.usersPageSize,
+            "filter_conditions": [:],
+            "sort": [["field": "name", "direction": 1] as [String: Any]]
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asQueryUsersPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
+    func test_asQueryUsersPayload_whenBackendDefaultPageSizeIsUsed_omitsLimit() throws {
+        let query = UserListQuery(pageSize: .backendDefaultPageSize)
+
+        let expectedData: [String: Any] = [
+            "presence": true,
+            "filter_conditions": [:]
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asQueryUsersPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
+    func test_asQueryUsersPayload_whenOffsetIsNotZero_encodesOffset() throws {
+        let query = UserListQuery(pageSize: 10)
+            .withPagination(Pagination(pageSize: 10, offset: 20))
+
+        let expectedData: [String: Any] = [
+            "presence": true,
+            "limit": 10,
+            "offset": 20,
+            "filter_conditions": [:]
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asQueryUsersPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
     func test_singleUserQuery_worksCorrectly() throws {
         let userId: UserId = .unique
 

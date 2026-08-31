@@ -149,7 +149,7 @@ final class UserSearch_Tests: XCTestCase {
     private func makeUsers(name: String, count: Int, offset: Int) -> UserListPayload {
         let users = (0..<count)
             .map { $0 + offset }
-            .map { UserPayload.dummy(userId: "\($0)", name: "name_\(String(format: "%03d", $0))") }
+            .map { FullUserResponse.dummy(userId: "\($0)", name: "name_\(String(format: "%03d", $0))") }
         return UserListPayload(users: users)
     }
 }

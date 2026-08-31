@@ -10,7 +10,8 @@ extension EndpointPath: Equatable {
         switch (lhs, rhs) {
         case (.connect, .connect): return true
         case (.sync, .sync): return true
-        case (.users, .users): return true
+        case (.queryUsers, .queryUsers): return true
+        case (.updateUsersPartial, .updateUsersPartial): return true
         case (.guest, .guest): return true
         case (.queryMembers, .queryMembers): return true
         case let (.updateMemberPartial(type1, id1), .updateMemberPartial(type2, id2)): return type1 == type2 && id1 == id2

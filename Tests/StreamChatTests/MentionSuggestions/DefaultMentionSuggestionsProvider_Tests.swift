@@ -86,7 +86,7 @@ final class DefaultMentionSuggestionsProvider_Tests: XCTestCase {
 
         // The query is sent to the API (all app users) instead of filtering the
         // channel's local members.
-        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, EndpointPath.users.value)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, EndpointPath.queryUsers.value)
         XCTAssertTrue(suggestions.isEmpty)
     }
 

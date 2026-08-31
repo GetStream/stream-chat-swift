@@ -19,21 +19,21 @@ public enum UserListSortingKey: String, SortingKey {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        let value: String
-
-        switch self {
-        case .id: value = "id"
-        case .name: value = "name"
-        case .role: value = "role"
-        case .isBanned: value = "banned"
-        case .lastActivityAt: value = "last_active"
-        }
-
-        try container.encode(value)
+        try container.encode(remoteKey)
     }
 }
 
 extension UserListSortingKey {
+    var remoteKey: String {
+        switch self {
+        case .id: return "id"
+        case .name: return "name"
+        case .role: return "role"
+        case .isBanned: return "banned"
+        case .lastActivityAt: return "last_active"
+        }
+    }
+
     static var defaultSortDescriptor: NSSortDescriptor {
         let stringKeyPath: KeyPath<UserDTO, String> = \UserDTO.id
         return .init(keyPath: stringKeyPath, ascending: false)

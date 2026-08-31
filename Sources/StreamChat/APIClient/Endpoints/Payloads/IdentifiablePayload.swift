@@ -93,7 +93,7 @@ extension Array where Element: IdentifiablePayload {
     }
 }
 
-extension UserListPayload: IdentifiablePayloadProxy {
+extension QueryUsersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         users.fillIds(cache: &cache)
     }
@@ -194,6 +194,15 @@ extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
+    }
+}
+
+extension FullUserResponse: IdentifiablePayload {
+    var databaseId: DatabaseId? { id }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
+
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        addId(cache: &cache)
     }
 }
 

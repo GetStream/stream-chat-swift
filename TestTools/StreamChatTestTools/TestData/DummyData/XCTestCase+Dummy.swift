@@ -12,21 +12,7 @@ extension XCTestCase {
     // MARK: - Dummy data with extra data
 
     var dummyCurrentUser: UserPayload {
-        UserPayload(
-            id: "dummyCurrentUser",
-            name: .unique,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
+        .dummy(userId: "dummyCurrentUser", imageUrl: nil, role: .user, teams: [])
     }
 
     var dummyCurrentUserPayload: CurrentUserPayload {
@@ -54,22 +40,7 @@ extension XCTestCase {
     }
 
     func dummyUser(id: String) -> UserPayload {
-        UserPayload(
-            id: id,
-            name: .unique,
-            imageURL: .unique(),
-            role: .user,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: true,
-            teams: [],
-            language: nil,
-            extraData: [:]
-        )
+        .dummy(userId: id, role: .user, teams: [], isBanned: true)
     }
 
     func dummyMessagePayload(
@@ -267,22 +238,7 @@ extension XCTestCase {
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload {
         let member: MemberPayload =
             .init(
-                user: .init(
-                    id: .unique,
-                    name: .unique,
-                    imageURL: nil,
-                    role: .admin,
-                    teamsRole: nil,
-                    createdAt: .unique,
-                    updatedAt: .unique,
-                    deactivatedAt: nil,
-                    lastActiveAt: .unique,
-                    isOnline: true,
-                    isBanned: true,
-                    teams: [],
-                    language: nil,
-                    extraData: [:]
-                ),
+                user: .dummy(userId: .unique, imageUrl: nil, teams: [], isBanned: true),
                 userId: .unique,
                 role: .member,
                 createdAt: .unique,
@@ -531,22 +487,7 @@ private extension MemberPayload {
     static func withLastActivity(at date: Date) -> MemberPayload {
         let userId = String.unique
         return .init(
-            user: .init(
-                id: userId,
-                name: .unique,
-                imageURL: nil,
-                role: .admin,
-                teamsRole: nil,
-                createdAt: .unique,
-                updatedAt: .unique,
-                deactivatedAt: nil,
-                lastActiveAt: date,
-                isOnline: true,
-                isBanned: true,
-                teams: [],
-                language: nil,
-                extraData: [:]
-            ),
+            user: .dummy(userId: userId, imageUrl: nil, teams: [], isBanned: true, lastActiveAt: date),
             userId: userId,
             role: .moderator,
             createdAt: .unique,
@@ -557,21 +498,6 @@ private extension MemberPayload {
 
 private extension UserPayload {
     static func withLastActivity(at date: Date) -> UserPayload {
-        .init(
-            id: .unique,
-            name: .unique,
-            imageURL: nil,
-            role: .admin,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: date,
-            isOnline: true,
-            isBanned: true,
-            teams: [],
-            language: nil,
-            extraData: [:]
-        )
+        .dummy(userId: .unique, imageUrl: nil, teams: [], isBanned: true, lastActiveAt: date)
     }
 }
