@@ -33,6 +33,16 @@ public struct DraftListQuery: Encodable, Sendable {
     }
 }
 
+extension DraftListQuery {
+    func toRequest() -> QueryDraftsRequest {
+        QueryDraftsRequest(
+            limit: pagination.pageSize,
+            next: pagination.cursor,
+            sort: sorting.map { SortParamRequest(direction: $0.direction, field: $0.key.rawValue) }
+        )
+    }
+}
+
 /// The type describing a value that can be used as a sorting when paginating all the drafts of the current user.
 public struct DraftListSortingKey: RawRepresentable, Hashable, SortingKey {
     public let rawValue: String

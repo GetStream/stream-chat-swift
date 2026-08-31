@@ -61,7 +61,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<DraftListPayloadResponse> = .drafts(query: query)
+        let referenceEndpoint: Endpoint<DraftListPayloadResponse> = .queryDrafts(queryDraftsRequest: query.toRequest())
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -228,7 +228,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<DraftPayloadResponse> = .getDraftMessage(channelId: channelId, threadId: threadId)
+        let referenceEndpoint: Endpoint<DraftPayloadResponse> = .getDraft(type: channelId.type.rawValue, id: channelId.id, parentId: threadId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -264,7 +264,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteDraftMessage(channelId: channelId, threadId: threadId)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteDraft(type: channelId.type.rawValue, id: channelId.id, parentId: threadId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
