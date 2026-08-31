@@ -494,8 +494,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     ) {
         apiClient.request(
             endpoint: .deleteMessage(
-                messageId: messageId,
-                hard: hard
+                id: messageId,
+                hard: hard,
+                deleteForMe: nil
             )
         ) { [weak self] result in
             self?.callback {

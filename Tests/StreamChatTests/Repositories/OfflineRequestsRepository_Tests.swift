@@ -172,7 +172,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
         // We add one .deleteMessage request to the queue
-        try createRequest(id: .unique, path: .deleteMessage(.unique), method: .delete)
+        try createRequest(id: .unique, path: .deleteMessage(id: .unique), method: .delete)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {

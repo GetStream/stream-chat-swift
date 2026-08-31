@@ -369,7 +369,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteMessage(_ messageId: MessageId, hard: Bool = false) async throws {
-        try await apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard))
+        try await apiClient.request(endpoint: .deleteMessage(id: messageId, hard: hard, deleteForMe: nil))
     }
 
     /// Flags the specified message and forwards it for moderation.

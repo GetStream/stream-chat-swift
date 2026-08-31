@@ -78,7 +78,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
             apiClient?.request(
                 endpoint: .deleteMessage(
-                    messageId: messageId,
+                    id: messageId,
                     hard: hard,
                     deleteForMe: deleteForMe
                 )

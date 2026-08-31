@@ -443,7 +443,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -460,12 +460,12 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Simulate API response with error
         let testError = TestError()
-        let response: Result<MessagePayload.Boxed, Error> = .failure(testError)
+        let response: Result<DeleteMessageResponse, Error> = .failure(testError)
         apiClient.test_simulateResponse(response)
 
         // Assert completion is called without any error
@@ -501,7 +501,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Update database container to throw the error on write
@@ -509,7 +509,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageRepository.saveSuccessfullyDeletedMessageError = databaseError
 
         // Simulate API response with success
-        let response: Result<MessagePayload.Boxed, Error> =
+        let response: Result<DeleteMessageResponse, Error> =
             .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
         apiClient.test_simulateResponse(response)
 
@@ -561,7 +561,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
 
-        let pairs: [(Result<MessagePayload.Boxed, Error>, LocalMessageState?)] = [
+        let pairs: [(Result<DeleteMessageResponse, Error>, LocalMessageState?)] = [
             (.success(.init(message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
             (.failure(TestError()), .deletingFailed)
         ]
@@ -641,7 +641,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.isHardDeleted, true)
 
         // Simulate API response
-        let networkResult: Result<MessagePayload.Boxed, Error> = .success(
+        let networkResult: Result<DeleteMessageResponse, Error> = .success(
             .init(message: .dummy(messageId: messageId, authorUserId: currentUserId))
         )
         apiClient.test_simulateResponse(networkResult)
@@ -683,7 +683,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.isHardDeleted, true)
 
         // Simulate API response
-        let networkResult: Result<MessagePayload.Boxed, Error> = .failure(TestError())
+        let networkResult: Result<DeleteMessageResponse, Error> = .failure(TestError())
         apiClient.test_simulateResponse(networkResult)
 
         // Local message state is set to deleting failed
@@ -788,7 +788,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deleteForMe: true)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -802,7 +802,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deleteForMe: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -816,7 +816,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

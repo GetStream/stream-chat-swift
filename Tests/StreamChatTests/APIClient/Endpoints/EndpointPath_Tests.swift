@@ -23,7 +23,7 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_deleteMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.deleteMessage("").shouldBeQueuedOffline)
+        XCTAssertTrue(EndpointPath.deleteMessage(id: "").shouldBeQueuedOffline)
     }
 
     func test_sendReaction_shouldBeQueuedOffline() {
@@ -246,7 +246,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.updateMessage(id: "message_ide"))
         assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
         assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))
-        assertResultEncodingAndDecoding(.deleteMessage("message_idd"))
+        assertResultEncodingAndDecoding(.deleteMessage(id: "message_idd"))
         assertResultEncodingAndDecoding(.replies("message_idr"))
         assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))

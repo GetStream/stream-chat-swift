@@ -27,6 +27,7 @@ allowed_endpoints=(
     deletePollVote
     deleteFile
     deleteImage
+    deleteMessage
     deleteReaction
     deleteUserGroup
     getApp
@@ -92,6 +93,7 @@ allowed_models=(
   CreatePollRequest
   CreateUserGroupRequest
   DeleteChannelResponse
+  DeleteMessageResponse
   DeleteReactionResponse
   DeliveredMessagePayload
   DeliveryReceiptsResponse
@@ -265,6 +267,7 @@ decodable_only_models=(
   CreateDraftResponse
   CurrentUserUnreads
   DeleteChannelResponse
+  DeleteMessageResponse
   DeleteReactionResponse
   DraftMessagePayload
   DraftPayload
@@ -686,6 +689,7 @@ remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
 remove_property UnmuteUsersResponse duration
 remove_property CreateDraftResponse duration
+remove_property DeleteMessageResponse duration
 remove_property DeleteReactionResponse duration
 remove_property SendMessageResponsePayload duration
 remove_property SendReactionResponse duration
@@ -980,7 +984,6 @@ inject_v1_endpoint_paths() {
     case pinnedMessages(String)
 
     case message(MessageId)
-    case deleteMessage(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
     case translateMessage(MessageId)
@@ -1027,7 +1030,6 @@ EOF
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
         case let .message(messageId): return "messages/\(messageId)"
-        case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
         case let .translateMessage(messageId): return "messages/\(messageId)/translate"
