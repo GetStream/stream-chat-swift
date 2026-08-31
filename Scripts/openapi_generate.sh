@@ -52,6 +52,7 @@ allowed_endpoints=(
     sendReaction
     showChannel
     stopWatchingChannel
+    translateMessage
     truncateChannel
     unblockUsers
     unmute
@@ -157,6 +158,8 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  TranslateMessageRequest
+  TranslateMessageResponse
   TruncateChannelRequest
   TruncateChannelResponse
   TypingIndicatorsResponse
@@ -241,6 +244,7 @@ encodable_only_models=(
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
+  TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
   UnmuteChannelRequest
@@ -306,6 +310,7 @@ decodable_only_models=(
   SendReactionResponse
   SharedLocation
   SharedLocationsResponse
+  TranslateMessageResponse
   TruncateChannelResponse
   UnblockUsersResponse
   UnmuteUsersResponse
@@ -607,6 +612,7 @@ rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
+rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
@@ -691,6 +697,7 @@ remove_property SendMessageResponsePayload duration
 remove_property SendReactionResponse duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
+remove_property TranslateMessageResponse duration
 
 # Unused channel context (cid, createdBy, id, type)
 remove_property SendMessageRequest includeChannelContext
@@ -787,6 +794,7 @@ publicize_raw_representable() {
 publicize_raw_representable ChannelCapability
 publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
+publicize_raw_representable TranslateMessageRequest TranslationLanguage
 
 # Mark a generated RawRepresentable value as deprecated while keeping its legacy
 # raw value available. Fail if the generated declaration changes so the annotation
@@ -983,7 +991,6 @@ inject_v1_endpoint_paths() {
     case deleteMessage(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
-    case translateMessage(MessageId)
 
     // Drafts
     case drafts
@@ -1030,7 +1037,6 @@ EOF
         case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
-        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
 
         case .drafts: return "drafts/query"
         case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
