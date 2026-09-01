@@ -109,7 +109,7 @@ final class MemberSearch_Tests: XCTestCase {
         await memberSearch.clearResults()
 
         await XCTAssertEqual([], memberSearch.state.members.map(\.id))
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertNil(memberSearch.state.query)
         }
     }

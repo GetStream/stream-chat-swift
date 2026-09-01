@@ -109,7 +109,7 @@ final class UserSearch_Tests: XCTestCase {
         await userSearch.clearResults()
 
         await XCTAssertEqual([], userSearch.state.users.map(\.id))
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertNil(userSearch.state.query)
         }
     }

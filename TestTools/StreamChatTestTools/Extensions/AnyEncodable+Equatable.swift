@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension AnyEncodable: Equatable {
+extension AnyEncodable: @retroactive Equatable {
     public static func == (lhs: AnyEncodable, rhs: AnyEncodable) -> Bool {
         do {
             let encoder = JSONEncoder.default

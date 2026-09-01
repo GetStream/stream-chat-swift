@@ -13,7 +13,7 @@ final class PollPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.id, "7fd88eb3-fc05-4e89-89af-36c6d8995dda")
         XCTAssertEqual(payload.name, "test")
         XCTAssertEqual(payload.description, "")
-        XCTAssertEqual(payload.votingVisibility, "public")
+        XCTAssertEqual(payload.votingVisibility, .public)
         XCTAssertEqual(payload.enforceUniqueVote, false)
         XCTAssertNil(payload.maxVotesAllowed)
         XCTAssertEqual(payload.allowUserSuggestedOptions, false)

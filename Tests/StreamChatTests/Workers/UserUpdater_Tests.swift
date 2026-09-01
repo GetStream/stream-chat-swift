@@ -64,7 +64,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MuteResponse, Error>.success(.init(duration: .unique)))
+        apiClient.test_simulateResponse(Result<MuteResponse, Error>.success(.init()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -93,7 +93,7 @@ final class UserUpdater_Tests: XCTestCase {
         // Mock the API response with the created mute
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
-                .init(duration: .unique, mutes: [.dummy(userId: mutedUserId)])
+                .init(mutes: [.dummy(userId: mutedUserId)])
             )
         )
 
@@ -115,7 +115,6 @@ final class UserUpdater_Tests: XCTestCase {
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
                 .init(
-                    duration: .unique,
                     mutes: nil,
                     ownUser: .dummy(
                         userId: currentUserId,
@@ -139,7 +138,7 @@ final class UserUpdater_Tests: XCTestCase {
         // Mock the API response with the created mute
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
-                .init(duration: .unique, mutes: [.dummy(userId: .unique)])
+                .init(mutes: [.dummy(userId: .unique)])
             )
         )
 
@@ -456,7 +455,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate API response with success
-        let payload = BlockUsersResponse(blockedByUserId: .unique, blockedUserId: .unique, createdAt: .unique, duration: "")
+        let payload = BlockUsersResponse(blockedByUserId: .unique, blockedUserId: .unique, createdAt: .unique)
         apiClient.test_simulateResponse(Result<BlockUsersResponse, Error>.success(payload))
 
         // Assert completion is called
@@ -505,7 +504,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.success(.init(duration: "")))
+        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.success(.init()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
