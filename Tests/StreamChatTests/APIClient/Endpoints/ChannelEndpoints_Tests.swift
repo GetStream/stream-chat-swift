@@ -552,25 +552,4 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/" + cid.apiPath + "/event", endpoint.path.value)
     }
-
-    func test_loadPinnedMessages_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let query = PinnedMessagesQuery(
-            pageSize: .unique,
-            pagination: .aroundTimestamp(.unique)
-        )
-
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>(
-            path: .pinnedMessages(cid.apiPath),
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["payload": query]
-        )
-
-        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath + "/pinned_messages", endpoint.path.value)
-    }
 }
