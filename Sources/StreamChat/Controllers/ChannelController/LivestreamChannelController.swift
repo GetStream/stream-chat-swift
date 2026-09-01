@@ -691,7 +691,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
             type: cid.type.rawValue,
             id: cid.id,
             limit: pageSize,
-            offset: nil,
+            offset: pagination?.offset,
             idGte: pagination?.messageIdAfterOrEqual,
             idGt: pagination?.messageIdAfter,
             idLte: pagination?.messageIdBeforeOrEqual,

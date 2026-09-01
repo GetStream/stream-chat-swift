@@ -31,6 +31,9 @@ public enum PinnedMessagesPagination: Hashable, Sendable {
     ///
     /// When `inclusive == true` the results include the message pinned at the given timestamp.
     case later(_ timestamp: Date, inclusive: Bool)
+
+    /// When used, the backend skips the given number of pinned messages.
+    case offset(_ offset: Int)
 }
 
 extension PinnedMessagesPagination {
@@ -73,6 +76,10 @@ extension PinnedMessagesPagination {
     var timestampBefore: Date? {
         if case let .earlier(timestamp, false) = self { timestamp } else { nil }
     }
+
+    var offset: Int? {
+        if case let .offset(offset) = self { offset } else { nil }
+    }
 }
 
 // MARK: - Encodable
@@ -84,6 +91,7 @@ extension PinnedMessagesPagination: Encodable {
         case id_gte
         case id_lt
         case id_lte
+        case offset
         case pinned_at_around
         case pinned_at_after
         case pinned_at_after_or_equal
@@ -107,6 +115,8 @@ extension PinnedMessagesPagination: Encodable {
             try container.encode(timestamp, forKey: inclusive ? .pinned_at_after_or_equal : .pinned_at_after)
         case let .earlier(timestamp, inclusive):
             try container.encode(timestamp, forKey: inclusive ? .pinned_at_before_or_equal : .pinned_at_before)
+        case let .offset(offset):
+            try container.encode(offset, forKey: .offset)
         }
     }
 }

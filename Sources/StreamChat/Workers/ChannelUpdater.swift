@@ -801,7 +801,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 type: cid.type.rawValue,
                 id: cid.id,
                 limit: query.pageSize,
-                offset: nil,
+                offset: query.pagination?.offset,
                 idGte: query.pagination?.messageIdAfterOrEqual,
                 idGt: query.pagination?.messageIdAfter,
                 idLte: query.pagination?.messageIdBeforeOrEqual,

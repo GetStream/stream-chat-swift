@@ -165,6 +165,22 @@ final class PinnedMessagesPagination_Tests: XCTestCase {
         AssertJSONEqual(json, ["pinned_at_after": timestampString])
     }
 
+    // MARK: - Offset
+
+    func test_offset_isEncodedCorrectly() throws {
+        // Create offset
+        let offset = 25
+
+        // Create pagination
+        let pagination: PinnedMessagesPagination = .offset(offset)
+
+        // Create JSON pagination.
+        let json = try JSONEncoder.default.encode(pagination)
+
+        // Assert encoding is correct.
+        AssertJSONEqual(json, ["offset": offset])
+    }
+
     // MARK: - Convenience Properties
 
     func test_aroundMessageId_returnsMatchingValue() {
@@ -235,5 +251,12 @@ final class PinnedMessagesPagination_Tests: XCTestCase {
 
         XCTAssertEqual(PinnedMessagesPagination.earlier(timestamp, inclusive: false).timestampBefore, timestamp)
         XCTAssertNil(PinnedMessagesPagination.earlier(timestamp, inclusive: true).timestampBefore)
+    }
+
+    func test_offset_returnsMatchingValue() {
+        let offset = 25
+
+        XCTAssertEqual(PinnedMessagesPagination.offset(offset).offset, offset)
+        XCTAssertNil(PinnedMessagesPagination.aroundMessage(.unique).offset)
     }
 }
