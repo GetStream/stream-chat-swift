@@ -47,8 +47,8 @@ final class RemindersRepository_Tests: XCTestCase {
         
         // Mock response
         let response = RemindersQueryPayload(
-            reminders: [],
-            next: nil
+            next: nil,
+            reminders: []
         )
         
         apiClient.test_simulateResponse(.success(response))
@@ -56,7 +56,7 @@ final class RemindersRepository_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
         
         // Assert endpoint is correct
-        let expectedEndpoint: Endpoint<RemindersQueryPayload> = .queryReminders(query: query)
+        let expectedEndpoint: Endpoint<RemindersQueryPayload> = .queryReminders(queryRemindersRequest: query.toRequest())
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -83,8 +83,8 @@ final class RemindersRepository_Tests: XCTestCase {
         )
         
         let response = RemindersQueryPayload(
-            reminders: [reminderPayload],
-            next: nil
+            next: nil,
+            reminders: [reminderPayload]
         )
 
         // Create a message to add reminder to
@@ -185,7 +185,7 @@ final class RemindersRepository_Tests: XCTestCase {
         // Assert endpoint is correct
         let expectedEndpoint: Endpoint<ReminderResponsePayload> = .createReminder(
             messageId: messageId,
-            request: ReminderRequestBody(remindAt: remindAt)
+            createReminderRequest: CreateReminderRequest(remindAt: remindAt)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -289,7 +289,7 @@ final class RemindersRepository_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        apiClient.test_mockResponseResult(.success(ReminderResponsePayload(
+        apiClient.test_mockResponseResult(.success(UpdateReminderResponse(
             reminder: .init(
                 channelCid: cid,
                 messageId: messageId,
@@ -302,9 +302,9 @@ final class RemindersRepository_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
         
         // Assert endpoint is correct
-        let expectedEndpoint: Endpoint<ReminderResponsePayload> = .updateReminder(
+        let expectedEndpoint: Endpoint<UpdateReminderResponse> = .updateReminder(
             messageId: messageId,
-            request: ReminderRequestBody(remindAt: newRemindAt)
+            updateReminderRequest: UpdateReminderRequest(remindAt: newRemindAt)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -389,7 +389,7 @@ final class RemindersRepository_Tests: XCTestCase {
         XCTAssertNearlySameDate(updatedRemindAt, newRemindAt)
         
         // Simulate API failure
-        apiClient.test_simulateResponse(Result<ReminderResponsePayload, Error>.failure(TestError()))
+        apiClient.test_simulateResponse(Result<UpdateReminderResponse, Error>.failure(TestError()))
         
         wait(for: [exp], timeout: defaultTimeout)
         
