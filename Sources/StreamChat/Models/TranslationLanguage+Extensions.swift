@@ -4,10 +4,10 @@
 
 import Foundation
 
-public extension TranslationLanguage {
-    var languageCode: String { rawValue }
+extension TranslationLanguage {
+    public var languageCode: String { rawValue }
 
-    convenience init(languageCode: String) {
+    public convenience init(languageCode: String) {
         self.init(rawValue: languageCode)
     }
 }
