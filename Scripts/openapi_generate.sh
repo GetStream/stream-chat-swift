@@ -50,6 +50,7 @@ allowed_endpoints=(
     queryReactions
     queryUsers
     removeUserGroupMembers
+    runMessageAction
     searchRoles
     searchUserGroups
     sendMessage
@@ -123,6 +124,8 @@ allowed_models=(
   ListUserGroupsResponse
   MarkDeliveredRequest
   MembersResponse
+  MessageActionRequest
+  MessageActionResponse
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -237,6 +240,7 @@ encodable_only_models=(
   CreateUserGroupRequest
   DeliveredMessagePayload
   HideChannelRequest
+  MessageActionRequest
   MessageRequest
   MuteChannelRequest
   MuteRequest
@@ -295,6 +299,7 @@ decodable_only_models=(
   MemberInfoPayload
   MemberPayload
   MembersResponse
+  MessageActionResponse
   MessageModerationDetailsPayload
   MessageReactionGroupPayload
   MessageReactionPayload
@@ -713,6 +718,7 @@ remove_property SendReactionResponse duration
 remove_property UpdateMessagePartialResponse duration
 remove_property UpdateMessageResponse duration
 remove_property TranslateMessageResponse duration
+remove_property MessageActionResponse duration
 
 # Unused channel context (cid, createdBy, id, type)
 remove_property SendMessageRequest includeChannelContext
@@ -1004,7 +1010,6 @@ inject_v1_endpoint_paths() {
 
     case message(MessageId)
     case replies(MessageId)
-    case messageAction(MessageId)
 
     // Reminders
     case reminders
@@ -1045,7 +1050,6 @@ EOF
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .messageAction(messageId): return "messages/\(messageId)/action"
 
         case .reminders: return "reminders/query"
         case let .reminder(messageId): return "messages/\(messageId)/reminders"

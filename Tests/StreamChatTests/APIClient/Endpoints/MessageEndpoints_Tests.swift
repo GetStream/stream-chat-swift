@@ -45,39 +45,4 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/replies", endpoint.path.value)
     }
-
-    func test_sendMessageAction_buildsCorrectly() {
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
-        let action = AttachmentAction(
-            name: .unique,
-            value: .unique,
-            style: .primary,
-            type: .button,
-            text: .unique
-        )
-
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: .messageAction(messageId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: AttachmentActionRequestBody(
-                cid: cid,
-                messageId: messageId,
-                action: action
-            )
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
-        )
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/action", endpoint.path.value)
-    }
 }

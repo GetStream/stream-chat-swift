@@ -26,24 +26,6 @@ extension Endpoint {
         )
     }
 
-    static func dispatchEphemeralMessageAction(
-        cid: ChannelId,
-        messageId: MessageId,
-        action: AttachmentAction
-    ) -> Endpoint<MessageResponse.Boxed> {
-        .init(
-            path: .messageAction(messageId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: AttachmentActionRequestBody(
-                cid: cid,
-                messageId: messageId,
-                action: action
-            )
-        )
-    }
-
     static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
         .init(path: .search, method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
     }

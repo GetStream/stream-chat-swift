@@ -44,7 +44,7 @@ extension EndpointPath: Equatable {
             .deleteReaction(messageId1, type1),
             .deleteReaction(messageId2, type2)
         ): return messageId1 == messageId2 && type1 == type2
-        case let (.messageAction(messageId1), .messageAction(messageId2)): return messageId1 == messageId2
+        case let (.runMessageAction(id1), .runMessageAction(id2)): return id1 == id2
         case (.banMember, .banMember): return true
         case (.flagUser, .flagUser): return true
         case (.flagMessage, .flagMessage): return true
