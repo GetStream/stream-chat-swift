@@ -4,6 +4,8 @@
 
 import AVFoundation
 import Foundation
+import ImageIO
+import PhotosUI
 import StreamChat
 import UIKit
 
@@ -443,13 +445,41 @@ open class ComposerVC: _ViewController,
         .init()
 
     /// The view controller for selecting image attachments.
-    open private(set) lazy var mediaPickerVC: UIViewController = {
+    ///
+    /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
+    /// faster than `UIImagePickerController` and needs no photo library permission. A new
+    /// picker is created for every presentation, because the system picker keeps showing the
+    /// previous selection when the same instance is reused.
+    open var mediaPickerVC: UIViewController {
+        if #available(iOS 14.0, *) {
+            var configuration = PHPickerConfiguration()
+            configuration.filter = .any(of: [.images, .videos])
+            configuration.selectionLimit = max(1, maxNumberOfAttachments - content.attachments.count)
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            return picker
+        }
+        return legacyMediaPickerVC
+    }
+
+    private lazy var legacyMediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
         picker.delegate = self
         return picker
     }()
+
+    /// The view controller which shows the progress of compressing the selected videos.
+    open private(set) lazy var videoCompressionProgressVC: VideoCompressionProgressVC = {
+        let progressVC = components.videoCompressionProgressVC.init()
+        progressVC.modalPresentationStyle = .overFullScreen
+        progressVC.modalTransitionStyle = .crossDissolve
+        return progressVC
+    }()
+
+    /// The task which loads and compresses the media selected in the media picker.
+    private var mediaSelectionTask: Task<Void, Never>?
 
     /// The View Controller for taking a picture.
     open private(set) lazy var cameraVC: UIViewController = {
@@ -1494,6 +1524,17 @@ open class ComposerVC: _ViewController,
         content.attachments.append(attachment)
     }
 
+    /// The maximum number of attachments which can be added to a message.
+    ///
+    /// The limit can be changed with `ChatClientConfig.maxAttachmentCountPerMessage`.
+    open var maxNumberOfAttachments: Int {
+        guard let config = channelController?.client.config else {
+            log.assertionFailure("Channel controller must be set at this point")
+            return 1
+        }
+        return config.maxAttachmentCountPerMessage
+    }
+
     /// The maximum upload file size depending on the attachment type.
     ///
     /// The max attachment size can be set from the Stream's Dashboard App Settings.
@@ -1595,71 +1636,270 @@ open class ComposerVC: _ViewController,
     }
 
     private func handleImagePickerMediaSelected(info: [UIImagePickerController.InfoKey: Any]) {
-        let urlAndType: (URL, AttachmentType)
+        let media: SelectedMediaItem
         if let imageURL = info[.imageURL] as? URL {
-            urlAndType = (imageURL, .image)
+            media = .init(url: imageURL, type: .image)
         } else if let videoURL = info[.mediaURL] as? URL {
-            urlAndType = (videoURL, .video)
+            media = .init(url: videoURL, type: .video)
         } else if let editedImage = info[.editedImage] as? UIImage,
                   let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
-            urlAndType = (editedImageURL, .image)
+            media = .init(url: editedImageURL, type: .image)
         } else if let originalImage = info[.originalImage] as? UIImage,
                   let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
-            urlAndType = (originalImageURL, .image)
+            media = .init(url: originalImageURL, type: .image)
         } else {
             log.error("Unexpected item selected in image picker")
             return
         }
 
-        nonisolated(unsafe) var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
-            localAttachmentInfo[.originalImage] = originalImage
+        let originalImage = media.type == .image ? info[.originalImage] as? UIImage : nil
+        Task { @MainActor [weak self] in
+            await self?.addAttachmentToContent(for: media, originalImage: originalImage)
         }
-        if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
-            let asset = AVURLAsset(url: videoURL)
-            let url = urlAndType.0
-            let type = urlAndType.1
-            StreamAssetPropertyLoader().loadProperties(
-                [AssetProperty(\.duration), AssetProperty(\.tracks)],
-                of: asset
-            ) { [weak self] result in
-                guard let self else { return }
-                Task { @MainActor in
-                    var info = localAttachmentInfo
-                    switch result {
-                    case .success(let loadedAsset):
-                        let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
-                        if durationSeconds.isFinite && !durationSeconds.isNaN {
-                            info[.duration] = durationSeconds
-                        }
-                        if let track = loadedAsset.tracks(withMediaType: .video).first {
-                            let (width, height) = Self.videoDimensions(from: track)
-                            info[.originalWidth] = width
-                            info[.originalHeight] = height
-                        }
-                    case .failure:
-                        break
-                    }
-                    do {
-                        try self.addAttachmentToContent(from: url, type: type, info: info)
-                    } catch {
-                        self.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
-                    }
+    }
+
+    // MARK: - Photos Picker
+
+    /// Adds the media items which were selected in the photos picker to the composer's content.
+    @available(iOS 14.0, *)
+    open func handleMediaPickerResults(_ results: [PHPickerResult]) {
+        let allowedResults = results.prefix(max(0, maxNumberOfAttachments - content.attachments.count))
+        if allowedResults.count < results.count {
+            showAttachmentsCountExceedingLimitAlert(maxNumberOfAttachments)
+        }
+        guard !allowedResults.isEmpty else { return }
+
+        let itemProviders = allowedResults.map(\.itemProvider)
+        mediaSelectionTask?.cancel()
+        mediaSelectionTask = Task { @MainActor [weak self] in
+            await self?.addSelectedMedia(from: itemProviders)
+        }
+    }
+
+    /// Cancels loading and compressing the media which was selected in the media picker.
+    open func cancelMediaSelection() {
+        mediaSelectionTask?.cancel()
+        mediaSelectionTask = nil
+        hideVideoCompressionProgress()
+    }
+
+    /// Loads the media provided by the photos picker and adds it to the composer's content.
+    ///
+    /// Videos are compressed with the quality of `Components.videoCompressionQuality`, so that
+    /// they are small enough to be uploaded. The progress is reported by `videoCompressionProgressVC`.
+    func addSelectedMedia(from itemProviders: [NSItemProvider]) async {
+        let quality = components.videoCompressionQuality
+        let numberOfVideos = itemProviders.filter { $0.hasItemConformingToTypeIdentifier(Self.videoTypeIdentifier) }.count
+        let shouldCompressVideos = numberOfVideos > 0 && quality != .original
+        if shouldCompressVideos {
+            showVideoCompressionProgress(numberOfVideos: numberOfVideos)
+        }
+        // When the task is cancelled, the progress is either already hidden by
+        // `cancelMediaSelection()`, or a newer selection has taken over showing it.
+        defer {
+            if shouldCompressVideos, !Task.isCancelled {
+                hideVideoCompressionProgress()
+            }
+        }
+
+        var processedVideos = 0
+        for itemProvider in itemProviders {
+            guard !Task.isCancelled else { return }
+
+            // Loading a video out of the photo library can take longer than compressing it,
+            // because the file is copied and possibly downloaded from iCloud first.
+            let isCompressedVideo = shouldCompressVideos
+                && itemProvider.hasItemConformingToTypeIdentifier(Self.videoTypeIdentifier)
+            if isCompressedVideo {
+                processedVideos += 1
+            }
+            let currentVideo = processedVideos
+            let reportProgress: (VideoCompressionProgressVC.Content.Phase, Double) -> Void = { [weak self] phase, progress in
+                guard isCompressedVideo else { return }
+                self?.updateVideoCompressionProgress(
+                    .init(
+                        phase: phase,
+                        currentVideo: currentVideo,
+                        numberOfVideos: numberOfVideos,
+                        progress: progress
+                    )
+                )
+            }
+
+            reportProgress(.preparing, 0)
+            guard var media = await Self.loadMedia(from: itemProvider, progressHandler: { reportProgress(.preparing, $0) })
+            else { continue }
+
+            if media.type == .video, shouldCompressVideos {
+                reportProgress(.compressing, 0)
+                do {
+                    let compressedURL = try await compressVideo(
+                        at: media.url,
+                        quality: quality,
+                        progressHandler: { reportProgress(.compressing, $0) }
+                    )
+                    media = .init(url: compressedURL, type: .video)
+                } catch is CancellationError {
+                    removeTemporaryMedia(at: media.url)
+                    return
+                } catch {
+                    log.error("Failed to compress the selected video, the original video is used instead: \(error)")
                 }
             }
-        } else {
-            do {
-                try addAttachmentToContent(
-                    from: urlAndType.0,
-                    type: urlAndType.1,
-                    info: localAttachmentInfo
-                )
-            } catch {
-                handleAddAttachmentError(
-                    attachmentURL: urlAndType.0,
-                    attachmentType: urlAndType.1,
-                    error: error
-                )
+
+            guard !Task.isCancelled else {
+                removeTemporaryMedia(at: media.url)
+                return
+            }
+            await addAttachmentToContent(for: media)
+        }
+    }
+
+    /// Compresses the video at the given location and removes the video it was created from.
+    ///
+    /// Compressing an already small video can result in a bigger file, in which case
+    /// the original video is kept.
+    private func compressVideo(
+        at url: URL,
+        quality: VideoCompressionQuality,
+        progressHandler: @escaping (Double) -> Void
+    ) async throws -> URL {
+        let compressedURL = try await components.videoCompressor.compressVideo(
+            at: url,
+            quality: quality,
+            progressHandler: progressHandler
+        )
+        if let originalSize = fileSize(at: url), let compressedSize = fileSize(at: compressedURL), compressedSize >= originalSize {
+            removeTemporaryMedia(at: compressedURL)
+            return url
+        }
+        removeTemporaryMedia(at: url)
+        return compressedURL
+    }
+
+    /// Adds the given media item to the composer's content, together with the metadata
+    /// which is needed for rendering it before it is uploaded.
+    private func addAttachmentToContent(for media: SelectedMediaItem, originalImage: UIImage? = nil) async {
+        var info: [LocalAttachmentInfoKey: Any] = [:]
+        switch media.type {
+        case .image:
+            if let originalImage = originalImage {
+                info[.originalImage] = originalImage
+            } else if let dimensions = imageDimensions(at: media.url) {
+                info[.originalWidth] = dimensions.width
+                info[.originalHeight] = dimensions.height
+            }
+        case .video:
+            let metadata = await Self.loadVideoMetadata(at: media.url)
+            if let duration = metadata.duration {
+                info[.duration] = duration
+            }
+            if let width = metadata.width, let height = metadata.height {
+                info[.originalWidth] = width
+                info[.originalHeight] = height
+            }
+        default:
+            break
+        }
+
+        do {
+            try addAttachmentToContent(from: media.url, type: media.type, info: info)
+        } catch {
+            handleAddAttachmentError(attachmentURL: media.url, attachmentType: media.type, error: error)
+        }
+    }
+
+    /// Shows the view which reports the progress of compressing the selected videos.
+    open func showVideoCompressionProgress(numberOfVideos: Int) {
+        videoCompressionProgressVC.content = .init(
+            phase: .preparing,
+            currentVideo: 1,
+            numberOfVideos: numberOfVideos,
+            progress: 0
+        )
+        videoCompressionProgressVC.onCancel = { [weak self] in
+            self?.cancelMediaSelection()
+        }
+        guard videoCompressionProgressVC.presentingViewController == nil else { return }
+        present(videoCompressionProgressVC, animated: true)
+    }
+
+    /// Updates the reported progress of compressing the selected videos.
+    open func updateVideoCompressionProgress(_ content: VideoCompressionProgressVC.Content) {
+        videoCompressionProgressVC.content = content
+    }
+
+    /// Hides the view which reports the progress of compressing the selected videos.
+    open func hideVideoCompressionProgress() {
+        guard videoCompressionProgressVC.presentingViewController != nil else { return }
+        videoCompressionProgressVC.dismiss(animated: true)
+    }
+
+    private static var videoTypeIdentifier: String { "public.movie" }
+
+    private static var imageTypeIdentifier: String { "public.image" }
+
+    /// How often the progress of loading a media item from the photo library is reported.
+    private static var mediaLoadProgressUpdateInterval: TimeInterval { 0.1 }
+
+    private static func loadMedia(
+        from itemProvider: NSItemProvider,
+        progressHandler: @escaping (Double) -> Void
+    ) async -> SelectedMediaItem? {
+        let isVideo = itemProvider.hasItemConformingToTypeIdentifier(videoTypeIdentifier)
+        let typeIdentifier = isVideo ? videoTypeIdentifier : imageTypeIdentifier
+        let loadProgress = MediaLoadProgress()
+        let progressTask = Task { @MainActor in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: UInt64(mediaLoadProgressUpdateInterval * 1_000_000_000))
+                guard !Task.isCancelled else { return }
+                guard let fractionCompleted = loadProgress.progress?.fractionCompleted else { continue }
+                progressHandler(fractionCompleted)
+            }
+        }
+        defer { progressTask.cancel() }
+
+        return await withCheckedContinuation { continuation in
+            loadProgress.progress = itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
+                guard let url = url else {
+                    log.error("Failed to load the media selected in the photos picker: \(error?.localizedDescription ?? "unknown error")")
+                    continuation.resume(returning: nil)
+                    return
+                }
+                do {
+                    // The provided file is deleted as soon as this closure returns, so it needs
+                    // to be copied to a location which is owned by the composer.
+                    let localURL = try copyToTemporaryLocation(url)
+                    continuation.resume(returning: SelectedMediaItem(url: localURL, type: isVideo ? .video : .image))
+                } catch {
+                    log.error("Failed to copy the media selected in the photos picker: \(error)")
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
+    }
+
+    private static func loadVideoMetadata(at url: URL) async -> VideoMetadata {
+        await withCheckedContinuation { continuation in
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\.duration), AssetProperty(\.tracks)],
+                of: AVURLAsset(url: url)
+            ) { result in
+                guard case .success(let asset) = result else {
+                    continuation.resume(returning: VideoMetadata())
+                    return
+                }
+                var metadata = VideoMetadata()
+                let durationSeconds = CMTimeGetSeconds(asset.duration)
+                if durationSeconds.isFinite && !durationSeconds.isNaN {
+                    metadata.duration = durationSeconds
+                }
+                if let track = asset.tracks(withMediaType: .video).first {
+                    let (width, height) = videoDimensions(from: track)
+                    metadata.width = width
+                    metadata.height = height
+                }
+                continuation.resume(returning: metadata)
             }
         }
     }
@@ -1671,6 +1911,16 @@ open class ComposerVC: _ViewController,
             return (Double(size.height), Double(size.width))
         }
         return (Double(size.width), Double(size.height))
+    }
+
+    /// Removes a temporary media file which the composer created for a selected media item.
+    private func removeTemporaryMedia(at url: URL) {
+        let directory = url.deletingLastPathComponent()
+        if UUID(uuidString: directory.lastPathComponent) != nil {
+            try? FileManager.default.removeItem(at: directory)
+        } else {
+            try? FileManager.default.removeItem(at: url)
+        }
     }
 
     // MARK: - UIDocumentPickerViewControllerDelegate
@@ -1824,6 +2074,75 @@ open class ComposerVC: _ViewController,
             }
         }
     }
+}
+
+extension ComposerVC {
+    /// A media item which was selected in the composer's media picker.
+    struct SelectedMediaItem: Sendable {
+        /// The local file URL of the media item.
+        let url: URL
+
+        /// The type of the media item, either `.image` or `.video`.
+        let type: AttachmentType
+    }
+}
+
+@available(iOS 14.0, *)
+extension ComposerVC: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true) { [weak self] in
+            self?.handleMediaPickerResults(results)
+        }
+    }
+}
+
+/// Holds the progress of loading a media item, which is only known once the loading started.
+@MainActor private final class MediaLoadProgress {
+    var progress: Progress?
+}
+
+/// The properties of a video which the backend needs for rendering it.
+private struct VideoMetadata: Sendable {
+    var duration: TimeInterval?
+    var width: Double?
+    var height: Double?
+}
+
+/// Reads the dimensions from the image's metadata, without decoding the whole image.
+private func imageDimensions(at url: URL) -> (width: Double, height: Double)? {
+    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+          let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any],
+          let width = (properties[kCGImagePropertyPixelWidth as String] as? NSNumber)?.doubleValue,
+          let height = (properties[kCGImagePropertyPixelHeight as String] as? NSNumber)?.doubleValue
+    else { return nil }
+    let rawOrientation = (properties[kCGImagePropertyOrientation as String] as? NSNumber)?.uint32Value
+    let orientation = rawOrientation.flatMap(CGImagePropertyOrientation.init(rawValue:)) ?? .up
+    switch orientation {
+    case .left, .leftMirrored, .right, .rightMirrored:
+        return (width: height, height: width)
+    default:
+        return (width: width, height: height)
+    }
+}
+
+private func copyToTemporaryLocation(_ url: URL) throws -> URL {
+    let directory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
+    let destination = directory.appendingPathComponent(fileName)
+    do {
+        try FileManager.default.copyItem(at: url, to: destination)
+    } catch {
+        try? FileManager.default.removeItem(at: directory)
+        throw error
+    }
+    return destination
+}
+
+private func fileSize(at url: URL) -> Int64? {
+    guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) else { return nil }
+    return (attributes[.size] as? NSNumber)?.int64Value
 }
 
 /// searchUsers does an autocomplete search on a list of ChatUser and returns users with `id` or `name` containing the search string
