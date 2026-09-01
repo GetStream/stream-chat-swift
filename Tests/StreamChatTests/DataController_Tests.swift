@@ -57,4 +57,20 @@ final class DataController_Tests: XCTestCase {
         controller.state = .localDataFetchFailed(ClientError(""))
         XCTAssertFalse(controller.canBeRecovered)
     }
+
+    func test_state_whenAccessedConcurrently_doesNotCrash() {
+        let controller = DataController()
+        let iterations = 1000
+
+        DispatchQueue.concurrentPerform(iterations: iterations) { index in
+            if index.isMultiple(of: 2) {
+                controller.state = .remoteDataFetchFailed(ClientError("Failed \(index)"))
+            } else {
+                _ = controller.state
+                _ = controller.canBeRecovered
+            }
+        }
+
+        XCTAssertTrue(controller.canBeRecovered)
+    }
 }

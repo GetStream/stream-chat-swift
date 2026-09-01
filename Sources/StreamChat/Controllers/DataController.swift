@@ -20,9 +20,13 @@ public class DataController: Controller {
         case remoteDataFetchFailed(ClientError)
     }
 
+    @Atomic private var _state: State = .initialized
+
     /// The current state of the controller.
-    public internal(set) var state: State = .initialized {
-        didSet {
+    public internal(set) var state: State {
+        get { _state }
+        set {
+            _state = newValue
             callback {
                 self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
             }
