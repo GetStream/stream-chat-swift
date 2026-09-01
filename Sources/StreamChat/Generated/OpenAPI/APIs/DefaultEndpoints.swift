@@ -28,7 +28,6 @@ enum EndpointPath: Codable {
     case pinnedMessages(String)
 
     case message(MessageId)
-    case deleteMessage(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
 
@@ -55,6 +54,7 @@ enum EndpointPath: Codable {
     case deleteDraft(type: String, id: String)
     case deleteFile
     case deleteImage
+    case deleteMessage(id: String)
     case deletePoll(pollId: String)
     case deletePollVote(messageId: String, pollId: String, voteId: String)
     case deleteReaction(id: String, type: String)
@@ -132,7 +132,6 @@ enum EndpointPath: Codable {
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
         case let .message(messageId): return "messages/\(messageId)"
-        case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
 
@@ -173,6 +172,8 @@ enum EndpointPath: Codable {
             return "/api/v2/uploads/file"
         case .deleteImage:
             return "/api/v2/uploads/image"
+        case let .deleteMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case let .deletePoll(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
         case let .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId):
@@ -552,6 +553,24 @@ extension Endpoint {
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteMessage(
+        id: String,
+        hard: Bool?,
+        deleteForMe: Bool?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<DeleteMessageResponse> {
+        return .init(
+            path: .deleteMessage(id: id),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "hard": hard,
+                "delete_for_me": deleteForMe
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil

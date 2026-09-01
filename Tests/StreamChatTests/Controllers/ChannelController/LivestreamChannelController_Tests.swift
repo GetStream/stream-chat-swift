@@ -881,12 +881,12 @@ extension LivestreamChannelController_Tests {
         }
 
         client.mockAPIClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.success(.init(message: .dummy()))
+            Result<DeleteMessageResponse, Error>.success(.dummy())
         )
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: messageId, hard: false, deleteForMe: nil)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(deleteError)
     }
@@ -897,7 +897,7 @@ extension LivestreamChannelController_Tests {
 
         controller.deleteMessage(messageId: messageId, hard: true) { _ in }
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteMessage(messageId: messageId, hard: true)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: messageId, hard: true, deleteForMe: nil)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -912,7 +912,7 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(testError))
+        client.mockAPIClient.test_simulateResponse(Result<DeleteMessageResponse, Error>.failure(testError))
 
         waitForExpectations(timeout: defaultTimeout)
 

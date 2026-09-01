@@ -205,7 +205,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
         case let .updateMessage(messageId), let .updateMessagePartial(messageId):
             messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
         case .deleteMessage:
-            guard let message = decodeTo(MessageResponse.Boxed.self) else {
+            guard let message = decodeTo(DeleteMessageResponse.self) else {
                 completion()
                 return
             }

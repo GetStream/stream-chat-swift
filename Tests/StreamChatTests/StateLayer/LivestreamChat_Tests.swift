@@ -479,29 +479,29 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_deleteMessage_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            Result<MessagePayload.Boxed, Error>.success(MessagePayload.Boxed(message: .dummy(messageId: "msg-1")))
+            Result<DeleteMessageResponse, Error>.success(DeleteMessageResponse(message: .dummy(messageId: "msg-1")))
         )
 
         try await livestreamChat.deleteMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>.deleteMessage(messageId: "msg-1", hard: false)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: "msg-1", hard: false, deleteForMe: nil)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_deleteMessage_withHardTrue_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            Result<MessagePayload.Boxed, Error>.success(MessagePayload.Boxed(message: .dummy(messageId: "msg-1")))
+            Result<DeleteMessageResponse, Error>.success(DeleteMessageResponse(message: .dummy(messageId: "msg-1")))
         )
 
         try await livestreamChat.deleteMessage("msg-1", hard: true)
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>.deleteMessage(messageId: "msg-1", hard: true)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: "msg-1", hard: true, deleteForMe: nil)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_deleteMessage_propagatesAPIErrors() async {
         let testError = TestError()
-        client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(testError))
+        client.mockAPIClient.test_mockResponseResult(Result<DeleteMessageResponse, Error>.failure(testError))
 
         do {
             try await livestreamChat.deleteMessage("msg-1")
