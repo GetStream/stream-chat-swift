@@ -33,6 +33,48 @@ public enum PinnedMessagesPagination: Hashable, Sendable {
     case later(_ timestamp: Date, inclusive: Bool)
 }
 
+extension PinnedMessagesPagination {
+    var aroundMessageId: MessageId? {
+        if case let .aroundMessage(messageId) = self { messageId } else { nil }
+    }
+
+    var messageIdAfterOrEqual: MessageId? {
+        if case let .after(messageId, true) = self { messageId } else { nil }
+    }
+
+    var messageIdAfter: MessageId? {
+        if case let .after(messageId, false) = self { messageId } else { nil }
+    }
+
+    var messageIdBeforeOrEqual: MessageId? {
+        if case let .before(messageId, true) = self { messageId } else { nil }
+    }
+
+    var messageIdBefore: MessageId? {
+        if case let .before(messageId, false) = self { messageId } else { nil }
+    }
+
+    var aroundTimestamp: Date? {
+        if case let .aroundTimestamp(timestamp) = self { timestamp } else { nil }
+    }
+
+    var timestampAfterOrEqual: Date? {
+        if case let .later(timestamp, true) = self { timestamp } else { nil }
+    }
+
+    var timestampAfter: Date? {
+        if case let .later(timestamp, false) = self { timestamp } else { nil }
+    }
+
+    var timestampBeforeOrEqual: Date? {
+        if case let .earlier(timestamp, true) = self { timestamp } else { nil }
+    }
+
+    var timestampBefore: Date? {
+        if case let .earlier(timestamp, false) = self { timestamp } else { nil }
+    }
+}
+
 // MARK: - Encodable
 
 extension PinnedMessagesPagination: Encodable {

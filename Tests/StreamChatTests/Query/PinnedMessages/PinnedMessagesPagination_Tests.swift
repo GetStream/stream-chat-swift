@@ -164,4 +164,76 @@ final class PinnedMessagesPagination_Tests: XCTestCase {
         let timestampString = try XCTUnwrap(DateFormatter.Stream.rfc3339DateString(from: timestamp))
         AssertJSONEqual(json, ["pinned_at_after": timestampString])
     }
+
+    // MARK: - Convenience Properties
+
+    func test_aroundMessageId_returnsMatchingValue() {
+        let messageId = MessageId.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.aroundMessage(messageId).aroundMessageId, messageId)
+        XCTAssertNil(PinnedMessagesPagination.after(messageId, inclusive: true).aroundMessageId)
+    }
+
+    func test_messageIdAfterOrEqual_returnsMatchingValue() {
+        let messageId = MessageId.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.after(messageId, inclusive: true).messageIdAfterOrEqual, messageId)
+        XCTAssertNil(PinnedMessagesPagination.after(messageId, inclusive: false).messageIdAfterOrEqual)
+    }
+
+    func test_messageIdAfter_returnsMatchingValue() {
+        let messageId = MessageId.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.after(messageId, inclusive: false).messageIdAfter, messageId)
+        XCTAssertNil(PinnedMessagesPagination.after(messageId, inclusive: true).messageIdAfter)
+    }
+
+    func test_messageIdBeforeOrEqual_returnsMatchingValue() {
+        let messageId = MessageId.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.before(messageId, inclusive: true).messageIdBeforeOrEqual, messageId)
+        XCTAssertNil(PinnedMessagesPagination.before(messageId, inclusive: false).messageIdBeforeOrEqual)
+    }
+
+    func test_messageIdBefore_returnsMatchingValue() {
+        let messageId = MessageId.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.before(messageId, inclusive: false).messageIdBefore, messageId)
+        XCTAssertNil(PinnedMessagesPagination.before(messageId, inclusive: true).messageIdBefore)
+    }
+
+    func test_aroundTimestamp_returnsMatchingValue() {
+        let timestamp = Date.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.aroundTimestamp(timestamp).aroundTimestamp, timestamp)
+        XCTAssertNil(PinnedMessagesPagination.later(timestamp, inclusive: true).aroundTimestamp)
+    }
+
+    func test_timestampAfterOrEqual_returnsMatchingValue() {
+        let timestamp = Date.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.later(timestamp, inclusive: true).timestampAfterOrEqual, timestamp)
+        XCTAssertNil(PinnedMessagesPagination.later(timestamp, inclusive: false).timestampAfterOrEqual)
+    }
+
+    func test_timestampAfter_returnsMatchingValue() {
+        let timestamp = Date.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.later(timestamp, inclusive: false).timestampAfter, timestamp)
+        XCTAssertNil(PinnedMessagesPagination.later(timestamp, inclusive: true).timestampAfter)
+    }
+
+    func test_timestampBeforeOrEqual_returnsMatchingValue() {
+        let timestamp = Date.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.earlier(timestamp, inclusive: true).timestampBeforeOrEqual, timestamp)
+        XCTAssertNil(PinnedMessagesPagination.earlier(timestamp, inclusive: false).timestampBeforeOrEqual)
+    }
+
+    func test_timestampBefore_returnsMatchingValue() {
+        let timestamp = Date.unique
+
+        XCTAssertEqual(PinnedMessagesPagination.earlier(timestamp, inclusive: false).timestampBefore, timestamp)
+        XCTAssertNil(PinnedMessagesPagination.earlier(timestamp, inclusive: true).timestampBefore)
+    }
 }

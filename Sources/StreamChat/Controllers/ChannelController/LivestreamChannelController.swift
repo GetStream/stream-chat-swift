@@ -687,13 +687,27 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
             return
         }
 
-        let query = PinnedMessagesQuery(
-            pageSize: pageSize,
-            sorting: sorting,
-            pagination: pagination
+        let endpoint: Endpoint<GetPinnedMessagesResponse> = .getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: pageSize,
+            offset: nil,
+            idGte: pagination?.messageIdAfterOrEqual,
+            idGt: pagination?.messageIdAfter,
+            idLte: pagination?.messageIdBeforeOrEqual,
+            idLt: pagination?.messageIdBefore,
+            pinnedAtAfterOrEqual: pagination?.timestampAfterOrEqual,
+            pinnedAtAfter: pagination?.timestampAfter,
+            pinnedAtBeforeOrEqual: pagination?.timestampBeforeOrEqual,
+            pinnedAtBefore: pagination?.timestampBefore,
+            idAround: pagination?.aroundMessageId,
+            pinnedAtAround: pagination?.aroundTimestamp,
+            sort: sorting.isEmpty ? nil : sorting.map {
+                SortParamRequest(direction: $0.direction, field: $0.key.rawValue)
+            },
+            memberCustomInclude: nil
         )
-
-        apiClient.request(endpoint: .pinnedMessages(cid: cid, query: query)) { [weak self] result in
+        apiClient.request(endpoint: endpoint) { [weak self] result in
             self?.callback {
                 switch result {
                 case .success(let payload):
