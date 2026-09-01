@@ -69,7 +69,7 @@ extension MessageResponse {
     /// A object describing the incoming JSON format for message payload. Unfortunately, our backend is not consistent
     /// in this and the payload has the form: `{ "message": <message payload> }` rather than `{ <message payload> }`
     ///
-    /// Replaced by the generated response types when the message CRUD/action endpoints move to v2 (IOS-1835, IOS-1960).
+    /// Replaced by the generated response types when the message CRUD/action endpoints move to v2 (IOS-1835).
     final class Boxed: Sendable, Decodable {
         let message: MessageResponse
 

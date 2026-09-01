@@ -266,7 +266,7 @@ extension ChatChannelMember {
         }
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawChannelValue: $0) } ?? .member
-        let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
+        let language: TranslationLanguage? = dto.user.language.map { TranslationLanguage(languageCode: $0) }
 
         var member = ChatChannelMember(
             id: dto.user.id,

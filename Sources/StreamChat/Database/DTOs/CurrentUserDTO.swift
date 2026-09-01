@@ -366,7 +366,7 @@ extension CurrentChatUser {
 
         let mutedChannels = Set(dto.channelMutes.compactMap { try? $0.channel.asModel() })
 
-        let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
+        let language: TranslationLanguage? = dto.user.language.map { TranslationLanguage(languageCode: $0) }
         
         let pushPreference = try dto.pushPreference?.asModel()
 
