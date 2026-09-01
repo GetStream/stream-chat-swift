@@ -39,6 +39,7 @@ public extension TranslationLanguage {
     static var german: TranslationLanguage { de }
     static var greek: TranslationLanguage { el }
     static var hausa: TranslationLanguage { ha }
+    static var haitianCreole: TranslationLanguage { ht }
     static var hebrew: TranslationLanguage { he }
     static var hindi: TranslationLanguage { hi }
     static var hungarian: TranslationLanguage { hu }
@@ -47,6 +48,7 @@ public extension TranslationLanguage {
     static var japanese: TranslationLanguage { ja }
     static var korean: TranslationLanguage { ko }
     static var latvian: TranslationLanguage { lv }
+    static var lithuanian: TranslationLanguage { lt }
     static var malay: TranslationLanguage { ms }
     static var norwegian: TranslationLanguage { no }
     static var persian: TranslationLanguage { fa }
@@ -96,6 +98,7 @@ public extension TranslationLanguage {
         .german,
         .greek,
         .hausa,
+        .haitianCreole,
         .hebrew,
         .hindi,
         .hungarian,
@@ -104,6 +107,7 @@ public extension TranslationLanguage {
         .japanese,
         .korean,
         .latvian,
+        .lithuanian,
         .malay,
         .norwegian,
         .persian,
@@ -131,12 +135,6 @@ public extension TranslationLanguage {
 }
 
 extension TranslationLanguage {
-    convenience init?(locale: Locale) {
-        guard let languageCode = locale.languageCode else { return nil }
-        let regionCode = locale.regionCode ?? ""
-        self.init(languageCode: languageCode + (regionCode.isEmpty ? "" : "-\(regionCode)"))
-    }
-
     static func languages(fromCommaSeparated value: String?) -> Set<TranslationLanguage> {
         guard let value = value?.trimmingCharacters(in: .whitespaces), !value.isEmpty else { return [] }
         return Set(
