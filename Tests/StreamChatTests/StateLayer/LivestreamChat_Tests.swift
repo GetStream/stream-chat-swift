@@ -636,10 +636,24 @@ final class LivestreamChat_Tests: XCTestCase {
 
         _ = try await livestreamChat.loadPinnedMessages(pageSize: 15)
 
-        let expectedQuery = PinnedMessagesQuery(pageSize: 15, sorting: [], pagination: nil)
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(
-            cid: channelQuery.cid!,
-            query: expectedQuery
+        let cid = try XCTUnwrap(channelQuery.cid)
+        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: 15,
+            offset: nil,
+            idGte: nil,
+            idGt: nil,
+            idLte: nil,
+            idLt: nil,
+            pinnedAtAfterOrEqual: nil,
+            pinnedAtAfter: nil,
+            pinnedAtBeforeOrEqual: nil,
+            pinnedAtBefore: nil,
+            idAround: nil,
+            pinnedAtAround: nil,
+            sort: nil,
+            memberCustomInclude: nil
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }

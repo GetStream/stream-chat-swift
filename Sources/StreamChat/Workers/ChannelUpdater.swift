@@ -797,13 +797,32 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         completion: @escaping @Sendable (Result<[ChatMessage], Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .pinnedMessages(cid: cid, query: query)
+            endpoint: .getPinnedMessages(
+                type: cid.type.rawValue,
+                id: cid.id,
+                limit: query.pageSize,
+                offset: query.pagination?.offset,
+                idGte: query.pagination?.messageIdAfterOrEqual,
+                idGt: query.pagination?.messageIdAfter,
+                idLte: query.pagination?.messageIdBeforeOrEqual,
+                idLt: query.pagination?.messageIdBefore,
+                pinnedAtAfterOrEqual: query.pagination?.timestampAfterOrEqual,
+                pinnedAtAfter: query.pagination?.timestampAfter,
+                pinnedAtBeforeOrEqual: query.pagination?.timestampBeforeOrEqual,
+                pinnedAtBefore: query.pagination?.timestampBefore,
+                idAround: query.pagination?.aroundMessageId,
+                pinnedAtAround: query.pagination?.aroundTimestamp,
+                sort: query.sorting.isEmpty ? nil : query.sorting.map {
+                    SortParamRequest(direction: $0.direction, field: $0.key.rawValue)
+                },
+                memberCustomInclude: nil
+            )
         ) { [weak self] result in
             switch result {
             case let .success(payload):
                 nonisolated(unsafe) var pinnedMessages: [ChatMessage] = []
                 self?.database.write { (session) in
-                    pinnedMessages = session.saveMessages(messagesPayload: payload, syncOwnReactions: false)
+                    pinnedMessages = session.saveMessages(messagesPayload: MessageListPayload(messages: payload.messages), syncOwnReactions: false)
                         .compactMap { try? $0.asModel() }
                 } completion: { _ in
                     completion(.success(pinnedMessages.compactMap { $0 }))

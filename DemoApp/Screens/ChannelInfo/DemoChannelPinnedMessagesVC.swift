@@ -19,6 +19,9 @@ final class DemoChannelPinnedMessagesVC: UIViewController,
 
     private var pinnedMessages: [ChatMessage] = []
     private var loadingFailed = false
+    private var hasMorePages = true
+    private var isPaginating = false
+    private let pageSize = 25
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -104,17 +107,35 @@ final class DemoChannelPinnedMessagesVC: UIViewController,
         loadingIndicator.startAnimating()
         updateContent()
 
-        channelController.loadPinnedMessages { [weak self] result in
+        channelController.loadPinnedMessages(pageSize: pageSize) { [weak self] result in
             guard let self else { return }
             loadingIndicator.stopAnimating()
             switch result {
             case let .success(messages):
                 pinnedMessages = messages
+                hasMorePages = messages.count == pageSize
             case .failure:
                 // The locally cached messages are still shown, the error state is only
                 // relevant when there is nothing to fall back to.
                 loadingFailed = pinnedMessages.isEmpty
             }
+            updateContent()
+        }
+    }
+
+    private func loadMorePinnedMessages() {
+        guard hasMorePages, !isPaginating, !loadingIndicator.isAnimating else { return }
+        isPaginating = true
+
+        channelController.loadPinnedMessages(
+            pageSize: pageSize,
+            pagination: .offset(pinnedMessages.count)
+        ) { [weak self] result in
+            guard let self else { return }
+            isPaginating = false
+            guard case let .success(messages) = result else { return }
+            hasMorePages = messages.count == pageSize
+            pinnedMessages += messages
             updateContent()
         }
     }
@@ -147,6 +168,12 @@ final class DemoChannelPinnedMessagesVC: UIViewController,
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         onMessageSelected?(pinnedMessages[indexPath.row].id)
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row >= pinnedMessages.count - 5 {
+            loadMorePinnedMessages()
+        }
     }
 }
 

@@ -20,9 +20,17 @@ final class LivestreamChannelController_Tests: XCTestCase {
     var client: ChatClient_Mock!
     var channelQuery: ChannelQuery!
     var controller: LivestreamChannelController!
+    var previousJSONEncoder: JSONEncoder!
 
     override func setUp() {
         super.setUp()
+
+        // Stable key order so pre-encoded JSON query strings (sort) compare byte-equal.
+        previousJSONEncoder = CodableHelper.jsonEncoder
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .formatted(CodableHelper.dateFormatter)
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        CodableHelper.jsonEncoder = encoder
 
         env = TestEnvironment()
         client = ChatClient.mock(config: ChatClient_Mock.defaultMockedConfig)
@@ -34,6 +42,9 @@ final class LivestreamChannelController_Tests: XCTestCase {
     }
 
     override func tearDown() {
+        CodableHelper.jsonEncoder = previousJSONEncoder
+        previousJSONEncoder = nil
+
         client?.cleanUp()
         env?.apiClient?.cleanUp()
         env = nil
@@ -1192,7 +1203,8 @@ extension LivestreamChannelController_Tests {
         let expectation = self.expectation(description: "Load pinned messages completes")
         nonisolated(unsafe) var loadResult: Result<[ChatMessage], Error>?
         let sorting: [Sorting<PinnedMessagesSortingKey>] = [.init(key: .pinnedAt, isAscending: false)]
-        let pagination = PinnedMessagesPagination.after(.unique, inclusive: false)
+        let messageId = MessageId.unique
+        let pagination = PinnedMessagesPagination.after(messageId, inclusive: false)
 
         controller.loadPinnedMessages(
             pageSize: 50,
@@ -1208,12 +1220,25 @@ extension LivestreamChannelController_Tests {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedQuery = PinnedMessagesQuery(
-            pageSize: 50,
-            sorting: sorting,
-            pagination: pagination
+        let cid = controller.cid!
+        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: 50,
+            offset: nil,
+            idGte: nil,
+            idGt: messageId,
+            idLte: nil,
+            idLt: nil,
+            pinnedAtAfterOrEqual: nil,
+            pinnedAtAfter: nil,
+            pinnedAtBeforeOrEqual: nil,
+            pinnedAtBefore: nil,
+            idAround: nil,
+            pinnedAtAround: nil,
+            sort: [SortParamRequest(direction: -1, field: PinnedMessagesSortingKey.pinnedAt.rawValue)],
+            memberCustomInclude: nil
         )
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(cid: controller.cid!, query: expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNotNil(loadResult)
         if case .success = loadResult {
@@ -1228,12 +1253,25 @@ extension LivestreamChannelController_Tests {
 
         controller.loadPinnedMessages { _ in }
 
-        let expectedQuery = PinnedMessagesQuery(
-            pageSize: 25,
-            sorting: [],
-            pagination: nil
+        let cid = controller.cid!
+        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: 25,
+            offset: nil,
+            idGte: nil,
+            idGt: nil,
+            idLte: nil,
+            idLt: nil,
+            pinnedAtAfterOrEqual: nil,
+            pinnedAtAfter: nil,
+            pinnedAtBeforeOrEqual: nil,
+            pinnedAtBefore: nil,
+            idAround: nil,
+            pinnedAtAround: nil,
+            sort: nil,
+            memberCustomInclude: nil
         )
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(cid: controller.cid!, query: expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 }
