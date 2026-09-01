@@ -188,6 +188,20 @@ public enum L10n {
       /// Reply to Message
       public static var reply: String { L10n.tr("Localizable", "composer.title.reply") }
     }
+    public enum VideoCompression {
+      /// Compressing video…
+      public static var compressing: String { L10n.tr("Localizable", "composer.video-compression.compressing") }
+      /// Compressing video %d of %d…
+      public static func compressingMultiple(_ p1: Int, _ p2: Int) -> String {
+        return L10n.tr("Localizable", "composer.video-compression.compressing-multiple", p1, p2)
+      }
+      /// Preparing video…
+      public static var preparing: String { L10n.tr("Localizable", "composer.video-compression.preparing") }
+      /// Preparing video %d of %d…
+      public static func preparingMultiple(_ p1: Int, _ p2: Int) -> String {
+        return L10n.tr("Localizable", "composer.video-compression.preparing-multiple", p1, p2)
+      }
+    }
   }
 
   public enum Dates {

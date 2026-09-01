@@ -587,6 +587,18 @@ import UIKit
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
         .Type = VideoAttachmentComposerPreview.self
 
+    /// The quality of the videos which are added as attachments in the composer.
+    ///
+    /// Videos are compressed before they are uploaded, so that they do not exceed the
+    /// maximum attachment size. Set it to `.original` to upload the videos as they are.
+    public var videoCompressionQuality: VideoCompressionQuality = .medium
+
+    /// The object responsible for compressing the videos which are added as attachments in the composer.
+    public var videoCompressor: VideoCompressor = StreamVideoCompressor()
+
+    /// A view controller that shows the progress while the selected videos are being compressed.
+    public var videoCompressionProgressVC: VideoCompressionProgressVC.Type = VideoCompressionProgressVC.self
+
     // MARK: - Composer suggestion components
 
     /// A view controller that shows suggestions of commands or mentions.
