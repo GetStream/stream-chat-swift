@@ -2581,7 +2581,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate `dispatchEphemeralMessageAction`
         let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
-                cid: cid,
                 messageId: messageId,
                 action: cancelAction,
                 completion: $0
@@ -2625,7 +2624,6 @@ final class MessageUpdater_Tests: XCTestCase {
         nonisolated(unsafe) var completionCalledError: Error?
         nonisolated(unsafe) var completionCalled = false
         messageUpdater.dispatchEphemeralMessageAction(
-            cid: cid,
             messageId: messageId,
             action: action
         ) { error in
@@ -2634,22 +2632,19 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
+        let endpoint: Endpoint<MessageActionResponse> = .runMessageAction(
+            id: messageId,
+            messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
         // Simulate message response.
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(
-                messageId: messageId,
-                authorUserId: currentUserId,
-                cid: cid
-            )
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserId,
+            cid: cid
         )
-        apiClient.test_simulateResponse(.success(messagePayload))
+        apiClient.test_simulateResponse(.success(MessageActionResponse.dummy(message: messagePayload)))
 
         // Load message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
@@ -2659,8 +2654,8 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(completionCalledError == nil)
             // Assert message is updated.
-            Assert.willBeEqual(message.type, messagePayload.message.type)
-            Assert.willBeEqual(message.text, messagePayload.message.text)
+            Assert.willBeEqual(message.type, messagePayload.type)
+            Assert.willBeEqual(message.text, messagePayload.text)
         }
     }
 
@@ -2688,7 +2683,6 @@ final class MessageUpdater_Tests: XCTestCase {
         nonisolated(unsafe) var completionCalledError: Error?
         nonisolated(unsafe) var completionCalled = false
         messageUpdater.dispatchEphemeralMessageAction(
-            cid: cid,
             messageId: messageId,
             action: action
         ) { error in
@@ -2697,16 +2691,15 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
+        let endpoint: Endpoint<MessageActionResponse> = .runMessageAction(
+            id: messageId,
+            messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
         // Simulate error response.
         let networkError = TestError()
-        let result: Result<MessagePayload.Boxed, Error> = .failure(networkError)
+        let result: Result<MessageActionResponse, Error> = .failure(networkError)
         apiClient.test_simulateResponse(result)
 
         AssertAsync {
@@ -2721,7 +2714,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate `dispatchEphemeralMessageAction` call
         let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
-                cid: .unique,
                 messageId: .unique,
                 action: .unique,
                 completion: $0
@@ -2739,7 +2731,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate `dispatchEphemeralMessageAction` call
         let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
-                cid: .unique,
                 messageId: .unique,
                 action: .unique,
                 completion: $0
@@ -2777,7 +2768,6 @@ final class MessageUpdater_Tests: XCTestCase {
             // Simulate `dispatchEphemeralMessageAction` call
             let completionError = try waitFor {
                 messageUpdater.dispatchEphemeralMessageAction(
-                    cid: cid,
                     messageId: messageId,
                     action: .unique,
                     completion: $0
@@ -2797,7 +2787,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate `dispatchEphemeralMessageAction` call
         let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
-                cid: .unique,
                 messageId: .unique,
                 action: .unique,
                 completion: $0
@@ -2831,7 +2820,6 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate `dispatchEphemeralMessageAction`
         nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.dispatchEphemeralMessageAction(
-            cid: cid,
             messageId: messageId,
             action: action
         ) { error in
@@ -2839,10 +2827,9 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
+        let endpoint: Endpoint<MessageActionResponse> = .runMessageAction(
+            id: messageId,
+            messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -2851,7 +2838,7 @@ final class MessageUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate message response.
-        let messagePayload: MessagePayload.Boxed = .init(
+        let messagePayload: MessageActionResponse = .dummy(
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId,

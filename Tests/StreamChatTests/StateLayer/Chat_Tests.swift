@@ -763,7 +763,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
         
-        let apiResponse = MessagePayload.Boxed(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged", cid: channelId))
+        let apiResponse = MessageActionResponse.dummy(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged", cid: channelId))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         try await chat.sendMessageAction(in: messageId, action: action)
         let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
@@ -782,7 +782,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = initialMessage.id
         let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
         
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<MessageActionResponse, Error>.failure(expectedTestError))
         await XCTAssertAsyncFailure(
             try await chat.sendMessageAction(in: messageId, action: action),
             expectedTestError

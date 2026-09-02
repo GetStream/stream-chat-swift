@@ -260,7 +260,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))
         assertResultEncodingAndDecoding(.sendReaction(id: "message_ida"))
         assertResultEncodingAndDecoding(.deleteReaction(id: "message_id", type: "love"))
-        assertResultEncodingAndDecoding(.messageAction("message_ida"))
+        assertResultEncodingAndDecoding(.runMessageAction(id: "message_ida"))
 
         assertResultEncodingAndDecoding(.banMember)
         assertResultEncodingAndDecoding(.flagUser)
