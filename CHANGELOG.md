@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `PinnedMessagesPagination.offset(Int)` for paginating messages using offset [#4249](https://github.com/GetStream/stream-chat-swift/pull/4249)
+- Add `memberLimit` to `ThreadQuery` for specifying the number of returned members in the thread's channel response [#4256](https://github.com/GetStream/stream-chat-swift/pull/4256)
 ### 🐞 Fixed
 - Fix rare crashes in `DataController.state` [#4248](https://github.com/GetStream/stream-chat-swift/pull/4248)
 
