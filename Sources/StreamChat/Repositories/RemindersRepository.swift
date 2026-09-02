@@ -35,7 +35,7 @@ class RemindersRepository: @unchecked Sendable {
         query: MessageReminderListQuery,
         completion: @escaping @Sendable (Result<ReminderListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .queryReminders(query: query)) { [weak self] result in
+        apiClient.request(endpoint: .queryReminders(queryRemindersRequest: query.toRequest())) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.database.write(
@@ -71,10 +71,9 @@ class RemindersRepository: @unchecked Sendable {
         remindAt: Date?,
         completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
-        let requestBody = ReminderRequestBody(remindAt: remindAt)
-        let endpoint: Endpoint<ReminderResponsePayload> = .createReminder(
+        let endpoint: Endpoint<CreateReminderResponse> = .createReminder(
             messageId: messageId,
-            request: requestBody
+            createReminderRequest: CreateReminderRequest(remindAt: remindAt)
         )
 
         // First optimistically create the reminder locally
@@ -128,8 +127,10 @@ class RemindersRepository: @unchecked Sendable {
         remindAt: Date?,
         completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
-        let requestBody = ReminderRequestBody(remindAt: remindAt)
-        let endpoint: Endpoint<ReminderResponsePayload> = .updateReminder(messageId: messageId, request: requestBody)
+        let endpoint: Endpoint<UpdateReminderResponse> = .updateReminder(
+            messageId: messageId,
+            updateReminderRequest: UpdateReminderRequest(remindAt: remindAt)
+        )
         
         // Save current data for potential rollback
         nonisolated(unsafe) var originalRemindAt: Date?
