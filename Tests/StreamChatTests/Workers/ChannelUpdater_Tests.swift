@@ -2476,7 +2476,24 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.loadPinnedMessages(in: cid, query: query, completion: { _ in })
 
         // Create expected endpoint
-        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
+        let endpoint: Endpoint<PinnedMessagesPayload> = .getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: query.pageSize,
+            offset: nil,
+            idGte: query.pagination?.messageIdAfterOrEqual,
+            idGt: query.pagination?.messageIdAfter,
+            idLte: query.pagination?.messageIdBeforeOrEqual,
+            idLt: query.pagination?.messageIdBefore,
+            pinnedAtAfterOrEqual: query.pagination?.timestampAfterOrEqual,
+            pinnedAtAfter: query.pagination?.timestampAfter,
+            pinnedAtBeforeOrEqual: query.pagination?.timestampBeforeOrEqual,
+            pinnedAtBefore: query.pagination?.timestampBefore,
+            idAround: query.pagination?.aroundMessageId,
+            pinnedAtAround: query.pagination?.aroundTimestamp,
+            sort: nil,
+            memberCustomInclude: nil
+        )
 
         // Assert correct endpoint is called
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))

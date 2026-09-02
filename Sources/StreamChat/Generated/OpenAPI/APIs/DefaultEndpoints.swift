@@ -25,7 +25,6 @@ enum EndpointPath: Codable {
     case markChannelUnread(String)
     case markAllChannelsRead
     case channelEvent(String)
-    case pinnedMessages(String)
 
     case message(MessageId)
     case replies(MessageId)
@@ -62,6 +61,7 @@ enum EndpointPath: Codable {
     case getBlockedUsers
     case getDraft(type: String, id: String)
     case getOG
+    case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
@@ -129,7 +129,6 @@ enum EndpointPath: Codable {
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
@@ -189,6 +188,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .getOG:
             return "/api/v2/og"
+        case let .getPinnedMessages(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .getUserGroup(id: id):
@@ -668,6 +669,52 @@ extension Endpoint {
             method: .get,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getPinnedMessages(
+        type: String,
+        id: String,
+        limit: Int?,
+        offset: Int?,
+        idGte: String?,
+        idGt: String?,
+        idLte: String?,
+        idLt: String?,
+        pinnedAtAfterOrEqual: Date?,
+        pinnedAtAfter: Date?,
+        pinnedAtBeforeOrEqual: Date?,
+        pinnedAtBefore: Date?,
+        idAround: String?,
+        pinnedAtAround: Date?,
+        sort: [SortParamRequest]?,
+        memberCustomInclude: [String]?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetPinnedMessagesResponse> {
+        return .init(
+            path: .getPinnedMessages(type: type, id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "offset": offset,
+                "id_gte": idGte,
+                "id_gt": idGt,
+                "id_lte": idLte,
+                "id_lt": idLt,
+                "pinned_at_after_or_equal": pinnedAtAfterOrEqual.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_after": pinnedAtAfter.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_before_or_equal": pinnedAtBeforeOrEqual.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_before": pinnedAtBefore.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "id_around": idAround,
+                "pinned_at_around": pinnedAtAround.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) },
+                "member_custom_include": memberCustomInclude
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
