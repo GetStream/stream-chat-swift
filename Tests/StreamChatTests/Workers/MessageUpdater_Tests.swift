@@ -1255,7 +1255,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
+        let flagEndpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Add it to DB as it is as expected after a successful getMessage call
@@ -1268,10 +1268,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response.
-        let flagMessagePayload = FlagMessagePayload(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedMessageId: messageId
-        )
+        let flagMessagePayload = EmptyResponse()
         apiClient.test_simulateResponse(.success(flagMessagePayload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -1343,12 +1340,12 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: nil))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<FlagMessagePayload, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
 
         // Assert the flag database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -1374,14 +1371,11 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: nil))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with success.
-        let payload = FlagMessagePayload(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedMessageId: messageId
-        )
+        let payload = EmptyResponse()
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert the flag database error is propagated.
@@ -1404,7 +1398,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: nil))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Delete the message from the database.
@@ -1415,10 +1409,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response with success.
-        let payload = FlagMessagePayload(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedMessageId: messageId
-        )
+        let payload = EmptyResponse()
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert `MessageDoesNotExist` error is propagated.

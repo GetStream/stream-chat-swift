@@ -530,12 +530,12 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
+            let endpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
-                case let .success(payload):
+                case .success:
                     self.database.write({ session in
-                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
+                        guard let messageDTO = session.message(id: messageId) else {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
 

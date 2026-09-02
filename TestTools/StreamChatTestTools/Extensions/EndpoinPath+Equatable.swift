@@ -45,9 +45,9 @@ extension EndpointPath: @retroactive Equatable {
             .deleteReaction(messageId2, type2)
         ): return messageId1 == messageId2 && type1 == type2
         case let (.runMessageAction(id1), .runMessageAction(id2)): return id1 == id2
-        case (.banMember, .banMember): return true
-        case (.flagUser, .flagUser): return true
-        case (.flagMessage, .flagMessage): return true
+        case (.ban, .ban): return true
+        case (.flag, .flag): return true
+        case (.unban, .unban): return true
         default: return false
         }
     }

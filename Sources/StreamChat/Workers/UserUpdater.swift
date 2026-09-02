@@ -174,16 +174,14 @@ class UserUpdater: Worker, @unchecked Sendable {
             return
         }
 
-        let endpoint: Endpoint<FlagUserPayload> = .flagUser(
-            with: userId,
-            reason: reason,
-            extraData: extraData
-        )
+        let endpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(userId: userId, reason: reason, custom: extraData))
         apiClient.request(endpoint: endpoint) {
             switch $0 {
-            case let .success(payload):
+            case .success:
                 self.database.write({ session in
-                    let userDTO = try session.saveUser(payload: payload.flaggedUser)
+                    guard let userDTO = session.user(id: userId) else {
+                        throw ClientError.UserDoesNotExist(userId: userId)
+                    }
                     session.currentUser?.flaggedUsers.insert(userDTO)
                 }, completion: {
                     if let error = $0 {

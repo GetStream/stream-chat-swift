@@ -513,15 +513,13 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_flagMessage_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            Result<FlagMessagePayload, Error>.success(.init(currentUser: .dummy(userId: .unique), flaggedMessageId: "msg-1"))
+            Result<EmptyResponse, Error>.success(.init())
         )
 
         try await livestreamChat.flagMessage("msg-1", reason: "spam", extraData: ["k": .string("v")])
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            with: "msg-1",
-            reason: "spam",
-            extraData: ["k": .string("v")]
+        let expectedEndpoint = Endpoint<EmptyResponse>.flag(
+            flagRequest: .init(messageId: "msg-1", reason: "spam", custom: ["k": .string("v")])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }

@@ -29,11 +29,8 @@ enum EndpointPath: Codable {
     case message(MessageId)
     case replies(MessageId)
 
-    case banMember
-    case flagUser
-    case flagMessage
-
     case addUserGroupMembers(id: String)
+    case ban
     case blockUsers
     case castPollVote(messageId: String, pollId: String)
     case createDevice
@@ -55,6 +52,7 @@ enum EndpointPath: Codable {
     case deleteReaction(id: String, type: String)
     case deleteReminder(messageId: String)
     case deleteUserGroup(id: String)
+    case flag
     case getApp
     case getBlockedUsers
     case getDraft(type: String, id: String)
@@ -85,6 +83,7 @@ enum EndpointPath: Codable {
     case stopWatchingChannel(type: String, id: String)
     case translateMessage(id: String)
     case truncateChannel(type: String, id: String)
+    case unban
     case unblockUsers
     case unmute
     case unmuteChannel
@@ -133,12 +132,10 @@ enum EndpointPath: Codable {
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
 
-        case .banMember: return "moderation/ban"
-        case .flagUser: return "moderation/flag"
-        case .flagMessage: return "moderation/flag"
-
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
+        case .ban:
+            return "/api/v2/moderation/ban"
         case .blockUsers:
             return "/api/v2/users/block"
         case let .castPollVote(messageId: messageId, pollId: pollId):
@@ -181,6 +178,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
+        case .flag:
+            return "/api/v2/moderation/flag"
         case .getApp:
             return "/api/v2/app"
         case .getBlockedUsers:
@@ -241,6 +240,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
         case let .truncateChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/truncate"
+        case .unban:
+            return "/api/v2/moderation/unban"
         case .unblockUsers:
             return "/api/v2/users/unblock"
         case .unmute:
@@ -366,6 +367,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: addUserGroupMembersRequest
+        )
+    }
+
+    static func ban(banRequest: BanRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .ban,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: banRequest
         )
     }
 
@@ -652,6 +663,16 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func flag(flagRequest: FlagRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .flag,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: flagRequest
         )
     }
 
@@ -1105,6 +1126,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: truncateChannelRequest
+        )
+    }
+
+    static func unban(targetUserId: String, channelCid: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .unban,
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "target_user_id": targetUserId,
+                "channel_cid": channelCid
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 
