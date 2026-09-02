@@ -82,8 +82,7 @@ final class EventPayload: Decodable, Sendable {
     let vote: PollVotePayload?
 
     /// Thread Data, it is stored in Result, to be easier to debug decoding errors
-    let threadDetails: Result<ThreadDetailsPayload, Error>?
-    let threadPartial: Result<ThreadPartialPayload, Error>?
+    let thread: Result<ThreadResponse, Error>?
     
     let aiState: String?
     let messageId: String?
@@ -119,8 +118,7 @@ final class EventPayload: Decodable, Sendable {
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
-        threadDetails: Result<ThreadDetailsPayload, Error>? = nil,
-        threadPartial: Result<ThreadPartialPayload, Error>? = nil,
+        thread: Result<ThreadResponse, Error>? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil,
         aiState: String? = nil,
@@ -159,8 +157,7 @@ final class EventPayload: Decodable, Sendable {
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
         self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
-        self.threadPartial = threadPartial
-        self.threadDetails = threadDetails
+        self.thread = thread
         self.poll = poll
         self.vote = vote
         self.aiState = aiState
@@ -204,8 +201,7 @@ final class EventPayload: Decodable, Sendable {
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
         unreadChannelCountsByGroup = try container.decodeIfPresent([String: Int].self, forKey: .unreadChannelCountsByGroup)
-        threadDetails = container.decodeAsResultIfPresent(ThreadDetailsPayload.self, forKey: .thread)
-        threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
+        thread = container.decodeAsResultIfPresent(ThreadResponse.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         aiState = try container.decodeIfPresent(String.self, forKey: .aiState)
@@ -257,8 +253,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.parentId: return "parentId"
         case \EventPayload.hardDelete: return "hardDelete"
         case \EventPayload.shadow: return "shadow"
-        case \EventPayload.threadPartial: return "thread"
-        case \EventPayload.threadDetails: return "thread"
+        case \EventPayload.thread: return "thread"
         default: return String(describing: self)
         }
     }

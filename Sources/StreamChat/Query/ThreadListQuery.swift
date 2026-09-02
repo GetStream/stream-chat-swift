@@ -12,6 +12,7 @@ public struct ThreadListQuery: Encodable, Sendable, LocalConvertibleSortingQuery
         case watch
         case replyLimit = "reply_limit"
         case participantLimit = "participant_limit"
+        case memberLimit = "member_limit"
         case limit
         case next
     }
@@ -29,6 +30,8 @@ public struct ThreadListQuery: Encodable, Sendable, LocalConvertibleSortingQuery
     public var replyLimit: Int
     /// The amount of participants fetched per thread. Default is 10.
     public var participantLimit: Int
+    /// The amount of members fetched per thread's channel, between 0 and 100. Default is 100.
+    public var memberLimit: Int?
     /// The pagination token from the previous response to fetch the next page.
     public var next: String?
 
@@ -43,6 +46,7 @@ public struct ThreadListQuery: Encodable, Sendable, LocalConvertibleSortingQuery
         limit: Int = 20,
         replyLimit: Int = 3,
         participantLimit: Int = 10,
+        memberLimit: Int? = nil,
         next: String? = nil
     ) {
         self.watch = watch
@@ -51,7 +55,23 @@ public struct ThreadListQuery: Encodable, Sendable, LocalConvertibleSortingQuery
         self.limit = limit
         self.replyLimit = replyLimit
         self.participantLimit = participantLimit
+        self.memberLimit = memberLimit
         self.next = next
+    }
+}
+
+extension ThreadListQuery {
+    func toRequest() -> QueryThreadsRequest {
+        QueryThreadsRequest(
+            filter: filter,
+            limit: limit,
+            memberLimit: memberLimit,
+            next: next,
+            participantLimit: participantLimit,
+            replyLimit: replyLimit,
+            sort: sort.map { SortParamRequest(direction: $0.direction, field: $0.key.remoteKey) },
+            watch: watch
+        )
     }
 }
 
@@ -133,49 +153,49 @@ extension ThreadListSortingKey {
     public static let createdAt = Self(
         keyPath: \.createdAt,
         localKey: #keyPath(ThreadDTO.createdAt),
-        remoteKey: ThreadCodingKeys.createdAt.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.createdAt.rawValue
     )
 
     /// Sort threads by date they were updated.
     public static let updatedAt = Self(
         keyPath: \.updatedAt,
         localKey: #keyPath(ThreadDTO.updatedAt),
-        remoteKey: ThreadCodingKeys.updatedAt.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.updatedAt.rawValue
     )
 
     /// Sort threads by the last message date.
     public static let lastMessageAt = Self(
         keyPath: \.lastMessageAt,
         localKey: #keyPath(ThreadDTO.lastMessageAt),
-        remoteKey: ThreadCodingKeys.lastMessageAt.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.lastMessageAt.rawValue
     )
 
     /// Sort threads by number of participants.
     public static let participantCount = Self(
         keyPath: \.participantCount,
         localKey: #keyPath(ThreadDTO.participantCount),
-        remoteKey: ThreadCodingKeys.participantCount.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.participantCount.rawValue
     )
 
     /// Sort threads by number of active participants.
     public static let activeParticipantCount = Self(
         keyPath: \.activeParticipantCount,
         localKey: #keyPath(ThreadDTO.activeParticipantCount),
-        remoteKey: ThreadCodingKeys.activeParticipantCount.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.activeParticipantCount.rawValue
     )
 
     /// Sort threads by number of replies.
     public static let replyCount = Self(
         keyPath: \.replyCount,
         localKey: #keyPath(ThreadDTO.replyCount),
-        remoteKey: ThreadCodingKeys.replyCount.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.replyCount.rawValue
     )
 
     /// Sort threads by `parentMessageId`.
     public static let parentMessageId = Self(
         keyPath: \.parentMessageId,
         localKey: #keyPath(ThreadDTO.parentMessageId),
-        remoteKey: ThreadCodingKeys.parentMessageId.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.parentMessageId.rawValue
     )
 
     /// Sort threads by unread state.

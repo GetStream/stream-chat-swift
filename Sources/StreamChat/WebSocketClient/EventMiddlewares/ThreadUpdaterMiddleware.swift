@@ -8,8 +8,8 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as MessageReadEventDTO:
-            if let threadDetails = event.payload.threadDetails?.value {
-                session.markThreadAsRead(parentMessageId: threadDetails.parentMessageId, userId: event.user.id, at: event.createdAt)
+            if let thread = event.payload.thread?.value {
+                session.markThreadAsRead(parentMessageId: thread.parentMessageId, userId: event.user.id, at: event.createdAt)
             }
         case let event as NotificationMarkUnreadEventDTO:
             // At the moment, this event does not return the thread id, so

@@ -1058,13 +1058,21 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func loadThread(query: ThreadQuery, completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void) {
-        apiClient.request(endpoint: .thread(query: query)) { result in
+        apiClient.request(
+            endpoint: .getThread(
+                messageId: query.messageId,
+                watch: query.watch,
+                replyLimit: query.replyLimit,
+                participantLimit: query.participantLimit,
+                memberLimit: query.memberLimit,
+                requiresConnectionId: query.watch
+            )
+        ) { result in
             switch result {
             case .success(let response):
-                self.database.write { session in
-                    let thread = try session.saveThread(payload: response.thread, cache: nil).asModel()
-                    completion(.success(thread))
-                }
+                self.database.write(converting: { session in
+                    try session.saveThread(payload: response.thread, cache: nil).asModel()
+                }, completion: completion)
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -1073,20 +1081,22 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     func updateThread(
         for messageId: MessageId,
-        request: ThreadPartialUpdateRequest,
+        request: UpdateThreadPartialRequest,
         completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .partialThreadUpdate(
+            endpoint: .updateThreadPartial(
                 messageId: messageId,
-                request: request
+                updateThreadPartialRequest: request
             )) { result in
                 switch result {
                 case .success(let response):
-                    self.database.write { session in
-                        let thread = try session.saveThread(partialPayload: response.thread).asModel()
-                        completion(.success(thread))
-                    }
+                    self.database.write(converting: { session in
+                        guard let threadDTO = try session.saveThread(partialPayload: response.thread) else {
+                            throw ClientError("Thread \(response.thread.parentMessageId) was not saved")
+                        }
+                        return try threadDTO.asModel()
+                    }, completion: completion)
                 case .failure(let error):
                     completion(.failure(error))
                 }

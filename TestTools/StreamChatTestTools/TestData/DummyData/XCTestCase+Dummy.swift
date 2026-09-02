@@ -322,42 +322,44 @@ extension XCTestCase {
         threadParticipants: [ThreadParticipantPayload] = [],
         lastMessageAt: Date? = .unique,
         createdAt: Date = .unique,
-        updatedAt: Date? = .unique,
-        title: String? = .unique,
+        updatedAt: Date = .unique,
+        title: String = .unique,
         latestReplies: [MessagePayload] = [],
         read: [ThreadReadPayload] = [],
         draft: DraftPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ThreadPayload {
         .init(
-            parentMessageId: parentMessageId,
-            parentMessage: parentMessage ?? .dummy(cid: channel.cid),
-            channel: channel,
-            createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
             activeParticipantCount: activeParticipantCount,
-            threadParticipants: threadParticipants,
-            lastMessageAt: lastMessageAt,
+            channel: channel,
+            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title,
-            latestReplies: latestReplies,
-            read: read,
+            createdBy: createdBy,
+            createdByUserId: createdBy.id,
+            custom: extraData,
             draft: draft,
-            extraData: extraData
+            lastMessageAt: lastMessageAt,
+            latestReplies: latestReplies,
+            parentMessage: parentMessage ?? .dummy(cid: channel.cid),
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            read: read,
+            replyCount: replyCount,
+            threadParticipants: threadParticipants,
+            title: title,
+            updatedAt: updatedAt
         )
     }
 
     func dummyThreadReadPayload(
         user: UserPayload = .dummy(userId: .unique),
-        lastReadAt: Date? = .unique,
+        lastReadAt: Date = .unique,
         unreadMessagesCount: Int = 0
     ) -> ThreadReadPayload {
         .init(
-            user: user,
-            lastReadAt: lastReadAt,
-            unreadMessagesCount: unreadMessagesCount
+            lastRead: lastReadAt,
+            unreadMessages: unreadMessagesCount,
+            user: user
         )
     }
 
@@ -365,13 +367,15 @@ extension XCTestCase {
         user: UserPayload = .dummy(userId: .unique),
         threadId: String = .unique,
         createdAt: Date = .unique,
-        lastReadAt: Date? = .unique
+        lastReadAt: Date = .unique
     ) -> ThreadParticipantPayload {
         .init(
-            user: user,
-            threadId: threadId,
+            channelCid: .unique,
             createdAt: createdAt,
-            lastReadAt: lastReadAt
+            custom: [:],
+            lastReadAt: lastReadAt,
+            threadId: threadId,
+            user: user
         )
     }
     

@@ -11,8 +11,6 @@ enum EndpointPath: Codable {
     case guest
     case search
 
-    case threads
-    case thread(messageId: MessageId)
     case markThreadRead(cid: ChannelId)
     case markThreadUnread(cid: ChannelId)
 
@@ -62,6 +60,7 @@ enum EndpointPath: Codable {
     case getOG
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
+    case getThread(messageId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
     case hideChannel(type: String, id: String)
@@ -75,6 +74,7 @@ enum EndpointPath: Codable {
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
     case queryReminders
+    case queryThreads
     case queryUsers
     case removeUserGroupMembers(id: String)
     case searchRoles
@@ -96,6 +96,7 @@ enum EndpointPath: Codable {
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
     case updateReminder(messageId: String)
+    case updateThreadPartial(messageId: String)
     case updateUserGroup(id: String)
     case updateUsersPartial
     case uploadChannelFile(type: String, id: String)
@@ -111,10 +112,6 @@ enum EndpointPath: Codable {
         case .guest: return "guest"
         case .search: return "search"
 
-        case .threads:
-            return "threads"
-        case let .thread(threadId):
-            return "threads/\(threadId)"
         case let .markThreadRead(cid):
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):
@@ -194,6 +191,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case let .getThread(messageId: messageId):
+            return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
@@ -220,6 +219,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case .queryReminders:
             return "/api/v2/chat/reminders/query"
+        case .queryThreads:
+            return "/api/v2/chat/threads"
         case .queryUsers:
             return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
@@ -262,6 +263,8 @@ enum EndpointPath: Codable {
             return "/api/v2/push_preferences"
         case let .updateReminder(messageId: messageId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .updateThreadPartial(messageId: messageId):
+            return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .updateUsersPartial:
@@ -767,6 +770,28 @@ extension Endpoint {
         )
     }
 
+    static func getThread(
+        messageId: String,
+        watch: Bool?,
+        replyLimit: Int?,
+        participantLimit: Int?,
+        memberLimit: Int?,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<GetThreadResponse> {
+        return .init(
+            path: .getThread(messageId: messageId),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "watch": watch,
+                "reply_limit": replyLimit,
+                "participant_limit": participantLimit,
+                "member_limit": memberLimit
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func getUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .getUserGroup(id: id),
@@ -937,6 +962,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryRemindersRequest
+        )
+    }
+
+    static func queryThreads(
+        queryThreadsRequest: QueryThreadsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<QueryThreadsResponse> {
+        return .init(
+            path: .queryThreads,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryThreadsRequest
         )
     }
 
@@ -1233,6 +1271,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateReminderRequest
+        )
+    }
+
+    static func updateThreadPartial(
+        messageId: String,
+        updateThreadPartialRequest: UpdateThreadPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateThreadPartialResponse> {
+        return .init(
+            path: .updateThreadPartial(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateThreadPartialRequest
         )
     }
 

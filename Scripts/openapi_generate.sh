@@ -39,6 +39,7 @@ allowed_endpoints=(
     getOG
     getPinnedMessages
     getReactions
+    getThread
     getUserGroup
     getUserLiveLocations
     hideChannel
@@ -52,6 +53,7 @@ allowed_endpoints=(
     queryPollVotes
     queryReactions
     queryReminders
+    queryThreads
     queryUsers
     removeUserGroupMembers
     searchRoles
@@ -73,6 +75,7 @@ allowed_endpoints=(
     updatePollPartial
     updatePushNotificationPreferences
     updateReminder
+    updateThreadPartial
     updateUserGroup
     updateUsersPartial
     uploadChannelFile
@@ -121,6 +124,7 @@ allowed_models=(
   GetOGResponse
   GetPinnedMessagesResponse
   GetReactionsResponse
+  GetThreadResponse
   GetUserGroupResponse
   HideChannelRequest
   ImageData
@@ -158,12 +162,15 @@ allowed_models=(
   QueryReactionsRequest
   QueryRemindersRequest
   QueryRemindersResponse
+  QueryThreadsRequest
+  QueryThreadsResponse
   QueryUsersPayload
   QueryUsersResponse
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
   ReadReceiptsResponse
+  ReadStateResponse
   ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
@@ -177,6 +184,9 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  ThreadParticipant
+  ThreadResponse
+  ThreadStateResponse
   TranslateMessageRequest
   TranslateMessageResponse
   TruncateChannelRequest
@@ -200,6 +210,8 @@ allowed_models=(
   UpdatePollPartialRequest
   UpdateReminderRequest
   UpdateReminderResponse
+  UpdateThreadPartialRequest
+  UpdateThreadPartialResponse
   UpdateUserGroupRequest
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
@@ -262,6 +274,7 @@ encodable_only_models=(
   QueryPollVotesRequestBody
   QueryReactionsRequest
   QueryRemindersRequest
+  QueryThreadsRequest
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
@@ -279,6 +292,7 @@ encodable_only_models=(
   UpdateMessageRequest
   UpdatePollPartialRequestBody
   UpdateReminderRequest
+  UpdateThreadPartialRequest
   UpdateUserGroupRequest
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
@@ -306,6 +320,7 @@ decodable_only_models=(
   GetDraftResponse
   GetOGResponse
   GetPinnedMessagesResponse
+  GetThreadResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -333,7 +348,9 @@ decodable_only_models=(
   PushPreference
   QueryDraftsResponse
   QueryRemindersResponse
+  QueryThreadsResponse
   QueryUsersResponse
+  ReadStateResponse
   ReminderPayload
   SearchResultMessage
   SearchRolesResponse
@@ -341,6 +358,9 @@ decodable_only_models=(
   SendReactionResponse
   SharedLocation
   SharedLocationsResponse
+  ThreadParticipantPayload
+  ThreadResponse
+  ThreadStateResponse
   TranslateMessageResponse
   TruncateChannelResponse
   UnblockUsersResponse
@@ -352,6 +372,7 @@ decodable_only_models=(
   UpdateMessagePartialResponse
   UpdateMessageResponse
   UpdateReminderResponse
+  UpdateThreadPartialResponse
   UpdateUsersResponse
   UploadChannelFileResponse
   UploadChannelResponse
@@ -668,6 +689,7 @@ rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
 rename_generated PrivacySettingsResponse UserPrivacySettings
 rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
+rename_generated ThreadParticipant ThreadParticipantPayload
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
@@ -736,6 +758,13 @@ require_property ChannelDetailPayload config
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessageResponse reactionCounts
 optionalize_property SearchResultMessage reactionCounts
+
+# v1 payloads may omit the count when it is zero.
+optionalize_property ThreadResponse activeParticipantCount
+optionalize_property ThreadStateResponse activeParticipantCount
+
+# v1 read events may omit it.
+optionalize_property ThreadResponse createdByUserId
 
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -993,8 +1022,6 @@ inject_v1_endpoint_paths() {
     case guest
     case search
 
-    case threads
-    case thread(messageId: MessageId)
     case markThreadRead(cid: ChannelId)
     case markThreadUnread(cid: ChannelId)
 
@@ -1025,10 +1052,6 @@ EOF
         case .guest: return "guest"
         case .search: return "search"
 
-        case .threads:
-            return "threads"
-        case let .thread(threadId):
-            return "threads/\(threadId)"
         case let .markThreadRead(cid):
             return "channels/\(cid.apiPath)/read"
         case let .markThreadUnread(cid):

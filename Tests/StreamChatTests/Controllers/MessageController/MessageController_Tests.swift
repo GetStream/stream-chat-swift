@@ -2469,8 +2469,8 @@ final class MessageController_Tests: XCTestCase {
 
         XCTAssertEqual(env.messageUpdater.updateThread_callCount, 1)
         XCTAssertEqual(env.messageUpdater.updateThread_messageId, messageId)
-        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?.title, "New Title")
-        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?.extraData, ["custom": "test"])
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?["title"], .string("New Title"))
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?["custom"], .string("test"))
         XCTAssertEqual(env.messageUpdater.updateThread_request?.unset, ["prop"])
     }
 
@@ -2498,7 +2498,8 @@ final class MessageController_Tests: XCTestCase {
         let exp = expectation(description: "load thread completion")
         controller.loadThread(
             replyLimit: 2,
-            participantLimit: 5
+            participantLimit: 5,
+            memberLimit: 20
         ) { result in
             XCTAssertEqual(result.value?.parentMessageId, self.messageId)
             exp.fulfill()
@@ -2513,6 +2514,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadThread_query?.watch, false)
         XCTAssertEqual(env.messageUpdater.loadThread_query?.replyLimit, 2)
         XCTAssertEqual(env.messageUpdater.loadThread_query?.participantLimit, 5)
+        XCTAssertEqual(env.messageUpdater.loadThread_query?.memberLimit, 20)
     }
 
     func test_loadThread_whenFailure() {

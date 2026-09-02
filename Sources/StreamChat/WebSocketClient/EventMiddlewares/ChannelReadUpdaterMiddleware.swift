@@ -133,7 +133,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     }
 
     private func isThreadReadEvent(eventPayload: EventPayload) -> Bool {
-        eventPayload.threadDetails != nil || eventPayload.threadPartial != nil
+        eventPayload.thread != nil
     }
 
     private func resetChannelRead(

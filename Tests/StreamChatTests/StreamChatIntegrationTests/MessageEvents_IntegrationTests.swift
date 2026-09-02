@@ -258,15 +258,12 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             user: .dummy(userId: .unique),
             unreadCount: .init(channels: 12, messages: 44, threads: 10),
             createdAt: .unique,
-            threadDetails: .success(.init(
-                cid: cid,
+            thread: .success(.dummy(
                 parentMessageId: parentMessageId,
+                channel: .dummy(cid: cid),
                 replyCount: 3,
                 participantCount: 3,
                 activeParticipantCount: 2,
-                lastMessageAt: .unique,
-                createdAt: .unique,
-                updatedAt: .unique,
                 title: "Test"
             ))
         )

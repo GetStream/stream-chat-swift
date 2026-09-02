@@ -79,8 +79,9 @@ final class ThreadsRepository_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<ThreadListPayload> = .threads(
-            query: query
+        let referenceEndpoint: Endpoint<ThreadListPayload> = .queryThreads(
+            queryThreadsRequest: query.toRequest(),
+            requiresConnectionId: query.watch
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
@@ -135,8 +136,9 @@ final class ThreadsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(payload))
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<ThreadListPayload> = .threads(
-            query: query
+        let referenceEndpoint: Endpoint<ThreadListPayload> = .queryThreads(
+            queryThreadsRequest: query.toRequest(),
+            requiresConnectionId: query.watch
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
@@ -160,8 +162,9 @@ final class ThreadsRepository_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<ThreadListPayload> = .threads(
-            query: query
+        let referenceEndpoint: Endpoint<ThreadListPayload> = .queryThreads(
+            queryThreadsRequest: query.toRequest(),
+            requiresConnectionId: query.watch
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

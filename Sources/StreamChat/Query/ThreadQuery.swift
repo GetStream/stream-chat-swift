@@ -12,6 +12,7 @@ public struct ThreadQuery: Encodable, Sendable {
         case watch
         case replyLimit = "reply_limit"
         case participantLimit = "participant_limit"
+        case memberLimit = "member_limit"
     }
     
     /// The parent message ID which the thread belongs to.
@@ -22,16 +23,21 @@ public struct ThreadQuery: Encodable, Sendable {
     public var replyLimit: Int
     /// The amount of participants fetched per thread. Default is 10.
     public var participantLimit: Int
+    /// The amount of members fetched from the thread's channel, between 0 and 100.
+    /// When not set, the thread's channel does not contain any members.
+    public var memberLimit: Int?
 
     public init(
         messageId: MessageId,
         watch: Bool = false,
         replyLimit: Int = 3,
-        participantLimit: Int = 10
+        participantLimit: Int = 10,
+        memberLimit: Int? = nil
     ) {
         self.messageId = messageId
         self.watch = watch
         self.replyLimit = replyLimit
         self.participantLimit = participantLimit
+        self.memberLimit = memberLimit
     }
 }

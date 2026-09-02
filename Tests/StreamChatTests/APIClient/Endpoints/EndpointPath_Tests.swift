@@ -67,8 +67,9 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_threads_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.threads.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.thread(messageId: "1").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.queryThreads.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getThread(messageId: "1").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateThreadPartial(messageId: "1").shouldBeQueuedOffline)
     }
     
     func test_polls_shouldNOTBeQueuedOffline() {
@@ -217,8 +218,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.createDevice)
         assertResultEncodingAndDecoding(.deleteDevice)
         assertResultEncodingAndDecoding(.listDevices)
-        assertResultEncodingAndDecoding(.threads)
-        assertResultEncodingAndDecoding(.thread(messageId: "1"))
+        assertResultEncodingAndDecoding(.queryThreads)
+        assertResultEncodingAndDecoding(.getThread(messageId: "1"))
+        assertResultEncodingAndDecoding(.updateThreadPartial(messageId: "1"))
         assertResultEncodingAndDecoding(.updatePushNotificationPreferences)
         assertResultEncodingAndDecoding(.getApp)
         assertResultEncodingAndDecoding(.listUserGroups)

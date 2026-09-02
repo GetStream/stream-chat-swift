@@ -22,7 +22,12 @@ class ThreadsRepository: @unchecked Sendable {
         query: ThreadListQuery,
         completion: @escaping @Sendable (Result<ThreadListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .threads(query: query)) { [weak self] result in
+        apiClient.request(
+            endpoint: .queryThreads(
+                queryThreadsRequest: query.toRequest(),
+                requiresConnectionId: query.watch
+            )
+        ) { [weak self] result in
             switch result {
             case .success(let threadListPayload):
                 nonisolated(unsafe) var threads: [ChatThread] = []
