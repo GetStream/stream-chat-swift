@@ -27,4 +27,14 @@ import XCTest
         XCTAssertEqual(components.mockMediaLoader.loadVideoPreviewAtURLMockFunc.calls.map(\.0), [url])
         XCTAssertEqual(components.mockMediaLoader.videoAssetMockFunc.calls.map(\.0), [url])
     }
+
+    func test_whenIsProcessing_thenTheOverlayIsVisible() {
+        let view = VideoAttachmentComposerPreview()
+        view.isProcessing = true
+        UIView().addSubview(view)
+
+        XCTAssertFalse(view.processingOverlayView.isHidden)
+        XCTAssertFalse(view.processingIndicator.isHidden)
+        XCTAssertEqual(view.processingOverlayView.accessibilityLabel, L10n.Composer.VideoCompression.compressing)
+    }
 }

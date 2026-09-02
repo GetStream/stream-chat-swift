@@ -1014,6 +1014,23 @@ import XCTest
         XCTAssertFalse(composerVC.mediaPickerVC === composerVC.mediaPickerVC)
     }
 
+    @available(iOS 14.0, *)
+    func test_mediaPickerVC_usesMediaPickerConfiguration() throws {
+        let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
+        XCTAssertEqual(picker.configuration.selectionLimit, composerVC.mediaPickerConfiguration.selectionLimit)
+        XCTAssertEqual(picker.configuration.preferredAssetRepresentationMode, .current)
+    }
+
+    @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenConfigurationIsOverridden_thenPickerUsesTheCustomConfiguration() throws {
+        let customComposerVC = ComposerVC_CustomPickerConfig()
+        customComposerVC.channelController = mockedChatChannelController
+
+        let picker = try XCTUnwrap(customComposerVC.mediaPickerVC as? PHPickerViewController)
+        XCTAssertEqual(picker.configuration.selectionLimit, 3)
+        XCTAssertTrue(picker.delegate === customComposerVC)
+    }
+
     // MARK: - imagePickerController(_:didFinishPickingMediaWithInfo:)
 
     func test_didFinishPickingMedia_whenImageURLWithoutOriginalImage_thenResolutionIsReadFromTheFile() throws {
@@ -1064,17 +1081,31 @@ import XCTest
 
     // MARK: - addSelectedMedia
 
+    func test_addSelectedMedia_whenVideoIsSelected_thenTheOriginalVideoIsAddedWithoutCompression() async throws {
+        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
+        let compressor = VideoCompressor_Mock()
+        composerVC.components.videoCompressor = compressor
+
+        await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
+
+        XCTAssertEqual(compressor.compressVideoCallCount, 0)
+        XCTAssertEqual(composerVC.content.attachments.count, 1)
+        XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
+        XCTAssertNotNil(composerVC.content.attachments.first?.localFileURL)
+    }
+
     func test_addSelectedMedia_whenVideoIsSelected_thenTheCompressedVideoIsAdded() async throws {
         let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
         let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 1024)
         let compressor = VideoCompressor_Mock()
         compressor.compressedURL = compressedURL
         composerVC.components.videoCompressor = compressor
+        composerVC.components.videoCompressionQuality = .high
 
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
         XCTAssertEqual(compressor.compressVideoCallCount, 1)
-        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .medium)
+        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .high)
         XCTAssertEqual(composerVC.content.attachments.count, 1)
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
         XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
@@ -1093,18 +1124,51 @@ import XCTest
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
     }
 
-    func test_addSelectedMedia_whenVideoIsSelected_thenTheProgressIsReportedForBothPhases() async throws {
+    func test_addSelectedMedia_whenVideoIsSelected_thenTheAttachmentIsVisibleAndSendIsDisabledWhileCompressing() async throws {
         let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov")
-        let spy = ComposerVC_ProgressSpy()
-        spy.components = composerVC.components
-        spy.components.videoCompressor = VideoCompressor_Mock()
-        spy.channelController = mockedChatChannelController
+        let compressor = VideoCompressor_Mock()
+        composerVC.components.videoCompressor = compressor
+        composerVC.components.videoCompressionQuality = .high
+        _ = composerVC.view
+        var pendingWhileCompressing = 0
+        var sendEnabledWhileCompressing = true
+        compressor.onCompress = { [weak composerVC] in
+            pendingWhileCompressing = composerVC?.pendingMediaItems.count ?? 0
+            sendEnabledWhileCompressing = composerVC?.composerView.sendButton.isEnabled ?? true
+        }
 
-        await spy.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
+        await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
-        XCTAssertEqual(spy.reportedProgress.first?.phase, .preparing)
-        XCTAssertEqual(spy.reportedProgress.last?.phase, .compressing)
-        XCTAssertEqual(spy.reportedProgress.last?.progress, 1)
+        XCTAssertEqual(pendingWhileCompressing, 1)
+        XCTAssertFalse(sendEnabledWhileCompressing)
+        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
+        XCTAssertTrue(composerVC.composerView.sendButton.isEnabled)
+    }
+
+    func test_enqueuePendingMedia_thenPlaceholderPreviewIsShownImmediately() throws {
+        _ = composerVC.view
+        let itemProvider = try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov"))
+
+        composerVC.enqueuePendingMedia(from: [itemProvider])
+
+        XCTAssertEqual(composerVC.pendingMediaItems.count, 1)
+        XCTAssertEqual(composerVC.pendingMediaItems.first?.type, .video)
+        XCTAssertTrue(composerVC.hasProcessingAttachments)
+        XCTAssertFalse(composerVC.composerView.inputMessageView.attachmentsViewContainer.isHidden)
+        XCTAssertFalse(composerVC.composerView.sendButton.isEnabled)
+        XCTAssertTrue(composerVC.attachmentsVC.content.contains { $0 is ProcessingAttachmentPreview })
+    }
+
+    func test_loadPendingPreviews_whenItemProviderHasAnImage_thenThePlaceholderShowsIt() async throws {
+        _ = composerVC.view
+        let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
+
+        composerVC.enqueuePendingMedia(from: [try makeItemProvider(for: imageURL)])
+        await composerVC.loadPendingPreviews()
+
+        XCTAssertNotNil(composerVC.pendingMediaItems.first?.previewImage)
+        let preview = try XCTUnwrap(composerVC.attachmentsVC.content.first as? ProcessingAttachmentPreview)
+        XCTAssertNotNil(preview.previewImage)
     }
 
     func test_addSelectedMedia_whenImageIsSelected_thenTheImageIsNotCompressed() async throws {
@@ -1126,6 +1190,7 @@ import XCTest
         let compressor = VideoCompressor_Mock()
         compressor.error = TestError()
         composerVC.components.videoCompressor = compressor
+        composerVC.components.videoCompressionQuality = .high
 
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
@@ -1139,6 +1204,7 @@ import XCTest
         let compressor = VideoCompressor_Mock()
         compressor.error = CancellationError()
         composerVC.components.videoCompressor = compressor
+        composerVC.components.videoCompressionQuality = .high
 
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
@@ -1151,6 +1217,7 @@ import XCTest
         let compressor = VideoCompressor_Mock()
         compressor.compressedURL = compressedURL
         composerVC.components.videoCompressor = compressor
+        composerVC.components.videoCompressionQuality = .high
 
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
@@ -1158,22 +1225,26 @@ import XCTest
         XCTAssertNotEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
     }
 
-    func test_addSelectedMedia_whenMultipleVideosAreSelected_thenTheProgressIsReportedForEachVideo() async throws {
+    func test_addSelectedMedia_whenMultipleVideosAreSelected_thenAllPlaceholdersAreVisibleBeforeCompression() async throws {
         let compressor = VideoCompressor_Mock()
-        compressor.reportedProgress = [0.5, 1]
         composerVC.components.videoCompressor = compressor
+        composerVC.components.videoCompressionQuality = .high
+        var pendingWhenFirstCompressionStarted = 0
+        compressor.onCompress = { [weak composerVC] in
+            if pendingWhenFirstCompressionStarted == 0 {
+                pendingWhenFirstCompressionStarted = composerVC?.pendingMediaItems.count ?? 0
+            }
+        }
         let itemProviders = try (0..<2).map { _ in
             try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov"))
         }
 
         await composerVC.addSelectedMedia(from: itemProviders)
 
+        XCTAssertEqual(pendingWhenFirstCompressionStarted, 2)
         XCTAssertEqual(compressor.compressVideoCallCount, 2)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.phase, .compressing)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.numberOfVideos, 2)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.currentVideo, 2)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.progress, 1)
         XCTAssertEqual(composerVC.content.attachments.count, 2)
+        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
     }
 
     // MARK: - maxAttachmentSize
@@ -1493,19 +1564,12 @@ private final class SpyComposerVC: ComposerVC {
     }
 }
 
-private final class ComposerVC_ProgressSpy: ComposerVC {
-    private(set) var reportedProgress: [VideoCompressionProgressVC.Content] = []
-
-    override func updateVideoCompressionProgress(_ content: VideoCompressionProgressVC.Content) {
-        reportedProgress.append(content)
-        super.updateVideoCompressionProgress(content)
-    }
-
-    override func showVideoCompressionProgress(numberOfVideos: Int) {
-        // Presenting is skipped, because the spy is not part of a view hierarchy.
-    }
-
-    override func hideVideoCompressionProgress() {
-        // Dismissing is skipped, because the spy is not part of a view hierarchy.
+@available(iOS 14.0, *)
+private final class ComposerVC_CustomPickerConfig: ComposerVC {
+    override var mediaPickerConfiguration: PHPickerConfiguration {
+        var configuration = super.mediaPickerConfiguration
+        configuration.filter = .images
+        configuration.selectionLimit = 3
+        return configuration
     }
 }
