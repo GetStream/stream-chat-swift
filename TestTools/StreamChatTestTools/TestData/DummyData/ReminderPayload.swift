@@ -5,6 +5,9 @@
 import Foundation
 @testable import StreamChat
 
+typealias ReminderResponsePayload = CreateReminderResponse
+typealias RemindersQueryPayload = QueryRemindersResponse
+
 extension ReminderPayload {
     convenience init(
         channelCid: ChannelId,

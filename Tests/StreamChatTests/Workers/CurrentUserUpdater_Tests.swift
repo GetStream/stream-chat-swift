@@ -1133,8 +1133,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
                     user: .dummy(userId: currentUserId),
                     userId: currentUserId
                 )
-            ],
-            duration: ""
+            ]
         )
         apiClient.test_mockResponseResult(Result<GetBlockedUsersResponse, Error>.success(payload))
         let expectation = XCTestExpectation()
@@ -1193,7 +1192,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let nonExistingUserId: UserId = .unique
         let mute = MutedUserPayload.dummy(userId: mutedUserId)
         let payload = MuteResponse(
-            duration: "",
             mutes: [mute],
             nonExistingUsers: [nonExistingUserId]
         )
@@ -1227,7 +1225,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let mutedUserId: UserId = .unique
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
-                .init(duration: "", mutes: [.dummy(userId: mutedUserId)])
+                .init(mutes: [.dummy(userId: mutedUserId)])
             )
         )
         let expectation = XCTestExpectation()
@@ -1254,7 +1252,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
                 .init(
-                    duration: "",
                     mutes: nil,
                     ownUser: .dummy(
                         userId: currentUserId,

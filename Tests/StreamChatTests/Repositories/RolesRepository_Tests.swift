@@ -31,7 +31,7 @@ final class RolesRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(SearchRolesResponse(duration: "1.23ms", roles: [])))
+        apiClient.test_simulateResponse(.success(SearchRolesResponse(roles: [])))
         wait(for: [exp], timeout: defaultTimeout)
 
         let expectedEndpoint: Endpoint<SearchRolesResponse> = .searchRoles(query: query)
@@ -49,7 +49,7 @@ final class RolesRepository_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(SearchRolesResponse(duration: "1.23ms", roles: [role])))
+        apiClient.test_simulateResponse(.success(SearchRolesResponse(roles: [role])))
         wait(for: [exp], timeout: defaultTimeout)
 
         guard case .success(let roles) = result else {
@@ -84,7 +84,7 @@ final class RolesRepository_Tests: XCTestCase {
         let query = RoleSearchQuery(query: "adm", limit: 10)
         let role = Role.dummy(custom: true, name: "admin")
 
-        apiClient.test_mockResponseResult(.success(SearchRolesResponse(duration: "1.23ms", roles: [role])))
+        apiClient.test_mockResponseResult(.success(SearchRolesResponse(roles: [role])))
 
         let roles = try await repository.searchRoles(query: query)
 

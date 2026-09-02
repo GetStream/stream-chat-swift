@@ -100,7 +100,7 @@ final class RoleSearch_Tests: XCTestCase {
 
         await search.clearResults()
 
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertTrue(search.state.roles.isEmpty)
             XCTAssertNil(search.state.query)
         }

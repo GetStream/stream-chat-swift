@@ -11,20 +11,16 @@ final class BlockUsersResponse: Sendable, Decodable {
     let blockedUserId: String
     /// Timestamp when the user was blocked
     let createdAt: Date
-    /// Duration of the request in milliseconds
-    let duration: String
 
-    init(blockedByUserId: String, blockedUserId: String, createdAt: Date, duration: String) {
+    init(blockedByUserId: String, blockedUserId: String, createdAt: Date) {
         self.blockedByUserId = blockedByUserId
         self.blockedUserId = blockedUserId
         self.createdAt = createdAt
-        self.duration = duration
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case blockedByUserId = "blocked_by_user_id"
         case blockedUserId = "blocked_user_id"
         case createdAt = "created_at"
-        case duration
     }
 }
