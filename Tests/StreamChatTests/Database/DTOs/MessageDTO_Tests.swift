@@ -836,6 +836,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let mentionedUser = UserPayload.dummy(userId: "u2", name: "Martin")
         let messagePayload: MessagePayload = .dummy(
+            cid: channelId,
             mentionedUsers: [mentionedUser],
             mentionedChannelMembers: [
                 "u2": MemberInfoPayload(
@@ -851,7 +852,6 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
             try session.saveMessage(
                 payload: messagePayload,
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -875,6 +875,7 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
+                    cid: channelId,
                     mentionedUsers: [mentionedUser],
                     mentionedChannelMembers: [
                         "u2": MemberInfoPayload(
@@ -884,7 +885,6 @@ final class MessageDTO_Tests: XCTestCase {
                         )
                     ]
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -894,10 +894,10 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
+                    cid: channelId,
                     mentionedUsers: [mentionedUser],
                     mentionedChannelMembers: nil
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -917,8 +917,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: channelId), query: nil, cache: nil)
             let dto = try session.saveMessage(
-                payload: .dummy(messageId: messageId, mentionedUsers: [mentionedUser]),
-                for: channelId,
+                payload: .dummy(messageId: messageId, cid: channelId, mentionedUsers: [mentionedUser]),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -929,6 +928,7 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
+                    cid: channelId,
                     mentionedUsers: [mentionedUser],
                     mentionedChannelMembers: [
                         "u2": MemberInfoPayload(
@@ -937,7 +937,6 @@ final class MessageDTO_Tests: XCTestCase {
                         )
                     ]
                 ),
-                for: channelId,
                 syncOwnReactions: false,
                 cache: nil
             )
