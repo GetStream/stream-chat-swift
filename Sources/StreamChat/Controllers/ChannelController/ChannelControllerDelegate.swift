@@ -53,6 +53,7 @@ public extension ChatChannelControllerDelegate {
         didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {}
 
+    @available(*, deprecated, message: "Use `channelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
     func channelController(
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>

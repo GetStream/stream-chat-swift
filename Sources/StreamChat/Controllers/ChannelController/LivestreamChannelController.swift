@@ -1163,6 +1163,7 @@ public extension LivestreamChannelControllerDelegate {
         didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {}
 
+    @available(*, deprecated, message: "Use `livestreamChannelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
