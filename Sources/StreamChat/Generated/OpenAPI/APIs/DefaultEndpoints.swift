@@ -28,7 +28,6 @@ enum EndpointPath: Codable {
 
     case message(MessageId)
     case replies(MessageId)
-    case messageAction(MessageId)
 
     case banMember
     case flagUser
@@ -77,6 +76,7 @@ enum EndpointPath: Codable {
     case queryReminders
     case queryUsers
     case removeUserGroupMembers(id: String)
+    case runMessageAction(id: String)
     case searchRoles
     case searchUserGroups
     case sendMessage(type: String, id: String)
@@ -132,7 +132,6 @@ enum EndpointPath: Codable {
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .messageAction(messageId): return "messages/\(messageId)/action"
 
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"
@@ -224,6 +223,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
+        case let .runMessageAction(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/action"
         case .searchRoles:
             return "/api/v2/roles/search"
         case .searchUserGroups:
@@ -966,6 +967,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: removeUserGroupMembersRequest
+        )
+    }
+
+    static func runMessageAction(
+        id: String,
+        messageActionRequest: MessageActionRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageActionResponse> {
+        return .init(
+            path: .runMessageAction(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: messageActionRequest
         )
     }
 

@@ -54,6 +54,7 @@ allowed_endpoints=(
     queryReminders
     queryUsers
     removeUserGroupMembers
+    runMessageAction
     searchRoles
     searchUserGroups
     sendMessage
@@ -132,6 +133,8 @@ allowed_models=(
   MarkDeliveredRequest
   MemberUserRequest
   MembersResponse
+  MessageActionRequest
+  MessageActionResponse
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -251,6 +254,7 @@ encodable_only_models=(
   CreateUserGroupRequest
   DeliveredMessagePayload
   HideChannelRequest
+  MessageActionRequest
   MessageRequest
   MuteChannelRequest
   MuteRequest
@@ -313,6 +317,7 @@ decodable_only_models=(
   MemberInfoPayload
   MemberPayload
   MembersResponse
+  MessageActionResponse
   MessageModerationDetailsPayload
   MessageReactionGroupPayload
   MessageReactionPayload
@@ -1010,7 +1015,6 @@ inject_v1_endpoint_paths() {
 
     case message(MessageId)
     case replies(MessageId)
-    case messageAction(MessageId)
 
     case banMember
     case flagUser
@@ -1046,7 +1050,6 @@ EOF
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .messageAction(messageId): return "messages/\(messageId)/action"
 
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"

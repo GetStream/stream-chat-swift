@@ -863,7 +863,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
     public func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: (@MainActor (Error?) -> Void)? = nil) {
-        messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
+        messageUpdater.dispatchEphemeralMessageAction(messageId: messageId, action: action) { error in
             self.callback {
                 completion?(error)
             }

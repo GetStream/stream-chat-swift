@@ -907,12 +907,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     /// Executes the provided action on the message.
     /// - Parameters:
-    ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier to take the action on.
     ///   - action: The action to take.
     ///   - completion: The completion called when the API call is finished. Called with `Error` if request fails.
     func dispatchEphemeralMessageAction(
-        cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction,
         completion: (@Sendable (Error?) -> Void)? = nil
@@ -937,17 +935,20 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 if action.isCancel {
                     completion?(nil)
                 } else {
-                    let endpoint: Endpoint<MessageResponse.Boxed> = .dispatchEphemeralMessageAction(
-                        cid: cid,
-                        messageId: messageId,
-                        action: action
+                    let endpoint: Endpoint<MessageActionResponse> = .runMessageAction(
+                        id: messageId,
+                        messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
                     )
                     self.apiClient.request(endpoint: endpoint) {
                         switch $0 {
-                        case let .success(payload):
+                        case let .success(response):
+                            guard let message = response.message else {
+                                completion?(nil)
+                                return
+                            }
                             self.database.write({ session in
                                 try session.saveMessage(
-                                    payload: payload.message,
+                                    payload: message,
                                     syncOwnReactions: true,
                                     skipDraftUpdate: true,
                                     cache: nil
@@ -1266,13 +1267,11 @@ extension MessageUpdater {
     }
 
     func dispatchEphemeralMessageAction(
-        cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             dispatchEphemeralMessageAction(
-                cid: cid,
                 messageId: messageId,
                 action: action
             ) { error in
