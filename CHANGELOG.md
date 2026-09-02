@@ -6,12 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `PinnedMessagesPagination.offset(Int)` for paginating messages using offset [#4249](https://github.com/GetStream/stream-chat-swift/pull/4249)
+- Add `ChatMessage.mentionedChannelMembers` for accessing channel-member info of mentioned users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add `TypingUser` and `ChatChannel.typingUsers` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add `LivestreamChatState.typingMemberInfos` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 ### 🐞 Fixed
 - Fix rare crashes in `DataController.state` [#4248](https://github.com/GetStream/stream-chat-swift/pull/4248)
+### 🔄 Changed
+- Deprecate `ChatChannelControllerDelegate.channelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Deprecate `LivestreamChannelControllerDelegate.livestreamChannelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
+### 🔄 Changed
+- Deprecate `ChatMessageListVC.showTypingIndicator(typingUsers:)` taking `[ChatUser]` in favour of the `[TypingUser]` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
 _August 27, 2026_
