@@ -31,7 +31,7 @@ extension EndpointPath: @retroactive Equatable {
         case let (.stopWatchingChannel(type1, id1), .stopWatchingChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.getPinnedMessages(type1, id1), .getPinnedMessages(type2, id2)): return type1 == type2 && id1 == id2
         case let (.sendMessage(type1, id1), .sendMessage(type2, id2)): return type1 == type2 && id1 == id2
-        case let (.message(messageId1), .message(messageId2)): return messageId1 == messageId2
+        case let (.getMessage(messageId1), .getMessage(messageId2)): return messageId1 == messageId2
         case let (.updateMessage(messageId1), .updateMessage(messageId2)): return messageId1 == messageId2
         case let (.updateMessagePartial(messageId1), .updateMessagePartial(messageId2)): return messageId1 == messageId2
         case let (.createDraft(type1, id1), .createDraft(type2, id2)): return type1 == type2 && id1 == id2

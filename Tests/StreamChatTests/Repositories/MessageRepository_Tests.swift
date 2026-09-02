@@ -315,7 +315,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.getMessage(cid: cid, messageId: messageId, store: true)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<GetMessageResponse> = .getMessage(id: messageId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -328,15 +328,15 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
     func test_getMessage_propagatesDatabaseError() throws {
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: .unique, authorUserId: .unique)
+        let messagePayload: GetMessageResponse = .dummy(
+            message: .dummy(message: .dummy(messageId: .unique, authorUserId: .unique))
         )
         let channelId = ChannelId.unique
 
@@ -354,7 +354,7 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -378,15 +378,46 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid)
+        let messagePayload: GetMessageResponse = .dummy(
+            message: .dummy(message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid))
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
 
         // Assert fetched message is saved to the database
+        XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
+
+    func test_getMessage_savesMessageToDatabase_whenChannelIsNotInDatabase() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+
+        // Create current user in the database, but not the channel
+        try database.createCurrentUser(id: currentUserId)
+
+        // Simulate `getMessage(cid:, messageId:)` call
+        nonisolated(unsafe) var completionCalled = false
+        repository.getMessage(cid: cid, messageId: messageId, store: true) { _ in
+            completionCalled = true
+        }
+
+        // Simulate API response with success
+        let messagePayload: GetMessageResponse = .dummy(
+            message: .dummy(
+                channel: .dummy(cid: cid),
+                message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid)
+            )
+        )
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+
+        // Assert the channel embedded in the response and the message are saved to the database
+        XCTAssertNotNil(database.viewContext.channel(cid: cid))
         XCTAssertNotNil(database.viewContext.message(id: messageId))
     }
 
@@ -408,10 +439,10 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid)
+        let messagePayload: GetMessageResponse = .dummy(
+            message: .dummy(message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid))
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)

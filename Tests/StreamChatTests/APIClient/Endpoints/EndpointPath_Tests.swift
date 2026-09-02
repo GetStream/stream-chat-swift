@@ -248,7 +248,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
 
         assertResultEncodingAndDecoding(.sendMessage(type: "messaging", id: "the_id"))
-        assertResultEncodingAndDecoding(.message("message_idm"))
+        assertResultEncodingAndDecoding(.getMessage(id: "message_idm"))
         assertResultEncodingAndDecoding(.updateMessage(id: "message_ide"))
         assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
         assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))

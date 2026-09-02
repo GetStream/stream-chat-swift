@@ -11,6 +11,10 @@ extension MessageResponse {
     var args: String? { custom[MessagePayloadsCodingKeys.args.rawValue]?.stringValue }
 
     var translations: [TranslationLanguage: String]? {
+        Self.translations(from: i18n)
+    }
+
+    static func translations(from i18n: [String: String]?) -> [TranslationLanguage: String]? {
         guard let i18n, !i18n.isEmpty else { return nil }
         let translatedSuffix = "_text"
         var translated = [TranslationLanguage: String]()

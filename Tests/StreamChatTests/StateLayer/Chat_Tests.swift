@@ -1135,7 +1135,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         
         // Set dummy response for failing the API call if it is mistakenly made
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<GetMessageResponse, Error>.failure(expectedTestError))
         let messageState = try await chat.messageState(for: messageId)
         
         XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint)
@@ -1147,7 +1147,7 @@ final class Chat_Tests: XCTestCase {
         
         let messageId = String.unique
         let messagePayload = try XCTUnwrap(makeChannelPayload(messageCount: 1, createdAtOffset: 0).messages.first)
-        let apiResponse = MessagePayload.Boxed(message: messagePayload)
+        let apiResponse = GetMessageResponse.dummy(message: .dummy(message: messagePayload))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let messageState = try await chat.messageState(for: messageId)
         

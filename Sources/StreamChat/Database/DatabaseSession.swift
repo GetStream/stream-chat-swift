@@ -210,6 +210,14 @@ protocol MessageDatabaseSession {
     ) throws -> MessageDTO
 
     @discardableResult
+    func saveMessage(
+        response: MessageWithChannelResponse,
+        syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+
+    @discardableResult
     func saveMessage(payload: SearchResultMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 
     func addReaction(

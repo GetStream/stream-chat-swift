@@ -36,6 +36,7 @@ allowed_endpoints=(
     getApp
     getDraft
     getBlockedUsers
+    getMessage
     getOG
     getPinnedMessages
     getReactions
@@ -119,6 +120,7 @@ allowed_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetDraftResponse
+  GetMessageResponse
   GetOGResponse
   GetPinnedMessagesResponse
   GetReactionsResponse
@@ -137,6 +139,7 @@ allowed_models=(
   MessageActionResponse
   MessageRequest
   MessageResponse
+  MessageWithChannelResponse
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
@@ -308,6 +311,7 @@ decodable_only_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetDraftResponse
+  GetMessageResponse
   GetOGResponse
   GetPinnedMessagesResponse
   ImageSize
@@ -323,6 +327,7 @@ decodable_only_models=(
   MessageReactionPayload
   MessageReactionsPayload
   MessageResponse
+  MessageWithChannelResponse
   MuteResponse
   MutedChannelPayload
   MutedChannelPayloadResponse
@@ -740,6 +745,7 @@ require_property ChannelDetailPayload config
 
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessageResponse reactionCounts
+optionalize_property MessageWithChannelResponse reactionCounts
 optionalize_property SearchResultMessage reactionCounts
 
 remove_type() {
@@ -1013,7 +1019,6 @@ inject_v1_endpoint_paths() {
     case markAllChannelsRead
     case channelEvent(String)
 
-    case message(MessageId)
     case replies(MessageId)
 
     case banMember
@@ -1048,7 +1053,6 @@ EOF
         case .markAllChannelsRead: return "channels/read"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
-        case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
 
         case .banMember: return "moderation/ban"

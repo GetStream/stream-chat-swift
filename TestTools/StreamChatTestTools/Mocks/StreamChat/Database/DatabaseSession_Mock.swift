@@ -311,6 +311,21 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
+    func saveMessage(
+        response: MessageWithChannelResponse,
+        syncOwnReactions: Bool,
+        skipDraftUpdate: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveMessage(
+            response: response,
+            syncOwnReactions: syncOwnReactions,
+            skipDraftUpdate: skipDraftUpdate,
+            cache: cache
+        )
+    }
+
     func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO] {
         underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
     }

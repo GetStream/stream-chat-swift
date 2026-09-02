@@ -924,6 +924,260 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     
     // swiftlint:disable function_body_length
 
+    private func saveMessageCommonFields(
+        attachments: [MessageAttachmentPayload],
+        cache: PreWarmedCache?,
+        channelDTO: ChannelDTO,
+        cid: String,
+        command: String?,
+        createdAt: Date,
+        custom: [String: RawJSON],
+        deletedAt: Date?,
+        deletedForMe: Bool?,
+        draft: DraftPayload?,
+        i18n: [String: String]?,
+        id: String,
+        latestReactions: [MessageReactionPayload],
+        member: MemberInfoPayload?,
+        mentionedChannel: Bool,
+        mentionedGroups: [UserGroup]?,
+        mentionedHere: Bool,
+        mentionedRoles: [String]?,
+        mentionedUsers: [UserPayload],
+        messageTextUpdatedAt: Date?,
+        moderation: MessageModerationDetailsPayload?,
+        ownReactions: [MessageReactionPayload],
+        parentId: String?,
+        pinExpires: Date?,
+        pinned: Bool,
+        pinnedAt: Date?,
+        pinnedBy: UserPayload?,
+        poll: PollPayload?,
+        quotedMessage: MessageResponse?,
+        quotedMessageId: String?,
+        reactionCounts: [String: Int]?,
+        reactionGroups: [String: MessageReactionGroupPayload?]?,
+        reactionScores: [String: Int],
+        reminder: ReminderPayload?,
+        replyCount: Int,
+        restrictedVisibility: [String],
+        shadowed: Bool,
+        sharedLocation: SharedLocation?,
+        showInChannel: Bool?,
+        silent: Bool,
+        skipDraftUpdate: Bool,
+        syncOwnReactions: Bool,
+        text: String,
+        threadParticipants: [UserPayload]?,
+        type: String,
+        updatedAt: Date,
+        user: UserPayload
+    ) throws -> MessageDTO {
+        let channelId = try ChannelId(cid: channelDTO.cid)
+        let dto = MessageDTO.loadOrCreate(id: id, context: self, cache: cache)
+
+        if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
+            return dto
+        }
+
+        // Local text edit before receiving the WS event
+        if let localDate = dto.textUpdatedAt?.bridgeDate,
+           let payloadDate = messageTextUpdatedAt,
+           localDate > payloadDate {
+            return dto
+        }
+
+        dto.cid = cid
+        dto.text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        dto.createdAt = createdAt.bridgeDate
+        dto.updatedAt = updatedAt.bridgeDate
+        dto.deletedAt = deletedAt?.bridgeDate
+        dto.textUpdatedAt = messageTextUpdatedAt?.bridgeDate
+        dto.type = type
+        dto.command = command
+        dto.args = custom[MessagePayloadsCodingKeys.args.rawValue]?.stringValue
+        dto.parentMessageId = parentId
+        dto.showReplyInChannel = showInChannel ?? false
+        dto.replyCount = Int32(replyCount)
+        if let member {
+            dto.updateMemberInfo(from: member)
+        }
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.isSilent = silent
+        dto.isShadowed = shadowed
+        if let deletedForMe {
+            dto.deletedForMe = deletedForMe
+        }
+
+        // Due to backend not working as advertised
+        // (sending `shadowed: true` flag to the shadow banned user)
+        // we have to implement this workaround to get the advertised behavior
+        // info on slack: https://getstream.slack.com/archives/CE5N802GP/p1635785568060500
+        // TODO: Remove the workaround once backend bug is fixed
+        if currentUser?.user.id == user.id {
+            dto.isShadowed = false
+        }
+
+        dto.pinned = pinned
+        dto.pinExpires = pinExpires?.bridgeDate
+        dto.pinnedAt = pinnedAt?.bridgeDate
+        if let pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedBy)
+        }
+
+        if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
+            channelDTO.pinnedMessages.insert(dto)
+        } else if !dto.pinned {
+            channelDTO.pinnedMessages.remove(dto)
+        }
+
+        if let quotedMessageId,
+           let localQuotedMessage = message(id: quotedMessageId) {
+            // In case we do not have a fully formed quoted message in the payload,
+            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
+            dto.quotedMessage = localQuotedMessage
+        } else if let quotedMessage {
+            dto.quotedMessage = try saveMessage(
+                payload: quotedMessage,
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: cache
+            )
+        } else {
+            dto.quotedMessage = nil
+        }
+
+        if let draft, skipDraftUpdate == false {
+            dto.draftReply = try saveDraftMessage(payload: draft, for: channelId, cache: cache)
+        } else if skipDraftUpdate == false {
+            /// If the payload does not contain a draft reply, we should
+            /// delete the existing draft reply if it exists.
+            if let draft = dto.draftReply {
+                deleteDraftMessage(in: channelId, threadId: draft.parentMessageId)
+                dto.draftReply = nil
+            }
+        }
+
+        if let sharedLocation {
+            dto.location = try saveLocation(payload: sharedLocation, cache: cache)
+        }
+
+        dto.user = try saveUser(payload: user)
+
+        dto.reactionScores = reactionScores
+        dto.reactionCounts = reactionCounts ?? [:]
+        dto.reactionGroups = Set((reactionGroups ?? [:]).compactMap { (type, groupPayload) in
+            groupPayload.map {
+                MessageReactionGroupDTO(
+                    type: .init(rawValue: type),
+                    payload: $0,
+                    context: self
+                )
+            }
+        })
+
+        // If user edited their message to remove mentioned users, we need to get rid of it
+        // as backend does
+        dto.mentionedUsers = try Set(mentionedUsers.map {
+            let user = try saveUser(payload: $0)
+            return user
+        })
+        dto.mentionedUserIds = mentionedUsers.map(\.id)
+        dto.mentionedHere = mentionedHere
+        dto.mentionedChannel = mentionedChannel
+        let mentionedGroupPayloads = mentionedGroups ?? []
+        dto.mentionedGroupIds = mentionedGroupPayloads.map(\.id)
+        dto.mentionedGroups = try Set(mentionedGroupPayloads.map { try saveUserGroup(payload: $0) })
+        dto.mentionedRoles = mentionedRoles ?? []
+
+        // If user participated in thread, but deleted message later, we need to get rid of it if backends does
+        dto.threadParticipants = try NSOrderedSet(
+            array: (threadParticipants ?? []).map { try saveUser(payload: $0) }
+        )
+        let restrictedVisibilityIds = Set(restrictedVisibility)
+        dto.restrictedVisibility = restrictedVisibilityIds.isEmpty ? nil : restrictedVisibilityIds
+
+        let isSystemMessage = dto.type == MessageType.system.rawValue
+        let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
+        if !shouldNotUpdateLastMessageAt {
+            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
+        }
+
+        dto.channel = channelDTO
+
+        dto.latestReactions = latestReactions
+            .compactMap { try? saveReaction(payload: $0, query: nil, cache: cache) }
+            .map(\.id)
+
+        if syncOwnReactions {
+            dto.ownReactions = ownReactions
+                .compactMap { try? saveReaction(payload: $0, query: nil, cache: cache) }
+                .map(\.id)
+        }
+
+        let attachmentDTOs: Set<AttachmentDTO> = try Set(
+            attachments.enumerated().map { index, attachment in
+                let attachmentId = AttachmentId(cid: channelId, messageId: id, index: index)
+                return try saveAttachment(payload: attachment, id: attachmentId)
+            }
+        )
+        dto.attachments = attachmentDTOs
+
+        if let poll {
+            let pollDto = try savePoll(payload: poll, cache: cache)
+            dto.poll = pollDto
+        }
+
+        // Only insert message into Parent's replies if not already present.
+        // This in theory would not be needed since replies is a Set, but
+        // it will trigger an FRC update, which will cause the message to disappear
+        // in the Message List if there is already a message with the same ID.
+        if let parentId,
+           let parentMessageDTO = MessageDTO.load(id: parentId, context: self),
+           !parentMessageDTO.replies.contains(dto) {
+            parentMessageDTO.replies.insert(dto)
+        }
+
+        dto.translations = MessageResponse.translations(from: i18n)?.mapKeys { $0.languageCode }
+        dto.originalLanguage = i18n?["language"]
+
+        if let moderation {
+            dto.moderationDetails = MessageModerationDetailsDTO.create(
+                from: moderation,
+                context: self
+            )
+        } else {
+            dto.moderationDetails = nil
+        }
+
+        // Calculate reads if the message is authored by the current user.
+        if user.id == currentUser?.user.id {
+            dto.updateReadBy(withChannelReads: channelDTO.reads)
+        }
+
+        if let reminder {
+            dto.reminder = try saveReminder(payload: reminder, cache: cache)
+        } else if let reminderDTO = dto.reminder {
+            delete(reminderDTO)
+            dto.reminder = nil
+        }
+
+        return dto
+    }
+
+    // swiftlint:enable function_body_length
+
     /// Saves a message into the local DB.
     /// - Parameters:
     ///   - payload: The message payload
@@ -940,214 +1194,114 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        let cid = try ChannelId(cid: channelDTO.cid)
-        let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
-
-        if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
-            return dto
-        }
-
-        // Local text edit before receiving the WS event
-        if let localDate = dto.textUpdatedAt?.bridgeDate,
-           let payloadDate = payload.messageTextUpdatedAt,
-           localDate > payloadDate {
-            return dto
-        }
-
-        dto.cid = payload.cid
-        dto.text = payload.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        dto.createdAt = payload.createdAt.bridgeDate
-        dto.updatedAt = payload.updatedAt.bridgeDate
-        dto.deletedAt = payload.deletedAt?.bridgeDate
-        dto.textUpdatedAt = payload.messageTextUpdatedAt?.bridgeDate
-        dto.type = payload.type
-        dto.command = payload.command
-        dto.args = payload.args
-        dto.parentMessageId = payload.parentId
-        dto.showReplyInChannel = payload.showInChannel ?? false
-        dto.replyCount = Int32(payload.replyCount)
-        if let member = payload.member {
-            dto.updateMemberInfo(from: member)
-        }
-
-        do {
-            dto.extraData = try JSONEncoder.default.encode(payload.custom)
-        } catch {
-            log.error(
-                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            dto.extraData = Data()
-        }
-
-        dto.isSilent = payload.silent
-        dto.isShadowed = payload.shadowed
-        if let deletedForMe = payload.deletedForMe {
-            dto.deletedForMe = deletedForMe
-        }
-
-        // Due to backend not working as advertised
-        // (sending `shadowed: true` flag to the shadow banned user)
-        // we have to implement this workaround to get the advertised behavior
-        // info on slack: https://getstream.slack.com/archives/CE5N802GP/p1635785568060500
-        // TODO: Remove the workaround once backend bug is fixed
-        if currentUser?.user.id == payload.user.id {
-            dto.isShadowed = false
-        }
-
-        dto.pinned = payload.pinned
-        dto.pinExpires = payload.pinExpires?.bridgeDate
-        dto.pinnedAt = payload.pinnedAt?.bridgeDate
-        if let pinnedByUser = payload.pinnedBy {
-            dto.pinnedBy = try saveUser(payload: pinnedByUser)
-        }
-
-        if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
-            channelDTO.pinnedMessages.insert(dto)
-        } else if !dto.pinned {
-            channelDTO.pinnedMessages.remove(dto)
-        }
-
-        if let quotedMessageId = payload.quotedMessageId,
-           let quotedMessage = message(id: quotedMessageId) {
-            // In case we do not have a fully formed quoted message in the payload,
-            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
-            dto.quotedMessage = quotedMessage
-        } else if let quotedMessage = payload.quotedMessage {
-            dto.quotedMessage = try saveMessage(
-                payload: quotedMessage,
-                channelDTO: channelDTO,
-                syncOwnReactions: false,
-                skipDraftUpdate: false,
-                cache: cache
-            )
-        } else {
-            dto.quotedMessage = nil
-        }
-
-        if let draft = payload.draft, skipDraftUpdate == false {
-            dto.draftReply = try saveDraftMessage(payload: draft, for: cid, cache: cache)
-        } else if skipDraftUpdate == false {
-            /// If the payload does not contain a draft reply, we should
-            /// delete the existing draft reply if it exists.
-            if let draft = dto.draftReply {
-                deleteDraftMessage(in: cid, threadId: draft.parentMessageId)
-                dto.draftReply = nil
-            }
-        }
-
-        if let location = payload.sharedLocation {
-            dto.location = try saveLocation(payload: location, cache: cache)
-        }
-
-        let user = try saveUser(payload: payload.user)
-        dto.user = user
-
-        dto.reactionScores = payload.reactionScores
-        dto.reactionCounts = payload.reactionCounts ?? [:]
-        dto.reactionGroups = Set((payload.reactionGroups ?? [:]).compactMap { (type, groupPayload) in
-            groupPayload.map {
-                MessageReactionGroupDTO(
-                    type: .init(rawValue: type),
-                    payload: $0,
-                    context: self
-                )
-            }
-        })
-
-        // If user edited their message to remove mentioned users, we need to get rid of it
-        // as backend does
-        dto.mentionedUsers = try Set(payload.mentionedUsers.map {
-            let user = try saveUser(payload: $0)
-            return user
-        })
-        dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
-        dto.mentionedHere = payload.mentionedHere
-        dto.mentionedChannel = payload.mentionedChannel
-        let mentionedGroups = payload.mentionedGroups ?? []
-        dto.mentionedGroupIds = mentionedGroups.map(\.id)
-        dto.mentionedGroups = try Set(mentionedGroups.map { try saveUserGroup(payload: $0) })
-        dto.mentionedRoles = payload.mentionedRoles ?? []
-
-        // If user participated in thread, but deleted message later, we need to get rid of it if backends does
-        dto.threadParticipants = try NSOrderedSet(
-            array: (payload.threadParticipants ?? []).map { try saveUser(payload: $0) }
+        try saveMessageCommonFields(
+            attachments: payload.attachments,
+            cache: cache,
+            channelDTO: channelDTO,
+            cid: payload.cid,
+            command: payload.command,
+            createdAt: payload.createdAt,
+            custom: payload.custom,
+            deletedAt: payload.deletedAt,
+            deletedForMe: payload.deletedForMe,
+            draft: payload.draft,
+            i18n: payload.i18n,
+            id: payload.id,
+            latestReactions: payload.latestReactions,
+            member: payload.member,
+            mentionedChannel: payload.mentionedChannel,
+            mentionedGroups: payload.mentionedGroups,
+            mentionedHere: payload.mentionedHere,
+            mentionedRoles: payload.mentionedRoles,
+            mentionedUsers: payload.mentionedUsers,
+            messageTextUpdatedAt: payload.messageTextUpdatedAt,
+            moderation: payload.moderation,
+            ownReactions: payload.ownReactions,
+            parentId: payload.parentId,
+            pinExpires: payload.pinExpires,
+            pinned: payload.pinned,
+            pinnedAt: payload.pinnedAt,
+            pinnedBy: payload.pinnedBy,
+            poll: payload.poll,
+            quotedMessage: payload.quotedMessage,
+            quotedMessageId: payload.quotedMessageId,
+            reactionCounts: payload.reactionCounts,
+            reactionGroups: payload.reactionGroups,
+            reactionScores: payload.reactionScores,
+            reminder: payload.reminder,
+            replyCount: payload.replyCount,
+            restrictedVisibility: payload.restrictedVisibility,
+            shadowed: payload.shadowed,
+            sharedLocation: payload.sharedLocation,
+            showInChannel: payload.showInChannel,
+            silent: payload.silent,
+            skipDraftUpdate: skipDraftUpdate,
+            syncOwnReactions: syncOwnReactions,
+            text: payload.text,
+            threadParticipants: payload.threadParticipants,
+            type: payload.type,
+            updatedAt: payload.updatedAt,
+            user: payload.user
         )
-        let restrictedVisibility = Set(payload.restrictedVisibility)
-        dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
-
-        let isSystemMessage = dto.type == MessageType.system.rawValue
-        let shouldNotUpdateLastMessageAt = isSystemMessage && channelDTO.config.skipLastMsgAtUpdateForSystemMsg
-        if !shouldNotUpdateLastMessageAt {
-            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
-        }
-        
-        dto.channel = channelDTO
-
-        dto.latestReactions = payload
-            .latestReactions
-            .compactMap { try? saveReaction(payload: $0, query: nil, cache: cache) }
-            .map(\.id)
-
-        if syncOwnReactions {
-            dto.ownReactions = payload
-                .ownReactions
-                .compactMap { try? saveReaction(payload: $0, query: nil, cache: cache) }
-                .map(\.id)
-        }
-
-        let attachments: Set<AttachmentDTO> = try Set(
-            payload.attachments.enumerated().map { index, attachment in
-                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
-                let dto = try saveAttachment(payload: attachment, id: id)
-                return dto
-            }
-        )
-        dto.attachments = attachments
-
-        if let poll = payload.poll {
-            let pollDto = try savePoll(payload: poll, cache: cache)
-            dto.poll = pollDto
-        }
-
-        // Only insert message into Parent's replies if not already present.
-        // This in theory would not be needed since replies is a Set, but
-        // it will trigger an FRC update, which will cause the message to disappear
-        // in the Message List if there is already a message with the same ID.
-        if let parentMessageId = payload.parentId,
-           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self),
-           !parentMessageDTO.replies.contains(dto) {
-            parentMessageDTO.replies.insert(dto)
-        }
-
-        dto.translations = payload.translations?.mapKeys { $0.languageCode }
-        dto.originalLanguage = payload.originalLanguage
-
-        if let moderationPayload = payload.moderation {
-            dto.moderationDetails = MessageModerationDetailsDTO.create(
-                from: moderationPayload,
-                context: self
-            )
-        } else {
-            dto.moderationDetails = nil
-        }
-
-        // Calculate reads if the message is authored by the current user.
-        if payload.user.id == currentUser?.user.id {
-            dto.updateReadBy(withChannelReads: channelDTO.reads)
-        }
-
-        if let reminder = payload.reminder {
-            dto.reminder = try saveReminder(payload: reminder, cache: cache)
-        } else if let reminderDTO = dto.reminder {
-            delete(reminderDTO)
-            dto.reminder = nil
-        }
-
-        return dto
     }
 
-    // swiftlint:enable function_body_length
+    func saveMessage(
+        response: MessageWithChannelResponse,
+        syncOwnReactions: Bool,
+        skipDraftUpdate: Bool = false,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        let channelDTO = try saveChannel(payload: response.channel, query: nil, cache: cache)
+        return try saveMessageCommonFields(
+            attachments: response.attachments,
+            cache: cache,
+            channelDTO: channelDTO,
+            cid: response.cid,
+            command: response.command,
+            createdAt: response.createdAt,
+            custom: response.custom,
+            deletedAt: response.deletedAt,
+            deletedForMe: response.deletedForMe,
+            draft: response.draft,
+            i18n: response.i18n,
+            id: response.id,
+            latestReactions: response.latestReactions,
+            member: response.member,
+            mentionedChannel: response.mentionedChannel,
+            mentionedGroups: response.mentionedGroups,
+            mentionedHere: response.mentionedHere,
+            mentionedRoles: response.mentionedRoles,
+            mentionedUsers: response.mentionedUsers,
+            messageTextUpdatedAt: response.messageTextUpdatedAt,
+            moderation: response.moderation,
+            ownReactions: response.ownReactions,
+            parentId: response.parentId,
+            pinExpires: response.pinExpires,
+            pinned: response.pinned,
+            pinnedAt: response.pinnedAt,
+            pinnedBy: response.pinnedBy,
+            poll: response.poll,
+            quotedMessage: response.quotedMessage,
+            quotedMessageId: response.quotedMessageId,
+            reactionCounts: response.reactionCounts,
+            reactionGroups: response.reactionGroups,
+            reactionScores: response.reactionScores,
+            reminder: response.reminder,
+            replyCount: response.replyCount,
+            restrictedVisibility: response.restrictedVisibility,
+            shadowed: response.shadowed,
+            sharedLocation: response.sharedLocation,
+            showInChannel: response.showInChannel,
+            silent: response.silent,
+            skipDraftUpdate: skipDraftUpdate,
+            syncOwnReactions: syncOwnReactions,
+            text: response.text,
+            threadParticipants: response.threadParticipants,
+            type: response.type,
+            updatedAt: response.updatedAt,
+            user: response.user
+        )
+    }
 
     func saveMessages(
         messagesPayload: MessageListPayload,
@@ -1170,21 +1324,23 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        let cid = try ChannelId(cid: payload.cid)
-
-        guard let channel = ChannelDTO.load(cid: cid, context: self) else {
-            let description = "Should never happen, a channel should have been fetched."
-            log.assertionFailure(description)
-            throw ClientError.MessagePayloadSavingFailure(description)
-        }
-
-        return try saveMessage(
+        try saveMessage(
             payload: payload,
-            channelDTO: channel,
+            channelDTO: try channelDTO(forMessageCid: payload.cid),
             syncOwnReactions: syncOwnReactions,
             skipDraftUpdate: skipDraftUpdate,
             cache: cache
         )
+    }
+
+    private func channelDTO(forMessageCid cid: String) throws -> ChannelDTO {
+        let channelId = try ChannelId(cid: cid)
+        guard let channelDTO = ChannelDTO.load(cid: channelId, context: self) else {
+            let description = "Should never happen, a channel should have been fetched."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
+        }
+        return channelDTO
     }
 
     @discardableResult
@@ -1294,10 +1450,61 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     func saveMessage(payload: SearchResultMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         // Only the search endpoint embeds the channel, and it is the sole source of the cid for
         // results whose channel is not cached locally yet.
+        let channelDTO: ChannelDTO
         if let channel = payload.channel {
-            _ = try saveChannel(payload: channel, query: nil, cache: cache)
+            channelDTO = try saveChannel(payload: channel, query: nil, cache: cache)
+        } else {
+            channelDTO = try self.channelDTO(forMessageCid: payload.cid)
         }
-        let messageDTO = try saveMessage(payload: payload.asMessageResponse(), cache: cache)
+        let messageDTO = try saveMessageCommonFields(
+            attachments: payload.attachments,
+            cache: cache,
+            channelDTO: channelDTO,
+            cid: payload.cid,
+            command: payload.command,
+            createdAt: payload.createdAt,
+            custom: payload.custom,
+            deletedAt: payload.deletedAt,
+            deletedForMe: payload.deletedForMe,
+            draft: payload.draft,
+            i18n: payload.i18n,
+            id: payload.id,
+            latestReactions: payload.latestReactions,
+            member: payload.member,
+            mentionedChannel: payload.mentionedChannel,
+            mentionedGroups: payload.mentionedGroups,
+            mentionedHere: payload.mentionedHere,
+            mentionedRoles: payload.mentionedRoles,
+            mentionedUsers: payload.mentionedUsers,
+            messageTextUpdatedAt: payload.messageTextUpdatedAt,
+            moderation: payload.moderation,
+            ownReactions: payload.ownReactions,
+            parentId: payload.parentId,
+            pinExpires: payload.pinExpires,
+            pinned: payload.pinned,
+            pinnedAt: payload.pinnedAt,
+            pinnedBy: payload.pinnedBy,
+            poll: payload.poll,
+            quotedMessage: payload.quotedMessage,
+            quotedMessageId: payload.quotedMessageId,
+            reactionCounts: payload.reactionCounts,
+            reactionGroups: payload.reactionGroups,
+            reactionScores: payload.reactionScores,
+            reminder: payload.reminder,
+            replyCount: payload.replyCount,
+            restrictedVisibility: payload.restrictedVisibility,
+            shadowed: payload.shadowed,
+            sharedLocation: payload.sharedLocation,
+            showInChannel: payload.showInChannel,
+            silent: payload.silent,
+            skipDraftUpdate: false,
+            syncOwnReactions: true,
+            text: payload.text,
+            threadParticipants: payload.threadParticipants,
+            type: payload.type,
+            updatedAt: payload.updatedAt,
+            user: payload.user
+        )
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }
