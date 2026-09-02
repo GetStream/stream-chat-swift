@@ -43,18 +43,6 @@ extension EntityChange {
         }
     }
 
-    /// Returns an `EntityChange` of the same kind, transforming the underlying item.
-    func map<T>(_ transform: (Item) -> T) -> EntityChange<T> {
-        switch self {
-        case let .create(item):
-            return .create(transform(item))
-        case let .update(item):
-            return .update(transform(item))
-        case let .remove(item):
-            return .remove(transform(item))
-        }
-    }
-
     /// Returns `EntityChange` of the same type but for the specific field
     func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> EntityChange<Value> {
         let field = item[keyPath: path]
