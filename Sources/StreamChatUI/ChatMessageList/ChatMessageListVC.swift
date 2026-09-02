@@ -551,7 +551,7 @@ open class ChatMessageListVC: _ViewController,
     /// Shows typing Indicator.
     /// - Parameter typingUsers: typing users gotten from `channelController`
     open func showTypingIndicator(typingUsers: [TypingUser]) {
-        updateTypingIndicator(with: typingUsers.map(\.user))
+        showTypingIndicator(typingUsers: typingUsers.map(\.user))
     }
 
     /// Shows typing Indicator.

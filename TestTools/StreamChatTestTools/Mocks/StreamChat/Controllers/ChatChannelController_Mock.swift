@@ -207,7 +207,19 @@ extension ChatChannelController_Mock {
             $0.channelController(self, didUpdateChannel: change)
             if let typingUsers = typingUsers {
                 let users = Set(typingUsers.map { $0 as ChatUser })
-                $0.channelController(self, didChangeTypingUsers: users.asTypingUsers)
+                $0.channelController(
+                    self,
+                    didChangeTypingUsers: Set(typingUsers.map { member in
+                        TypingUser(
+                            user: member,
+                            memberInfo: ChannelMemberInfo(
+                                channelRole: member.memberRole,
+                                notificationsMuted: member.notificationsMuted,
+                                extraData: member.memberExtraData
+                            )
+                        )
+                    })
+                )
                 $0.channelController(self, didChangeTypingUsers: users)
             }
         }
