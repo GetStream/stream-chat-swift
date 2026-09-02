@@ -1081,7 +1081,7 @@ import XCTest
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
     }
 
-    func test_addSelectedMedia_whenVideoIsSelected_thenTheProgressIsReportedForBothPhases() async throws {
+    func test_addSelectedMedia_whenVideoIsSelected_thenTheProgressCoversLoadingAndCompressing() async throws {
         let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov")
         let spy = ComposerVC_ProgressSpy()
         spy.components = composerVC.components
@@ -1090,9 +1090,12 @@ import XCTest
 
         await spy.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
-        XCTAssertEqual(spy.reportedProgress.first?.phase, .preparing)
-        XCTAssertEqual(spy.reportedProgress.last?.phase, .compressing)
-        XCTAssertEqual(spy.reportedProgress.last?.progress, 1)
+        // Loading takes the first half of the progress and compressing the second half,
+        // so the reported values have to stay in order and end at 1.
+        let reported = spy.reportedProgress.map(\.progress)
+        XCTAssertEqual(reported.last, 1)
+        XCTAssertTrue(reported.contains { $0 > 0 && $0 < 1 }, "expected intermediate progress, got \(reported)")
+        XCTAssertEqual(reported, reported.sorted())
     }
 
     func test_addSelectedMedia_whenImageIsSelected_thenTheImageIsNotCompressed() async throws {
@@ -1176,9 +1179,6 @@ import XCTest
         await composerVC.addSelectedMedia(from: itemProviders)
 
         XCTAssertEqual(compressor.compressVideoCallCount, 2)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.phase, .compressing)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.numberOfVideos, 2)
-        XCTAssertEqual(composerVC.videoCompressionProgressVC.content.currentVideo, 2)
         XCTAssertEqual(composerVC.videoCompressionProgressVC.content.progress, 1)
         XCTAssertEqual(composerVC.content.attachments.count, 2)
     }
@@ -1508,7 +1508,7 @@ private final class ComposerVC_ProgressSpy: ComposerVC {
         super.updateVideoCompressionProgress(content)
     }
 
-    override func showVideoCompressionProgress(numberOfVideos: Int) {
+    override func showVideoCompressionProgress() {
         // Presenting is skipped, because the spy is not part of a view hierarchy.
     }
 

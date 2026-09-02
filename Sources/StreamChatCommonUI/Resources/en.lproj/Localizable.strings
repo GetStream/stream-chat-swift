@@ -160,14 +160,8 @@
 "composer.picker.camera" = "Camera";
 /// Text for the cancel button in the attachment picker in the composer.
 "composer.picker.cancel" = "Cancel";
-/// Shown while a video which was selected in the composer is being loaded from the photo library.
+/// Shown while the videos which were selected in the composer are prepared for uploading.
 "composer.video-compression.preparing" = "Preparing video…";
-/// Shown while one of multiple videos which were selected in the composer is being loaded from the photo library.
-"composer.video-compression.preparing-multiple" = "Preparing video %d of %d…";
-/// Shown while a video which was selected in the composer is being compressed.
-"composer.video-compression.compressing" = "Compressing video…";
-/// Shown while one of multiple videos which were selected in the composer is being compressed.
-"composer.video-compression.compressing-multiple" = "Compressing video %d of %d…";
 /// Shown as title in the popup shown when links are disabled in the chat.
 "composer.links-disabled.title" = "Links are disabled";
 /// Shown as message in the popup shown when links are disabled in the chat.
