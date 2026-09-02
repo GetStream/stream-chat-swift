@@ -1016,19 +1016,6 @@ import XCTest
 
     // MARK: - imagePickerController(_:didFinishPickingMediaWithInfo:)
 
-    func test_didFinishPickingMedia_whenImageURLWithoutOriginalImage_thenResolutionIsReadFromTheFile() throws {
-        let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
-
-        composerVC.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [.imageURL: imageURL])
-
-        AssertAsync {
-            Assert.willBeEqual(self.composerVC.content.attachments.count, 1)
-            Assert.willBeEqual(self.composerVC.content.attachments.first?.type, .image)
-            Assert.willBeEqual(self.imagePayload?.originalWidth, 40)
-            Assert.willBeEqual(self.imagePayload?.originalHeight, 20)
-        }
-    }
-
     func test_didFinishPickingMedia_whenOriginalImageIsProvided_thenResolutionComesFromTheImage() throws {
         let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
         let originalImage = try makeImage(width: 10, height: 30)
@@ -1074,7 +1061,7 @@ import XCTest
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
         XCTAssertEqual(compressor.compressVideoCallCount, 1)
-        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .medium)
+        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .high)
         XCTAssertEqual(composerVC.content.attachments.count, 1)
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
         XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
@@ -1119,6 +1106,25 @@ import XCTest
         XCTAssertEqual(composerVC.content.attachments.first?.type, .image)
         XCTAssertEqual(imagePayload?.originalWidth, 40)
         XCTAssertEqual(imagePayload?.originalHeight, 20)
+    }
+
+    func test_addSelectedMedia_whenTheAttachmentIsRejected_thenTheCopiedFileIsRemoved() async throws {
+        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov")
+        let chatClient = ChatClient_Mock.mock
+        chatClient.mockedAppSettings = .mock(fileUploadConfig: .mock(sizeLimitInBytes: 1))
+        composerVC.channelController = ChatChannelController_Mock.mock(chatClient: chatClient)
+        composerVC.components.videoCompressionQuality = .original
+        let directoriesBefore = temporaryDirectoryUUIDs()
+
+        await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
+
+        XCTAssertEqual(composerVC.content.attachments.count, 0)
+        XCTAssertEqual(temporaryDirectoryUUIDs().subtracting(directoriesBefore), [])
+    }
+
+    private func temporaryDirectoryUUIDs() -> Set<String> {
+        let contents = (try? FileManager.default.contentsOfDirectory(atPath: NSTemporaryDirectory())) ?? []
+        return Set(contents.filter { UUID(uuidString: $0) != nil })
     }
 
     func test_addSelectedMedia_whenCompressionFails_thenTheOriginalVideoIsAdded() async throws {

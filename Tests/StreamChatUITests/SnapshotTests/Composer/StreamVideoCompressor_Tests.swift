@@ -18,7 +18,7 @@ import XCTest
 
     func test_compressVideo_whenQualityIsMedium_thenTheResultIsASmallerPlayableVideo() async throws {
         let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 20, bitRate: 8_000_000)
-        let compressor = StreamVideoCompressor(progressUpdateInterval: 0.01)
+        let compressor = StreamVideoCompressor(progressUpdateInterval: 0.005)
         nonisolated(unsafe) var reportedProgress: [Double] = []
 
         let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .medium) {

@@ -11,6 +11,9 @@ public struct VideoCompressionQuality: Equatable, Sendable {
     public let exportPreset: String
 
     /// Creates a compression quality which is backed by the given `AVAssetExportSession` preset.
+    ///
+    /// Use it for presets which are not covered by the provided qualities, for example
+    /// `AVAssetExportPreset1280x720` for downscaling the videos to a fixed resolution.
     public init(exportPreset: String) {
         self.exportPreset = exportPreset
     }
@@ -21,28 +24,24 @@ public struct VideoCompressionQuality: Equatable, Sendable {
     /// The videos are compressed to the smallest file size.
     public static let low = Self(exportPreset: AVAssetExportPresetLowQuality)
 
-    /// The videos are compressed to a size which is suitable for sharing in a chat.
+    /// The videos are compressed to a lower resolution, which results in a smaller file.
     public static let medium = Self(exportPreset: AVAssetExportPresetMediumQuality)
 
-    /// The videos keep a quality close to the original one, but are still transcoded to H.264.
+    /// The videos keep their resolution and are only transcoded to H.264. This is the default.
     public static let high = Self(exportPreset: AVAssetExportPresetHighestQuality)
 }
 
 /// The errors which can occur while a video is being compressed.
-public enum VideoCompressionError: Error {
+enum VideoCompressionError: Error {
     /// The video cannot be compressed with the requested quality.
     case unsupportedQuality(VideoCompressionQuality)
 }
 
 /// A type which compresses the videos that are added as attachments to the composer.
-public protocol VideoCompressor: Sendable {
-    /// Compresses the video at the given location.
-    ///
-    /// - Parameters:
-    ///   - url: The local file URL of the video which should be compressed.
-    ///   - quality: The quality which the compressed video should have.
-    ///   - progressHandler: Called with the progress of the compression, a value between 0 and 1.
-    /// - Returns: The local file URL of the compressed video.
+///
+/// It is not public yet, so that only `Components.videoCompressionQuality` has to be
+/// supported as configuration. It exists to keep the compression testable.
+protocol VideoCompressing: Sendable {
     @MainActor
     func compressVideo(
         at url: URL,
@@ -51,24 +50,20 @@ public protocol VideoCompressor: Sendable {
     ) async throws -> URL
 }
 
-/// The default video compressor, which transcodes videos with `AVAssetExportSession`.
-public struct StreamVideoCompressor: VideoCompressor {
+/// Compresses videos by transcoding them with `AVAssetExportSession`.
+struct StreamVideoCompressor: VideoCompressing {
     /// How often the progress of the compression is reported.
-    public var progressUpdateInterval: TimeInterval
+    private let progressUpdateInterval: TimeInterval
 
     /// The container format of the compressed video.
-    public var outputFileType: AVFileType
+    private let outputFileType: AVFileType = .mp4
 
-    public init(
-        progressUpdateInterval: TimeInterval = 0.1,
-        outputFileType: AVFileType = .mp4
-    ) {
+    init(progressUpdateInterval: TimeInterval = 0.1) {
         self.progressUpdateInterval = progressUpdateInterval
-        self.outputFileType = outputFileType
     }
 
     @MainActor
-    public func compressVideo(
+    func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
         progressHandler: @escaping (Double) -> Void
@@ -106,19 +101,6 @@ public struct StreamVideoCompressor: VideoCompressor {
         let fileName = inputURL.deletingPathExtension().lastPathComponent
         return directory
             .appendingPathComponent(fileName.isEmpty ? UUID().uuidString : fileName)
-            .appendingPathExtension(outputFileType.fileExtension)
-    }
-}
-
-private extension AVFileType {
-    var fileExtension: String {
-        switch self {
-        case .mov:
-            return "mov"
-        case .m4v:
-            return "m4v"
-        default:
-            return "mp4"
-        }
+            .appendingPathExtension("mp4")
     }
 }

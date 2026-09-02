@@ -447,9 +447,12 @@ open class ComposerVC: _ViewController,
     /// The view controller for selecting image attachments.
     ///
     /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
-    /// faster than `UIImagePickerController` and needs no photo library permission. A new
-    /// picker is created for every presentation, because the system picker keeps showing the
-    /// previous selection when the same instance is reused.
+    /// faster than `UIImagePickerController` and needs no photo library permission.
+    ///
+    /// - Note: This intentionally returns a new picker on every access instead of being a
+    /// `lazy var`. `PHPickerConfiguration` is read once when the picker is created, so
+    /// `selectionLimit` has to be recomputed from the remaining attachment slots for every
+    /// presentation. Reusing one instance also keeps showing the previous selection.
     open var mediaPickerVC: UIViewController {
         if #available(iOS 14.0, *) {
             var configuration = PHPickerConfiguration()
@@ -1636,25 +1639,72 @@ open class ComposerVC: _ViewController,
     }
 
     private func handleImagePickerMediaSelected(info: [UIImagePickerController.InfoKey: Any]) {
-        let media: SelectedMediaItem
+        let urlAndType: (URL, AttachmentType)
         if let imageURL = info[.imageURL] as? URL {
-            media = .init(url: imageURL, type: .image)
+            urlAndType = (imageURL, .image)
         } else if let videoURL = info[.mediaURL] as? URL {
-            media = .init(url: videoURL, type: .video)
+            urlAndType = (videoURL, .video)
         } else if let editedImage = info[.editedImage] as? UIImage,
                   let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
-            media = .init(url: editedImageURL, type: .image)
+            urlAndType = (editedImageURL, .image)
         } else if let originalImage = info[.originalImage] as? UIImage,
                   let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
-            media = .init(url: originalImageURL, type: .image)
+            urlAndType = (originalImageURL, .image)
         } else {
             log.error("Unexpected item selected in image picker")
             return
         }
 
-        let originalImage = media.type == .image ? info[.originalImage] as? UIImage : nil
-        Task { @MainActor [weak self] in
-            await self?.addAttachmentToContent(for: media, originalImage: originalImage)
+        nonisolated(unsafe) var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
+        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
+            localAttachmentInfo[.originalImage] = originalImage
+        }
+        if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
+            let asset = AVURLAsset(url: videoURL)
+            let url = urlAndType.0
+            let type = urlAndType.1
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\.duration), AssetProperty(\.tracks)],
+                of: asset
+            ) { [weak self] result in
+                guard let self else { return }
+                Task { @MainActor in
+                    var info = localAttachmentInfo
+                    switch result {
+                    case .success(let loadedAsset):
+                        let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
+                        if durationSeconds.isFinite && !durationSeconds.isNaN {
+                            info[.duration] = durationSeconds
+                        }
+                        if let track = loadedAsset.tracks(withMediaType: .video).first {
+                            let (width, height) = Self.videoDimensions(from: track)
+                            info[.originalWidth] = width
+                            info[.originalHeight] = height
+                        }
+                    case .failure:
+                        break
+                    }
+                    do {
+                        try self.addAttachmentToContent(from: url, type: type, info: info)
+                    } catch {
+                        self.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
+                    }
+                }
+            }
+        } else {
+            do {
+                try addAttachmentToContent(
+                    from: urlAndType.0,
+                    type: urlAndType.1,
+                    info: localAttachmentInfo
+                )
+            } catch {
+                handleAddAttachmentError(
+                    attachmentURL: urlAndType.0,
+                    attachmentType: urlAndType.1,
+                    error: error
+                )
+            }
         }
     }
 
@@ -1777,15 +1827,14 @@ open class ComposerVC: _ViewController,
         return compressedURL
     }
 
-    /// Adds the given media item to the composer's content, together with the metadata
-    /// which is needed for rendering it before it is uploaded.
-    private func addAttachmentToContent(for media: SelectedMediaItem, originalImage: UIImage? = nil) async {
+    /// Adds the media loaded from the photos picker to the composer's content.
+    ///
+    /// The composer owns the file at this point, so it is removed again when it cannot be attached.
+    private func addAttachmentToContent(for media: SelectedMediaItem) async {
         var info: [LocalAttachmentInfoKey: Any] = [:]
         switch media.type {
         case .image:
-            if let originalImage = originalImage {
-                info[.originalImage] = originalImage
-            } else if let dimensions = imageDimensions(at: media.url) {
+            if let dimensions = imageDimensions(at: media.url) {
                 info[.originalWidth] = dimensions.width
                 info[.originalHeight] = dimensions.height
             }
@@ -1805,6 +1854,7 @@ open class ComposerVC: _ViewController,
         do {
             try addAttachmentToContent(from: media.url, type: media.type, info: info)
         } catch {
+            removeTemporaryMedia(at: media.url)
             handleAddAttachmentError(attachmentURL: media.url, attachmentType: media.type, error: error)
         }
     }

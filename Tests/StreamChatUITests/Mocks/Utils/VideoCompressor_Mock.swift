@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChatUI
 
-final class VideoCompressor_Mock: VideoCompressor, @unchecked Sendable {
+final class VideoCompressor_Mock: VideoCompressing, @unchecked Sendable {
     /// The URL which is returned instead of the compressed video. When nil, the input URL is returned.
     var compressedURL: URL?
 
