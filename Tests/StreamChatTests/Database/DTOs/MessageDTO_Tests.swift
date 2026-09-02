@@ -857,7 +857,9 @@ final class MessageDTO_Tests: XCTestCase {
             )
         }
 
-        let loadedMessage = try XCTUnwrap(try database.viewContext.message(id: messagePayload.id)?.asModel())
+        let loadedMessage = try database.readSynchronously { session in
+            try XCTUnwrap(session.message(id: messagePayload.id)?.asModel())
+        }
         XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.channelRole, .member)
         XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData, ["nickname": .string("Marty")])
     }
@@ -901,7 +903,9 @@ final class MessageDTO_Tests: XCTestCase {
             )
         }
 
-        let loadedMessage = try XCTUnwrap(try database.viewContext.message(id: messageId)?.asModel())
+        let loadedMessage = try database.readSynchronously { session in
+            try XCTUnwrap(session.message(id: messageId)?.asModel())
+        }
         XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData, ["nickname": .string("Marty")])
     }
 
@@ -939,7 +943,9 @@ final class MessageDTO_Tests: XCTestCase {
             )
         }
 
-        let loadedMessage = try XCTUnwrap(try database.viewContext.message(id: messageId)?.asModel())
+        let loadedMessage = try database.readSynchronously { session in
+            try XCTUnwrap(session.message(id: messageId)?.asModel())
+        }
         XCTAssertEqual(loadedMessage.mentionedChannelMembers["u2"]?.extraData["is_premium"], .bool(true))
     }
 
