@@ -18,6 +18,12 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
         }
     }
 
+    /// A thumbnail provided by the photos picker. When set, it is shown immediately
+    /// instead of loading the image from `content`.
+    public var previewImage: UIImage? {
+        didSet { updateContentIfNeeded() }
+    }
+
     /// The image view that displays the image of the attachment.
     open private(set) lazy var imageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -29,6 +35,9 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
         layer.cornerRadius = 11
 
         imageView.contentMode = .scaleAspectFill
+        if #available(iOS 17.0, *) {
+            imageView.preferredImageDynamicRange = .standard
+        }
     }
 
     override open func setUpLayout() {
@@ -42,6 +51,11 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
 
     override open func updateContent() {
         super.updateContent()
+
+        if let previewImage {
+            imageView.image = previewImage
+            return
+        }
 
         let size = CGSize(width: width, height: height)
         components.mediaLoader.loadImage(

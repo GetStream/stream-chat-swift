@@ -587,11 +587,17 @@ import UIKit
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
         .Type = VideoAttachmentComposerPreview.self
 
+    /// A view that displays a placeholder preview while a picked attachment is processed.
+    public var processingAttachmentComposerPreview: ProcessingAttachmentComposerPreview
+        .Type = ProcessingAttachmentComposerPreview.self
+
     /// The quality of the videos which are added as attachments in the composer.
     ///
-    /// Videos are compressed before they are uploaded, so that they do not exceed the
-    /// maximum attachment size. Set it to `.original` to upload the videos as they are.
-    public var videoCompressionQuality: VideoCompressionQuality = .medium
+    /// The default is `.original`, so HEVC videos from the photos picker are uploaded
+    /// as they are. That avoids a slow H.264 transcode after picking. Set `.high`,
+    /// `.medium`, or `.low` to transcode before upload. Videos that exceed the
+    /// maximum attachment size are still transcoded with `.high`.
+    public var videoCompressionQuality: VideoCompressionQuality = .original
 
     /// The object responsible for compressing the videos which are added as attachments in the composer.
     public var videoCompressor: VideoCompressor = StreamVideoCompressor()

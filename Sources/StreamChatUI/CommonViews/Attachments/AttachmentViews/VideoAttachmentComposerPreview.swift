@@ -16,6 +16,20 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
+    /// A thumbnail provided by the photos picker. When set, it is shown immediately
+    /// instead of generating a preview from the video file.
+    public var previewImage: UIImage? {
+        didSet { updateContentIfNeeded() }
+    }
+
+    /// Whether the video is still being processed (for example compressed) before it can be sent.
+    public var isProcessing: Bool = false {
+        didSet {
+            guard isProcessing != oldValue else { return }
+            updateProcessingState()
+        }
+    }
+
     /// The view that displays the video preview.
     open private(set) lazy var previewImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -40,10 +54,22 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         .loadingIndicator.init()
         .withoutAutoresizingMaskConstraints
 
+    /// Dims the preview while the attachment is being processed.
+    open private(set) lazy var processingOverlayView: UIView = UIView()
+        .withoutAutoresizingMaskConstraints
+
+    /// The view that displays a loading indicator while the video is being processed.
+    open private(set) lazy var processingIndicator = components
+        .loadingIndicator.init()
+        .withoutAutoresizingMaskConstraints
+
     override open func setUpAppearance() {
         super.setUpAppearance()
 
         previewImageView.contentMode = .scaleAspectFill
+        if #available(iOS 17.0, *) {
+            previewImageView.preferredImageDynamicRange = .standard
+        }
 
         cameraIconView.image = appearance.images.camera
         cameraIconView.contentMode = .scaleAspectFit
@@ -59,6 +85,12 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
 
         layer.cornerRadius = 12
         layer.masksToBounds = true
+
+        processingOverlayView.isOpaque = false
+        processingOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.35)
+        processingOverlayView.isAccessibilityElement = true
+        processingOverlayView.accessibilityLabel = L10n.Composer.VideoCompression.compressing
+        processingOverlayView.accessibilityTraits = .updatesFrequently
     }
 
     override open func setUpLayout() {
@@ -81,6 +113,13 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         cameraIconView.pin(anchors: [.leading, .centerY], to: gradientView.layoutMarginsGuide)
         videoDurationLabel.pin(anchors: [.trailing, .centerY], to: gradientView.layoutMarginsGuide)
 
+        addSubview(processingOverlayView)
+        processingOverlayView.pin(to: self)
+        processingOverlayView.addSubview(processingIndicator)
+        processingIndicator.pin(anchors: [.centerX, .centerY], to: processingOverlayView)
+        processingIndicator.pin(anchors: [.height], to: 28)
+        updateProcessingState()
+
         pin(anchors: [.width], to: width)
         pin(anchors: [.height], to: height)
     }
@@ -88,18 +127,20 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        loadingIndicator.isHidden = false
-        previewImageView.image = nil
+        loadingIndicator.isHidden = previewImage != nil
+        previewImageView.image = previewImage
         videoDurationLabel.text = nil
 
         if let url = content {
-            components.mediaLoader.loadVideoPreview(at: url) { [weak self] in
-                self?.loadingIndicator.isHidden = true
-                switch $0 {
-                case let .success(preview):
-                    self?.previewImageView.image = preview.image
-                case .failure:
-                    self?.previewImageView.image = nil
+            if previewImage == nil {
+                components.mediaLoader.loadVideoPreview(at: url) { [weak self] in
+                    self?.loadingIndicator.isHidden = true
+                    switch $0 {
+                    case let .success(preview):
+                        self?.previewImageView.image = preview.image
+                    case .failure:
+                        self?.previewImageView.image = nil
+                    }
                 }
             }
             components.mediaLoader.loadVideoAsset(at: url) { [weak self] result in
@@ -110,5 +151,12 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
                 }
             }
         }
+        updateProcessingState()
+    }
+
+    /// Shows or hides the processing overlay in the middle of the preview.
+    open func updateProcessingState() {
+        processingOverlayView.isHidden = !isProcessing
+        processingIndicator.isHidden = !isProcessing
     }
 }
