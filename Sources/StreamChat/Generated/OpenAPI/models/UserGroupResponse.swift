@@ -5,16 +5,13 @@
 import Foundation
 
 final class UserGroupResponse: Sendable, Decodable {
-    let duration: String
     let userGroup: UserGroup?
 
-    init(duration: String, userGroup: UserGroup? = nil) {
-        self.duration = duration
+    init(userGroup: UserGroup? = nil) {
         self.userGroup = userGroup
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
         case userGroup = "user_group"
     }
 }

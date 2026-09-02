@@ -5,8 +5,6 @@
 import Foundation
 
 final class UploadChannelResponse: Sendable, Decodable {
-    /// Duration of the request in milliseconds
-    let duration: String
     let file: String?
     let moderationAction: String?
     let thumbUrl: String?
@@ -14,13 +12,11 @@ final class UploadChannelResponse: Sendable, Decodable {
     let uploadSizes: [ImageSize]?
 
     init(
-        duration: String,
         file: String? = nil,
         moderationAction: String? = nil,
         thumbUrl: String? = nil,
         uploadSizes: [ImageSize]? = nil
     ) {
-        self.duration = duration
         self.file = file
         self.moderationAction = moderationAction
         self.thumbUrl = thumbUrl
@@ -28,7 +24,6 @@ final class UploadChannelResponse: Sendable, Decodable {
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
         case file
         case moderationAction = "moderation_action"
         case thumbUrl = "thumb_url"

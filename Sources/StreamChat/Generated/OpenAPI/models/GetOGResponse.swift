@@ -15,7 +15,6 @@ final class GetOGResponse: Sendable, Decodable {
     let authorName: String?
     let color: String?
     let custom: [String: RawJSON]
-    let duration: String
     let fallback: String?
     let fields: [AttachmentFieldPayload]?
     let footer: String?
@@ -47,7 +46,6 @@ final class GetOGResponse: Sendable, Decodable {
         authorName: String? = nil,
         color: String? = nil,
         custom: [String: RawJSON],
-        duration: String,
         fallback: String? = nil,
         fields: [AttachmentFieldPayload]? = nil,
         footer: String? = nil,
@@ -71,7 +69,6 @@ final class GetOGResponse: Sendable, Decodable {
         self.authorName = authorName
         self.color = color
         self.custom = custom
-        self.duration = duration
         self.fallback = fallback
         self.fields = fields
         self.footer = footer
@@ -97,7 +94,6 @@ final class GetOGResponse: Sendable, Decodable {
         case authorName = "author_name"
         case color
         case custom
-        case duration
         case fallback
         case fields
         case footer

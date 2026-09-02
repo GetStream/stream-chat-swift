@@ -537,7 +537,6 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
         try await messageUpdater.dispatchEphemeralMessageAction(
-            cid: cid,
             messageId: messageId,
             action: action
         )

@@ -2311,7 +2311,6 @@ final class MessageController_Tests: XCTestCase {
         controller.dispatchEphemeralMessageAction(action)
 
         // Assert updater is called with correct values.
-        XCTAssertEqual(env.messageUpdater.dispatchEphemeralMessageAction_cid, controller.cid)
         XCTAssertEqual(env.messageUpdater.dispatchEphemeralMessageAction_messageId, controller.messageId)
         XCTAssertEqual(env.messageUpdater.dispatchEphemeralMessageAction_action, action)
     }

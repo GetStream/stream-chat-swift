@@ -395,7 +395,7 @@ extension XCTestCase {
         voteCountsByOption: [String: Int] = [:],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
-        votingVisibility: String? = nil,
+        votingVisibility: PollResponseDataVotingVisibility? = nil,
         user: UserPayload? = .dummy(userId: .unique)
     ) -> PollPayload {
         .init(
@@ -465,7 +465,7 @@ extension PollVotePayloadResponse {
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil
     ) -> PollVotePayloadResponse {
-        .init(duration: "", poll: poll, vote: vote)
+        .init(poll: poll, vote: vote)
     }
 }
 
@@ -475,7 +475,7 @@ extension PollVoteListResponse {
         prev: String? = nil,
         votes: [PollVotePayload] = []
     ) -> PollVoteListResponse {
-        .init(duration: "", next: next, prev: prev, votes: votes)
+        .init(next: next, prev: prev, votes: votes)
     }
 }
 

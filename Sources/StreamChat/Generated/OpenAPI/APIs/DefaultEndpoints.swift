@@ -28,11 +28,6 @@ enum EndpointPath: Codable {
 
     case message(MessageId)
     case replies(MessageId)
-    case messageAction(MessageId)
-
-    // Reminders
-    case reminders
-    case reminder(MessageId)
 
     case banMember
     case flagUser
@@ -45,6 +40,7 @@ enum EndpointPath: Codable {
     case createDraft(type: String, id: String)
     case createPoll
     case createPollOption(pollId: String)
+    case createReminder(messageId: String)
     case createUserGroup
     case deleteChannel(type: String, id: String)
     case deleteChannelFile(type: String, id: String)
@@ -57,6 +53,7 @@ enum EndpointPath: Codable {
     case deletePoll(pollId: String)
     case deletePollVote(messageId: String, pollId: String, voteId: String)
     case deleteReaction(id: String, type: String)
+    case deleteReminder(messageId: String)
     case deleteUserGroup(id: String)
     case getApp
     case getBlockedUsers
@@ -76,8 +73,10 @@ enum EndpointPath: Codable {
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
+    case queryReminders
     case queryUsers
     case removeUserGroupMembers(id: String)
+    case runMessageAction(id: String)
     case searchRoles
     case searchUserGroups
     case sendMessage(type: String, id: String)
@@ -96,6 +95,7 @@ enum EndpointPath: Codable {
     case updateMessagePartial(id: String)
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
+    case updateReminder(messageId: String)
     case updateUserGroup(id: String)
     case updateUsersPartial
     case uploadChannelFile(type: String, id: String)
@@ -132,10 +132,6 @@ enum EndpointPath: Codable {
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .messageAction(messageId): return "messages/\(messageId)/action"
-
-        case .reminders: return "reminders/query"
-        case let .reminder(messageId): return "messages/\(messageId)/reminders"
 
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"
@@ -155,6 +151,8 @@ enum EndpointPath: Codable {
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/options"
+        case let .createReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case .createUserGroup:
             return "/api/v2/usergroups"
         case let .deleteChannel(type: type, id: id):
@@ -179,6 +177,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote/\(APIHelper.escapedPathItem(voteId))"
         case let .deleteReaction(id: id, type: type):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction/\(APIHelper.escapedPathItem(type))"
+        case let .deleteReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getApp:
@@ -217,10 +217,14 @@ enum EndpointPath: Codable {
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
         case let .queryReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case .queryReminders:
+            return "/api/v2/chat/reminders/query"
         case .queryUsers:
             return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
+        case let .runMessageAction(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/action"
         case .searchRoles:
             return "/api/v2/roles/search"
         case .searchUserGroups:
@@ -257,6 +261,8 @@ enum EndpointPath: Codable {
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
         case .updatePushNotificationPreferences:
             return "/api/v2/push_preferences"
+        case let .updateReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .updateUsersPartial:
@@ -443,6 +449,20 @@ extension Endpoint {
         )
     }
 
+    static func createReminder(
+        messageId: String,
+        createReminderRequest: CreateReminderRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateReminderResponse> {
+        return .init(
+            path: .createReminder(messageId: messageId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createReminderRequest
+        )
+    }
+
     static func createUserGroup(
         createUserGroupRequest: CreateUserGroupRequest,
         requiresConnectionId: Bool = false
@@ -606,6 +626,16 @@ extension Endpoint {
     static func deleteReaction(id: String, type: String, requiresConnectionId: Bool = false) -> Endpoint<DeleteReactionResponse> {
         return .init(
             path: .deleteReaction(id: id, type: type),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteReminder(messageId: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteReminder(messageId: messageId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -898,6 +928,19 @@ extension Endpoint {
         )
     }
 
+    static func queryReminders(
+        queryRemindersRequest: QueryRemindersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryRemindersResponse> {
+        return .init(
+            path: .queryReminders,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryRemindersRequest
+        )
+    }
+
     static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false) -> Endpoint<QueryUsersResponse> {
         return .init(
             path: .queryUsers,
@@ -924,6 +967,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: removeUserGroupMembersRequest
+        )
+    }
+
+    static func runMessageAction(
+        id: String,
+        messageActionRequest: MessageActionRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageActionResponse> {
+        return .init(
+            path: .runMessageAction(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: messageActionRequest
         )
     }
 
@@ -1177,6 +1234,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: upsertPushPreferencesRequest
+        )
+    }
+
+    static func updateReminder(
+        messageId: String,
+        updateReminderRequest: UpdateReminderRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateReminderResponse> {
+        return .init(
+            path: .updateReminder(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateReminderRequest
         )
     }
 

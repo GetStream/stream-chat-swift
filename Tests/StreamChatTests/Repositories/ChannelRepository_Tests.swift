@@ -123,7 +123,7 @@ final class ChannelRepository_Tests: XCTestCase {
 
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(.init()))
 
-        try waitFor { done in
+        _ = try waitFor { done in
             repository.markRead(cid: cid, userId: currentUserPayload.id, completion: done)
         }
 

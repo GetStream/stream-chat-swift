@@ -114,7 +114,6 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var resendMessage_completion: ((Error?) -> Void)?
     @Atomic var resendMessage_completion_result: Result<Void, Error>?
 
-    @Atomic var dispatchEphemeralMessageAction_cid: ChannelId?
     @Atomic var dispatchEphemeralMessageAction_messageId: MessageId?
     @Atomic var dispatchEphemeralMessageAction_action: AttachmentAction?
     @Atomic var dispatchEphemeralMessageAction_completion: ((Error?) -> Void)?
@@ -250,7 +249,6 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         resendMessage_completion = nil
         resendMessage_completion_result = nil
         
-        dispatchEphemeralMessageAction_cid = nil
         dispatchEphemeralMessageAction_messageId = nil
         dispatchEphemeralMessageAction_action = nil
         dispatchEphemeralMessageAction_completion = nil
@@ -534,12 +532,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     }
 
     override func dispatchEphemeralMessageAction(
-        cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction,
         completion: ((Error?) -> Void)? = nil
     ) {
-        dispatchEphemeralMessageAction_cid = cid
         dispatchEphemeralMessageAction_messageId = messageId
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion

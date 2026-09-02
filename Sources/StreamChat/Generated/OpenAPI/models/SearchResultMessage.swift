@@ -23,6 +23,7 @@ final class SearchResultMessage: Sendable, Decodable {
     let latestReactions: [MessageReactionPayload]
     let member: MemberInfoPayload?
     let mentionedChannel: Bool
+    let mentionedChannelMembers: [String: MemberInfoPayload]?
     let mentionedGroupIds: [String]?
     let mentionedGroups: [UserGroup]?
     let mentionedHere: Bool
@@ -78,6 +79,7 @@ final class SearchResultMessage: Sendable, Decodable {
         latestReactions: [MessageReactionPayload],
         member: MemberInfoPayload? = nil,
         mentionedChannel: Bool,
+        mentionedChannelMembers: [String: MemberInfoPayload]? = nil,
         mentionedGroupIds: [String]? = nil,
         mentionedGroups: [UserGroup]? = nil,
         mentionedHere: Bool,
@@ -129,6 +131,7 @@ final class SearchResultMessage: Sendable, Decodable {
         self.latestReactions = latestReactions
         self.member = member
         self.mentionedChannel = mentionedChannel
+        self.mentionedChannelMembers = mentionedChannelMembers
         self.mentionedGroupIds = mentionedGroupIds
         self.mentionedGroups = mentionedGroups
         self.mentionedHere = mentionedHere
@@ -182,6 +185,7 @@ final class SearchResultMessage: Sendable, Decodable {
         case latestReactions = "latest_reactions"
         case member
         case mentionedChannel = "mentioned_channel"
+        case mentionedChannelMembers = "mentioned_channel_members"
         case mentionedGroupIds = "mentioned_group_ids"
         case mentionedGroups = "mentioned_groups"
         case mentionedHere = "mentioned_here"
@@ -250,6 +254,10 @@ final class SearchResultMessage: Sendable, Decodable {
         )
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
         mentionedChannel = try container.decode(Bool.self, forKey: .mentionedChannel)
+        mentionedChannelMembers = try container.decodeIfPresent(
+            [String: MemberInfoPayload].self,
+            forKey: .mentionedChannelMembers
+        )
         mentionedGroupIds = try container.decodeIfPresent([String].self, forKey: .mentionedGroupIds)
         mentionedGroups = try container.decodeIfPresent([UserGroup].self, forKey: .mentionedGroups)
         mentionedHere = try container.decode(Bool.self, forKey: .mentionedHere)

@@ -160,7 +160,7 @@ extension NSManagedObjectContext {
         if let maxVotesAllowed = payload.maxVotesAllowed {
             pollDto.maxVotesAllowed = NSNumber(value: maxVotesAllowed)
         }
-        pollDto.votingVisibility = payload.votingVisibility
+        pollDto.votingVisibility = payload.votingVisibility?.rawValue
         
         if let custom = payload.custom, !custom.isEmpty {
             pollDto.custom = try JSONEncoder.default.encode(custom)
