@@ -23,8 +23,10 @@ final class MemberEndpoints_Tests: XCTestCase {
         let payload = query.asQueryMembersPayload()
         XCTAssertEqual(cid.id, payload.id)
         XCTAssertEqual(cid.type.rawValue, payload.type)
-        let filterJSON = try JSONEncoder.default.encode(payload.filterConditions)
-        AssertJSONEqual(filterJSON, ["id": ["$eq": "Luke"]])
+        let encodedPayload = try JSONEncoder.default.encode(payload)
+        let payloadJSON = try XCTUnwrap(JSONSerialization.jsonObject(with: encodedPayload) as? [String: Any])
+        let filterJSON = try XCTUnwrap(payloadJSON["filter_conditions"] as? [String: [String: String]])
+        XCTAssertEqual(filterJSON, ["id": ["$eq": "Luke"]])
     }
 
     func test_updateMemberPartial_buildsCorrectly() {

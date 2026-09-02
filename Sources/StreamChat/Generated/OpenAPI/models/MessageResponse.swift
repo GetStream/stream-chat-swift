@@ -32,6 +32,8 @@ final class MessageResponse: Sendable, Decodable {
     let member: MemberInfoPayload?
     /// Whether the message mentioned the channel tag
     let mentionedChannel: Bool
+    /// Channel member data for the users mentioned in the message, keyed by user id. Only present when the app has member custom on mentioned users enabled, and only for the first two mentioned users of each message
+    let mentionedChannelMembers: [String: MemberInfoPayload]?
     /// List of user group IDs mentioned in the message. Group members who are also channel members will receive push notifications based on their push preferences. Max 10 groups
     let mentionedGroupIds: [String]?
     /// List of mentioned user group objects.
@@ -109,6 +111,7 @@ final class MessageResponse: Sendable, Decodable {
         latestReactions: [MessageReactionPayload],
         member: MemberInfoPayload? = nil,
         mentionedChannel: Bool,
+        mentionedChannelMembers: [String: MemberInfoPayload]? = nil,
         mentionedGroupIds: [String]? = nil,
         mentionedGroups: [UserGroup]? = nil,
         mentionedHere: Bool,
@@ -159,6 +162,7 @@ final class MessageResponse: Sendable, Decodable {
         self.latestReactions = latestReactions
         self.member = member
         self.mentionedChannel = mentionedChannel
+        self.mentionedChannelMembers = mentionedChannelMembers
         self.mentionedGroupIds = mentionedGroupIds
         self.mentionedGroups = mentionedGroups
         self.mentionedHere = mentionedHere
@@ -211,6 +215,7 @@ final class MessageResponse: Sendable, Decodable {
         case latestReactions = "latest_reactions"
         case member
         case mentionedChannel = "mentioned_channel"
+        case mentionedChannelMembers = "mentioned_channel_members"
         case mentionedGroupIds = "mentioned_group_ids"
         case mentionedGroups = "mentioned_groups"
         case mentionedHere = "mentioned_here"
@@ -278,6 +283,10 @@ final class MessageResponse: Sendable, Decodable {
         )
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
         mentionedChannel = try container.decode(Bool.self, forKey: .mentionedChannel)
+        mentionedChannelMembers = try container.decodeIfPresent(
+            [String: MemberInfoPayload].self,
+            forKey: .mentionedChannelMembers
+        )
         mentionedGroupIds = try container.decodeIfPresent([String].self, forKey: .mentionedGroupIds)
         mentionedGroups = try container.decodeIfPresent([UserGroup].self, forKey: .mentionedGroups)
         mentionedHere = try container.decode(Bool.self, forKey: .mentionedHere)

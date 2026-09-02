@@ -130,6 +130,7 @@ allowed_models=(
   ListDevicesResponse
   ListUserGroupsResponse
   MarkDeliveredRequest
+  MemberUserRequest
   MembersResponse
   MessageRequest
   MessageResponse
@@ -369,6 +370,7 @@ codable_models=(
   Device
   GiphyImageData
   GiphyImages
+  MemberUserRequest
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
   Role
@@ -492,6 +494,32 @@ prune_models() {
   done
 }
 prune_models
+
+# Remove a generated property (declaration, doc comment, init param, assignment,
+#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+remove_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v p="$2" '
+    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+    { s = $0; sub(/^[[:space:]]+/, "", s) }
+    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+    s ~ "^let " p ": "                 { n = 0; next }
+    s ~ "^self\\." p " = " p "$"       { next }
+    s ~ "^case " p "( =|$)"            { next }
+    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
+    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
+    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+    { flush(); print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
+  perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+}
+
+for model in "${allowed_models[@]}"; do
+  remove_property "$model" duration
+done
 
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
@@ -676,29 +704,6 @@ optionalize_property OwnUserResponse totalUnreadCount
 optionalize_property OwnUserResponse unreadChannels
 optionalize_property OwnUserResponse unreadThreads
 
-# Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
-remove_property() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^self\\." p " = " p "$"       { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
-    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
-  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
-}
-remove_property CurrentUserUnreads duration
-remove_property FileUploadResponse duration
-remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsLevel
@@ -707,36 +712,14 @@ remove_property PushPreference callLevel
 remove_property PushPreference chatPreferences
 remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
-remove_property QueryUsersResponse duration
-remove_property UpdateUsersResponse duration
 remove_property UpdateUsersResponse membershipDeletionTaskId
-remove_property UpsertPushPreferencesResponse duration
 remove_property UserGroupMember appPk
 remove_property UserPayload blockedUserIds
 remove_property SharedLocation channel
 remove_property SharedLocation message
-remove_property SharedLocationsResponse duration
-remove_property DeleteChannelResponse duration
-remove_property TruncateChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
-remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
-remove_property UnmuteUsersResponse duration
-remove_property CreateDraftResponse duration
-remove_property CreateReminderResponse duration
-remove_property QueryRemindersResponse duration
-remove_property UpdateReminderResponse duration
-remove_property DeleteMessageResponse duration
-remove_property GetDraftResponse duration
-remove_property GetPinnedMessagesResponse duration
-remove_property QueryDraftsResponse duration
-remove_property DeleteReactionResponse duration
-remove_property SendMessageResponsePayload duration
-remove_property SendReactionResponse duration
-remove_property UpdateMessagePartialResponse duration
-remove_property UpdateMessageResponse duration
-remove_property TranslateMessageResponse duration
 
 # Unused channel context (cid, createdBy, id, type)
 remove_property SendMessageRequest includeChannelContext
