@@ -589,13 +589,13 @@ import UIKit
 
     /// The quality of the videos which are added as attachments in the composer.
     ///
-    /// Videos selected in the composer's photos picker are compressed before they are
-    /// uploaded, so that they do not exceed the maximum attachment size. While a video is
-    /// compressed, `videoCompressionProgressVC` reports the progress.
+    /// Videos selected in the composer's photos picker are scaled down and transcoded to
+    /// H.264 before they are uploaded, so that they do not exceed the maximum attachment
+    /// size. While a video is compressed, `videoCompressionProgressVC` reports the progress.
     ///
     /// Set it to `.original` to upload the videos as they are, which also stops the
     /// progress from being shown.
-    public var videoCompressionQuality: VideoCompressionQuality = .high
+    public var videoCompressionQuality: VideoCompressionQuality = .hd720p
 
     /// The object responsible for compressing the videos which are added as attachments in the composer.
     var videoCompressor: VideoCompressing = StreamVideoCompressor()

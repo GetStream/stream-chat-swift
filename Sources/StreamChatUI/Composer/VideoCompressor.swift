@@ -13,7 +13,8 @@ public struct VideoCompressionQuality: Equatable, Sendable {
     /// Creates a compression quality which is backed by the given `AVAssetExportSession` preset.
     ///
     /// Use it for presets which are not covered by the provided qualities, for example
-    /// `AVAssetExportPreset1280x720` for downscaling the videos to a fixed resolution.
+    /// `AVAssetExportPreset960x540` for smaller files, or `AVAssetExportPresetHEVC1920x1080`
+    /// for keeping more detail at the same file size where HEVC playback is acceptable.
     public init(exportPreset: String) {
         self.exportPreset = exportPreset
     }
@@ -21,14 +22,18 @@ public struct VideoCompressionQuality: Equatable, Sendable {
     /// The videos are uploaded as they are, without being compressed.
     public static let original = Self(exportPreset: AVAssetExportPresetPassthrough)
 
-    /// The videos are compressed to the smallest file size.
-    public static let low = Self(exportPreset: AVAssetExportPresetLowQuality)
+    /// The videos are scaled down to at most 720p. This is the default.
+    ///
+    /// It is the only quality which reliably makes a recording from a modern phone smaller,
+    /// because both 1080p and 4K recordings are scaled down.
+    public static let hd720p = Self(exportPreset: AVAssetExportPreset1280x720)
 
-    /// The videos are compressed to a lower resolution, which results in a smaller file.
-    public static let medium = Self(exportPreset: AVAssetExportPresetMediumQuality)
-
-    /// The videos keep their resolution and are only transcoded to H.264. This is the default.
-    public static let high = Self(exportPreset: AVAssetExportPresetHighestQuality)
+    /// The videos are scaled down to at most 1080p.
+    ///
+    /// A 1080p recording keeps its resolution, so it is only transcoded to H.264. That can
+    /// make it bigger than the original when the original is HEVC, in which case the original
+    /// is uploaded instead.
+    public static let hd1080p = Self(exportPreset: AVAssetExportPreset1920x1080)
 }
 
 /// The errors which can occur while a video is being compressed.

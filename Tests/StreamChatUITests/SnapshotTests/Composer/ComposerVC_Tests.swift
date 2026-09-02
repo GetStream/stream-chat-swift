@@ -1061,7 +1061,7 @@ import XCTest
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
         XCTAssertEqual(compressor.compressVideoCallCount, 1)
-        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .high)
+        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .hd720p)
         XCTAssertEqual(composerVC.content.attachments.count, 1)
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
         XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
