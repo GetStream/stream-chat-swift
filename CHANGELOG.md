@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Support selecting multiple photos and videos at once in the composer, up to the app's maximum attachment count [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-- Add `Components.videoCompressionQuality`, `Components.videoCompressor` and `Components.videoCompressionProgressVC` for customising how the videos added in the composer are compressed [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
+- Add `Components.videoCompressionQuality` and `Components.videoCompressionProgressVC` for customising how the videos added in the composer are compressed [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 ### 🔄 Changed
 - Use the system photos picker in the composer, so that the photo library opens instantly and no longer asks for permission [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 - Compress the videos added in the composer, showing the progress and allowing to cancel it [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
