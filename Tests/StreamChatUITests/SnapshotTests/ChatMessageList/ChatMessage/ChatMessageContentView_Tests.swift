@@ -1339,6 +1339,17 @@ extension ChatMessageContentView_Tests {
         XCTAssertEqual(view.backgroundColor, view.appearance.colorPalette.backgroundCoreHighlight)
     }
 
+    func test_isJumpHighlighted_whenDisabled_restoresCustomBackgroundColor() {
+        let view = ChatMessageContentView()
+        view.appearance = Appearance.default
+        view.backgroundColor = .green
+
+        view.isJumpHighlighted = true
+        view.isJumpHighlighted = false
+
+        XCTAssertEqual(view.backgroundColor, .green)
+    }
+
     func test_prepareForReuse_whenJumpHighlighted_clearsHighlight() {
         let view = ChatMessageContentView()
         view.appearance = Appearance.default
@@ -1348,6 +1359,18 @@ extension ChatMessageContentView_Tests {
 
         XCTAssertFalse(view.isJumpHighlighted)
         XCTAssertNil(view.backgroundColor)
+    }
+
+    func test_prepareForReuse_whenJumpHighlightedWithCustomBackgroundColor_restoresCustomBackgroundColor() {
+        let view = ChatMessageContentView()
+        view.appearance = Appearance.default
+        view.backgroundColor = .green
+        view.isJumpHighlighted = true
+
+        view.prepareForReuse()
+
+        XCTAssertFalse(view.isJumpHighlighted)
+        XCTAssertEqual(view.backgroundColor, .green)
     }
 }
 

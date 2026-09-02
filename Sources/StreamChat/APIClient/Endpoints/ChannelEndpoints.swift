@@ -286,16 +286,6 @@ extension Endpoint {
             body: ["set": ["frozen": freeze]]
         )
     }
-
-    static func pinnedMessages(cid: ChannelId, query: PinnedMessagesQuery) -> Endpoint<PinnedMessagesPayload> {
-        .init(
-            path: .pinnedMessages(cid.apiPath),
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["payload": query]
-        )
-    }
 }
 
 struct MemberInfoRequest: Encodable {

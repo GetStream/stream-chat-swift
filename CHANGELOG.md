@@ -4,8 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `PinnedMessagesPagination.offset(Int)` for paginating messages using offset [#4249](https://github.com/GetStream/stream-chat-swift/pull/4249)
 ### 🐞 Fixed
 - Fix rare crashes in `DataController.state` [#4248](https://github.com/GetStream/stream-chat-swift/pull/4248)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
 _August 27, 2026_

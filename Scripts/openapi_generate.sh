@@ -37,6 +37,7 @@ allowed_endpoints=(
     getDraft
     getBlockedUsers
     getOG
+    getPinnedMessages
     getReactions
     getUserGroup
     getUserLiveLocations
@@ -118,6 +119,7 @@ allowed_models=(
   GetBlockedUsersResponse
   GetDraftResponse
   GetOGResponse
+  GetPinnedMessagesResponse
   GetReactionsResponse
   GetUserGroupResponse
   HideChannelRequest
@@ -302,6 +304,7 @@ decodable_only_models=(
   GetBlockedUsersResponse
   GetDraftResponse
   GetOGResponse
+  GetPinnedMessagesResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -726,6 +729,7 @@ remove_property QueryRemindersResponse duration
 remove_property UpdateReminderResponse duration
 remove_property DeleteMessageResponse duration
 remove_property GetDraftResponse duration
+remove_property GetPinnedMessagesResponse duration
 remove_property QueryDraftsResponse duration
 remove_property DeleteReactionResponse duration
 remove_property SendMessageResponsePayload duration
@@ -1020,7 +1024,6 @@ inject_v1_endpoint_paths() {
     case markChannelUnread(String)
     case markAllChannelsRead
     case channelEvent(String)
-    case pinnedMessages(String)
 
     case message(MessageId)
     case replies(MessageId)
@@ -1057,7 +1060,6 @@ EOF
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
