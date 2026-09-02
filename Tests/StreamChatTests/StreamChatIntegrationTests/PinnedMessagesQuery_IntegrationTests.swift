@@ -12,21 +12,89 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
         // Create cid
         let cid: ChannelId = .unique
 
-        // Create query.
+        // Create query arguments.
         let pageSize: Int = 10
         let messageId: MessageId = .unique
-        let query = PinnedMessagesQuery(
-            pageSize: pageSize,
-            sorting: [.init(key: .pinnedAt, isAscending: true)],
-            pagination: .aroundMessage(messageId)
-        )
 
         // Create endpoint.
-        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(
-            cid: cid,
-            query: query
+        let pagination = PinnedMessagesPagination.aroundMessage(messageId)
+        let endpoint: Endpoint<PinnedMessagesPayload> = .getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: pageSize,
+            offset: nil,
+            idGte: pagination.messageIdAfterOrEqual,
+            idGt: pagination.messageIdAfter,
+            idLte: pagination.messageIdBeforeOrEqual,
+            idLt: pagination.messageIdBefore,
+            pinnedAtAfterOrEqual: pagination.timestampAfterOrEqual,
+            pinnedAtAfter: pagination.timestampAfter,
+            pinnedAtBeforeOrEqual: pagination.timestampBeforeOrEqual,
+            pinnedAtBefore: pagination.timestampBefore,
+            idAround: pagination.aroundMessageId,
+            pinnedAtAround: pagination.aroundTimestamp,
+            sort: [SortParamRequest(direction: 1, field: PinnedMessagesSortingKey.pinnedAt.rawValue)],
+            memberCustomInclude: nil
         )
 
+        let urlComponents = try encodeRequest(for: endpoint)
+
+        // Assert path is correct
+        XCTAssertEqual(urlComponents.path, endpoint.path.value)
+
+        // Assert query contains the discrete pagination parameters
+        let queryItems = try XCTUnwrap(urlComponents.queryItems)
+        XCTAssertEqual(queryItems.first(where: { $0.name == "limit" })?.value, "\(pageSize)")
+        XCTAssertEqual(queryItems.first(where: { $0.name == "id_around" })?.value, messageId)
+
+        XCTAssertNotNil(queryItems.first(where: { $0.name == "sort" })?.value)
+    }
+
+    func test_pinnedMessagesRequest_withTimestampPagination_isCreatedCorrectly() throws {
+        // Create cid
+        let cid: ChannelId = .unique
+
+        // Create query arguments.
+        let pageSize: Int = 10
+        let timestamp: Date = .unique
+
+        // Create endpoint.
+        let pagination = PinnedMessagesPagination.aroundTimestamp(timestamp)
+        let endpoint: Endpoint<PinnedMessagesPayload> = .getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: pageSize,
+            offset: nil,
+            idGte: pagination.messageIdAfterOrEqual,
+            idGt: pagination.messageIdAfter,
+            idLte: pagination.messageIdBeforeOrEqual,
+            idLt: pagination.messageIdBefore,
+            pinnedAtAfterOrEqual: pagination.timestampAfterOrEqual,
+            pinnedAtAfter: pagination.timestampAfter,
+            pinnedAtBeforeOrEqual: pagination.timestampBeforeOrEqual,
+            pinnedAtBefore: pagination.timestampBefore,
+            idAround: pagination.aroundMessageId,
+            pinnedAtAround: pagination.aroundTimestamp,
+            sort: nil,
+            memberCustomInclude: nil
+        )
+
+        let urlComponents = try encodeRequest(for: endpoint)
+
+        // Assert path is correct
+        XCTAssertEqual(urlComponents.path, endpoint.path.value)
+
+        // Assert the date parameter is a bare RFC3339 string
+        let queryItems = try XCTUnwrap(urlComponents.queryItems)
+        XCTAssertEqual(queryItems.first(where: { $0.name == "limit" })?.value, "\(pageSize)")
+        XCTAssertEqual(
+            queryItems.first(where: { $0.name == "pinned_at_around" })?.value,
+            CodableHelper.dateFormatter.string(from: timestamp)
+        )
+        XCTAssertNil(queryItems.first(where: { $0.name == "sort" }))
+    }
+
+    private func encodeRequest<Response>(for endpoint: Endpoint<Response>) throws -> URLComponents {
         // Create token provider
         let tokenProvider = ConnectionDetailsProviderDelegate_Spy()
         tokenProvider.provideTokenResult = .success(.unique(userId: .unique))
@@ -50,26 +118,6 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
 
         // Assert host is correct
         XCTAssertEqual(urlComponents.host, baseURL.host)
-        // Assert path is correct
-        XCTAssertEqual(urlComponents.path, "/\(endpoint.path.value)")
-        // Assert query contains payload
-        let payload = try XCTUnwrap(
-            urlComponents
-                .queryItems?
-                .first(where: { $0.name == "payload" })?
-                .value?
-                .data(using: .utf8)
-        )
-
-        AssertJSONEqual(payload, [
-            "id_around": messageId,
-            "limit": "\(pageSize)",
-            "sort": [
-                [
-                    "direction": 1,
-                    "field": "pinned_at"
-                ] as [String: Any]
-            ] as NSArray
-        ])
+        return urlComponents
     }
 }

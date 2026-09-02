@@ -218,9 +218,6 @@ struct MessageRequestBody: Encodable, Sendable {
     }
 }
 
-/// An object describing pinned messages JSON payload.
-typealias PinnedMessagesPayload = MessageListPayload
-
 /// An object describing the message list JSON payload.
 typealias MessageRepliesPayload = MessageListPayload
 
