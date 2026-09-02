@@ -21,7 +21,7 @@ import XCTest
         let compressor = StreamVideoCompressor(progressUpdateInterval: 0.005)
         nonisolated(unsafe) var reportedProgress: [Double] = []
 
-        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .hd720p) {
+        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .hd720p, maximumFileSize: nil) {
             reportedProgress.append($0)
         }
         temporaryDirectories.append(compressedURL.deletingLastPathComponent())
@@ -40,7 +40,7 @@ import XCTest
         let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 10, bitRate: 1_000_000)
         let compressor = StreamVideoCompressor()
 
-        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .original) { _ in }
+        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .original, maximumFileSize: nil) { _ in }
         temporaryDirectories.append(compressedURL.deletingLastPathComponent())
 
         let loadedTrack = await videoTrack(of: compressedURL)
@@ -55,7 +55,8 @@ import XCTest
         do {
             _ = try await compressor.compressVideo(
                 at: videoURL,
-                quality: .init(exportPreset: "StreamNotAnExportPreset")
+                quality: .init(exportPreset: "StreamNotAnExportPreset"),
+                maximumFileSize: nil
             ) { _ in }
             XCTFail("The compression was expected to fail")
         } catch {

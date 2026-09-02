@@ -16,16 +16,17 @@ final class VideoCompressor_Mock: VideoCompressing, @unchecked Sendable {
     var reportedProgress: [Double] = [0.5, 1]
 
     private(set) var compressVideoCallCount = 0
-    private(set) var compressVideoCalledWith: [(url: URL, quality: VideoCompressionQuality)] = []
+    private(set) var compressVideoCalledWith: [(url: URL, quality: VideoCompressionQuality, maximumFileSize: Int64?)] = []
 
     @MainActor
     func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
+        maximumFileSize: Int64?,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> URL {
         compressVideoCallCount += 1
-        compressVideoCalledWith.append((url: url, quality: quality))
+        compressVideoCalledWith.append((url: url, quality: quality, maximumFileSize: maximumFileSize))
         reportedProgress.forEach { progressHandler($0) }
         if let error = error {
             throw error

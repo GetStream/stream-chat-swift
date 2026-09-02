@@ -1814,12 +1814,20 @@ open class ComposerVC: _ViewController,
         quality: VideoCompressionQuality,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> URL {
+        let maximumFileSize = maxAttachmentSize(for: .video)
+        let originalSize = fileSize(at: url)
         let compressedURL = try await components.videoCompressor.compressVideo(
             at: url,
             quality: quality,
+            maximumFileSize: maximumFileSize,
             progressHandler: progressHandler
         )
-        if let originalSize = fileSize(at: url), let compressedSize = fileSize(at: compressedURL), compressedSize >= originalSize {
+        let compressedSize = fileSize(at: compressedURL)
+        log.info(
+            "Compressed the selected video from \(originalSize?.description ?? "unknown") to "
+                + "\(compressedSize?.description ?? "unknown") bytes, the maximum attachment size is \(maximumFileSize)"
+        )
+        if let originalSize = originalSize, let compressedSize = compressedSize, compressedSize >= originalSize {
             removeTemporaryMedia(at: compressedURL)
             return url
         }

@@ -1062,6 +1062,7 @@ import XCTest
 
         XCTAssertEqual(compressor.compressVideoCallCount, 1)
         XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .hd720p)
+        XCTAssertEqual(compressor.compressVideoCalledWith.first?.maximumFileSize, composerVC.maxAttachmentSize(for: .video))
         XCTAssertEqual(composerVC.content.attachments.count, 1)
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
         XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)

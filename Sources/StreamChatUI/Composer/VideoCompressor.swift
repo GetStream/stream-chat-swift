@@ -47,10 +47,13 @@ enum VideoCompressionError: Error {
 /// It is not public yet, so that only `Components.videoCompressionQuality` has to be
 /// supported as configuration. It exists to keep the compression testable.
 protocol VideoCompressing: Sendable {
+    /// - Parameter maximumFileSize: The size the result should stay below, when known. It is
+    /// only a hint to `AVAssetExportSession`, which can still exceed it.
     @MainActor
     func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
+        maximumFileSize: Int64?,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> URL
 }
@@ -71,6 +74,7 @@ struct StreamVideoCompressor: VideoCompressing {
     func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
+        maximumFileSize: Int64?,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> URL {
         let asset = AVURLAsset(url: url)
@@ -78,6 +82,12 @@ struct StreamVideoCompressor: VideoCompressing {
             throw VideoCompressionError.unsupportedQuality(quality)
         }
         session.shouldOptimizeForNetworkUse = true
+        if let maximumFileSize = maximumFileSize, maximumFileSize > 0 {
+            // Scaling the resolution down does not bound the file size of a long video, so the
+            // export is additionally asked to aim for a size which can still be uploaded. The
+            // limit is documented as one the export may exceed, hence the headroom.
+            session.fileLengthLimit = Int64(Double(maximumFileSize) * 0.9)
+        }
 
         let outputURL = try makeOutputURL(for: url)
         let progressTask = Task { @MainActor in
