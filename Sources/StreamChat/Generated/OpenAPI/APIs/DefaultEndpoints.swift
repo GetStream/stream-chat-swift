@@ -25,15 +25,10 @@ enum EndpointPath: Codable {
     case markChannelUnread(String)
     case markAllChannelsRead
     case channelEvent(String)
-    case pinnedMessages(String)
 
     case message(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
-
-    // Reminders
-    case reminders
-    case reminder(MessageId)
 
     case banMember
     case flagUser
@@ -46,6 +41,7 @@ enum EndpointPath: Codable {
     case createDraft(type: String, id: String)
     case createPoll
     case createPollOption(pollId: String)
+    case createReminder(messageId: String)
     case createUserGroup
     case deleteChannel(type: String, id: String)
     case deleteChannelFile(type: String, id: String)
@@ -58,11 +54,13 @@ enum EndpointPath: Codable {
     case deletePoll(pollId: String)
     case deletePollVote(messageId: String, pollId: String, voteId: String)
     case deleteReaction(id: String, type: String)
+    case deleteReminder(messageId: String)
     case deleteUserGroup(id: String)
     case getApp
     case getBlockedUsers
     case getDraft(type: String, id: String)
     case getOG
+    case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
@@ -76,6 +74,7 @@ enum EndpointPath: Codable {
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
+    case queryReminders
     case queryUsers
     case removeUserGroupMembers(id: String)
     case searchRoles
@@ -96,6 +95,7 @@ enum EndpointPath: Codable {
     case updateMessagePartial(id: String)
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
+    case updateReminder(messageId: String)
     case updateUserGroup(id: String)
     case updateUsersPartial
     case uploadChannelFile(type: String, id: String)
@@ -129,14 +129,10 @@ enum EndpointPath: Codable {
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
-
-        case .reminders: return "reminders/query"
-        case let .reminder(messageId): return "messages/\(messageId)/reminders"
 
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"
@@ -156,6 +152,8 @@ enum EndpointPath: Codable {
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/options"
+        case let .createReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case .createUserGroup:
             return "/api/v2/usergroups"
         case let .deleteChannel(type: type, id: id):
@@ -180,6 +178,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote/\(APIHelper.escapedPathItem(voteId))"
         case let .deleteReaction(id: id, type: type):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction/\(APIHelper.escapedPathItem(type))"
+        case let .deleteReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getApp:
@@ -190,6 +190,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .getOG:
             return "/api/v2/og"
+        case let .getPinnedMessages(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .getUserGroup(id: id):
@@ -216,6 +218,8 @@ enum EndpointPath: Codable {
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
         case let .queryReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case .queryReminders:
+            return "/api/v2/chat/reminders/query"
         case .queryUsers:
             return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
@@ -256,6 +260,8 @@ enum EndpointPath: Codable {
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
         case .updatePushNotificationPreferences:
             return "/api/v2/push_preferences"
+        case let .updateReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .updateUsersPartial:
@@ -442,6 +448,20 @@ extension Endpoint {
         )
     }
 
+    static func createReminder(
+        messageId: String,
+        createReminderRequest: CreateReminderRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateReminderResponse> {
+        return .init(
+            path: .createReminder(messageId: messageId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createReminderRequest
+        )
+    }
+
     static func createUserGroup(
         createUserGroupRequest: CreateUserGroupRequest,
         requiresConnectionId: Bool = false
@@ -612,6 +632,16 @@ extension Endpoint {
         )
     }
 
+    static func deleteReminder(messageId: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteReminder(messageId: messageId),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func deleteUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteUserGroup(id: id),
@@ -667,6 +697,52 @@ extension Endpoint {
             method: .get,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getPinnedMessages(
+        type: String,
+        id: String,
+        limit: Int?,
+        offset: Int?,
+        idGte: String?,
+        idGt: String?,
+        idLte: String?,
+        idLt: String?,
+        pinnedAtAfterOrEqual: Date?,
+        pinnedAtAfter: Date?,
+        pinnedAtBeforeOrEqual: Date?,
+        pinnedAtBefore: Date?,
+        idAround: String?,
+        pinnedAtAround: Date?,
+        sort: [SortParamRequest]?,
+        memberCustomInclude: [String]?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetPinnedMessagesResponse> {
+        return .init(
+            path: .getPinnedMessages(type: type, id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "offset": offset,
+                "id_gte": idGte,
+                "id_gt": idGt,
+                "id_lte": idLte,
+                "id_lt": idLt,
+                "pinned_at_after_or_equal": pinnedAtAfterOrEqual.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_after": pinnedAtAfter.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_before_or_equal": pinnedAtBeforeOrEqual.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_before": pinnedAtBefore.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "id_around": idAround,
+                "pinned_at_around": pinnedAtAround.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) },
+                "member_custom_include": memberCustomInclude
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -848,6 +924,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryReactionsRequest
+        )
+    }
+
+    static func queryReminders(
+        queryRemindersRequest: QueryRemindersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryRemindersResponse> {
+        return .init(
+            path: .queryReminders,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryRemindersRequest
         )
     }
 
@@ -1130,6 +1219,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: upsertPushPreferencesRequest
+        )
+    }
+
+    static func updateReminder(
+        messageId: String,
+        updateReminderRequest: UpdateReminderRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateReminderResponse> {
+        return .init(
+            path: .updateReminder(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateReminderRequest
         )
     }
 

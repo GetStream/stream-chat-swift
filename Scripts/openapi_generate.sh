@@ -18,6 +18,7 @@ allowed_endpoints=(
     createDraft
     createPoll
     createPollOption
+    createReminder
     createUserGroup
     deleteChannel
     deleteChannelFile
@@ -30,11 +31,13 @@ allowed_endpoints=(
     deleteImage
     deleteMessage
     deleteReaction
+    deleteReminder
     deleteUserGroup
     getApp
     getDraft
     getBlockedUsers
     getOG
+    getPinnedMessages
     getReactions
     getUserGroup
     getUserLiveLocations
@@ -48,6 +51,7 @@ allowed_endpoints=(
     queryMembers
     queryPollVotes
     queryReactions
+    queryReminders
     queryUsers
     removeUserGroupMembers
     searchRoles
@@ -68,6 +72,7 @@ allowed_endpoints=(
     updateMessagePartial
     updatePollPartial
     updatePushNotificationPreferences
+    updateReminder
     updateUserGroup
     updateUsersPartial
     uploadChannelFile
@@ -95,6 +100,8 @@ allowed_models=(
   CreateDraftResponse
   CreatePollOptionRequest
   CreatePollRequest
+  CreateReminderRequest
+  CreateReminderResponse
   CreateUserGroupRequest
   DeleteChannelResponse
   DeleteMessageResponse
@@ -112,6 +119,7 @@ allowed_models=(
   GetBlockedUsersResponse
   GetDraftResponse
   GetOGResponse
+  GetPinnedMessagesResponse
   GetReactionsResponse
   GetUserGroupResponse
   HideChannelRequest
@@ -148,6 +156,8 @@ allowed_models=(
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest
+  QueryRemindersRequest
+  QueryRemindersResponse
   QueryUsersPayload
   QueryUsersResponse
   ReactionGroupResponse
@@ -188,6 +198,8 @@ allowed_models=(
   UpdateMessageRequest
   UpdateMessageResponse
   UpdatePollPartialRequest
+  UpdateReminderRequest
+  UpdateReminderResponse
   UpdateUserGroupRequest
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
@@ -235,6 +247,7 @@ encodable_only_models=(
   CreateDraftRequest
   CreatePollOptionRequestBody
   CreatePollRequestBody
+  CreateReminderRequest
   CreateUserGroupRequest
   DeliveredMessagePayload
   HideChannelRequest
@@ -248,6 +261,7 @@ encodable_only_models=(
   QueryMembersPayload
   QueryPollVotesRequestBody
   QueryReactionsRequest
+  QueryRemindersRequest
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
@@ -264,6 +278,7 @@ encodable_only_models=(
   UpdateMessagePartialRequest
   UpdateMessageRequest
   UpdatePollPartialRequestBody
+  UpdateReminderRequest
   UpdateUserGroupRequest
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
@@ -277,6 +292,7 @@ decodable_only_models=(
   BlockedUserResponse
   ChannelDetailPayload
   CreateDraftResponse
+  CreateReminderResponse
   CurrentUserUnreads
   DeleteChannelResponse
   DeleteMessageResponse
@@ -289,6 +305,7 @@ decodable_only_models=(
   GetBlockedUsersResponse
   GetDraftResponse
   GetOGResponse
+  GetPinnedMessagesResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -315,6 +332,7 @@ decodable_only_models=(
   PollVotePayloadResponse
   PushPreference
   QueryDraftsResponse
+  QueryRemindersResponse
   QueryUsersResponse
   ReminderPayload
   SearchResultMessage
@@ -333,6 +351,7 @@ decodable_only_models=(
   UpdateMemberPartialResponse
   UpdateMessagePartialResponse
   UpdateMessageResponse
+  UpdateReminderResponse
   UpdateUsersResponse
   UploadChannelFileResponse
   UploadChannelResponse
@@ -654,6 +673,7 @@ rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
+rename_generated_type DeleteReminderResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
@@ -987,15 +1007,10 @@ inject_v1_endpoint_paths() {
     case markChannelUnread(String)
     case markAllChannelsRead
     case channelEvent(String)
-    case pinnedMessages(String)
 
     case message(MessageId)
     case replies(MessageId)
     case messageAction(MessageId)
-
-    // Reminders
-    case reminders
-    case reminder(MessageId)
 
     case banMember
     case flagUser
@@ -1028,14 +1043,10 @@ EOF
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
-
-        case .reminders: return "reminders/query"
-        case let .reminder(messageId): return "messages/\(messageId)/reminders"
 
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"

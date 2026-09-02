@@ -162,6 +162,12 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// Unnecessary updates can get expensive due to text updates.
     private var previousContentUpdateTintColor: UIColor?
 
+    /// The background color to restore once the jump highlight is cleared.
+    ///
+    /// The background can be customised while laying out the content view, for example to give
+    /// pinned messages a distinct background, so it has to be preserved across the highlight.
+    private var backgroundColorBeforeJumpHighlight: UIColor?
+
     /// Whether the message is temporarily highlighted, for example when jumping to it.
     ///
     /// Tracking it here makes it possible to tell the highlighted cells apart from the ones that
@@ -169,7 +175,13 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     var isJumpHighlighted = false {
         didSet {
             guard isJumpHighlighted != oldValue else { return }
-            backgroundColor = isJumpHighlighted ? appearance.colorPalette.backgroundCoreHighlight : nil
+            if isJumpHighlighted {
+                backgroundColorBeforeJumpHighlight = backgroundColor
+                backgroundColor = appearance.colorPalette.backgroundCoreHighlight
+            } else {
+                backgroundColor = backgroundColorBeforeJumpHighlight
+                backgroundColorBeforeJumpHighlight = nil
+            }
         }
     }
 

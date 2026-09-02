@@ -119,6 +119,17 @@ public struct MessageReminderListQuery: Encodable, Sendable {
     }
 }
 
+extension MessageReminderListQuery {
+    func toRequest() -> QueryRemindersRequest {
+        QueryRemindersRequest(
+            filter: filter,
+            limit: pagination.pageSize,
+            next: pagination.cursor,
+            sort: sort.map { SortParamRequest(direction: $0.direction, field: $0.key.rawValue) }
+        )
+    }
+}
+
 extension MessageReminderListQuery: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Filter: \(String(describing: filter)) | Sort: \(sort)"

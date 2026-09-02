@@ -82,8 +82,10 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_reminders_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.reminders.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.reminder("test_message").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.queryReminders.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.createReminder(messageId: "test_message").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateReminder(messageId: "test_message").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteReminder(messageId: "test_message").shouldBeQueuedOffline)
     }
 
     func test_unread_shouldNOTBeQueuedOffline() {
@@ -242,7 +244,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.markDelivered)
         assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
         assertResultEncodingAndDecoding(.stopWatchingChannel(type: "messaging", id: "channel_idq"))
-        assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
+        assertResultEncodingAndDecoding(.getPinnedMessages(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
 
         assertResultEncodingAndDecoding(.sendMessage(type: "messaging", id: "the_id"))
@@ -277,8 +279,10 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.getDraft(type: "messaging", id: "draft_channel"))
         assertResultEncodingAndDecoding(.deleteDraft(type: "messaging", id: "draft_channel"))
         
-        assertResultEncodingAndDecoding(.reminders)
-        assertResultEncodingAndDecoding(.reminder("test_message"))
+        assertResultEncodingAndDecoding(.queryReminders)
+        assertResultEncodingAndDecoding(.createReminder(messageId: "test_message"))
+        assertResultEncodingAndDecoding(.updateReminder(messageId: "test_message"))
+        assertResultEncodingAndDecoding(.deleteReminder(messageId: "test_message"))
     }
 }
 
