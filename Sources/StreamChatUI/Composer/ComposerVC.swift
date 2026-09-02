@@ -1935,21 +1935,28 @@ open class ComposerVC: _ViewController,
         pendingMediaItems.remove(at: index)
     }
 
+    /// Pixel size that fills the 100pt composer cell on a 3x display.
+    /// The picker poster is often much smaller; stretching it looks blurry.
+    /// `nonisolated` so the thumbnail helpers can read it off the main actor.
+    nonisolated private static let composerPreviewMaxPixelSize = 300
+
     private func applyLocalThumbnailIfNeeded(id: UUID, media: SelectedMediaItem) async {
-        guard pendingMediaItems.first(where: { $0.id == id })?.previewImage == nil else { return }
         let thumbnail: UIImage?
         switch media.type {
         case .image:
-            thumbnail = await withCheckedContinuation { continuation in
-                components.mediaLoader.loadImage(url: media.url) { result in
-                    continuation.resume(returning: try? result.get().image)
-                }
-            }
+            guard let data = try? Data(contentsOf: media.url) else { return }
+            thumbnail = Self.thumbnail(
+                fromImageData: data,
+                maxPixelSize: Self.composerPreviewMaxPixelSize
+            )
         case .video:
             thumbnail = await withCheckedContinuation { continuation in
                 let generator = AVAssetImageGenerator(asset: AVURLAsset(url: media.url))
                 generator.appliesPreferredTrackTransform = true
-                generator.maximumSize = CGSize(width: 200, height: 200)
+                generator.maximumSize = CGSize(
+                    width: Self.composerPreviewMaxPixelSize,
+                    height: Self.composerPreviewMaxPixelSize
+                )
                 generator.generateCGImagesAsynchronously(
                     forTimes: [NSValue(time: .zero)]
                 ) { _, image, _, _, _ in
@@ -1969,7 +1976,10 @@ open class ComposerVC: _ViewController,
         }
         if let preview = await loadSystemPreviewImage(
             from: itemProvider,
-            options: [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(width: 200, height: 200))],
+            options: [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(
+                width: composerPreviewMaxPixelSize,
+                height: composerPreviewMaxPixelSize
+            ))],
             toneMap: true
         ) {
             return preview
@@ -1991,7 +2001,10 @@ open class ComposerVC: _ViewController,
         }
         return await loadSystemPreviewImage(
             from: itemProvider,
-            options: [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(width: 100, height: 100))],
+            options: [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(
+                width: composerPreviewMaxPixelSize,
+                height: composerPreviewMaxPixelSize
+            ))],
             toneMap: false
         )
     }
@@ -2044,7 +2057,10 @@ open class ComposerVC: _ViewController,
         return toneMap ? sdrPreviewImage(from: image) : image
     }
 
-    nonisolated private static func thumbnail(fromImageData data: Data, maxPixelSize: Int = 200) -> UIImage? {
+    nonisolated private static func thumbnail(
+        fromImageData data: Data,
+        maxPixelSize: Int = composerPreviewMaxPixelSize
+    ) -> UIImage? {
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions) else { return nil }
         let options: [CFString: Any] = [
@@ -2060,13 +2076,14 @@ open class ComposerVC: _ViewController,
     }
 
     nonisolated private static func sdrPreviewImage(from image: UIImage) -> UIImage {
-        let size = image.size
-        guard size.width > 0, size.height > 0 else { return image }
-        let maxDimension: CGFloat = 200
-        let scale = min(maxDimension / size.width, maxDimension / size.height, 1)
+        let pixelWidth = image.size.width * image.scale
+        let pixelHeight = image.size.height * image.scale
+        guard pixelWidth > 0, pixelHeight > 0 else { return image }
+        let maxDimension = CGFloat(composerPreviewMaxPixelSize)
+        let scale = min(maxDimension / pixelWidth, maxDimension / pixelHeight, 1)
         let target = CGSize(
-            width: max(1, (size.width * scale).rounded()),
-            height: max(1, (size.height * scale).rounded())
+            width: max(1, (pixelWidth * scale).rounded()),
+            height: max(1, (pixelHeight * scale).rounded())
         )
         let format = UIGraphicsImageRendererFormat.preferred()
         format.opaque = true
