@@ -82,4 +82,24 @@ final class Pagination_Tests: XCTestCase {
         let greaterPagination = MessagesPagination(pageSize: 25, parameter: .greaterThan("someId"))
         XCTAssertEqual(greaterPagination.parameter?.aroundMessageId, nil)
     }
+
+    func test_messageIdAfterOrEqual_returnsMatchingValue() {
+        XCTAssertEqual(PaginationParameter.greaterThanOrEqual("someId").messageIdAfterOrEqual, "someId")
+        XCTAssertNil(PaginationParameter.greaterThan("someId").messageIdAfterOrEqual)
+    }
+
+    func test_messageIdAfter_returnsMatchingValue() {
+        XCTAssertEqual(PaginationParameter.greaterThan("someId").messageIdAfter, "someId")
+        XCTAssertNil(PaginationParameter.greaterThanOrEqual("someId").messageIdAfter)
+    }
+
+    func test_messageIdBeforeOrEqual_returnsMatchingValue() {
+        XCTAssertEqual(PaginationParameter.lessThanOrEqual("someId").messageIdBeforeOrEqual, "someId")
+        XCTAssertNil(PaginationParameter.lessThan("someId").messageIdBeforeOrEqual)
+    }
+
+    func test_messageIdBefore_returnsMatchingValue() {
+        XCTAssertEqual(PaginationParameter.lessThan("someId").messageIdBefore, "someId")
+        XCTAssertNil(PaginationParameter.lessThanOrEqual("someId").messageIdBefore)
+    }
 }

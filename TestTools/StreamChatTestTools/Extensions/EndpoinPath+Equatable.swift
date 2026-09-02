@@ -36,7 +36,7 @@ extension EndpointPath: @retroactive Equatable {
         case let (.updateMessagePartial(messageId1), .updateMessagePartial(messageId2)): return messageId1 == messageId2
         case let (.createDraft(type1, id1), .createDraft(type2, id2)): return type1 == type2 && id1 == id2
         case let (.deleteMessage(messageId1), .deleteMessage(messageId2)): return messageId1 == messageId2
-        case let (.replies(messageId1), .replies(messageId2)): return messageId1 == messageId2
+        case let (.getReplies(parentId1), .getReplies(parentId2)): return parentId1 == parentId2
         case let (.getReactions(messageId1), .getReactions(messageId2)): return messageId1 == messageId2
         case let (.queryReactions(messageId1), .queryReactions(messageId2)): return messageId1 == messageId2
         case let (.sendReaction(messageId1), .sendReaction(messageId2)): return messageId1 == messageId2
