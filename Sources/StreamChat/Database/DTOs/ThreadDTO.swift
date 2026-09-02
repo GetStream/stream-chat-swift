@@ -95,6 +95,63 @@ class ThreadDTO: NSManagedObject {
     }
 
     /// Populate the DTO.
+    func fill(
+        parentMessage: MessageDTO?,
+        title: String?,
+        replyCount: Int64,
+        participantCount: Int64,
+        activeParticipantCount: Int64?,
+        createdAt: DBDate,
+        lastMessageAt: DBDate?,
+        updatedAt: DBDate?,
+        latestReplies: Set<MessageDTO>?,
+        threadParticipants: Set<ThreadParticipantDTO>?,
+        read: Set<ThreadReadDTO>?,
+        createdBy: UserDTO?,
+        channel: ChannelDTO?,
+        currentUserUnreadCount: Int?,
+        extraData: Data?
+    ) {
+        self.title = title
+        self.replyCount = replyCount
+        self.participantCount = participantCount
+        if let activeParticipantCount {
+            self.activeParticipantCount = activeParticipantCount
+        }
+        self.createdAt = createdAt
+        self.lastMessageAt = lastMessageAt
+        self.updatedAt = updatedAt
+
+        /// For partial thread responses and thread read events, the properties below won't be returned.
+        /// We need to make sure we don't reset this values from the current state.
+        if let parentMessage {
+            self.parentMessage = parentMessage
+        }
+        if let createdBy {
+            self.createdBy = createdBy
+        }
+        if let channel {
+            self.channel = channel
+        }
+        if let extraData {
+            self.extraData = extraData
+        }
+        if let latestReplies {
+            self.latestReplies = latestReplies
+        }
+        if let threadParticipants {
+            self.threadParticipants = threadParticipants
+        }
+        if let read {
+            self.read = read
+        }
+
+        // currentUserUnreadCount should only be updated when fetching thread list,
+        // not in events or when marking the thread read to avoid thread list live updates.
+        if let currentUserUnreadCount {
+            self.currentUserUnreadCount = Int64(currentUserUnreadCount)
+        }
+    }
 }
 
 extension ThreadDTO {
@@ -250,24 +307,23 @@ extension NSManagedObjectContext {
             }
         }
 
-        saveThreadCommonFields(
-            activeParticipantCount: payload.activeParticipantCount ?? 0,
-            createdAt: payload.createdAt,
-            dto: threadDTO,
-            lastMessageAt: payload.lastMessageAt,
-            participantCount: payload.participantCount,
-            replyCount: payload.replyCount,
+        threadDTO.fill(
+            parentMessage: parentMessageDTO,
             title: payload.title,
-            updatedAt: payload.updatedAt
+            replyCount: Int64(payload.replyCount),
+            participantCount: Int64(payload.participantCount),
+            activeParticipantCount: payload.activeParticipantCount.map(Int64.init),
+            createdAt: payload.createdAt.bridgeDate,
+            lastMessageAt: payload.lastMessageAt?.bridgeDate,
+            updatedAt: payload.updatedAt.bridgeDate,
+            latestReplies: Set(latestRepliesDTO),
+            threadParticipants: Set(threadParticipantsDTO),
+            read: Set(readsDTO),
+            createdBy: createdByUserDTO,
+            channel: channelDTO,
+            currentUserUnreadCount: currentUserUnreadCount,
+            extraData: extraData
         )
-        threadDTO.channel = channelDTO
-        threadDTO.createdBy = createdByUserDTO
-        threadDTO.currentUserUnreadCount = Int64(currentUserUnreadCount)
-        threadDTO.extraData = extraData
-        threadDTO.latestReplies = Set(latestRepliesDTO)
-        threadDTO.parentMessage = parentMessageDTO
-        threadDTO.read = Set(readsDTO)
-        threadDTO.threadParticipants = Set(threadParticipantsDTO)
 
         return threadDTO
     }
@@ -286,15 +342,22 @@ extension NSManagedObjectContext {
             ) else {
                 return nil
             }
-            saveThreadCommonFields(
-                activeParticipantCount: partialPayload.activeParticipantCount,
-                createdAt: partialPayload.createdAt,
-                dto: threadDTO,
-                lastMessageAt: partialPayload.lastMessageAt,
-                participantCount: partialPayload.participantCount,
-                replyCount: partialPayload.replyCount,
+            threadDTO.fill(
+                parentMessage: nil,
                 title: partialPayload.title,
-                updatedAt: partialPayload.updatedAt
+                replyCount: Int64(partialPayload.replyCount),
+                participantCount: Int64(partialPayload.participantCount),
+                activeParticipantCount: partialPayload.activeParticipantCount.map(Int64.init),
+                createdAt: partialPayload.createdAt.bridgeDate,
+                lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
+                updatedAt: partialPayload.updatedAt.bridgeDate,
+                latestReplies: nil,
+                threadParticipants: nil,
+                read: nil,
+                createdBy: nil,
+                channel: nil,
+                currentUserUnreadCount: nil,
+                extraData: nil
             )
             return threadDTO
         }
@@ -324,43 +387,25 @@ extension NSManagedObjectContext {
             extraData = Data()
         }
 
-        saveThreadCommonFields(
-            activeParticipantCount: partialPayload.activeParticipantCount,
-            createdAt: partialPayload.createdAt,
-            dto: threadDTO,
-            lastMessageAt: partialPayload.lastMessageAt,
-            participantCount: partialPayload.participantCount,
-            replyCount: partialPayload.replyCount,
+        threadDTO.fill(
+            parentMessage: parentMessageDTO,
             title: partialPayload.title,
-            updatedAt: partialPayload.updatedAt
+            replyCount: Int64(partialPayload.replyCount),
+            participantCount: Int64(partialPayload.participantCount),
+            activeParticipantCount: partialPayload.activeParticipantCount.map(Int64.init),
+            createdAt: partialPayload.createdAt.bridgeDate,
+            lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
+            updatedAt: partialPayload.updatedAt.bridgeDate,
+            latestReplies: nil,
+            threadParticipants: nil,
+            read: nil,
+            createdBy: createdByUserDTO,
+            channel: channelDTO,
+            currentUserUnreadCount: nil,
+            extraData: extraData
         )
-        threadDTO.channel = channelDTO
-        threadDTO.createdBy = createdByUserDTO
-        threadDTO.extraData = extraData
-        threadDTO.parentMessage = parentMessageDTO
 
         return threadDTO
-    }
-
-    private func saveThreadCommonFields(
-        activeParticipantCount: Int?,
-        createdAt: Date,
-        dto: ThreadDTO,
-        lastMessageAt: Date?,
-        participantCount: Int,
-        replyCount: Int,
-        title: String,
-        updatedAt: Date
-    ) {
-        dto.createdAt = createdAt.bridgeDate
-        dto.lastMessageAt = lastMessageAt?.bridgeDate
-        dto.participantCount = Int64(participantCount)
-        dto.replyCount = Int64(replyCount)
-        dto.title = title
-        dto.updatedAt = updatedAt.bridgeDate
-        if let activeParticipantCount {
-            dto.activeParticipantCount = Int64(activeParticipantCount)
-        }
     }
 
     func deleteAllThreads() throws {
