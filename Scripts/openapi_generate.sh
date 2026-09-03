@@ -57,6 +57,7 @@ allowed_endpoints=(
     runMessageAction
     searchRoles
     searchUserGroups
+    sendEvent
     sendMessage
     sendReaction
     showChannel
@@ -112,6 +113,7 @@ allowed_models=(
   DeviceResponse
   DraftPayloadResponse
   DraftResponse
+  EventRequest
   Field
   FileUploadConfig
   FileUploadResponse
@@ -172,6 +174,7 @@ allowed_models=(
   Role
   SearchResultMessage
   SearchRolesResponse
+  SendEventRequest
   SendMessageRequest
   SendMessageResponse
   SendReactionRequest
@@ -253,6 +256,7 @@ encodable_only_models=(
   CreateReminderRequest
   CreateUserGroupRequest
   DeliveredMessagePayload
+  EventRequest
   HideChannelRequest
   MessageActionRequest
   MessageRequest
@@ -269,6 +273,7 @@ encodable_only_models=(
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  SendEventRequest
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
@@ -679,6 +684,8 @@ rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
 rename_generated_type DeleteReminderResponse EmptyResponse
+# TODO: EventResponse is not used and would bring in WSEvent
+rename_generated_type EventResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type Response EmptyResponse
@@ -1011,7 +1018,6 @@ inject_v1_endpoint_paths() {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case channelEvent(String)
 
     case message(MessageId)
     case replies(MessageId)
@@ -1046,7 +1052,6 @@ EOF
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"

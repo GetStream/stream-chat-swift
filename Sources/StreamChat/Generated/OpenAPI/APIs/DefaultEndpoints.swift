@@ -24,7 +24,6 @@ enum EndpointPath: Codable {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case channelEvent(String)
 
     case message(MessageId)
     case replies(MessageId)
@@ -79,6 +78,7 @@ enum EndpointPath: Codable {
     case runMessageAction(id: String)
     case searchRoles
     case searchUserGroups
+    case sendEvent(type: String, id: String)
     case sendMessage(type: String, id: String)
     case sendReaction(id: String)
     case showChannel(type: String, id: String)
@@ -128,7 +128,6 @@ enum EndpointPath: Codable {
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
         case let .message(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
@@ -229,6 +228,8 @@ enum EndpointPath: Codable {
             return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
+        case let .sendEvent(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/event"
         case let .sendMessage(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
         case let .sendReaction(id: id):
@@ -1027,6 +1028,21 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func sendEvent(
+        type: String,
+        id: String,
+        sendEventRequest: SendEventRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .sendEvent(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendEventRequest
         )
     }
 
