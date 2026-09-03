@@ -55,6 +55,7 @@ allowed_endpoints=(
     queryUsers
     removeUserGroupMembers
     runMessageAction
+    search
     searchRoles
     searchUserGroups
     sendMessage
@@ -135,6 +136,7 @@ allowed_models=(
   MembersResponse
   MessageActionRequest
   MessageActionResponse
+  MessageOptions
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -170,8 +172,12 @@ allowed_models=(
   ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  SearchPayload
+  SearchResponse
+  SearchResult
   SearchResultMessage
   SearchRolesResponse
+  SearchWarning
   SendMessageRequest
   SendMessageResponse
   SendReactionRequest
@@ -255,6 +261,7 @@ encodable_only_models=(
   DeliveredMessagePayload
   HideChannelRequest
   MessageActionRequest
+  MessageOptions
   MessageRequest
   MuteChannelRequest
   MuteRequest
@@ -269,6 +276,7 @@ encodable_only_models=(
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  SearchPayload
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
@@ -340,8 +348,11 @@ decodable_only_models=(
   QueryRemindersResponse
   QueryUsersResponse
   ReminderPayload
+  SearchResponse
+  SearchResult
   SearchResultMessage
   SearchRolesResponse
+  SearchWarning
   SendMessageResponsePayload
   SendReactionResponse
   SharedLocation
@@ -501,7 +512,7 @@ prune_models() {
 prune_models
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
 #     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -514,6 +525,7 @@ remove_property() {
     s ~ "^case " p "( =|$)"            { next }
     s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
     s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
+    s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
     s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
@@ -733,10 +745,16 @@ remove_property SendMessageResponsePayload channelContext
 # TODO: reaction group reactors need CoreData and public API design first
 remove_property MessageReactionGroupPayload latestReactionsBy
 
+# CHA-5106
+remove_property SearchPayload forceDefaultSearch
+remove_property SearchPayload forceSqlV2Backend
+
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
+# CHA-5105
+require_property SearchResult message
 
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessageResponse reactionCounts
@@ -996,7 +1014,6 @@ inject_v1_endpoint_paths() {
     case connect
     case sync
     case guest
-    case search
 
     case threads
     case thread(messageId: MessageId)
@@ -1027,7 +1044,6 @@ EOF
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-        case .search: return "search"
 
         case .threads:
             return "threads"

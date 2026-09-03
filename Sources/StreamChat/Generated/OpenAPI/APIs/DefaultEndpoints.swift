@@ -9,7 +9,6 @@ enum EndpointPath: Codable {
     case connect
     case sync
     case guest
-    case search
 
     case threads
     case thread(messageId: MessageId)
@@ -77,6 +76,7 @@ enum EndpointPath: Codable {
     case queryUsers
     case removeUserGroupMembers(id: String)
     case runMessageAction(id: String)
+    case search
     case searchRoles
     case searchUserGroups
     case sendMessage(type: String, id: String)
@@ -109,7 +109,6 @@ enum EndpointPath: Codable {
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-        case .search: return "search"
 
         case .threads:
             return "threads"
@@ -225,6 +224,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
         case let .runMessageAction(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/action"
+        case .search:
+            return "/api/v2/chat/search"
         case .searchRoles:
             return "/api/v2/roles/search"
         case .searchUserGroups:
@@ -981,6 +982,21 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: messageActionRequest
+        )
+    }
+
+    static func search(payload: SearchPayload?, requiresConnectionId: Bool = false) -> Endpoint<SearchResponse> {
+        return .init(
+            path: .search,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 

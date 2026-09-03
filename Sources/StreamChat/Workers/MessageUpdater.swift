@@ -966,7 +966,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<MessageSearchResults, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .search(query: query)) { result in
+        apiClient.request(endpoint: .search(payload: query.asSearchPayload())) { result in
             switch result {
             case let .success(payload):
                 nonisolated(unsafe) var messages = [ChatMessage]()
@@ -1097,7 +1097,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
 extension MessageUpdater {
     struct MessageSearchResults {
-        let payload: MessageSearchResultsPayload
+        let payload: SearchResponse
         let models: [ChatMessage]
 
         var next: String? { payload.next }

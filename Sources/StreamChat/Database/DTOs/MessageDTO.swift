@@ -1515,7 +1515,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return reaction
     }
 
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.results.compactMapLoggingError {
             try saveMessage(payload: $0.message, for: query, cache: cache)
