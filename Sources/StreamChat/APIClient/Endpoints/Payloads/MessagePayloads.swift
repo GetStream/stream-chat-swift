@@ -219,9 +219,6 @@ struct MessageRequestBody: Encodable, Sendable {
     }
 }
 
-/// An object describing the message list JSON payload.
-typealias MessageRepliesPayload = MessageListPayload
-
 struct MessageListPayload: Decodable {
     let messages: [MessageResponse]
 }
