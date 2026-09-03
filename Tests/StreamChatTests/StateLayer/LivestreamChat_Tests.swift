@@ -77,6 +77,7 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(state.skippedMessagesAmount, 0)
         XCTAssertTrue(state.typingUsers.isEmpty)
         XCTAssertTrue(state.typingMemberInfos.isEmpty)
+        XCTAssertTrue(state.typingUsersWithMemberInfo.isEmpty)
         XCTAssertEqual(state.remainingCooldownDuration, 0)
         XCTAssertTrue(state.client === client)
 
@@ -468,6 +469,14 @@ final class LivestreamChat_Tests: XCTestCase {
         mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser, memberInfo: memberInfo)])
         XCTAssertEqual(state.typingUsers.map(\.id), [typingUser.id])
         XCTAssertEqual(state.typingMemberInfos[typingUser.id], memberInfo)
+        XCTAssertEqual(
+            state.typingUsersWithMemberInfo,
+            Set([TypingUser(user: typingUser, memberInfo: memberInfo)])
+        )
+
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser)])
+        XCTAssertEqual(state.typingUsersWithMemberInfo, Set([TypingUser(user: typingUser)]))
+        XCTAssertTrue(state.typingMemberInfos.isEmpty)
     }
 
     func test_remainingCooldownDuration_returnsValueFromHandler() {

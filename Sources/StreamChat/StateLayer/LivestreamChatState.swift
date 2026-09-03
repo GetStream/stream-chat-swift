@@ -100,6 +100,14 @@ import Foundation
     /// Slim channel-member info for currently typing users, keyed by user id, when present on the typing event.
     public private(set) var typingMemberInfos: [UserId: ChatMemberInfo] = [:]
 
+    /// Users currently typing in the channel, including optional slim member info from the typing event.
+    ///
+    /// This is the livestream equivalent of ``ChatChannel/typingUsers``. Prefer it when you need
+    /// ``ChatMemberInfo`` such as custom extra data.
+    public var typingUsersWithMemberInfo: Set<TypingUser> {
+        Set(typingUsers.map { TypingUser(user: $0, memberInfo: typingMemberInfos[$0.id]) })
+    }
+
     // MARK: - Throttling and Slow Mode
 
     /// The duration until the current user can't send new messages when the channel has slow mode enabled.
