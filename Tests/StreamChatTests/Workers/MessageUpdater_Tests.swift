@@ -173,6 +173,125 @@ final class MessageUpdater_Tests: XCTestCase {
         }
     }
 
+    func test_editMessage_updatesMentionsCorrectly() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let mentionedUserId: UserId = .unique
+        let updatedText: String = .unique
+
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createUser(id: mentionedUserId)
+        try database.createMessage(id: messageId, authorId: currentUserId, cid: cid)
+
+        let completionResult = try waitFor {
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                skipPush: false,
+                mentionedUserIds: [mentionedUserId],
+                mentionedHere: true,
+                mentionedChannel: true,
+                restrictedVisibility: [],
+                completion: $0
+            )
+        }
+
+        XCTAssertNil(completionResult.error)
+
+        let editedMessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(editedMessageDTO.mentionedUserIds, [mentionedUserId])
+        XCTAssertEqual(editedMessageDTO.mentionedUsers.map(\.id), [mentionedUserId])
+        XCTAssertTrue(editedMessageDTO.mentionedHere)
+        XCTAssertTrue(editedMessageDTO.mentionedChannel)
+
+        let requestBody = editedMessageDTO.asMessageRequest()
+        XCTAssertEqual(requestBody.mentionedUsers, [mentionedUserId])
+        XCTAssertEqual(requestBody.mentionedHere, true)
+        XCTAssertEqual(requestBody.mentionedChannel, true)
+
+        let editedMessage = try editedMessageDTO.asModel()
+        XCTAssertEqual(editedMessage.mentionedUsers.map(\.id), [mentionedUserId])
+        XCTAssertTrue(editedMessage.mentionedHere)
+        XCTAssertTrue(editedMessage.mentionedChannel)
+    }
+
+    func test_editMessage_whenMentionsNotProvided_preservesExistingMentions() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let mentionedUserId: UserId = .unique
+        let updatedText: String = .unique
+
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createUser(id: mentionedUserId)
+        try database.writeSynchronously { session in
+            let messageDTO = try session.createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: .unique,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [mentionedUserId],
+                showReplyInChannel: false,
+                isSilent: false,
+                isSystem: false,
+                quotedMessageId: nil,
+                createdAt: nil,
+                skipPush: false,
+                skipEnrichUrl: false,
+                poll: nil,
+                location: nil,
+                restrictedVisibility: [],
+                extraData: [:]
+            )
+            messageDTO.mentionedHere = true
+            messageDTO.mentionedChannel = true
+        }
+
+        let completionResult = try waitFor {
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                skipPush: false,
+                restrictedVisibility: [],
+                completion: $0
+            )
+        }
+
+        XCTAssertNil(completionResult.error)
+
+        let editedMessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(editedMessageDTO.mentionedUserIds, [mentionedUserId])
+        XCTAssertTrue(editedMessageDTO.mentionedHere)
+        XCTAssertTrue(editedMessageDTO.mentionedChannel)
+    }
+
     func test_editMessage_whenBounced_shouldResendMessage() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique

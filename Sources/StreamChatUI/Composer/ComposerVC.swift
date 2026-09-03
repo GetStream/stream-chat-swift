@@ -1059,6 +1059,9 @@ open class ComposerVC: _ViewController,
     ///   - newText: The new text content of the message.
     open func editMessage(withId id: MessageId, newText: String) {
         guard let cid = channelController?.cid else { return }
+
+        removeMentionUserIfNotIncluded(in: newText)
+
         let messageController = channelController?.client.messageController(
             cid: cid,
             messageId: id
@@ -1068,6 +1071,7 @@ open class ComposerVC: _ViewController,
             skipEnrichUrl: content.skipEnrichUrl,
             skipPush: false,
             attachments: content.attachments,
+            mentionedUserIds: content.mentionedUsers.map(\.id),
             extraData: content.extraData
         )
     }

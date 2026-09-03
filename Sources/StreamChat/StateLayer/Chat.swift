@@ -658,6 +658,11 @@ public class Chat: @unchecked Sendable {
     ///   - messageId: The id of the message to edit.
     ///   - text: Text of the message.
     ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: The list of user ids mentioned in the message. When `nil`, existing mentions are preserved.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedChannel: If true, the message mentions all users in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message. When `nil`, existing group mentions are preserved.
+    ///   - mentionedRoles: The list of roles mentioned in the message. When `nil`, existing role mentions are preserved.
     ///   - extraData: Additional extra data of the message object.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
@@ -669,6 +674,11 @@ public class Chat: @unchecked Sendable {
         _ messageId: MessageId,
         text: String,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         extraData: [String: RawJSON]? = nil,
         restrictedVisibility: [UserId] = [],
         skipEnrichURL: Bool = false,
@@ -682,6 +692,11 @@ public class Chat: @unchecked Sendable {
             skipEnrichUrl: skipEnrichURL,
             skipPush: skipPush,
             attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
