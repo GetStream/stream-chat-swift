@@ -1448,32 +1448,26 @@ final class ChannelController_Tests: XCTestCase {
 
     @MainActor func test_channelTypingEvents_areForwardedToDelegate() throws {
         let userId: UserId = .unique
-        // Create channel in the database
         try client.databaseContainer.createChannel(cid: channelId)
-        // Create user in the database
         try client.databaseContainer.createUser(id: userId)
 
-        // Set the queue for delegate calls
         let delegate = ChannelController_Delegate()
         controller.delegate = delegate
 
-        // Simulate `synchronize()` call
         controller.synchronize()
 
-        // Save user as a typing member
         try client.databaseContainer.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: self.channelId))
             let user = try XCTUnwrap(session.user(id: userId))
             channel.currentlyTypingUsers.insert(user)
         }
 
-        // Load the user
         let typingUser = try client.mockDatabaseContainer.readSynchronously { session in
             try XCTUnwrap(session.user(id: userId)).asModel()
         }
 
-        // Assert the delegate receives typing user
         AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
+        AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsersInfo, [TypingUser(user: typingUser)])
     }
 
     @MainActor func test_delegateMethodsAreCalled() throws {

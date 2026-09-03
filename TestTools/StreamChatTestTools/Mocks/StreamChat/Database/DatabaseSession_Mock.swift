@@ -466,6 +466,15 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.member(userId: userId, cid: cid)
     }
 
+    func saveMemberInfo(
+        payload: MemberInfoPayload,
+        userId: UserId,
+        cid: ChannelId,
+        cache: PreWarmedCache?
+    ) -> MemberInfoDTO {
+        underlyingSession.saveMemberInfo(payload: payload, userId: userId, cid: cid, cache: cache)
+    }
+
     func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO? {
         underlyingSession.channelMemberListQuery(queryHash: queryHash)
     }

@@ -25,6 +25,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case quotedMessage = "quoted_message"
     case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
+    case mentionedChannelMembers = "mentioned_channel_members"
     case mentionedHere = "mentioned_here"
     case mentionedChannel = "mentioned_channel"
     case mentionedGroupIds = "mentioned_group_ids"
