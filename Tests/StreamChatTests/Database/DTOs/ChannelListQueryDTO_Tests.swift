@@ -43,14 +43,14 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
             filterValues: ["user_id": "r2-d2"]
         )
         let predefinedFilter = PredefinedFilterPayload(
-            name: "user_per_channel_type_channels",
             filter: [
                 "members": .dictionary(["$in": .array([.string("r2-d2")])]),
                 "type": .string("messaging")
             ],
+            name: "user_per_channel_type_channels",
             sort: [
-                ["direction": .number(-1), "field": .string("last_message_at"), "type": .string("string")],
-                ["direction": .number(-1), "field": .string("created_at"), "type": .string("string")]
+                SortParamRequest(direction: -1, field: "last_message_at", type: "string"),
+                SortParamRequest(direction: -1, field: "created_at", type: "string")
             ]
         )
 
@@ -65,7 +65,10 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
 
             let sortData = try XCTUnwrap(dto.sortJSONData)
             let savedSort = try JSONDecoder.default.decode([[String: RawJSON]].self, from: sortData)
-            XCTAssertEqual(savedSort, predefinedFilter.sort)
+            XCTAssertEqual(savedSort, [
+                ["direction": .number(-1), "field": .string("last_message_at"), "type": .string("string")],
+                ["direction": .number(-1), "field": .string("created_at"), "type": .string("string")]
+            ])
         }
     }
 
@@ -75,14 +78,14 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
             filterValues: ["user_id": "r2-d2"]
         )
         let first = PredefinedFilterPayload(
-            name: "user_per_channel_type_channels",
             filter: ["type": .string("messaging")],
-            sort: [["field": .string("last_message_at"), "direction": .number(-1)]]
+            name: "user_per_channel_type_channels",
+            sort: [SortParamRequest(direction: -1, field: "last_message_at")]
         )
         let second = PredefinedFilterPayload(
-            name: "user_per_channel_type_channels",
             filter: ["type": .string("livestream")],
-            sort: [["field": .string("created_at"), "direction": .number(1)]]
+            name: "user_per_channel_type_channels",
+            sort: [SortParamRequest(direction: 1, field: "created_at")]
         )
 
         try database.writeSynchronously { session in
@@ -99,7 +102,7 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
 
             let sortData = try XCTUnwrap(dto.sortJSONData)
             let savedSort = try JSONDecoder.default.decode([[String: RawJSON]].self, from: sortData)
-            XCTAssertEqual(savedSort, second.sort)
+            XCTAssertEqual(savedSort, [["field": .string("created_at"), "direction": .number(1)]])
         }
     }
 
@@ -109,9 +112,9 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
             filterValues: ["user_id": "r2-d2"]
         )
         let payload = PredefinedFilterPayload(
-            name: "user_per_channel_type_channels",
             filter: ["type": .string("messaging")],
-            sort: [["field": .string("last_message_at"), "direction": .number(-1)]]
+            name: "user_per_channel_type_channels",
+            sort: [SortParamRequest(direction: -1, field: "last_message_at")]
         )
         try database.writeSynchronously { session in
             _ = session.saveQuery(query: query, predefinedFilter: payload)
@@ -142,8 +145,8 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
     func test_loadPredefinedFilter_persistedDTOWithNilSort_returnsQueryWithDecodedFilterAndEmptySort() throws {
         let query = ChannelListQuery(predefinedFilter: "user_per_channel_type_channels")
         let payload = PredefinedFilterPayload(
-            name: "user_per_channel_type_channels",
             filter: ["type": .string("messaging")],
+            name: "user_per_channel_type_channels",
             sort: []
         )
         try database.writeSynchronously { session in

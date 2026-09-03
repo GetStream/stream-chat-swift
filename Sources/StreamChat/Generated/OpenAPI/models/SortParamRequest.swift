@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SortParamRequest: Sendable, Encodable, JSONEncodable {
+final class SortParamRequest: Sendable, Codable, JSONEncodable {
     /// Direction of sorting, 1 for Ascending, -1 for Descending, default is 1. One of: -1, 1
     let direction: Int?
     /// Name of field to sort by

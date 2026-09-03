@@ -150,10 +150,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         channelListQuery: ChannelListQuery,
         completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
     ) {
-        apiClient.request(
-            endpoint: .channels(query: channelListQuery),
-            completion: completion
-        )
+        apiClient.request(endpoint: channelListQuery.endpoint, completion: completion)
     }
 
     /// Marks all channels for a user as read.

@@ -55,6 +55,7 @@ allowed_endpoints=(
     markUnread
     mute
     muteChannel
+    queryChannels
     queryDrafts
     queryMembers
     queryPollVotes
@@ -166,6 +167,7 @@ allowed_models=(
   MuteResponse
   OwnUserResponse
   PaginationParams
+  ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionInput
   PollOptionResponse
@@ -178,6 +180,8 @@ allowed_models=(
   PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
+  QueryChannelsRequest
+  QueryChannelsResponse
   QueryDraftsRequest
   QueryDraftsResponse
   QueryMembersPayload
@@ -301,6 +305,7 @@ encodable_only_models=(
   PaginationParams
   PollOptionRequestBody
   PushPreferenceInput
+  QueryChannelsRequest
   QueryDraftsRequest
   QueryMembersPayload
   QueryPollVotesRequestBody
@@ -313,7 +318,6 @@ encodable_only_models=(
   SendEventRequest
   SendMessageRequest
   SendReactionRequest
-  SortParamRequest
   TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
@@ -380,6 +384,8 @@ decodable_only_models=(
   PollVotePayload
   PollVotePayloadResponse
   PushPreference
+  ParsedPredefinedFilterResponse
+  QueryChannelsResponse
   QueryDraftsResponse
   QueryRemindersResponse
   QueryUsersResponse
@@ -427,6 +433,7 @@ codable_models=(
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
   Role
+  SortParamRequest
   TypingIndicatorPrivacySettings
   UserPayload
   UserPrivacySettings
@@ -707,6 +714,8 @@ rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
+# Type with matching fields
+rename_generated_type ChannelStateResponseFields ChannelStateResponse
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 rename_generated Attachment MessageAttachmentPayload
 rename_generated ChannelMemberPartialResponse MemberInfoPayload
@@ -1081,7 +1090,6 @@ inject_v1_endpoint_paths() {
     case threads
     case thread(messageId: MessageId)
 
-    case channels
     case groupedChannels
     case channelUpdate(String)
 
@@ -1100,7 +1108,6 @@ EOF
         case let .thread(threadId):
             return "threads/\(threadId)"
 
-        case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 

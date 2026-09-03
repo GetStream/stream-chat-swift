@@ -228,7 +228,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.removeUserGroupMembers(id: "group"))
         assertResultEncodingAndDecoding(.searchRoles)
 
-        assertResultEncodingAndDecoding(.channels)
+        assertResultEncodingAndDecoding(.queryChannels)
         assertResultEncodingAndDecoding(.getOrCreateChannel(type: "messaging", id: "channel_idc"))
         assertResultEncodingAndDecoding(.getOrCreateDistinctChannel(type: "messaging"))
         assertResultEncodingAndDecoding(.deleteChannel(type: "messaging", id: "channel_idd"))

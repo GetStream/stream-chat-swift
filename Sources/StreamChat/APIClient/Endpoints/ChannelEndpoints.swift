@@ -5,16 +5,6 @@
 import Foundation
 
 extension Endpoint {
-    static func channels(query: ChannelListQuery) -> Endpoint<ChannelListPayload> {
-        .init(
-            path: .channels,
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
-            body: ["payload": query]
-        )
-    }
-
     static func groupedChannels(
         request: GroupedQueryChannelsRequestBody
     ) -> Endpoint<GroupedQueryChannelsPayload> {

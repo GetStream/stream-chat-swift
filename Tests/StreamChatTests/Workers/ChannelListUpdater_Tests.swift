@@ -44,7 +44,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         listUpdater.update(channelListQuery: query)
 
-        let referenceEndpoint: Endpoint<ChannelListPayload> = .channels(query: query)
+        let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -227,7 +227,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         listUpdater.fetch(channelListQuery: query, completion: { _ in })
 
-        let referenceEndpoint: Endpoint<ChannelListPayload> = .channels(query: query)
+        let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -355,7 +355,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         // Then
         wait(for: [exp], timeout: defaultTimeout)
         let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
-        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(
             Set(cids.compactMap { try? database.viewContext.channel(cid: $0)?.asModel().cid }),
@@ -379,7 +379,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         // Then
         wait(for: [exp], timeout: defaultTimeout)
         let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
-        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertNotNil(actualError)
     }
@@ -862,9 +862,9 @@ final class ChannelListUpdater_Tests: XCTestCase {
             filterValues: ["user_id": "r2-d2"]
         )
         let payload = PredefinedFilterPayload(
-            name: "user_per_channel_type_channels",
             filter: ["type": .string("messaging")],
-            sort: [["field": .string("last_message_at"), "direction": .number(-1)]]
+            name: "user_per_channel_type_channels",
+            sort: [SortParamRequest(direction: -1, field: "last_message_at")]
         )
         let response = ChannelListPayload(
             channels: [],

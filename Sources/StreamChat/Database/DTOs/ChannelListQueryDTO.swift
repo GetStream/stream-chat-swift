@@ -113,7 +113,7 @@ extension NSManagedObjectContext {
                 log.error("Failed encoding predefined filter from response with error: \(error).")
             }
             do {
-                dto.sortJSONData = try JSONEncoder.default.encode(predefinedFilter.sort)
+                dto.sortJSONData = try predefinedFilter.sort.map { try JSONEncoder.default.encode($0) }
             } catch {
                 log.error("Failed encoding predefined sort from response with error: \(error).")
             }

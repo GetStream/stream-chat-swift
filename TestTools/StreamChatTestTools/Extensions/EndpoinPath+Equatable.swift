@@ -19,7 +19,7 @@ extension EndpointPath: @retroactive Equatable {
         case (.createDevice, .createDevice): return true
         case (.deleteDevice, .deleteDevice): return true
         case (.listDevices, .listDevices): return true
-        case (.channels, .channels): return true
+        case (.queryChannels, .queryChannels): return true
         case let (.getOrCreateChannel(type1, id1), .getOrCreateChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.getOrCreateDistinctChannel(type1), .getOrCreateDistinctChannel(type2)): return type1 == type2
         case let (.deleteChannel(type1, id1), .deleteChannel(type2, id2)): return type1 == type2 && id1 == id2

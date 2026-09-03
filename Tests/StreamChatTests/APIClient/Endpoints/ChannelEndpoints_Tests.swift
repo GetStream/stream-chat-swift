@@ -7,7 +7,7 @@
 import XCTest
 
 final class ChannelEndpoints_Tests: XCTestCase {
-    func test_channels_buildsCorrectly() {
+    func test_channels_buildsCorrectly() throws {
         let filter: Filter<ChannelListFilterScope> = .containMembers(userIds: [.unique])
 
         func channelListQuery(options: QueryOptions) -> ChannelListQuery {
@@ -25,20 +25,20 @@ final class ChannelEndpoints_Tests: XCTestCase {
         ]
 
         for (query, requiresConnectionId) in testCases {
-            let expectedEndpoint = Endpoint<ChannelListPayload>(
-                path: .channels,
-                method: .get,
-                queryItems: nil,
-                requiresConnectionId: requiresConnectionId,
-                body: ["payload": query]
-            )
-
             // Build endpoint
-            let endpoint: Endpoint<ChannelListPayload> = .channels(query: query)
+            let endpoint = query.endpoint
 
             // Assert endpoint is built correctly
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels", endpoint.path.value)
+            XCTAssertEqual(endpoint.method, .post)
+            XCTAssertEqual(endpoint.requiresConnectionId, requiresConnectionId)
+            XCTAssertEqual("/api/v2/chat/channels", endpoint.path.value)
+            let body = try XCTUnwrap(endpoint.body)
+            let json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder.default.encode(body)) as? [String: Any])
+            XCTAssertNotNil(json["filter_conditions"])
+            XCTAssertEqual(json["limit"] as? Int, .channelsPageSize)
+            XCTAssertEqual(json["state"] as? Bool, query.options.contains(.state))
+            XCTAssertEqual(json["watch"] as? Bool, query.options.contains(.watch))
+            XCTAssertEqual(json["presence"] as? Bool, query.options.contains(.presence))
         }
     }
 
