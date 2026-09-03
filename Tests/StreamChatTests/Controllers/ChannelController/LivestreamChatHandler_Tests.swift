@@ -618,7 +618,7 @@ extension LivestreamChatHandler_Tests {
     func test_didReceiveEvent_memberUpdatedEvent_updatesMessagesMemberInfo_whenExtraDataChanges() {
         let memberId = UserId.unique
         seedChannel(members: [.mock(id: memberId)])
-        let originalMemberInfo = ChatMessage.MemberInfo(channelRole: .member, notificationsMuted: false, extraData: [:])
+        let originalMemberInfo = ChatMemberInfo(channelRole: .member, notificationsMuted: false, extraData: [:])
         handler.messages = [
             .mock(id: "m1", author: .mock(id: memberId), member: originalMemberInfo),
             .mock(id: "m2", author: .mock(id: .unique))
@@ -650,7 +650,7 @@ extension LivestreamChatHandler_Tests {
     func test_didReceiveEvent_memberUpdatedEvent_doesNotUpdateMessages_whenExtraDataIsUnchanged() {
         let memberId = UserId.unique
         seedChannel(members: [.mock(id: memberId)])
-        let originalMemberInfo = ChatMessage.MemberInfo(channelRole: .member, notificationsMuted: false, extraData: [:])
+        let originalMemberInfo = ChatMemberInfo(channelRole: .member, notificationsMuted: false, extraData: [:])
         let originalMessage = ChatMessage.mock(id: "m1", author: .mock(id: memberId), member: originalMemberInfo)
         handler.messages = [originalMessage]
 
@@ -849,7 +849,7 @@ extension LivestreamChatHandler_Tests {
 
     func test_didReceiveEvent_typingStart_carriesMemberInfo() {
         seedChannel()
-        let memberInfo = ChatMessage.MemberInfo(
+        let memberInfo = ChatMemberInfo(
             channelRole: .member,
             extraData: ["is_premium": .bool(true)]
         )
@@ -1103,7 +1103,7 @@ private extension LivestreamChatHandler_Tests {
         )
     }
 
-    func typingEvent(user: ChatUser, isTyping: Bool, memberInfo: ChatMessage.MemberInfo? = nil) -> TypingEvent {
+    func typingEvent(user: ChatUser, isTyping: Bool, memberInfo: ChatMemberInfo? = nil) -> TypingEvent {
         TypingEvent(
             isTyping: isTyping,
             cid: cid,

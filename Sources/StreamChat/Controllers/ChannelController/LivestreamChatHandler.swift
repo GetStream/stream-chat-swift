@@ -568,7 +568,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
     /// behavior for persisted channels, since livestream messages live only in memory and are
     /// never automatically kept up to date by the database.
     private func updateMessagesMemberInfo(with member: ChatChannelMember) {
-        let newMemberInfo = ChatMessage.MemberInfo(
+        let newMemberInfo = ChatMemberInfo(
             channelRole: member.memberRole,
             notificationsMuted: member.notificationsMuted,
             extraData: member.memberExtraData

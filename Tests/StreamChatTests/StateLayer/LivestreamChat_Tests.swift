@@ -461,7 +461,7 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(state.skippedMessagesAmount, 7)
 
         let typingUser = ChatUser.mock(id: "user-1")
-        let memberInfo = ChatMessage.MemberInfo(
+        let memberInfo = ChatMemberInfo(
             channelRole: .member,
             extraData: ["is_premium": .bool(true)]
         )

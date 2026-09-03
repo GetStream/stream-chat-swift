@@ -212,7 +212,7 @@ extension ChatChannelController_Mock {
                     didChangeTypingUsers: Set(typingUsers.map { member in
                         TypingUser(
                             user: member,
-                            memberInfo: ChannelMemberInfo(
+                            memberInfo: ChatMemberInfo(
                                 channelRole: member.memberRole,
                                 notificationsMuted: member.notificationsMuted,
                                 extraData: member.memberExtraData

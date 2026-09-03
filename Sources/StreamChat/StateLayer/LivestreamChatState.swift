@@ -98,7 +98,7 @@ import Foundation
     @Published public internal(set) var typingUsers: Set<ChatUser> = []
 
     /// Slim channel-member info for currently typing users, keyed by user id, when present on the typing event.
-    public private(set) var typingMemberInfos: [UserId: ChannelMemberInfo] = [:]
+    public private(set) var typingMemberInfos: [UserId: ChatMemberInfo] = [:]
 
     // MARK: - Throttling and Slow Mode
 

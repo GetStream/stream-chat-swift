@@ -10,7 +10,7 @@ public struct TypingUser: Hashable, Identifiable, Sendable {
     public let user: ChatUser
 
     /// Slim channel-member information attached to the typing event, when available.
-    public let memberInfo: ChannelMemberInfo?
+    public let memberInfo: ChatMemberInfo?
 
     /// The unique identifier of the typing user.
     public var id: UserId { user.id }
@@ -20,7 +20,7 @@ public struct TypingUser: Hashable, Identifiable, Sendable {
     /// - Parameters:
     ///   - user: The typing user.
     ///   - memberInfo: Slim channel-member information from the typing event, if any.
-    public init(user: ChatUser, memberInfo: ChannelMemberInfo? = nil) {
+    public init(user: ChatUser, memberInfo: ChatMemberInfo? = nil) {
         self.user = user
         self.memberInfo = memberInfo
     }

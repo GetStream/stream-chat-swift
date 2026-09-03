@@ -1882,7 +1882,7 @@ private extension ChatMessage {
 
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
         
-        let member: ChatMessage.MemberInfo? = {
+        let member: ChatMemberInfo? = {
             guard dto.channelRole != nil || dto.memberExtraData != nil else { return nil }
 
             let extraData: [String: RawJSON]
@@ -1895,7 +1895,7 @@ private extension ChatMessage {
                 extraData = [:]
             }
 
-            return ChatMessage.MemberInfo(
+            return ChatMemberInfo(
                 channelRole: dto.channelRole.map(MemberRole.init(rawValue:)),
                 notificationsMuted: dto.memberNotificationsMuted,
                 extraData: extraData

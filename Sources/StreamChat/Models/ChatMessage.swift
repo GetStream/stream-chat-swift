@@ -8,14 +8,14 @@ import Foundation
 /// A unique identifier of a message.
 public typealias MessageId = String
 
-/// Slim channel-member information attached to messages and typing events.
-public typealias ChannelMemberInfo = ChatMessage.MemberInfo
-
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
 ///
 /// `@unchecked Sendable` is safe here because every stored property is `let`, and the type-erased
 /// `_quotedMessage` is only read through `getValue()`, which the compiler cannot prove.
 public final class ChatMessage: Identifiable, @unchecked Sendable {
+    /// Slim channel-member information. See ``ChatMemberInfo``.
+    public typealias MemberInfo = ChatMemberInfo
+
     /// A unique identifier of the message.
     public let id: MessageId
 
@@ -215,35 +215,11 @@ public final class ChatMessage: Identifiable, @unchecked Sendable {
 
     /// Slim channel-member information for the message author, when present on the payload.
     ///
-    /// Any custom fields present on `message.member` are available on ``MemberInfo/extraData``.
+    /// Any custom fields present on `message.member` are available on ``ChatMemberInfo/extraData``.
     public let member: MemberInfo?
 
     /// The role of the member in the channel.
     public var channelRole: MemberRole? { member?.channelRole }
-
-    /// Slim channel-member information attached to a message (`message.member` and
-    /// `mentioned_channel_members` values on the wire).
-    ///
-    /// This is not a full ``ChatChannelMember``. Known fields such as role and notification
-    /// mute state are exposed as typed properties; any additional fields land in ``extraData``.
-    public struct MemberInfo: Hashable, Sendable {
-        /// The role of the member in the channel.
-        public let channelRole: MemberRole?
-        /// Whether the member has muted notifications for the channel.
-        public let notificationsMuted: Bool
-        /// Additional inline fields from the channel membership.
-        public let extraData: [String: RawJSON]
-
-        init(
-            channelRole: MemberRole? = nil,
-            notificationsMuted: Bool = false,
-            extraData: [String: RawJSON] = [:]
-        ) {
-            self.channelRole = channelRole
-            self.notificationsMuted = notificationsMuted
-            self.extraData = extraData
-        }
-    }
 
     init(
         id: MessageId,

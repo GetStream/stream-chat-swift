@@ -19,7 +19,7 @@ extension ChatUser {
     }
 }
 
-extension ChannelMemberInfo {
+extension ChatMemberInfo {
     var isPremium: Bool {
         extraData["is_premium"]?.boolValue == true
     }

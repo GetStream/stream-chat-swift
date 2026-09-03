@@ -147,7 +147,7 @@ extension MessageResponse {
                 )
             },
             member: member.map {
-                ChatMessage.MemberInfo(
+                ChatMemberInfo(
                     channelRole: MemberRole(rawChannelValue: $0.channelRole),
                     notificationsMuted: $0.notificationsMuted,
                     extraData: $0.custom ?? [:]
@@ -174,8 +174,8 @@ extension MessageReactionPayload {
 }
 
 extension MemberInfoPayload {
-    func asModel() -> ChatMessage.MemberInfo {
-        ChatMessage.MemberInfo(
+    func asModel() -> ChatMemberInfo {
+        ChatMemberInfo(
             channelRole: MemberRole(rawChannelValue: channelRole),
             notificationsMuted: notificationsMuted,
             extraData: custom ?? [:]

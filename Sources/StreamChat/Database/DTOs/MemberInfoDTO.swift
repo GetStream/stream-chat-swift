@@ -43,7 +43,7 @@ extension MemberInfoDTO {
         return new
     }
 
-    func asModel() throws -> ChatMessage.MemberInfo {
+    func asModel() throws -> ChatMemberInfo {
         let decodedExtraData: [String: RawJSON]
         do {
             decodedExtraData = try JSONDecoder.stream.decodeRawJSON(from: extraData)
@@ -52,7 +52,7 @@ extension MemberInfoDTO {
             decodedExtraData = [:]
         }
 
-        return ChatMessage.MemberInfo(
+        return ChatMemberInfo(
             channelRole: channelRoleRaw.map { MemberRole(rawChannelValue: $0) },
             notificationsMuted: notificationsMuted,
             extraData: decodedExtraData
@@ -93,7 +93,7 @@ extension ChannelDTO {
         typingMemberInfos.removeAll()
     }
 
-    func typingMemberInfo(for userId: UserId) -> ChatMessage.MemberInfo? {
+    func typingMemberInfo(for userId: UserId) -> ChatMemberInfo? {
         try? typingMemberInfos.first(where: { $0.userId == userId })?.asModel()
     }
 }
