@@ -4340,7 +4340,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Because we don't have other messages, we fallback to the passed messageId as lastReadMessageId.
         XCTAssertNil(updater.markUnread_lastReadMessageId)
-        XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
+        XCTAssertEqual(updater.markUnread_request, MarkUnreadRequest(messageId: messageId))
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreOtherMessages_whenUpdaterSucceeds() throws {
@@ -4373,7 +4373,7 @@ final class ChannelController_Tests: XCTestCase {
 
         XCTAssertNil(receivedError)
         XCTAssertEqual(updater.markUnread_lastReadMessageId, previousMessageId)
-        XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
+        XCTAssertEqual(updater.markUnread_request, MarkUnreadRequest(messageId: messageId))
     }
 
     func test_markUnread_whenChannelDoesNotExist_messageTimestamp() {

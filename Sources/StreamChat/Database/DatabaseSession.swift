@@ -434,7 +434,7 @@ protocol ChannelReadDatabaseSession {
     func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
-        from unreadCriteria: MarkUnreadCriteria,
+        from request: MarkUnreadRequest,
         lastReadMessageId: MessageId?,
         lastReadAt: Date?,
         unreadMessagesCount: Int?

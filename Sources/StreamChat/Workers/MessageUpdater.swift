@@ -1040,7 +1040,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadRead(cid: cid, threadId: threadId)
+            endpoint: .markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest(threadId: threadId))
         ) { result in
             completion(result.error)
         }
@@ -1052,7 +1052,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadUnread(cid: cid, threadId: threadId)
+            endpoint: .markUnread(type: cid.type.rawValue, id: cid.id, markUnreadRequest: MarkUnreadRequest(threadId: threadId))
         ) { result in
             completion(result.error)
         }

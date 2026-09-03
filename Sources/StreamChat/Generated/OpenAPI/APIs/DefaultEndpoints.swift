@@ -13,17 +13,12 @@ enum EndpointPath: Codable {
 
     case threads
     case thread(messageId: MessageId)
-    case markThreadRead(cid: ChannelId)
-    case markThreadUnread(cid: ChannelId)
 
     case channels
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case markChannelRead(String)
-    case markChannelUnread(String)
-    case markAllChannelsRead
     case channelEvent(String)
 
     case message(MessageId)
@@ -66,7 +61,10 @@ enum EndpointPath: Codable {
     case hideChannel(type: String, id: String)
     case listDevices
     case listUserGroups
+    case markChannelsRead
     case markDelivered
+    case markRead(type: String, id: String)
+    case markUnread(type: String, id: String)
     case mute
     case muteChannel
     case queryDrafts
@@ -115,19 +113,12 @@ enum EndpointPath: Codable {
             return "threads"
         case let .thread(threadId):
             return "threads/\(threadId)"
-        case let .markThreadRead(cid):
-            return "channels/\(cid.apiPath)/read"
-        case let .markThreadUnread(cid):
-            return "channels/\(cid.apiPath)/unread"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .markChannelRead(channelId): return "channels/\(channelId)/read"
-        case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
-        case .markAllChannelsRead: return "channels/read"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
         case let .message(messageId): return "messages/\(messageId)"
@@ -203,8 +194,14 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case .listUserGroups:
             return "/api/v2/usergroups"
+        case .markChannelsRead:
+            return "/api/v2/chat/channels/read"
         case .markDelivered:
             return "/api/v2/chat/channels/delivered"
+        case let .markRead(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/read"
+        case let .markUnread(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/unread"
         case .mute:
             return "/api/v2/moderation/mute"
         case .muteChannel:
@@ -836,6 +833,19 @@ extension Endpoint {
         )
     }
 
+    static func markChannelsRead(
+        markChannelsReadRequest: MarkChannelsReadRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markChannelsRead,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markChannelsReadRequest
+        )
+    }
+
     static func markDelivered(
         markDeliveredRequest: ChannelDeliveredRequestPayload,
         requiresConnectionId: Bool = false
@@ -846,6 +856,36 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: markDeliveredRequest
+        )
+    }
+
+    static func markRead(
+        type: String,
+        id: String,
+        markReadRequest: MarkReadRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markRead(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markReadRequest
+        )
+    }
+
+    static func markUnread(
+        type: String,
+        id: String,
+        markUnreadRequest: MarkUnreadRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markUnread(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markUnreadRequest
         )
     }
 
