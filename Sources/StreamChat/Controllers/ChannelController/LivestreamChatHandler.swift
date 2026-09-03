@@ -182,6 +182,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
 
         let newChannel = payload.asModel(
             currentUserId: currentUserId,
+            currentlyTypingUsers: nil,
             typingUsers: channel?.typingUsers,
             unreadCount: channel?.unreadCount
         )

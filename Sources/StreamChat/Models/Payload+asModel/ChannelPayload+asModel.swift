@@ -9,8 +9,8 @@ extension ChannelPayload {
     /// - Returns: A ChatChannel instance
     func asModel(
         currentUserId: UserId?,
-        currentlyTypingUsers: Set<ChatUser>? = nil,
-        typingUsers: Set<TypingUser>? = nil,
+        currentlyTypingUsers: Set<ChatUser>?,
+        typingUsers: Set<TypingUser>?,
         unreadCount: ChannelUnreadCount?
     ) -> ChatChannel {
         let channelPayload = channel
