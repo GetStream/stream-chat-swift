@@ -1393,9 +1393,11 @@ final class ChannelDTO_Tests: XCTestCase {
             let channel = try XCTUnwrap(session.channel(cid: cid))
             let user = try XCTUnwrap(session.user(id: userId))
             channel.currentlyTypingUsers.insert(user)
-            channel.updateTypingMemberInfo(
+            session.saveMemberInfo(
+                payload: MemberInfoPayload(extraData: ["is_premium": .bool(true)]),
                 userId: userId,
-                from: MemberInfoPayload(extraData: ["is_premium": .bool(true)])
+                cid: cid,
+                cache: nil
             )
         }
 

@@ -15,15 +15,32 @@ class MemberInfoDTO: NSManagedObject {
 }
 
 extension MemberInfoDTO {
-    func update(from member: MemberInfoPayload) {
-        channelRoleRaw = member.channelRole
-        notificationsMuted = member.notificationsMuted
-        do {
-            extraData = try JSONEncoder.default.encode(member.custom ?? [:])
-        } catch {
-            log.error("Failed to encode member info extra data. Error: \(error)")
-            extraData = nil
+    static func fetchRequest(for cid: ChannelId, userId: UserId) -> NSFetchRequest<MemberInfoDTO> {
+        let request = NSFetchRequest<MemberInfoDTO>(entityName: MemberInfoDTO.entityName)
+        MemberInfoDTO.applyPrefetchingState(to: request)
+        request.predicate = NSPredicate(format: "channel.cid == %@ && userId == %@", cid.rawValue, userId)
+        return request
+    }
+
+    static func load(cid: ChannelId, userId: UserId, context: NSManagedObjectContext) -> MemberInfoDTO? {
+        load(by: fetchRequest(for: cid, userId: userId), context: context).first
+    }
+
+    static func loadOrCreate(
+        userId: UserId,
+        cid: ChannelId,
+        context: NSManagedObjectContext,
+        cache: PreWarmedCache?
+    ) -> MemberInfoDTO {
+        let request = fetchRequest(for: cid, userId: userId)
+        if let existing = load(by: request, context: context).first {
+            return existing
         }
+
+        let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.userId = userId
+        new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context, cache: cache)
+        return new
     }
 
     func asModel() throws -> ChatMessage.MemberInfo {
@@ -43,20 +60,28 @@ extension MemberInfoDTO {
     }
 }
 
-extension ChannelDTO {
-    func updateTypingMemberInfo(userId: UserId, from member: MemberInfoPayload) {
-        let dto: MemberInfoDTO
-        if let existing = typingMemberInfos.first(where: { $0.userId == userId }) {
-            dto = existing
-        } else {
-            guard let managedObjectContext else { return }
-            dto = MemberInfoDTO(context: managedObjectContext)
-            dto.userId = userId
-            dto.channel = self
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveMemberInfo(
+        payload: MemberInfoPayload,
+        userId: UserId,
+        cid: ChannelId,
+        cache: PreWarmedCache?
+    ) -> MemberInfoDTO {
+        let dto = MemberInfoDTO.loadOrCreate(userId: userId, cid: cid, context: self, cache: cache)
+        dto.channelRoleRaw = payload.channelRole
+        dto.notificationsMuted = payload.notificationsMuted
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
+        } catch {
+            log.error("Failed to encode member info extra data. Error: \(error)")
+            dto.extraData = nil
         }
-        dto.update(from: member)
+        return dto
     }
+}
 
+extension ChannelDTO {
     func clearTypingMemberInfo(userId: UserId) {
         guard let dto = typingMemberInfos.first(where: { $0.userId == userId }) else { return }
         typingMemberInfos.remove(dto)

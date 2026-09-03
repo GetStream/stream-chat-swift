@@ -23,7 +23,7 @@ struct UserTypingStateUpdaterMiddleware: EventMiddleware {
 
             if event.isTyping {
                 if let member = event.member {
-                    channelDTO.updateTypingMemberInfo(userId: userDTO.id, from: member)
+                    session.saveMemberInfo(payload: member, userId: userDTO.id, cid: event.cid, cache: nil)
                 }
                 if let previousChannel = userDTO.typingIn, previousChannel != channelDTO {
                     previousChannel.clearTypingMemberInfo(userId: userDTO.id)
