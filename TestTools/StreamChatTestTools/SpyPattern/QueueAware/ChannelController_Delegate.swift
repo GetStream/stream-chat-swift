@@ -14,6 +14,7 @@ final class ChannelController_Delegate: QueueAwareDelegate, ChatChannelControlle
     @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didChangeTypingUsers_typingUsers: Set<ChatUser>?
+    @Atomic var didChangeTypingUsers_typingUsersInfo: Set<TypingUser>?
 
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -42,6 +43,14 @@ final class ChannelController_Delegate: QueueAwareDelegate, ChatChannelControlle
 
     func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
+        validateQueue()
+    }
+
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    ) {
+        didChangeTypingUsers_typingUsersInfo = typingUsers
         validateQueue()
     }
 

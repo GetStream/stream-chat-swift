@@ -77,7 +77,9 @@ open class ChatThreadVC: _ViewController,
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    private var currentlyTypingUsers: Set<ChatUser> = []
+    /// Keyed by user id because `TypingUser` equality includes `memberInfo`, which is not
+    /// guaranteed to be present on both the start and stop typing events for the same user.
+    private var currentlyTypingUsers: [UserId: TypingUser] = [:]
     private var scrollsToBottomAfterLoadingFirstPage = false
 
     /// A boolean value that determines whether the thread view renders the parent message at the top.
@@ -474,15 +476,16 @@ open class ChatThreadVC: _ViewController,
         case let event as TypingEvent:
             guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
             if event.isTyping {
-                currentlyTypingUsers.insert(event.user)
+                currentlyTypingUsers[event.user.id] = event.typingUser
             } else {
-                currentlyTypingUsers.remove(event.user)
+                currentlyTypingUsers[event.user.id] = nil
             }
 
             if currentlyTypingUsers.isEmpty {
                 messageListVC.hideTypingIndicator()
             } else {
-                messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
+                let typingUsers = currentlyTypingUsers.values.sorted { $0.user.id < $1.user.id }
+                messageListVC.showTypingIndicator(typingUsers: typingUsers)
             }
         case let event as NewMessagePendingEvent:
             let newMessage = event.message
