@@ -15,7 +15,6 @@ enum EndpointPath: Codable {
 
     case channels
     case groupedChannels
-    case channelUpdate(String)
 
     case message(MessageId)
 
@@ -86,6 +85,8 @@ enum EndpointPath: Codable {
     case unmute
     case unmuteChannel
     case unreadCounts
+    case updateChannel(type: String, id: String)
+    case updateChannelPartial(type: String, id: String)
     case updateLiveLocation
     case updateMemberPartial(type: String, id: String)
     case updateMessage(id: String)
@@ -114,7 +115,6 @@ enum EndpointPath: Codable {
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
-        case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
         case let .message(messageId): return "messages/\(messageId)"
 
@@ -252,6 +252,10 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/moderation/unmute/channel"
         case .unreadCounts:
             return "/api/v2/chat/unread"
+        case let .updateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
+        case let .updateChannelPartial(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
         case .updateLiveLocation:
             return "/api/v2/users/live_locations"
         case let .updateMemberPartial(type: type, id: id):
@@ -1322,6 +1326,36 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func updateChannel(
+        type: String,
+        id: String,
+        updateChannelRequest: UpdateChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateChannelResponse> {
+        return .init(
+            path: .updateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateChannelRequest
+        )
+    }
+
+    static func updateChannelPartial(
+        type: String,
+        id: String,
+        updateChannelPartialRequest: UpdateChannelPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateChannelPartialResponse> {
+        return .init(
+            path: .updateChannelPartial(type: type, id: id),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateChannelPartialRequest
         )
     }
 

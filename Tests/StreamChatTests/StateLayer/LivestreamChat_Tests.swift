@@ -684,25 +684,27 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Slow Mode
 
     func test_enableSlowMode_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.enableSlowMode(cooldownDuration: 7)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(
-            cid: channelQuery.cid!,
-            cooldownDuration: 7
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(7)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_disableSlowMode_callsAPIWithZeroCooldown() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.disableSlowMode()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(
-            cid: channelQuery.cid!,
-            cooldownDuration: 0
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(0)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -710,20 +712,28 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Channel Freezing
 
     func test_freeze_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.freeze()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(true, cid: channelQuery.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(true)])
+        )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_unfreeze_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.unfreeze()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: channelQuery.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(false)])
+        )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

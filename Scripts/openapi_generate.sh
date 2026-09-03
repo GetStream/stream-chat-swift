@@ -78,6 +78,8 @@ allowed_endpoints=(
     unmute
     unmuteChannel
     unreadCounts
+    updateChannel
+    updateChannelPartial
     updateLiveLocation
     updateMemberPartial
     updateMessage
@@ -104,6 +106,7 @@ allowed_models=(
   CastPollVoteRequest
   ChannelGetOrCreateRequest
   ChannelInput
+  ChannelInputRequest
   ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
@@ -222,6 +225,10 @@ allowed_models=(
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateChannelPartialRequest
+  UpdateChannelPartialResponse
+  UpdateChannelRequest
+  UpdateChannelResponse
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
@@ -278,6 +285,7 @@ encodable_only_models=(
   ChannelDeliveredRequestPayload
   ChannelGetOrCreateRequest
   ChannelInput
+  ChannelInputRequest
   ChannelMemberRequest
   CreateDeviceRequest
   CreateDraftRequest
@@ -319,6 +327,8 @@ encodable_only_models=(
   UnblockUsersRequest
   UnmuteChannelRequest
   UnmuteRequest
+  UpdateChannelPartialRequest
+  UpdateChannelRequest
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMessagePartialRequest
@@ -400,6 +410,8 @@ decodable_only_models=(
   UnreadChannel
   UnreadChannelByType
   UnreadThread
+  UpdateChannelPartialResponse
+  UpdateChannelResponse
   UpdateMemberPartialResponse
   UpdateMessagePartialResponse
   UpdateMessageResponse
@@ -788,6 +800,10 @@ remove_property ChannelGetOrCreateRequest hideForCreator
 remove_property ChannelInput configOverrides
 # CHA-5096
 remove_property ChannelInput createdBy
+# CHA-5096
+remove_property ChannelInputRequest configOverrides
+# CHA-5096
+remove_property ChannelInputRequest createdBy
 # CHA-5068
 remove_property BanRequest ipBan
 remove_property FlagRequest entityCreatorId
@@ -1083,7 +1099,6 @@ inject_v1_endpoint_paths() {
 
     case channels
     case groupedChannels
-    case channelUpdate(String)
 
     case message(MessageId)
 
@@ -1102,7 +1117,6 @@ EOF
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
-        case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
         case let .message(messageId): return "messages/\(messageId)"
 

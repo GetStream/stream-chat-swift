@@ -39,6 +39,11 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.getOrCreateDistinctChannel(type: "").shouldBeQueuedOffline)
     }
 
+    func test_updateChannel_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.updateChannel(type: "", id: "").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateChannelPartial(type: "", id: "").shouldBeQueuedOffline)
+    }
+
     func test_deleteChannel_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.deleteChannel(type: "", id: "").shouldBeQueuedOffline)
     }
@@ -232,7 +237,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.getOrCreateChannel(type: "messaging", id: "channel_idc"))
         assertResultEncodingAndDecoding(.getOrCreateDistinctChannel(type: "messaging"))
         assertResultEncodingAndDecoding(.deleteChannel(type: "messaging", id: "channel_idd"))
-        assertResultEncodingAndDecoding(.channelUpdate("channel_idq"))
+        assertResultEncodingAndDecoding(.updateChannel(type: "messaging", id: "channel_idq"))
+        assertResultEncodingAndDecoding(.updateChannelPartial(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.hideChannel(type: "messaging", id: "channel_id"))
         assertResultEncodingAndDecoding(.showChannel(type: "messaging", id: "channel_id"))
         assertResultEncodingAndDecoding(.truncateChannel(type: "messaging", id: "channel_idq"))

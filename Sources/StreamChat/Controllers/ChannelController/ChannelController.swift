@@ -1227,7 +1227,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         updater.addMembers(
-            currentUserId: client.currentUserId,
             cid: cid,
             members: members,
             systemMessage: systemMessage,
@@ -1330,7 +1329,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         updater.removeMembers(
-            currentUserId: client.currentUserId,
             cid: cid,
             userIds: userIds,
             systemMessage: systemMessage

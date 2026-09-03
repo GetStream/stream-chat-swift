@@ -23,7 +23,8 @@ extension EndpointPath: @retroactive Equatable {
         case let (.getOrCreateChannel(type1, id1), .getOrCreateChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.getOrCreateDistinctChannel(type1), .getOrCreateDistinctChannel(type2)): return type1 == type2
         case let (.deleteChannel(type1, id1), .deleteChannel(type2, id2)): return type1 == type2 && id1 == id2
-        case let (.channelUpdate(string1), .channelUpdate(string2)): return string1 == string2
+        case let (.updateChannel(type1, id1), .updateChannel(type2, id2)): return type1 == type2 && id1 == id2
+        case let (.updateChannelPartial(type1, id1), .updateChannelPartial(type2, id2)): return type1 == type2 && id1 == id2
         case let (.truncateChannel(type1, id1), .truncateChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.markRead(type1, id1), .markRead(type2, id2)): return type1 == type2 && id1 == id2
         case let (.markUnread(type1, id1), .markUnread(type2, id2)): return type1 == type2 && id1 == id2

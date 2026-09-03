@@ -1470,11 +1470,15 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: controller.cid!, cooldownDuration: cooldownDuration)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: controller.cid!.type.rawValue,
+            id: controller.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(Double(cooldownDuration))])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(slowModeError)
     }
@@ -1488,7 +1492,7 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -1519,11 +1523,15 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(true, cid: controller.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: controller.cid!.type.rawValue,
+            id: controller.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(true)])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(freezeError)
     }
@@ -1538,11 +1546,15 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: controller.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: controller.cid!.type.rawValue,
+            id: controller.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(false)])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unfreezeError)
     }
