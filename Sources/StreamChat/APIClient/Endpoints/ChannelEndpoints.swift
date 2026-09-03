@@ -27,35 +27,6 @@ extension Endpoint {
         )
     }
 
-    static func createChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
-        createOrUpdateChannel(path: .createChannel(query.apiPath), query: query)
-    }
-
-    static func updateChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
-        createOrUpdateChannel(path: .updateChannel(query.apiPath), query: query)
-    }
-    
-    static func channelState(query: ChannelQuery) -> Endpoint<ChannelPayload> {
-        assert(!query.options.contains(oneOf: [.presence, .watch]), "This method is only for fetching channel data")
-        return .init(
-            path: .updateChannel(query.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false, // presence and watch require connection id
-            body: query
-        )
-    }
-
-    private static func createOrUpdateChannel(path: EndpointPath, query: ChannelQuery) -> Endpoint<ChannelPayload> {
-        .init(
-            path: path,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
-            body: query
-        )
-    }
-
     static func updateChannel(channelPayload: ChannelEditDetailPayload)
         -> Endpoint<EmptyResponse> {
         .init(
@@ -264,16 +235,6 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: ["set": ["cooldown": cooldownDuration]]
-        )
-    }
-
-    static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload> {
-        .init(
-            path: .updateChannel(query.cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true,
-            body: query
         )
     }
 

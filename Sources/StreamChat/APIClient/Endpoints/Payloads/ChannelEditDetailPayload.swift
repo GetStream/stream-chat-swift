@@ -92,3 +92,25 @@ extension ChannelEditDetailPayload: APIPathConvertible {
         return type.rawValue + "/" + id
     }
 }
+
+extension ChannelEditDetailPayload {
+    func toChannelInput() -> ChannelInput {
+        var custom = extraData
+        if let name {
+            custom[ChannelCodingKeys.name.rawValue] = .string(name)
+        }
+        if let imageURL {
+            custom[ChannelCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+        }
+
+        let allMembers = members.union(invites)
+
+        return ChannelInput(
+            custom: custom,
+            filterTags: filterTags.isEmpty ? nil : Array(filterTags),
+            invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
+            members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
+            team: team
+        )
+    }
+}

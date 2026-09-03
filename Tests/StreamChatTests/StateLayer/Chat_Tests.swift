@@ -461,7 +461,7 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(apiResponse.members.map(\.user?.id), chat.state.members.map(\.id))
         
         let channel = try await MainActor.run { try XCTUnwrap(chat.state.channel) }
-        XCTAssertEqual(apiResponse.channelReads.map(\.user.id).sorted(), channel.reads.map(\.user.id).sorted())
+        XCTAssertEqual(try XCTUnwrap(apiResponse.read).map(\.user.id).sorted(), channel.reads.map(\.user.id).sorted())
     }
     
     func test_loadMoreMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -479,7 +479,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(moreResponse.members.map(\.user?.id), paginationMembers.map(\.id))
         
         let allMembers = initialResponse.members + moreResponse.members
-        let allReads = initialResponse.channelReads + moreResponse.channelReads
+        let allReads = try XCTUnwrap(initialResponse.read) + XCTUnwrap(moreResponse.read)
         await XCTAssertEqual(allMembers.map(\.user?.id), chat.state.members.map(\.id))
         
         let channel = try await MainActor.run { try XCTUnwrap(chat.state.channel) }
@@ -975,7 +975,7 @@ final class Chat_Tests: XCTestCase {
         try await setUpChat(usesMockedUpdaters: false, loadState: false)
         
         // Accessing the state triggers loading the initial states
-        let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages ?? [])
+        let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages?.compactMap(\.message) ?? [])
         await XCTAssertEqual(allMessages.map(\.id), chat.state.messages.map(\.id))
     }
     

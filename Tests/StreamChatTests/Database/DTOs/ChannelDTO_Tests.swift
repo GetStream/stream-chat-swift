@@ -207,13 +207,13 @@ final class ChannelDTO_Tests: XCTestCase {
         let ownMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
-            createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-10)
+            createdAt: anotherMemberRead.lastRead.addingTimeInterval(-10)
         )
 
         let ownPinnedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
-            createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-20),
+            createdAt: anotherMemberRead.lastRead.addingTimeInterval(-20),
             pinned: true,
             pinnedByUserId: anotherMember.user!.id
         )
@@ -510,7 +510,7 @@ final class ChannelDTO_Tests: XCTestCase {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel.cid)
 
-            Assert.willBeEqual(payload.isHidden, loadedChannel.isHidden)
+            Assert.willBeEqual(payload.hidden, loadedChannel.isHidden)
             Assert.willBeEqual(payload.watcherCount, loadedChannel.watcherCount)
             Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.lastActiveWatchers.map(\.id)))
             Assert.willBeEqual(payload.channel.name, loadedChannel.name)
@@ -603,8 +603,8 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.pinnedMessages[0].pinnedBy?.id, loadedChannel.pinnedMessages[0].pinDetails?.pinnedBy.id)
             
             // Pending Messages
-            Assert.willBeEqual(payload.pendingMessages?[0].id, loadedChannel.pendingMessages[0].id)
-            Assert.willBeEqual(payload.pendingMessages?[0].text, loadedChannel.pendingMessages[0].text)
+            Assert.willBeEqual(payload.pendingMessages?[0].message?.id, loadedChannel.pendingMessages[0].id)
+            Assert.willBeEqual(payload.pendingMessages?[0].message?.text, loadedChannel.pendingMessages[0].text)
             
             // Message user
             Assert.willBeEqual(payload.messages[0].user.id, loadedChannel.latestMessages.first?.author.id)
@@ -617,18 +617,18 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel.latestMessages.first?.author.extraData)
 
             // Read
-            Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel.reads.first?.lastReadAt)
-            Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel.reads.first?.unreadMessagesCount)
-            Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel.reads.first?.user.id)
+            Assert.willBeEqual(payload.read?[0].lastRead, loadedChannel.reads.first?.lastReadAt)
+            Assert.willBeEqual(payload.read?[0].unreadMessages, loadedChannel.reads.first?.unreadMessagesCount)
+            Assert.willBeEqual(payload.read?[0].user.id, loadedChannel.reads.first?.user.id)
 
             // Truncated
             Assert.willBeEqual(payload.channel.truncatedAt, loadedChannel.truncatedAt)
             
             // Push Preference
-            Assert.willNotBeNil(payload.pushPreference)
-            Assert.willBeEqual(payload.pushPreference?.level, loadedChannel.pushPreference?.level)
+            Assert.willNotBeNil(payload.pushPreferences)
+            Assert.willBeEqual(payload.pushPreferences?.level, loadedChannel.pushPreference?.level)
             Assert.willBeEqual(
-                payload.pushPreference?.disabledUntil?.timeIntervalSince1970,
+                payload.pushPreferences?.disabledUntil?.timeIntervalSince1970,
                 loadedChannel.pushPreference?.disabledUntil?.timeIntervalSince1970
             )
         }
@@ -1289,7 +1289,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let messageMentioningCurrentUser: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            createdAt: currentUserChannelReadPayload.lastReadAt.addingTimeInterval(5),
+            createdAt: currentUserChannelReadPayload.lastRead.addingTimeInterval(5),
             mentionedUsers: [currentUserPayload]
         )
 

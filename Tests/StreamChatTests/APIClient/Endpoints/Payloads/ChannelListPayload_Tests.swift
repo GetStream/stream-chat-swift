@@ -42,7 +42,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
-    func test_decode_shouldReturnChannelsIfOneChannelHasMissingRequiredProperties() throws {
+    func test_decode_shouldSkipChannelIfItHasMissingRequiredProperties() throws {
         /// Channel List JSON with 3 channels, the first channel has multiple missing required properties:
         /// - channel.members.first.user.updatedAt
         /// - channel.pinnedMessages.first.user.updatedAt
@@ -50,7 +50,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         let url = XCTestCase.mockData(fromJSONFile: "PartiallyFailingChannelListPayload")
 
         let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 3)
+        XCTAssertEqual(payload.channels.count, 2)
     }
 
     func test_decode_shouldReturnChannelsIfOneChannelCompletelyFailsParsing() throws {
@@ -494,7 +494,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
-        XCTAssertEqual(payload.isHidden, true)
+        XCTAssertEqual(payload.hidden, true)
         XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
 
         XCTAssertEqual(payload.messages.count, 25)
@@ -515,7 +515,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertFalse(firstMessage.silent)
 
         XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
-        let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first)
+        let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first?.message)
         XCTAssertEqual(pendingMessage.text, "My pending message")
         
         XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
@@ -539,9 +539,9 @@ final class ChannelPayload_Tests: XCTestCase {
             "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
         )
 
-        let firstChannelRead = payload.channelReads.first!
-        XCTAssertEqual(firstChannelRead.lastReadAt, "2020-06-10T07:43:11.812841984Z".toDate())
-        XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
+        let firstChannelRead = try XCTUnwrap(payload.read?.first)
+        XCTAssertEqual(firstChannelRead.lastRead, "2020-06-10T07:43:11.812841984Z".toDate())
+        XCTAssertEqual(firstChannelRead.unreadMessages, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
 
         let config = channel.config
@@ -570,10 +570,10 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.channel.filterTags, ["football"])
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
-        XCTAssertEqual(payload.activeLiveLocations.count, 1)
-        XCTAssertNotNil(payload.pushPreference)
-        XCTAssertEqual(payload.pushPreference?.level, "all")
-        XCTAssertNil(payload.pushPreference?.disabledUntil)
+        XCTAssertEqual(payload.activeLiveLocations?.count, 1)
+        XCTAssertNotNil(payload.pushPreferences)
+        XCTAssertEqual(payload.pushPreferences?.level, "all")
+        XCTAssertNil(payload.pushPreferences?.disabledUntil)
     }
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {

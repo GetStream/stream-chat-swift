@@ -78,7 +78,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_load_happyPath_whenChannelDoesNotExistsLocally() {
+    func test_load_happyPath_whenChannelDoesNotExistsLocally() throws {
         // Simulate `load` call.
         nonisolated(unsafe) var completionCalled = false
         listUpdater.load(query) { result in
@@ -87,8 +87,9 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
+        let channelEndpoint = ChannelQuery(cid: query.cid).endpoint
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
+        AssertAsync.willBeEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.cid.type.rawValue)/\(query.cid.id)/query")
 
         // Simulate successful channel response.
         let dummyChannelPayload = dummyPayload(with: query.cid)
@@ -133,7 +134,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_load_propagatesChannelNetworkError() {
+    func test_load_propagatesChannelNetworkError() throws {
         // Simulate `load` call and catch the error.
         nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.load(query) {
@@ -141,8 +142,9 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
+        let channelEndpoint = ChannelQuery(cid: query.cid).endpoint
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
+        AssertAsync.willBeEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.cid.type.rawValue)/\(query.cid.id)/query")
 
         // Simulate channel response with failure.
         let networkError = TestError()
@@ -152,7 +154,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
 
-    func test_load_propagatesChannelDatabaseError() {
+    func test_load_propagatesChannelDatabaseError() throws {
         // Update database to throw the error.
         let databaseError = TestError()
         database.write_errorResponse = databaseError
@@ -164,8 +166,9 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
+        let channelEndpoint = ChannelQuery(cid: query.cid).endpoint
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
+        AssertAsync.willBeEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.cid.type.rawValue)/\(query.cid.id)/query")
 
         // Simulate channel response with  success.
         apiClient.test_simulateResponse(.success(dummyPayload(with: query.cid)))

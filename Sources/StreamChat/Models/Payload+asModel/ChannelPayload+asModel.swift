@@ -18,13 +18,13 @@ extension ChannelPayload {
         let mappedMembers = members.compactMap { $0.asModel(channelId: channelPayload.cid) }
         
         // Map latest messages
-        let reads = channelReads.map { $0.asModel() }
+        let reads = read?.map { $0.asModel() } ?? []
         let latestMessages = messages.compactMap {
             $0.asModel(cid: channel.cid, currentUserId: currentUserId, channelReads: reads)
         }
         
         // Map reads
-        let mappedReads = channelReads.map { $0.asModel() }
+        let mappedReads = read?.map { $0.asModel() } ?? []
         
         // Map watchers
         let mappedWatchers = watchers?.map { $0.asModel() } ?? []
@@ -39,7 +39,7 @@ extension ChannelPayload {
             deletedAt: channelPayload.deletedAt,
             truncatedAt: channelPayload.truncatedAt,
             truncatedBy: channelPayload.truncatedBy?.asModel(),
-            isHidden: isHidden ?? false,
+            isHidden: hidden ?? false,
             createdBy: channelPayload.createdBy?.asModel(),
             config: channelPayload.config,
             filterTags: Set(channelPayload.filterTags ?? []),
@@ -66,13 +66,13 @@ extension ChannelPayload {
             pinnedMessages: pinnedMessages.compactMap {
                 $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
             },
-            pendingMessages: (pendingMessages ?? []).compactMap {
+            pendingMessages: (pendingMessages?.compactMap(\.message) ?? []).compactMap {
                 $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
             },
             muteDetails: nil,
             draftMessage: nil,
             activeLiveLocations: [],
-            pushPreference: pushPreference
+            pushPreference: pushPreferences
         )
     }
 }
@@ -126,9 +126,9 @@ extension ChannelReadPayload {
     /// - Returns: A ChatChannelRead instance
     func asModel() -> ChatChannelRead {
         ChatChannelRead(
-            lastReadAt: lastReadAt,
+            lastReadAt: lastRead,
             lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount,
+            unreadMessagesCount: unreadMessages,
             user: user.asModel(),
             lastDeliveredAt: lastDeliveredAt,
             lastDeliveredMessageId: lastDeliveredMessageId

@@ -37,3 +37,13 @@ public struct ChannelWatcherListQuery: Encodable, Sendable {
         try container.encode(pagination, forKey: .watchers)
     }
 }
+
+extension ChannelWatcherListQuery {
+    func toRequest() -> ChannelGetOrCreateRequest {
+        ChannelGetOrCreateRequest(
+            state: options.contains(.state),
+            watch: options.contains(.watch),
+            watchers: PaginationParams(limit: pagination.pageSize, offset: pagination.offset)
+        )
+    }
+}

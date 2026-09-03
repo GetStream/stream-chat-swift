@@ -24,37 +24,73 @@ extension ChannelPayload {
         pushPreference: PushPreference? = nil
     ) -> Self {
         .init(
+            activeLiveLocations: activeLiveLocations,
             channel: channel,
-            watcherCount: watcherCount ?? watchers.count,
-            watchers: watchers,
+            draft: draft,
+            hidden: isHidden,
             members: members,
             membership: membership,
             messages: messages,
-            pendingMessages: pendingMessages,
+            pendingMessages: pendingMessages.map { PendingMessageResponse(message: $0) },
             pinnedMessages: pinnedMessages,
-            channelReads: channelReads,
-            isHidden: isHidden,
-            draft: draft,
+            pushPreferences: pushPreference,
+            read: channelReads,
+            watcherCount: watcherCount ?? watchers.count,
+            watchers: watchers
+        )
+    }
+}
+
+extension ChannelPayload {
+    convenience init(
+        channel: ChannelDetailPayload,
+        watcherCount: Int? = nil,
+        watchers: [UserPayload]? = nil,
+        members: [MemberPayload],
+        membership: MemberPayload? = nil,
+        messages: [MessagePayload],
+        pendingMessages: [MessagePayload]? = nil,
+        pinnedMessages: [MessagePayload],
+        channelReads: [ChannelReadPayload],
+        isHidden: Bool? = nil,
+        draft: DraftPayload? = nil,
+        activeLiveLocations: [SharedLocation] = [],
+        pushPreference: PushPreference? = nil
+    ) {
+        self.init(
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            channel: channel,
+            draft: draft,
+            hidden: isHidden,
+            members: members,
+            membership: membership,
+            messages: messages,
+            pendingMessages: pendingMessages?.map { PendingMessageResponse(message: $0) },
+            pinnedMessages: pinnedMessages,
+            pushPreferences: pushPreference,
+            read: channelReads,
+            watcherCount: watcherCount,
+            watchers: watchers
         )
     }
 }
 
 extension ChannelReadPayload {
-    init(
+    convenience init(
         user: UserPayload,
         lastReadAt: Date,
         lastReadMessageId: MessageId? = nil,
-        unreadMessagesCount: Int
+        unreadMessagesCount: Int,
+        lastDeliveredAt: Date? = nil,
+        lastDeliveredMessageId: MessageId? = nil
     ) {
         self.init(
-            user: user,
-            lastReadAt: lastReadAt,
+            lastDeliveredAt: lastDeliveredAt,
+            lastDeliveredMessageId: lastDeliveredMessageId,
+            lastRead: lastReadAt,
             lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount,
-            lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            unreadMessages: unreadMessagesCount,
+            user: user
         )
     }
 }

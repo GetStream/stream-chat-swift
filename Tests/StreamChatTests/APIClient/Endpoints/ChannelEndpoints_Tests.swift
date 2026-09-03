@@ -66,42 +66,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         }
     }
 
-    func test_channel_buildsCorrectly() {
-        let cid = ChannelId(type: .livestream, id: "qwerty")
-
-        func channelQuery(options: QueryOptions) -> ChannelQuery {
-            var query: ChannelQuery = .init(cid: cid)
-            query.options = options
-            return query
-        }
-
-        let testCases: [(ChannelQuery, Bool)] = [
-            (channelQuery(options: .state), true),
-            (channelQuery(options: .presence), true),
-            (channelQuery(options: .watch), true),
-            (channelQuery(options: .all), true),
-            (channelQuery(options: []), false)
-        ]
-
-        for (query, requiresConnectionId) in testCases {
-            let expectedEndpoint =
-                Endpoint<ChannelPayload>(
-                    path: .updateChannel(query.apiPath),
-                    method: .post,
-                    queryItems: nil,
-                    requiresConnectionId: requiresConnectionId,
-                    body: query
-                )
-
-            // Build endpoint
-            let endpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
-
-            // Assert endpoint is built correctly
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path.value)
-        }
-    }
-
     func test_updateChannel_buildsCorrectly() {
         let channelPayload: ChannelEditDetailPayload = .unique
 
@@ -122,28 +86,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
     }
     
-    func test_channelState_buildsCorrectly() {
-        let cid = ChannelId(type: .livestream, id: "qwerty")
-
-        var query: ChannelQuery = .init(cid: cid)
-        query.options = [.state]
-
-        let expectedEndpoint = Endpoint<ChannelPayload>(
-            path: .updateChannel(query.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: query
-        )
-        
-        // Build endpoint
-        let endpoint: Endpoint<ChannelPayload> = .channelState(query: query)
-        
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(query.apiPath)/query", endpoint.path.value)
-    }
-
     func test_partialChannelUpdate_buildsCorrectly() {
         let channelPayload: ChannelEditDetailPayload = .unique
         let unsetProperties = ["user", "clash"]
@@ -496,25 +438,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/stop-watching", endpoint.path.value)
-    }
-
-    func test_channelWatchers_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let pagination = Pagination(pageSize: .random(in: 10...100), offset: .random(in: 10...100))
-        let query = ChannelWatcherListQuery(cid: cid, pagination: pagination)
-
-        let expectedEndpoint = Endpoint<ChannelPayload>(
-            path: .updateChannel(query.cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: true, // Observing watchers always requires connection id
-            body: query
-        )
-
-        let endpoint: Endpoint<ChannelPayload> = .channelWatchers(query: query)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(query.cid.type.rawValue)/\(query.cid.id)/query", endpoint.path.value)
     }
 
     func test_freezeChannel_buildsCorrectly() {

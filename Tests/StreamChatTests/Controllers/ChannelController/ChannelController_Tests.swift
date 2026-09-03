@@ -4131,7 +4131,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_propagatesErrorFromUpdater() throws {
         let payload = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: try XCTUnwrap(payload.read?.first).user.id, role: .user)
 
         // This is needed to determine if the channel needs to be marked as read
         client.setToken(token: .unique(userId: dummyUserPayload.id))
@@ -4161,7 +4161,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_markRead_keepsControllerAlive() throws {
         // GIVEN
         let channel = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
+        let currentUser: CurrentUserPayload = .dummy(userId: try XCTUnwrap(channel.read?.first).user.id, role: .user)
         client.setToken(token: .unique(userId: currentUser.id))
 
         writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in

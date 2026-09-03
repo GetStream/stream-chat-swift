@@ -171,3 +171,46 @@ public enum PaginationParameter: Encodable, Hashable, Sendable {
         }
     }
 }
+
+extension Pagination {
+    func toPaginationParams() -> PaginationParams {
+        PaginationParams(
+            limit: pageSize != .backendDefaultPageSize ? pageSize : nil,
+            offset: offset != 0 ? offset : nil
+        )
+    }
+}
+
+extension MessagesPagination {
+    func toMessagePaginationParams() -> MessagePaginationParams {
+        var idAround: String?
+        var idGt: String?
+        var idGte: String?
+        var idLt: String?
+        var idLte: String?
+
+        switch parameter {
+        case let .around(id):
+            idAround = id
+        case let .greaterThan(id):
+            idGt = id
+        case let .greaterThanOrEqual(id):
+            idGte = id
+        case let .lessThan(id):
+            idLt = id
+        case let .lessThanOrEqual(id):
+            idLte = id
+        case nil:
+            break
+        }
+
+        return MessagePaginationParams(
+            idAround: idAround,
+            idGt: idGt,
+            idGte: idGte,
+            idLt: idLt,
+            idLte: idLte,
+            limit: pageSize
+        )
+    }
+}

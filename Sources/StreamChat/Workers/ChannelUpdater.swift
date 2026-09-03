@@ -60,7 +60,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         let resetMembersAndReads = didLoadFirstPage
         let resetMessages = didLoadFirstPage
         let resetWatchers = didLoadFirstPage
-        let isChannelCreate = onChannelCreated != nil
 
         let completion: @Sendable (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
@@ -117,8 +116,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             }
         }
 
-        let endpoint: Endpoint<ChannelPayload> = isChannelCreate ? .createChannel(query: channelQuery) :
-            .updateChannel(query: channelQuery)
+        let endpoint = channelQuery.endpoint
 
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
@@ -174,7 +172,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             watchersLimit: 0
         )
         channelQuery.options = .state
-        apiClient.request(endpoint: .updateChannel(query: channelQuery)) { [database] result in
+        apiClient.request(endpoint: channelQuery.endpoint) { [database] result in
             nonisolated(unsafe) var paginatedMembers: [ChatChannelMember]?
             switch result {
             case .success(let payload):
@@ -638,8 +636,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let endpoint = Endpoint<ChannelPayload>.updateChannel(query: query)
-        let completion: @Sendable (Result<ChannelPayload, Error>) -> Void = { completion?($0.error) }
+        let endpoint = query.endpoint
+        let completion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { completion?($0.error) }
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
         } else {
@@ -668,7 +666,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: (@Sendable (Result<ChannelPayload, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
+        let endpoint: Endpoint<ChannelStateResponse> = .getOrCreateChannel(
+            type: query.cid.type.rawValue,
+            id: query.cid.id,
+            channelGetOrCreateRequest: query.toRequest(),
+            requiresConnectionId: true
+        )
+        apiClient.request(endpoint: endpoint) { result in
             do {
                 let payload = try result.get()
                 self.database.write { (session) in

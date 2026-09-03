@@ -120,10 +120,6 @@ public struct ChannelQuery: Encodable, Sendable {
     }
 }
 
-extension ChannelQuery: APIPathConvertible {
-    var apiPath: String { cid?.apiPath ?? type.rawValue }
-}
-
 /// An answer for an invite to a channel.
 struct ChannelInvitePayload: Encodable {
     struct Message: Encodable {
@@ -142,4 +138,32 @@ struct ChannelInvitePayload: Encodable {
     let reject: Bool?
     /// Additional message.
     let message: Message?
+}
+
+extension ChannelQuery {
+    var endpoint: Endpoint<ChannelStateResponse> {
+        let request = ChannelGetOrCreateRequest(
+            data: channelPayload?.toChannelInput(),
+            members: membersPagination?.toPaginationParams(),
+            messages: pagination?.toMessagePaginationParams(),
+            presence: options.contains(.presence),
+            state: options.contains(.state),
+            watch: options.contains(.watch),
+            watchers: watchersLimit.map { PaginationParams(limit: $0) }
+        )
+        let requiresConnectionId = options.contains(oneOf: [.presence, .watch])
+        if let id {
+            return .getOrCreateChannel(
+                type: type.rawValue,
+                id: id,
+                channelGetOrCreateRequest: request,
+                requiresConnectionId: requiresConnectionId
+            )
+        }
+        return .getOrCreateDistinctChannel(
+            type: type.rawValue,
+            channelGetOrCreateRequest: request,
+            requiresConnectionId: requiresConnectionId
+        )
+    }
 }
