@@ -237,26 +237,29 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
 
     /// Queries grouped channel groups for the app.
     func queryGroupedChannels(
-        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
-        let request = GroupedQueryChannelsRequestBody(
-            limit: groups == nil ? limit : nil,
+        let request = GroupedQueryChannelsRequest(
             groups: groups,
-            watch: watch,
-            presence: presence
+            limit: groups == nil ? limit : nil,
+            presence: presence,
+            watch: watch
         )
-        let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+        let endpoint: Endpoint<GroupedQueryChannelsResponse> = .groupedQueryChannels(
+            groupedQueryChannelsRequest: request,
+            requiresConnectionId: watch || presence
+        )
         apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
             case let .failure(error):
                 completion(.failure(error))
             case let .success(payload):
                 database.write(converting: { session in
-                    let unreadChannelCountsByGroup = payload.groups.mapValues(\.unreadChannels)
+                    let unreadChannelCountsByGroup = payload.groups.mapValues { $0.unreadChannels ?? 0 }
                     try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
                     var channelGroups: [ChannelGroup] = []
                     for (groupKey, groupPayload) in payload.groups {
@@ -276,7 +279,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         channelGroups.append(ChannelGroup(
                             groupKey: groupKey,
                             channels: channels,
-                            unreadChannels: groupPayload.unreadChannels,
+                            unreadChannels: groupPayload.unreadChannels ?? 0,
                             next: groupPayload.next
                         ))
                     }
@@ -289,7 +292,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     }
 
     func queryGroupedChannels(
-        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
         watch: Bool,
         presence: Bool

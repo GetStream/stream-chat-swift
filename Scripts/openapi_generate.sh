@@ -46,6 +46,7 @@ allowed_endpoints=(
     getReplies
     getUserGroup
     getUserLiveLocations
+    groupedQueryChannels
     hideChannel
     listDevices
     listUserGroups
@@ -141,6 +142,10 @@ allowed_models=(
   GetReactionsResponse
   GetRepliesResponse
   GetUserGroupResponse
+  GroupedChannelsBucket
+  GroupedChannelsGroupRequest
+  GroupedQueryChannelsRequest
+  GroupedQueryChannelsResponse
   HideChannelRequest
   ImageData
   Images
@@ -288,6 +293,8 @@ encodable_only_models=(
   DeliveredMessagePayload
   EventRequest
   FlagRequest
+  GroupedChannelsGroupRequest
+  GroupedQueryChannelsRequest
   HideChannelRequest
   MarkChannelsReadRequest
   MarkReadRequest
@@ -354,6 +361,8 @@ decodable_only_models=(
   GetOGResponse
   GetPinnedMessagesResponse
   GetRepliesResponse
+  GroupedChannelsBucket
+  GroupedQueryChannelsResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -707,6 +716,8 @@ rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
+# Type with matching fields
+rename_generated_type ChannelStateResponseFields ChannelStateResponse
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 rename_generated Attachment MessageAttachmentPayload
 rename_generated ChannelMemberPartialResponse MemberInfoPayload
@@ -1082,7 +1093,6 @@ inject_v1_endpoint_paths() {
     case thread(messageId: MessageId)
 
     case channels
-    case groupedChannels
     case channelUpdate(String)
 
     case message(MessageId)
@@ -1101,7 +1111,6 @@ EOF
             return "threads/\(threadId)"
 
         case .channels: return "channels"
-        case .groupedChannels: return "channels/grouped"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
         case let .message(messageId): return "messages/\(messageId)"

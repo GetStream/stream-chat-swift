@@ -42,30 +42,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         }
     }
 
-    func test_groupedChannels_buildsCorrectly() {
-        let testCases: [(GroupedQueryChannelsRequestBody, Bool)] = [
-            (.init(limit: 10, groups: nil, watch: true, presence: false), true),
-            (.init(limit: 10, groups: nil, watch: false, presence: true), true),
-            (.init(limit: 10, groups: nil, watch: true, presence: true), true),
-            (.init(limit: 10, groups: nil, watch: false, presence: false), false)
-        ]
-
-        for (request, requiresConnectionId) in testCases {
-            let expectedEndpoint = Endpoint<GroupedQueryChannelsPayload>(
-                path: .groupedChannels,
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: requiresConnectionId,
-                body: request
-            )
-
-            let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
-
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual("channels/grouped", endpoint.path.value)
-        }
-    }
-
     func test_updateChannel_buildsCorrectly() {
         let channelPayload: ChannelEditDetailPayload = .unique
 

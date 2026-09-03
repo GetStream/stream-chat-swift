@@ -51,7 +51,7 @@ extension EndpointPath {
              .getReplies,
              .getUserGroup,
              .getUserLiveLocations,
-             .groupedChannels,
+             .groupedQueryChannels,
              .guest,
              .hideChannel,
              .listDevices,

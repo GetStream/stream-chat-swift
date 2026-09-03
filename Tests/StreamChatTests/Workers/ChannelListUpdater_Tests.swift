@@ -475,8 +475,24 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertNil(body["groups"])
     }
 
+    func test_queryGroupedChannels_requiresConnectionIdWhenWatchingOrPresence() throws {
+        let testCases: [(watch: Bool, presence: Bool, requiresConnectionId: Bool)] = [
+            (true, false, true),
+            (false, true, true),
+            (true, true, true),
+            (false, false, false)
+        ]
+
+        for testCase in testCases {
+            listUpdater.queryGroupedChannels(groups: nil, limit: 10, watch: testCase.watch, presence: testCase.presence, completion: { _ in })
+
+            XCTAssertEqual(testCase.requiresConnectionId, apiClient.request_endpoint?.requiresConnectionId)
+            XCTAssertEqual("/api/v2/chat/channels/grouped", apiClient.request_endpoint?.path.value)
+        }
+    }
+
     func test_queryGroupedChannels_paginated_sendsBodyWithGroupsKeyAndCursor() throws {
-        let groupRequests = ["old": GroupedQueryChannelsRequestGroup(limit: 5, next: "old-cursor")]
+        let groupRequests = ["old": GroupedChannelsGroupRequest(limit: 5, next: "old-cursor")]
         listUpdater.queryGroupedChannels(
             groups: groupRequests,
             limit: nil,
@@ -505,12 +521,12 @@ final class ChannelListUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        let groupPayload = GroupedQueryChannelsGroupPayload(
+        let groupPayload = GroupedChannelsBucket(
             channels: [],
-            unreadChannels: 3,
-            next: "next-cursor"
+            next: "next-cursor",
+            unreadChannels: 3
         )
-        let payload = GroupedQueryChannelsPayload(groups: ["current": groupPayload])
+        let payload = GroupedQueryChannelsResponse(groups: ["current": groupPayload])
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -526,14 +542,14 @@ final class ChannelListUpdater_Tests: XCTestCase {
             try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 10, "old": 2])
         }
 
-        let groups = ["old": GroupedQueryChannelsRequestGroup(limit: nil, next: "cursor")]
+        let groups = ["old": GroupedChannelsGroupRequest(limit: nil, next: "cursor")]
         nonisolated(unsafe) var completionCalled = false
         listUpdater.queryGroupedChannels(groups: groups, limit: nil, watch: false, presence: false) { _ in
             completionCalled = true
         }
 
         // Paginated response carries only "old" group.
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: ["old": .init(channels: [], unreadChannels: 99)]
         )
         apiClient.test_simulateResponse(.success(payload))
@@ -561,7 +577,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             completionCalled = true
         }
 
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "new": .init(channels: [], unreadChannels: 5),
                 "current": .init(channels: [], unreadChannels: 10)
@@ -589,7 +605,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "all": .init(channels: allChannels, unreadChannels: 0),
                 "new": .init(channels: newChannels, unreadChannels: 0)
@@ -623,7 +639,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "all": .init(channels: [dummyPayload(with: freshAllCid)], unreadChannels: 0),
                 "new": .init(channels: [dummyPayload(with: freshNewCid)], unreadChannels: 0)
@@ -654,10 +670,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let freshCid = ChannelId(type: .messaging, id: .unique)
         let freshChannels = [self.dummyPayload(with: freshCid)]
 
-        let groups = ["all": GroupedQueryChannelsRequestGroup(limit: nil, next: nil)]
+        let groups = ["all": GroupedChannelsGroupRequest(limit: nil, next: nil)]
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: groups, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: ["all": .init(channels: freshChannels, unreadChannels: 0)]
         )
         apiClient.test_simulateResponse(.success(payload))
@@ -674,10 +690,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
-                "all": .init(channels: [], unreadChannels: 0, next: "all-next", prev: nil),
-                "exhausted": .init(channels: [], unreadChannels: 0, next: nil, prev: nil)
+                "all": .init(channels: [], next: "all-next", prev: nil, unreadChannels: 0),
+                "exhausted": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)
             ]
         )
         apiClient.test_simulateResponse(.success(payload))
@@ -695,10 +711,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: true, presence: true) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
-                "all": .init(channels: [], unreadChannels: 0, next: nil, prev: nil),
-                "current": .init(channels: [], unreadChannels: 0, next: nil, prev: nil)
+                "all": .init(channels: [], next: nil, prev: nil, unreadChannels: 0),
+                "current": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)
             ]
         )
         apiClient.test_simulateResponse(.success(payload))
@@ -719,8 +735,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         // First call with both flags true.
         let firstExp = expectation(description: "first completion called")
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: true, presence: true) { _ in firstExp.fulfill() }
-        let firstPayload = GroupedQueryChannelsPayload(
-            groups: ["all": .init(channels: [], unreadChannels: 0, next: nil, prev: nil)]
+        let firstPayload = GroupedQueryChannelsResponse(
+            groups: ["all": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)]
         )
         apiClient.test_simulateResponse(.success(firstPayload))
         wait(for: [firstExp], timeout: defaultTimeout)
@@ -761,8 +777,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     func test_queryGroupedChannels_specificGroups_sendsPerGroupBody() throws {
         let groups = [
-            "new": GroupedQueryChannelsRequestGroup(limit: 5, next: nil),
-            "current": GroupedQueryChannelsRequestGroup(limit: 5, next: nil)
+            "new": GroupedChannelsGroupRequest(limit: 5, next: nil),
+            "current": GroupedChannelsGroupRequest(limit: 5, next: nil)
         ]
         listUpdater.queryGroupedChannels(
             groups: groups,
@@ -802,12 +818,12 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // "new" → fresh fetch (next: nil), should reset. "current" → continuation (next: "cursor"), should append.
         let groups = [
-            "new": GroupedQueryChannelsRequestGroup(limit: nil, next: nil),
-            "current": GroupedQueryChannelsRequestGroup(limit: nil, next: "cursor")
+            "new": GroupedChannelsGroupRequest(limit: nil, next: nil),
+            "current": GroupedChannelsGroupRequest(limit: nil, next: "cursor")
         ]
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: groups, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "new": .init(channels: [self.dummyPayload(with: freshNewCid)], unreadChannels: 0),
                 "current": .init(channels: [self.dummyPayload(with: freshCurrentCid)], unreadChannels: 0)
@@ -835,10 +851,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let appendedCid = ChannelId(type: .messaging, id: .unique)
         let appendedChannels = [self.dummyPayload(with: appendedCid)]
 
-        let groups = ["all": GroupedQueryChannelsRequestGroup(limit: nil, next: "cursor-1")]
+        let groups = ["all": GroupedChannelsGroupRequest(limit: nil, next: "cursor-1")]
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groups: groups, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: ["all": .init(channels: appendedChannels, unreadChannels: 0)]
         )
         apiClient.test_simulateResponse(.success(payload))
