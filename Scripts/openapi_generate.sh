@@ -314,7 +314,6 @@ decodable_only_models=(
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
-  MemberInfoPayload
   MemberPayload
   MembersResponse
   MessageActionResponse
@@ -375,6 +374,7 @@ codable_models=(
   Device
   GiphyImageData
   GiphyImages
+  MemberInfoPayload
   MemberUserRequest
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings

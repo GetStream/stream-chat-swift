@@ -243,12 +243,3 @@ public struct Command: Codable, Hashable, Sendable {
         self.args = args
     }
 }
-
-extension MemberInfoPayload: Encodable {
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelRole, forKey: .channelRole)
-        try container.encodeIfPresent(custom, forKey: .custom)
-        try container.encode(notificationsMuted, forKey: .notificationsMuted)
-    }
-}
