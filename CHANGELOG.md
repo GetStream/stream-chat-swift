@@ -11,7 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `TypingUser` and `ChatChannel.typingUsers` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 - Add `LivestreamChatState.typingMemberInfos` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 - Add `LivestreamChatState.typingUsersWithMemberInfo` for `TypingUser` values derived from `typingUsers` and `typingMemberInfos` [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add mention parameters to `ChatMessageController.editMessage` and `Chat.updateMessage` [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 ### 🐞 Fixed
+- Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix rare crashes in `DataController.state` [#4248](https://github.com/GetStream/stream-chat-swift/pull/4248)
 ### 🔄 Changed
 - Deprecate `ChatChannelControllerDelegate.channelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
@@ -19,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🐞 Fixed
+- Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
 ### 🔄 Changed
 - Deprecate `ChatMessageListVC.showTypingIndicator(typingUsers:)` taking `[ChatUser]` in favour of the `[TypingUser]` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
