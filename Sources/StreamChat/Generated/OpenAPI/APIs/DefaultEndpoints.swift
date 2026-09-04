@@ -19,7 +19,6 @@ enum EndpointPath: Codable {
     case updateChannel(String)
     case channelUpdate(String)
 
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
@@ -117,7 +116,6 @@ enum EndpointPath: Codable {
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
