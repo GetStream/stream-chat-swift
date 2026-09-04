@@ -386,7 +386,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         extraData: [String: RawJSON]? = nil
     ) async throws {
         try await apiClient.request(
-            endpoint: .flagMessage(with: messageId, reason: reason, extraData: extraData)
+            endpoint: .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
         )
     }
 

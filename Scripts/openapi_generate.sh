@@ -12,6 +12,7 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
     addUserGroupMembers
+    ban
     blockUsers
     castPollVote
     createDevice
@@ -33,6 +34,7 @@ allowed_endpoints=(
     deleteReaction
     deleteReminder
     deleteUserGroup
+    flag
     getApp
     getDraft
     getBlockedUsers
@@ -65,6 +67,7 @@ allowed_endpoints=(
     stopWatchingChannel
     translateMessage
     truncateChannel
+    unban
     unblockUsers
     unmute
     unmuteChannel
@@ -88,6 +91,7 @@ allowed_models=(
   AddUserGroupMembersRequest
   AppResponseFields
   Attachment
+  BanRequest
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
@@ -118,6 +122,7 @@ allowed_models=(
   Field
   FileUploadConfig
   FileUploadResponse
+  FlagRequest
   FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
@@ -247,6 +252,7 @@ allowed_hashable_models=(
 # is Codable which makes the SDK size larger.
 encodable_only_models=(
   AddUserGroupMembersRequest
+  BanRequest
   BlockUsersRequest
   CastPollVoteRequestBody
   ChannelDeliveredRequestPayload
@@ -259,6 +265,7 @@ encodable_only_models=(
   CreateUserGroupRequest
   DeliveredMessagePayload
   EventRequest
+  FlagRequest
   HideChannelRequest
   MessageActionRequest
   MessageRequest
@@ -689,10 +696,13 @@ rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 rename_generated_type DeleteReminderResponse EmptyResponse
 # TODO: EventResponse is not used and would bring in WSEvent
 rename_generated_type EventResponse EmptyResponse
+rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
+rename_generated_type ModerationBanResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
+rename_generated_type UnbanResponse EmptyResponse
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
@@ -735,6 +745,10 @@ remove_property SharedLocation message
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
+# CHA-5068
+remove_property BanRequest ipBan
+remove_property FlagRequest entityCreatorId
+remove_property FlagRequest moderationPayload
 
 # Unused channel context (cid, createdBy, id, type)
 remove_property SendMessageRequest includeChannelContext
@@ -1024,10 +1038,6 @@ inject_v1_endpoint_paths() {
 
     case message(MessageId)
 
-    case banMember
-    case flagUser
-    case flagMessage
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -1056,10 +1066,6 @@ EOF
         case .markAllChannelsRead: return "channels/read"
 
         case let .message(messageId): return "messages/\(messageId)"
-
-        case .banMember: return "moderation/ban"
-        case .flagUser: return "moderation/flag"
-        case .flagMessage: return "moderation/flag"
 
 EOF
 

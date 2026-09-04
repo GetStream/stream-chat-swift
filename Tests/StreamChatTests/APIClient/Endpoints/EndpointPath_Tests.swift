@@ -46,8 +46,8 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.deleteChannel(type: "", id: "").shouldBeQueuedOffline)
     }
 
-    func test_banMember_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
+    func test_ban_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.ban.shouldBeQueuedOffline)
     }
 
     func test_getOG_shouldNOTBeQueuedOffline() {
@@ -260,9 +260,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.deleteReaction(id: "message_id", type: "love"))
         assertResultEncodingAndDecoding(.runMessageAction(id: "message_ida"))
 
-        assertResultEncodingAndDecoding(.banMember)
-        assertResultEncodingAndDecoding(.flagUser)
-        assertResultEncodingAndDecoding(.flagMessage)
+        assertResultEncodingAndDecoding(.ban)
+        assertResultEncodingAndDecoding(.unban)
+        assertResultEncodingAndDecoding(.flag)
         assertResultEncodingAndDecoding(.blockUsers)
         assertResultEncodingAndDecoding(.unblockUsers)
         assertResultEncodingAndDecoding(.getBlockedUsers)

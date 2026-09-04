@@ -17,7 +17,7 @@ extension EndpointPath {
              .updateMessagePartial:
             return true
         case .addUserGroupMembers,
-             .banMember,
+             .ban,
              .blockUsers,
              .castPollVote,
              .channels,
@@ -40,8 +40,7 @@ extension EndpointPath {
              .deletePollVote,
              .deleteReminder,
              .deleteUserGroup,
-             .flagMessage,
-             .flagUser,
+             .flag,
              .getApp,
              .getBlockedUsers,
              .getDraft,
@@ -84,6 +83,7 @@ extension EndpointPath {
              .threads,
              .translateMessage,
              .truncateChannel,
+             .unban,
              .unblockUsers,
              .unmute,
              .unmuteChannel,

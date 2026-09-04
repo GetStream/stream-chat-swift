@@ -549,11 +549,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .flagMessage(
-                with: messageId,
-                reason: reason,
-                extraData: extraData
-            )
+            endpoint: .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
         ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
