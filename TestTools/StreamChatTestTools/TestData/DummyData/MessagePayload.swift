@@ -10,6 +10,7 @@ import XCTest
 typealias MessagePayload = MessageResponse
 typealias PinnedMessagesPayload = GetPinnedMessagesResponse
 typealias MessageRepliesPayload = GetRepliesResponse
+typealias MessageSearchResultsPayload = SearchResponse
 
 extension MessagePayload {
     convenience init(

@@ -80,24 +80,6 @@ extension MessageResponse {
     }
 }
 
-extension SearchResultMessage {
-    /// The boxed form of a search result, matching `{ "message": <message payload> }`.
-    ///
-    /// Replaced by the generated `SearchResult` when the search endpoint moves to v2 (IOS-1836).
-    final class Boxed: Sendable, Decodable {
-        let message: SearchResultMessage
-
-        init(message: SearchResultMessage) {
-            self.message = message
-        }
-    }
-}
-
-struct MessageSearchResultsPayload: Decodable {
-    let results: [SearchResultMessage.Boxed]
-    let next: String?
-}
-
 /// An object describing the outgoing message JSON payload.
 struct MessageRequestBody: Encodable, Sendable {
     let id: String
