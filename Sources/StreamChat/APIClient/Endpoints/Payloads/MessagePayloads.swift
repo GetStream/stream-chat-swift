@@ -25,6 +25,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case quotedMessage = "quoted_message"
     case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
+    case mentionedChannelMembers = "mentioned_channel_members"
     case mentionedHere = "mentioned_here"
     case mentionedChannel = "mentioned_channel"
     case mentionedGroupIds = "mentioned_group_ids"
@@ -77,24 +78,6 @@ extension MessageResponse {
             self.message = message
         }
     }
-}
-
-extension SearchResultMessage {
-    /// The boxed form of a search result, matching `{ "message": <message payload> }`.
-    ///
-    /// Replaced by the generated `SearchResult` when the search endpoint moves to v2 (IOS-1836).
-    final class Boxed: Sendable, Decodable {
-        let message: SearchResultMessage
-
-        init(message: SearchResultMessage) {
-            self.message = message
-        }
-    }
-}
-
-struct MessageSearchResultsPayload: Decodable {
-    let results: [SearchResultMessage.Boxed]
-    let next: String?
 }
 
 /// An object describing the outgoing message JSON payload.
@@ -217,9 +200,6 @@ struct MessageRequestBody: Encodable, Sendable {
         try extraData.encode(to: encoder)
     }
 }
-
-/// An object describing the message list JSON payload.
-typealias MessageRepliesPayload = MessageListPayload
 
 struct MessageListPayload: Decodable {
     let messages: [MessageResponse]

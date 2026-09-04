@@ -633,10 +633,10 @@ extension LivestreamChannelController_Tests {
         controller.delegate = delegate
 
         let typingUser = ChatUser.mock(id: .unique)
-        mockHandler.simulateTypingUsersDidChange([typingUser])
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser)])
 
         AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
-        AssertAsync.willBeEqual(delegate.didChangeTypingUsersCalledWith, [typingUser])
+        AssertAsync.willBeEqual(delegate.didChangeTypingUsersCalledWith, [TypingUser(user: typingUser)])
     }
 }
 
@@ -682,7 +682,7 @@ extension LivestreamChannelController_Tests {
         var didChangeSkippedMessagesAmountCalledWith: Int?
 
         var didChangeTypingUsersCalled = false
-        var didChangeTypingUsersCalledWith: Set<ChatUser>?
+        var didChangeTypingUsersCalledWith: Set<TypingUser>?
 
         func livestreamChannelController(
             _ controller: LivestreamChannelController,
@@ -718,7 +718,7 @@ extension LivestreamChannelController_Tests {
 
         func livestreamChannelController(
             _ controller: LivestreamChannelController,
-            didChangeTypingUsers typingUsers: Set<ChatUser>
+            didChangeTypingUsers typingUsers: Set<TypingUser>
         ) {
             didChangeTypingUsersCalled = true
             didChangeTypingUsersCalledWith = typingUsers
@@ -1110,19 +1110,12 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        let flagPayload = FlagMessagePayload(
-            currentUser: CurrentUserPayload.dummy(userId: .unique, role: .user),
-            flaggedMessageId: messageId
-        )
-        client.mockAPIClient.test_simulateResponse(Result<FlagMessagePayload, Error>.success(flagPayload))
+        let flagPayload = EmptyResponse()
+        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(flagPayload))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            with: messageId,
-            reason: reason,
-            extraData: extraData
-        )
+        let expectedEndpoint = Endpoint<EmptyResponse>.flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(flagError)
     }
@@ -1133,11 +1126,7 @@ extension LivestreamChannelController_Tests {
 
         controller.flag(messageId: messageId) { _ in }
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            with: messageId,
-            reason: nil,
-            extraData: nil
-        )
+        let expectedEndpoint = Endpoint<EmptyResponse>.flag(flagRequest: .init(messageId: messageId, reason: nil, custom: nil))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

@@ -168,7 +168,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         session.markChannelAsUnread(
             for: cid,
             userId: userId,
-            from: .messageId(messageId),
+            from: .init(messageId: messageId),
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
             unreadMessagesCount: unreadMessages

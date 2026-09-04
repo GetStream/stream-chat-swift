@@ -141,6 +141,22 @@ public enum PaginationParameter: Encodable, Hashable, Sendable {
         aroundMessageId != nil
     }
 
+    var messageIdAfterOrEqual: String? {
+        if case let .greaterThanOrEqual(id) = self { id } else { nil }
+    }
+
+    var messageIdAfter: String? {
+        if case let .greaterThan(id) = self { id } else { nil }
+    }
+
+    var messageIdBeforeOrEqual: String? {
+        if case let .lessThanOrEqual(id) = self { id } else { nil }
+    }
+
+    var messageIdBefore: String? {
+        if case let .lessThan(id) = self { id } else { nil }
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 

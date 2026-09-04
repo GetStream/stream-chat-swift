@@ -1393,19 +1393,25 @@ final class ChannelDTO_Tests: XCTestCase {
             let channel = try XCTUnwrap(session.channel(cid: cid))
             let user = try XCTUnwrap(session.user(id: userId))
             channel.currentlyTypingUsers.insert(user)
+            session.saveMemberInfo(
+                payload: MemberInfoPayload(extraData: ["is_premium": .bool(true)]),
+                userId: userId,
+                cid: cid,
+                cache: nil
+            )
         }
 
         // Load the channel
-        func getChannel() throws -> ChatChannel { try channel(with: cid) }
+        func getChannelDTO() throws -> ChannelDTO {
+            try XCTUnwrap(database.viewContext.channel(cid: cid))
+        }
 
-        // Assert channel's currentlyTypingUsers are not empty
-        try XCTAssertFalse(getChannel().currentlyTypingUsers.isEmpty)
+        try XCTAssertFalse(getChannelDTO().currentlyTypingUsers.isEmpty)
 
-        // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
 
-        // Assert channel's currentlyTypingUsers are cleared
-        AssertAsync.willBeTrue((try? getChannel().currentlyTypingUsers.isEmpty) ?? false)
+        AssertAsync.willBeTrue((try? getChannelDTO().currentlyTypingUsers.isEmpty) ?? false)
+        AssertAsync.willBeTrue((try? getChannelDTO().typingMemberInfos.isEmpty) ?? false)
     }
 
     func test_createFromDTO_handlesExtraDataCorrectlyWhenPresent() throws {

@@ -2119,11 +2119,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         let messageId = MessageId.unique
         let lastReadMessageId = MessageId.unique
 
-        channelUpdater.markUnread(cid: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: lastReadMessageId)
+        channelUpdater.markUnread(cid: cid, userId: userId, from: .init(messageId: messageId), lastReadMessageId: lastReadMessageId)
 
         XCTAssertEqual(channelRepository.markUnreadCid, cid)
         XCTAssertEqual(channelRepository.markUnreadUserId, userId)
-        XCTAssertEqual(channelRepository.markUnreadCriteria, .messageId(messageId))
+        XCTAssertEqual(channelRepository.markUnreadRequest, .init(messageId: messageId))
         XCTAssertEqual(channelRepository.markUnreadLastReadMessageId, lastReadMessageId)
     }
 
@@ -2132,7 +2132,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markUnreadResult = .success(.mock(cid: .unique))
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .messageId(.unique), lastReadMessageId: .unique) { result in
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .init(messageId: .unique), lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -2147,7 +2147,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markUnreadResult = .failure(mockedError)
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .messageId(.unique), lastReadMessageId: .unique) { result in
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .init(messageId: .unique), lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }

@@ -56,7 +56,7 @@ class ChannelRepository: @unchecked Sendable {
             case .failure(let dbError):
                 completion?(dbError)
             case .success(let previousReadState):
-                self?.apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] apiResult in
+                self?.apiClient.request(endpoint: .markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest())) { [weak self] apiResult in
                     if let error = apiResult.error {
                         self?.rollbackMarkRead(
                             cid: cid,
@@ -121,18 +121,18 @@ class ChannelRepository: @unchecked Sendable {
     /// - Parameters:
     ///   - cid: The id of the channel to be marked as unread
     ///   - userId: The id of the current user
-    ///   - unreadCriteria: The id or timestamp of the first message that will be marked as unread.
+    ///   - request: The id or timestamp of the first message that will be marked as unread.
     ///   - lastReadMessageId: The id of the last message that was read.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markUnread(
         for cid: ChannelId,
         userId: UserId,
-        from unreadCriteria: MarkUnreadCriteria,
+        from request: MarkUnreadRequest,
         lastReadMessageId: MessageId?,
         completion: (@Sendable (Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .markUnread(cid: cid, payload: .init(criteria: unreadCriteria, userId: userId))
+            endpoint: .markUnread(type: cid.type.rawValue, id: cid.id, markUnreadRequest: request)
         ) { [weak self] result in
             if let error = result.error {
                 completion?(.failure(error))
@@ -144,7 +144,7 @@ class ChannelRepository: @unchecked Sendable {
                 session.markChannelAsUnread(
                     for: cid,
                     userId: userId,
-                    from: unreadCriteria,
+                    from: request,
                     lastReadMessageId: lastReadMessageId,
                     lastReadAt: nil,
                     unreadMessagesCount: nil

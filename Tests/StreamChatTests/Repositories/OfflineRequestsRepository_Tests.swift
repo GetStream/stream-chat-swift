@@ -395,7 +395,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestNotWanted() {
         let endpoint = DataEndpoint(
-            path: .channelEvent("id"),
+            path: .sendEvent(type: "messaging", id: "id"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,

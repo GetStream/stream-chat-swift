@@ -131,8 +131,8 @@ final class MessageSearch_Tests: XCTestCase {
                 )
             }
         return MessageSearchResultsPayload(
-            results: messagePayloads.map { SearchResultMessage.Boxed(message: $0) },
-            next: next
+            next: next,
+            results: messagePayloads.map { SearchResult(message: $0) }
         )
     }
 }

@@ -24,6 +24,13 @@ public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller received a change related to users typing in the channel it observes.
     func channelController(
         _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    )
+
+    /// The controller received a change related to users typing in the channel it observes.
+    @available(*, deprecated, message: "Use `channelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
+    func channelController(
+        _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     )
 }
@@ -43,6 +50,12 @@ public extension ChatChannelControllerDelegate {
 
     func channelController(
         _ channelController: ChatChannelController,
-        didChangeTypingUsers: Set<ChatUser>
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    ) {}
+
+    @available(*, deprecated, message: "Use `channelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {}
 }
