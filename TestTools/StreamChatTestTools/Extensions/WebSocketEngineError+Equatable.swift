@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension WebSocketEngineError: @retroactive Equatable {
+extension WebSocketEngineError: Equatable {
     public static func == (lhs: WebSocketEngineError, rhs: WebSocketEngineError) -> Bool {
         String(describing: lhs) == String(describing: rhs)
     }
