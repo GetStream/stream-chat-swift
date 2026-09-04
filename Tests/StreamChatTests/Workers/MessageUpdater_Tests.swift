@@ -998,9 +998,16 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(paginationStateHandler.endCallCount, 0)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessageRepliesPayload> = .loadReplies(
-            messageId: messageId,
-            pagination: pagination
+        let expectedEndpoint: Endpoint<MessageRepliesPayload> = .getReplies(
+            parentId: messageId,
+            limit: pagination.pageSize,
+            idGte: nil,
+            idGt: nil,
+            idLte: nil,
+            idLt: nil,
+            idAround: nil,
+            sort: nil,
+            memberCustomInclude: nil
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 

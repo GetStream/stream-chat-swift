@@ -29,6 +29,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var language: String?
     @NSManaged var teamsRole: [String: String]?
     @NSManaged var avgResponseTime: NSNumber?
+    @NSManaged var typingIn: ChannelDTO?
 
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {

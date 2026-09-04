@@ -41,6 +41,7 @@ allowed_endpoints=(
     getOG
     getPinnedMessages
     getReactions
+    getReplies
     getUserGroup
     getUserLiveLocations
     hideChannel
@@ -59,6 +60,7 @@ allowed_endpoints=(
     runMessageAction
     searchRoles
     searchUserGroups
+    sendEvent
     sendMessage
     sendReaction
     showChannel
@@ -116,6 +118,7 @@ allowed_models=(
   DeviceResponse
   DraftPayloadResponse
   DraftResponse
+  EventRequest
   Field
   FileUploadConfig
   FileUploadResponse
@@ -127,6 +130,7 @@ allowed_models=(
   GetOGResponse
   GetPinnedMessagesResponse
   GetReactionsResponse
+  GetRepliesResponse
   GetUserGroupResponse
   HideChannelRequest
   ImageData
@@ -177,6 +181,7 @@ allowed_models=(
   Role
   SearchResultMessage
   SearchRolesResponse
+  SendEventRequest
   SendMessageRequest
   SendMessageResponse
   SendReactionRequest
@@ -259,6 +264,7 @@ encodable_only_models=(
   CreateReminderRequest
   CreateUserGroupRequest
   DeliveredMessagePayload
+  EventRequest
   FlagRequest
   HideChannelRequest
   MessageActionRequest
@@ -276,6 +282,7 @@ encodable_only_models=(
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  SendEventRequest
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
@@ -317,11 +324,11 @@ decodable_only_models=(
   GetDraftResponse
   GetOGResponse
   GetPinnedMessagesResponse
+  GetRepliesResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
-  MemberInfoPayload
   MemberPayload
   MembersResponse
   MessageActionResponse
@@ -382,6 +389,7 @@ codable_models=(
   Device
   GiphyImageData
   GiphyImages
+  MemberInfoPayload
   MemberUserRequest
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
@@ -686,6 +694,8 @@ rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
 rename_generated_type DeleteReminderResponse EmptyResponse
+# TODO: EventResponse is not used and would bring in WSEvent
+rename_generated_type EventResponse EmptyResponse
 rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
@@ -1025,10 +1035,8 @@ inject_v1_endpoint_paths() {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case channelEvent(String)
 
     case message(MessageId)
-    case replies(MessageId)
 
 EOF
 
@@ -1056,10 +1064,8 @@ EOF
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
         case let .message(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
 
 EOF
 

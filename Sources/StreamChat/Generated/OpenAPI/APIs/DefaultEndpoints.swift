@@ -24,10 +24,8 @@ enum EndpointPath: Codable {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
-    case channelEvent(String)
 
     case message(MessageId)
-    case replies(MessageId)
 
     case addUserGroupMembers(id: String)
     case ban
@@ -59,6 +57,7 @@ enum EndpointPath: Codable {
     case getOG
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
+    case getReplies(parentId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
     case hideChannel(type: String, id: String)
@@ -77,6 +76,7 @@ enum EndpointPath: Codable {
     case runMessageAction(id: String)
     case searchRoles
     case searchUserGroups
+    case sendEvent(type: String, id: String)
     case sendMessage(type: String, id: String)
     case sendReaction(id: String)
     case showChannel(type: String, id: String)
@@ -127,10 +127,8 @@ enum EndpointPath: Codable {
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
         case let .message(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
@@ -192,6 +190,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case let .getReplies(parentId: parentId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(parentId))/replies"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
@@ -228,6 +228,8 @@ enum EndpointPath: Codable {
             return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
+        case let .sendEvent(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/event"
         case let .sendMessage(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
         case let .sendReaction(id: id):
@@ -789,6 +791,39 @@ extension Endpoint {
         )
     }
 
+    static func getReplies(
+        parentId: String,
+        limit: Int?,
+        idGte: String?,
+        idGt: String?,
+        idLte: String?,
+        idLt: String?,
+        idAround: String?,
+        sort: [SortParamRequest]?,
+        memberCustomInclude: [String]?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetRepliesResponse> {
+        return .init(
+            path: .getReplies(parentId: parentId),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "id_gte": idGte,
+                "id_gt": idGt,
+                "id_lte": idLte,
+                "id_lt": idLt,
+                "id_around": idAround,
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) },
+                "member_custom_include": memberCustomInclude
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func getUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .getUserGroup(id: id),
@@ -1048,6 +1083,21 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func sendEvent(
+        type: String,
+        id: String,
+        sendEventRequest: SendEventRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .sendEvent(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendEventRequest
         )
     }
 

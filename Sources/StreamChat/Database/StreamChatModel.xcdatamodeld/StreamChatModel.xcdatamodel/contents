@@ -72,6 +72,7 @@
         <relationship name="config" maxCount="1" deletionRule="Cascade" destinationEntity="ChannelConfigDTO" inverseName="channel" inverseEntity="ChannelConfigDTO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="currentlyTypingUsers" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="typingIn" inverseEntity="UserDTO"/>
+        <relationship name="typingMemberInfos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MemberInfoDTO" inverseName="channel" inverseEntity="MemberInfoDTO"/>
         <relationship name="draftMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="draftOfChannel" inverseEntity="MessageDTO"/>
         <relationship name="memberListQueries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="channel" inverseEntity="ChannelMemberListQueryDTO"/>
         <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="channel" inverseEntity="MemberDTO"/>
@@ -269,6 +270,7 @@
         <attribute name="memberExtraData" optional="YES" attributeType="Binary"/>
         <attribute name="memberNotificationsMuted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="mentionedChannel" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="mentionedChannelMembersData" optional="YES" attributeType="Binary"/>
         <attribute name="mentionedGroupIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="mentionedHere" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="mentionedRoles" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
@@ -594,6 +596,13 @@
         <attribute name="unreadMessagesCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="thread" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ThreadDTO" inverseName="read" inverseEntity="ThreadDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="threadReads" inverseEntity="UserDTO"/>
+    </entity>
+    <entity name="MemberInfoDTO" representedClassName="MemberInfoDTO" syncable="YES">
+        <attribute name="channelRoleRaw" optional="YES" attributeType="String"/>
+        <attribute name="extraData" optional="YES" attributeType="Binary"/>
+        <attribute name="notificationsMuted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="userId" attributeType="String"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="typingMemberInfos" inverseEntity="ChannelDTO"/>
     </entity>
     <entity name="UserDTO" representedClassName="UserDTO" syncable="YES">
         <attribute name="avgResponseTime" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>

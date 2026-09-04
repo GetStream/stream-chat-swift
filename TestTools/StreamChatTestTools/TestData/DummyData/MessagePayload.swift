@@ -9,6 +9,7 @@ import XCTest
 /// The generated model is `MessageResponse`; tests keep the historical name.
 typealias MessagePayload = MessageResponse
 typealias PinnedMessagesPayload = GetPinnedMessagesResponse
+typealias MessageRepliesPayload = GetRepliesResponse
 
 extension MessagePayload {
     convenience init(
@@ -27,6 +28,7 @@ extension MessagePayload {
         quotedMessageId: String? = nil,
         quotedMessage: MessagePayload? = nil,
         mentionedUsers: [UserPayload],
+        mentionedChannelMembers: [UserId: MemberInfoPayload]? = nil,
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
         mentionedGroups: [UserGroup] = [],
@@ -83,6 +85,7 @@ extension MessagePayload {
             latestReactions: latestReactions,
             member: member,
             mentionedChannel: mentionedChannel,
+            mentionedChannelMembers: mentionedChannelMembers,
             mentionedGroups: mentionedGroups,
             mentionedHere: mentionedHere,
             mentionedRoles: mentionedRoles,
@@ -156,6 +159,7 @@ extension MessagePayload {
         originalLanguage: String? = nil,
         moderation: MessageModerationDetailsPayload? = nil,
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
+        mentionedChannelMembers: [UserId: MemberInfoPayload]? = nil,
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
         mentionedGroups: [UserGroup] = [],
@@ -185,6 +189,7 @@ extension MessagePayload {
             quotedMessageId: quotedMessageId,
             quotedMessage: quotedMessage,
             mentionedUsers: mentionedUsers,
+            mentionedChannelMembers: mentionedChannelMembers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
             mentionedGroups: mentionedGroups,
@@ -230,6 +235,20 @@ extension MessagePayload {
 extension MessagePayload {
     func attachmentIDs(cid: ChannelId) -> [AttachmentId] {
         attachments.enumerated().map { .init(cid: cid, messageId: id, index: $0.offset) }
+    }
+}
+
+extension MemberInfoPayload {
+    convenience init(
+        channelRole: MemberRole? = nil,
+        extraData: [String: RawJSON] = [:],
+        notificationsMuted: Bool = false
+    ) {
+        self.init(
+            channelRole: channelRole?.rawChannelValue ?? "channel_member",
+            custom: extraData,
+            notificationsMuted: notificationsMuted
+        )
     }
 }
 
