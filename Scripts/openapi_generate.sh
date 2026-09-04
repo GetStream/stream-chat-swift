@@ -155,7 +155,6 @@ allowed_models=(
   MessageActionResponse
   MessageRequest
   MessageResponse
-  MessageWithChannelResponse
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
@@ -356,7 +355,6 @@ decodable_only_models=(
   MessageReactionPayload
   MessageReactionsPayload
   MessageResponse
-  MessageWithChannelResponse
   MuteResponse
   MutedChannelPayload
   MutedChannelPayloadResponse
@@ -799,7 +797,6 @@ require_property SearchResult message
 
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessageResponse reactionCounts
-optionalize_property MessageWithChannelResponse reactionCounts
 optionalize_property SearchResultMessage reactionCounts
 
 remove_type() {

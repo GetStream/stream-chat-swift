@@ -1147,7 +1147,14 @@ final class Chat_Tests: XCTestCase {
         
         let messageId = String.unique
         let messagePayload = try XCTUnwrap(makeChannelPayload(messageCount: 1, createdAtOffset: 0).messages.first)
-        let apiResponse = GetMessageResponse.dummy(message: .dummy(message: messagePayload))
+        let apiResponse = GetMessageResponse.dummy(
+            message: .dummy(
+                messageId: messagePayload.id,
+                authorUserId: messagePayload.user.id,
+                cid: channelId,
+                createdAt: messagePayload.createdAt
+            )
+        )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let messageState = try await chat.messageState(for: messageId)
         

@@ -471,23 +471,6 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.mentionedRoles, ["admin"])
     }
 
-    func test_messageResponse_savesEmbeddedChannel_whenChannelIsNotInDB() throws {
-        let messageId: MessageId = .unique
-        let channelId: ChannelId = .unique
-        let response = MessageWithChannelResponse.dummy(
-            channel: .dummy(cid: channelId),
-            message: .dummy(messageId: messageId, authorUserId: .unique, cid: channelId)
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveMessage(response: response, syncOwnReactions: true, skipDraftUpdate: false, cache: nil)
-        }
-
-        let loadedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertEqual(channelId.rawValue, loadedMessage.channel?.cid)
-        XCTAssertNotNil(database.viewContext.channel(cid: channelId))
-    }
-
     func test_messagePayload_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
