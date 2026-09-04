@@ -28,7 +28,6 @@ extension EndpointPath: @retroactive Equatable {
         case let (.markRead(type1, id1), .markRead(type2, id2)): return type1 == type2 && id1 == id2
         case let (.markUnread(type1, id1), .markUnread(type2, id2)): return type1 == type2 && id1 == id2
         case (.markChannelsRead, .markChannelsRead): return true
-        case let (.channelEvent(string1), .channelEvent(string2)): return string1 == string2
         case let (.stopWatchingChannel(type1, id1), .stopWatchingChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.getPinnedMessages(type1, id1), .getPinnedMessages(type2, id2)): return type1 == type2 && id1 == id2
         case let (.sendMessage(type1, id1), .sendMessage(type2, id2)): return type1 == type2 && id1 == id2
@@ -37,7 +36,7 @@ extension EndpointPath: @retroactive Equatable {
         case let (.updateMessagePartial(messageId1), .updateMessagePartial(messageId2)): return messageId1 == messageId2
         case let (.createDraft(type1, id1), .createDraft(type2, id2)): return type1 == type2 && id1 == id2
         case let (.deleteMessage(messageId1), .deleteMessage(messageId2)): return messageId1 == messageId2
-        case let (.replies(messageId1), .replies(messageId2)): return messageId1 == messageId2
+        case let (.getReplies(parentId1), .getReplies(parentId2)): return parentId1 == parentId2
         case let (.getReactions(messageId1), .getReactions(messageId2)): return messageId1 == messageId2
         case let (.queryReactions(messageId1), .queryReactions(messageId2)): return messageId1 == messageId2
         case let (.sendReaction(messageId1), .sendReaction(messageId2)): return messageId1 == messageId2
@@ -46,9 +45,9 @@ extension EndpointPath: @retroactive Equatable {
             .deleteReaction(messageId2, type2)
         ): return messageId1 == messageId2 && type1 == type2
         case let (.runMessageAction(id1), .runMessageAction(id2)): return id1 == id2
-        case (.banMember, .banMember): return true
-        case (.flagUser, .flagUser): return true
-        case (.flagMessage, .flagMessage): return true
+        case (.ban, .ban): return true
+        case (.flag, .flag): return true
+        case (.unban, .unban): return true
         default: return false
         }
     }

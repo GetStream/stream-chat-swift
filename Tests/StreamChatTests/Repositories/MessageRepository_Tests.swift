@@ -224,6 +224,28 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertNil(message?.localState)
     }
 
+    func test_saveSuccessfullySentMessage_appliesMentionedChannelMembersFromPayload() throws {
+        let id = MessageId.unique
+        let mentionedUser = UserPayload.dummy(userId: "u2", name: "Martin")
+        try createMessage(id: id, localState: .sending)
+        let payload = MessagePayload.dummy(
+            messageId: id,
+            authorUserId: .anonymous,
+            cid: cid,
+            mentionedUsers: [mentionedUser],
+            mentionedChannelMembers: [
+                "u2": MemberInfoPayload(
+                    channelRole: .member,
+                    extraData: ["is_premium": .bool(true)]
+                )
+            ]
+        )
+
+        let message = runSaveSuccessfullySentMessageAndWait(payload: payload)
+
+        XCTAssertEqual(message?.mentionedChannelMembers["u2"]?.extraData["is_premium"], .bool(true))
+    }
+
     func test_saveSuccessfullySentMessage_channelPayload_sendingFailed() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .sendingFailed)

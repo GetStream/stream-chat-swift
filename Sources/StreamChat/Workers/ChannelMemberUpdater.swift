@@ -116,7 +116,15 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
+            endpoint: .ban(
+                banRequest: BanRequest(
+                    channelCid: cid.rawValue,
+                    reason: reason,
+                    shadow: shadow,
+                    targetUserId: userId,
+                    timeout: timeoutInMinutes
+                )
+            )
         ) {
             completion?($0.error)
         }
@@ -132,7 +140,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         in cid: ChannelId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .unbanMember(userId, cid: cid)) {
+        apiClient.request(endpoint: .unban(targetUserId: userId, channelCid: cid.rawValue)) {
             completion?($0.error)
         }
     }

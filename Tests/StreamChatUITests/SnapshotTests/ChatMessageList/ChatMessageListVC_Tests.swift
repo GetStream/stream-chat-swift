@@ -1342,6 +1342,27 @@ import XCTest
 
         XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
     }
+
+    func test_showTypingIndicator_typingUsers_invokesOverridableChatUserOverload() {
+        final class ChatUserTypingIndicatorOverrideVC: ChatMessageListVC {
+            var showTypingIndicatorChatUsersCallCount = 0
+            var showTypingIndicatorChatUsersCalledWith: [ChatUser]?
+
+            @available(*, deprecated)
+            override func showTypingIndicator(typingUsers: [ChatUser]) {
+                showTypingIndicatorChatUsersCallCount += 1
+                showTypingIndicatorChatUsersCalledWith = typingUsers
+            }
+        }
+
+        let vc = ChatUserTypingIndicatorOverrideVC()
+        let user = ChatUser.mock(id: .unique, name: "Martin")
+
+        vc.showTypingIndicator(typingUsers: [TypingUser(user: user)])
+
+        XCTAssertEqual(vc.showTypingIndicatorChatUsersCallCount, 1)
+        XCTAssertEqual(vc.showTypingIndicatorChatUsersCalledWith, [user])
+    }
 }
 
 class AttachmentViewCatalog_Mock: AttachmentViewCatalog {

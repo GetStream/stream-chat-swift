@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MemberInfoPayload: Sendable, Decodable {
+final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
     /// Role of the member in the channel
     let channelRole: String
     /// Channel-member custom fields projected via `member_custom_include`

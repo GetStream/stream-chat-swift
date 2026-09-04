@@ -9,7 +9,7 @@ import UIKit
 
 /// A custom message list view controller for livestream channels that uses LivestreamChannelController
 /// instead of MessageController and shows a custom bottom sheet for message actions.
-class DemoLivestreamChatMessageListVC: ChatMessageListVC {
+class DemoLivestreamChatMessageListVC: DemoChatMessageListVC {
     public weak var livestreamChannelController: LivestreamChannelController?
 
     override func didSelectMessageCell(at indexPath: IndexPath) {

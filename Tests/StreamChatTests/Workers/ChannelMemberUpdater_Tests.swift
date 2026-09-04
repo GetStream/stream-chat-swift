@@ -52,7 +52,15 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         XCTAssertEqual(
             apiClient.request_endpoint,
             AnyEndpoint(
-                .banMember(userId, cid: cid, shadow: false, timeoutInMinutes: timeoutInMinutes, reason: reason)
+                .ban(
+                    banRequest: BanRequest(
+                        channelCid: cid.rawValue,
+                        reason: reason,
+                        shadow: false,
+                        targetUserId: userId,
+                        timeout: timeoutInMinutes
+                    )
+                )
             )
         )
     }
@@ -100,7 +108,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.unbanMember(userId, in: cid)
 
         // Assert correct endpoint is called
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.unbanMember(userId, cid: cid)))
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.unban(targetUserId: userId, channelCid: cid.rawValue)))
     }
 
     func test_unbanMember_propagatesSuccessfulResponse() {

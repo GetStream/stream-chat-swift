@@ -395,13 +395,13 @@ class DemoLivestreamChatChannelVC: _ViewController,
 
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
+        didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {
         guard controller.channel?.canSendTypingEvents == true else { return }
 
         let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client.currentUserId }
+            .sorted { $0.user.id < $1.user.id }
+            .filter { $0.user.id != self.client.currentUserId }
 
         if typingUsersWithoutCurrentUser.isEmpty {
             messageListVC.hideTypingIndicator()

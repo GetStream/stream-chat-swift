@@ -481,6 +481,15 @@ protocol MemberDatabaseSession {
 
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
+
+    /// Saves slim channel-member info for the given user in the channel with `cid`.
+    @discardableResult
+    func saveMemberInfo(
+        payload: MemberInfoPayload,
+        userId: UserId,
+        cid: ChannelId,
+        cache: PreWarmedCache?
+    ) -> MemberInfoDTO
 }
 
 protocol MemberListQueryDatabaseSession {

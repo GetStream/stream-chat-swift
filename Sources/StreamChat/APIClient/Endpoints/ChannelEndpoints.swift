@@ -173,57 +173,19 @@ extension Endpoint {
         )
     }
 
-    static func sendEvent(cid: ChannelId, eventType: EventType) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .channelEvent(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["event": ["type": eventType]]
-        )
-    }
-
-    static func sendEvent<Payload: CustomEventPayload>(_ payload: Payload, cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .channelEvent(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["event": CustomEventRequestBody(payload: payload)]
-        )
-    }
-
     static func startTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
-        let eventType = EventType.userStartTyping
-        let body: Encodable & Sendable
-        if let parentMessageId = parentMessageId {
-            body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
-        } else {
-            body = ["event": ["type": eventType]]
-        }
-        return .init(
-            path: .channelEvent(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: body
+        .sendEvent(
+            type: cid.type.rawValue,
+            id: cid.id,
+            sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue))
         )
     }
 
     static func stopTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
-        let eventType = EventType.userStopTyping
-        let body: Encodable & Sendable
-        if let parentMessageId = parentMessageId {
-            body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
-        } else {
-            body = ["event": ["type": eventType]]
-        }
-        return .init(
-            path: .channelEvent(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: body
+        .sendEvent(
+            type: cid.type.rawValue,
+            id: cid.id,
+            sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue))
         )
     }
 

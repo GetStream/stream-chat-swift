@@ -19,16 +19,11 @@ enum EndpointPath: Codable {
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case channelEvent(String)
 
     case message(MessageId)
-    case replies(MessageId)
-
-    case banMember
-    case flagUser
-    case flagMessage
 
     case addUserGroupMembers(id: String)
+    case ban
     case blockUsers
     case castPollVote(messageId: String, pollId: String)
     case createDevice
@@ -50,12 +45,14 @@ enum EndpointPath: Codable {
     case deleteReaction(id: String, type: String)
     case deleteReminder(messageId: String)
     case deleteUserGroup(id: String)
+    case flag
     case getApp
     case getBlockedUsers
     case getDraft(type: String, id: String)
     case getOG
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
+    case getReplies(parentId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
     case hideChannel(type: String, id: String)
@@ -77,12 +74,14 @@ enum EndpointPath: Codable {
     case runMessageAction(id: String)
     case searchRoles
     case searchUserGroups
+    case sendEvent(type: String, id: String)
     case sendMessage(type: String, id: String)
     case sendReaction(id: String)
     case showChannel(type: String, id: String)
     case stopWatchingChannel(type: String, id: String)
     case translateMessage(id: String)
     case truncateChannel(type: String, id: String)
+    case unban
     case unblockUsers
     case unmute
     case unmuteChannel
@@ -119,17 +118,13 @@ enum EndpointPath: Codable {
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
 
         case let .message(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
-
-        case .banMember: return "moderation/ban"
-        case .flagUser: return "moderation/flag"
-        case .flagMessage: return "moderation/flag"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
+        case .ban:
+            return "/api/v2/moderation/ban"
         case .blockUsers:
             return "/api/v2/users/block"
         case let .castPollVote(messageId: messageId, pollId: pollId):
@@ -172,6 +167,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
+        case .flag:
+            return "/api/v2/moderation/flag"
         case .getApp:
             return "/api/v2/app"
         case .getBlockedUsers:
@@ -184,6 +181,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case let .getReplies(parentId: parentId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(parentId))/replies"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
@@ -226,6 +225,8 @@ enum EndpointPath: Codable {
             return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
+        case let .sendEvent(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/event"
         case let .sendMessage(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
         case let .sendReaction(id: id):
@@ -238,6 +239,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
         case let .truncateChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/truncate"
+        case .unban:
+            return "/api/v2/moderation/unban"
         case .unblockUsers:
             return "/api/v2/users/unblock"
         case .unmute:
@@ -363,6 +366,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: addUserGroupMembersRequest
+        )
+    }
+
+    static func ban(banRequest: BanRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .ban,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: banRequest
         )
     }
 
@@ -652,6 +665,16 @@ extension Endpoint {
         )
     }
 
+    static func flag(flagRequest: FlagRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .flag,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: flagRequest
+        )
+    }
+
     static func getApp(requiresConnectionId: Bool = false) -> Endpoint<GetApplicationResponse> {
         return .init(
             path: .getApp,
@@ -759,6 +782,39 @@ extension Endpoint {
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "limit": limit,
                 "offset": offset
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getReplies(
+        parentId: String,
+        limit: Int?,
+        idGte: String?,
+        idGt: String?,
+        idLte: String?,
+        idLt: String?,
+        idAround: String?,
+        sort: [SortParamRequest]?,
+        memberCustomInclude: [String]?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetRepliesResponse> {
+        return .init(
+            path: .getReplies(parentId: parentId),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "id_gte": idGte,
+                "id_gt": idGt,
+                "id_lte": idLte,
+                "id_lt": idLt,
+                "id_around": idAround,
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) },
+                "member_custom_include": memberCustomInclude
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -1070,6 +1126,21 @@ extension Endpoint {
         )
     }
 
+    static func sendEvent(
+        type: String,
+        id: String,
+        sendEventRequest: SendEventRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .sendEvent(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendEventRequest
+        )
+    }
+
     static func sendMessage(
         type: String,
         id: String,
@@ -1145,6 +1216,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: truncateChannelRequest
+        )
+    }
+
+    static func unban(targetUserId: String, channelCid: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .unban,
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "target_user_id": targetUserId,
+                "channel_cid": channelCid
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 
