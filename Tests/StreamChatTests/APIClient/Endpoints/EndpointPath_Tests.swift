@@ -46,8 +46,8 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.deleteChannel(type: "", id: "").shouldBeQueuedOffline)
     }
 
-    func test_banMember_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
+    func test_ban_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.ban.shouldBeQueuedOffline)
     }
 
     func test_getOG_shouldNOTBeQueuedOffline() {
@@ -239,10 +239,11 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.hideChannel(type: "messaging", id: "channel_id"))
         assertResultEncodingAndDecoding(.showChannel(type: "messaging", id: "channel_id"))
         assertResultEncodingAndDecoding(.truncateChannel(type: "messaging", id: "channel_idq"))
-        assertResultEncodingAndDecoding(.markChannelRead("channel_idq"))
-        assertResultEncodingAndDecoding(.markAllChannelsRead)
+        assertResultEncodingAndDecoding(.markRead(type: "messaging", id: "channel_idq"))
+        assertResultEncodingAndDecoding(.markUnread(type: "messaging", id: "channel_idq"))
+        assertResultEncodingAndDecoding(.markChannelsRead)
         assertResultEncodingAndDecoding(.markDelivered)
-        assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
+        assertResultEncodingAndDecoding(.sendEvent(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.stopWatchingChannel(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.getPinnedMessages(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
@@ -253,16 +254,16 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
         assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))
         assertResultEncodingAndDecoding(.deleteMessage(id: "message_idd"))
-        assertResultEncodingAndDecoding(.replies("message_idr"))
+        assertResultEncodingAndDecoding(.getReplies(parentId: "message_idr"))
         assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))
         assertResultEncodingAndDecoding(.sendReaction(id: "message_ida"))
         assertResultEncodingAndDecoding(.deleteReaction(id: "message_id", type: "love"))
         assertResultEncodingAndDecoding(.runMessageAction(id: "message_ida"))
 
-        assertResultEncodingAndDecoding(.banMember)
-        assertResultEncodingAndDecoding(.flagUser)
-        assertResultEncodingAndDecoding(.flagMessage)
+        assertResultEncodingAndDecoding(.ban)
+        assertResultEncodingAndDecoding(.unban)
+        assertResultEncodingAndDecoding(.flag)
         assertResultEncodingAndDecoding(.blockUsers)
         assertResultEncodingAndDecoding(.unblockUsers)
         assertResultEncodingAndDecoding(.getBlockedUsers)

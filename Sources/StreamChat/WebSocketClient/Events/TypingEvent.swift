@@ -15,6 +15,14 @@ public final class TypingEvent: ChannelSpecificEvent {
     /// The user who changed the typing state.
     public let user: ChatUser
 
+    /// Slim channel-member information attached to the typing event, when available.
+    public let memberInfo: ChatMemberInfo?
+
+    /// The typing user together with optional member info from the event.
+    public var typingUser: TypingUser {
+        TypingUser(user: user, memberInfo: memberInfo)
+    }
+
     /// If typing event happened in the message thread, this field contains thread root message identifier.
     public let parentId: MessageId?
 
@@ -24,10 +32,18 @@ public final class TypingEvent: ChannelSpecificEvent {
     /// `true` if typing event happened in the message thread.
     public var isThread: Bool { parentId != nil }
 
-    init(isTyping: Bool, cid: ChannelId, user: ChatUser, parentId: MessageId?, createdAt: Date) {
+    init(
+        isTyping: Bool,
+        cid: ChannelId,
+        user: ChatUser,
+        memberInfo: ChatMemberInfo? = nil,
+        parentId: MessageId?,
+        createdAt: Date
+    ) {
         self.isTyping = isTyping
         self.cid = cid
         self.user = user
+        self.memberInfo = memberInfo
         self.parentId = parentId
         self.createdAt = createdAt
     }
@@ -35,6 +51,7 @@ public final class TypingEvent: ChannelSpecificEvent {
 
 final class TypingEventDTO: EventDTO {
     let user: UserPayload
+    let member: MemberInfoPayload?
     let cid: ChannelId
     let isTyping: Bool
     let parentId: MessageId?
@@ -45,6 +62,7 @@ final class TypingEventDTO: EventDTO {
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         user = try response.value(at: \.user)
+        member = response.memberInfo
         createdAt = try response.value(at: \.createdAt)
         isTyping = response.eventType == .userStartTyping
         parentId = try? response.value(at: \.parentId)
@@ -52,12 +70,11 @@ final class TypingEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
-
-        return try? TypingEvent(
+        TypingEvent(
             isTyping: isTyping,
             cid: cid,
-            user: userDTO.asModel(),
+            user: user.asModel(),
+            memberInfo: member?.asModel(),
             parentId: parentId,
             createdAt: createdAt
         )

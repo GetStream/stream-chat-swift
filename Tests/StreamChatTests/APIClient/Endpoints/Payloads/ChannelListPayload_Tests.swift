@@ -699,6 +699,7 @@ final class ChannelPayload_Tests: XCTestCase {
         let chatChannel = payload.asModel(
             currentUserId: currentUserId,
             currentlyTypingUsers: typingUsers,
+            typingUsers: nil,
             unreadCount: unreadCount
         )
         
@@ -793,6 +794,7 @@ final class ChannelPayload_Tests: XCTestCase {
         let chatChannel = payload.asModel(
             currentUserId: currentUserId,
             currentlyTypingUsers: nil,
+            typingUsers: nil,
             unreadCount: nil
         )
         

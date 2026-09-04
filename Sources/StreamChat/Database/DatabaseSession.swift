@@ -282,7 +282,7 @@ protocol MessageDatabaseSession {
     /// Saves the message results from the search payload to the DB. Return's the `MessageDTO`s if the save was successful.
     /// Ignores messages that could not be saved
     @discardableResult
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO]
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO]
 
     /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
     /// to avoid those from being stuck there in limbo.
@@ -442,7 +442,7 @@ protocol ChannelReadDatabaseSession {
     func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
-        from unreadCriteria: MarkUnreadCriteria,
+        from request: MarkUnreadRequest,
         lastReadMessageId: MessageId?,
         lastReadAt: Date?,
         unreadMessagesCount: Int?
@@ -489,6 +489,15 @@ protocol MemberDatabaseSession {
 
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
+
+    /// Saves slim channel-member info for the given user in the channel with `cid`.
+    @discardableResult
+    func saveMemberInfo(
+        payload: MemberInfoPayload,
+        userId: UserId,
+        cid: ChannelId,
+        cache: PreWarmedCache?
+    ) -> MemberInfoDTO
 }
 
 protocol MemberListQueryDatabaseSession {

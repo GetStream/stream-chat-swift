@@ -44,22 +44,4 @@ extension SearchResultMessage {
             user: .dummy(userId: authorUserId)
         )
     }
-
-    static func boxed(
-        messageId: MessageId = .unique,
-        text: String = .unique,
-        cid: ChannelId = .unique,
-        channel: ChannelDetailPayload? = nil,
-        createdAt: Date = .unique
-    ) -> SearchResultMessage.Boxed {
-        SearchResultMessage.Boxed(
-            message: .dummy(
-                messageId: messageId,
-                text: text,
-                cid: cid,
-                channel: channel,
-                createdAt: createdAt
-            )
-        )
-    }
 }

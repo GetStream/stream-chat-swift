@@ -340,7 +340,7 @@ class MessageRepository: @unchecked Sendable {
 
     /// Fetches a message id before the specified message when sorting by the creation date in the local database.
     func getMessage(
-        before unreadCriteria: MarkUnreadCriteria,
+        before request: MarkUnreadRequest,
         in cid: ChannelId,
         completion: @escaping @Sendable (Result<MessageId?, Error>) -> Void
     ) {
@@ -349,8 +349,7 @@ class MessageRepository: @unchecked Sendable {
             let clientConfig = context.chatClientConfig
             let shouldShowShadowedMessages = clientConfig?.shouldShowShadowedMessages ?? false
             do {
-                switch unreadCriteria {
-                case .messageId(let messageId):
+                if let messageId = request.messageId {
                     let resultId = try MessageDTO.loadMessage(
                         before: messageId,
                         cid: cid.rawValue,
@@ -358,7 +357,7 @@ class MessageRepository: @unchecked Sendable {
                         context: context
                     )?.id
                     completion(.success(resultId))
-                case .messageTimestamp(let messageTimestamp):
+                } else if let messageTimestamp = request.messageTimestamp {
                     let resultId = try MessageDTO.loadMessage(
                         beforeOrEqual: messageTimestamp,
                         cid: cid.rawValue,
@@ -366,6 +365,8 @@ class MessageRepository: @unchecked Sendable {
                         context: context
                     )?.id
                     completion(.success(resultId))
+                } else {
+                    completion(.success(nil))
                 }
             } catch {
                 completion(.failure(error))
