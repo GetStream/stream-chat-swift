@@ -9,6 +9,8 @@ import XCTest
 /// The generated model is `MessageResponse`; tests keep the historical name.
 typealias MessagePayload = MessageResponse
 typealias PinnedMessagesPayload = GetPinnedMessagesResponse
+typealias MessageRepliesPayload = GetRepliesResponse
+typealias MessageSearchResultsPayload = SearchResponse
 
 extension MessagePayload {
     convenience init(

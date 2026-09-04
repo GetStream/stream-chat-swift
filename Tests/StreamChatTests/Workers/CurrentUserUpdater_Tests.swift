@@ -698,7 +698,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_markAllRead_makesCorrectAPICall() {
         // GIVEN
-        let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+        let referenceEndpoint = Endpoint<EmptyResponse>.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())
 
         // WHEN
         currentUserUpdater.markAllRead()

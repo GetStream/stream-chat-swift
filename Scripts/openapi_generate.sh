@@ -12,6 +12,7 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
     addUserGroupMembers
+    ban
     blockUsers
     castPollVote
     createDevice
@@ -33,18 +34,24 @@ allowed_endpoints=(
     deleteReaction
     deleteReminder
     deleteUserGroup
+    flag
     getApp
     getDraft
     getBlockedUsers
+    getMessage
     getOG
     getPinnedMessages
     getReactions
+    getReplies
     getUserGroup
     getUserLiveLocations
     hideChannel
     listDevices
     listUserGroups
+    markChannelsRead
     markDelivered
+    markRead
+    markUnread
     mute
     muteChannel
     queryDrafts
@@ -55,14 +62,17 @@ allowed_endpoints=(
     queryUsers
     removeUserGroupMembers
     runMessageAction
+    search
     searchRoles
     searchUserGroups
+    sendEvent
     sendMessage
     sendReaction
     showChannel
     stopWatchingChannel
     translateMessage
     truncateChannel
+    unban
     unblockUsers
     unmute
     unmuteChannel
@@ -86,6 +96,7 @@ allowed_models=(
   AddUserGroupMembersRequest
   AppResponseFields
   Attachment
+  BanRequest
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
@@ -112,16 +123,20 @@ allowed_models=(
   DeviceResponse
   DraftPayloadResponse
   DraftResponse
+  EventRequest
   Field
   FileUploadConfig
   FileUploadResponse
+  FlagRequest
   FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
   GetDraftResponse
+  GetMessageResponse
   GetOGResponse
   GetPinnedMessagesResponse
   GetReactionsResponse
+  GetRepliesResponse
   GetUserGroupResponse
   HideChannelRequest
   ImageData
@@ -130,7 +145,10 @@ allowed_models=(
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
+  MarkChannelsReadRequest
   MarkDeliveredRequest
+  MarkReadRequest
+  MarkUnreadRequest
   MemberUserRequest
   MembersResponse
   MessageActionRequest
@@ -170,8 +188,12 @@ allowed_models=(
   ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  SearchPayload
+  SearchResponse
+  SearchResult
   SearchResultMessage
   SearchRolesResponse
+  SendEventRequest
   SendMessageRequest
   SendMessageResponse
   SendReactionRequest
@@ -225,6 +247,7 @@ allowed_models=(
 allowed_hashable_models=(
   AppSettings
   Device
+  MarkUnreadRequest
   PushPreference
   PushPreferenceInput
   Role
@@ -242,6 +265,7 @@ allowed_hashable_models=(
 # is Codable which makes the SDK size larger.
 encodable_only_models=(
   AddUserGroupMembersRequest
+  BanRequest
   BlockUsersRequest
   CastPollVoteRequestBody
   ChannelDeliveredRequestPayload
@@ -253,7 +277,12 @@ encodable_only_models=(
   CreateReminderRequest
   CreateUserGroupRequest
   DeliveredMessagePayload
+  EventRequest
+  FlagRequest
   HideChannelRequest
+  MarkChannelsReadRequest
+  MarkReadRequest
+  MarkUnreadRequest
   MessageActionRequest
   MessageRequest
   MuteChannelRequest
@@ -269,6 +298,8 @@ encodable_only_models=(
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  SearchPayload
+  SendEventRequest
   SendMessageRequest
   SendReactionRequest
   SortParamRequest
@@ -308,8 +339,10 @@ decodable_only_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetDraftResponse
+  GetMessageResponse
   GetOGResponse
   GetPinnedMessagesResponse
+  GetRepliesResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -339,6 +372,8 @@ decodable_only_models=(
   QueryRemindersResponse
   QueryUsersResponse
   ReminderPayload
+  SearchResponse
+  SearchResult
   SearchResultMessage
   SearchRolesResponse
   SendMessageResponsePayload
@@ -501,7 +536,7 @@ prune_models() {
 prune_models
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
+#     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
 #     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -514,6 +549,7 @@ remove_property() {
     s ~ "^case " p "( =|$)"            { next }
     s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
     s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
+    s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
     s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
     { flush(); print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
@@ -679,10 +715,16 @@ rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
 rename_generated_type DeleteReminderResponse EmptyResponse
+# TODO: EventResponse is not used and would bring in WSEvent
+rename_generated_type EventResponse EmptyResponse
+rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
+rename_generated_type MarkReadResponse EmptyResponse
+rename_generated_type ModerationBanResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
+rename_generated_type UnbanResponse EmptyResponse
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
@@ -725,6 +767,10 @@ remove_property SharedLocation message
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
+# CHA-5068
+remove_property BanRequest ipBan
+remove_property FlagRequest entityCreatorId
+remove_property FlagRequest moderationPayload
 
 # Unused channel context (cid, createdBy, id, type)
 remove_property SendMessageRequest includeChannelContext
@@ -733,10 +779,21 @@ remove_property SendMessageResponsePayload channelContext
 # TODO: reaction group reactors need CoreData and public API design first
 remove_property MessageReactionGroupPayload latestReactionsBy
 
+# CHA-5106
+remove_property SearchPayload forceDefaultSearch
+remove_property SearchPayload forceSqlV2Backend
+
+# Unused
+remove_property SearchPayload messageOptions
+# Unused
+remove_property SearchResponse resultsWarning
+
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
+# CHA-5105
+require_property SearchResult message
 
 # TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
 optionalize_property MessageResponse reactionCounts
@@ -996,29 +1053,15 @@ inject_v1_endpoint_paths() {
     case connect
     case sync
     case guest
-    case search
 
     case threads
     case thread(messageId: MessageId)
-    case markThreadRead(cid: ChannelId)
-    case markThreadUnread(cid: ChannelId)
 
     case channels
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case markChannelRead(String)
-    case markChannelUnread(String)
-    case markAllChannelsRead
-    case channelEvent(String)
-
-    case message(MessageId)
-    case replies(MessageId)
-
-    case banMember
-    case flagUser
-    case flagMessage
 
 EOF
 
@@ -1027,33 +1070,17 @@ EOF
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-        case .search: return "search"
 
         case .threads:
             return "threads"
         case let .thread(threadId):
             return "threads/\(threadId)"
-        case let .markThreadRead(cid):
-            return "channels/\(cid.apiPath)/read"
-        case let .markThreadUnread(cid):
-            return "channels/\(cid.apiPath)/unread"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .markChannelRead(channelId): return "channels/\(channelId)/read"
-        case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
-        case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
-
-        case let .message(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
-
-        case .banMember: return "moderation/ban"
-        case .flagUser: return "moderation/flag"
-        case .flagMessage: return "moderation/flag"
 
 EOF
 

@@ -70,7 +70,7 @@ extension MessageResponse {
     /// A object describing the incoming JSON format for message payload. Unfortunately, our backend is not consistent
     /// in this and the payload has the form: `{ "message": <message payload> }` rather than `{ <message payload> }`
     ///
-    /// Replaced by the generated response types when the message CRUD/action endpoints move to v2 (IOS-1835).
+    /// Only used for the channel query's pending messages, which still decode the v1 envelope.
     final class Boxed: Sendable, Decodable {
         let message: MessageResponse
 
@@ -78,24 +78,6 @@ extension MessageResponse {
             self.message = message
         }
     }
-}
-
-extension SearchResultMessage {
-    /// The boxed form of a search result, matching `{ "message": <message payload> }`.
-    ///
-    /// Replaced by the generated `SearchResult` when the search endpoint moves to v2 (IOS-1836).
-    final class Boxed: Sendable, Decodable {
-        let message: SearchResultMessage
-
-        init(message: SearchResultMessage) {
-            self.message = message
-        }
-    }
-}
-
-struct MessageSearchResultsPayload: Decodable {
-    let results: [SearchResultMessage.Boxed]
-    let next: String?
 }
 
 /// An object describing the outgoing message JSON payload.
@@ -218,9 +200,6 @@ struct MessageRequestBody: Encodable, Sendable {
         try extraData.encode(to: encoder)
     }
 }
-
-/// An object describing the message list JSON payload.
-typealias MessageRepliesPayload = MessageListPayload
 
 struct MessageListPayload: Decodable {
     let messages: [MessageResponse]

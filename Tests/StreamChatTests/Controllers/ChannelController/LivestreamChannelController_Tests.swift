@@ -1103,19 +1103,12 @@ extension LivestreamChannelController_Tests {
             expectation.fulfill()
         }
 
-        let flagPayload = FlagMessagePayload(
-            currentUser: CurrentUserPayload.dummy(userId: .unique, role: .user),
-            flaggedMessageId: messageId
-        )
-        client.mockAPIClient.test_simulateResponse(Result<FlagMessagePayload, Error>.success(flagPayload))
+        let flagPayload = EmptyResponse()
+        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(flagPayload))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            with: messageId,
-            reason: reason,
-            extraData: extraData
-        )
+        let expectedEndpoint = Endpoint<EmptyResponse>.flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(flagError)
     }
@@ -1126,11 +1119,7 @@ extension LivestreamChannelController_Tests {
 
         controller.flag(messageId: messageId) { _ in }
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            with: messageId,
-            reason: nil,
-            extraData: nil
-        )
+        let expectedEndpoint = Endpoint<EmptyResponse>.flag(flagRequest: .init(messageId: messageId, reason: nil, custom: nil))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

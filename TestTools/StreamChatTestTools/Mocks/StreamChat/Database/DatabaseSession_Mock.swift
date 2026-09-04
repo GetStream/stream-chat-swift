@@ -315,7 +315,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
     }
 
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
         underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
@@ -400,11 +400,11 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.markChannelAsUnread(cid: cid, by: userId)
     }
     
-    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from unreadCriteria: MarkUnreadCriteria, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
+    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from request: MarkUnreadRequest, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
         underlyingSession.markChannelAsUnread(
             for: cid,
             userId: userId,
-            from: unreadCriteria,
+            from: request,
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
             unreadMessagesCount: unreadMessagesCount

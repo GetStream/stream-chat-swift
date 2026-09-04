@@ -75,3 +75,60 @@ final class MessageSearchQuery_ChannelListSortMapping_Tests: XCTestCase {
         XCTAssertEqual(result, [.init(key: .createdAt, isAscending: false)])
     }
 }
+
+final class MessageSearchQuery_SearchPayload_Tests: XCTestCase {
+    func test_asSearchPayload_encodedCorrectly() throws {
+        let query = MessageSearchQuery(
+            channelFilter: .in(.members, values: ["luke"]),
+            messageFilter: .queryText("hello"),
+            sort: [.init(key: .createdAt, isAscending: true)],
+            pageSize: 23
+        )
+
+        let expectedData: [String: Any] = [
+            "filter_conditions": ["members": ["$in": ["luke"]]],
+            "message_filter_conditions": ["text": ["$q": "hello"]],
+            "limit": 23,
+            "sort": [["field": "created_at", "direction": 1] as [String: Any]]
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asSearchPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
+    func test_asSearchPayload_whenCursorIsSet_encodesNextAndOmitsOffset() throws {
+        var query = MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withAttachments, sort: [])
+        query.pagination = Pagination(pageSize: 10, cursor: "cursor")
+
+        let expectedData: [String: Any] = [
+            "filter_conditions": ["team": ["$eq": NSNull()]],
+            "message_filter_conditions": ["attachments": ["$exists": true]],
+            "limit": 10,
+            "next": "cursor"
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asSearchPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
+    func test_asSearchPayload_whenOffsetIsSet_encodesOffset() throws {
+        var query = MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withAttachments, sort: [])
+        query.pagination = Pagination(pageSize: 10, offset: 20)
+
+        let expectedData: [String: Any] = [
+            "filter_conditions": ["team": ["$eq": NSNull()]],
+            "message_filter_conditions": ["attachments": ["$exists": true]],
+            "limit": 10,
+            "offset": 20
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query.asSearchPayload())
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+}

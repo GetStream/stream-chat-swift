@@ -647,7 +647,7 @@ extension MessageUpdater.MessageSearchResults {
         .make(api: [], next: nil, models: [])
     }
     
-    static func make(api apiMessages: [SearchResultMessage.Boxed] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
-        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
+    static func make(api apiMessages: [SearchResult] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
+        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(next: next, results: apiMessages), models: models)
     }
 }

@@ -1035,7 +1035,7 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateHandler.markUnread(from: .messageId(messageId), in: channel)
+        try await readStateHandler.markUnread(from: .init(messageId: messageId), in: channel)
     }
     
     /// Marks all the messages after the specified timestamp as unread.
@@ -1045,7 +1045,7 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from timestamp: Date) async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateHandler.markUnread(from: .messageTimestamp(timestamp), in: channel)
+        try await readStateHandler.markUnread(from: .init(messageTimestamp: timestamp), in: channel)
     }
     
     // MARK: - Message Replies and Pagination

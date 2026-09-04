@@ -302,7 +302,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
     }
 
-    private func updateNextPageCursor(with payload: MessageSearchResultsPayload) {
+    private func updateNextPageCursor(with payload: SearchResponse) {
         nextPageCursor = payload.next
     }
 }

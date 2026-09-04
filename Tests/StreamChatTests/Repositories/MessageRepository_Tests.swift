@@ -337,7 +337,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.getMessage(cid: cid, messageId: messageId, store: true)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<GetMessageResponse> = .getMessage(id: messageId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -350,14 +350,14 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
     func test_getMessage_propagatesDatabaseError() throws {
-        let messagePayload: MessagePayload.Boxed = .init(
+        let messagePayload: GetMessageResponse = .dummy(
             message: .dummy(messageId: .unique, authorUserId: .unique)
         )
         let channelId = ChannelId.unique
@@ -376,7 +376,7 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -400,10 +400,10 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
+        let messagePayload: GetMessageResponse = .dummy(
             message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid)
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -430,10 +430,10 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
+        let messagePayload: GetMessageResponse = .dummy(
             message: .dummy(messageId: messageId, authorUserId: currentUserId, cid: cid)
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -461,7 +461,7 @@ final class MessageRepositoryTests: XCTestCase {
             )
         }
         let result = try waitFor { done in
-            repository.getMessage(before: .messageId("3"), in: cid, completion: done)
+            repository.getMessage(before: .init(messageId: "3"), in: cid, completion: done)
         }
         switch result {
         case .success(let messageId):
@@ -492,7 +492,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Use a timestamp between message "2" and "3" to get message "2"
         let timestamp = Date(timeIntervalSinceReferenceDate: 2.5)
         let result = try waitFor { done in
-            repository.getMessage(before: .messageTimestamp(timestamp), in: cid, completion: done)
+            repository.getMessage(before: .init(messageTimestamp: timestamp), in: cid, completion: done)
         }
         switch result {
         case .success(let messageId):

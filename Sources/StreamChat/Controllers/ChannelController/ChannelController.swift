@@ -1448,7 +1448,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         readStateHandler.markUnread(
-            from: .messageId(messageId),
+            from: .init(messageId: messageId),
             in: channel
         ) { [weak self] result in
             self?.callback {
@@ -1488,7 +1488,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         readStateHandler.markUnread(
-            from: .messageTimestamp(timestamp),
+            from: .init(messageTimestamp: timestamp),
             in: channel
         ) { [weak self] result in
             self?.callback {
