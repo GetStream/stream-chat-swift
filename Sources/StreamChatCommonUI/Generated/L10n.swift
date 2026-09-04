@@ -188,6 +188,10 @@ public enum L10n {
       /// Reply to Message
       public static var reply: String { L10n.tr("Localizable", "composer.title.reply") }
     }
+    public enum VideoCompression {
+      /// Preparing video…
+      public static var preparing: String { L10n.tr("Localizable", "composer.video-compression.preparing") }
+    }
   }
 
   public enum Dates {

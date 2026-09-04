@@ -4,6 +4,7 @@
 
 import AVFoundation
 import Foundation
+import PhotosUI
 import StreamChat
 import UIKit
 
@@ -443,13 +444,44 @@ open class ComposerVC: _ViewController,
         .init()
 
     /// The view controller for selecting image attachments.
-    open private(set) lazy var mediaPickerVC: UIViewController = {
+    ///
+    /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
+    /// faster than `UIImagePickerController` and needs no photo library permission.
+    ///
+    /// - Note: This intentionally returns a new picker on every access instead of being a
+    /// `lazy var`. `PHPickerConfiguration` is read once when the picker is created, so
+    /// `selectionLimit` has to be recomputed from the remaining attachment slots for every
+    /// presentation. Reusing one instance also keeps showing the previous selection.
+    open var mediaPickerVC: UIViewController {
+        if #available(iOS 14.0, *) {
+            var configuration = PHPickerConfiguration()
+            configuration.filter = .any(of: [.images, .videos])
+            configuration.selectionLimit = max(1, maxNumberOfAttachments - content.attachments.count)
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            return picker
+        }
+        return legacyMediaPickerVC
+    }
+
+    private lazy var legacyMediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
         picker.delegate = self
         return picker
     }()
+
+    /// The view controller which shows the progress of compressing the selected videos.
+    open private(set) lazy var videoCompressionProgressVC: VideoCompressionProgressVC = {
+        let progressVC = components.videoCompressionProgressVC.init()
+        progressVC.modalPresentationStyle = .overFullScreen
+        progressVC.modalTransitionStyle = .crossDissolve
+        return progressVC
+    }()
+
+    /// The task which loads and compresses the media selected in the media picker.
+    private var mediaSelectionTask: Task<Void, Never>?
 
     /// The View Controller for taking a picture.
     open private(set) lazy var cameraVC: UIViewController = {
@@ -1494,6 +1526,17 @@ open class ComposerVC: _ViewController,
         content.attachments.append(attachment)
     }
 
+    /// The maximum number of attachments which can be added to a message.
+    ///
+    /// The limit can be changed with `ChatClientConfig.maxAttachmentCountPerMessage`.
+    open var maxNumberOfAttachments: Int {
+        guard let config = channelController?.client.config else {
+            log.assertionFailure("Channel controller must be set at this point")
+            return 1
+        }
+        return config.maxAttachmentCountPerMessage
+    }
+
     /// The maximum upload file size depending on the attachment type.
     ///
     /// The max attachment size can be set from the Stream's Dashboard App Settings.
@@ -1673,6 +1716,108 @@ open class ComposerVC: _ViewController,
         return (Double(size.width), Double(size.height))
     }
 
+    // MARK: - Photos Picker
+
+    /// Adds the media items which were selected in the photos picker to the composer's content.
+    @available(iOS 14.0, *)
+    open func handleMediaPickerResults(_ results: [PHPickerResult]) {
+        let allowedResults = results.prefix(max(0, maxNumberOfAttachments - content.attachments.count))
+        if allowedResults.count < results.count {
+            showAttachmentsCountExceedingLimitAlert(maxNumberOfAttachments)
+        }
+        guard !allowedResults.isEmpty else { return }
+
+        let itemProviders = allowedResults.map(\.itemProvider)
+        mediaSelectionTask?.cancel()
+        mediaSelectionTask = Task { @MainActor [weak self] in
+            await self?.addSelectedMedia(from: itemProviders)
+        }
+    }
+
+    /// Cancels loading and compressing the media which was selected in the media picker.
+    open func cancelMediaSelection() {
+        mediaSelectionTask?.cancel()
+        mediaSelectionTask = nil
+        hideVideoCompressionProgress()
+    }
+
+    /// Loads the media provided by the photos picker and adds it to the composer's content.
+    ///
+    /// Videos are compressed with the quality of `Components.videoCompressionQuality`, and
+    /// `videoCompressionProgressVC` reports the progress while that happens.
+    func addSelectedMedia(from itemProviders: [NSItemProvider]) async {
+        let loader = ComposerMediaLoader(
+            compressor: components.videoCompressor,
+            quality: components.videoCompressionQuality,
+            maximumVideoFileSize: maxAttachmentSize(for: .video)
+        )
+        let numberOfVideos = loader.numberOfVideosToCompress(in: itemProviders)
+        if numberOfVideos > 0 {
+            showVideoCompressionProgress()
+        }
+        // When the task is cancelled, the progress is either already hidden by
+        // `cancelMediaSelection()`, or a newer selection has taken over showing it.
+        defer {
+            if numberOfVideos > 0, !Task.isCancelled {
+                hideVideoCompressionProgress()
+            }
+        }
+
+        var compressedVideos = 0
+        for itemProvider in itemProviders {
+            guard !Task.isCancelled else { return }
+
+            let previousVideos = Double(compressedVideos)
+            let item: ComposerMediaLoader.Item?
+            do {
+                item = try await loader.loadItem(from: itemProvider) { [weak self] progress in
+                    guard numberOfVideos > 0 else { return }
+                    self?.updateVideoCompressionProgress(
+                        .init(progress: (previousVideos + progress) / Double(numberOfVideos))
+                    )
+                }
+            } catch {
+                return
+            }
+            guard let item = item else { continue }
+            if item.type == .video {
+                compressedVideos += 1
+            }
+
+            guard !Task.isCancelled else {
+                loader.removeTemporaryFile(at: item.url)
+                return
+            }
+            do {
+                try addAttachmentToContent(from: item.url, type: item.type, info: item.info)
+            } catch {
+                loader.removeTemporaryFile(at: item.url)
+                handleAddAttachmentError(attachmentURL: item.url, attachmentType: item.type, error: error)
+            }
+        }
+    }
+
+    /// Shows the view which reports the progress of preparing the selected videos.
+    open func showVideoCompressionProgress() {
+        videoCompressionProgressVC.content = .init(progress: 0)
+        videoCompressionProgressVC.onCancel = { [weak self] in
+            self?.cancelMediaSelection()
+        }
+        guard videoCompressionProgressVC.presentingViewController == nil else { return }
+        present(videoCompressionProgressVC, animated: true)
+    }
+
+    /// Updates the reported progress of preparing the selected videos.
+    open func updateVideoCompressionProgress(_ content: VideoCompressionProgressVC.Content) {
+        videoCompressionProgressVC.content = content
+    }
+
+    /// Hides the view which reports the progress of preparing the selected videos.
+    open func hideVideoCompressionProgress() {
+        guard videoCompressionProgressVC.presentingViewController != nil else { return }
+        videoCompressionProgressVC.dismiss(animated: true)
+    }
+
     // MARK: - UIDocumentPickerViewControllerDelegate
 
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
@@ -1822,6 +1967,15 @@ open class ComposerVC: _ViewController,
             if !currentText.contains(mentionText(for: user)) {
                 content.mentionedUsers.remove(user)
             }
+        }
+    }
+}
+
+@available(iOS 14.0, *)
+extension ComposerVC: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true) { [weak self] in
+            self?.handleMediaPickerResults(results)
         }
     }
 }
