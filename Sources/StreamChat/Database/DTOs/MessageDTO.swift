@@ -129,6 +129,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var channelRole: String?
     @NSManaged var memberNotificationsMuted: Bool
     @NSManaged var memberExtraData: Data?
+    @NSManaged var mentionedChannelMembersData: Data?
     @NSManaged var deletedForMe: Bool
 
     override func willSave() {
@@ -706,6 +707,29 @@ extension MessageDTO {
             memberExtraData = nil
         }
     }
+
+    func updateMentionedChannelMembers(_ members: [UserId: MemberInfoPayload]) {
+        do {
+            mentionedChannelMembersData = try JSONEncoder.default.encode(members)
+        } catch {
+            log.error(
+                "Failed to encode mentioned channel members for Message with id: <\(id)>. Error: \(error)"
+            )
+            mentionedChannelMembersData = nil
+        }
+    }
+
+    func decodedMentionedChannelMembers() -> [UserId: MemberInfoPayload] {
+        guard let mentionedChannelMembersData else { return [:] }
+        do {
+            return try JSONDecoder.stream.decode([UserId: MemberInfoPayload].self, from: mentionedChannelMembersData)
+        } catch {
+            log.error(
+                "Failed to decode mentioned channel members for Message with id: <\(id)>. Error: \(error)"
+            )
+            return [:]
+        }
+    }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
@@ -1062,6 +1086,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return user
         })
         dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
+        if let mentionedChannelMembers = payload.mentionedChannelMembers {
+            dto.updateMentionedChannelMembers(mentionedChannelMembers)
+        }
         dto.mentionedHere = payload.mentionedHere
         dto.mentionedChannel = payload.mentionedChannel
         let mentionedGroups = payload.mentionedGroups ?? []
@@ -1832,6 +1859,7 @@ private extension ChatMessage {
             .compactMap { try? $0.asModel() }
 
         let mentionedUsers = Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
+        let mentionedChannelMembers = dto.decodedMentionedChannelMembers().mapValues { $0.asModel() }
 
         let mentionedGroups = Set(dto.mentionedGroups.map { $0.asModel() })
 
@@ -1854,7 +1882,7 @@ private extension ChatMessage {
 
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
         
-        let member: ChatMessage.MemberInfo? = {
+        let member: ChatMemberInfo? = {
             guard dto.channelRole != nil || dto.memberExtraData != nil else { return nil }
 
             let extraData: [String: RawJSON]
@@ -1867,7 +1895,7 @@ private extension ChatMessage {
                 extraData = [:]
             }
 
-            return ChatMessage.MemberInfo(
+            return ChatMemberInfo(
                 channelRole: dto.channelRole.map(MemberRole.init(rawValue:)),
                 notificationsMuted: dto.memberNotificationsMuted,
                 extraData: extraData
@@ -1899,6 +1927,7 @@ private extension ChatMessage {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedChannelMembers: mentionedChannelMembers,
             mentionedHere: dto.mentionedHere,
             mentionedChannel: dto.mentionedChannel,
             mentionedGroups: mentionedGroups,

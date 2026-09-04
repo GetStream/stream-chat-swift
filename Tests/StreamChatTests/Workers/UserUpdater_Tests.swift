@@ -326,7 +326,7 @@ final class UserUpdater_Tests: XCTestCase {
         userUpdater.flagUser(true, with: userId, reason: reason, extraData: extraData)
 
         // Assert correct endpoint is called.
-        let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(with: userId, reason: reason, extraData: extraData)
+        let expectedEndpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(userId: userId, reason: reason, custom: extraData))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -344,6 +344,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Create current user in the database.
         try database.createCurrentUser(id: currentUserId)
+        try database.createUser(id: flaggedUserId)
 
         // Simulate `flagUser` call.
         nonisolated(unsafe) var flagCompletionCalled = false
@@ -353,10 +354,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate `flagUser` API response with success.
-        let payload = FlagUserPayload(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedUser: .dummy(userId: flaggedUserId)
-        )
+        let payload = EmptyResponse()
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(flagCompletionCalled)
@@ -400,7 +398,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let error = TestError()
-        apiClient.test_simulateResponse(Result<FlagUserPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -418,10 +416,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success.
-        let payload = FlagUserPayload(
-            currentUser: .dummy(userId: .unique, role: .user),
-            flaggedUser: .dummy(userId: .unique)
-        )
+        let payload = EmptyResponse()
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert database error is propagated.

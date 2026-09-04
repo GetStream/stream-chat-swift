@@ -14,15 +14,4 @@ extension Endpoint {
             body: nil
         )
     }
-
-    static func loadReplies(messageId: MessageId, pagination: MessagesPagination)
-        -> Endpoint<MessageRepliesPayload> {
-        .init(
-            path: .replies(messageId),
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: pagination
-        )
-    }
 }

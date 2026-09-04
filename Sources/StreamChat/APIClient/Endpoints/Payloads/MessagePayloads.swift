@@ -25,6 +25,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case quotedMessage = "quoted_message"
     case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
+    case mentionedChannelMembers = "mentioned_channel_members"
     case mentionedHere = "mentioned_here"
     case mentionedChannel = "mentioned_channel"
     case mentionedGroupIds = "mentioned_group_ids"
@@ -199,9 +200,6 @@ struct MessageRequestBody: Encodable, Sendable {
         try extraData.encode(to: encoder)
     }
 }
-
-/// An object describing the message list JSON payload.
-typealias MessageRepliesPayload = MessageListPayload
 
 struct MessageListPayload: Decodable {
     let messages: [MessageResponse]

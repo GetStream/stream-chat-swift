@@ -424,13 +424,23 @@ class MessageUpdater: Worker, @unchecked Sendable {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling,
-        completion: (@Sendable (Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = pagination.parameter == nil
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
-        let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
+        let endpoint: Endpoint<GetRepliesResponse> = .getReplies(
+            parentId: messageId,
+            limit: pagination.pageSize,
+            idGte: pagination.parameter?.messageIdAfterOrEqual,
+            idGt: pagination.parameter?.messageIdAfter,
+            idLte: pagination.parameter?.messageIdBeforeOrEqual,
+            idLt: pagination.parameter?.messageIdBefore,
+            idAround: pagination.parameter?.aroundMessageId,
+            sort: nil,
+            memberCustomInclude: nil
+        )
 
         apiClient.request(endpoint: endpoint) {
             paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
@@ -449,7 +459,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
-                    let replies = session.saveMessages(messagesPayload: payload, syncOwnReactions: true)
+                    let replies = session.saveMessages(messagesPayload: MessageListPayload(messages: payload.messages), syncOwnReactions: true)
                     replies.forEach {
                         $0.showInsideThread = true
                     }
@@ -530,12 +540,12 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
+            let endpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
-                case let .success(payload):
+                case .success:
                     self.database.write({ session in
-                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
+                        guard let messageDTO = session.message(id: messageId) else {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
 
@@ -1040,7 +1050,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadRead(cid: cid, threadId: threadId)
+            endpoint: .markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest(threadId: threadId))
         ) { result in
             completion(result.error)
         }
@@ -1052,7 +1062,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadUnread(cid: cid, threadId: threadId)
+            endpoint: .markUnread(type: cid.type.rawValue, id: cid.id, markUnreadRequest: MarkUnreadRequest(threadId: threadId))
         ) { result in
             completion(result.error)
         }
@@ -1364,7 +1374,7 @@ extension MessageUpdater {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling
-    ) async throws -> MessageRepliesPayload {
+    ) async throws -> GetRepliesResponse {
         try await withCheckedThrowingContinuation { continuation in
             loadReplies(
                 cid: cid,

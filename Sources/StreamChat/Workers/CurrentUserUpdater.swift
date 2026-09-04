@@ -209,7 +209,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markAllRead()) {
+        apiClient.request(endpoint: .markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())) {
             completion?($0.error)
         }
     }
