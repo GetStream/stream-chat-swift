@@ -35,7 +35,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(),
             unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: .unique,
-            threadDetails: .success(.dummy(parentMessageId: .unique))
+            thread: .success(.dummy(parentMessageId: .unique))
         )
 
         let event = try MessageReadEventDTO(from: eventPayload)

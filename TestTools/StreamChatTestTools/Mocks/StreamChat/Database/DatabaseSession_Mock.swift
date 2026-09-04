@@ -561,11 +561,7 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveThread(payload: payload, cache: cache)
     }
 
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
-        try underlyingSession.saveThread(detailsPayload: detailsPayload)
-    }
-
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO? {
         try underlyingSession.saveThread(partialPayload: partialPayload)
     }
 
