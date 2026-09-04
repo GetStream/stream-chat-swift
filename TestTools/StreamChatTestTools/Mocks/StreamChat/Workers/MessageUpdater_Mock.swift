@@ -31,6 +31,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var editMessage_skipPush: Bool?
     @Atomic var editMessage_restrictedVisibility: [UserId]?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
+    @Atomic var editMessage_mentionedUserIds: [UserId]?
+    @Atomic var editMessage_mentionedHere: Bool?
+    @Atomic var editMessage_mentionedChannel: Bool?
+    @Atomic var editMessage_mentionedGroupIds: [String]?
+    @Atomic var editMessage_mentionedRoles: [String]?
     @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
 
@@ -178,6 +183,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         editMessage_messageId = nil
         editMessage_text = nil
         editMessage_skipPush = nil
+        editMessage_mentionedUserIds = nil
+        editMessage_mentionedHere = nil
+        editMessage_mentionedChannel = nil
+        editMessage_mentionedGroupIds = nil
+        editMessage_mentionedRoles = nil
         editMessage_completion = nil
 
         createNewReply_cid = nil
@@ -349,6 +359,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         skipEnrichUrl: Bool,
         skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
@@ -359,6 +374,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         editMessage_skipPush = skipPush
         editMessage_restrictedVisibility = restrictedVisibility
         editMessage_attachments = attachments
+        editMessage_mentionedUserIds = mentionedUserIds
+        editMessage_mentionedHere = mentionedHere
+        editMessage_mentionedChannel = mentionedChannel
+        editMessage_mentionedGroupIds = mentionedGroupIds
+        editMessage_mentionedRoles = mentionedRoles
         editMessage_extraData = extraData
         editMessage_completion = completion
     }

@@ -984,6 +984,29 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
     }
 
+    func test_editMessage_callsMessageUpdater_withMentionParameters() {
+        let updatedText: String = .unique
+        let mentionedUserIds: [UserId] = [.unique]
+        let mentionedGroupIds: [String] = [.unique]
+        let mentionedRoles: [String] = ["admin"]
+
+        controller.editMessage(
+            text: updatedText,
+            mentionedUserIds: mentionedUserIds,
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles
+        )
+
+        XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_mentionedUserIds, mentionedUserIds)
+        XCTAssertEqual(env.messageUpdater.editMessage_mentionedHere, true)
+        XCTAssertEqual(env.messageUpdater.editMessage_mentionedChannel, true)
+        XCTAssertEqual(env.messageUpdater.editMessage_mentionedGroupIds, mentionedGroupIds)
+        XCTAssertEqual(env.messageUpdater.editMessage_mentionedRoles, mentionedRoles)
+    }
+
     func test_editMessage_callsMessageUpdater_withSkipPushParameter() {
         let updatedText: String = .unique
 

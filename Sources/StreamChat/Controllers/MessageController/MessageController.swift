@@ -272,6 +272,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - skipPush: If true, skips sending push notification when message is edited.
     ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: The list of user ids mentioned in the message. When `nil`, existing mentions are preserved.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedChannel: If true, the message mentions all users in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message. When `nil`, existing group mentions are preserved.
+    ///   - mentionedRoles: The list of roles mentioned in the message. When `nil`, existing role mentions are preserved.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
     ///   - completion: Called when the message is edited locally.
@@ -280,6 +285,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         skipEnrichUrl: Bool = false,
         skipPush: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
@@ -299,6 +309,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             skipEnrichUrl: skipEnrichUrl,
             skipPush: skipPush,
             attachments: transformableInfo.attachments,
+            mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             restrictedVisibility: restrictedVisibility,
             extraData: transformableInfo.extraData
         ) { result in

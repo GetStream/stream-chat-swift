@@ -106,6 +106,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message
     ///   - skipPush: If true, skips sending push notification when message is edited.
     ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: The list of user ids mentioned in the message. When `nil`, existing mentions are preserved.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedChannel: If true, the message mentions all users in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message. When `nil`, existing group mentions are preserved.
+    ///   - mentionedRoles: The list of roles mentioned in the message. When `nil`, existing role mentions are preserved.
     ///   - extraData: Extra Data for the message.
     ///   - completion: The completion handler with the local updated message.
     func editMessage(
@@ -114,6 +119,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
         skipEnrichUrl: Bool,
         skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]? = nil,
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
@@ -139,6 +149,23 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 messageDTO.skipEnrichUrl = skipEnrichUrl
                 messageDTO.skipPush = skipPush
                 messageDTO.restrictedVisibility = Set(restrictedVisibility)
+
+                if let mentionedUserIds {
+                    messageDTO.mentionedUserIds = mentionedUserIds
+                    messageDTO.mentionedUsers = Set(mentionedUserIds.compactMap { session.user(id: $0) })
+                }
+                if let mentionedHere {
+                    messageDTO.mentionedHere = mentionedHere
+                }
+                if let mentionedChannel {
+                    messageDTO.mentionedChannel = mentionedChannel
+                }
+                if let mentionedGroupIds {
+                    messageDTO.mentionedGroupIds = mentionedGroupIds
+                }
+                if let mentionedRoles {
+                    messageDTO.mentionedRoles = mentionedRoles
+                }
 
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt
@@ -1317,6 +1344,11 @@ extension MessageUpdater {
         skipEnrichUrl: Bool,
         skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil
     ) async throws -> ChatMessage {
@@ -1327,6 +1359,11 @@ extension MessageUpdater {
                 skipEnrichUrl: skipEnrichUrl,
                 skipPush: skipPush,
                 attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                mentionedHere: mentionedHere,
+                mentionedChannel: mentionedChannel,
+                mentionedGroupIds: mentionedGroupIds,
+                mentionedRoles: mentionedRoles,
                 restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             ) { result in
