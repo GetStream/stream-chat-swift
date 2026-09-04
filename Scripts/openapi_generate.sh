@@ -38,6 +38,7 @@ allowed_endpoints=(
     getApp
     getDraft
     getBlockedUsers
+    getMessage
     getOG
     getPinnedMessages
     getReactions
@@ -131,6 +132,7 @@ allowed_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetDraftResponse
+  GetMessageResponse
   GetOGResponse
   GetPinnedMessagesResponse
   GetReactionsResponse
@@ -337,6 +339,7 @@ decodable_only_models=(
   GetApplicationResponse
   GetBlockedUsersResponse
   GetDraftResponse
+  GetMessageResponse
   GetOGResponse
   GetPinnedMessagesResponse
   GetRepliesResponse
@@ -1060,8 +1063,6 @@ inject_v1_endpoint_paths() {
     case updateChannel(String)
     case channelUpdate(String)
 
-    case message(MessageId)
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -1080,8 +1081,6 @@ EOF
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-
-        case let .message(messageId): return "messages/\(messageId)"
 
 EOF
 
