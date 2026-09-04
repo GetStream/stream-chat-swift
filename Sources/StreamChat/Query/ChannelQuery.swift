@@ -149,7 +149,7 @@ extension ChannelQuery {
             presence: options.contains(.presence),
             state: options.contains(.state),
             watch: options.contains(.watch),
-            watchers: watchersLimit.map { PaginationParams(limit: $0) }
+            watchers: watchersLimit.map { Pagination(pageSize: $0).toPaginationParams() }
         )
         let requiresConnectionId = options.contains(oneOf: [.presence, .watch])
         if let id {

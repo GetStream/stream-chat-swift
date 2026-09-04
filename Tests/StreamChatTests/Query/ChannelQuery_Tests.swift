@@ -37,4 +37,19 @@ final class ChannelQuery_Tests: XCTestCase {
         // Assert ChannelQuery encoded correctly
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
+
+    func test_endpoint_backendDefaultWatchersLimit_omitsLimit() throws {
+        let query = ChannelQuery(cid: .unique, watchersLimit: .backendDefaultPageSize)
+
+        let request = try XCTUnwrap(query.endpoint.body as? ChannelGetOrCreateRequest)
+        let json = try JSONEncoder.default.encode(request)
+
+        AssertJSONEqual(json, [
+            "messages": ["limit": 25],
+            "presence": true,
+            "state": true,
+            "watch": true,
+            "watchers": [:]
+        ])
+    }
 }

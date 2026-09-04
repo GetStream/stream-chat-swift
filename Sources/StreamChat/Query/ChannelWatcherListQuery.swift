@@ -43,7 +43,7 @@ extension ChannelWatcherListQuery {
         ChannelGetOrCreateRequest(
             state: options.contains(.state),
             watch: options.contains(.watch),
-            watchers: PaginationParams(limit: pagination.pageSize, offset: pagination.offset)
+            watchers: pagination.toPaginationParams()
         )
     }
 }
