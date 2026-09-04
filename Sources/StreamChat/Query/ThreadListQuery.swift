@@ -30,7 +30,7 @@ public struct ThreadListQuery: Encodable, Sendable, LocalConvertibleSortingQuery
     public var replyLimit: Int
     /// The amount of participants fetched per thread. Default is 10.
     public var participantLimit: Int
-    /// The amount of members fetched per thread's channel, between 0 and 100. Default is 100.
+    /// The amount of members fetched per thread's channel, between 0 and 100.
     public var memberLimit: Int?
     /// The pagination token from the previous response to fetch the next page.
     public var next: String?

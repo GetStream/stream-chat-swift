@@ -24,7 +24,6 @@ public struct ThreadQuery: Encodable, Sendable {
     /// The amount of participants fetched per thread. Default is 10.
     public var participantLimit: Int
     /// The amount of members fetched from the thread's channel, between 0 and 100.
-    /// When not set, the thread's channel does not contain any members.
     public var memberLimit: Int?
 
     public init(
