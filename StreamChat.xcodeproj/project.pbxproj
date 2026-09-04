@@ -778,7 +778,6 @@
 				StreamChatTests/APIClient/Endpoints/PollsEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/CallRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/ChannelMemberBanRequestPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/CustomEventRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/GuestUserTokenRequestPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/MissingEventsRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/RoleEndpoints_Tests.swift,
