@@ -2180,13 +2180,14 @@ private extension ChatChannelController {
                     $0.channelController(self, didUpdateChannel: change)
                 }
             }
-            .onFieldChange(\.currentlyTypingUsers) { [weak self] change in
+            .onFieldChange(\.typingUsers) { [weak self] change in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return
                     }
                     $0.channelController(self, didChangeTypingUsers: change.item)
+                    $0.channelController(self, didChangeTypingUsers: change.item.chatUsers)
                 }
             }
 

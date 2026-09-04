@@ -590,13 +590,13 @@ open class ChatChannelVC: _ViewController,
 
     open func channelController(
         _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
+        didChangeTypingUsers typingUsers: Set<TypingUser>
     ) {
         guard channelController.channel?.canSendTypingEvents == true else { return }
 
         let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client.currentUserId }
+            .sorted { $0.user.id < $1.user.id }
+            .filter { $0.user.id != self.client.currentUserId }
 
         if typingUsersWithoutCurrentUser.isEmpty {
             messageListVC.hideTypingIndicator()
@@ -604,6 +604,12 @@ open class ChatChannelVC: _ViewController,
             messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
     }
+
+    @available(*, deprecated, message: "Use `channelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
+    open func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    ) {}
 
     // MARK: - EventsControllerDelegate
 

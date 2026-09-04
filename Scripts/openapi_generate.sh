@@ -39,6 +39,7 @@ allowed_endpoints=(
     getOG
     getPinnedMessages
     getReactions
+    getReplies
     getUserGroup
     getUserLiveLocations
     hideChannel
@@ -124,6 +125,7 @@ allowed_models=(
   GetOGResponse
   GetPinnedMessagesResponse
   GetReactionsResponse
+  GetRepliesResponse
   GetUserGroupResponse
   HideChannelRequest
   ImageData
@@ -315,11 +317,11 @@ decodable_only_models=(
   GetDraftResponse
   GetOGResponse
   GetPinnedMessagesResponse
+  GetRepliesResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
-  MemberInfoPayload
   MemberPayload
   MembersResponse
   MessageActionResponse
@@ -380,6 +382,7 @@ codable_models=(
   Device
   GiphyImageData
   GiphyImages
+  MemberInfoPayload
   MemberUserRequest
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
@@ -1020,7 +1023,6 @@ inject_v1_endpoint_paths() {
     case markAllChannelsRead
 
     case message(MessageId)
-    case replies(MessageId)
 
     case banMember
     case flagUser
@@ -1054,7 +1056,6 @@ EOF
         case .markAllChannelsRead: return "channels/read"
 
         case let .message(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
 
         case .banMember: return "moderation/ban"
         case .flagUser: return "moderation/flag"

@@ -253,7 +253,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
         assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))
         assertResultEncodingAndDecoding(.deleteMessage(id: "message_idd"))
-        assertResultEncodingAndDecoding(.replies("message_idr"))
+        assertResultEncodingAndDecoding(.getReplies(parentId: "message_idr"))
         assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))
         assertResultEncodingAndDecoding(.sendReaction(id: "message_ida"))

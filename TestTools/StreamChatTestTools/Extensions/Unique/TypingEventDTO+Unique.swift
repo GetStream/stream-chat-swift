@@ -17,12 +17,14 @@ extension TypingEventDTO {
 
     static func startTyping(
         cid: ChannelId = .unique,
-        userId: UserId = .unique
+        userId: UserId = .unique,
+        member: MemberInfoPayload? = nil
     ) -> TypingEventDTO {
         let payload = EventPayload(
             eventType: .userStartTyping,
             cid: cid,
             user: .dummy(userId: userId),
+            memberInfo: member,
             createdAt: .unique
         )
 
