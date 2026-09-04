@@ -92,11 +92,95 @@ final class MessagePayload_Tests: XCTestCase {
 
         XCTAssertNil(payload.mentionedGroups)
         XCTAssertNil(payload.mentionedRoles)
+        XCTAssertNil(payload.mentionedChannelMembers)
 
         // The defaults are applied when the payload is converted to a model
         let message = payload.asModel(cid: .unique, currentUserId: nil, channelReads: [])
         XCTAssertTrue(message.mentionedGroups.isEmpty)
         XCTAssertEqual(message.mentionedRoles, [])
+        XCTAssertTrue(message.mentionedChannelMembers.isEmpty)
+    }
+
+    func test_messagePayload_decodesMentionedChannelMembersMap() throws {
+        let json = """
+        {
+            "id": "msg-1",
+            "type": "regular",
+            "user": {
+                "id": "user-1",
+                "role": "user",
+                "online": false,
+                "created_at": "2020-07-16T15:39:03.010717Z",
+                "updated_at": "2020-08-17T13:15:39.895109Z"
+            },
+            "created_at": "2020-07-16T15:39:03.010717Z",
+            "updated_at": "2020-08-17T13:15:39.895109Z",
+            "text": "Hey @Martin",
+            "html": "Hey @Martin",
+            "cid": "messaging:general",
+            "deleted_reply_count": 0,
+            "pinned": false,
+            "restricted_visibility": [],
+            "shadowed": false,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "reply_count": 0,
+            "reaction_scores": {},
+            "silent": false,
+            "attachments": [],
+            "latest_reactions": [],
+            "own_reactions": [],
+            "mentioned_users": [
+                {
+                    "id": "u2",
+                    "role": "user",
+                    "online": false,
+                    "name": "Martin",
+                    "created_at": "2020-07-16T15:39:03.010717Z",
+                    "updated_at": "2020-08-17T13:15:39.895109Z"
+                }
+            ],
+            "mentioned_channel_members": {
+                "u2": {
+                    "channel_role": "channel_member",
+                    "notifications_muted": false,
+                    "nickname": "Marty"
+                }
+            }
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
+        let member = try XCTUnwrap(payload.mentionedChannelMembers?["u2"])
+
+        XCTAssertEqual(payload.mentionedChannelMembers?.count, 1)
+        XCTAssertEqual(member.channelRole, "channel_member")
+        XCTAssertEqual(member.custom, ["nickname": .string("Marty")])
+        XCTAssertNil(payload.custom["mentioned_channel_members"])
+    }
+
+    func test_messagePayload_asModel_convertsMentionedChannelMembers() {
+        let mentionedUser = UserPayload.dummy(userId: "u2", name: "Martin")
+        let payload = MessagePayload.dummy(
+            mentionedUsers: [mentionedUser],
+            mentionedChannelMembers: [
+                "u2": MemberInfoPayload(
+                    channelRole: "channel_member",
+                    custom: ["nickname": .string("Marty")],
+                    notificationsMuted: false
+                )
+            ]
+        )
+
+        let chatMessage = payload.asModel(
+            cid: .unique,
+            currentUserId: .unique,
+            channelReads: []
+        )
+
+        XCTAssertEqual(chatMessage.mentionedChannelMembers.count, 1)
+        XCTAssertEqual(chatMessage.mentionedChannelMembers["u2"]?.channelRole, .member)
+        XCTAssertEqual(chatMessage.mentionedChannelMembers["u2"]?.extraData, ["nickname": .string("Marty")])
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
@@ -153,7 +237,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.member?.custom, [String: RawJSON]())
     }
 
-    func test_memberInfoPayload_decodesV1InlineCustomKeys() throws {
+    func test_memberInfoPayload_decodesInlineExtraData() throws {
         let json = """
         {
             "channel_role": "channel_member",

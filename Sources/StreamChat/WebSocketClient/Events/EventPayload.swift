@@ -58,6 +58,7 @@ final class EventPayload: Decodable, Sendable {
     let user: UserPayload?
     let createdBy: UserPayload?
     let memberContainer: MemberContainerPayload?
+    let memberInfo: MemberInfoPayload?
     let channel: ChannelDetailPayload?
     let message: MessageResponse?
     let reaction: MessageReactionPayload?
@@ -101,6 +102,7 @@ final class EventPayload: Decodable, Sendable {
         user: UserPayload? = nil,
         createdBy: UserPayload? = nil,
         memberContainer: MemberContainerPayload? = nil,
+        memberInfo: MemberInfoPayload? = nil,
         channel: ChannelDetailPayload? = nil,
         message: MessageResponse? = nil,
         reaction: MessageReactionPayload? = nil,
@@ -140,6 +142,7 @@ final class EventPayload: Decodable, Sendable {
         self.user = user
         self.createdBy = createdBy
         self.memberContainer = memberContainer
+        self.memberInfo = memberInfo
         self.channel = channel
         self.message = message
         self.reaction = reaction
@@ -184,6 +187,7 @@ final class EventPayload: Decodable, Sendable {
         user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         memberContainer = try container.decodeIfPresent(MemberContainerPayload.self, forKey: .memberContainer)
+        memberInfo = try? container.decodeIfPresent(MemberInfoPayload.self, forKey: .memberContainer)
         channel = try? container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
         reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
@@ -240,6 +244,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.user: return "user"
         case \EventPayload.createdBy: return "createdBy"
         case \EventPayload.memberContainer: return "memberContainer"
+        case \EventPayload.memberInfo: return "memberInfo"
         case \EventPayload.channel: return "channel"
         case \EventPayload.message: return "message"
         case \EventPayload.reaction: return "reaction"

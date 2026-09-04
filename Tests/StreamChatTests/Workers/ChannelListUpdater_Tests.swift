@@ -310,7 +310,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_markAllRead_makesCorrectAPICall() {
         listUpdater.markAllRead()
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+        let referenceEndpoint = Endpoint<EmptyResponse>.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 

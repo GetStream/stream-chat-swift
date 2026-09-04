@@ -111,7 +111,7 @@ extension MessageReactionsPayload: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageSearchResultsPayload: IdentifiablePayloadProxy {
+extension SearchResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         results.fillIds(cache: &cache)
     }
@@ -123,7 +123,7 @@ extension MessageResponse.Boxed: IdentifiablePayloadProxy {
     }
 }
 
-extension SearchResultMessage.Boxed: IdentifiablePayloadProxy {
+extension SearchResult: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message.fillIds(cache: &cache)
     }

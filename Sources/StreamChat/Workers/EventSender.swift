@@ -17,8 +17,19 @@ class EventSender: Worker, @unchecked Sendable {
         to cid: ChannelId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .sendEvent(payload, cid: cid)) {
-            completion?($0.error)
+        do {
+            let data = try JSONEncoder.default.encode(payload)
+            let custom = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
+            let endpoint: Endpoint<EmptyResponse> = .sendEvent(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendEventRequest: SendEventRequest(event: EventRequest(custom: custom, type: Payload.eventType.rawValue))
+            )
+            apiClient.request(endpoint: endpoint) {
+                completion?($0.error)
+            }
+        } catch {
+            completion?(error)
         }
     }
 }
