@@ -47,7 +47,10 @@ allowed_endpoints=(
     hideChannel
     listDevices
     listUserGroups
+    markChannelsRead
     markDelivered
+    markRead
+    markUnread
     mute
     muteChannel
     queryDrafts
@@ -139,7 +142,10 @@ allowed_models=(
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
+  MarkChannelsReadRequest
   MarkDeliveredRequest
+  MarkReadRequest
+  MarkUnreadRequest
   MemberUserRequest
   MembersResponse
   MessageActionRequest
@@ -235,6 +241,7 @@ allowed_models=(
 allowed_hashable_models=(
   AppSettings
   Device
+  MarkUnreadRequest
   PushPreference
   PushPreferenceInput
   Role
@@ -267,6 +274,9 @@ encodable_only_models=(
   EventRequest
   FlagRequest
   HideChannelRequest
+  MarkChannelsReadRequest
+  MarkReadRequest
+  MarkUnreadRequest
   MessageActionRequest
   MessageRequest
   MuteChannelRequest
@@ -699,6 +709,7 @@ rename_generated_type EventResponse EmptyResponse
 rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
+rename_generated_type MarkReadResponse EmptyResponse
 rename_generated_type ModerationBanResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
@@ -1024,17 +1035,12 @@ inject_v1_endpoint_paths() {
 
     case threads
     case thread(messageId: MessageId)
-    case markThreadRead(cid: ChannelId)
-    case markThreadUnread(cid: ChannelId)
 
     case channels
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case markChannelRead(String)
-    case markChannelUnread(String)
-    case markAllChannelsRead
 
     case message(MessageId)
 
@@ -1051,19 +1057,12 @@ EOF
             return "threads"
         case let .thread(threadId):
             return "threads/\(threadId)"
-        case let .markThreadRead(cid):
-            return "channels/\(cid.apiPath)/read"
-        case let .markThreadUnread(cid):
-            return "channels/\(cid.apiPath)/unread"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .markChannelRead(channelId): return "channels/\(channelId)/read"
-        case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
-        case .markAllChannelsRead: return "channels/read"
 
         case let .message(messageId): return "messages/\(messageId)"
 

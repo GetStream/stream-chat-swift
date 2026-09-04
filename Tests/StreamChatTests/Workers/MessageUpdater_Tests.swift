@@ -2970,7 +2970,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadRead(cid: cid, threadId: threadId)))
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest(threadId: threadId))))
     }
 
     func test_markThreadRead_whenFailure() throws {
@@ -2988,7 +2988,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadRead(cid: cid, threadId: threadId)))
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest(threadId: threadId))))
     }
 
     // MARK: Mark unread
@@ -3007,7 +3007,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markUnread(type: cid.type.rawValue, id: cid.id, markUnreadRequest: MarkUnreadRequest(threadId: threadId))))
     }
 
     func test_markThreadUnread_whenFailure() throws {
@@ -3025,7 +3025,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markUnread(type: cid.type.rawValue, id: cid.id, markUnreadRequest: MarkUnreadRequest(threadId: threadId))))
     }
 
     // MARK: updateThread

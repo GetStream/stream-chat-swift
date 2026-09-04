@@ -160,7 +160,7 @@ extension NSManagedObjectContext {
     func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
-        from unreadCriteria: MarkUnreadCriteria,
+        from request: MarkUnreadRequest,
         lastReadMessageId: MessageId?,
         lastReadAt: Date?,
         unreadMessagesCount: Int?
@@ -168,10 +168,9 @@ extension NSManagedObjectContext {
         guard let read = loadChannelRead(cid: cid, userId: userId) else { return }
         
         let findMessageDTO: () -> MessageDTO? = {
-            switch unreadCriteria {
-            case .messageId(let messageId):
+            if let messageId = request.messageId {
                 return self.message(id: messageId)
-            case .messageTimestamp(let messageTimestamp):
+            } else if let messageTimestamp = request.messageTimestamp {
                 let clientConfig = self.chatClientConfig
                 return try? MessageDTO.loadMessage(
                     beforeOrEqual: messageTimestamp,
@@ -179,6 +178,8 @@ extension NSManagedObjectContext {
                     shouldShowShadowedMessages: clientConfig?.shouldShowShadowedMessages ?? false,
                     context: self
                 )
+            } else {
+                return nil
             }
         }
         guard let message = findMessageDTO() else { return }
@@ -187,12 +188,7 @@ extension NSManagedObjectContext {
         read.lastReadAt = lastReadAt.bridgeDate
         read.lastReadMessageId = lastReadMessageId
 
-        let excludesMessageId: Bool = {
-            switch unreadCriteria {
-            case .messageId: return false
-            case .messageTimestamp: return true
-            }
-        }()
+        let excludesMessageId = request.messageId == nil
         let messagesCount = unreadMessagesCount ?? MessageDTO.countOtherUserMessages(
             in: read.channel.cid,
             createdAtFrom: lastReadAt,
