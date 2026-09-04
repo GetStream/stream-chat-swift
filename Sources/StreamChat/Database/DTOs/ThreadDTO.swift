@@ -96,7 +96,7 @@ class ThreadDTO: NSManagedObject {
 
     /// Populate the DTO.
     func fill(
-        parentMessage: MessageDTO,
+        parentMessage: MessageDTO?,
         title: String?,
         replyCount: Int64,
         participantCount: Int64,
@@ -107,12 +107,11 @@ class ThreadDTO: NSManagedObject {
         latestReplies: Set<MessageDTO>?,
         threadParticipants: Set<ThreadParticipantDTO>?,
         read: Set<ThreadReadDTO>?,
-        createdBy: UserDTO,
-        channel: ChannelDTO,
+        createdBy: UserDTO?,
+        channel: ChannelDTO?,
         currentUserUnreadCount: Int?,
-        extraData: Data
+        extraData: Data?
     ) {
-        self.parentMessage = parentMessage
         self.title = title
         self.replyCount = replyCount
         self.participantCount = participantCount
@@ -122,12 +121,21 @@ class ThreadDTO: NSManagedObject {
         self.createdAt = createdAt
         self.lastMessageAt = lastMessageAt
         self.updatedAt = updatedAt
-        self.createdBy = createdBy
-        self.channel = channel
-        self.extraData = extraData
 
-        /// For partial thread response, the properties below won't be returned.
+        /// For partial thread responses and thread read events, the properties below won't be returned.
         /// We need to make sure we don't reset this values from the current state.
+        if let parentMessage {
+            self.parentMessage = parentMessage
+        }
+        if let createdBy {
+            self.createdBy = createdBy
+        }
+        if let channel {
+            self.channel = channel
+        }
+        if let extraData {
+            self.extraData = extraData
+        }
         if let latestReplies {
             self.latestReplies = latestReplies
         }
@@ -207,7 +215,7 @@ extension NSManagedObjectContext {
         )
     }
 
-    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO] {
+    func saveThreadList(payload: QueryThreadsResponse) -> [ThreadDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.threads.compactMapLoggingError { threadPayload in
             try saveThread(payload: threadPayload, cache: cache)
@@ -215,21 +223,30 @@ extension NSManagedObjectContext {
     }
 
     func saveThread(
-        payload: ThreadPayload,
+        payload: ThreadStateResponse,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO {
+        guard let channel = payload.channel else {
+            throw ClientError("Thread payload is missing a channel")
+        }
+        guard let parentMessage = payload.parentMessage else {
+            throw ClientError("Thread payload is missing a parent message")
+        }
+        guard let createdBy = payload.createdBy else {
+            throw ClientError("Thread payload is missing a creator")
+        }
         let threadDTO = ThreadDTO.loadOrCreate(
             parentMessageId: payload.parentMessageId,
             context: self,
             cache: cache
         )
         let channelDTO = try saveChannel(
-            payload: payload.channel,
+            payload: channel,
             query: nil,
             cache: cache
         )
         let parentMessageDTO = try saveMessage(
-            payload: payload.parentMessage,
+            payload: parentMessage,
             channelDTO: channelDTO,
             syncOwnReactions: false,
             cache: cache
@@ -245,7 +262,8 @@ extension NSManagedObjectContext {
             return replyDTO
         }
 
-        let threadParticipantsDTO: [ThreadParticipantDTO] = try payload.threadParticipants.map { participantPayload in
+        let threadParticipants = payload.threadParticipants ?? []
+        let threadParticipantsDTO: [ThreadParticipantDTO] = try threadParticipants.map { participantPayload in
             let participantDTO = try saveThreadParticipant(
                 payload: participantPayload,
                 threadId: payload.parentMessageId,
@@ -254,7 +272,7 @@ extension NSManagedObjectContext {
             return participantDTO
         }
 
-        let readsDTO: [ThreadReadDTO] = try payload.read.map { readPayload in
+        let readsDTO: [ThreadReadDTO] = try (payload.read ?? []).map { readPayload in
             let readDTO = try saveThreadRead(
                 payload: readPayload,
                 parentMessageId: payload.parentMessageId,
@@ -263,28 +281,28 @@ extension NSManagedObjectContext {
             return readDTO
         }
 
-        let createdByUserDTO = try saveUser(payload: payload.createdBy)
+        let createdByUserDTO = try saveUser(payload: createdBy)
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(payload.extraData)
+            extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             extraData = Data()
         }
 
         var currentUserUnreadCount = 0
         if let currentUserId = currentUser?.user.id {
-            let currentUserRead = payload.read.first(where: { $0.user.id == currentUserId })
-            currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
+            let currentUserRead = payload.read?.first(where: { $0.user.id == currentUserId })
+            currentUserUnreadCount = currentUserRead?.unreadMessages ?? 0
         }
 
         if let draft = payload.draft {
-            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: payload.channel.cid, cache: cache)
+            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: channel.cid, cache: cache)
         } else {
             /// If the payload does not contain a draft reply, we should
             /// delete the existing draft reply if it exists.
             if let draft = parentMessageDTO.draftReply {
-                deleteDraftMessage(in: payload.channel.cid, threadId: draft.parentMessageId)
+                deleteDraftMessage(in: channel.cid, threadId: draft.parentMessageId)
                 parentMessageDTO.draftReply = nil
             }
         }
@@ -294,10 +312,10 @@ extension NSManagedObjectContext {
             title: payload.title,
             replyCount: Int64(payload.replyCount),
             participantCount: Int64(payload.participantCount),
-            activeParticipantCount: Int64(payload.activeParticipantCount),
+            activeParticipantCount: payload.activeParticipantCount.map(Int64.init),
             createdAt: payload.createdAt.bridgeDate,
             lastMessageAt: payload.lastMessageAt?.bridgeDate,
-            updatedAt: payload.updatedAt?.bridgeDate,
+            updatedAt: payload.updatedAt.bridgeDate,
             latestReplies: Set(latestRepliesDTO),
             threadParticipants: Set(threadParticipantsDTO),
             read: Set(readsDTO),
@@ -311,29 +329,60 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+    func saveThread(partialPayload: ThreadResponse) throws -> ThreadDTO? {
+        // Read events deliver a thread without its parent message and creator,
+        // therefore only the already stored thread can be updated.
+        guard let channel = partialPayload.channel,
+              let parentMessage = partialPayload.parentMessage,
+              let createdBy = partialPayload.createdBy else {
+            guard let threadDTO = ThreadDTO.load(
+                parentMessageId: partialPayload.parentMessageId,
+                context: self,
+                cache: nil
+            ) else {
+                return nil
+            }
+            threadDTO.fill(
+                parentMessage: nil,
+                title: partialPayload.title,
+                replyCount: Int64(partialPayload.replyCount),
+                participantCount: Int64(partialPayload.participantCount),
+                activeParticipantCount: partialPayload.activeParticipantCount.map(Int64.init),
+                createdAt: partialPayload.createdAt.bridgeDate,
+                lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
+                updatedAt: partialPayload.updatedAt.bridgeDate,
+                latestReplies: nil,
+                threadParticipants: nil,
+                read: nil,
+                createdBy: nil,
+                channel: nil,
+                currentUserUnreadCount: nil,
+                extraData: nil
+            )
+            return threadDTO
+        }
         let threadDTO = ThreadDTO.loadOrCreate(
             parentMessageId: partialPayload.parentMessageId,
             context: self,
             cache: nil
         )
         let channelDTO = try saveChannel(
-            payload: partialPayload.channel,
+            payload: channel,
             query: nil,
             cache: nil
         )
         let parentMessageDTO = try saveMessage(
-            payload: partialPayload.parentMessage,
+            payload: parentMessage,
             channelDTO: channelDTO,
             syncOwnReactions: false,
             cache: nil
         )
 
-        let createdByUserDTO = try saveUser(payload: partialPayload.createdBy)
+        let createdByUserDTO = try saveUser(payload: createdBy)
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(partialPayload.extraData)
+            extraData = try JSONEncoder.default.encode(partialPayload.custom)
         } catch {
             extraData = Data()
         }
@@ -346,7 +395,7 @@ extension NSManagedObjectContext {
             activeParticipantCount: partialPayload.activeParticipantCount.map(Int64.init),
             createdAt: partialPayload.createdAt.bridgeDate,
             lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
-            updatedAt: partialPayload.updatedAt?.bridgeDate,
+            updatedAt: partialPayload.updatedAt.bridgeDate,
             latestReplies: nil,
             threadParticipants: nil,
             read: nil,
@@ -355,26 +404,6 @@ extension NSManagedObjectContext {
             currentUserUnreadCount: nil,
             extraData: extraData
         )
-
-        return threadDTO
-    }
-
-    @discardableResult
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
-        let threadDTO = ThreadDTO.loadOrCreate(
-            parentMessageId: detailsPayload.parentMessageId,
-            context: self,
-            cache: nil
-        )
-        
-        threadDTO.replyCount = Int64(detailsPayload.replyCount)
-        threadDTO.participantCount = Int64(detailsPayload.participantCount)
-        if let activeParticipantCount = detailsPayload.activeParticipantCount {
-            threadDTO.activeParticipantCount = Int64(activeParticipantCount)
-        }
-        threadDTO.lastMessageAt = detailsPayload.lastMessageAt?.bridgeDate
-        threadDTO.updatedAt = detailsPayload.updatedAt.bridgeDate
-        threadDTO.title = detailsPayload.title
 
         return threadDTO
     }

@@ -926,10 +926,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - replyLimit: The number of replies fetched.
     ///   - participantLimit: The number of participants fetches.
+    ///   - memberLimit: The number of members fetched from the thread's channel, between 0 and 100.
     ///   - completion: Returns the thread information if the message is the root of a thread.
     public func loadThread(
         replyLimit: Int? = nil,
         participantLimit: Int? = nil,
+        memberLimit: Int? = nil,
         completion: @escaping @MainActor (Result<ChatThread, Error>) -> Void
     ) {
         var query = ThreadQuery(
@@ -942,6 +944,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         if let participantLimit {
             query.participantLimit = participantLimit
         }
+        query.memberLimit = memberLimit
         messageUpdater.loadThread(query: query) { result in
             self.callback {
                 completion(result)
@@ -960,15 +963,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         unsetProperties: [String]? = nil,
         completion: @escaping @MainActor (Result<ChatThread, Error>) -> Void
     ) {
+        var set = extraData ?? [:]
+        set["title"] = title.map(RawJSON.string)
         messageUpdater.updateThread(
             for: messageId,
-            request: .init(
-                set: .init(
-                    title: title,
-                    extraData: extraData
-                ),
-                unset: unsetProperties
-            )
+            request: .init(set: set.isEmpty ? nil : set, unset: unsetProperties)
         ) { result in
             self.callback {
                 completion(result)

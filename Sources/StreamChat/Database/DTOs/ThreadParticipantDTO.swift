@@ -62,14 +62,17 @@ extension NSManagedObjectContext {
         threadId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadParticipantDTO {
+        guard let user = payload.user else {
+            throw ClientError("Thread participant payload is missing a user")
+        }
         let dto = ThreadParticipantDTO.loadOrCreate(
             threadId: threadId,
-            userId: payload.user.id,
+            userId: user.id,
             context: self,
             cache: cache
         )
-        dto.user = try saveUser(payload: payload.user)
-        dto.lastReadAt = payload.lastReadAt?.bridgeDate
+        dto.user = try saveUser(payload: user)
+        dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.createdAt = payload.createdAt.bridgeDate
         dto.threadId = threadId
         return dto

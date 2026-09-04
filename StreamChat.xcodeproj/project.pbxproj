@@ -777,7 +777,6 @@
 				StreamChatTests/APIClient/Endpoints/Requests/MissingEventsRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/RoleEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/SyncEndpoint_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/ThreadEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/UserGroupEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/WebSocketConnectEndpoint_Tests.swift,
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
