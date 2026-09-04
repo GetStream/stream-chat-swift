@@ -11,7 +11,6 @@ final class SearchPayload: Sendable, Encodable, JSONEncodable {
     let limit: Int?
     /// Message filter conditions
     let messageFilterConditions: (any Encodable & Sendable)?
-    let messageOptions: MessageOptions?
     /// Pagination parameter. Cannot be used with non-zero offset.
     let next: String?
     /// Pagination offset. Cannot be used with sort or next.
@@ -25,7 +24,6 @@ final class SearchPayload: Sendable, Encodable, JSONEncodable {
         filterConditions: any Encodable & Sendable,
         limit: Int? = nil,
         messageFilterConditions: (any Encodable & Sendable)? = nil,
-        messageOptions: MessageOptions? = nil,
         next: String? = nil,
         offset: Int? = nil,
         query: String? = nil,
@@ -34,7 +32,6 @@ final class SearchPayload: Sendable, Encodable, JSONEncodable {
         self.filterConditions = filterConditions
         self.limit = limit
         self.messageFilterConditions = messageFilterConditions
-        self.messageOptions = messageOptions
         self.next = next
         self.offset = offset
         self.query = query
@@ -45,7 +42,6 @@ final class SearchPayload: Sendable, Encodable, JSONEncodable {
         case filterConditions = "filter_conditions"
         case limit
         case messageFilterConditions = "message_filter_conditions"
-        case messageOptions = "message_options"
         case next
         case offset
         case query
@@ -59,7 +55,6 @@ final class SearchPayload: Sendable, Encodable, JSONEncodable {
         if let messageFilterConditions {
             try container.encode(messageFilterConditions, forKey: .messageFilterConditions)
         }
-        try container.encodeIfPresent(messageOptions, forKey: .messageOptions)
         try container.encodeIfPresent(next, forKey: .next)
         try container.encodeIfPresent(offset, forKey: .offset)
         try container.encodeIfPresent(query, forKey: .query)

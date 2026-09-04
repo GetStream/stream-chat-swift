@@ -11,24 +11,16 @@ final class SearchResponse: Sendable, Decodable {
     let previous: String?
     /// Search results
     let results: [SearchResult]
-    let resultsWarning: SearchWarning?
 
-    init(
-        next: String? = nil,
-        previous: String? = nil,
-        results: [SearchResult],
-        resultsWarning: SearchWarning? = nil
-    ) {
+    init(next: String? = nil, previous: String? = nil, results: [SearchResult]) {
         self.next = next
         self.previous = previous
         self.results = results
-        self.resultsWarning = resultsWarning
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case next
         case previous
         case results
-        case resultsWarning = "results_warning"
     }
 }

@@ -151,7 +151,6 @@ allowed_models=(
   MembersResponse
   MessageActionRequest
   MessageActionResponse
-  MessageOptions
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -192,7 +191,6 @@ allowed_models=(
   SearchResult
   SearchResultMessage
   SearchRolesResponse
-  SearchWarning
   SendEventRequest
   SendMessageRequest
   SendMessageResponse
@@ -284,7 +282,6 @@ encodable_only_models=(
   MarkReadRequest
   MarkUnreadRequest
   MessageActionRequest
-  MessageOptions
   MessageRequest
   MuteChannelRequest
   MuteRequest
@@ -376,7 +373,6 @@ decodable_only_models=(
   SearchResult
   SearchResultMessage
   SearchRolesResponse
-  SearchWarning
   SendMessageResponsePayload
   SendReactionResponse
   SharedLocation
@@ -783,6 +779,11 @@ remove_property MessageReactionGroupPayload latestReactionsBy
 # CHA-5106
 remove_property SearchPayload forceDefaultSearch
 remove_property SearchPayload forceSqlV2Backend
+
+# Unused
+remove_property SearchPayload messageOptions
+# Unused
+remove_property SearchResponse resultsWarning
 
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
