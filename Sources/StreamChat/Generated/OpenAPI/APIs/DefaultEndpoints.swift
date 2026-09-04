@@ -16,8 +16,6 @@ enum EndpointPath: Codable {
     case updateChannel(String)
     case channelUpdate(String)
 
-    case message(MessageId)
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
@@ -45,6 +43,7 @@ enum EndpointPath: Codable {
     case getApp
     case getBlockedUsers
     case getDraft(type: String, id: String)
+    case getMessage(id: String)
     case getOG
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
@@ -113,8 +112,6 @@ enum EndpointPath: Codable {
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
-        case let .message(messageId): return "messages/\(messageId)"
-
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
         case .ban:
@@ -169,6 +166,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users/block"
         case let .getDraft(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
+        case let .getMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case .getOG:
             return "/api/v2/og"
         case let .getPinnedMessages(type: type, id: id):
@@ -709,6 +708,16 @@ extension Endpoint {
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "parent_id": parentId
             ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<GetMessageResponse> {
+        return .init(
+            path: .getMessage(id: id),
+            method: .get,
+            queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
         )

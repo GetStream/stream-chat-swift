@@ -4,6 +4,11 @@
 
 import Foundation
 
+/// `MessageWithChannelResponse` (getMessage) and `SearchResultMessage` (search) are both
+/// `MessageResponse` plus `channel`. Remove the alias once the generator emits the embedded
+/// message as a nested model (CHA-5170).
+typealias MessageWithChannelResponse = SearchResultMessage
+
 extension SearchResultMessage {
     /// `SearchResultMessage` is `MessageResponse` plus `channel`, which only the search endpoint
     /// returns. Everything downstream works on `MessageResponse`, so the channel is read separately

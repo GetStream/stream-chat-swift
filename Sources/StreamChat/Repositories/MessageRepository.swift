@@ -304,14 +304,14 @@ class MessageRepository: @unchecked Sendable {
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<MessageResponse.Boxed> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<GetMessageResponse> = .getMessage(id: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
-            case let .success(boxed):
+            case let .success(response):
                 nonisolated(unsafe) var message: ChatMessage?
                 self.database.write({ session in
                     message = try session.saveMessage(
-                        payload: boxed.message,
+                        payload: response.message.asMessageResponse(),
                         syncOwnReactions: true,
                         skipDraftUpdate: false,
                         cache: nil
