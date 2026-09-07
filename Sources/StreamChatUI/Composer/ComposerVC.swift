@@ -619,8 +619,8 @@ open class ComposerVC: _ViewController,
                     self.attachmentPreviewImages.removeValue(forKey: url)
                 }
                 self.content.attachments.remove(at: index)
-            } else {
-                self.removePendingMedia(at: index - readyCount)
+            } else if let pendingPreview = self.attachmentsVC.content[safe: index] as? ProcessingAttachmentPreview {
+                self.removePendingMedia(id: pendingPreview.id)
             }
         }
     }
@@ -1830,9 +1830,6 @@ open class ComposerVC: _ViewController,
                 }
             }
         }
-        if Task.isCancelled {
-            pendingMediaItems.removeAll()
-        }
     }
 
     func loadPendingPreview(for id: UUID) async {
@@ -2002,11 +1999,6 @@ open class ComposerVC: _ViewController,
 
     private func removePendingMedia(id: UUID) {
         pendingMediaItems.removeAll { $0.id == id }
-    }
-
-    private func removePendingMedia(at index: Int) {
-        guard pendingMediaItems.indices.contains(index) else { return }
-        pendingMediaItems.remove(at: index)
     }
 
     /// Pixel size that fills the 100pt composer cell on a 3x display.
