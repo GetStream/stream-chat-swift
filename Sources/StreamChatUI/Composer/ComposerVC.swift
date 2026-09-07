@@ -829,8 +829,18 @@ open class ComposerVC: _ViewController,
                 return DefaultAttachmentPreviewProvider()
             }
         }
-        let pendingPreviews: [AttachmentPreviewProvider] = pendingMediaItems.map {
-            ProcessingAttachmentPreview(id: $0.id, type: $0.type, previewImage: $0.previewImage, progress: $0.progress)
+        let pendingPreviews: [AttachmentPreviewProvider] = pendingMediaItems.compactMap { item in
+            // Images have no compression overlay, so an empty grey cell would just flash.
+            // Wait for the picker thumbnail before showing them.
+            if item.type == .image, item.previewImage == nil {
+                return nil
+            }
+            return ProcessingAttachmentPreview(
+                id: item.id,
+                type: item.type,
+                previewImage: item.previewImage,
+                progress: item.progress
+            )
         }
         attachmentsVC.content = readyPreviews + pendingPreviews
         composerView.inputMessageView.attachmentsViewContainer.isHidden = readyPreviews.isEmpty && pendingPreviews.isEmpty

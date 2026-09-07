@@ -27,8 +27,18 @@ import XCTest
         UIView().addSubview(view)
 
         XCTAssertEqual(view.imageView.image, image)
-        XCTAssertFalse(view.uploadingOverlay.isHidden)
-        XCTAssertFalse(view.uploadingOverlay.loadingIndicator.isHidden)
+        XCTAssertTrue(view.uploadingOverlay.isHidden)
+        XCTAssertTrue(view.isAccessibilityElement)
+        XCTAssertEqual(view.accessibilityLabel, L10n.Composer.QuotedMessage.photo)
+    }
+
+    func test_whenContentIsAnImage_thenTheCompressionOverlayIsHidden() {
+        let view = ProcessingAttachmentComposerPreview()
+        view.content = .init(previewImage: nil, type: .image)
+        UIView().addSubview(view)
+
+        XCTAssertTrue(view.uploadingOverlay.isHidden)
+        XCTAssertFalse(view.uploadingOverlay.isAccessibilityElement)
     }
 
     func test_whenProgressChanges_thenThePercentageIsUpdated() {

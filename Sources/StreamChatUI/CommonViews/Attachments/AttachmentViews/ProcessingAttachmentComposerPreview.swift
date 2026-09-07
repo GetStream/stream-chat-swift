@@ -84,9 +84,20 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
         super.updateContent()
 
         imageView.image = content?.previewImage
-        uploadingOverlay.content = uploadingState
-        uploadingOverlay.accessibilityLabel = L10n.Composer.VideoCompression.preparing
-        uploadingOverlay.accessibilityValue = appearance.formatters.uploadingProgress.format(progress)
+        let showsProgress = content?.type == .video
+        uploadingOverlay.isHidden = !showsProgress
+        uploadingOverlay.isAccessibilityElement = showsProgress
+        isAccessibilityElement = !showsProgress
+        if showsProgress {
+            uploadingOverlay.content = uploadingState
+            uploadingOverlay.accessibilityLabel = L10n.Composer.VideoCompression.preparing
+            uploadingOverlay.accessibilityValue = appearance.formatters.uploadingProgress.format(progress)
+            accessibilityLabel = nil
+            accessibilityValue = nil
+        } else {
+            accessibilityLabel = L10n.Composer.QuotedMessage.photo
+            accessibilityValue = nil
+        }
     }
 
     private var uploadingState: AttachmentUploadingState {

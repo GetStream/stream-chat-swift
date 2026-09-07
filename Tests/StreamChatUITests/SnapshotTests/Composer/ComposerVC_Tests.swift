@@ -1157,6 +1157,19 @@ import XCTest
         XCTAssertTrue(composerVC.attachmentsVC.content.contains { $0 is ProcessingAttachmentPreview })
     }
 
+    func test_enqueuePendingMedia_whenImageHasNoPreviewYet_thenTheGreyPlaceholderIsNotShown() throws {
+        _ = composerVC.view
+        let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
+
+        composerVC.enqueuePendingMedia(from: [try makeItemProvider(for: imageURL)])
+
+        XCTAssertEqual(composerVC.pendingMediaItems.count, 1)
+        XCTAssertEqual(composerVC.pendingMediaItems.first?.type, .image)
+        XCTAssertTrue(composerVC.hasProcessingAttachments)
+        XCTAssertFalse(composerVC.composerView.sendButton.isEnabled)
+        XCTAssertFalse(composerVC.attachmentsVC.content.contains { $0 is ProcessingAttachmentPreview })
+    }
+
     func test_loadPendingPreviews_whenItemProviderHasAnImage_thenThePlaceholderShowsIt() async throws {
         _ = composerVC.view
         let imageURL = try makeTemporaryImageFile(width: 40, height: 20)
