@@ -1807,7 +1807,6 @@ open class ComposerVC: _ViewController,
         let itemProviders = allowedResults.map(\.itemProvider)
         enqueuePendingMedia(from: itemProviders)
         mediaSelectionTask = Task { @MainActor [weak self] in
-            await self?.loadPendingPreviews()
             await self?.processPendingMedia()
         }
     }
@@ -1823,7 +1822,6 @@ open class ComposerVC: _ViewController,
     /// Shows placeholder previews for the picked media, then loads and compresses the files.
     func addSelectedMedia(from itemProviders: [NSItemProvider]) async {
         enqueuePendingMedia(from: itemProviders)
-        await loadPendingPreviews()
         await processPendingMedia()
     }
 
@@ -1850,21 +1848,32 @@ open class ComposerVC: _ViewController,
     /// Loads picker thumbnails for every pending item before the files are processed.
     func loadPendingPreviews() async {
         let ids = pendingMediaItems.map(\.id)
-        for id in ids {
-            await loadPendingPreview(for: id)
+        await withTaskGroup(of: Void.self) { group in
+            for id in ids {
+                group.addTask { [weak self] in
+                    await self?.loadPendingPreview(for: id)
+                }
+            }
         }
     }
 
-    /// Downloads, writes, and compresses every pending media item.
+    /// Loads, copies, and compresses every pending item at the same time.
+    ///
+    /// Images are added as soon as their file is ready. Videos compress
+    /// alongside them and keep the original picker order when they finish.
     func processPendingMedia() async {
         let batchStartCount = content.attachments.count
         let ids = pendingMediaItems.map(\.id)
-        for id in ids {
-            guard !Task.isCancelled else {
-                pendingMediaItems.removeAll()
-                return
+        await withTaskGroup(of: Void.self) { group in
+            for id in ids {
+                group.addTask { [weak self] in
+                    await self?.loadPendingPreview(for: id)
+                    await self?.processPendingItem(id: id, batchStartCount: batchStartCount)
+                }
             }
-            await processPendingItem(id: id, batchStartCount: batchStartCount)
+        }
+        if Task.isCancelled {
+            pendingMediaItems.removeAll()
         }
     }
 
@@ -1943,7 +1952,9 @@ open class ComposerVC: _ViewController,
                     at: media.url,
                     quality: quality,
                     progressHandler: { [weak self] progress in
-                        self?.updateCompressionProgress(progress, for: id)
+                        Task { @MainActor [weak self] in
+                            self?.updateCompressionProgress(progress, for: id)
+                        }
                     }
                 )
                 processedMedia = .init(url: compressedURL, type: .video)
@@ -2000,6 +2011,16 @@ open class ComposerVC: _ViewController,
         return .compress(quality)
     }
 
+    /// Where a finished item should sit when others from the same picker batch
+    /// may still be compressing.
+    static func attachmentIndex(
+        batchStartCount: Int,
+        order: Int,
+        unfinishedItemsBefore: Int
+    ) -> Int {
+        batchStartCount + order - unfinishedItemsBefore
+    }
+
     private func commitPendingMedia(id: UUID, media: SelectedMediaItem, batchStartCount: Int) async {
         guard let pending = pendingMediaItems.first(where: { $0.id == id }) else {
             removeTemporaryMedia(at: media.url)
@@ -2016,7 +2037,12 @@ open class ComposerVC: _ViewController,
             removePendingMedia(id: id)
             return
         }
-        let desiredIndex = min(content.attachments.count - 1, batchStartCount + pending.order)
+        let unfinishedItemsBefore = pendingMediaItems.filter { $0.id != id && $0.order < pending.order }.count
+        let desiredIndex = Self.attachmentIndex(
+            batchStartCount: batchStartCount,
+            order: pending.order,
+            unfinishedItemsBefore: unfinishedItemsBefore
+        )
         if currentIndex != desiredIndex {
             var attachments = content.attachments
             let attachment = attachments.remove(at: currentIndex)
@@ -2200,7 +2226,7 @@ open class ComposerVC: _ViewController,
     private func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
-        progressHandler: @escaping (Double) -> Void
+        progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL {
         let compressedURL = try await components.videoCompressor.compressVideo(
             at: url,

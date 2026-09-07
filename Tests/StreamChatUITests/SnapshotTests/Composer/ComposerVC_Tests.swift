@@ -1327,6 +1327,80 @@ import XCTest
         XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
     }
 
+    func test_attachmentIndex_whenEarlierItemsAreStillProcessing_thenTheFinishedItemLeavesSpaceForThem() {
+        XCTAssertEqual(ComposerVC.attachmentIndex(batchStartCount: 0, order: 2, unfinishedItemsBefore: 2), 0)
+        XCTAssertEqual(ComposerVC.attachmentIndex(batchStartCount: 0, order: 1, unfinishedItemsBefore: 1), 0)
+        XCTAssertEqual(ComposerVC.attachmentIndex(batchStartCount: 0, order: 0, unfinishedItemsBefore: 0), 0)
+        XCTAssertEqual(ComposerVC.attachmentIndex(batchStartCount: 3, order: 1, unfinishedItemsBefore: 0), 4)
+    }
+
+    func test_addSelectedMedia_whenMultipleImagesAreSelected_thenTheyAreAddedInPickerOrder() async throws {
+        let first = try makeTemporaryImageFile(width: 40, height: 20)
+        let second = try makeTemporaryImageFile(width: 10, height: 30)
+
+        await composerVC.addSelectedMedia(from: [
+            try makeItemProvider(for: first),
+            try makeItemProvider(for: second)
+        ])
+
+        let widths = composerVC.content.attachments.compactMap { ($0.payload as? ImageAttachmentPayload)?.originalWidth }
+        XCTAssertEqual(widths, [40, 10])
+        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
+    }
+
+    func test_addSelectedMedia_whenImageAndVideoAreSelected_thenTheImageIsAddedWhileTheVideoCompresses() async throws {
+        let compressor = VideoCompressor_Mock()
+        let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 512)
+        compressor.compressedURL = compressedURL
+        composerVC.components.videoCompressor = compressor
+        setUploadSizeLimit(1000)
+
+        var typesWhileCompressing: [AttachmentType] = []
+        compressor.compressionGate = { [weak composerVC] in
+            for _ in 0..<50 {
+                if composerVC?.content.attachments.contains(where: { $0.type == .image }) == true {
+                    break
+                }
+                try? await Task.sleep(nanoseconds: 20_000_000)
+            }
+            typesWhileCompressing = composerVC?.content.attachments.map(\.type) ?? []
+        }
+
+        await composerVC.addSelectedMedia(from: [
+            try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)),
+            try makeItemProvider(for: try makeTemporaryImageFile(width: 40, height: 20))
+        ])
+
+        XCTAssertEqual(typesWhileCompressing, [.image])
+        XCTAssertEqual(composerVC.content.attachments.map(\.type), [.video, .image])
+        XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
+        XCTAssertEqual((composerVC.content.attachments.last?.payload as? ImageAttachmentPayload)?.originalWidth, 40)
+        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
+    }
+
+    func test_addSelectedMedia_whenImageThenVideoAreSelected_thenPickerOrderIsKept() async throws {
+        let compressor = VideoCompressor_Mock()
+        compressor.compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 512)
+        composerVC.components.videoCompressor = compressor
+        setUploadSizeLimit(1000)
+        compressor.compressionGate = { [weak composerVC] in
+            for _ in 0..<50 {
+                if composerVC?.content.attachments.contains(where: { $0.type == .image }) == true {
+                    break
+                }
+                try? await Task.sleep(nanoseconds: 20_000_000)
+            }
+        }
+
+        await composerVC.addSelectedMedia(from: [
+            try makeItemProvider(for: try makeTemporaryImageFile(width: 40, height: 20)),
+            try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096))
+        ])
+
+        XCTAssertEqual(composerVC.content.attachments.map(\.type), [.image, .video])
+        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
+    }
+
     func test_processingProgress_whenVideoIsDownloadedAndCompressed_thenEachPhaseUsesHalfOfTheBar() throws {
         let id = try enqueuePendingVideo()
 

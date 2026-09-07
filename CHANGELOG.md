@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Compress the videos added in the composer, showing the progress and allowing to cancel it [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 - Show composer media processing with the same percentage spinner as message attachment uploads, reporting the iCloud download and the compression as a single progress [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 - Compress every composer video to 720p H.264 at the same bitrate as the system photos picker (`VideoCompressionQuality.high`), so HEVC files play on other platforms. Skip the transcode when even that low size estimate would exceed the upload limit. Set `Components.default.videoCompressionQuality` to `.medium` or `.low` for smaller uploads [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
+- Process picked photos and videos in parallel, so images are added while videos compress at the same time and the original selection order is kept [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
 _August 27, 2026_

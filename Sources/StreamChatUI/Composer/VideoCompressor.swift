@@ -39,12 +39,12 @@ public protocol VideoCompressor: Sendable {
     ///   - url: The local file URL of the video which should be compressed.
     ///   - quality: The quality which the compressed video should have.
     ///   - progressHandler: Called with the progress of the compression, a value between 0 and 1.
+    ///     May be invoked off the main actor.
     /// - Returns: The local file URL of the compressed video.
-    @MainActor
     func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
-        progressHandler: @escaping (Double) -> Void
+        progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL
 }
 
@@ -64,11 +64,10 @@ public struct StreamVideoCompressor: VideoCompressor {
         self.outputFileType = outputFileType
     }
 
-    @MainActor
     public func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
-        progressHandler: @escaping (Double) -> Void
+        progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL {
         let asset = AVURLAsset(url: url)
         guard let session = AVAssetExportSession(asset: asset, presetName: quality.exportPreset) else {
@@ -80,17 +79,22 @@ public struct StreamVideoCompressor: VideoCompressor {
         }
 
         let outputURL = try makeOutputURL(for: url)
-        let progressTask = Task { @MainActor in
+        // `progress` is meant to be read while the session exports.
+        nonisolated(unsafe) let progressSession = session
+        let progressTask = Task {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64(progressUpdateInterval * 1_000_000_000))
                 guard !Task.isCancelled else { return }
-                progressHandler(Double(session.progress))
+                progressHandler(Double(progressSession.progress))
             }
         }
         defer { progressTask.cancel() }
 
         do {
-            try await session.export(to: outputURL, as: outputFileType)
+            // `export(to:as:)` inherits the caller actor. Passing no isolation
+            // lets several videos compress at the same time instead of taking
+            // turns on the main actor.
+            try await session.export(to: outputURL, as: outputFileType, isolation: nil)
         } catch {
             try? FileManager.default.removeItem(at: outputURL.deletingLastPathComponent())
             throw error

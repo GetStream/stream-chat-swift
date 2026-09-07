@@ -65,6 +65,32 @@ import XCTest
         XCTAssertGreaterThan(try XCTUnwrap(estimate), 100 * 1024 * 1024)
     }
 
+    func test_compressVideo_whenTwoVideosAreCompressed_thenBothReportProgressBeforeEitherFinishes() async throws {
+        let firstURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 30, bitRate: 4_000_000)
+        let secondURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 30, bitRate: 4_000_000)
+        let compressor = StreamVideoCompressor(progressUpdateInterval: 0.01)
+        let lock = NSLock()
+        nonisolated(unsafe) var firstStarted = false
+        nonisolated(unsafe) var secondStarted = false
+        nonisolated(unsafe) var bothWereInFlight = false
+
+        async let first = compressor.compressVideo(at: firstURL, quality: .high) { _ in
+            lock.lock()
+            firstStarted = true
+            if secondStarted { bothWereInFlight = true }
+            lock.unlock()
+        }
+        async let second = compressor.compressVideo(at: secondURL, quality: .high) { _ in
+            lock.lock()
+            secondStarted = true
+            if firstStarted { bothWereInFlight = true }
+            lock.unlock()
+        }
+        _ = try await (first, second)
+
+        XCTAssertTrue(bothWereInFlight)
+    }
+
     func test_compressVideo_whenTheQualityIsNotSupported_thenAnErrorIsThrown() async throws {
         let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 5, bitRate: 1_000_000)
         let compressor = StreamVideoCompressor()
