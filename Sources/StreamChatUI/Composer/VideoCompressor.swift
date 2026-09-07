@@ -29,6 +29,8 @@ public struct VideoCompressionQuality: Equatable, Sendable {
 public enum VideoCompressionError: Error {
     /// The video cannot be compressed with the requested quality.
     case unsupportedQuality(VideoCompressionQuality)
+    /// The export finished without producing a compressed video.
+    case exportFailed
 }
 
 /// A type which compresses the videos that are added as attachments to the composer.
@@ -79,21 +81,18 @@ public struct StreamVideoCompressor: VideoCompressor {
         }
 
         let outputURL = try makeOutputURL(for: url)
-        let exportProgress = ExportProgress(session)
+        let export = ExportSession(session)
         let progressTask = Task { [progressUpdateInterval] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64(progressUpdateInterval * 1_000_000_000))
                 guard !Task.isCancelled else { return }
-                progressHandler(exportProgress.value)
+                progressHandler(export.progress)
             }
         }
         defer { progressTask.cancel() }
 
         do {
-            // `export(to:as:)` inherits the caller actor. Passing no isolation
-            // lets several videos compress at the same time instead of taking
-            // turns on the main actor.
-            try await session.export(to: outputURL, as: outputFileType, isolation: nil)
+            try await export.run(to: outputURL, as: outputFileType)
         } catch {
             try? FileManager.default.removeItem(at: outputURL.deletingLastPathComponent())
             throw error
@@ -144,21 +143,45 @@ public struct StreamVideoCompressor: VideoCompressor {
     }
 }
 
-/// Reads the progress of an export session from another task while it runs.
+/// Runs an export session and reports its progress from another task.
 ///
-/// `AVAssetExportSession` is not `Sendable`, but `progress` is safe to read
-/// while the export is in flight. Wrapping it keeps the session out of the
-/// progress task's capture list, which the concurrency checker otherwise
-/// rejects because the session is also used to run the export.
-private final class ExportProgress: @unchecked Sendable {
+/// `AVAssetExportSession` is not `Sendable`, but the export runs on its own
+/// queue and only `progress` is read while it is in flight. Keeping the session
+/// behind this wrapper means the progress task captures a `Sendable` value,
+/// which the concurrency checker otherwise rejects because the session is also
+/// used to run the export.
+private final class ExportSession: @unchecked Sendable {
     private let session: AVAssetExportSession
 
     init(_ session: AVAssetExportSession) {
         self.session = session
     }
 
-    var value: Double {
+    var progress: Double {
         Double(session.progress)
+    }
+
+    func run(to outputURL: URL, as fileType: AVFileType) async throws {
+        if #available(iOS 18.0, *) {
+            // `export(to:as:)` inherits the caller actor. Passing no isolation
+            // lets several videos compress at the same time instead of taking
+            // turns on the main actor.
+            try await session.export(to: outputURL, as: fileType, isolation: nil)
+            return
+        }
+        session.outputURL = outputURL
+        session.outputFileType = fileType
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            session.exportAsynchronously { continuation.resume() }
+        }
+        switch session.status {
+        case .completed:
+            return
+        case .cancelled:
+            throw CancellationError()
+        default:
+            throw session.error ?? VideoCompressionError.exportFailed
+        }
     }
 }
 

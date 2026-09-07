@@ -2035,7 +2035,7 @@ open class ComposerVC: _ViewController,
     /// Pixel size that fills the 100pt composer cell on a 3x display.
     /// The picker poster is often much smaller; stretching it looks blurry.
     /// `nonisolated` so the thumbnail helpers can read it off the main actor.
-    nonisolated private static let composerPreviewMaxPixelSize = 300
+    private nonisolated static let composerPreviewMaxPixelSize = 300
 
     private func applyLocalThumbnailIfNeeded(id: UUID, media: SelectedMediaItem) async {
         let thumbnail: UIImage?
@@ -2137,7 +2137,7 @@ open class ComposerVC: _ViewController,
     /// PHPicker typically vends a `CGImage` from `loadPreviewImage`, not a `UIImage`.
     /// Image previews are tone-mapped so HDR photos do not render black.
     /// Video posters are kept as-is; redrawing them often produces a black frame.
-    nonisolated private static func uiImage(fromPreview object: NSSecureCoding?, toneMap: Bool) -> UIImage? {
+    private nonisolated static func uiImage(fromPreview object: NSSecureCoding?, toneMap: Bool) -> UIImage? {
         let image: UIImage?
         if let preview = object as? UIImage {
             image = preview
@@ -2154,7 +2154,7 @@ open class ComposerVC: _ViewController,
         return toneMap ? sdrPreviewImage(from: image) : image
     }
 
-    nonisolated private static func thumbnail(
+    private nonisolated static func thumbnail(
         fromImageData data: Data,
         maxPixelSize: Int = composerPreviewMaxPixelSize
     ) -> UIImage? {
@@ -2172,7 +2172,7 @@ open class ComposerVC: _ViewController,
         return UIImage(cgImage: cgImage)
     }
 
-    nonisolated private static func sdrPreviewImage(from image: UIImage) -> UIImage {
+    private nonisolated static func sdrPreviewImage(from image: UIImage) -> UIImage {
         let pixelWidth = image.size.width * image.scale
         let pixelHeight = image.size.height * image.scale
         guard pixelWidth > 0, pixelHeight > 0 else { return image }
@@ -2333,7 +2333,7 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    nonisolated private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
+    private nonisolated static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
         let size = track.naturalSize
         let transform = track.preferredTransform
         if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
