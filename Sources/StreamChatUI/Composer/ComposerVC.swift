@@ -473,15 +473,19 @@ open class ComposerVC: _ViewController,
 
     /// The view controller for selecting image attachments.
     ///
-    /// On iOS 14 and above `PHPickerViewController` is used, which is presented considerably
-    /// faster than `UIImagePickerController` and needs no photo library permission. A new
+    /// On iOS 14 and above `PHPickerViewController` is used unless
+    /// `Components.isLegacyPhotosPickerEnabled` is `true`. It opens faster than
+    /// `UIImagePickerController` and needs no photo library permission. A new
     /// picker is created for every presentation, because the system picker keeps showing the
     /// previous selection when the same instance is reused.
+    ///
+    /// Set `Components.isLegacyPhotosPickerEnabled` to `true` to keep the
+    /// legacy `UIImagePickerController`.
     ///
     /// To customize the system photos picker, override `mediaPickerConfiguration`.
     /// Override this property only when replacing the picker with a completely custom view controller.
     open var mediaPickerVC: UIViewController {
-        if #available(iOS 14.0, *) {
+        if #available(iOS 14.0, *), !components.isLegacyPhotosPickerEnabled {
             let picker = PHPickerViewController(configuration: mediaPickerConfiguration)
             picker.delegate = self
             return picker

@@ -21,22 +21,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Deprecate `LivestreamChannelControllerDelegate.livestreamChannelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 
 ## StreamChatUI
+### ✅ Added
+- Add `Components.isLegacyPhotosPickerEnabled` to keep using `UIImagePickerController` in the composer
 ### 🐞 Fixed
 - Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
 ### 🔄 Changed
+- Use Apple's `PHPickerViewController` by default instead of `UIImagePickerController` to better support iOS 27
 - Deprecate `ChatMessageListVC.showTypingIndicator(typingUsers:)` taking `[ChatUser]` in favour of the `[TypingUser]` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
-
-## StreamChatUI
-### ✅ Added
-- Support selecting multiple photos and videos at once in the composer, up to the app's maximum attachment count [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-- Add `Components.videoCompressionQuality`, `Components.videoCompressor` and `Components.videoCompressionProgressVC` for customising how the videos added in the composer are compressed [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-### 🔄 Changed
-- Use the system photos picker in the composer, so that the photo library opens instantly and no longer asks for permission [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-- Compress the videos added in the composer, showing the progress and allowing to cancel it [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-- Show composer media processing with the same percentage spinner as message attachment uploads, reporting the iCloud download and the compression as a single progress [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-- Compress every composer video to 720p H.264 at the same bitrate as the system photos picker (`VideoCompressionQuality.high`), so HEVC files play on other platforms. Skip the transcode when even that low size estimate would exceed the upload limit. Set `Components.default.videoCompressionQuality` to `.medium` or `.low` for smaller uploads [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
-- Process picked photos and videos in parallel, so images are added while videos compress at the same time and the original selection order is kept [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
 _August 27, 2026_

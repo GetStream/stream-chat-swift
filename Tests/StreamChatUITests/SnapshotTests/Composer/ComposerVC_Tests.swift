@@ -1028,6 +1028,14 @@ import XCTest
     }
 
     @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenLegacyPhotosPickerIsEnabled_thenUsesTheLegacyPicker() {
+        composerVC.components.isLegacyPhotosPickerEnabled = true
+
+        XCTAssertTrue(composerVC.mediaPickerVC is UIImagePickerController)
+        XCTAssertTrue(composerVC.mediaPickerVC === composerVC.mediaPickerVC)
+    }
+
+    @available(iOS 14.0, *)
     func test_mediaPickerVC_whenConfigurationIsOverridden_thenPickerUsesTheCustomConfiguration() throws {
         let customComposerVC = ComposerVC_CustomPickerConfig()
         customComposerVC.channelController = mockedChatChannelController
