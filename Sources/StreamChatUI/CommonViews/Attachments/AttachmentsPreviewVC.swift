@@ -13,14 +13,6 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         }
     }
 
-    /// Local file URLs of attachments that are still being processed and should show a spinner.
-    open var processingLocalFileURLs: Set<URL> = [] {
-        didSet {
-            guard processingLocalFileURLs != oldValue else { return }
-            updateContentIfNeeded()
-        }
-    }
-
     /// Picker-provided thumbnails keyed by the attachment's local file URL.
     open var previewImagesByURL: [URL: UIImage] = [:] {
         didSet {
@@ -103,7 +95,6 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
                 if let videoPreview = view as? VideoAttachmentComposerPreview,
                    let video = attachment as? VideoAttachmentPayload {
                     videoPreview.previewImage = previewImagesByURL[video.videoURL]
-                    videoPreview.isProcessing = processingLocalFileURLs.contains(video.videoURL)
                 }
 
                 if let imagePreview = view as? ImageAttachmentComposerPreview,

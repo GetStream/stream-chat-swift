@@ -501,14 +501,6 @@ open class ComposerVC: _ViewController,
         return picker
     }()
 
-    /// The view controller which shows the progress of compressing the selected videos.
-    open private(set) lazy var videoCompressionProgressVC: VideoCompressionProgressVC = {
-        let progressVC = components.videoCompressionProgressVC.init()
-        progressVC.modalPresentationStyle = .overFullScreen
-        progressVC.modalTransitionStyle = .crossDissolve
-        return progressVC
-    }()
-
     /// The task which loads and compresses the media selected in the media picker.
     private var mediaSelectionTask: Task<Void, Never>?
 
@@ -542,19 +534,9 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    /// Local file URLs of attachments that are still being processed and cannot be sent yet.
-    open private(set) var processingAttachmentURLs: Set<URL> = [] {
-        didSet {
-            guard processingAttachmentURLs != oldValue else { return }
-            updateInputAttachmentsView()
-            updateSendButtonEnabled()
-            updateConfirmButtonEnabled()
-        }
-    }
-
     /// A boolean that checks if any composer attachment is still being processed.
     open var hasProcessingAttachments: Bool {
-        !pendingMediaItems.isEmpty || !processingAttachmentURLs.isEmpty
+        !pendingMediaItems.isEmpty
     }
 
     /// Thumbnails loaded from the photos picker, keyed by the attachment's local file URL.
@@ -645,7 +627,6 @@ open class ComposerVC: _ViewController,
             let readyCount = self.content.attachments.count
             if index < readyCount {
                 if let url = self.content.attachments[index].localFileURL {
-                    self.processingAttachmentURLs.remove(url)
                     self.attachmentPreviewImages.removeValue(forKey: url)
                 }
                 self.content.attachments.remove(at: index)
@@ -821,7 +802,6 @@ open class ComposerVC: _ViewController,
 
     open func updateInputAttachmentsView() {
         attachmentsVC.previewImagesByURL = attachmentPreviewImages
-        attachmentsVC.processingLocalFileURLs = processingAttachmentURLs
         let readyPreviews: [AttachmentPreviewProvider] = content.attachments.map {
             if let provider = $0.payload as? AttachmentPreviewProvider {
                 return provider
@@ -1820,7 +1800,6 @@ open class ComposerVC: _ViewController,
         mediaSelectionTask?.cancel()
         mediaSelectionTask = nil
         pendingMediaItems.removeAll()
-        removeProcessingAttachments()
     }
 
     /// Shows placeholder previews for the picked media, then loads and compresses the files.
@@ -1849,18 +1828,6 @@ open class ComposerVC: _ViewController,
         pendingMediaItems = items
     }
 
-    /// Loads picker thumbnails for every pending item before the files are processed.
-    func loadPendingPreviews() async {
-        let ids = pendingMediaItems.map(\.id)
-        await withTaskGroup(of: Void.self) { group in
-            for id in ids {
-                group.addTask { [weak self] in
-                    await self?.loadPendingPreview(for: id)
-                }
-            }
-        }
-    }
-
     /// Loads, copies, and compresses every pending item at the same time.
     ///
     /// Images are added as soon as their file is ready. Videos compress
@@ -1881,7 +1848,7 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    private func loadPendingPreview(for id: UUID) async {
+    func loadPendingPreview(for id: UUID) async {
         guard let itemProvider = pendingMediaItems.first(where: { $0.id == id })?.itemProvider else { return }
         guard let previewImage = await Self.loadPreviewImage(from: itemProvider) else { return }
         updatePendingPreview(previewImage, for: id)
@@ -2264,18 +2231,6 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    /// Removes every attachment that is still being processed.
-    private func removeProcessingAttachments() {
-        let urls = processingAttachmentURLs
-        content.attachments.removeAll { attachment in
-            guard let url = attachment.localFileURL, urls.contains(url) else { return false }
-            attachmentPreviewImages.removeValue(forKey: url)
-            removeTemporaryMedia(at: url)
-            return true
-        }
-        processingAttachmentURLs.removeAll()
-    }
-
     private func localInfo(
         for media: SelectedMediaItem,
         originalImage: UIImage? = nil
@@ -2302,32 +2257,6 @@ open class ComposerVC: _ViewController,
             break
         }
         return info
-    }
-
-    /// Shows the view which reports the progress of compressing the selected videos.
-    open func showVideoCompressionProgress(numberOfVideos: Int) {
-        videoCompressionProgressVC.content = .init(
-            phase: .preparing,
-            currentVideo: 1,
-            numberOfVideos: numberOfVideos,
-            progress: 0
-        )
-        videoCompressionProgressVC.onCancel = { [weak self] in
-            self?.cancelMediaSelection()
-        }
-        guard videoCompressionProgressVC.presentingViewController == nil else { return }
-        present(videoCompressionProgressVC, animated: true)
-    }
-
-    /// Updates the reported progress of compressing the selected videos.
-    open func updateVideoCompressionProgress(_ content: VideoCompressionProgressVC.Content) {
-        videoCompressionProgressVC.content = content
-    }
-
-    /// Hides the view which reports the progress of compressing the selected videos.
-    open func hideVideoCompressionProgress() {
-        guard videoCompressionProgressVC.presentingViewController != nil else { return }
-        videoCompressionProgressVC.dismiss(animated: true)
     }
 
     private static var videoTypeIdentifier: String { "public.movie" }

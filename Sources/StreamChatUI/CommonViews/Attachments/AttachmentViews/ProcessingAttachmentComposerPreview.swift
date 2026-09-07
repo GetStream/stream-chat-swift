@@ -131,7 +131,6 @@ public struct ProcessingAttachmentPreview: AttachmentPreviewProvider {
         view.processingId = id
         view.progress = progress
         view.content = .init(previewImage: previewImage, type: type)
-        view.imageView.image = previewImage
         return view
     }
 }

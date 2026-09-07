@@ -27,18 +27,4 @@ import XCTest
         XCTAssertEqual(components.mockMediaLoader.loadVideoPreviewAtURLMockFunc.calls.map(\.0), [url])
         XCTAssertEqual(components.mockMediaLoader.videoAssetMockFunc.calls.map(\.0), [url])
     }
-
-    func test_whenIsProcessing_thenTheOverlayIsVisible() {
-        let view = VideoAttachmentComposerPreview()
-        view.isProcessing = true
-        view.progress = 0.42
-        UIView().addSubview(view)
-
-        XCTAssertFalse(view.uploadingOverlay.isHidden)
-        XCTAssertFalse(view.uploadingOverlay.loadingIndicator.isHidden)
-        let formatted = view.appearance.formatters.uploadingProgress.format(0.42)
-        XCTAssertEqual(view.uploadingOverlay.uploadingProgressLabel.text, formatted)
-        XCTAssertEqual(view.uploadingOverlay.accessibilityLabel, L10n.Composer.VideoCompression.compressing)
-        XCTAssertEqual(view.uploadingOverlay.accessibilityValue, formatted)
-    }
 }

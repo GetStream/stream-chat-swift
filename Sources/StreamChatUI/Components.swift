@@ -608,9 +608,6 @@ import UIKit
     /// The object responsible for compressing the videos which are added as attachments in the composer.
     public var videoCompressor: VideoCompressor = StreamVideoCompressor()
 
-    /// A view controller that shows the progress while the selected videos are being compressed.
-    public var videoCompressionProgressVC: VideoCompressionProgressVC.Type = VideoCompressionProgressVC.self
-
     // MARK: - Composer suggestion components
 
     /// A view controller that shows suggestions of commands or mentions.
