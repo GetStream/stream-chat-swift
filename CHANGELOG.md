@@ -22,12 +22,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ✅ Added
-- Add `Components.isLegacyPhotosPickerEnabled` to keep using `UIImagePickerController` in the composer
+- Add `Components.isLegacyPhotosPickerEnabled` to keep using `UIImagePickerController` in the composer [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 ### 🐞 Fixed
 - Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
 ### 🔄 Changed
-- Use Apple's `PHPickerViewController` by default instead of `UIImagePickerController` to better support iOS 27
+- Use Apple's `PHPickerViewController` by default instead of `UIImagePickerController` to better support iOS 27 [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 - Deprecate `ChatMessageListVC.showTypingIndicator(typingUsers:)` taking `[ChatUser]` in favour of the `[TypingUser]` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
