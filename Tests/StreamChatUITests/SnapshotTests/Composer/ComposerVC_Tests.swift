@@ -1087,18 +1087,21 @@ import XCTest
 
     // MARK: - addSelectedMedia
 
-    func test_addSelectedMedia_whenVideoFitsTheUploadLimit_thenTheOriginalVideoIsAddedWithoutCompression() async throws {
+    func test_addSelectedMedia_whenVideoFitsTheUploadLimit_thenTheVideoIsStillCompressed() async throws {
         let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
+        let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 2048)
         let compressor = VideoCompressor_Mock()
+        compressor.compressedURL = compressedURL
         composerVC.components.videoCompressor = compressor
 
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
         XCTAssertEqual(Components.default.videoCompressionQuality, .high)
-        XCTAssertEqual(compressor.compressVideoCallCount, 0)
+        XCTAssertEqual(compressor.compressVideoCallCount, 1)
+        XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .high)
         XCTAssertEqual(composerVC.content.attachments.count, 1)
         XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
-        XCTAssertNotNil(composerVC.content.attachments.first?.localFileURL)
+        XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
     }
 
     func test_addSelectedMedia_whenQualityIsConfiguredAndTheVideoExceedsTheLimit_thenTheVideoIsCompressedWithIt() async throws {
@@ -1115,19 +1118,6 @@ import XCTest
         XCTAssertEqual(compressor.compressVideoCallCount, 1)
         XCTAssertEqual(compressor.compressVideoCalledWith.first?.quality, .medium)
         XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
-    }
-
-    func test_addSelectedMedia_whenQualityIsOriginal_thenTheVideoIsNotCompressed() async throws {
-        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov")
-        let compressor = VideoCompressor_Mock()
-        composerVC.components.videoCompressor = compressor
-        composerVC.components.videoCompressionQuality = .original
-
-        await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
-
-        XCTAssertEqual(compressor.compressVideoCallCount, 0)
-        XCTAssertEqual(composerVC.content.attachments.count, 1)
-        XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
     }
 
     func test_addSelectedMedia_whenVideoIsSelected_thenTheAttachmentIsVisibleAndSendIsDisabledWhileCompressing() async throws {
@@ -1219,19 +1209,17 @@ import XCTest
         XCTAssertEqual(composerVC.content.attachments.count, 0)
     }
 
-    func test_addSelectedMedia_whenTheCompressedVideoIsBigger_thenTheOversizedOriginalVideoIsRejected() async throws {
-        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
-        let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 8192)
+    func test_addSelectedMedia_whenTheCompressedVideoIsBigger_thenTheTranscodedVideoIsKept() async throws {
+        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 1024)
+        let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 2048)
         let compressor = VideoCompressor_Mock()
         compressor.compressedURL = compressedURL
         composerVC.components.videoCompressor = compressor
-        setUploadSizeLimit(1000)
 
         await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
 
         XCTAssertEqual(compressor.compressVideoCallCount, 1)
-        XCTAssertTrue(composerVC.content.attachments.isEmpty)
-        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
+        XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
     }
 
     func test_addSelectedMedia_whenVideoExceedsTheLimit_thenItIsCompressedWithTheConfiguredQuality() async throws {
@@ -1264,18 +1252,39 @@ import XCTest
         XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
     }
 
-    func test_addSelectedMedia_whenQualityIsOriginalAndTheVideoExceedsTheLimit_thenTheAttachmentIsRejected() async throws {
-        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
-        let compressor = VideoCompressor_Mock()
-        composerVC.components.videoCompressor = compressor
-        composerVC.components.videoCompressionQuality = .original
-        setUploadSizeLimit(1000)
-
-        await composerVC.addSelectedMedia(from: [try makeItemProvider(for: videoURL)])
-
-        XCTAssertEqual(compressor.compressVideoCallCount, 0)
-        XCTAssertTrue(composerVC.content.attachments.isEmpty)
-        XCTAssertTrue(composerVC.pendingMediaItems.isEmpty)
+    func test_videoCompressionPlan_whenTheLowEstimateStillExceedsTheLimit_thenTheTranscodeIsSkipped() {
+        XCTAssertEqual(
+            ComposerVC.videoCompressionPlan(
+                maxSize: 100_000_000,
+                quality: .high,
+                estimatedCompressedSize: 30_000_000
+            ),
+            .compress(.high)
+        )
+        XCTAssertEqual(
+            ComposerVC.videoCompressionPlan(
+                maxSize: 100_000_000,
+                quality: .high,
+                estimatedCompressedSize: 120_000_000
+            ),
+            .exceedsUploadLimit
+        )
+        XCTAssertEqual(
+            ComposerVC.videoCompressionPlan(
+                maxSize: 100_000_000,
+                quality: .high,
+                estimatedCompressedSize: nil
+            ),
+            .compress(.high)
+        )
+        XCTAssertEqual(
+            ComposerVC.videoCompressionPlan(
+                maxSize: 100_000_000,
+                quality: .medium,
+                estimatedCompressedSize: 30_000_000
+            ),
+            .compress(.medium)
+        )
     }
 
     func test_addSelectedMedia_whenMultipleVideosAreSelected_thenAllPlaceholdersAreVisibleBeforeCompression() async throws {

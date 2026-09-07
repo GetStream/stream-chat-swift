@@ -591,13 +591,12 @@ import UIKit
     public var processingAttachmentComposerPreview: ProcessingAttachmentComposerPreview
         .Type = ProcessingAttachmentComposerPreview.self
 
-    /// The quality used when a video is larger than the upload limit.
+    /// The quality used when a video is compressed before upload.
     ///
-    /// Videos that already fit the limit are uploaded as they are. Oversized
-    /// videos are compressed with this quality, which defaults to `.high`
-    /// (720p H.264 at the same bitrate as the system photos picker). Set `.medium` or
-    /// `.low` for smaller uploads, or `.original` to skip the transcode and
-    /// reject the file when it exceeds the limit.
+    /// Every video is transcoded with this quality, which defaults to `.high`
+    /// (720p H.264 at the same bitrate as the system photos picker), so that
+    /// HEVC files play on other platforms. Set `.medium` or `.low` for smaller
+    /// uploads.
     public var videoCompressionQuality: VideoCompressionQuality = .high
 
     /// The object responsible for compressing the videos which are added as attachments in the composer.

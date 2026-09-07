@@ -15,9 +15,6 @@ public struct VideoCompressionQuality: Equatable, Sendable {
         self.exportPreset = exportPreset
     }
 
-    /// The videos are uploaded as they are, without being compressed.
-    public static let original = Self(exportPreset: AVAssetExportPresetPassthrough)
-
     /// The videos are compressed to the smallest file size.
     public static let low = Self(exportPreset: AVAssetExportPresetLowQuality)
 
@@ -78,7 +75,7 @@ public struct StreamVideoCompressor: VideoCompressor {
             throw VideoCompressionError.unsupportedQuality(quality)
         }
         session.shouldOptimizeForNetworkUse = true
-        if quality == .high, let fileLengthLimit = Self.fileLengthLimit(for: asset.duration) {
+        if let fileLengthLimit = Self.estimatedFileLength(for: asset.duration, quality: quality) {
             session.fileLengthLimit = fileLengthLimit
         }
 
@@ -106,11 +103,31 @@ public struct StreamVideoCompressor: VideoCompressor {
     /// (~2.5 Mbps video + AAC), measured from Apple's own picker output.
     static let highQualityBitRate: Double = 2_700_000
 
-    /// The maximum output size which matches the system photos picker's 720p H.264 bitrate.
-    static func fileLengthLimit(for duration: CMTime) -> Int64? {
+    /// Typical bitrate of `AVAssetExportPresetMediumQuality`.
+    static let mediumQualityBitRate: Double = 3_000_000
+
+    /// Typical bitrate of `AVAssetExportPresetLowQuality`.
+    static let lowQualityBitRate: Double = 500_000
+
+    /// A low size estimate for the compressed video, based on duration and the
+    /// bitrate of the given quality. Returns `nil` when the duration is unknown
+    /// or the quality has no known bitrate.
+    static func estimatedFileLength(for duration: CMTime, quality: VideoCompressionQuality) -> Int64? {
+        guard let bitRate = bitRate(for: quality) else { return nil }
         let seconds = CMTimeGetSeconds(duration)
         guard seconds.isFinite, seconds > 0 else { return nil }
-        return Int64((seconds * highQualityBitRate / 8).rounded())
+        return Int64((seconds * bitRate / 8).rounded())
+    }
+
+    static func estimatedFileLength(at url: URL, quality: VideoCompressionQuality) -> Int64? {
+        estimatedFileLength(for: AVURLAsset(url: url).duration, quality: quality)
+    }
+
+    private static func bitRate(for quality: VideoCompressionQuality) -> Double? {
+        if quality == .high { return highQualityBitRate }
+        if quality == .medium { return mediumQualityBitRate }
+        if quality == .low { return lowQualityBitRate }
+        return nil
     }
 
     private func makeOutputURL(for inputURL: URL) throws -> URL {

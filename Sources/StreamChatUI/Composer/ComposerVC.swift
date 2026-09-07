@@ -450,8 +450,8 @@ open class ComposerVC: _ViewController,
     ///
     /// `preferredAssetRepresentationMode` is `.current` so Photos does not transcode
     /// HEVC videos to H.264 while loading. That transcode is what makes picking a video
-    /// feel slow. The original file is copied instead; transcode only happens later if
-    /// `videoCompressionQuality` is not `.original`, or if the file exceeds the upload limit.
+    /// feel slow. The original file is copied instead; transcode happens afterwards
+    /// so the uploaded video is H.264 and plays on other platforms.
     ///
     /// Override this property to customize the picker without reimplementing result handling.
     /// For example, to only allow selecting images:
@@ -1919,7 +1919,15 @@ open class ComposerVC: _ViewController,
         await applyLocalThumbnailIfNeeded(id: id, media: media)
 
         var processedMedia = media
-        if let quality = videoCompressionQualityIfNeeded(for: media) {
+        switch videoCompressionPlan(for: media) {
+        case .skip:
+            updatePendingProgress(1, for: id)
+        case .exceedsUploadLimit:
+            removeTemporaryMedia(at: media.url)
+            removePendingMedia(id: id)
+            showAttachmentExceedsMaxSizeAlert()
+            return
+        case let .compress(quality):
             do {
                 let compressedURL = try await compressVideo(
                     at: media.url,
@@ -1936,8 +1944,6 @@ open class ComposerVC: _ViewController,
             } catch {
                 log.error("Failed to compress the selected video, the original video is used instead: \(error)")
             }
-        } else {
-            updatePendingProgress(1, for: id)
         }
 
         guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
@@ -1947,18 +1953,41 @@ open class ComposerVC: _ViewController,
         await commitPendingMedia(id: id, media: processedMedia, batchStartCount: batchStartCount)
     }
 
-    /// The quality a picked video should be compressed with, or `nil` when it can be uploaded as it is.
+    /// How a picked video should be compressed before it is added to the composer.
+    enum VideoCompressionPlan: Equatable {
+        case skip
+        case compress(VideoCompressionQuality)
+        case exceedsUploadLimit
+    }
+
+    /// Decides whether a video should be compressed with the configured quality.
     ///
-    /// Only videos which are larger than the upload limit are compressed. Whether the
-    /// compressed file fits the limit is checked on the real file once the compression
-    /// finished, because the size of a transcode cannot be predicted reliably upfront.
-    private func videoCompressionQualityIfNeeded(for media: SelectedMediaItem) -> VideoCompressionQuality? {
-        guard media.type == .video else { return nil }
-        guard let originalSize = fileSize(at: media.url), originalSize > maxAttachmentSize(for: .video) else {
-            return nil
+    /// Videos are always transcoded to H.264 so they play on other platforms.
+    /// The transcode is skipped only when the size estimate is already above
+    /// the upload limit.
+    private func videoCompressionPlan(for media: SelectedMediaItem) -> VideoCompressionPlan {
+        guard media.type == .video else { return .skip }
+        return Self.videoCompressionPlan(
+            maxSize: maxAttachmentSize(for: .video),
+            quality: components.videoCompressionQuality,
+            estimatedCompressedSize: StreamVideoCompressor.estimatedFileLength(
+                at: media.url,
+                quality: components.videoCompressionQuality
+            )
+        )
+    }
+
+    /// - Note: The estimate is a low cap (duration × the configured quality's bitrate).
+    ///   We only reject before compressing when even that low size would not fit.
+    static func videoCompressionPlan(
+        maxSize: Int64,
+        quality: VideoCompressionQuality,
+        estimatedCompressedSize: Int64?
+    ) -> VideoCompressionPlan {
+        if let estimatedCompressedSize, estimatedCompressedSize > maxSize {
+            return .exceedsUploadLimit
         }
-        let quality = components.videoCompressionQuality
-        return quality == .original ? nil : quality
+        return .compress(quality)
     }
 
     private func commitPendingMedia(id: UUID, media: SelectedMediaItem, batchStartCount: Int) async {
@@ -2156,8 +2185,8 @@ open class ComposerVC: _ViewController,
 
     /// Compresses the video at the given location and removes the video it was created from.
     ///
-    /// Compressing an already small video can result in a bigger file, in which case
-    /// the original video is kept.
+    /// The transcoded file is always kept, even when it is larger than the original,
+    /// so that HEVC videos become H.264 and play on other platforms.
     private func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
@@ -2168,11 +2197,9 @@ open class ComposerVC: _ViewController,
             quality: quality,
             progressHandler: progressHandler
         )
-        if let originalSize = fileSize(at: url), let compressedSize = fileSize(at: compressedURL), compressedSize >= originalSize {
-            removeTemporaryMedia(at: compressedURL)
-            return url
+        if compressedURL != url {
+            removeTemporaryMedia(at: url)
         }
-        removeTemporaryMedia(at: url)
         return compressedURL
     }
 

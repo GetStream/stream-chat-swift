@@ -40,21 +40,29 @@ import XCTest
         XCTAssertEqual(VideoCompressionQuality.high.exportPreset, AVAssetExportPreset1280x720)
     }
 
-    func test_fileLengthLimit_thenItMatchesTheSystemPickerBitrate() {
-        let limit = StreamVideoCompressor.fileLengthLimit(for: CMTime(seconds: 89.09, preferredTimescale: 600))
-        XCTAssertEqual(limit, 30_067_875)
+    func test_estimatedFileLength_thenItUsesTheBitRateOfTheConfiguredQuality() {
+        let duration = CMTime(seconds: 89.09, preferredTimescale: 600)
+        XCTAssertEqual(
+            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .high),
+            30_067_875
+        )
+        XCTAssertEqual(
+            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium),
+            33_408_750
+        )
+        XCTAssertEqual(
+            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low),
+            5_568_125
+        )
     }
 
-    func test_compressVideo_whenQualityIsOriginal_thenTheVideoKeepsItsResolution() async throws {
-        let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 10, bitRate: 1_000_000)
-        let compressor = StreamVideoCompressor()
-
-        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .original) { _ in }
-        temporaryDirectories.append(compressedURL.deletingLastPathComponent())
-
-        let loadedTrack = await videoTrack(of: compressedURL)
-        let track = try XCTUnwrap(loadedTrack)
-        XCTAssertEqual(track.naturalSize, CGSize(width: 640, height: 480))
+    func test_estimatedFileLength_whenTheVideoIsLong_thenTheLowEstimateCanExceedTheUploadLimit() {
+        let estimate = StreamVideoCompressor.estimatedFileLength(
+            for: CMTime(seconds: 600, preferredTimescale: 1),
+            quality: .high
+        )
+        XCTAssertEqual(estimate, 202_500_000)
+        XCTAssertGreaterThan(try XCTUnwrap(estimate), 100 * 1024 * 1024)
     }
 
     func test_compressVideo_whenTheQualityIsNotSupported_thenAnErrorIsThrown() async throws {
