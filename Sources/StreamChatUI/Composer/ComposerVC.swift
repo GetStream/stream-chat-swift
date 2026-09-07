@@ -2333,7 +2333,7 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
+    nonisolated private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
         let size = track.naturalSize
         let transform = track.preferredTransform
         if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {

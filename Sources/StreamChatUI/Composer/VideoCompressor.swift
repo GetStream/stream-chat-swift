@@ -79,13 +79,12 @@ public struct StreamVideoCompressor: VideoCompressor {
         }
 
         let outputURL = try makeOutputURL(for: url)
-        // `progress` is meant to be read while the session exports.
-        nonisolated(unsafe) let progressSession = session
-        let progressTask = Task {
+        let exportProgress = ExportProgress(session)
+        let progressTask = Task { [progressUpdateInterval] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64(progressUpdateInterval * 1_000_000_000))
                 guard !Task.isCancelled else { return }
-                progressHandler(Double(progressSession.progress))
+                progressHandler(exportProgress.value)
             }
         }
         defer { progressTask.cancel() }
@@ -142,6 +141,24 @@ public struct StreamVideoCompressor: VideoCompressor {
         return directory
             .appendingPathComponent(fileName.isEmpty ? UUID().uuidString : fileName)
             .appendingPathExtension(outputFileType.fileExtension)
+    }
+}
+
+/// Reads the progress of an export session from another task while it runs.
+///
+/// `AVAssetExportSession` is not `Sendable`, but `progress` is safe to read
+/// while the export is in flight. Wrapping it keeps the session out of the
+/// progress task's capture list, which the concurrency checker otherwise
+/// rejects because the session is also used to run the export.
+private final class ExportProgress: @unchecked Sendable {
+    private let session: AVAssetExportSession
+
+    init(_ session: AVAssetExportSession) {
+        self.session = session
+    }
+
+    var value: Double {
+        Double(session.progress)
     }
 }
 
