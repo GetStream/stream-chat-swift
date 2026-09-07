@@ -36,6 +36,15 @@ import XCTest
         XCTAssertLessThan(try fileSize(of: compressedURL), try fileSize(of: videoURL))
     }
 
+    func test_highQuality_usesThe720pH264ExportPreset() {
+        XCTAssertEqual(VideoCompressionQuality.high.exportPreset, AVAssetExportPreset1280x720)
+    }
+
+    func test_fileLengthLimit_thenItMatchesTheSystemPickerBitrate() {
+        let limit = StreamVideoCompressor.fileLengthLimit(for: CMTime(seconds: 89.09, preferredTimescale: 600))
+        XCTAssertEqual(limit, 30_067_875)
+    }
+
     func test_compressVideo_whenQualityIsOriginal_thenTheVideoKeepsItsResolution() async throws {
         let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 10, bitRate: 1_000_000)
         let compressor = StreamVideoCompressor()

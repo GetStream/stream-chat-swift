@@ -1919,15 +1919,7 @@ open class ComposerVC: _ViewController,
         await applyLocalThumbnailIfNeeded(id: id, media: media)
 
         var processedMedia = media
-        switch await videoCompressionPlan(for: media) {
-        case .skip:
-            updatePendingProgress(1, for: id)
-        case .exceedsUploadLimit:
-            removeTemporaryMedia(at: media.url)
-            removePendingMedia(id: id)
-            showAttachmentExceedsMaxSizeAlert()
-            return
-        case let .compress(quality):
+        if let quality = videoCompressionQualityIfNeeded(for: media) {
             do {
                 let compressedURL = try await compressVideo(
                     at: media.url,
@@ -1944,6 +1936,8 @@ open class ComposerVC: _ViewController,
             } catch {
                 log.error("Failed to compress the selected video, the original video is used instead: \(error)")
             }
+        } else {
+            updatePendingProgress(1, for: id)
         }
 
         guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
@@ -1953,56 +1947,18 @@ open class ComposerVC: _ViewController,
         await commitPendingMedia(id: id, media: processedMedia, batchStartCount: batchStartCount)
     }
 
-    /// How a picked video should be compressed before it is added to the composer.
-    private enum VideoCompressionPlan {
-        case skip
-        case compress(VideoCompressionQuality)
-        case exceedsUploadLimit
-    }
-
-    /// Decides whether a video should be compressed, and which quality should be used.
+    /// The quality a picked video should be compressed with, or `nil` when it can be uploaded as it is.
     ///
-    /// When the original file is larger than the upload limit, the compressor
-    /// estimates the output size so we can skip a long transcode that would
-    /// still be too big, or pick a lower quality that should fit.
-    private func videoCompressionPlan(for media: SelectedMediaItem) async -> VideoCompressionPlan {
-        guard media.type == .video else { return .skip }
-        let configuredQuality = components.videoCompressionQuality
-        let maxSize = maxAttachmentSize(for: .video)
-        let originalSize = fileSize(at: media.url)
-
-        if configuredQuality != .original {
-            if let originalSize, originalSize > maxSize,
-               let estimate = await estimatedCompressedSize(at: media.url, quality: configuredQuality),
-               !estimateFitsUploadLimit(estimate, maxSize: maxSize) {
-                return .exceedsUploadLimit
-            }
-            return .compress(configuredQuality)
+    /// Only videos which are larger than the upload limit are compressed. Whether the
+    /// compressed file fits the limit is checked on the real file once the compression
+    /// finished, because the size of a transcode cannot be predicted reliably upfront.
+    private func videoCompressionQualityIfNeeded(for media: SelectedMediaItem) -> VideoCompressionQuality? {
+        guard media.type == .video else { return nil }
+        guard let originalSize = fileSize(at: media.url), originalSize > maxAttachmentSize(for: .video) else {
+            return nil
         }
-
-        guard let originalSize, originalSize > maxSize else { return .skip }
-
-        for quality in [VideoCompressionQuality.high, .medium, .low] {
-            guard let estimate = await estimatedCompressedSize(at: media.url, quality: quality) else {
-                return .compress(quality)
-            }
-            if estimateFitsUploadLimit(estimate, maxSize: maxSize) {
-                return .compress(quality)
-            }
-        }
-        return .exceedsUploadLimit
-    }
-
-    /// Whether a compressed-size estimate is expected to stay under the upload limit.
-    ///
-    /// A small margin covers the fact that `AVAssetExportSession` estimates and
-    /// the bitrate heuristic can both run a bit low.
-    private func estimateFitsUploadLimit(_ estimate: Int64, maxSize: Int64) -> Bool {
-        Int64(Double(estimate) * 1.1) <= maxSize
-    }
-
-    private func estimatedCompressedSize(at url: URL, quality: VideoCompressionQuality) async -> Int64? {
-        await components.videoCompressor.estimateCompressedFileSize(at: url, quality: quality)
+        let quality = components.videoCompressionQuality
+        return quality == .original ? nil : quality
     }
 
     private func commitPendingMedia(id: UUID, media: SelectedMediaItem, batchStartCount: Int) async {
@@ -2015,6 +1971,9 @@ open class ComposerVC: _ViewController,
         }
         await addAttachmentToContent(for: media, validateFileSize: true)
         guard let currentIndex = content.attachments.firstIndex(where: { $0.localFileURL == media.url }) else {
+            // The attachment was rejected, for example because it is still too big to upload.
+            attachmentPreviewImages.removeValue(forKey: media.url)
+            removeTemporaryMedia(at: media.url)
             removePendingMedia(id: id)
             return
         }

@@ -17,8 +17,6 @@ final class VideoCompressor_Mock: VideoCompressor, @unchecked Sendable {
 
     private(set) var compressVideoCallCount = 0
     private(set) var compressVideoCalledWith: [(url: URL, quality: VideoCompressionQuality)] = []
-    private(set) var estimateCompressedFileSizeCallCount = 0
-    var estimatedSizesByPreset: [String: Int64] = [:]
 
     /// Called on the main actor just before the mock starts compressing.
     var onCompress: (() -> Void)?
@@ -37,13 +35,5 @@ final class VideoCompressor_Mock: VideoCompressor, @unchecked Sendable {
             throw error
         }
         return compressedURL ?? url
-    }
-
-    func estimateCompressedFileSize(
-        at url: URL,
-        quality: VideoCompressionQuality
-    ) async -> Int64? {
-        estimateCompressedFileSizeCallCount += 1
-        return estimatedSizesByPreset[quality.exportPreset]
     }
 }
