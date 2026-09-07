@@ -448,11 +448,6 @@ open class ComposerVC: _ViewController,
 
     /// The configuration of the system photos picker presented by `mediaPickerVC`.
     ///
-    /// `preferredAssetRepresentationMode` is `.current` so Photos does not transcode
-    /// HEVC videos to H.264 while loading. That transcode is what makes picking a video
-    /// feel slow. The original file is copied instead; transcode happens afterwards
-    /// so the uploaded video is H.264 and plays on other platforms.
-    ///
     /// Override this property to customize the picker without reimplementing result handling.
     /// For example, to only allow selecting images:
     /// ```
@@ -473,13 +468,8 @@ open class ComposerVC: _ViewController,
 
     /// The view controller for selecting image attachments.
     ///
-    /// On iOS 14 and above `PHPickerViewController` is used unless
-    /// `Components.isLegacyPhotosPickerEnabled` is `true`. It opens faster than
-    /// `UIImagePickerController` and needs no photo library permission. A new
-    /// picker is created for every presentation, because the system picker keeps showing the
-    /// previous selection when the same instance is reused.
-    ///
-    /// Set `Components.isLegacyPhotosPickerEnabled` to `true` to keep the
+    /// On iOS 14 and above `PHPickerViewController` is used. Set
+    /// `Components.isLegacyPhotosPickerEnabled` to `true` to keep the
     /// legacy `UIImagePickerController`.
     ///
     /// To customize the system photos picker, override `mediaPickerConfiguration`.
@@ -511,7 +501,6 @@ open class ComposerVC: _ViewController,
         public var previewImage: UIImage?
         public var progress: Double
         /// The share of the progress bar taken by downloading the file from iCloud.
-        /// Zero when the file was already on the device, so compression fills the whole bar.
         var downloadShare: Double
         let itemProvider: NSItemProvider
         let order: Int
@@ -814,8 +803,6 @@ open class ComposerVC: _ViewController,
             }
         }
         let pendingPreviews: [AttachmentPreviewProvider] = pendingMediaItems.compactMap { item in
-            // Images have no compression overlay, so an empty grey cell would just flash.
-            // Wait for the picker thumbnail before showing them.
             if item.type == .image, item.previewImage == nil {
                 return nil
             }
@@ -1862,8 +1849,7 @@ open class ComposerVC: _ViewController,
     /// The part of the progress bar an iCloud download takes when compression follows it.
     static let cloudDownloadProgressShare: Double = 0.5
 
-    /// Downloading from iCloud and compressing are shown as a single progress bar,
-    /// so the reported progress never goes backwards.
+    /// The reported progress never goes backwards.
     private func updatePendingProgress(_ progress: Double, for id: UUID) {
         guard let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
         let progress = min(max(progress, 0), 1)
@@ -1872,9 +1858,6 @@ open class ComposerVC: _ViewController,
     }
 
     /// Reports how much of the file was downloaded from iCloud.
-    ///
-    /// The download only takes a share of the bar when it actually happens, and only
-    /// leaves room for compression when the item is going to be compressed.
     func updateDownloadProgress(_ progress: Double, isCloudDownload: Bool, for id: UUID) {
         guard isCloudDownload, let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
         let share = pendingMediaItems[index].type == .video ? Self.cloudDownloadProgressShare : 1
@@ -1953,10 +1936,6 @@ open class ComposerVC: _ViewController,
     }
 
     /// Decides whether a video should be compressed with the configured quality.
-    ///
-    /// Videos are always transcoded to H.264 so they play on other platforms.
-    /// The transcode is skipped only when the size estimate is already above
-    /// the upload limit.
     private func videoCompressionPlan(for media: SelectedMediaItem) -> VideoCompressionPlan {
         guard media.type == .video else { return .skip }
         return Self.videoCompressionPlan(
@@ -1969,8 +1948,6 @@ open class ComposerVC: _ViewController,
         )
     }
 
-    /// - Note: The estimate is a low cap (duration × the configured quality's bitrate).
-    ///   We only reject before compressing when even that low size would not fit.
     static func videoCompressionPlan(
         maxSize: Int64,
         quality: VideoCompressionQuality,
@@ -2033,8 +2010,6 @@ open class ComposerVC: _ViewController,
     }
 
     /// Pixel size that fills the 100pt composer cell on a 3x display.
-    /// The picker poster is often much smaller; stretching it looks blurry.
-    /// `nonisolated` so the thumbnail helpers can read it off the main actor.
     private nonisolated static let composerPreviewMaxPixelSize = 300
 
     private func applyLocalThumbnailIfNeeded(id: UUID, media: SelectedMediaItem) async {
@@ -2089,9 +2064,6 @@ open class ComposerVC: _ViewController,
         return await loadImageDataThumbnail(from: itemProvider)
     }
 
-    /// Videos do not vend `UIImage` via `loadObject`. The immediate thumbnail is
-    /// only the system poster from `loadPreviewImage`. Generating a frame from the
-    /// video file is deferred until the file has already been copied locally.
     private static func loadVideoPreviewImage(from itemProvider: NSItemProvider) async -> UIImage? {
         if let preview = await loadSystemPreviewImage(from: itemProvider, options: [:], toneMap: false) {
             return preview
@@ -2134,9 +2106,7 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    /// PHPicker typically vends a `CGImage` from `loadPreviewImage`, not a `UIImage`.
-    /// Image previews are tone-mapped so HDR photos do not render black.
-    /// Video posters are kept as-is; redrawing them often produces a black frame.
+    /// Video posters are not tone-mapped, because redrawing them often produces a black frame.
     private nonisolated static func uiImage(fromPreview object: NSSecureCoding?, toneMap: Bool) -> UIImage? {
         let image: UIImage?
         if let preview = object as? UIImage {
@@ -2191,9 +2161,6 @@ open class ComposerVC: _ViewController,
     }
 
     /// Compresses the video at the given location and removes the video it was created from.
-    ///
-    /// The transcoded file is always kept, even when it is larger than the original,
-    /// so that HEVC videos become H.264 and play on other platforms.
     private func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
@@ -2542,8 +2509,6 @@ extension ComposerVC: PHPickerViewControllerDelegate {
         return progress.fractionCompleted
     }
 
-    /// iCloud downloads report a downloading kind, linger between 0 and 1, or simply
-    /// take a while. Local files finish before the first poll, so they are not counted.
     private func isLikelyCloudDownload(_ progress: Progress) -> Bool {
         if progress.fileOperationKind == .downloading {
             return true

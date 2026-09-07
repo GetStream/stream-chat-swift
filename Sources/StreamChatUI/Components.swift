@@ -591,22 +591,15 @@ import UIKit
     public var processingAttachmentComposerPreview: ProcessingAttachmentComposerPreview
         .Type = ProcessingAttachmentComposerPreview.self
 
-    /// Whether the composer presents the legacy `UIImagePickerController`.
-    ///
-    /// Defaults to `false`. When `false`, iOS 14 and later use the system
-    /// photos picker. Set to `true` to keep using `UIImagePickerController`.
+    /// Whether the composer presents the legacy `UIImagePickerController`
+    /// instead of the system photos picker.
     public var isLegacyPhotosPickerEnabled = false
 
     /// The quality used when a video is compressed before upload.
-    ///
-    /// Every video is transcoded with this quality, which defaults to `.high`
-    /// (720p H.264 at the same bitrate as the system photos picker), so that
-    /// HEVC files play on other platforms. Set `.medium` or `.low` for smaller
-    /// uploads.
     public var videoCompressionQuality: VideoCompressionQuality = .high
 
     /// The object responsible for compressing the videos which are added as attachments in the composer.
-    public var videoCompressor: VideoCompressor = StreamVideoCompressor()
+    var videoCompressor: VideoCompressor = StreamVideoCompressor()
 
     // MARK: - Composer suggestion components
 

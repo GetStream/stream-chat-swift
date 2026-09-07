@@ -26,7 +26,7 @@ public struct VideoCompressionQuality: Equatable, Sendable {
 }
 
 /// The errors which can occur while a video is being compressed.
-public enum VideoCompressionError: Error {
+enum VideoCompressionError: Error {
     /// The video cannot be compressed with the requested quality.
     case unsupportedQuality(VideoCompressionQuality)
     /// The export finished without producing a compressed video.
@@ -34,7 +34,7 @@ public enum VideoCompressionError: Error {
 }
 
 /// A type which compresses the videos that are added as attachments to the composer.
-public protocol VideoCompressor: Sendable {
+protocol VideoCompressor: Sendable {
     /// Compresses the video at the given location.
     ///
     /// - Parameters:
@@ -51,14 +51,14 @@ public protocol VideoCompressor: Sendable {
 }
 
 /// The default video compressor, which transcodes videos with `AVAssetExportSession`.
-public struct StreamVideoCompressor: VideoCompressor {
+struct StreamVideoCompressor: VideoCompressor {
     /// How often the progress of the compression is reported.
-    public var progressUpdateInterval: TimeInterval
+    var progressUpdateInterval: TimeInterval
 
     /// The container format of the compressed video.
-    public var outputFileType: AVFileType
+    var outputFileType: AVFileType
 
-    public init(
+    init(
         progressUpdateInterval: TimeInterval = 0.1,
         outputFileType: AVFileType = .mp4
     ) {
@@ -66,7 +66,7 @@ public struct StreamVideoCompressor: VideoCompressor {
         self.outputFileType = outputFileType
     }
 
-    public func compressVideo(
+    func compressVideo(
         at url: URL,
         quality: VideoCompressionQuality,
         progressHandler: @escaping @Sendable (Double) -> Void
@@ -101,8 +101,7 @@ public struct StreamVideoCompressor: VideoCompressor {
         return outputURL
     }
 
-    /// Total bitrate used by the system photos picker for 720p H.264
-    /// (~2.5 Mbps video + AAC), measured from Apple's own picker output.
+    /// Total bitrate used by the system photos picker for 720p H.264.
     static let highQualityBitRate: Double = 2_700_000
 
     /// Typical bitrate of `AVAssetExportPresetMediumQuality`.
@@ -146,10 +145,7 @@ public struct StreamVideoCompressor: VideoCompressor {
 /// Runs an export session and reports its progress from another task.
 ///
 /// `AVAssetExportSession` is not `Sendable`, but the export runs on its own
-/// queue and only `progress` is read while it is in flight. Keeping the session
-/// behind this wrapper means the progress task captures a `Sendable` value,
-/// which the concurrency checker otherwise rejects because the session is also
-/// used to run the export.
+/// queue and only `progress` is read while it is in flight.
 private final class ExportSession: @unchecked Sendable {
     private let session: AVAssetExportSession
 
@@ -163,9 +159,8 @@ private final class ExportSession: @unchecked Sendable {
 
     func run(to outputURL: URL, as fileType: AVFileType) async throws {
         if #available(iOS 18.0, *) {
-            // `export(to:as:)` inherits the caller actor. Passing no isolation
-            // lets several videos compress at the same time instead of taking
-            // turns on the main actor.
+            // Passing no isolation lets several videos compress at the same
+            // time instead of taking turns on the main actor.
             try await session.export(to: outputURL, as: fileType, isolation: nil)
             return
         }
