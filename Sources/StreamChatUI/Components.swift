@@ -596,7 +596,8 @@ import UIKit
     /// The default is `.original`, so HEVC videos from the photos picker are uploaded
     /// as they are. That avoids a slow H.264 transcode after picking. Set `.high`,
     /// `.medium`, or `.low` to transcode before upload. Videos that exceed the
-    /// maximum attachment size are still transcoded with `.high`.
+    /// maximum attachment size are transcoded with the highest quality that is
+    /// predicted to fit the limit.
     public var videoCompressionQuality: VideoCompressionQuality = .original
 
     /// The object responsible for compressing the videos which are added as attachments in the composer.

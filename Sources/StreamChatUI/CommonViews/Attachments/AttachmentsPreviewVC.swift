@@ -28,6 +28,14 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         }
     }
 
+    /// Processing progress for pending composer attachments, keyed by pending item id.
+    open var processingProgressByID: [UUID: Double] = [:] {
+        didSet {
+            guard processingProgressByID != oldValue else { return }
+            applyProcessingProgress()
+        }
+    }
+
     /// The maximum number of vertical items before scrolling is enabled.
     open var maxNumberOfVerticalItems: Int = 3
 
@@ -86,6 +94,11 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             .map { index, attachment in
                 let view = attachment.previewView(components: components)
                     .withoutAutoresizingMaskConstraints
+
+                if let processingPreview = view as? ProcessingAttachmentComposerPreview,
+                   let pending = attachment as? ProcessingAttachmentPreview {
+                    processingPreview.progress = processingProgressByID[pending.id] ?? pending.progress
+                }
 
                 if let videoPreview = view as? VideoAttachmentComposerPreview,
                    let video = attachment as? VideoAttachmentPayload {
@@ -210,6 +223,20 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             verticalScrollViewHeightConstraint?.isActive = false
             verticalScrollViewHeightConstraint = nil
         }
+    }
+
+    /// Updates in-place progress on pending attachment previews without rebuilding the stack.
+    open func applyProcessingProgress() {
+        applyProcessingProgress(in: view)
+    }
+
+    private func applyProcessingProgress(in view: UIView) {
+        if let processingPreview = view as? ProcessingAttachmentComposerPreview,
+           let id = processingPreview.processingId,
+           let progress = processingProgressByID[id] {
+            processingPreview.progress = progress
+        }
+        view.subviews.forEach { applyProcessingProgress(in: $0) }
     }
 
     // Scrolls to the bottom of the vertical scroll view.

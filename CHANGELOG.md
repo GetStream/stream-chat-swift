@@ -34,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Use the system photos picker in the composer, so that the photo library opens instantly and no longer asks for permission [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 - Compress the videos added in the composer, showing the progress and allowing to cancel it [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
+- Show composer media processing with the same percentage spinner as message attachment uploads, reporting the iCloud download and the compression as a single progress [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
+- Estimate the compressed size of oversized videos and skip a transcode that would still exceed the upload limit [#4255](https://github.com/GetStream/stream-chat-swift/pull/4255)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
 _August 27, 2026_

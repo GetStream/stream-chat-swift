@@ -513,6 +513,10 @@ open class ComposerVC: _ViewController,
         public let id: UUID
         public let type: AttachmentType
         public var previewImage: UIImage?
+        public var progress: Double
+        /// The share of the progress bar taken by downloading the file from iCloud.
+        /// Zero when the file was already on the device, so compression fills the whole bar.
+        var downloadShare: Double
         let itemProvider: NSItemProvider
         let order: Int
     }
@@ -520,9 +524,17 @@ open class ComposerVC: _ViewController,
     /// Attachments that should already show a preview, but are not ready to send yet.
     open private(set) var pendingMediaItems: [PendingMediaItem] = [] {
         didSet {
-            updateInputAttachmentsView()
-            updateSendButtonEnabled()
-            updateConfirmButtonEnabled()
+            let structureChanged = oldValue.map(\.id) != pendingMediaItems.map(\.id)
+                || oldValue.count != pendingMediaItems.count
+                || zip(oldValue, pendingMediaItems).contains { $0.previewImage !== $1.previewImage }
+            if structureChanged {
+                updateInputAttachmentsView()
+                updateSendButtonEnabled()
+                updateConfirmButtonEnabled()
+            }
+            attachmentsVC.processingProgressByID = Dictionary(
+                uniqueKeysWithValues: pendingMediaItems.map { ($0.id, $0.progress) }
+            )
         }
     }
 
@@ -818,7 +830,7 @@ open class ComposerVC: _ViewController,
             }
         }
         let pendingPreviews: [AttachmentPreviewProvider] = pendingMediaItems.map {
-            ProcessingAttachmentPreview(id: $0.id, type: $0.type, previewImage: $0.previewImage)
+            ProcessingAttachmentPreview(id: $0.id, type: $0.type, previewImage: $0.previewImage, progress: $0.progress)
         }
         attachmentsVC.content = readyPreviews + pendingPreviews
         composerView.inputMessageView.attachmentsViewContainer.isHidden = readyPreviews.isEmpty && pendingPreviews.isEmpty
@@ -1816,6 +1828,8 @@ open class ComposerVC: _ViewController,
                 id: UUID(),
                 type: itemProvider.hasItemConformingToTypeIdentifier(Self.videoTypeIdentifier) ? .video : .image,
                 previewImage: nil,
+                progress: 0,
+                downloadShare: 0,
                 itemProvider: itemProvider,
                 order: index
             )
@@ -1855,9 +1869,46 @@ open class ComposerVC: _ViewController,
         pendingMediaItems[index].previewImage = image
     }
 
+    /// The part of the progress bar an iCloud download takes when compression follows it.
+    static let cloudDownloadProgressShare: Double = 0.5
+
+    /// Downloading from iCloud and compressing are shown as a single progress bar,
+    /// so the reported progress never goes backwards.
+    private func updatePendingProgress(_ progress: Double, for id: UUID) {
+        guard let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        let progress = min(max(progress, 0), 1)
+        guard progress > pendingMediaItems[index].progress else { return }
+        pendingMediaItems[index].progress = progress
+    }
+
+    /// Reports how much of the file was downloaded from iCloud.
+    ///
+    /// The download only takes a share of the bar when it actually happens, and only
+    /// leaves room for compression when the item is going to be compressed.
+    func updateDownloadProgress(_ progress: Double, isCloudDownload: Bool, for id: UUID) {
+        guard isCloudDownload, let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        let share = pendingMediaItems[index].type == .video ? Self.cloudDownloadProgressShare : 1
+        if pendingMediaItems[index].downloadShare != share {
+            pendingMediaItems[index].downloadShare = share
+        }
+        updatePendingProgress(min(max(progress, 0), 1) * share, for: id)
+    }
+
+    /// Reports the compression progress, which continues where the iCloud download stopped.
+    func updateCompressionProgress(_ progress: Double, for id: UUID) {
+        guard let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        let share = pendingMediaItems[index].downloadShare
+        updatePendingProgress(share + min(max(progress, 0), 1) * (1 - share), for: id)
+    }
+
     private func processPendingItem(id: UUID, batchStartCount: Int) async {
         guard let item = pendingMediaItems.first(where: { $0.id == id }) else { return }
-        guard let media = await Self.loadMedia(from: item.itemProvider, progressHandler: { _ in }) else {
+        guard let media = await Self.loadMedia(
+            from: item.itemProvider,
+            progressHandler: { [weak self] progress, isCloudDownload in
+                self?.updateDownloadProgress(progress, isCloudDownload: isCloudDownload, for: id)
+            }
+        ) else {
             removePendingMedia(id: id)
             return
         }
@@ -1868,12 +1919,22 @@ open class ComposerVC: _ViewController,
         await applyLocalThumbnailIfNeeded(id: id, media: media)
 
         var processedMedia = media
-        if let quality = compressionQualityIfNeeded(for: media) {
+        switch await videoCompressionPlan(for: media) {
+        case .skip:
+            updatePendingProgress(1, for: id)
+        case .exceedsUploadLimit:
+            removeTemporaryMedia(at: media.url)
+            removePendingMedia(id: id)
+            showAttachmentExceedsMaxSizeAlert()
+            return
+        case let .compress(quality):
             do {
                 let compressedURL = try await compressVideo(
                     at: media.url,
                     quality: quality,
-                    progressHandler: { _ in }
+                    progressHandler: { [weak self] progress in
+                        self?.updateCompressionProgress(progress, for: id)
+                    }
                 )
                 processedMedia = .init(url: compressedURL, type: .video)
             } catch is CancellationError {
@@ -1892,19 +1953,56 @@ open class ComposerVC: _ViewController,
         await commitPendingMedia(id: id, media: processedMedia, batchStartCount: batchStartCount)
     }
 
-    /// Returns a compression quality when the video should be transcoded.
+    /// How a picked video should be compressed before it is added to the composer.
+    private enum VideoCompressionPlan {
+        case skip
+        case compress(VideoCompressionQuality)
+        case exceedsUploadLimit
+    }
+
+    /// Decides whether a video should be compressed, and which quality should be used.
     ///
-    /// Original HEVC files are kept as-is. They are transcoded when the customer
-    /// asked for a specific quality, or when the file is larger than the upload limit.
-    private func compressionQualityIfNeeded(for media: SelectedMediaItem) -> VideoCompressionQuality? {
-        guard media.type == .video else { return nil }
-        if components.videoCompressionQuality != .original {
-            return components.videoCompressionQuality
+    /// When the original file is larger than the upload limit, the compressor
+    /// estimates the output size so we can skip a long transcode that would
+    /// still be too big, or pick a lower quality that should fit.
+    private func videoCompressionPlan(for media: SelectedMediaItem) async -> VideoCompressionPlan {
+        guard media.type == .video else { return .skip }
+        let configuredQuality = components.videoCompressionQuality
+        let maxSize = maxAttachmentSize(for: .video)
+        let originalSize = fileSize(at: media.url)
+
+        if configuredQuality != .original {
+            if let originalSize, originalSize > maxSize,
+               let estimate = await estimatedCompressedSize(at: media.url, quality: configuredQuality),
+               !estimateFitsUploadLimit(estimate, maxSize: maxSize) {
+                return .exceedsUploadLimit
+            }
+            return .compress(configuredQuality)
         }
-        if let size = fileSize(at: media.url), size > maxAttachmentSize(for: .video) {
-            return .high
+
+        guard let originalSize, originalSize > maxSize else { return .skip }
+
+        for quality in [VideoCompressionQuality.high, .medium, .low] {
+            guard let estimate = await estimatedCompressedSize(at: media.url, quality: quality) else {
+                return .compress(quality)
+            }
+            if estimateFitsUploadLimit(estimate, maxSize: maxSize) {
+                return .compress(quality)
+            }
         }
-        return nil
+        return .exceedsUploadLimit
+    }
+
+    /// Whether a compressed-size estimate is expected to stay under the upload limit.
+    ///
+    /// A small margin covers the fact that `AVAssetExportSession` estimates and
+    /// the bitrate heuristic can both run a bit low.
+    private func estimateFitsUploadLimit(_ estimate: Int64, maxSize: Int64) -> Bool {
+        Int64(Double(estimate) * 1.1) <= maxSize
+    }
+
+    private func estimatedCompressedSize(at url: URL, quality: VideoCompressionQuality) async -> Int64? {
+        await components.videoCompressor.estimateCompressedFileSize(at: url, quality: quality)
     }
 
     private func commitPendingMedia(id: UUID, media: SelectedMediaItem, batchStartCount: Int) async {
@@ -2215,7 +2313,7 @@ open class ComposerVC: _ViewController,
 
     private static func loadMedia(
         from itemProvider: NSItemProvider,
-        progressHandler: @escaping (Double) -> Void
+        progressHandler: @escaping (_ progress: Double, _ isCloudDownload: Bool) -> Void
     ) async -> SelectedMediaItem? {
         let isVideo = itemProvider.hasItemConformingToTypeIdentifier(videoTypeIdentifier)
         let typeIdentifier = isVideo ? videoTypeIdentifier : imageTypeIdentifier
@@ -2224,13 +2322,13 @@ open class ComposerVC: _ViewController,
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: UInt64(mediaLoadProgressUpdateInterval * 1_000_000_000))
                 guard !Task.isCancelled else { return }
-                guard let fractionCompleted = loadProgress.progress?.fractionCompleted else { continue }
-                progressHandler(fractionCompleted)
+                guard let fractionCompleted = loadProgress.observedFractionCompleted() else { continue }
+                progressHandler(fractionCompleted, loadProgress.isCloudDownload)
             }
         }
         defer { progressTask.cancel() }
 
-        return await withCheckedContinuation { continuation in
+        let media: SelectedMediaItem? = await withCheckedContinuation { continuation in
             loadProgress.progress = itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
                 guard let url = url else {
                     log.error("Failed to load the media selected in the photos picker: \(error?.localizedDescription ?? "unknown error")")
@@ -2248,6 +2346,11 @@ open class ComposerVC: _ViewController,
                 }
             }
         }
+        guard let media else { return nil }
+        if loadProgress.isCloudDownload {
+            progressHandler(1, true)
+        }
+        return media
     }
 
     private static func loadVideoMetadata(at url: URL) async -> VideoMetadata {
@@ -2469,6 +2572,34 @@ extension ComposerVC: PHPickerViewControllerDelegate {
 /// Holds the progress of loading a media item, which is only known once the loading started.
 @MainActor private final class MediaLoadProgress {
     var progress: Progress?
+    private(set) var isCloudDownload = false
+    private let startedAt = Date()
+
+    /// A load that is still unfinished after this long is treated as an iCloud download,
+    /// even when it has not reported a fraction yet.
+    private static let slowLoadThreshold: TimeInterval = 1
+
+    func observedFractionCompleted() -> Double? {
+        guard let progress else { return nil }
+        if !isCloudDownload {
+            isCloudDownload = isLikelyCloudDownload(progress)
+        }
+        return progress.fractionCompleted
+    }
+
+    /// iCloud downloads report a downloading kind, linger between 0 and 1, or simply
+    /// take a while. Local files finish before the first poll, so they are not counted.
+    private func isLikelyCloudDownload(_ progress: Progress) -> Bool {
+        if progress.fileOperationKind == .downloading {
+            return true
+        }
+        guard !progress.isFinished else { return false }
+        let fraction = progress.fractionCompleted
+        if fraction > 0, fraction < 1 {
+            return true
+        }
+        return Date().timeIntervalSince(startedAt) > Self.slowLoadThreshold
+    }
 }
 
 /// The properties of a video which the backend needs for rendering it.

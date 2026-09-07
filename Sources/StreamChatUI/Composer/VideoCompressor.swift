@@ -49,6 +49,23 @@ public protocol VideoCompressor: Sendable {
         quality: VideoCompressionQuality,
         progressHandler: @escaping (Double) -> Void
     ) async throws -> URL
+
+    /// Predicts the file size of the video after compressing it with the given quality.
+    ///
+    /// Returns `nil` when the size cannot be estimated.
+    func estimateCompressedFileSize(
+        at url: URL,
+        quality: VideoCompressionQuality
+    ) async -> Int64?
+}
+
+public extension VideoCompressor {
+    func estimateCompressedFileSize(
+        at url: URL,
+        quality: VideoCompressionQuality
+    ) async -> Int64? {
+        nil
+    }
 }
 
 /// The default video compressor, which transcodes videos with `AVAssetExportSession`.
@@ -97,6 +114,70 @@ public struct StreamVideoCompressor: VideoCompressor {
         }
         progressHandler(1)
         return outputURL
+    }
+
+    public func estimateCompressedFileSize(
+        at url: URL,
+        quality: VideoCompressionQuality
+    ) async -> Int64? {
+        if quality == .original {
+            return (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? NSNumber)?.int64Value
+        }
+        let asset = AVURLAsset(url: url)
+        guard let session = AVAssetExportSession(asset: asset, presetName: quality.exportPreset) else {
+            return estimatedSizeFromDuration(of: asset, quality: quality)
+        }
+        session.shouldOptimizeForNetworkUse = true
+        session.outputFileType = outputFileType
+        let duration = asset.duration
+        if duration.isNumeric, duration.seconds > 0 {
+            session.timeRange = CMTimeRange(start: .zero, duration: duration)
+        }
+        let estimatedLength: Int64 = await withCheckedContinuation { continuation in
+            session.estimateOutputFileLength { length, error in
+                continuation.resume(returning: error == nil ? length : 0)
+            }
+        }
+        if estimatedLength > 0 {
+            return estimatedLength
+        }
+        return estimatedSizeFromDuration(of: asset, quality: quality)
+    }
+
+    private func estimatedSizeFromDuration(
+        of asset: AVAsset,
+        quality: VideoCompressionQuality
+    ) -> Int64? {
+        let seconds = CMTimeGetSeconds(asset.duration)
+        guard seconds.isFinite, seconds > 0 else { return nil }
+        return Int64(seconds * typicalBitRate(for: quality, pixelCount: videoPixelCount(of: asset)) / 8)
+    }
+
+    /// Pixel count of the first video track, used to scale the highest-quality bitrate.
+    private func videoPixelCount(of asset: AVAsset) -> Int {
+        guard let track = asset.tracks(withMediaType: .video).first else {
+            return 1920 * 1080
+        }
+        let size = track.naturalSize
+        return max(1, Int(abs(size.width * size.height)))
+    }
+
+    /// Typical output bitrates for Apple's export presets.
+    ///
+    /// Low and medium map to fairly fixed resolutions, so they stay constant.
+    /// Highest quality keeps the source resolution, so the bitrate scales with it.
+    private func typicalBitRate(for quality: VideoCompressionQuality, pixelCount: Int) -> Double {
+        switch quality.exportPreset {
+        case AVAssetExportPresetLowQuality:
+            return 500_000
+        case AVAssetExportPresetMediumQuality:
+            return 3_000_000
+        case AVAssetExportPresetHighestQuality:
+            let scale = max(0.5, min(4.0, Double(pixelCount) / Double(1920 * 1080)))
+            return 12_000_000 * scale
+        default:
+            return 6_000_000
+        }
     }
 
     private func makeOutputURL(for inputURL: URL) throws -> URL {

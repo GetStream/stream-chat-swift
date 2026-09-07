@@ -31,10 +31,14 @@ import XCTest
     func test_whenIsProcessing_thenTheOverlayIsVisible() {
         let view = VideoAttachmentComposerPreview()
         view.isProcessing = true
+        view.progress = 0.42
         UIView().addSubview(view)
 
-        XCTAssertFalse(view.processingOverlayView.isHidden)
-        XCTAssertFalse(view.processingIndicator.isHidden)
-        XCTAssertEqual(view.processingOverlayView.accessibilityLabel, L10n.Composer.VideoCompression.compressing)
+        XCTAssertFalse(view.uploadingOverlay.isHidden)
+        XCTAssertFalse(view.uploadingOverlay.loadingIndicator.isHidden)
+        let formatted = view.appearance.formatters.uploadingProgress.format(0.42)
+        XCTAssertEqual(view.uploadingOverlay.uploadingProgressLabel.text, formatted)
+        XCTAssertEqual(view.uploadingOverlay.accessibilityLabel, L10n.Composer.VideoCompression.compressing)
+        XCTAssertEqual(view.uploadingOverlay.accessibilityValue, formatted)
     }
 }

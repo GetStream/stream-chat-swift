@@ -30,6 +30,14 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         }
     }
 
+    /// The processing progress, a value between 0 and 1.
+    public var progress: Double = 0 {
+        didSet {
+            guard progress != oldValue else { return }
+            updateProcessingState()
+        }
+    }
+
     /// The view that displays the video preview.
     open private(set) lazy var previewImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -54,19 +62,16 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         .loadingIndicator.init()
         .withoutAutoresizingMaskConstraints
 
-    /// Dims the preview while the attachment is being processed.
-    open private(set) lazy var processingOverlayView: UIView = UIView()
-        .withoutAutoresizingMaskConstraints
-
-    /// The view that displays a loading indicator while the video is being processed.
-    open private(set) lazy var processingIndicator = components
-        .loadingIndicator.init()
+    /// Dims the preview and shows upload-style progress while the video is processed.
+    open private(set) lazy var uploadingOverlay: UploadingOverlayView = components
+        .uploadingOverlayView.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpAppearance() {
         super.setUpAppearance()
 
         previewImageView.contentMode = .scaleAspectFill
+        previewImageView.isAccessibilityElement = false
         if #available(iOS 17.0, *) {
             previewImageView.preferredImageDynamicRange = .standard
         }
@@ -74,6 +79,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         cameraIconView.image = appearance.images.camera
         cameraIconView.contentMode = .scaleAspectFit
         cameraIconView.tintColor = appearance.colorPalette.textOnAccent
+        cameraIconView.isAccessibilityElement = false
 
         videoDurationLabel.textColor = appearance.colorPalette.textOnAccent
         videoDurationLabel.font = appearance.fonts.footnoteBold
@@ -86,11 +92,11 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         layer.cornerRadius = 12
         layer.masksToBounds = true
 
-        processingOverlayView.isOpaque = false
-        processingOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.35)
-        processingOverlayView.isAccessibilityElement = true
-        processingOverlayView.accessibilityLabel = L10n.Composer.VideoCompression.compressing
-        processingOverlayView.accessibilityTraits = .updatesFrequently
+        layoutMargins = .init(top: 4, left: 4, bottom: 4, right: 4)
+        uploadingOverlay.isAccessibilityElement = true
+        uploadingOverlay.accessibilityTraits = .updatesFrequently
+        uploadingOverlay.uploadingProgressLabel.isAccessibilityElement = false
+        uploadingOverlay.loadingIndicator.isAccessibilityElement = false
     }
 
     override open func setUpLayout() {
@@ -113,11 +119,8 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         cameraIconView.pin(anchors: [.leading, .centerY], to: gradientView.layoutMarginsGuide)
         videoDurationLabel.pin(anchors: [.trailing, .centerY], to: gradientView.layoutMarginsGuide)
 
-        addSubview(processingOverlayView)
-        processingOverlayView.pin(to: self)
-        processingOverlayView.addSubview(processingIndicator)
-        processingIndicator.pin(anchors: [.centerX, .centerY], to: processingOverlayView)
-        processingIndicator.pin(anchors: [.height], to: 28)
+        addSubview(uploadingOverlay)
+        uploadingOverlay.pin(to: self)
         updateProcessingState()
 
         pin(anchors: [.width], to: width)
@@ -156,7 +159,16 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
 
     /// Shows or hides the processing overlay in the middle of the preview.
     open func updateProcessingState() {
-        processingOverlayView.isHidden = !isProcessing
-        processingIndicator.isHidden = !isProcessing
+        uploadingOverlay.isHidden = !isProcessing
+        uploadingOverlay.content = isProcessing
+            ? AttachmentUploadingState(
+                localFileURL: content ?? URL(fileURLWithPath: "/"),
+                state: .uploading(progress: progress),
+                file: AttachmentFile(type: .mp4, size: 0, mimeType: nil)
+            )
+            : nil
+        uploadingOverlay.accessibilityLabel = L10n.Composer.VideoCompression.compressing
+        uploadingOverlay.accessibilityValue = appearance.formatters.uploadingProgress.format(progress)
+        videoDurationLabel.isAccessibilityElement = !isProcessing
     }
 }

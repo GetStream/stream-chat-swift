@@ -12,10 +12,12 @@ import XCTest
         UIView().addSubview(view)
 
         XCTAssertNil(view.imageView.image)
-        XCTAssertFalse(view.processingOverlayView.isOpaque)
-        XCTAssertEqual(view.processingOverlayView.backgroundColor, .clear)
-        XCTAssertEqual(view.processingOverlayView.accessibilityLabel, L10n.Composer.VideoCompression.preparing)
-        XCTAssertTrue(view.processingIndicator.isAnimating)
+        XCTAssertFalse(view.uploadingOverlay.isHidden)
+        XCTAssertEqual(view.uploadingOverlay.accessibilityLabel, L10n.Composer.VideoCompression.preparing)
+        let formattedZero = view.appearance.formatters.uploadingProgress.format(0)
+        XCTAssertEqual(view.uploadingOverlay.accessibilityValue, formattedZero)
+        XCTAssertFalse(view.uploadingOverlay.loadingIndicator.isHidden)
+        XCTAssertEqual(view.uploadingOverlay.uploadingProgressLabel.text, formattedZero)
     }
 
     func test_whenPreviewImageIsSet_thenTheImageIsShownUnderTheOverlay() {
@@ -25,7 +27,20 @@ import XCTest
         UIView().addSubview(view)
 
         XCTAssertEqual(view.imageView.image, image)
-        XCTAssertFalse(view.processingOverlayView.isHidden)
-        XCTAssertFalse(view.processingOverlayView.isOpaque)
+        XCTAssertFalse(view.uploadingOverlay.isHidden)
+        XCTAssertFalse(view.uploadingOverlay.loadingIndicator.isHidden)
+    }
+
+    func test_whenProgressChanges_thenThePercentageIsUpdated() {
+        let view = ProcessingAttachmentComposerPreview()
+        view.content = .init(previewImage: nil, type: .video)
+        let parent = UIView()
+        parent.addSubview(view)
+
+        view.progress = 0.42
+
+        let formatted = view.appearance.formatters.uploadingProgress.format(0.42)
+        XCTAssertEqual(view.uploadingOverlay.uploadingProgressLabel.text, formatted)
+        XCTAssertEqual(view.uploadingOverlay.accessibilityValue, formatted)
     }
 }

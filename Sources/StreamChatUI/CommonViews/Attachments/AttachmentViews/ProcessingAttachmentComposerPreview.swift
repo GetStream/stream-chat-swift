@@ -16,6 +16,17 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
+    /// The identifier of the pending item this preview represents.
+    public var processingId: UUID?
+
+    /// The processing progress, a value between 0 and 1.
+    public var progress: Double = 0 {
+        didSet {
+            guard progress != oldValue else { return }
+            updateContentIfNeeded()
+        }
+    }
+
     public struct Content {
         /// The optional system preview image provided by the item provider.
         public var previewImage: UIImage?
@@ -32,16 +43,10 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
     open private(set) lazy var imageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
-    /// Dims the preview while the attachment is being processed.
-    open private(set) lazy var processingOverlayView: UIView = UIView()
+    /// Dims the preview and shows upload-style progress while the attachment is processed.
+    open private(set) lazy var uploadingOverlay: UploadingOverlayView = components
+        .uploadingOverlayView.init()
         .withoutAutoresizingMaskConstraints
-
-    /// The system spinner shown while the attachment is being processed.
-    open private(set) lazy var processingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .medium)
-        indicator.hidesWhenStopped = false
-        return indicator.withoutAutoresizingMaskConstraints
-    }()
 
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -51,19 +56,16 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
         backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
 
         imageView.contentMode = .scaleAspectFill
+        imageView.isAccessibilityElement = false
         if #available(iOS 17.0, *) {
             imageView.preferredImageDynamicRange = .standard
         }
 
-        // A transparent overlay until the thumbnail arrives, otherwise the cell
-        // reads as a black square. `isOpaque` must be false or a translucent
-        // background is composited as solid black.
-        processingOverlayView.isOpaque = false
-        processingOverlayView.backgroundColor = .clear
-        processingOverlayView.isAccessibilityElement = true
-        processingOverlayView.accessibilityTraits = .updatesFrequently
-        processingIndicator.isAccessibilityElement = false
-        processingIndicator.startAnimating()
+        layoutMargins = .init(top: 4, left: 4, bottom: 4, right: 4)
+        uploadingOverlay.isAccessibilityElement = true
+        uploadingOverlay.accessibilityTraits = .updatesFrequently
+        uploadingOverlay.uploadingProgressLabel.isAccessibilityElement = false
+        uploadingOverlay.loadingIndicator.isAccessibilityElement = false
     }
 
     override open func setUpLayout() {
@@ -71,10 +73,8 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
 
         embed(imageView)
 
-        addSubview(processingOverlayView)
-        processingOverlayView.pin(to: self)
-        processingOverlayView.addSubview(processingIndicator)
-        processingIndicator.pin(anchors: [.centerX, .centerY], to: processingOverlayView)
+        addSubview(uploadingOverlay)
+        uploadingOverlay.pin(to: self)
 
         pin(anchors: [.width], to: width)
         pin(anchors: [.height], to: height)
@@ -84,10 +84,17 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
         super.updateContent()
 
         imageView.image = content?.previewImage
-        processingOverlayView.backgroundColor = content?.previewImage == nil
-            ? .clear
-            : UIColor.black.withAlphaComponent(0.35)
-        processingOverlayView.accessibilityLabel = L10n.Composer.VideoCompression.preparing
+        uploadingOverlay.content = uploadingState
+        uploadingOverlay.accessibilityLabel = L10n.Composer.VideoCompression.preparing
+        uploadingOverlay.accessibilityValue = appearance.formatters.uploadingProgress.format(progress)
+    }
+
+    private var uploadingState: AttachmentUploadingState {
+        AttachmentUploadingState(
+            localFileURL: URL(fileURLWithPath: "/"),
+            state: .uploading(progress: progress),
+            file: AttachmentFile(type: .generic, size: 0, mimeType: nil)
+        )
     }
 }
 
@@ -96,11 +103,13 @@ public struct ProcessingAttachmentPreview: AttachmentPreviewProvider {
     public let id: UUID
     public let type: AttachmentType
     public let previewImage: UIImage?
+    public let progress: Double
 
-    public init(id: UUID, type: AttachmentType, previewImage: UIImage?) {
+    public init(id: UUID, type: AttachmentType, previewImage: UIImage?, progress: Double = 0) {
         self.id = id
         self.type = type
         self.previewImage = previewImage
+        self.progress = progress
     }
 
     public static var preferredAxis: NSLayoutConstraint.Axis { .horizontal }
@@ -108,6 +117,8 @@ public struct ProcessingAttachmentPreview: AttachmentPreviewProvider {
     @MainActor
     public func previewView(components: Components) -> UIView {
         let view = components.processingAttachmentComposerPreview.init()
+        view.processingId = id
+        view.progress = progress
         view.content = .init(previewImage: previewImage, type: type)
         view.imageView.image = previewImage
         return view
