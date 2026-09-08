@@ -2563,11 +2563,6 @@ private func copyToTemporaryLocation(_ url: URL) throws -> URL {
     return destination
 }
 
-private func fileSize(at url: URL) -> Int64? {
-    guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path) else { return nil }
-    return (attributes[.size] as? NSNumber)?.int64Value
-}
-
 /// searchUsers does an autocomplete search on a list of ChatUser and returns users with `id` or `name` containing the search string
 /// results are returned sorted by their edit distance from the searched string
 /// distance is calculated using the levenshtein algorithm
