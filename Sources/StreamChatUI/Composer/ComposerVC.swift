@@ -495,11 +495,11 @@ open class ComposerVC: _ViewController,
     private var mediaSelectionTask: Task<Void, Never>?
 
     /// Media picked in the photos picker that is still being downloaded, written, or compressed.
-    public struct PendingMediaItem {
-        public let id: UUID
-        public let type: AttachmentType
-        public var previewImage: UIImage?
-        public var progress: Double
+    struct PendingMediaItem {
+        let id: UUID
+        let type: AttachmentType
+        var previewImage: UIImage?
+        var progress: Double
         /// The share of the progress bar taken by downloading the file from iCloud.
         var downloadShare: Double
         let itemProvider: NSItemProvider
@@ -507,7 +507,7 @@ open class ComposerVC: _ViewController,
     }
 
     /// Attachments that should already show a preview, but are not ready to send yet.
-    open private(set) var pendingMediaItems: [PendingMediaItem] = [] {
+    private(set) var pendingMediaItems: [PendingMediaItem] = [] {
         didSet {
             let structureChanged = oldValue.map(\.id) != pendingMediaItems.map(\.id)
                 || oldValue.count != pendingMediaItems.count
