@@ -595,7 +595,7 @@ import UIKit
     /// instead of the system photos picker.
     public var isLegacyPhotosPickerEnabled = false
 
-    /// The quality used when a video is compressed before upload. Defaults to 720p.
+    /// The quality used when a video is compressed before upload. Defaults to 540p.
     public var videoCompressionQuality: VideoCompressionQuality = .medium
 
     /// The object responsible for compressing the videos which are added as attachments in the composer.

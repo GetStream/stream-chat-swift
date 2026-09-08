@@ -10,22 +10,34 @@ import StreamChat
 public struct VideoCompressionQuality: Equatable, Sendable {
     /// The `AVAssetExportSession` preset which is used for the compression.
     public let exportPreset: String
+    private let name: String
 
     /// Creates a compression quality which is backed by the given `AVAssetExportSession` preset.
     public init(exportPreset: String) {
         self.exportPreset = exportPreset
+        name = exportPreset
+    }
+
+    private init(name: String, exportPreset: String) {
+        self.exportPreset = exportPreset
+        self.name = name
     }
 
     /// The videos are scaled down to 480p H.264.
     ///
     /// A 16:9 video becomes 640x360.
-    public static let low = Self(exportPreset: AVAssetExportPreset640x480)
+    public static let low = Self(name: "low", exportPreset: AVAssetExportPreset640x480)
+
+    /// The videos are scaled down to 540p H.264.
+    ///
+    /// A 16:9 video becomes 960x540. This is the default composer quality.
+    public static let medium = Self(name: "medium", exportPreset: AVAssetExportPreset960x540)
 
     /// The videos are scaled down to 720p H.264.
-    public static let medium = Self(exportPreset: AVAssetExportPreset1280x720)
+    public static let high = Self(name: "high", exportPreset: AVAssetExportPreset1280x720)
 
     /// The videos are scaled down to 1080p H.264.
-    public static let high = Self(exportPreset: AVAssetExportPreset1920x1080)
+    public static let veryHigh = Self(name: "veryHigh", exportPreset: AVAssetExportPreset1920x1080)
 }
 
 /// The errors which can occur while a video is being compressed.
@@ -105,13 +117,16 @@ struct StreamVideoCompressor: VideoCompressor {
     }
 
     /// Total bitrate used to estimate a 1080p H.264 export.
-    static let highQualityBitRate: Double = 5_000_000
+    static let veryHighQualityBitRate: Double = 15_600_000
 
     /// Total bitrate used to estimate a 720p H.264 export.
-    static let mediumQualityBitRate: Double = 2_700_000
+    static let highQualityBitRate: Double = 11_000_000
+
+    /// Total bitrate used to estimate a 540p H.264 export.
+    static let mediumQualityBitRate: Double = 5_600_000
 
     /// Total bitrate used to estimate a 480p H.264 export.
-    static let lowQualityBitRate: Double = 1_000_000
+    static let lowQualityBitRate: Double = 2_700_000
 
     /// The expected size of the compressed video, based on duration and the
     /// bitrate of the given quality. Returns `nil` when the duration is unknown
@@ -143,6 +158,7 @@ struct StreamVideoCompressor: VideoCompressor {
     }
 
     private static func bitRate(for quality: VideoCompressionQuality) -> Double? {
+        if quality == .veryHigh { return veryHighQualityBitRate }
         if quality == .high { return highQualityBitRate }
         if quality == .medium { return mediumQualityBitRate }
         if quality == .low { return lowQualityBitRate }
