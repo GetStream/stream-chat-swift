@@ -136,6 +136,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         Self.removeTemporaryMedia(at: url)
     }
 
+    // A sized video preview often comes back empty, so try the full poster first.
     private func loadVideoPreviewImage(from itemProvider: NSItemProvider) async -> UIImage? {
         if let preview = await loadSystemPreviewImage(from: itemProvider, options: [:], toneMap: false) {
             return preview
@@ -150,6 +151,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         )
     }
 
+    // Photos may return the preview as a UIImage, Data, or CGImage.
     private func loadSystemPreviewImage(
         from itemProvider: NSItemProvider,
         options: [AnyHashable: Any],
@@ -162,6 +164,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
+    // Fallback when `loadPreviewImage` returns nothing.
     private func loadObjectImage(from itemProvider: NSItemProvider) async -> UIImage? {
         await withCheckedContinuation { continuation in
             itemProvider.loadObject(ofClass: UIImage.self) { image, _ in
@@ -170,6 +173,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
+    // Last fallback: a thumbnail from the image's raw data.
     private func loadImageDataThumbnail(from itemProvider: NSItemProvider) async -> UIImage? {
         let typeIdentifier = imageTypeIdentifier
         return await withCheckedContinuation { continuation in
@@ -179,12 +183,14 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
+    // Downsample the copied photo off the main actor.
     private nonisolated static func makeImageThumbnail(at url: URL) async -> UIImage? {
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else { return nil }
         return thumbnail(from: source, maxPixelSize: composerMediaPreviewMaxPixelSize)
     }
 
+    // First frame of the copied video, used when the picker preview is missing.
     private nonisolated static func makeVideoThumbnail(at url: URL) async -> UIImage? {
         await withCheckedContinuation { continuation in
             let generator = AVAssetImageGenerator(asset: AVURLAsset(url: url))
@@ -201,6 +207,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
+    // Duration and size so the attachment can render before it is uploaded.
     private nonisolated static func makeVideoMetadata(at url: URL) async -> VideoMetadata {
         await withCheckedContinuation { continuation in
             StreamAssetPropertyLoader().loadProperties(
@@ -226,6 +233,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
+    // Photos deletes the provider file as soon as the load callback returns.
     private nonisolated static func copyToTemporaryLocation(_ url: URL) throws -> URL {
         let directory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -241,6 +249,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         return destination
     }
 
+    // Remove the UUID temp directory created for a picker file.
     private nonisolated static func removeTemporaryMedia(at url: URL) {
         let directory = url.deletingLastPathComponent()
         if UUID(uuidString: directory.lastPathComponent) != nil {
@@ -268,6 +277,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         return toneMap ? sdrPreviewImage(from: image) : image
     }
 
+    // Downsample image data without decoding the full photo.
     private nonisolated static func thumbnail(
         fromImageData data: Data,
         maxPixelSize: Int = composerMediaPreviewMaxPixelSize
@@ -278,6 +288,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
             ?? UIImage(data: data).map { sdrPreviewImage(from: $0) }
     }
 
+    // ImageIO thumbnail at the composer preview size.
     private nonisolated static func thumbnail(from source: CGImageSource, maxPixelSize: Int) -> UIImage? {
         let options: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
@@ -291,6 +302,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         return UIImage(cgImage: cgImage)
     }
 
+    // HDR photos look wrong in the cell unless they are redrawn as SDR.
     private nonisolated static func sdrPreviewImage(from image: UIImage) -> UIImage {
         let pixelWidth = image.size.width * image.scale
         let pixelHeight = image.size.height * image.scale
@@ -309,6 +321,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
+    // Swap width and height when the video track is rotated.
     private nonisolated static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
         let size = track.naturalSize
         let transform = track.preferredTransform
