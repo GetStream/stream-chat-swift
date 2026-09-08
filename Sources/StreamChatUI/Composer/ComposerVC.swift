@@ -469,6 +469,8 @@ open class ComposerVC: _ViewController,
         var configuration = PHPickerConfiguration()
         configuration.filter = .any(of: [.images, .videos])
         configuration.selectionLimit = max(1, remainingNumberOfAttachments)
+        // `.current` returns the file already on disk. `.compatible` transcodes in
+        // Photos first, which is much slower for camera videos.
         configuration.preferredAssetRepresentationMode = .current
         return configuration
     }
@@ -1856,8 +1858,10 @@ open class ComposerVC: _ViewController,
         await withTaskGroup(of: Void.self) { group in
             for id in ids {
                 group.addTask { [weak self] in
-                    await self?.loadPendingPreview(for: id)
-                    await self?.processPendingItem(id: id)
+                    await withTaskGroup(of: Void.self) { itemGroup in
+                        itemGroup.addTask { await self?.loadPendingPreview(for: id) }
+                        itemGroup.addTask { await self?.processPendingItem(id: id) }
+                    }
                 }
             }
         }
@@ -1886,6 +1890,9 @@ open class ComposerVC: _ViewController,
     }
 
     /// Reports how much of the file was downloaded from iCloud.
+    ///
+    /// Local videos skip this so compression can use the whole bar from 0%.
+    /// iCloud videos use half of the bar, then compression fills the rest.
     func updateDownloadProgress(_ progress: Double, isCloudDownload: Bool, for id: UUID) {
         guard isCloudDownload, let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
         let share = pendingMediaItems[index].type == .video ? Self.cloudDownloadProgressShare : 1
@@ -2466,33 +2473,18 @@ extension ComposerVC: PHPickerViewControllerDelegate {
 }
 
 /// Holds the progress of loading a media item, which is only known once the loading started.
-@MainActor private final class MediaLoadProgress {
+@MainActor final class MediaLoadProgress {
     var progress: Progress?
     private(set) var isCloudDownload = false
-    private let startedAt = Date()
-
-    /// A load that is still unfinished after this long is treated as an iCloud download,
-    /// even when it has not reported a fraction yet.
-    private static let slowLoadThreshold: TimeInterval = 1
 
     func observedFractionCompleted() -> Double? {
         guard let progress else { return nil }
+        // Only a download file operation is an iCloud fetch. Local copies can
+        // also report incremental progress.
         if !isCloudDownload {
-            isCloudDownload = isLikelyCloudDownload(progress)
+            isCloudDownload = progress.fileOperationKind == .downloading
         }
         return progress.fractionCompleted
-    }
-
-    private func isLikelyCloudDownload(_ progress: Progress) -> Bool {
-        if progress.fileOperationKind == .downloading {
-            return true
-        }
-        guard !progress.isFinished else { return false }
-        let fraction = progress.fractionCompleted
-        if fraction > 0, fraction < 1 {
-            return true
-        }
-        return Date().timeIntervalSince(startedAt) > Self.slowLoadThreshold
     }
 }
 

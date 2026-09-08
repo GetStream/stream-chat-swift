@@ -28,8 +28,7 @@ protocol VideoCompressor: Sendable {
 
 /// The default video compressor, which transcodes videos with `AVAssetExportSession`.
 ///
-/// Uses `AVAssetExportPresetMediumQuality` — the same preset the SwiftUI SDK uses —
-/// which lets Apple pick a reasonable resolution and bitrate for the source video.
+/// Uses `AVAssetExportPreset960x540` so camera videos become 540p H.264.
 struct StreamVideoCompressor: VideoCompressor {
     /// How often the progress of the compression is reported.
     var progressUpdateInterval: TimeInterval
@@ -50,7 +49,7 @@ struct StreamVideoCompressor: VideoCompressor {
         progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL {
         let asset = AVURLAsset(url: url)
-        guard let session = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetMediumQuality) else {
+        guard let session = AVAssetExportSession(asset: asset, presetName: AVAssetExportPreset960x540) else {
             throw VideoCompressionError.exportFailed
         }
         session.shouldOptimizeForNetworkUse = true

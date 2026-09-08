@@ -1110,7 +1110,7 @@ import XCTest
         XCTAssertEqual(composerVC.content.attachments.first?.localFileURL, compressedURL)
     }
 
-    func test_addSelectedMedia_whenVideoExceedsTheLimit_thenItIsStillCompressed() async throws {
+    func test_addSelectedMedia_whenVideoExceedsTheLimit_thenItIsCompressed() async throws {
         let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
         let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 512)
         let compressor = VideoCompressor_Mock()
@@ -1268,7 +1268,7 @@ import XCTest
     }
 
     func test_addSelectedMedia_whenTheCompressedVideoIsBigger_thenTheTranscodedVideoIsKept() async throws {
-        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 1024)
+        let videoURL = try makeTemporaryFile(named: "\(UUID().uuidString).mov", byteCount: 4096)
         let compressedURL = try makeTemporaryFile(named: "\(UUID().uuidString).mp4", byteCount: 2048)
         let compressor = VideoCompressor_Mock()
         compressor.compressedURL = compressedURL
@@ -1783,5 +1783,33 @@ private final class ComposerVC_CustomPickerConfig: ComposerVC {
         configuration.filter = .images
         configuration.selectionLimit = 3
         return configuration
+    }
+}
+
+@MainActor final class MediaLoadProgress_Tests: XCTestCase {
+    func test_observedFractionCompleted_whenTheFileIsBeingDownloaded_thenItIsAnICloudDownload() {
+        let loadProgress = MediaLoadProgress()
+        let progress = Progress(totalUnitCount: 100)
+        progress.completedUnitCount = 40
+        progress.kind = .file
+        progress.fileOperationKind = .downloading
+        loadProgress.progress = progress
+
+        XCTAssertEqual(loadProgress.observedFractionCompleted(), 0.4)
+        XCTAssertTrue(loadProgress.isCloudDownload)
+    }
+
+    func test_observedFractionCompleted_whenALocalCopyReportsProgress_thenItIsNotAnICloudDownload() {
+        let loadProgress = MediaLoadProgress()
+        let progress = Progress(totalUnitCount: 100)
+        progress.completedUnitCount = 40
+        loadProgress.progress = progress
+
+        XCTAssertEqual(loadProgress.observedFractionCompleted(), 0.4)
+        XCTAssertFalse(loadProgress.isCloudDownload)
+    }
+
+    func test_observedFractionCompleted_whenTheLoadHasNotStarted_thenThereIsNoFraction() {
+        XCTAssertNil(MediaLoadProgress().observedFractionCompleted())
     }
 }
