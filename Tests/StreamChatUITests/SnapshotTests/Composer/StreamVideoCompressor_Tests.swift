@@ -16,12 +16,12 @@ import XCTest
         super.tearDown()
     }
 
-    func test_compressVideo_whenQualityIsLow_thenTheResultIsASmallerPlayableVideo() async throws {
+    func test_compressVideo_thenTheResultIsASmallerPlayableVideo() async throws {
         let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 20, bitRate: 8_000_000)
         let compressor = StreamVideoCompressor(progressUpdateInterval: 0.01)
         nonisolated(unsafe) var reportedProgress: [Double] = []
 
-        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .low) {
+        let compressedURL = try await compressor.compressVideo(at: videoURL) {
             reportedProgress.append($0)
         }
         temporaryDirectories.append(compressedURL.deletingLastPathComponent())
@@ -40,69 +40,12 @@ import XCTest
         let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 90, bitRate: 20_000_000)
         let compressor = StreamVideoCompressor()
 
-        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .high) { _ in }
+        let compressedURL = try await compressor.compressVideo(at: videoURL) { _ in }
         temporaryDirectories.append(compressedURL.deletingLastPathComponent())
 
         let sourceDuration = await duration(of: videoURL)
         let compressedDuration = await duration(of: compressedURL)
         XCTAssertEqual(compressedDuration, sourceDuration, accuracy: 0.1)
-    }
-
-    func test_quality_thenEachTierScalesToAnExplicitResolution() {
-        XCTAssertEqual(VideoCompressionQuality.low.exportPreset, AVAssetExportPreset640x480)
-        XCTAssertEqual(VideoCompressionQuality.medium.exportPreset, AVAssetExportPreset960x540)
-        XCTAssertEqual(VideoCompressionQuality.high.exportPreset, AVAssetExportPreset1280x720)
-        XCTAssertEqual(VideoCompressionQuality.veryHigh.exportPreset, AVAssetExportPreset1920x1080)
-    }
-
-    func test_estimatedFileLength_thenItUsesTheBitRateOfTheConfiguredQuality() {
-        let duration = CMTime(seconds: 89.09, preferredTimescale: 600)
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .veryHigh),
-            173_725_500
-        )
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .high),
-            122_498_750
-        )
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium),
-            62_363_000
-        )
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low),
-            30_067_875
-        )
-    }
-
-    func test_estimatedFileLength_thenALowerQualityAlwaysEstimatesASmallerFile() throws {
-        let duration = CMTime(seconds: 60, preferredTimescale: 600)
-        let low = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low))
-        let medium = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium))
-        let high = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .high))
-        let veryHigh = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .veryHigh))
-
-        XCTAssertLessThan(low, medium)
-        XCTAssertLessThan(medium, high)
-        XCTAssertLessThan(high, veryHigh)
-    }
-
-    func test_estimatedFileLength_whenTheVideoIsLong_thenTheEstimateExceedsTheUploadLimit() {
-        let estimate = StreamVideoCompressor.estimatedFileLength(
-            for: CMTime(seconds: 600, preferredTimescale: 1),
-            quality: .high
-        )
-        XCTAssertEqual(estimate, 825_000_000)
-        XCTAssertGreaterThan(try XCTUnwrap(estimate), 100 * 1024 * 1024)
-    }
-
-    func test_estimatedFileLength_whenTheQualityIsNotSupported_thenThereIsNoEstimate() {
-        let estimate = StreamVideoCompressor.estimatedFileLength(
-            for: CMTime(seconds: 60, preferredTimescale: 1),
-            quality: .init(exportPreset: "StreamNotAnExportPreset")
-        )
-
-        XCTAssertNil(estimate)
     }
 
     func test_compressVideo_whenTwoVideosAreCompressed_thenBothReportProgressBeforeEitherFinishes() async throws {
@@ -114,13 +57,13 @@ import XCTest
         nonisolated(unsafe) var secondStarted = false
         nonisolated(unsafe) var bothWereInFlight = false
 
-        async let first = compressor.compressVideo(at: firstURL, quality: .high) { _ in
+        async let first = compressor.compressVideo(at: firstURL) { _ in
             lock.lock()
             firstStarted = true
             if secondStarted { bothWereInFlight = true }
             lock.unlock()
         }
-        async let second = compressor.compressVideo(at: secondURL, quality: .high) { _ in
+        async let second = compressor.compressVideo(at: secondURL) { _ in
             lock.lock()
             secondStarted = true
             if firstStarted { bothWereInFlight = true }
@@ -129,21 +72,6 @@ import XCTest
         _ = try await (first, second)
 
         XCTAssertTrue(bothWereInFlight)
-    }
-
-    func test_compressVideo_whenTheQualityIsNotSupported_thenAnErrorIsThrown() async throws {
-        let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 5, bitRate: 1_000_000)
-        let compressor = StreamVideoCompressor()
-
-        do {
-            _ = try await compressor.compressVideo(
-                at: videoURL,
-                quality: .init(exportPreset: "StreamNotAnExportPreset")
-            ) { _ in }
-            XCTFail("The compression was expected to fail")
-        } catch {
-            XCTAssertTrue(error is VideoCompressionError)
-        }
     }
 
     // MARK: - Helpers

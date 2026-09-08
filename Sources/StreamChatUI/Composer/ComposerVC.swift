@@ -1920,19 +1920,10 @@ open class ComposerVC: _ViewController,
         await applyLocalThumbnailIfNeeded(id: id, media: media)
 
         var processedMedia = media
-        switch await videoCompressionPlan(for: media) {
-        case .skip:
-            updatePendingProgress(1, for: id)
-        case .exceedsUploadLimit:
-            removeTemporaryMedia(at: media.url)
-            removePendingMedia(id: id)
-            showAttachmentExceedsMaxSizeAlert()
-            return
-        case let .compress(quality):
+        if media.type == .video {
             do {
                 let compressedURL = try await compressVideo(
                     at: media.url,
-                    quality: quality,
                     progressHandler: { [weak self] progress in
                         Task { @MainActor [weak self] in
                             self?.updateCompressionProgress(progress, for: id)
@@ -1947,6 +1938,8 @@ open class ComposerVC: _ViewController,
             } catch {
                 log.error("Failed to compress the selected video, the original video is used instead: \(error)")
             }
+        } else {
+            updatePendingProgress(1, for: id)
         }
 
         guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
@@ -1954,38 +1947,6 @@ open class ComposerVC: _ViewController,
             return
         }
         await commitPendingMedia(id: id, media: processedMedia)
-    }
-
-    /// How a picked video should be compressed before it is added to the composer.
-    enum VideoCompressionPlan: Equatable {
-        case skip
-        case compress(VideoCompressionQuality)
-        case exceedsUploadLimit
-    }
-
-    /// Decides whether a video should be compressed with the configured quality.
-    private func videoCompressionPlan(for media: SelectedMediaItem) async -> VideoCompressionPlan {
-        guard media.type == .video else { return .skip }
-        let quality = components.videoCompressionQuality
-        return Self.videoCompressionPlan(
-            maxSize: maxAttachmentSize(for: .video),
-            quality: quality,
-            estimatedCompressedSize: await StreamVideoCompressor.estimatedFileLength(
-                at: media.url,
-                quality: quality
-            )
-        )
-    }
-
-    static func videoCompressionPlan(
-        maxSize: Int64,
-        quality: VideoCompressionQuality,
-        estimatedCompressedSize: Int64?
-    ) -> VideoCompressionPlan {
-        if let estimatedCompressedSize, estimatedCompressedSize > maxSize {
-            return .exceedsUploadLimit
-        }
-        return .compress(quality)
     }
 
     /// Where a finished item should sit when others from the same picker batch
@@ -2196,12 +2157,10 @@ open class ComposerVC: _ViewController,
     /// Compresses the video at the given location and removes the video it was created from.
     private func compressVideo(
         at url: URL,
-        quality: VideoCompressionQuality,
         progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL {
         let compressedURL = try await components.videoCompressor.compressVideo(
             at: url,
-            quality: quality,
             progressHandler: progressHandler
         )
         if compressedURL != url {

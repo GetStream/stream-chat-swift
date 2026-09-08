@@ -16,7 +16,7 @@ final class VideoCompressor_Mock: VideoCompressor, @unchecked Sendable {
     var reportedProgress: [Double] = [0.5, 1]
 
     private(set) var compressVideoCallCount = 0
-    private(set) var compressVideoCalledWith: [(url: URL, quality: VideoCompressionQuality)] = []
+    private(set) var compressVideoCalledWithURLs: [URL] = []
 
     /// Called on the main actor just before the mock starts compressing.
     var onCompress: (() -> Void)?
@@ -27,11 +27,10 @@ final class VideoCompressor_Mock: VideoCompressor, @unchecked Sendable {
     @MainActor
     func compressVideo(
         at url: URL,
-        quality: VideoCompressionQuality,
         progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL {
         compressVideoCallCount += 1
-        compressVideoCalledWith.append((url: url, quality: quality))
+        compressVideoCalledWithURLs.append(url)
         onCompress?()
         if let compressionGate {
             await compressionGate()

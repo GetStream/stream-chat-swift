@@ -4,46 +4,9 @@
 
 import AVFoundation
 import Foundation
-import StreamChat
-
-/// The quality which is used when the videos added to the composer are compressed.
-public struct VideoCompressionQuality: Equatable, Sendable {
-    /// The `AVAssetExportSession` preset which is used for the compression.
-    public let exportPreset: String
-    private let name: String
-
-    /// Creates a compression quality which is backed by the given `AVAssetExportSession` preset.
-    public init(exportPreset: String) {
-        self.exportPreset = exportPreset
-        name = exportPreset
-    }
-
-    private init(name: String, exportPreset: String) {
-        self.exportPreset = exportPreset
-        self.name = name
-    }
-
-    /// The videos are scaled down to 480p H.264.
-    ///
-    /// A 16:9 video becomes 640x360.
-    public static let low = Self(name: "low", exportPreset: AVAssetExportPreset640x480)
-
-    /// The videos are scaled down to 540p H.264.
-    ///
-    /// A 16:9 video becomes 960x540. This is the default composer quality.
-    public static let medium = Self(name: "medium", exportPreset: AVAssetExportPreset960x540)
-
-    /// The videos are scaled down to 720p H.264.
-    public static let high = Self(name: "high", exportPreset: AVAssetExportPreset1280x720)
-
-    /// The videos are scaled down to 1080p H.264.
-    public static let veryHigh = Self(name: "veryHigh", exportPreset: AVAssetExportPreset1920x1080)
-}
 
 /// The errors which can occur while a video is being compressed.
 enum VideoCompressionError: Error {
-    /// The video cannot be compressed with the requested quality.
-    case unsupportedQuality(VideoCompressionQuality)
     /// The export finished without producing a compressed video.
     case exportFailed
 }
@@ -54,18 +17,19 @@ protocol VideoCompressor: Sendable {
     ///
     /// - Parameters:
     ///   - url: The local file URL of the video which should be compressed.
-    ///   - quality: The quality which the compressed video should have.
     ///   - progressHandler: Called with the progress of the compression, a value between 0 and 1.
     ///     May be invoked off the main actor.
     /// - Returns: The local file URL of the compressed video.
     func compressVideo(
         at url: URL,
-        quality: VideoCompressionQuality,
         progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL
 }
 
 /// The default video compressor, which transcodes videos with `AVAssetExportSession`.
+///
+/// Uses `AVAssetExportPresetMediumQuality` — the same preset the SwiftUI SDK uses —
+/// which lets Apple pick a reasonable resolution and bitrate for the source video.
 struct StreamVideoCompressor: VideoCompressor {
     /// How often the progress of the compression is reported.
     var progressUpdateInterval: TimeInterval
@@ -83,12 +47,11 @@ struct StreamVideoCompressor: VideoCompressor {
 
     func compressVideo(
         at url: URL,
-        quality: VideoCompressionQuality,
         progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL {
         let asset = AVURLAsset(url: url)
-        guard let session = AVAssetExportSession(asset: asset, presetName: quality.exportPreset) else {
-            throw VideoCompressionError.unsupportedQuality(quality)
+        guard let session = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetMediumQuality) else {
+            throw VideoCompressionError.exportFailed
         }
         session.shouldOptimizeForNetworkUse = true
         // `fileLengthLimit` is deliberately not set. The export stops writing as soon as the
@@ -114,55 +77,6 @@ struct StreamVideoCompressor: VideoCompressor {
         }
         progressHandler(1)
         return outputURL
-    }
-
-    /// Total bitrate used to estimate a 1080p H.264 export.
-    static let veryHighQualityBitRate: Double = 15_600_000
-
-    /// Total bitrate used to estimate a 720p H.264 export.
-    static let highQualityBitRate: Double = 11_000_000
-
-    /// Total bitrate used to estimate a 540p H.264 export.
-    static let mediumQualityBitRate: Double = 5_600_000
-
-    /// Total bitrate used to estimate a 480p H.264 export.
-    static let lowQualityBitRate: Double = 2_700_000
-
-    /// The expected size of the compressed video, based on duration and the
-    /// bitrate of the given quality. Returns `nil` when the duration is unknown
-    /// or the quality has no known bitrate.
-    static func estimatedFileLength(for duration: CMTime, quality: VideoCompressionQuality) -> Int64? {
-        guard let bitRate = bitRate(for: quality) else { return nil }
-        let seconds = CMTimeGetSeconds(duration)
-        guard seconds.isFinite, seconds > 0 else { return nil }
-        return Int64((seconds * bitRate / 8).rounded())
-    }
-
-    /// The duration is loaded asynchronously, so that reading it does not block the
-    /// caller, which is usually the main actor.
-    static func estimatedFileLength(at url: URL, quality: VideoCompressionQuality) async -> Int64? {
-        let duration: CMTime? = await withCheckedContinuation { continuation in
-            StreamAssetPropertyLoader().loadProperties(
-                [AssetProperty(\AVURLAsset.duration)],
-                of: AVURLAsset(url: url)
-            ) { result in
-                guard case .success(let asset) = result else {
-                    continuation.resume(returning: nil)
-                    return
-                }
-                continuation.resume(returning: asset.duration)
-            }
-        }
-        guard let duration else { return nil }
-        return estimatedFileLength(for: duration, quality: quality)
-    }
-
-    private static func bitRate(for quality: VideoCompressionQuality) -> Double? {
-        if quality == .veryHigh { return veryHighQualityBitRate }
-        if quality == .high { return highQualityBitRate }
-        if quality == .medium { return mediumQualityBitRate }
-        if quality == .low { return lowQualityBitRate }
-        return nil
     }
 
     private func makeOutputURL(for inputURL: URL) throws -> URL {
