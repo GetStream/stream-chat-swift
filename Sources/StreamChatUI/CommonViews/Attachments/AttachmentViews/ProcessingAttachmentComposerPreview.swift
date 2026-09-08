@@ -98,12 +98,19 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
     }
 
     private var uploadingState: AttachmentUploadingState {
+        // The overlay only reads `state` for the percentage. `AttachmentUploadingState`
+        // still requires a local URL, so this temp path is a placeholder and is never opened.
         AttachmentUploadingState(
-            localFileURL: URL(fileURLWithPath: "/"),
+            localFileURL: placeholderUploadingURL,
             state: .uploading(progress: progress),
             file: AttachmentFile(type: .generic, size: 0, mimeType: nil)
         )
     }
+
+    private let placeholderUploadingURL = URL(
+        fileURLWithPath: NSTemporaryDirectory(),
+        isDirectory: true
+    ).appendingPathComponent("pending-attachment")
 }
 
 /// A preview provider for attachments that are still being processed.
