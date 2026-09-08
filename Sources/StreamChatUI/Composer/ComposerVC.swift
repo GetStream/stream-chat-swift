@@ -2498,17 +2498,6 @@ open class ComposerVC: _ViewController,
     }
 }
 
-extension ComposerVC {
-    /// A media item which was selected in the composer's media picker.
-    struct SelectedMediaItem: Sendable {
-        /// The local file URL of the media item.
-        let url: URL
-
-        /// The type of the media item, either `.image` or `.video`.
-        let type: AttachmentType
-    }
-}
-
 @available(iOS 14.0, *)
 extension ComposerVC: PHPickerViewControllerDelegate {
     public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
