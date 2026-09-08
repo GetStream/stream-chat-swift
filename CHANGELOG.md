@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Add `Components.isLegacyPhotosPickerEnabled` to keep using `UIImagePickerController` in the composer [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
+- Add `Components.videoCompressionQuality` to configure the quality used when compressing videos added to the composer [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
+- Add `Components.processingAttachmentComposerPreview` to customize the preview shown while a picked attachment is being processed [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 ### 🐞 Fixed
 - Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
