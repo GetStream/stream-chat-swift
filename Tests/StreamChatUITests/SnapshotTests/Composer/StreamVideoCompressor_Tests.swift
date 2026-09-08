@@ -36,6 +36,18 @@ import XCTest
         XCTAssertLessThan(try fileSize(of: compressedURL), try fileSize(of: videoURL))
     }
 
+    func test_compressVideo_whenTheContentCompressesPoorly_thenTheWholeDurationIsExported() async throws {
+        let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 90, bitRate: 20_000_000)
+        let compressor = StreamVideoCompressor()
+
+        let compressedURL = try await compressor.compressVideo(at: videoURL, quality: .high) { _ in }
+        temporaryDirectories.append(compressedURL.deletingLastPathComponent())
+
+        let sourceDuration = await duration(of: videoURL)
+        let compressedDuration = await duration(of: compressedURL)
+        XCTAssertEqual(compressedDuration, sourceDuration, accuracy: 0.1)
+    }
+
     func test_highQuality_usesThe720pH264ExportPreset() {
         XCTAssertEqual(VideoCompressionQuality.high.exportPreset, AVAssetExportPreset1280x720)
     }
@@ -111,6 +123,16 @@ import XCTest
     private func fileSize(of url: URL) throws -> Int64 {
         let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
         return try XCTUnwrap(attributes[.size] as? NSNumber).int64Value
+    }
+
+    private func duration(of url: URL) async -> TimeInterval {
+        let asset = AVURLAsset(url: url)
+        return await withCheckedContinuation { continuation in
+            nonisolated(unsafe) let unsafeAsset = asset
+            StreamAssetPropertyLoader().loadProperties([AssetProperty(\AVURLAsset.duration)], of: asset) { _ in
+                continuation.resume(returning: CMTimeGetSeconds(unsafeAsset.duration))
+            }
+        }
     }
 
     private func videoTrack(of url: URL) async -> AVAssetTrack? {

@@ -76,9 +76,9 @@ struct StreamVideoCompressor: VideoCompressor {
             throw VideoCompressionError.unsupportedQuality(quality)
         }
         session.shouldOptimizeForNetworkUse = true
-        if let fileLengthLimit = Self.estimatedFileLength(for: asset.duration, quality: quality) {
-            session.fileLengthLimit = fileLengthLimit
-        }
+        // `fileLengthLimit` is deliberately not set. The export stops writing as soon as the
+        // limit is reached, which silently shortens the video instead of lowering its bitrate.
+        // The size of the compressed file is validated once it is on disk instead.
 
         let outputURL = try makeOutputURL(for: url)
         let export = ExportSession(session)
