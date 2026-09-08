@@ -60,6 +60,13 @@ open class ComposerVC: _ViewController,
     UINavigationControllerDelegate,
     InputTextViewClipboardAttachmentDelegate,
     VoiceRecordingDelegate {
+    private static var videoTypeIdentifier: String { "public.movie" }
+
+    private static var imageTypeIdentifier: String { "public.image" }
+
+    /// How often the progress of loading a media item from the photo library is reported.
+    private static var mediaLoadProgressUpdateInterval: TimeInterval { 0.1 }
+
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -2251,13 +2258,6 @@ open class ComposerVC: _ViewController,
         }
         return info
     }
-
-    private static var videoTypeIdentifier: String { "public.movie" }
-
-    private static var imageTypeIdentifier: String { "public.image" }
-
-    /// How often the progress of loading a media item from the photo library is reported.
-    private static var mediaLoadProgressUpdateInterval: TimeInterval { 0.1 }
 
     private static func loadMedia(
         from itemProvider: NSItemProvider,
