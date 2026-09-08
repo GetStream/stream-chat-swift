@@ -1839,10 +1839,9 @@ open class ComposerVC: _ViewController,
         await withTaskGroup(of: Void.self) { group in
             for id in ids {
                 group.addTask { [weak self] in
-                    await withTaskGroup(of: Void.self) { itemGroup in
-                        itemGroup.addTask { await self?.loadPendingPreview(for: id) }
-                        itemGroup.addTask { await self?.processPendingItem(id: id) }
-                    }
+                    async let preview: Void? = self?.loadPendingPreview(for: id)
+                    async let process: Void? = self?.processPendingItem(id: id)
+                    _ = await (preview, process)
                 }
             }
         }

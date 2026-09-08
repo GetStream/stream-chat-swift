@@ -179,13 +179,13 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
-    nonisolated private static func makeImageThumbnail(at url: URL) async -> UIImage? {
+    private nonisolated static func makeImageThumbnail(at url: URL) async -> UIImage? {
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else { return nil }
         return thumbnail(from: source, maxPixelSize: composerMediaPreviewMaxPixelSize)
     }
 
-    nonisolated private static func makeVideoThumbnail(at url: URL) async -> UIImage? {
+    private nonisolated static func makeVideoThumbnail(at url: URL) async -> UIImage? {
         await withCheckedContinuation { continuation in
             let generator = AVAssetImageGenerator(asset: AVURLAsset(url: url))
             generator.appliesPreferredTrackTransform = true
@@ -201,7 +201,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
-    nonisolated private static func makeVideoMetadata(at url: URL) async -> VideoMetadata {
+    private nonisolated static func makeVideoMetadata(at url: URL) async -> VideoMetadata {
         await withCheckedContinuation { continuation in
             StreamAssetPropertyLoader().loadProperties(
                 [AssetProperty(\.duration), AssetProperty(\.tracks)],
@@ -226,7 +226,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
-    nonisolated private static func copyToTemporaryLocation(_ url: URL) throws -> URL {
+    private nonisolated static func copyToTemporaryLocation(_ url: URL) throws -> URL {
         let directory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -241,7 +241,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         return destination
     }
 
-    nonisolated private static func removeTemporaryMedia(at url: URL) {
+    private nonisolated static func removeTemporaryMedia(at url: URL) {
         let directory = url.deletingLastPathComponent()
         if UUID(uuidString: directory.lastPathComponent) != nil {
             try? FileManager.default.removeItem(at: directory)
@@ -251,7 +251,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
     }
 
     // Video posters are not tone-mapped, because redrawing them often produces a black frame.
-    nonisolated private static func uiImage(fromPreview object: NSSecureCoding?, toneMap: Bool) -> UIImage? {
+    private nonisolated static func uiImage(fromPreview object: NSSecureCoding?, toneMap: Bool) -> UIImage? {
         let image: UIImage?
         if let preview = object as? UIImage {
             image = preview
@@ -268,7 +268,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         return toneMap ? sdrPreviewImage(from: image) : image
     }
 
-    nonisolated private static func thumbnail(
+    private nonisolated static func thumbnail(
         fromImageData data: Data,
         maxPixelSize: Int = composerMediaPreviewMaxPixelSize
     ) -> UIImage? {
@@ -278,7 +278,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
             ?? UIImage(data: data).map { sdrPreviewImage(from: $0) }
     }
 
-    nonisolated private static func thumbnail(from source: CGImageSource, maxPixelSize: Int) -> UIImage? {
+    private nonisolated static func thumbnail(from source: CGImageSource, maxPixelSize: Int) -> UIImage? {
         let options: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
@@ -291,7 +291,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         return UIImage(cgImage: cgImage)
     }
 
-    nonisolated private static func sdrPreviewImage(from image: UIImage) -> UIImage {
+    private nonisolated static func sdrPreviewImage(from image: UIImage) -> UIImage {
         let pixelWidth = image.size.width * image.scale
         let pixelHeight = image.size.height * image.scale
         guard pixelWidth > 0, pixelHeight > 0 else { return image }
@@ -309,7 +309,7 @@ final class ComposerMediaLoader: ComposerMediaLoading {
         }
     }
 
-    nonisolated private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
+    private nonisolated static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
         let size = track.naturalSize
         let transform = track.preferredTransform
         if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
