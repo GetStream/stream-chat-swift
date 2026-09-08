@@ -2,10 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import AVFoundation
-import CoreGraphics
 import Foundation
-import ImageIO
 import PhotosUI
 import StreamChat
 import StreamChatCommonUI
@@ -60,13 +57,6 @@ open class ComposerVC: _ViewController,
     UINavigationControllerDelegate,
     InputTextViewClipboardAttachmentDelegate,
     VoiceRecordingDelegate {
-    private static var videoTypeIdentifier: String { "public.movie" }
-
-    private static var imageTypeIdentifier: String { "public.image" }
-
-    /// How often the progress of loading a media item from the photo library is reported.
-    private static var mediaLoadProgressUpdateInterval: TimeInterval { 0.1 }
-
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -512,17 +502,8 @@ open class ComposerVC: _ViewController,
     /// The position the next picked item takes within the current pending media.
     private var nextPendingMediaOrder = 0
 
-    /// Media picked in the photos picker that is still being downloaded, written, or compressed.
-    struct PendingMediaItem {
-        let id: UUID
-        let type: AttachmentType
-        var previewImage: UIImage?
-        var progress: Double
-        /// The share of the progress bar taken by downloading the file from iCloud.
-        var downloadShare: Double
-        let itemProvider: NSItemProvider
-        let order: Int
-    }
+    // Loads picker files, previews, and metadata. Replace in tests to avoid Photos I/O.
+    var mediaLoader: ComposerMediaLoading = ComposerMediaLoader()
 
     /// Attachments that should already show a preview, but are not ready to send yet.
     private(set) var pendingMediaItems: [PendingMediaItem] = [] {
@@ -1837,7 +1818,7 @@ open class ComposerVC: _ViewController,
         let items = itemProviders.enumerated().map { index, itemProvider in
             PendingMediaItem(
                 id: UUID(),
-                type: itemProvider.hasItemConformingToTypeIdentifier(Self.videoTypeIdentifier) ? .video : .image,
+                type: itemProvider.hasItemConformingToTypeIdentifier(mediaLoader.videoTypeIdentifier) ? .video : .image,
                 previewImage: nil,
                 progress: 0,
                 downloadShare: 0,
@@ -1869,7 +1850,7 @@ open class ComposerVC: _ViewController,
 
     func loadPendingPreview(for id: UUID) async {
         guard let itemProvider = pendingMediaItems.first(where: { $0.id == id })?.itemProvider else { return }
-        guard let previewImage = await Self.loadPreviewImage(from: itemProvider) else { return }
+        guard let previewImage = await mediaLoader.loadPreviewImage(from: itemProvider) else { return }
         updatePendingPreview(previewImage, for: id)
     }
 
@@ -1911,7 +1892,7 @@ open class ComposerVC: _ViewController,
 
     private func processPendingItem(id: UUID) async {
         guard let item = pendingMediaItems.first(where: { $0.id == id }) else { return }
-        guard let media = await Self.loadMedia(
+        guard let media = await mediaLoader.loadMedia(
             from: item.itemProvider,
             progressHandler: { [weak self] progress, isCloudDownload in
                 self?.updateDownloadProgress(progress, isCloudDownload: isCloudDownload, for: id)
@@ -1921,7 +1902,7 @@ open class ComposerVC: _ViewController,
             return
         }
         guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
-            removeTemporaryMedia(at: media.url)
+            mediaLoader.removeTemporaryMedia(at: media.url)
             return
         }
         await applyLocalThumbnailIfNeeded(id: id, media: media)
@@ -1939,7 +1920,7 @@ open class ComposerVC: _ViewController,
                 )
                 processedMedia = .init(url: compressedURL, type: .video)
             } catch is CancellationError {
-                removeTemporaryMedia(at: media.url)
+                mediaLoader.removeTemporaryMedia(at: media.url)
                 removePendingMedia(id: id)
                 return
             } catch {
@@ -1950,7 +1931,7 @@ open class ComposerVC: _ViewController,
         }
 
         guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
-            removeTemporaryMedia(at: processedMedia.url)
+            mediaLoader.removeTemporaryMedia(at: processedMedia.url)
             return
         }
         await commitPendingMedia(id: id, media: processedMedia)
@@ -1968,7 +1949,7 @@ open class ComposerVC: _ViewController,
 
     private func commitPendingMedia(id: UUID, media: SelectedMediaItem) async {
         guard let pending = pendingMediaItems.first(where: { $0.id == id }) else {
-            removeTemporaryMedia(at: media.url)
+            mediaLoader.removeTemporaryMedia(at: media.url)
             return
         }
         if let previewImage = pending.previewImage {
@@ -1978,7 +1959,7 @@ open class ComposerVC: _ViewController,
         guard let currentIndex = content.attachments.firstIndex(where: { $0.localFileURL == media.url }) else {
             // The attachment was rejected, for example because it is still too big to upload.
             attachmentPreviewImages.removeValue(forKey: media.url)
-            removeTemporaryMedia(at: media.url)
+            mediaLoader.removeTemporaryMedia(at: media.url)
             removePendingMedia(id: id)
             return
         }
@@ -2001,164 +1982,18 @@ open class ComposerVC: _ViewController,
         pendingMediaItems.removeAll { $0.id == id }
     }
 
-    /// Pixel size that fills the 100pt composer cell on a 3x display.
-    private nonisolated static let composerPreviewMaxPixelSize = 300
-
     private func applyLocalThumbnailIfNeeded(id: UUID, media: SelectedMediaItem) async {
         let thumbnail: UIImage?
         switch media.type {
         case .image:
-            thumbnail = await Self.imageThumbnail(at: media.url)
+            thumbnail = await mediaLoader.imageThumbnail(at: media.url)
         case .video:
-            thumbnail = await withCheckedContinuation { continuation in
-                let generator = AVAssetImageGenerator(asset: AVURLAsset(url: media.url))
-                generator.appliesPreferredTrackTransform = true
-                generator.maximumSize = CGSize(
-                    width: Self.composerPreviewMaxPixelSize,
-                    height: Self.composerPreviewMaxPixelSize
-                )
-                generator.generateCGImagesAsynchronously(
-                    forTimes: [NSValue(time: .zero)]
-                ) { _, image, _, _, _ in
-                    continuation.resume(returning: image.map { UIImage(cgImage: $0) })
-                }
-            }
+            thumbnail = await mediaLoader.videoThumbnail(at: media.url)
         default:
             thumbnail = nil
         }
         guard let thumbnail else { return }
         updatePendingPreview(thumbnail, for: id)
-    }
-
-    private static func loadPreviewImage(from itemProvider: NSItemProvider) async -> UIImage? {
-        if itemProvider.hasItemConformingToTypeIdentifier(videoTypeIdentifier) {
-            return await loadVideoPreviewImage(from: itemProvider)
-        }
-        if let preview = await loadSystemPreviewImage(
-            from: itemProvider,
-            options: [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(
-                width: composerPreviewMaxPixelSize,
-                height: composerPreviewMaxPixelSize
-            ))],
-            toneMap: true
-        ) {
-            return preview
-        }
-        if itemProvider.canLoadObject(ofClass: UIImage.self),
-           let image = await loadObjectImage(from: itemProvider) {
-            return sdrPreviewImage(from: image)
-        }
-        guard itemProvider.hasItemConformingToTypeIdentifier(imageTypeIdentifier) else { return nil }
-        return await loadImageDataThumbnail(from: itemProvider)
-    }
-
-    private static func loadVideoPreviewImage(from itemProvider: NSItemProvider) async -> UIImage? {
-        if let preview = await loadSystemPreviewImage(from: itemProvider, options: [:], toneMap: false) {
-            return preview
-        }
-        return await loadSystemPreviewImage(
-            from: itemProvider,
-            options: [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(
-                width: composerPreviewMaxPixelSize,
-                height: composerPreviewMaxPixelSize
-            ))],
-            toneMap: false
-        )
-    }
-
-    private static func loadSystemPreviewImage(
-        from itemProvider: NSItemProvider,
-        options: [AnyHashable: Any],
-        toneMap: Bool
-    ) async -> UIImage? {
-        await withCheckedContinuation { continuation in
-            itemProvider.loadPreviewImage(options: options) { object, _ in
-                continuation.resume(returning: uiImage(fromPreview: object, toneMap: toneMap))
-            }
-        }
-    }
-
-    private static func loadObjectImage(from itemProvider: NSItemProvider) async -> UIImage? {
-        await withCheckedContinuation { continuation in
-            itemProvider.loadObject(ofClass: UIImage.self) { image, _ in
-                continuation.resume(returning: image as? UIImage)
-            }
-        }
-    }
-
-    private static func loadImageDataThumbnail(from itemProvider: NSItemProvider) async -> UIImage? {
-        await withCheckedContinuation { continuation in
-            itemProvider.loadDataRepresentation(forTypeIdentifier: imageTypeIdentifier) { data, _ in
-                continuation.resume(returning: data.flatMap { thumbnail(fromImageData: $0) })
-            }
-        }
-    }
-
-    /// Video posters are not tone-mapped, because redrawing them often produces a black frame.
-    private nonisolated static func uiImage(fromPreview object: NSSecureCoding?, toneMap: Bool) -> UIImage? {
-        let image: UIImage?
-        if let preview = object as? UIImage {
-            image = preview
-        } else if let data = object as? Data {
-            image = thumbnail(fromImageData: data)
-        } else if let object {
-            let anyObject = object as AnyObject
-            guard CFGetTypeID(anyObject) == CGImage.typeID else { return nil }
-            image = UIImage(cgImage: unsafeDowncast(anyObject, to: CGImage.self))
-        } else {
-            return nil
-        }
-        guard let image else { return nil }
-        return toneMap ? sdrPreviewImage(from: image) : image
-    }
-
-    /// Decoding a full size photo is expensive, so it happens off the main actor.
-    /// The file is read by ImageIO instead of being loaded into memory as a whole.
-    private nonisolated static func imageThumbnail(at url: URL) async -> UIImage? {
-        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else { return nil }
-        return thumbnail(from: source, maxPixelSize: composerPreviewMaxPixelSize)
-    }
-
-    private nonisolated static func thumbnail(
-        fromImageData data: Data,
-        maxPixelSize: Int = composerPreviewMaxPixelSize
-    ) -> UIImage? {
-        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions) else { return nil }
-        return thumbnail(from: source, maxPixelSize: maxPixelSize)
-            ?? UIImage(data: data).map { sdrPreviewImage(from: $0) }
-    }
-
-    private nonisolated static func thumbnail(from source: CGImageSource, maxPixelSize: Int) -> UIImage? {
-        let options: [CFString: Any] = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
-        ]
-        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
-            return nil
-        }
-        return UIImage(cgImage: cgImage)
-    }
-
-    private nonisolated static func sdrPreviewImage(from image: UIImage) -> UIImage {
-        let pixelWidth = image.size.width * image.scale
-        let pixelHeight = image.size.height * image.scale
-        guard pixelWidth > 0, pixelHeight > 0 else { return image }
-        let maxDimension = CGFloat(composerPreviewMaxPixelSize)
-        let scale = min(maxDimension / pixelWidth, maxDimension / pixelHeight, 1)
-        let target = CGSize(
-            width: max(1, (pixelWidth * scale).rounded()),
-            height: max(1, (pixelHeight * scale).rounded())
-        )
-        let format = UIGraphicsImageRendererFormat.preferred()
-        format.opaque = true
-        format.scale = 1
-        return UIGraphicsImageRenderer(size: target, format: format).image { _ in
-            image.draw(in: CGRect(origin: .zero, size: target))
-        }
     }
 
     /// Compresses the video at the given location and removes the video it was created from.
@@ -2171,7 +2006,7 @@ open class ComposerVC: _ViewController,
             progressHandler: progressHandler
         )
         if compressedURL != url {
-            removeTemporaryMedia(at: url)
+            mediaLoader.removeTemporaryMedia(at: url)
         }
         return compressedURL
     }
@@ -2206,12 +2041,12 @@ open class ComposerVC: _ViewController,
         case .image:
             if let originalImage = originalImage {
                 info[.originalImage] = originalImage
-            } else if let dimensions = imageDimensions(at: media.url) {
+            } else if let dimensions = mediaLoader.imageDimensions(at: media.url) {
                 info[.originalWidth] = dimensions.width
                 info[.originalHeight] = dimensions.height
             }
         case .video:
-            let metadata = await Self.loadVideoMetadata(at: media.url)
+            let metadata = await mediaLoader.loadVideoMetadata(at: media.url)
             if let duration = metadata.duration {
                 info[.duration] = duration
             }
@@ -2223,92 +2058,6 @@ open class ComposerVC: _ViewController,
             break
         }
         return info
-    }
-
-    private static func loadMedia(
-        from itemProvider: NSItemProvider,
-        progressHandler: @escaping (_ progress: Double, _ isCloudDownload: Bool) -> Void
-    ) async -> SelectedMediaItem? {
-        let isVideo = itemProvider.hasItemConformingToTypeIdentifier(videoTypeIdentifier)
-        let typeIdentifier = isVideo ? videoTypeIdentifier : imageTypeIdentifier
-        let loadProgress = MediaLoadProgress()
-        let progressTask = Task { @MainActor in
-            while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: UInt64(mediaLoadProgressUpdateInterval * 1_000_000_000))
-                guard !Task.isCancelled else { return }
-                guard let fractionCompleted = loadProgress.observedFractionCompleted() else { continue }
-                progressHandler(fractionCompleted, loadProgress.isCloudDownload)
-            }
-        }
-        defer { progressTask.cancel() }
-
-        let media: SelectedMediaItem? = await withCheckedContinuation { continuation in
-            loadProgress.progress = itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
-                guard let url = url else {
-                    log.error("Failed to load the media selected in the photos picker: \(error?.localizedDescription ?? "unknown error")")
-                    continuation.resume(returning: nil)
-                    return
-                }
-                do {
-                    // The provided file is deleted as soon as this closure returns, so it needs
-                    // to be copied to a location which is owned by the composer.
-                    let localURL = try copyToTemporaryLocation(url)
-                    continuation.resume(returning: SelectedMediaItem(url: localURL, type: isVideo ? .video : .image))
-                } catch {
-                    log.error("Failed to copy the media selected in the photos picker: \(error)")
-                    continuation.resume(returning: nil)
-                }
-            }
-        }
-        guard let media else { return nil }
-        if loadProgress.isCloudDownload {
-            progressHandler(1, true)
-        }
-        return media
-    }
-
-    private static func loadVideoMetadata(at url: URL) async -> VideoMetadata {
-        await withCheckedContinuation { continuation in
-            StreamAssetPropertyLoader().loadProperties(
-                [AssetProperty(\.duration), AssetProperty(\.tracks)],
-                of: AVURLAsset(url: url)
-            ) { result in
-                guard case .success(let asset) = result else {
-                    continuation.resume(returning: VideoMetadata())
-                    return
-                }
-                var metadata = VideoMetadata()
-                let durationSeconds = CMTimeGetSeconds(asset.duration)
-                if durationSeconds.isFinite && !durationSeconds.isNaN {
-                    metadata.duration = durationSeconds
-                }
-                if let track = asset.tracks(withMediaType: .video).first {
-                    let (width, height) = videoDimensions(from: track)
-                    metadata.width = width
-                    metadata.height = height
-                }
-                continuation.resume(returning: metadata)
-            }
-        }
-    }
-
-    private nonisolated static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
-        let size = track.naturalSize
-        let transform = track.preferredTransform
-        if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
-            return (Double(size.height), Double(size.width))
-        }
-        return (Double(size.width), Double(size.height))
-    }
-
-    /// Removes a temporary media file which the composer created for a selected media item.
-    private func removeTemporaryMedia(at url: URL) {
-        let directory = url.deletingLastPathComponent()
-        if UUID(uuidString: directory.lastPathComponent) != nil {
-            try? FileManager.default.removeItem(at: directory)
-        } else {
-            try? FileManager.default.removeItem(at: url)
-        }
     }
 
     // MARK: - UIDocumentPickerViewControllerDelegate
@@ -2470,61 +2219,6 @@ extension ComposerVC: PHPickerViewControllerDelegate {
         handleMediaPickerResults(results)
         picker.dismiss(animated: true)
     }
-}
-
-/// Holds the progress of loading a media item, which is only known once the loading started.
-@MainActor final class MediaLoadProgress {
-    var progress: Progress?
-    private(set) var isCloudDownload = false
-
-    func observedFractionCompleted() -> Double? {
-        guard let progress else { return nil }
-        // Only a download file operation is an iCloud fetch. Local copies can
-        // also report incremental progress.
-        if !isCloudDownload {
-            isCloudDownload = progress.fileOperationKind == .downloading
-        }
-        return progress.fractionCompleted
-    }
-}
-
-/// The properties of a video which the backend needs for rendering it.
-private struct VideoMetadata: Sendable {
-    var duration: TimeInterval?
-    var width: Double?
-    var height: Double?
-}
-
-/// Reads the dimensions from the image's metadata, without decoding the whole image.
-private func imageDimensions(at url: URL) -> (width: Double, height: Double)? {
-    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
-          let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any],
-          let width = (properties[kCGImagePropertyPixelWidth as String] as? NSNumber)?.doubleValue,
-          let height = (properties[kCGImagePropertyPixelHeight as String] as? NSNumber)?.doubleValue
-    else { return nil }
-    let rawOrientation = (properties[kCGImagePropertyOrientation as String] as? NSNumber)?.uint32Value
-    let orientation = rawOrientation.flatMap(CGImagePropertyOrientation.init(rawValue:)) ?? .up
-    switch orientation {
-    case .left, .leftMirrored, .right, .rightMirrored:
-        return (width: height, height: width)
-    default:
-        return (width: width, height: height)
-    }
-}
-
-private func copyToTemporaryLocation(_ url: URL) throws -> URL {
-    let directory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        .appendingPathComponent(UUID().uuidString, isDirectory: true)
-    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    let fileName = url.lastPathComponent.isEmpty ? UUID().uuidString : url.lastPathComponent
-    let destination = directory.appendingPathComponent(fileName)
-    do {
-        try FileManager.default.copyItem(at: url, to: destination)
-    } catch {
-        try? FileManager.default.removeItem(at: directory)
-        throw error
-    }
-    return destination
 }
 
 /// searchUsers does an autocomplete search on a list of ChatUser and returns users with `id` or `name` containing the search string
