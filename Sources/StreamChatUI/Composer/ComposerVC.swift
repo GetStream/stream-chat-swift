@@ -1889,7 +1889,7 @@ open class ComposerVC: _ViewController,
         await applyLocalThumbnailIfNeeded(id: id, media: media)
 
         var processedMedia = media
-        switch videoCompressionPlan(for: media) {
+        switch await videoCompressionPlan(for: media) {
         case .skip:
             updatePendingProgress(1, for: id)
         case .exceedsUploadLimit:
@@ -1933,14 +1933,15 @@ open class ComposerVC: _ViewController,
     }
 
     /// Decides whether a video should be compressed with the configured quality.
-    private func videoCompressionPlan(for media: SelectedMediaItem) -> VideoCompressionPlan {
+    private func videoCompressionPlan(for media: SelectedMediaItem) async -> VideoCompressionPlan {
         guard media.type == .video else { return .skip }
+        let quality = components.videoCompressionQuality
         return Self.videoCompressionPlan(
             maxSize: maxAttachmentSize(for: .video),
-            quality: components.videoCompressionQuality,
-            estimatedCompressedSize: StreamVideoCompressor.estimatedFileLength(
+            quality: quality,
+            estimatedCompressedSize: await StreamVideoCompressor.estimatedFileLength(
                 at: media.url,
-                quality: components.videoCompressionQuality
+                quality: quality
             )
         )
     }

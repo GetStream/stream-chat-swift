@@ -4,6 +4,7 @@
 
 import AVFoundation
 import Foundation
+import StreamChat
 
 /// The quality which is used when the videos added to the composer are compressed.
 public struct VideoCompressionQuality: Equatable, Sendable {
@@ -121,8 +122,25 @@ struct StreamVideoCompressor: VideoCompressor {
         return Int64((seconds * bitRate / 8).rounded())
     }
 
-    static func estimatedFileLength(at url: URL, quality: VideoCompressionQuality) -> Int64? {
-        estimatedFileLength(for: AVURLAsset(url: url).duration, quality: quality)
+    /// The duration is loaded asynchronously, so that reading it does not block the
+    /// caller, which is usually the main actor.
+    static func estimatedFileLength(at url: URL, quality: VideoCompressionQuality) async -> Int64? {
+        let asset = AVURLAsset(url: url)
+        let duration: CMTime? = await withCheckedContinuation { continuation in
+            nonisolated(unsafe) let unsafeAsset = asset
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\AVURLAsset.duration)],
+                of: asset
+            ) { result in
+                guard case .success = result else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: unsafeAsset.duration)
+            }
+        }
+        guard let duration else { return nil }
+        return estimatedFileLength(for: duration, quality: quality)
     }
 
     private static func bitRate(for quality: VideoCompressionQuality) -> Double? {
