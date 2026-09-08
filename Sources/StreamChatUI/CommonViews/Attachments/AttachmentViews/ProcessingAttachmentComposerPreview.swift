@@ -16,9 +16,6 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
-    /// The identifier of the pending item this preview represents.
-    public var processingId: UUID?
-
     /// The processing progress, a value between 0 and 1.
     public var progress: Double = 0 {
         didSet {
@@ -128,7 +125,6 @@ public struct ProcessingAttachmentPreview: AttachmentPreviewProvider {
     @MainActor
     public func previewView(components: Components) -> UIView {
         let view = components.processingAttachmentComposerPreview.init()
-        view.processingId = id
         view.progress = progress
         view.content = .init(previewImage: previewImage, type: type)
         return view

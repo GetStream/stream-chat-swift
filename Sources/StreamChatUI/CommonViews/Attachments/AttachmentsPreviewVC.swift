@@ -71,6 +71,10 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     /// The audioPlayer that will be used by VoiceRecording attachments for playback.
     public var audioPlayer: AudioPlaying?
 
+    /// The processing previews which are currently shown, keyed by the pending item's id.
+    /// Rebuilt together with the stacks, so that progress updates do not have to look them up.
+    private var processingPreviewsByID: [UUID: ProcessingAttachmentComposerPreview] = [:]
+
     /// The attachment views for each attachment preview.
     ///
     /// - Parameter axises: The desired axises of which the previews belong.
@@ -90,6 +94,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
                 if let processingPreview = view as? ProcessingAttachmentComposerPreview,
                    let pending = attachment as? ProcessingAttachmentPreview {
                     processingPreview.progress = processingProgressByID[pending.id] ?? pending.progress
+                    processingPreviewsByID[pending.id] = processingPreview
                 }
 
                 if let videoPreview = view as? VideoAttachmentComposerPreview,
@@ -162,6 +167,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
 
         horizontalScrollView.isHidden = true
         verticalScrollView.isHidden = true
+        processingPreviewsByID.removeAll()
 
         let axises = Set(content.map { type(of: $0).preferredAxis })
 
@@ -218,16 +224,10 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
 
     /// Updates in-place progress on pending attachment previews without rebuilding the stack.
     open func applyProcessingProgress() {
-        applyProcessingProgress(in: view)
-    }
-
-    private func applyProcessingProgress(in view: UIView) {
-        if let processingPreview = view as? ProcessingAttachmentComposerPreview,
-           let id = processingPreview.processingId,
-           let progress = processingProgressByID[id] {
-            processingPreview.progress = progress
+        for (id, preview) in processingPreviewsByID {
+            guard let progress = processingProgressByID[id] else { continue }
+            preview.progress = progress
         }
-        view.subviews.forEach { applyProcessingProgress(in: $0) }
     }
 
     // Scrolls to the bottom of the vertical scroll view.
