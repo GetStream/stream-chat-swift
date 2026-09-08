@@ -105,13 +105,13 @@ final class UserGroupSearch_Tests: XCTestCase {
         let userGroup = UserGroup.dummy(id: "backendsupport", name: "Backend Support")
         repository.searchUserGroups_completion_result = .success([userGroup])
         try await search.search(text: "backend")
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertEqual(1, search.state.userGroups.count)
         }
 
         await search.clearResults()
 
-        try await MainActor.run {
+        await MainActor.run {
             XCTAssertTrue(search.state.userGroups.isEmpty)
             XCTAssertNil(search.state.query)
         }

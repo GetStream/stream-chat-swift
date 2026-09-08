@@ -31,7 +31,7 @@ public final class ThreadMessageNewEvent: Event {
 
 final class ThreadMessageNewEventDTO: EventDTO {
     let cid: ChannelId
-    let message: MessagePayload
+    let message: MessageResponse
     let channel: ChannelDetailPayload
     let unreadCount: UnreadCountPayload?
     let createdAt: Date
@@ -77,12 +77,12 @@ public final class ThreadUpdatedEvent: Event {
 }
 
 final class ThreadUpdatedEventDTO: EventDTO {
-    let thread: ThreadPartialPayload
+    let thread: ThreadResponse
     let createdAt: Date
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
-        thread = try response.value(at: \.threadPartial)
+        thread = try response.value(at: \.thread)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }

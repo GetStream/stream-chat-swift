@@ -4,14 +4,11 @@
 
 import Foundation
 
-final class UpdateMemberPartialRequest: Sendable, Codable, JSONEncodable {
+final class UpdateMemberPartialRequest: Sendable, Encodable, JSONEncodable {
     let set: [String: RawJSON]?
     let unset: [String]?
 
-    init(
-        set: [String: RawJSON]? = nil,
-        unset: [String]? = nil
-    ) {
+    init(set: [String: RawJSON]? = nil, unset: [String]? = nil) {
         self.set = set
         self.unset = unset
     }

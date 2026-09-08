@@ -186,7 +186,7 @@ final class LivestreamChatHandler_Mock: LivestreamChatHandling, @unchecked Senda
 
     /// Invokes the captured `typingUsersDidChange` callback with the given users.
     @MainActor
-    func simulateTypingUsersDidChange(_ users: Set<ChatUser>) {
+    func simulateTypingUsersDidChange(_ users: Set<TypingUser>) {
         capturedHandlers?.typingUsersDidChange(users)
     }
 }

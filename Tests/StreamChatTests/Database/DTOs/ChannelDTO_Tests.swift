@@ -409,6 +409,23 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel.truncatedBy?.id, truncatedBy.id)
     }
 
+    func test_saveChannel_keepsUnrecognizedOwnCapability() throws {
+        let channelId: ChannelId = .unique
+        let payload = ChannelDetailPayload.dummy(
+            cid: channelId,
+            ownCapabilities: [ChannelCapability.sendMessage.rawValue, "future-capability"]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.ownCapabilities, [.sendMessage, ChannelCapability(rawValue: "future-capability")])
+    }
+
     func test_saveChannel_storesAutoTranslation() throws {
         let channelId: ChannelId = .unique
         let payload = ChannelDetailPayload.dummy(
@@ -564,19 +581,18 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
-            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel.latestMessages.first?.type.rawValue)
+            Assert.willBeEqual(payload.messages[0].type, loadedChannel.latestMessages.first?.type.rawValue)
             Assert.willBeEqual(payload.messages[0].text, loadedChannel.latestMessages.first?.text)
             Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel.latestMessages.first?.updatedAt)
             Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel.latestMessages.first?.createdAt)
             Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel.latestMessages.first?.deletedAt)
-            Assert.willBeEqual(payload.messages[0].args, loadedChannel.latestMessages.first?.arguments)
             Assert.willBeEqual(payload.messages[0].command, loadedChannel.latestMessages.first?.command)
-            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel.latestMessages.first?.extraData)
-            Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel.latestMessages.first?.isSilent)
+            Assert.willBeEqual(payload.messages[0].custom, loadedChannel.latestMessages.first?.extraData)
+            Assert.willBeEqual(payload.messages[0].silent, loadedChannel.latestMessages.first?.isSilent)
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel.latestMessages.first?.mentionedUsers.count)
             Assert.willBeEqual(payload.messages[0].parentId, loadedChannel.latestMessages.first?.parentMessageId)
-            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores)
-            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts)
+            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores.mapKeys(\.rawValue))
+            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts.mapKeys(\.rawValue))
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
 
             // Pinned Messages
@@ -1377,19 +1393,25 @@ final class ChannelDTO_Tests: XCTestCase {
             let channel = try XCTUnwrap(session.channel(cid: cid))
             let user = try XCTUnwrap(session.user(id: userId))
             channel.currentlyTypingUsers.insert(user)
+            session.saveMemberInfo(
+                payload: MemberInfoPayload(extraData: ["is_premium": .bool(true)]),
+                userId: userId,
+                cid: cid,
+                cache: nil
+            )
         }
 
         // Load the channel
-        func getChannel() throws -> ChatChannel { try channel(with: cid) }
+        func getChannelDTO() throws -> ChannelDTO {
+            try XCTUnwrap(database.viewContext.channel(cid: cid))
+        }
 
-        // Assert channel's currentlyTypingUsers are not empty
-        try XCTAssertFalse(getChannel().currentlyTypingUsers.isEmpty)
+        try XCTAssertFalse(getChannelDTO().currentlyTypingUsers.isEmpty)
 
-        // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
 
-        // Assert channel's currentlyTypingUsers are cleared
-        AssertAsync.willBeTrue((try? getChannel().currentlyTypingUsers.isEmpty) ?? false)
+        AssertAsync.willBeTrue((try? getChannelDTO().currentlyTypingUsers.isEmpty) ?? false)
+        AssertAsync.willBeTrue((try? getChannelDTO().typingMemberInfos.isEmpty) ?? false)
     }
 
     func test_createFromDTO_handlesExtraDataCorrectlyWhenPresent() throws {
@@ -1677,7 +1699,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1701,7 +1723,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let draftMessage = try XCTUnwrap(channel.draftMessage)
         XCTAssertEqual(draftMessage.id, draftMessagePayload.id)
         XCTAssertEqual(draftMessage.text, draftMessagePayload.text)
-        XCTAssertEqual(draftMessage.extraData, draftMessagePayload.extraData)
+        XCTAssertEqual(draftMessage.extraData, draftMessagePayload.custom)
         XCTAssertEqual(channel.activeLiveLocations.first?.latitude, 10)
         XCTAssertEqual(channel.activeLiveLocations.first?.longitude, 10)
     }
@@ -1732,7 +1754,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1812,7 +1834,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1870,7 +1892,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,
-            draft: DraftPayload(
+            draft: DraftPayload.dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),

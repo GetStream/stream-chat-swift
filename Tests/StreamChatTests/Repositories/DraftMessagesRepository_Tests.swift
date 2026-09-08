@@ -61,7 +61,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<DraftListPayloadResponse> = .drafts(query: query)
+        let referenceEndpoint: Endpoint<DraftListPayloadResponse> = .queryDrafts(queryDraftsRequest: query.toRequest())
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -119,12 +119,14 @@ final class DraftMessagesRepository_Tests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        apiClient.test_simulateResponse(.success(DraftPayloadResponse(draft: draftPayload)))
+        apiClient.test_simulateResponse(.success(CreateDraftResponse.dummy(draft: draftPayload)))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
         let requestBodyMessage = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary()["message"] as? [String: Any])
         AssertDictionary(ignoringKeys: ["id"], requestBodyMessage, [
+            "attachments": [],
+            "custom": [:],
             "mentioned_users": ["leia"],
             "parent_id": threadId,
             "show_in_channel": 1,
@@ -132,7 +134,49 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             "text": text
         ])
     }
-    
+
+    func test_updateDraft_whenCommandAndArguments_thenSentAsCustomData() throws {
+        let channelId = ChannelId.unique
+        let text = "/giphy hello"
+        try savePreExistingData(channelId: channelId, threadId: nil)
+
+        let draftPayload = DraftPayload.dummy(
+            cid: channelId,
+            channelPayload: .dummy(cid: channelId),
+            message: .dummy(text: text, command: "giphy", args: "hello")
+        )
+
+        let completionCalled = expectation(description: "completion called")
+        repository.updateDraft(
+            for: channelId,
+            threadId: nil,
+            text: text,
+            isSilent: false,
+            showReplyInChannel: false,
+            command: "giphy",
+            arguments: "hello",
+            attachments: [],
+            mentionedUserIds: [],
+            quotedMessageId: nil,
+            extraData: ["key": .string("value")]
+        ) { result in
+            XCTAssertNil(result.error)
+            completionCalled.fulfill()
+        }
+
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        apiClient.test_simulateResponse(.success(CreateDraftResponse.dummy(draft: draftPayload)))
+
+        wait(for: [completionCalled], timeout: defaultTimeout)
+
+        let requestBodyMessage = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary()["message"] as? [String: Any])
+        let custom = try XCTUnwrap(requestBodyMessage["custom"] as? [String: Any])
+        XCTAssertEqual(custom["command"] as? String, "giphy")
+        XCTAssertEqual(custom["args"] as? String, "hello")
+        XCTAssertEqual(custom["key"] as? String, "value")
+    }
+
     func test_updateDraft_whenFailure() {
         let channelId = ChannelId.unique
         let text = "Draft message"
@@ -156,7 +200,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<DraftPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<CreateDraftResponse, Error>.failure(error))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
     }
@@ -184,7 +228,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<DraftPayloadResponse> = .getDraftMessage(channelId: channelId, threadId: threadId)
+        let referenceEndpoint: Endpoint<DraftPayloadResponse> = .getDraft(type: channelId.type.rawValue, id: channelId.id, parentId: threadId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -220,7 +264,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteDraftMessage(channelId: channelId, threadId: threadId)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteDraft(type: channelId.type.rawValue, id: channelId.id, parentId: threadId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -245,7 +289,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             if let threadId {
-                try session.saveMessage(payload: .dummy(messageId: threadId), for: channelId, syncOwnReactions: false, cache: nil)
+                try session.saveMessage(payload: .dummy(messageId: threadId, cid: channelId), syncOwnReactions: false, cache: nil)
             }
         }
     }

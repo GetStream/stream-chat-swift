@@ -52,25 +52,41 @@ final class UserDTO_Tests: XCTestCase {
         }
     }
 
+    func test_fullUserResponse_isStoredAndLoadedFromDB() throws {
+        let userId = UUID().uuidString
+
+        let payload: FullUserResponse = .dummy(userId: userId, extraData: ["k": .string("v")], language: "pt")
+
+        try database.writeSynchronously { session in
+            try session.saveUser(fullResponse: payload)
+        }
+
+        // Load the user from the db and check the fields are correct
+        try database.readSynchronously { session in
+            let loadedUserDTO = try XCTUnwrap(session.user(id: userId))
+
+            XCTAssertEqual(payload.id, loadedUserDTO.id)
+            XCTAssertEqual(payload.name, loadedUserDTO.name)
+            XCTAssertEqual(payload.image, loadedUserDTO.imageURL?.absoluteString)
+            XCTAssertEqual(payload.online, loadedUserDTO.isOnline)
+            XCTAssertEqual(payload.banned, loadedUserDTO.isBanned)
+            XCTAssertEqual(payload.role, loadedUserDTO.userRoleRaw)
+            XCTAssertEqual(payload.createdAt, loadedUserDTO.userCreatedAt.bridgeDate)
+            XCTAssertEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
+            XCTAssertEqual(payload.lastActive, loadedUserDTO.lastActivityAt?.bridgeDate)
+            XCTAssertEqual(payload.teams, loadedUserDTO.teams)
+            XCTAssertEqual(loadedUserDTO.language, "pt")
+            XCTAssertEqual(
+                payload.custom,
+                try JSONDecoder.default.decode([String: RawJSON].self, from: loadedUserDTO.extraData)
+            )
+        }
+    }
+
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
 
-        let payload: UserPayload = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: true,
-            teams: [],
-            language: nil,
-            extraData: [:]
-        )
+        let payload: UserPayload = .dummy(userId: userId, teams: [], isBanned: true)
 
         try database.writeSynchronously { session in
             // Save the user
@@ -363,13 +379,14 @@ final class UserDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
-            text: "Yo"
+            text: "Yo",
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
             try session.saveMember(payload: memberPayload, channelId: channelId)
-            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: payload, syncOwnReactions: false, cache: nil)
         }
 
         // Arrange: Observe changes on channel
@@ -400,13 +417,14 @@ final class UserDTO_Tests: XCTestCase {
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
-            text: "Yo"
+            text: "Yo",
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
             try session.saveUser(payload: userPayload)
-            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+            try session.saveMessage(payload: payload, syncOwnReactions: false, cache: nil)
         }
 
         // Arrange: Observe changes on messages

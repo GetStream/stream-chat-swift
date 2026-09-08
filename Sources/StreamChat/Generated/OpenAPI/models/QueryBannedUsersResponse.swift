@@ -4,22 +4,15 @@
 
 import Foundation
 
-final class QueryBannedUsersResponse: Sendable, Codable, JSONEncodable {
+final class QueryBannedUsersResponse: Sendable, Decodable {
     /// List of found bans
     let bans: [BanResponse]
-    /// Duration of the request in milliseconds
-    let duration: String
 
-    init(
-        bans: [BanResponse],
-        duration: String
-    ) {
+    init(bans: [BanResponse]) {
         self.bans = bans
-        self.duration = duration
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case bans
-        case duration
     }
 }

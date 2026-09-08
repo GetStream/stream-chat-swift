@@ -43,9 +43,9 @@ public final class UserList: Sendable {
     
     /// Loads users for the specified pagination parameters and updates ``UserListState/users``.
     ///
-    /// - Important: If pagination offset is 0 and cursor is nil, then loaded users are reset.
+    /// - Important: If pagination offset is 0, then loaded users are reset.
     ///
-    /// - Parameter pagination: The pagination configuration which includes a limit and an offset or a cursor.
+    /// - Parameter pagination: The pagination configuration which includes a limit and an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of users for the pagination.

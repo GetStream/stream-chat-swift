@@ -374,7 +374,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     func test_reuseUsers_whenSomeChange_thenOthersAreReused() async throws {
         let makePayload: (Int) -> UserListPayload = { count in
             let users = (0..<count)
-                .map { UserPayload.dummy(userId: "\($0)", name: "name_\($0)") }
+                .map { FullUserResponse.dummy(userId: "\($0)", name: "name_\($0)") }
             return UserListPayload(users: users)
         }
         let query = UserListQuery(
@@ -402,7 +402,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         // Change 1 existing
         try await client.mockDatabaseContainer.write { session in
-            try session.saveUser(payload: makePayload(1).users[0])
+            try session.saveUser(fullResponse: makePayload(1).users[0])
         }
         
         await fulfillment(of: [expectation], timeout: defaultTimeout)

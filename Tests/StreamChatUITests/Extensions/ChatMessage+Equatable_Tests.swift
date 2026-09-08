@@ -211,21 +211,16 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
 
     private func userPayload(id: Int) -> UserPayload {
         let userId = "user-\(id)"
-        return UserPayload(
-            id: userId,
+        return UserPayload.dummy(
+            userId: userId,
             name: userId,
-            imageURL: nil,
+            imageUrl: nil,
             role: .user,
-            teamsRole: nil,
+            teams: [],
             createdAt: Date(timeIntervalSince1970: 3),
             updatedAt: Date(timeIntervalSince1970: 3),
             deactivatedAt: Date(timeIntervalSince1970: 3),
-            lastActiveAt: Date(timeIntervalSince1970: 3),
-            isOnline: true,
-            isBanned: false,
-            teams: [],
-            language: nil,
-            extraData: [:]
+            lastActiveAt: Date(timeIntervalSince1970: 3)
         )
     }
 }

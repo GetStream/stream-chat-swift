@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UserGroup: Sendable, Codable, JSONEncodable {
+public final class UserGroup: Sendable, Decodable {
     public let createdAt: Date
     public let createdBy: String?
     public let description: String?
@@ -48,10 +48,7 @@ public final class UserGroup: Sendable, Codable, JSONEncodable {
 }
 
 extension UserGroup: Hashable {
-    public static func == (
-        lhs: UserGroup,
-        rhs: UserGroup
-    ) -> Bool {
+    public static func == (lhs: UserGroup, rhs: UserGroup) -> Bool {
         lhs.createdAt == rhs.createdAt &&
             lhs.createdBy == rhs.createdBy &&
             lhs.description == rhs.description &&

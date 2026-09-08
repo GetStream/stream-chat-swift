@@ -121,17 +121,18 @@ final class MessageSearch_Tests: XCTestCase {
         // Default sorting is ascending false, mimic that in API responses
         let messagePayloads = (0..<messageCount)
             .reversed()
-            .map {
-                MessagePayload.dummy(
-                    messageId: "\($0 + createdAtOffset)",
-                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
-                    channel: .dummy(),
-                    cid: .unique
+            .map { index -> SearchResultMessage in
+                let cid = ChannelId.unique
+                return SearchResultMessage.dummy(
+                    messageId: "\(index + createdAtOffset)",
+                    cid: cid,
+                    channel: .dummy(cid: cid),
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval(index + createdAtOffset))
                 )
             }
         return MessageSearchResultsPayload(
-            results: messagePayloads.map { MessagePayload.Boxed(message: $0) },
-            next: next
+            next: next,
+            results: messagePayloads.map { SearchResult(message: $0) }
         )
     }
 }

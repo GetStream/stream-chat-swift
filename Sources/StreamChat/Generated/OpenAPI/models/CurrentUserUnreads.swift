@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class CurrentUserUnreads: Sendable, Codable, JSONEncodable {
+public final class CurrentUserUnreads: Sendable, Decodable {
     public let channelType: [UnreadChannelByType]
     public let channels: [UnreadChannel]
     public let threads: [UnreadThread]

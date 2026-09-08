@@ -13,22 +13,7 @@ extension MutedUserPayload {
     ) -> MutedUserPayload {
         .init(
             createdAt: .unique,
-            target: .init(
-                id: userId,
-                name: .unique,
-                imageURL: .unique(),
-                role: .user,
-                teamsRole: nil,
-                createdAt: .unique,
-                updatedAt: .unique,
-                deactivatedAt: nil,
-                lastActiveAt: .unique,
-                isOnline: true,
-                isBanned: true,
-                teams: [],
-                language: nil,
-                extraData: extraData
-            ),
+            target: .dummy(userId: userId, role: .user, extraData: extraData, teams: [], isBanned: true),
             updatedAt: .unique
         )
     }

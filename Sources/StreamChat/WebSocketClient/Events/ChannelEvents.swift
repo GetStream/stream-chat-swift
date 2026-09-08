@@ -32,7 +32,7 @@ public final class ChannelUpdatedEvent: ChannelSpecificEvent {
 final class ChannelUpdatedEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let user: UserPayload?
-    let message: MessagePayload?
+    let message: MessageResponse?
     let createdAt: Date
     let payload: EventPayload
 
@@ -146,7 +146,7 @@ final class ChannelTruncatedEventDTO: EventDTO {
     let user: UserPayload?
     let createdAt: Date
     let payload: EventPayload
-    let message: MessagePayload?
+    let message: MessageResponse?
 
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)

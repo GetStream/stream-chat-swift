@@ -287,7 +287,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         try container.createCurrentUser()
         try container.writeSynchronously { session in
             let user = try session.saveUser(
-                payload: .dummy(
+                payload: UserPayload.dummy(
                     userId: userId,
                     isOnline: true
                 )
@@ -367,6 +367,12 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+            session.saveMemberInfo(
+                payload: MemberInfoPayload(extraData: ["is_premium": .bool(true)]),
+                userId: currentUserId,
+                cid: cid,
+                cache: nil
+            )
             try session.saveLocation(payload: SharedLocation.dummy(latitude: 10, longitude: 10), cache: nil)
             try session.saveCurrentDevice("123")
             try session.saveChannelMute(payload: .init(
@@ -376,7 +382,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                 updatedAt: .unique
             ))
             let mutedUserId = UserId.unique
-            let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
+            let mutedUserDTO = try session.saveUser(payload: UserPayload.dummy(userId: mutedUserId))
             session.currentUser?.mutedUsers = Set([mutedUserDTO])
             try session.savePushPreference(id: "currentUserId", payload: .init(level: "mentions", disabledUntil: nil))
             try session.saveUserGroup(payload: .dummy(members: [.dummy()]))
@@ -392,21 +398,23 @@ final class DatabaseContainer_Tests: XCTestCase {
                     next: nil
                 )
             )
-            try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
-            try session.saveUser(payload: .dummy(userId: .unique))
+            try session.saveUser(payload: UserPayload.dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
+            try session.saveUser(payload: UserPayload.dummy(userId: .unique))
             let messages: [MessagePayload] = [
                 .dummy(
+                    cid: cid,
                     reactionGroups: [
                         "like": MessageReactionGroupPayload(
-                            sumScores: 1,
                             count: 1,
                             firstReactionAt: .unique,
-                            lastReactionAt: .unique
+                            lastReactionAt: .unique,
+                            sumScores: 1
                         )
                     ],
-                    moderationDetails: .dummy(originalText: "yo", action: "spam")
+                    moderation: .dummy(originalText: "yo", action: "spam")
                 ),
                 .dummy(
+                    cid: cid,
                     poll: self.dummyPollPayload(
                         createdById: currentUserId,
                         id: "pollId",
@@ -415,12 +423,12 @@ final class DatabaseContainer_Tests: XCTestCase {
                         user: .dummy(userId: currentUserId)
                     )
                 ),
-                .dummy(mentionedGroups: [.dummy()]),
-                .dummy(),
-                .dummy()
+                .dummy(cid: cid, mentionedGroups: [.dummy()]),
+                .dummy(cid: cid),
+                .dummy(cid: cid)
             ]
             try messages.forEach {
-                let message = try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true, cache: nil)
+                let message = try session.saveMessage(payload: $0, syncOwnReactions: true, cache: nil)
                 try session.saveReaction(
                     payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)),
                     query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
@@ -438,7 +446,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                 )
             }
             try session.saveMessage(
-                payload: .dummy(channel: .dummy(cid: cid)),
+                payload: .dummy(cid: cid, channel: .dummy(cid: cid)),
                 for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
                 cache: nil
             )

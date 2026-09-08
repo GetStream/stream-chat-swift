@@ -54,14 +54,12 @@ final class MessageState_Tests: XCTestCase {
         try await env.client.databaseContainer.write { session in
             try session.saveMessage(
                 payload: messagePayload,
-                for: self.channelId,
                 syncOwnReactions: true,
                 cache: nil
             )
             // Add reactions to other messages for ensuring MessageState does not pick them up
             try session.saveMessage(
                 payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId),
-                for: self.channelId,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -80,14 +78,12 @@ final class MessageState_Tests: XCTestCase {
         try await env.client.databaseContainer.write { session in
             try session.saveMessage(
                 payload: messagePayload,
-                for: self.channelId,
                 syncOwnReactions: true,
                 cache: nil
             )
             // Add reactions to other messages for ensuring MessageState does not pick them up
             try session.saveMessage(
                 payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId),
-                for: self.channelId,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -105,7 +101,6 @@ final class MessageState_Tests: XCTestCase {
             for replyPayload in replyPayloads {
                 let message = try session.saveMessage(
                     payload: replyPayload,
-                    for: self.channelId,
                     syncOwnReactions: true,
                     cache: nil
                 )
@@ -116,7 +111,6 @@ final class MessageState_Tests: XCTestCase {
             for replyPayload in unrelatedReplies {
                 let message = try session.saveMessage(
                     payload: replyPayload,
-                    for: self.channelId,
                     syncOwnReactions: true,
                     cache: nil
                 )
@@ -139,7 +133,6 @@ final class MessageState_Tests: XCTestCase {
             for replyPayload in replyPayloads {
                 let message = try session.saveMessage(
                     payload: replyPayload,
-                    for: self.channelId,
                     syncOwnReactions: true,
                     cache: nil
                 )
@@ -150,7 +143,6 @@ final class MessageState_Tests: XCTestCase {
             for replyPayload in unrelatedReplies {
                 let message = try session.saveMessage(
                     payload: replyPayload,
-                    for: self.channelId,
                     syncOwnReactions: true,
                     cache: nil
                 )
@@ -219,7 +211,7 @@ final class MessageState_Tests: XCTestCase {
                     user: .dummy(userId: .unique)
                 )
             }
-        return MessagePayload.dummy(messageId: messageId, latestReactions: reactions)
+        return MessagePayload.dummy(messageId: messageId, latestReactions: reactions, cid: channelId)
     }
     
     private func makeMessageRepliesPayload(repliesCount: Int, parentMessageId: MessageId) -> [MessagePayload] {

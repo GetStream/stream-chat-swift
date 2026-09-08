@@ -109,8 +109,14 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
+        let query = UserListQuery.user(withID: userId)
         apiClient
-            .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload, Error>) in
+            .request(
+                endpoint: .queryUsers(
+                    payload: query.asQueryUsersPayload(),
+                    requiresConnectionId: query.options.contains(.presence)
+                )
+            ) { (result: Result<QueryUsersResponse, Error>) in
                 switch result {
                 case let .success(payload):
                     guard payload.users.count <= 1 else {
@@ -126,7 +132,7 @@ class UserUpdater: Worker, @unchecked Sendable {
                     }
 
                     self.database.write({ session in
-                        try session.saveUser(payload: user)
+                        try session.saveUser(fullResponse: user)
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")
@@ -168,16 +174,14 @@ class UserUpdater: Worker, @unchecked Sendable {
             return
         }
 
-        let endpoint: Endpoint<FlagUserPayload> = .flagUser(
-            with: userId,
-            reason: reason,
-            extraData: extraData
-        )
+        let endpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(userId: userId, reason: reason, custom: extraData))
         apiClient.request(endpoint: endpoint) {
             switch $0 {
-            case let .success(payload):
+            case .success:
                 self.database.write({ session in
-                    let userDTO = try session.saveUser(payload: payload.flaggedUser)
+                    guard let userDTO = session.user(id: userId) else {
+                        throw ClientError.UserDoesNotExist(userId: userId)
+                    }
                     session.currentUser?.flaggedUsers.insert(userDTO)
                 }, completion: {
                     if let error = $0 {

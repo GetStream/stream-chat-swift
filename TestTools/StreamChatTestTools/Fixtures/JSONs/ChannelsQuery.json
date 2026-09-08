@@ -3,6 +3,12 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
           "reaction_counts" : {
             
@@ -54,6 +60,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
           "reaction_counts" : {
             
@@ -97,6 +109,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
           "reaction_counts" : {
             
@@ -140,6 +158,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "jolly-base-0-9543fe87-8bb9-4145-8781-029661669844",
           "reaction_counts" : {
             
@@ -183,6 +207,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "jolly-base-0-c6321eed-2d81-46c8-9c65-72f49ef0e9f2",
           "reaction_counts" : {
             
@@ -236,6 +266,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "example-user-699e467b-580e-4c97-a8ad-117080ffdf14",
           "reaction_counts" : {
             
@@ -279,6 +315,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "hidden-lake-6-abf534d4-08f3-4d47-886b-a7d8739f60c6",
           "reaction_counts" : {
             
@@ -326,6 +368,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a7e192f1-0c4f-4c0d-91ad-5451403487ec",
           "reaction_counts" : {
             
@@ -374,6 +422,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "ff3dc0c3-217b-45c3-b318-ec9631737810",
           "reaction_counts" : {
             
@@ -422,6 +476,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "711b1eac-24ec-4482-ba2a-38f8eb91d041",
           "reaction_counts" : {
             
@@ -474,6 +534,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "25580938-597f-42db-b5fa-a3551fce93df",
           "reaction_counts" : {
             
@@ -529,6 +595,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "79eb1a37-4367-4729-bf2e-72becb16abf5",
           "reaction_counts" : {
             
@@ -584,6 +656,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "2adae507-1051-435f-a4c7-232b75d5b242",
           "reaction_counts" : {
             
@@ -644,6 +722,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bitter-cloud-0-184d7818-6282-4047-977c-43102352866c",
           "reaction_counts" : {
             
@@ -687,6 +771,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bitter-cloud-0-6f6edd0e-06dd-406f-ac58-a4cfc63a357e",
           "reaction_counts" : {
             
@@ -734,6 +824,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "139c8acf-e405-44a8-a8a6-7e3922a7ea7f",
           "reaction_counts" : {
             
@@ -786,6 +882,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "0e5083af-e7d1-4278-a10c-8e9990976234",
           "reaction_counts" : {
             
@@ -841,6 +943,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "wispy-bird-9-59ad6b82-a45e-4f83-849b-01d79f3248a0",
           "reaction_counts" : {
             
@@ -884,6 +992,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "wispy-bird-9-5252269d-4d51-4c32-acb0-985be29cf17a",
           "reaction_counts" : {
             
@@ -927,6 +1041,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "wispy-bird-9-cbb34e46-6f22-4c1d-8105-f4df78d5914a",
           "reaction_counts" : {
             
@@ -970,6 +1090,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "throbbing-salad-6-8187e80d-88ff-468a-8670-7c60a4f11e20",
           "reaction_counts" : {
             
@@ -1013,6 +1139,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "throbbing-salad-6-9ea5ca14-fe37-4144-87ef-345de2c72cf1",
           "reaction_counts" : {
             
@@ -1060,6 +1192,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "aged-moon-3-423c9b17-78a3-41ff-8aa7-47e6afb9157e",
           "reaction_counts" : {
             
@@ -1103,6 +1241,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bitter-cloud-4-988809fa-b534-4f6a-8e22-0f547fe46129",
           "reaction_counts" : {
             
@@ -1150,6 +1294,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:general",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "white-boat-1-c9d54585-f046-4785-9d81-72fd930bf2a3",
           "reaction_counts" : {
             
@@ -1195,6 +1345,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:general",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -1466,6 +1622,12 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bender-e1da3870-79a2-45d6-a89d-241bee64b66f",
           "reaction_counts" : {
             
@@ -1622,6 +1784,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bender-55243541-7acd-4f26-b4e9-023e6c95b5df",
           "reaction_counts" : {
             
@@ -1778,6 +1946,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "Steveusenameinsteadplz-7e6ab8dc-18d6-4532-b314-df48af2ef55f",
           "reaction_counts" : {
             "sad" : 1,
@@ -1903,6 +2077,13 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-80d0474a-fa66-4534-b84b-10ec256952dd",
           "reaction_counts" : {
             
@@ -1942,6 +2123,12 @@
           "html" : "<p>hey there<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-5fac5981-8aec-4b90-a853-a9e5d36924d1",
           "reaction_counts" : {
             
@@ -1995,6 +2182,13 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-92552bd4-4c47-4a3b-99fd-00566e37594b",
           "reaction_counts" : {
             
@@ -2044,6 +2238,12 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU<\/a><\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "betausenameinsteadplz-03b2d247-6b56-4b8a-b41d-1eddd7217ddc",
           "reaction_counts" : {
             
@@ -2097,6 +2297,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "foousenameinsteadplz-1e720a5e-fa0d-4f1e-adb3-516eae83e906",
           "reaction_counts" : {
             
@@ -2139,6 +2345,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "betausenameinsteadplz-1d7dd472-9bbe-4036-a4f8-27398ea0b8fc",
           "reaction_counts" : {
             
@@ -2182,6 +2394,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "betausenameinsteadplz-bf7a90fe-98dd-46da-95f6-da73dc4222ac",
           "reaction_counts" : {
             
@@ -2235,6 +2453,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_8884",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "e3f77b77-32f6-4357-b502-92c2b3537b1b",
           "reaction_counts" : {
             
@@ -2288,6 +2512,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_8884",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -2463,6 +2693,12 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "11e44a7c-7ace-49e6-aa70-f089fcc6e36d",
           "reaction_counts" : {
             
@@ -2511,6 +2747,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "831eb92b-271e-4da2-80ed-96c8ea1d7910",
           "reaction_counts" : {
             
@@ -2559,6 +2801,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a08ca6ed-2b95-4baa-b654-9f694e06451a",
           "reaction_counts" : {
             
@@ -2607,6 +2855,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "c2e41fda-9fdb-448c-8afb-856e9f7d0769",
           "reaction_counts" : {
             
@@ -2655,6 +2909,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "14f533cd-1a70-4680-9f62-082fbe45e8a2",
           "reaction_counts" : {
             
@@ -2703,6 +2963,12 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "6c40df9c-1591-467a-b07f-ccb20431b199",
           "reaction_counts" : {
             
@@ -2751,6 +3017,13 @@
           "pinned_by": null
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f5e328a9-30b4-4c00-b5f4-0cc74626f427",
           "reaction_counts" : {
             
@@ -2795,6 +3068,13 @@
           "html" : "<p>6<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "ad59e5e7-2092-4b50-b9bf-f46b2bf26145",
           "reaction_counts" : {
             
@@ -2839,6 +3119,13 @@
           "html" : "<p>7<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "84f77a0e-354a-4407-86a5-a71ad9912b61",
           "reaction_counts" : {
             
@@ -2883,6 +3170,13 @@
           "html" : "<p>8<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a7411fd7-d271-46ed-beb9-d095c54d5026",
           "reaction_counts" : {
             
@@ -2927,6 +3221,13 @@
           "html" : "<p>9<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "09e79c84-8e0d-45f9-a466-aab6c961b460",
           "reaction_counts" : {
             
@@ -2971,6 +3272,13 @@
           "html" : "<p>10<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "dc6c3a48-7533-43cd-9582-5d0e88f18eaf",
           "reaction_counts" : {
             
@@ -3015,6 +3323,13 @@
           "html" : "<p>11<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "ba4c8d99-eb57-40e2-978c-87c07f35f00f",
           "reaction_counts" : {
             
@@ -3059,6 +3374,13 @@
           "html" : "<p>12<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "d39a60c4-7ae8-4b36-acf4-7691ad61d3cb",
           "reaction_counts" : {
             
@@ -3103,6 +3425,13 @@
           "html" : "<p>13<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "49ec3c79-1abc-4685-941f-54ab36b9666a",
           "reaction_counts" : {
             
@@ -3147,6 +3476,13 @@
           "html" : "<p>14<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7487",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "ae96cb9a-3507-4259-97c1-ea2142b9a579",
           "reaction_counts" : {
             
@@ -3193,6 +3529,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_7487",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -3409,6 +3751,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "c9ca125d-8aa5-4531-9577-8059b37bdfa5",
           "reaction_counts" : {
             
@@ -3453,6 +3802,13 @@
           "html" : "<p>Hi there!<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "816f3adf-adda-4bb8-a0ee-d541558a2a35",
           "reaction_counts" : {
             
@@ -3497,6 +3853,13 @@
           "html" : "<p>Wait what?<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "506edce7-1b8d-4167-9c40-53e85ebaf1ea",
           "reaction_counts" : {
             
@@ -3541,6 +3904,13 @@
           "html" : "<p>Hi I am<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f3892fda-cece-4652-ab48-6a140b43f115",
           "reaction_counts" : {
             
@@ -3585,6 +3955,13 @@
           "html" : "<p>Hi I am on the road I<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "48525631-2ed0-4726-a5f5-57438eb673e0",
           "reaction_counts" : {
             
@@ -3629,6 +4006,13 @@
           "html" : "<p>Hi there I’m just leaving work right after work<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "9c9013e7-5210-472a-9d1b-25f2391a2ce6",
           "reaction_counts" : {
             
@@ -3673,6 +4057,13 @@
           "html" : "<p>The new update has a great<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "857ebebf-8815-424a-a55e-2ca57499ec8e",
           "reaction_counts" : {
             
@@ -3717,6 +4108,13 @@
           "html" : "<p>The first thing that you did<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "fca830e1-cfd5-42f1-a35d-47e37739d6e7",
           "reaction_counts" : {
             
@@ -3761,6 +4159,13 @@
           "html" : "<p>Hi there I’m just leaving<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "d629eaad-18e3-4fc0-b634-9c525c1b7622",
           "reaction_counts" : {
             
@@ -3805,6 +4210,13 @@
           "html" : "<p>The new update has a great update but<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "957f1472-cbe4-42f1-b11d-1b84d08b6419",
           "reaction_counts" : {
             
@@ -3849,6 +4261,13 @@
           "html" : "<p>Hi there I’m just wondering how much I<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "e50dad23-bcd2-4349-9424-65c429a53f66",
           "reaction_counts" : {
             
@@ -3893,6 +4312,13 @@
           "html" : "<p>Hi there I’m just leaving work right after work I’ll text him and see what you <br\/><br\/><br\/>Hi I just wanted<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "c74a442f-5ff1-4268-b646-5d06ffa0244e",
           "reaction_counts" : {
             
@@ -3937,6 +4363,13 @@
           "html" : "<p>The first thing you<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "8aa90b87-5e7a-4d73-9b66-799495b8dd4d",
           "reaction_counts" : {
             
@@ -3981,6 +4414,13 @@
           "html" : "<p>Hi there I just finished watching<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "0e310948-f236-4bbe-886c-6db10d067bf5",
           "reaction_counts" : {
             
@@ -4025,6 +4465,13 @@
           "html" : "<p>The only way I could ever find<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "741db1f4-9856-414b-be39-a98eb32e9a18",
           "reaction_counts" : {
             
@@ -4069,6 +4516,13 @@
           "html" : "<p>The new version of this is<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "8f45fa48-9c3c-4652-a534-2c54ace399ad",
           "reaction_counts" : {
             
@@ -4113,6 +4567,13 @@
           "html" : "<p>Hi there I am at home now<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "9f695cc0-0e15-445e-897d-be3f2adbc556",
           "reaction_counts" : {
             
@@ -4157,6 +4618,13 @@
           "html" : "<p>Y<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1751",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "0511251f-c8c1-4ec3-a887-c99bf4876bfb",
           "reaction_counts" : {
             
@@ -4203,6 +4671,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_1751",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -4419,6 +4893,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bac1660d-d187-45ef-ba56-70be069fd47e",
           "reaction_counts" : {
             
@@ -4463,6 +4944,13 @@
           "html" : "<p>Hi!<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "b6fcb352-51b7-4864-a69c-d03682a512e8",
           "reaction_counts" : {
             
@@ -4507,6 +4995,13 @@
           "html" : "<p>The new version<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "8e8329de-434a-4a31-9d55-081cc4a697b1",
           "reaction_counts" : {
             
@@ -4551,6 +5046,13 @@
           "html" : "<p>The new version of this<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "31f21538-2ebd-4efa-ba10-b36b94e6358c",
           "reaction_counts" : {
             
@@ -4595,6 +5097,13 @@
           "html" : "<p>Hi I’m just wondering<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "53262b35-517c-4604-800b-bacad2d676ce",
           "reaction_counts" : {
             
@@ -4639,6 +5148,13 @@
           "html" : "<p>I don’t want you<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "37b5cb41-fffe-4887-8ca7-1100d264f194",
           "reaction_counts" : {
             
@@ -4683,6 +5199,13 @@
           "html" : "<p>1<br\/>2<br\/>3<br\/>4<br\/>5<br\/>6<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "d6454f14-da3b-40b8-9900-d17affd0fcad",
           "reaction_counts" : {
             
@@ -4727,6 +5250,13 @@
           "html" : "<p>The only reason why we are <br\/>Hi there I’m sorry to miss you<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "d9d610ac-1ce9-44e5-90bf-508784a31979",
           "reaction_counts" : {
             
@@ -4771,6 +5301,13 @@
           "html" : "<p>7<br\/>6<br\/>5<br\/>4<br\/>3<br\/>2<br\/>1<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "052f547b-257b-4b51-b41b-03fa53fe51ab",
           "reaction_counts" : {
             
@@ -4815,6 +5352,13 @@
           "html" : "<p>Hi there I’m going home<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "af295389-8be6-4ba2-b2eb-f4a187f4fbbb",
           "reaction_counts" : {
             
@@ -4859,6 +5403,13 @@
           "html" : "<p>The only way I<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "1713d645-0660-42f5-a3b5-b9158ce18049",
           "reaction_counts" : {
             
@@ -4903,6 +5454,13 @@
           "html" : "<p>I don’t think you have<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_5000",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "14cd2443-5302-4de5-a7dc-9deb5dc35fb8",
           "reaction_counts" : {
             
@@ -4949,6 +5507,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_5000",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -5165,6 +5729,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_3124",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "9a8a7623-1ce9-4269-9359-934168e0fe04",
           "reaction_counts" : {
             
@@ -5209,6 +5780,13 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_3124",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "095801b0-d074-4e0f-bd4c-d7d0a3678ac6",
           "reaction_counts" : {
             
@@ -5253,6 +5831,13 @@
           "html" : "<p>How are you?<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_3124",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "4c256c12-cb4f-49b2-8a20-6cdc2324c083",
           "reaction_counts" : {
             
@@ -5299,6 +5884,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_3124",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -5514,6 +6105,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_6264",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "9a8fe664-c1c6-4004-bebe-a84205c49606",
           "reaction_counts" : {
             
@@ -5561,6 +6159,13 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_6264",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "1e350c22-c9a5-48a6-a51e-8a993c9cbd56",
           "reaction_counts" : {
             
@@ -5610,6 +6215,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_6264",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -5785,6 +6396,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_7940",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a0b27dc5-bce3-46dc-8647-8f22bd51a951",
           "reaction_counts" : {
             
@@ -5832,6 +6450,13 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7940",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "1d093306-faae-4bb2-ba70-5a095f7d3028",
           "reaction_counts" : {
             
@@ -5879,6 +6504,13 @@
           "html" : "<p>How are you?<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_7940",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "8bf6c7c8-a204-4730-bbc9-1844b0688b44",
           "reaction_counts" : {
             
@@ -5928,6 +6560,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_7940",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -6103,6 +6741,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "cc951b98-6df9-4431-8628-895c1c5ab737",
           "reaction_counts" : {
             
@@ -6150,6 +6795,13 @@
           "html" : "<p>Message1 68400DEC-113B-45B0-9B95-14ADDC4371D2<\/p>\n"
         },
         {
+          "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "e7c63a1c-aee7-4e35-8148-7f1ad839d133",
           "reaction_counts" : {
             
@@ -6197,6 +6849,13 @@
           "html" : "<p>Message2 92386C0B-D27F-40A9-A5F0-F9FE81EA6A71<\/p>\n"
         },
         {
+          "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "9bf11f2f-9f7e-419c-8c6c-0480c9881de0",
           "reaction_counts" : {
             
@@ -6246,6 +6905,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -6449,6 +7114,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "d7835f01-e280-4da1-afd2-a4a358cb3b44",
           "reaction_counts" : {
             
@@ -6493,6 +7165,13 @@
           "html" : "<p>Hh<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "fa7ad527-4808-4d06-a6cd-a8faffa7d257",
           "reaction_counts" : {
             
@@ -6537,6 +7216,13 @@
           "html" : "<p>Gyt<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a65cec92-57e4-4587-a7f2-a09d7a63e9e2",
           "reaction_counts" : {
             
@@ -6581,6 +7267,13 @@
           "html" : "<p>Gg<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "348f4e6c-64f4-4e94-a298-e83ab325c7f1",
           "reaction_counts" : {
             
@@ -6625,6 +7318,13 @@
           "html" : "<p>Hh<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "541ca928-5dbe-4d6d-8c4c-583373eef321",
           "reaction_counts" : {
             
@@ -6669,6 +7369,13 @@
           "html" : "<p>55<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "777478ea-eb7e-4f47-a91d-004fdd0844fc",
           "reaction_counts" : {
             
@@ -6713,6 +7420,13 @@
           "html" : "<p>44<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "4bfc1677-d70a-4b05-8b8d-02d8d6572732",
           "reaction_counts" : {
             
@@ -6757,6 +7471,13 @@
           "html" : "<p>Rr<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "4240528c-e082-43f1-8659-63bc12bcc958",
           "reaction_counts" : {
             
@@ -6801,6 +7522,13 @@
           "html" : "<p>11<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "10fcb71a-6a32-446f-96ac-b5c4f609118d",
           "reaction_counts" : {
             
@@ -6845,6 +7573,13 @@
           "html" : "<p>22<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "821d7c83-5b4d-484f-9321-6ca92a8e49a5",
           "reaction_counts" : {
             
@@ -6892,6 +7627,13 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "7cf11988-c7eb-4533-9a69-75cacaf50b7d",
           "reaction_counts" : {
             
@@ -6939,6 +7681,13 @@
           "html" : "<p>I just got a new phone<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "93e3d6de-e44c-4ac1-80f2-929abe6695e4",
           "reaction_counts" : {
             
@@ -6986,6 +7735,13 @@
           "html" : "<p>I just want you guys want me just to come home<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "fa96905a-8f6d-4cc8-a845-3a7e9a9adc8b",
           "reaction_counts" : {
             
@@ -7033,6 +7789,13 @@
           "html" : "<p>I don’t know<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "dd532302-cffd-47e7-9498-1868aed9a0ce",
           "reaction_counts" : {
             
@@ -7080,6 +7843,13 @@
           "html" : "<p>I just want you guys want me just to come home to the car I want you guys want me just let him go<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "ae8b1d63-c8dc-4233-83e0-6ceee11e4086",
           "reaction_counts" : {
             
@@ -7124,6 +7894,13 @@
           "html" : "<p>The new version of this is the first app that I’ve ever used<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "45619207-0b7f-4b22-aa57-256ae0f9d14a",
           "reaction_counts" : {
             
@@ -7168,6 +7945,13 @@
           "html" : "<p>I’m just trying out a couple things and I’m just wondering how to get them done<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "32160a20-dfa0-4bfa-928e-98a127e688ad",
           "reaction_counts" : {
             
@@ -7212,6 +7996,13 @@
           "html" : "<p>I just got to work<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "dd686419-3b8d-4e81-9601-3bde43c94183",
           "reaction_counts" : {
             
@@ -7256,6 +8047,13 @@
           "html" : "<p>The new version of this game has a great game<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f8d8d7e2-7ee9-476a-8669-f91a0478af09",
           "reaction_counts" : {
             
@@ -7300,6 +8098,13 @@
           "html" : "<p>I just got to the point where I was talking<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "3ceb44ba-852a-4edf-966d-9cea969393f5",
           "reaction_counts" : {
             
@@ -7344,6 +8149,13 @@
           "html" : "<p>I’m going home and I’m just leaving<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "3907bd2f-4d4d-4915-85f8-8e74aafbb893",
           "reaction_counts" : {
             
@@ -7388,6 +8200,13 @@
           "html" : "<p>I’m not going anywhere I want you in the morning<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "cdd434da-1d77-4b29-8c04-d019b61389e4",
           "reaction_counts" : {
             
@@ -7432,6 +8251,13 @@
           "html" : "<p>The game has to do a great and great way for my iPhone game<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f53ef7e0-71a3-4fe4-921e-c6d7471a314b",
           "reaction_counts" : {
             
@@ -7476,6 +8302,13 @@
           "html" : "<p>I’m going back<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "97841d73-7bba-4699-86f9-70df70c6a2c8",
           "reaction_counts" : {
             
@@ -7520,6 +8353,13 @@
           "html" : "<p>The only reason I’m a fan is that I have to say this game has a great time<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_1877",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "2a736394-cb3b-4273-9ed4-ad92d39babed",
           "reaction_counts" : {
             
@@ -7566,6 +8406,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_1877",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -7782,6 +8628,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f1c7d836-b5ca-4b4f-8dd8-d039f6409e2b",
           "reaction_counts" : {
             
@@ -7829,6 +8682,13 @@
           "html" : "<p>Message1 394EB294-2EB0-40B8-A429-4EE9E2DFCC32<\/p>\n"
         },
         {
+          "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "fff18a09-462b-40c8-9650-221acd5a5fc5",
           "reaction_counts" : {
             
@@ -7876,6 +8736,13 @@
           "html" : "<p>Message2 8B5B331C-CCB8-43BC-9C23-68C00966F91C<\/p>\n"
         },
         {
+          "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f5e9c987-7dcc-4b2d-a018-2ab0b28a94a7",
           "reaction_counts" : {
             
@@ -7932,6 +8799,13 @@
           "html" : "<p>Message3 @Noisy mountain C5FC1C5E-DA84-4768-B0D0-176E41AB48CA<\/p>\n"
         },
         {
+          "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "3231868e-a21f-4597-b0fe-eb8f3ed20fe7",
           "reaction_counts" : {
             
@@ -7981,6 +8855,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -8184,6 +9064,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bender-76f7aa00-3b06-4ab6-b22a-db38dba4345b",
           "reaction_counts" : {
             
@@ -8336,6 +9223,13 @@
           "html" : "<p>Hd<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "broken-waterfall-5-dbc8f713-b1d5-461e-aabd-6771e78a1d16",
           "reaction_counts" : {
             
@@ -8383,6 +9277,13 @@
           "html" : "<p>Left<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "broken-waterfall-5-e49dc604-0d80-484e-80c2-82c81ffba79d",
           "reaction_counts" : {
             
@@ -8430,6 +9331,13 @@
           "html" : "<p>Nfhdhd<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "broken-waterfall-5-fdbe99d6-f851-407d-bef6-eeca976cb3b1",
           "reaction_counts" : {
             
@@ -8477,6 +9385,13 @@
           "html" : "<p>Vzdjdshs<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "broken-waterfall-5-ef6f0426-af2d-4717-b0f1-2a3b0ecb228a",
           "reaction_counts" : {
             
@@ -8524,6 +9439,13 @@
           "html" : "<p>Jfjfud<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bender-7378800f-7222-4cb9-89f5-4689a32d8a2a",
           "reaction_counts" : {
             
@@ -8676,6 +9598,13 @@
           "html" : "<p>Bbb<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "44f14937-bd63-4e64-9766-3bad0135f671",
           "reaction_counts" : {
             
@@ -8723,6 +9652,13 @@
           "html" : "<p>Dhddu<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bender-832ef2cb-4ab4-4925-9416-f0be8419818f",
           "reaction_counts" : {
             
@@ -8875,6 +9811,13 @@
           "html" : "<p>Gggg<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f9f6f049-2056-416f-b99c-2c4475f5e690",
           "reaction_counts" : {
             
@@ -8922,6 +9865,13 @@
           "html" : "<p>Dsfgffgfgggdfgdfgdf<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "4aebdd28-209f-4bf5-a045-5100782a8b3d",
           "reaction_counts" : {
             
@@ -8969,6 +9919,13 @@
           "html" : "<p>Fgdfgdfgdfg<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "8e9da01d-22c0-4fa7-9a44-609d9aed2e96",
           "reaction_counts" : {
             
@@ -9016,6 +9973,13 @@
           "html" : "<p>Rrrrr<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "0f33c1cd-2408-4e18-8f43-ffeed2d91a5f",
           "reaction_counts" : {
             
@@ -9063,6 +10027,13 @@
           "html" : "<p>Cd sddsssssssgggg<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "bender-fb3f22f8-80b4-466e-8999-05a43233a786",
           "reaction_counts" : {
             
@@ -9215,6 +10186,13 @@
           "html" : "<p>Hhh<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "c7df405b-e543-4fdc-93a4-ddce28e86670",
           "reaction_counts" : {
             
@@ -9262,6 +10240,13 @@
           "html" : "<p>Fffnkjjhkfffff<\/p>\n"
         },
         {
+          "cid" : "messaging:new_channel_4371",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "betausenameinsteadplz-1bf4a505-f44d-4463-a60f-1540e53262cd",
           "reaction_counts" : {
             
@@ -9318,6 +10303,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:new_channel_4371",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -9494,6 +10485,13 @@
     {
       "messages" : [
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-b4e6a6f0-3783-484b-9e62-fa72777c7e13",
           "reaction_counts" : {
             
@@ -9533,6 +10531,13 @@
           "html" : "<p>hey<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "Steveusenameinsteadplz-7441779b-f8ad-4ed4-a533-22480910d85e",
           "reaction_counts" : {
             "sad" : 1,
@@ -9653,6 +10658,13 @@
           "html" : "<p>Hey Dani! I’m here<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-3d8f0c9e-3a73-4f20-8d07-b172eae93e62",
           "reaction_counts" : {
             
@@ -9702,6 +10714,13 @@
           "html" : ""
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-269e9a96-35d6-4add-ae4b-a099e6f30262",
           "reaction_counts" : {
             
@@ -9741,6 +10760,13 @@
           "html" : "<p>Hi there<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-c893dc5e-29af-46bc-9d07-dab9ffcf9dc7",
           "reaction_counts" : {
             
@@ -9780,6 +10806,13 @@
           "html" : "<p>testing<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-c3e0e02f-a257-4ed6-bb9e-cc3a18b4c1a0",
           "reaction_counts" : {
             "haha" : 1
@@ -9837,6 +10870,13 @@
           "html" : "<p>testing<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "TheBestBritusenameinsteadplz-aa6a7160-6d7b-4e79-a56a-ac08d7161140",
           "reaction_counts" : {
             "like" : 1
@@ -9894,6 +10934,13 @@
           "html" : "<p>hellooo<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-532ec0fe-c2fb-4785-a100-cad6d24f3944",
           "reaction_counts" : {
             
@@ -9943,6 +10990,13 @@
           "html" : ""
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "TheBestBritusenameinsteadplz-d1cc401e-73a5-499b-a384-72a60d17f06e",
           "reaction_counts" : {
             "like" : 1
@@ -10008,6 +11062,13 @@
           "html" : ""
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "thierry-f23ee25d-2ca8-4e35-aa89-28e1bfa2d055",
           "reaction_counts" : {
             "love" : 1,
@@ -10105,6 +11166,13 @@
           "html" : "<p>Hi!<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-11c2ba44-3fef-4c1e-9838-3cc7bad7ecba",
           "reaction_counts" : {
             
@@ -10154,6 +11222,13 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU<\/a><\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "Thierryusenameinsteadplz-b8ac6563-8fe1-4a87-803a-ab63c7d6ef97",
           "reaction_counts" : {
             
@@ -10193,6 +11268,13 @@
           "html" : "<p>hello scott<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-24a726ef-9481-42b4-b3fa-9b69f6712550",
           "reaction_counts" : {
             
@@ -10232,6 +11314,13 @@
           "html" : "<p>hi Thierry<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "Thierryusenameinsteadplz-b6e3d374-d598-4384-a7c7-58b7327b139a",
           "reaction_counts" : {
             "love" : 1,
@@ -10362,6 +11451,13 @@
           "html" : "<p>check out this video: <a href=\"https:\/\/www.youtube.com\/watch?v=qC5KtatMcUw\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=qC5KtatMcUw<\/a><\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-dd55f297-1383-426d-9801-8f125031fcec",
           "reaction_counts" : {
             
@@ -10401,6 +11497,13 @@
           "html" : "<p>😜<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "YoungShatnerusenameinsteadplz-9663bbbd-f319-4971-a7b5-ac21bf1555dd",
           "reaction_counts" : {
             
@@ -10450,6 +11553,13 @@
           "html" : ""
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-f387386c-7aa3-4f97-9714-47b1f4d469b9",
           "reaction_counts" : {
             
@@ -10489,6 +11599,13 @@
           "html" : "<p>hey<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
           "reaction_counts" : {
             "love" : 1,
@@ -10670,6 +11787,13 @@
           "html" : "<p>Yeah hey Dani! I’m here<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-62de808c-e4e9-44e1-9bcf-7b5083dfca35",
           "reaction_counts" : {
             
@@ -10709,6 +11833,13 @@
           "html" : "<p>hey<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-5fc89657-9d82-49aa-a11a-27b82b7c8160",
           "reaction_counts" : {
             
@@ -10758,6 +11889,13 @@
           "html" : ""
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-a0478aab-61d7-46ac-b252-8a89053a3d8d",
           "reaction_counts" : {
             
@@ -10807,6 +11945,13 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM<\/a><\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-d0a99249-25c6-4e13-9990-6b4d58cebd2a",
           "reaction_counts" : {
             
@@ -10846,6 +11991,13 @@
           "html" : "<p>hey there<\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-1883395e-d708-420c-877d-ecdc9f909ec6",
           "reaction_counts" : {
             
@@ -10895,6 +12047,13 @@
           "html" : ""
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "usenameinsteadplz-c817812c-e78b-4b40-b811-a120b692fcda",
           "reaction_counts" : {
             
@@ -10944,6 +12103,13 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM<\/a><\/p>\n"
         },
         {
+          "cid" : "messaging:test-channel-3011",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "betausenameinsteadplz-af05fa65-2074-4bb6-bd74-68ce0779fc01",
           "reaction_counts" : {
             
@@ -10985,6 +12151,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "messaging:test-channel-3011",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -11398,6 +12570,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "83d91c2f-ab4f-4777-8b41-b9e4bec79458",
           "reaction_counts" : {
             
@@ -11445,6 +12624,13 @@
           "html" : "<p>Message1 F41CEA3D-D4FC-4FF2-8D2E-D28578201E29<\/p>\n"
         },
         {
+          "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "7635fb32-8c86-44c5-8511-bd680534544d",
           "reaction_counts" : {
             
@@ -11492,6 +12678,13 @@
           "html" : "<p>Message2 49A45ACD-609F-450F-A248-0EBC10990561<\/p>\n"
         },
         {
+          "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "7f602d85-4b6b-47cc-ac0a-16370bad1ad1",
           "reaction_counts" : {
             
@@ -11550,6 +12743,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -11714,6 +12913,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "2ca1ffe9-63d0-41ae-986b-6415bb14139e",
           "reaction_counts" : {
             
@@ -11761,6 +12967,13 @@
           "html" : "<p>Message1 C5009B3E-44B9-40C0-B85D-374A31813D35<\/p>\n"
         },
         {
+          "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "de25ec68-d9bb-46d2-a5e1-9f0fe691bd76",
           "reaction_counts" : {
             
@@ -11808,6 +13021,13 @@
           "html" : "<p>Message2 ED07A7B4-4BB6-40A1-98EB-CD4A74D2589B<\/p>\n"
         },
         {
+          "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a7eefc4e-3207-436e-a00e-5d63bdd2a5cb",
           "reaction_counts" : {
             
@@ -11866,6 +13086,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -12030,6 +13256,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "4aecee19-a249-402a-af86-5e3e4f41abc0",
           "reaction_counts" : {
             
@@ -12079,6 +13312,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -12243,6 +13482,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:9E38A3E7-315C-441E-87CE-D65DEE26D390",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a5b6babd-d31b-4d7c-b5d7-4aa93803fbd8",
           "reaction_counts" : {
             
@@ -12292,6 +13538,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:9E38A3E7-315C-441E-87CE-D65DEE26D390",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -12456,6 +13708,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "a9c4efcd-9d90-49bd-9318-7bd6464be526",
           "reaction_counts" : {
             
@@ -12503,6 +13762,13 @@
           "html" : "<p>Message1 3BBB47F1-8FB0-4EB3-BA0D-54ACB01F4C79<\/p>\n"
         },
         {
+          "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "6e11d226-8cc4-48f0-81a5-0c86da83ab4c",
           "reaction_counts" : {
             
@@ -12550,6 +13816,13 @@
           "html" : "<p>Message2 88443C9B-2C68-4807-B585-27325931888C<\/p>\n"
         },
         {
+          "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "f6283908-3566-49e4-a7e1-803c7a26fd65",
           "reaction_counts" : {
             
@@ -12608,6 +13881,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -12772,6 +14051,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "405118c6-b10c-4b46-861b-7a794050eb7d",
           "reaction_counts" : {
             
@@ -12819,6 +14105,13 @@
           "html" : "<p>Message1 6862A33F-8609-40E8-B4A2-99583997A9CC<\/p>\n"
         },
         {
+          "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "824f93c4-135c-4e53-ac46-c7f9e01ec629",
           "reaction_counts" : {
             
@@ -12866,6 +14159,13 @@
           "html" : "<p>Message2 89F1F6D0-0B32-4B0E-A18D-9D831C69FE99<\/p>\n"
         },
         {
+          "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "d6553fb0-2926-415d-8c84-8c56367509a4",
           "reaction_counts" : {
             
@@ -12943,6 +14243,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 
@@ -13132,6 +14438,13 @@
     {
       "messages" : [
         {
+          "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "7ffd60b8-abc8-4770-bd80-c1daf56584e2",
           "reaction_counts" : {
             
@@ -13179,6 +14492,13 @@
           "html" : "<p>Message1 FCDB0DAD-C781-427F-9AE3-AA82ACE4B835<\/p>\n"
         },
         {
+          "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "fc136d5c-6591-48ac-b78a-1a593e1a6cfd",
           "reaction_counts" : {
             
@@ -13226,6 +14546,13 @@
           "html" : "<p>Message2 46D81157-E66F-4A66-81CF-C77EA0EF9C6E<\/p>\n"
         },
         {
+          "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
+          "deleted_reply_count" : 0,
+          "mentioned_channel" : false,
+          "mentioned_here" : false,
+          "pinned" : false,
+          "restricted_visibility" : [],
+          "shadowed" : false,
           "id" : "29b9ec73-0da4-49a9-afcf-151cf31cc723",
           "reaction_counts" : {
             
@@ -13303,6 +14630,12 @@
       ],
       "pinned_messages": [
           {
+            "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
+            "deleted_reply_count" : 0,
+            "mentioned_channel" : false,
+            "mentioned_here" : false,
+            "restricted_visibility" : [],
+            "shadowed" : false,
             "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
             "reaction_counts" : {
 

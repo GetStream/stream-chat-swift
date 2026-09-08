@@ -116,6 +116,10 @@
       },
       "messages": [
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "391ee66d-4151-4678-8bef-bbfa8b1239c8",
           "text": "Kk",
           "html": "<p>Kk</p>\n",
@@ -151,6 +155,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "df6edcec-7e47-45ea-8a6d-27db36fa9e8f",
           "text": "Jj",
           "html": "<p>Jj</p>\n",
@@ -187,6 +195,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "55744545-d752-4659-91e5-af7cc2fe8416",
           "text": "Vbb",
           "html": "<p>Vbb</p>\n",
@@ -223,6 +235,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "e5c8dc2f-f9d9-413d-b66e-ecfb5788f57a",
           "text": "Hj",
           "html": "<p>Hj</p>\n",
@@ -259,6 +275,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "62a04705-cba9-4202-946b-c5d1c920fc25",
           "text": "Hb",
           "html": "<p>Hb</p>\n",
@@ -295,6 +315,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "c7f5e866-94e0-4775-8695-1be0a2cfc77d",
           "text": "Bb",
           "html": "<p>Bb</p>\n",
@@ -331,6 +355,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "4585b020-bf9b-489b-b862-6e21aeddd5de",
           "text": "Bbn",
           "html": "<p>Bbn</p>\n",
@@ -367,6 +395,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "af90c4b0-8d51-4a1b-ad17-5bc0b9b90799",
           "text": "Bb",
           "html": "<p>Bb</p>\n",
@@ -403,6 +435,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "1a5d9add-ca25-4003-a758-18a2d2f26be4",
           "text": "Hj",
           "html": "<p>Hj</p>\n",
@@ -439,6 +475,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "670d7b83-6be1-4394-b9bf-bfb8ad277b70",
           "text": "Jj",
           "html": "<p>Jj</p>\n",
@@ -475,6 +515,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "f0addaa6-5a47-45e7-9b0f-fd2efa4343ce",
           "text": "Gjj",
           "html": "<p>Gjj</p>\n",
@@ -511,6 +555,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "dcff579f-98a5-45cf-9070-5090b389c9e7",
           "text": "Jj",
           "html": "<p>Jj</p>\n",
@@ -547,6 +595,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "0429b4d6-2fb2-4fa8-b6f4-388915431c3a",
           "text": "Hh",
           "html": "<p>Hh</p>\n",
@@ -583,6 +635,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "d10cb7f4-83e0-477e-aa26-1a23fedaa052",
           "text": "Khh",
           "html": "<p>Khh</p>\n",
@@ -619,6 +675,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "d6a034dc-1ac9-4017-a7f0-445a2220a5a7",
           "text": "Hhj",
           "html": "<p>Hhj</p>\n",
@@ -657,6 +717,10 @@
       ],
       "pinned_messages": [
           {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "391ee66d-4151-4678-8bef-bbfa8b1239c8",
             "text": "Kk",
             "html": "<p>Kk</p>\n",
@@ -897,6 +961,10 @@
       },
       "messages": [
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "d00cd103-7776-46cf-9626-0ed5245f2ce4",
           "text": "",
           "command": "giphy",
@@ -1046,6 +1114,10 @@
           "args": "Test"
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "0baee705-e0ad-448e-aa4d-a6a37bd0aed4",
           "text": "Hey",
           "html": "<p>Hey</p>\n",
@@ -1082,6 +1154,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "95aef43e-b785-4b30-96dc-8a5f39295f36",
           "text": "Test",
           "html": "<p>Test</p>\n",
@@ -1118,6 +1194,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "ed778774-7e2b-4011-8408-6e3344e4d614",
           "text": "Test",
           "html": "<p>Test</p>\n",
@@ -1154,6 +1234,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "7890c6c4-2cbe-48a2-8903-e9c4b87b9d1e",
           "text": "",
           "command": "giphy",
@@ -1253,6 +1337,10 @@
           }
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "226f5b5d-0c63-4c7b-a213-b2b5d2f02621",
           "text": "",
           "command": "giphy",
@@ -1352,6 +1440,10 @@
           }
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "e96c6d30-2d40-4aa8-83bf-2d4a9a239a1b",
           "text": "Yo",
           "html": "<p>Yo</p>\n",
@@ -1378,6 +1470,10 @@
           "reply_count": 0,
           "quoted_message_id": "e8fa0602-bffa-401d-bb38-8ad090d2465d",
           "quoted_message": {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "e8fa0602-bffa-401d-bb38-8ad090d2465d",
             "text": "Surrounded to me occasional pianoforte alteration unaffected impossible ye",
             "html": "<p>Surrounded to me occasional pianoforte alteration unaffected impossible ye</p>\n",
@@ -1438,6 +1534,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "9965526a-1813-4e43-b655-34f4045f70c9",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -1474,6 +1574,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "28462ba4-6423-40d4-923e-54bd0553c83c",
           "text": "Hey",
           "html": "<p>Hey</p>\n",
@@ -1510,6 +1614,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "d69b48d4-05fe-4eca-894f-d07764d0a56c",
           "text": "Hey",
           "html": "<p>Hey</p>\n",
@@ -1546,6 +1654,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "21873f20-5d7e-473a-8532-5a5293c9591e",
           "text": "Coool",
           "html": "<p>Coool</p>\n",
@@ -1582,6 +1694,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "a01be7ab-b886-4e6e-b970-29ed3a264fe0",
           "text": "DddGreat",
           "html": "<p>DddGreat</p>\n",
@@ -1618,6 +1734,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "fe962bb5-c8a3-4ed6-bcf4-6856db8f053e",
           "text": "Ahah",
           "html": "<p>Ahah</p>\n",
@@ -1644,6 +1764,10 @@
           "reply_count": 0,
           "quoted_message_id": "9eb88551-0a71-4154-a124-5ec579861b6d",
           "quoted_message": {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "9eb88551-0a71-4154-a124-5ec579861b6d",
             "text": "Am wound worth water he linen at vexed",
             "html": "<p>Am wound worth water he linen at vexed</p>\n",
@@ -1811,6 +1935,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "5514d321-2dd8-4265-a19b-6505a0f57704",
           "text": "Ahahahah",
           "html": "<p>Ahahahah</p>\n",
@@ -1837,6 +1965,10 @@
           "reply_count": 0,
           "quoted_message_id": "a01be7ab-b886-4e6e-b970-29ed3a264fe0",
           "quoted_message": {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "a01be7ab-b886-4e6e-b970-29ed3a264fe0",
             "text": "DddGreat",
             "html": "<p>DddGreat</p>\n",
@@ -1884,6 +2016,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "890da646-1581-4c44-8d34-cbd477e5cb14",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -1920,6 +2056,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "28ab90c4-07c4-446c-adf6-18b79bd62880",
           "text": "Lol",
           "html": "<p>Lol</p>\n",
@@ -1956,6 +2096,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "ff03bdd0-325b-4cbe-b283-12a6455a3028",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -1992,6 +2136,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "5b93f6d0-fc5a-429b-bd36-2a5fa4994783",
           "text": "Great",
           "html": "<p>Great</p>\n",
@@ -2044,6 +2192,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "leia_organa-937ddc6e-d009-49ac-9f4a-30bc13c70767",
           "text": "😉😉",
           "html": "<p>😉😉</p>\n",
@@ -2080,6 +2232,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "leia_organa-987e2269-f715-490a-945a-c8b072ae120a",
           "text": "This message was deleted.",
           "html": "<p>This message was deleted.</p>\n",
@@ -2106,6 +2262,10 @@
           "reply_count": 0,
           "quoted_message_id": "leia_organa-937ddc6e-d009-49ac-9f4a-30bc13c70767",
           "quoted_message": {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "leia_organa-937ddc6e-d009-49ac-9f4a-30bc13c70767",
             "text": "😉😉",
             "html": "<p>😉😉</p>\n",
@@ -2154,6 +2314,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "c11026f0-f5c9-4031-83c2-ffdf7da7eb24",
           "text": "123",
           "html": "<p>123</p>\n",
@@ -2206,6 +2370,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "7055eb3a-976b-485b-a459-59abf314e689",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -2242,6 +2410,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "cdcb4168-419f-40c7-9864-7b85a45b703b",
           "text": "Great",
           "html": "<p>Great</p>\n",
@@ -2278,6 +2450,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "ef178d0c-84bd-4a19-95a6-0b9966aebf83",
           "text": "",
           "html": "",
@@ -2322,6 +2498,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "c676c419-b447-4dd3-a3c5-69330d3d6010",
           "text": "",
           "html": "",
@@ -2368,6 +2548,10 @@
       ],
       "pinned_messages": [
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "CF1CBD0D-25EF-4140-AC66-94952F52F2FA",
           "text": "Hi",
           "html": "<p>Hi</p>\n",
@@ -2417,6 +2601,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "03816B40-1FF1-43C8-AA19-82FC3662095A",
           "text": "Four",
           "html": "<p>Four</p>\n",
@@ -2466,6 +2654,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "34B760B3-EC4C-4504-A8D8-E9C868BCFBB7",
           "text": "Hi",
           "html": "<p>Hi</p>\n",
@@ -2515,6 +2707,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "5F5072ED-C436-423B-AA84-59DD5EC2B386",
           "text": "Qwerty",
           "html": "<p>Qwerty</p>\n",
@@ -2564,6 +2760,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "5C9CB86A-2307-472E-8514-9B472558CE16",
           "text": "Asdfasdfasdfsdf",
           "html": "<p>Asdfasdfasdfsdf</p>\n",
@@ -2613,6 +2813,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "EA9C530B-C841-48A3-9BDE-54C24699E154",
           "text": "Qwerty",
           "html": "<p>Qwerty</p>\n",
@@ -2662,6 +2866,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "69942E7B-D549-47E1-BC45-CB0883D5A3D8",
           "text": "Lkasjdfklasdfjlkasdfjsadf",
           "html": "<p>Lkasjdfklasdfjlkasdfjsadf</p>\n",
@@ -2711,6 +2919,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "3F5D71A6-286C-4C9F-B8BF-2BC259333506",
           "text": "Hey",
           "html": "<p>Hey</p>\n",
@@ -2760,6 +2972,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "C1EBB6EC-17E9-4288-B6DA-BFDA00B0FE44",
           "text": "Hey",
           "html": "<p>Hey</p>\n",
@@ -2809,6 +3025,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "75D83BCF-0A9E-4709-A989-B70915D1494C",
           "text": "Hey",
           "html": "<p>Hey</p>\n",
@@ -3076,6 +3296,10 @@
       },
       "messages": [
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "86e3cbe5-50ba-42cb-bd25-d26d4b0b2a4e",
           "text": "Asd",
           "html": "<p>Asd</p>\n",
@@ -3112,6 +3336,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "64d60cb3-ecf7-424c-8863-9fd28f485e42",
           "text": "Asd",
           "html": "<p>Asd</p>\n",
@@ -3148,6 +3376,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "1316a8f5-a099-4794-81c6-e1980d4d1bd6",
           "text": "123",
           "html": "<p>123</p>\n",
@@ -3184,6 +3416,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "fd5555cd-7223-4778-9621-55edf5f729d3",
           "text": "41",
           "html": "<p>41</p>\n",
@@ -3220,6 +3456,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "8903c5f2-5bbc-4f4f-9ade-413f2bd03525",
           "text": "4",
           "html": "<p>4</p>\n",
@@ -3256,6 +3496,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "5b15c9c4-5704-415d-9007-8ef4d2068ce0",
           "text": "",
           "command": "giphy",
@@ -3382,6 +3626,10 @@
           }
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "1303e847-46f3-4a00-9f80-c9cee09f548a",
           "text": "",
           "command": "giphy",
@@ -3508,6 +3756,10 @@
           }
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "734ae3e0-0ced-48ab-87ef-8540f583ad63",
           "text": "",
           "command": "giphy",
@@ -3634,6 +3886,10 @@
           }
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "6f2edc5b-3ff6-4d8c-b7f5-73819f07333f",
           "text": "Test",
           "html": "<p>Test</p>\n",
@@ -3697,6 +3953,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "3a0a2955-635d-430d-9a0c-675dd146febf",
           "text": "Lol",
           "html": "<p>Lol</p>\n",
@@ -3733,6 +3993,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "ef4a75c8-284c-4164-b120-c98e1c4e5354",
           "text": "Test",
           "html": "<p>Test</p>\n",
@@ -3796,6 +4060,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "b951f49f-cff8-442a-b18b-066d05177812",
           "text": "Tedt",
           "html": "<p>Tedt</p>\n",
@@ -3859,6 +4127,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "17447d5f-9539-4842-b70b-b2d69a38e279",
           "text": "Ok",
           "html": "<p>Ok</p>\n",
@@ -3895,6 +4167,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "7e2f64b0-9de0-4b4c-bbab-d8e5cc0bb889",
           "text": "Heyy",
           "html": "<p>Heyy</p>\n",
@@ -3931,6 +4207,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "009a2b6c-485c-4d14-9ccb-94d8d7d92496",
           "text": "🐳",
           "html": "<p>🐳</p>\n",
@@ -3982,6 +4262,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "5379bc66-ffb8-4a12-92bf-8182218dc278",
           "text": "",
           "html": "",
@@ -4026,6 +4310,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "2bea92e8-3eae-46d1-bc50-8d0f0b241091",
           "text": "🐳",
           "html": "<p>🐳</p>\n",
@@ -4062,6 +4350,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "acb42830-34e3-4143-a7f9-f811f6ec7fab",
           "text": "Hi",
           "html": "<p>Hi</p>\n",
@@ -4098,6 +4390,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "a0766943-52c2-44eb-a3bb-812872a87a49",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -4124,6 +4420,10 @@
           "reply_count": 0,
           "quoted_message_id": "a8b5f70e-57b9-4e0f-bc8f-3ca01af47635",
           "quoted_message": {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "a8b5f70e-57b9-4e0f-bc8f-3ca01af47635",
             "text": "1",
             "html": "<p>1</p>\n",
@@ -4169,6 +4469,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "774fff64-6536-44ba-ad46-f6bc3c5b4db8",
           "text": "Already in list",
           "html": "<p>Already in list</p>\n",
@@ -4222,6 +4526,10 @@
           "reply_count": 0,
           "quoted_message_id": "7e2f64b0-9de0-4b4c-bbab-d8e5cc0bb889",
           "quoted_message": {
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "7e2f64b0-9de0-4b4c-bbab-d8e5cc0bb889",
             "text": "Heyy",
             "html": "<p>Heyy</p>\n",
@@ -4269,6 +4577,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "leia_organa-97300fa4-da6d-4c91-b2e5-22318babbb54",
           "text": "Hola",
           "html": "<p>Hola</p>\n",
@@ -4305,6 +4617,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "c5d0998b-5412-41fe-8b23-b0acd22ac49b",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -4341,6 +4657,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "03e6d6d1-7890-4b75-8419-33c067098940",
           "text": "Cool",
           "html": "<p>Cool</p>\n",
@@ -4379,6 +4699,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "de003d28-012c-4d42-9945-6c2372e12318",
           "text": "Hi",
           "html": "<p>Hi</p>\n",
@@ -4415,6 +4739,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "bbdaa7d3-8f5f-4a7c-9e92-4f0d62c7db87",
           "text": "Hi",
           "html": "<p>Hi</p>\n",
@@ -4453,6 +4781,10 @@
       ],
       "pinned_messages": [
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "c84d2b96-a24b-433e-a033-2497401affc9",
           "text": "Frfg",
           "html": "<p>Frfg</p>\n",
@@ -4502,6 +4834,10 @@
           "pin_expires": null
         },
         {
+          "deleted_reply_count": 0,
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "79c38056-2fce-4d7f-8f3e-91c0cb3b71cd",
           "text": "Ll",
           "html": "<p>Ll</p>\n",

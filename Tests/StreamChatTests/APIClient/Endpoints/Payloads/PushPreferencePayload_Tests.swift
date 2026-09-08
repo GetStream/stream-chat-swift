@@ -8,6 +8,12 @@ import Foundation
 import XCTest
 
 final class PushPreferencePayload_Tests: XCTestCase {
+    func test_pushPreferenceLevel_encodesRawValueAsSingleValue() {
+        let level = PushPreferenceLevel(rawValue: "future-level")
+
+        XCTAssertEqual(JSONEncoder.default.encodedString(level), "future-level")
+    }
+
     func test_pushPreferencePayload_withAllLevel_isDecodedCorrectly() throws {
         // GIVEN
         let json = """
@@ -117,7 +123,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         // GIVEN
         let requestPayload = PushPreferenceInput(
             channelCid: "messaging:test-channel",
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             disabledUntil: "2024-12-31T23:59:59.999Z".toDate(),
             removeDisable: true
         )
@@ -126,7 +132,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         let encoded = try JSONEncoder.default.encode(requestPayload)
 
         AssertJSONEqual(encoded, [
-            "chat_level": "mentions",
+            "chat_level": "direct_mentions",
             "channel_cid": "messaging:test-channel",
             "disabled_until": "2024-12-31T23:59:59.999Z",
             "remove_disable": true

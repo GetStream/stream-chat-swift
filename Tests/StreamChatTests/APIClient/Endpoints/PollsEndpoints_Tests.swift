@@ -8,6 +8,12 @@ import Foundation
 import XCTest
 
 final class PollsEndpoints_Tests: XCTestCase {
+    func test_votingVisibility_encodesRawValueAsSingleValue() {
+        let votingVisibility = VotingVisibility(rawValue: "future-visibility")
+
+        XCTAssertEqual(JSONEncoder.default.encodedString(votingVisibility), "future-visibility")
+    }
+
     func test_createPoll() throws {
         let request = CreatePollRequestBody(
             allowAnswers: true,

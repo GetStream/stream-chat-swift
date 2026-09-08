@@ -7,27 +7,31 @@ import XCTest
 
 final class EndpointPathTests: XCTestCase {
     func test_sendMessage_shouldBeQueuedOffline() throws {
-        XCTAssertTrue(EndpointPath.sendMessage(.unique).shouldBeQueuedOffline)
+        XCTAssertTrue(EndpointPath.sendMessage(type: "messaging", id: .unique).shouldBeQueuedOffline)
     }
 
-    func test_editMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.editMessage("").shouldBeQueuedOffline)
+    func test_updateMessage_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.updateMessage(id: "").shouldBeQueuedOffline)
+    }
+
+    func test_updateMessagePartial_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.updateMessagePartial(id: "").shouldBeQueuedOffline)
+    }
+
+    func test_createDraft_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.createDraft(type: "messaging", id: "").shouldBeQueuedOffline)
     }
 
     func test_deleteMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.deleteMessage("").shouldBeQueuedOffline)
-    }
-    
-    func test_pinMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.pinMessage("").shouldBeQueuedOffline)
+        XCTAssertTrue(EndpointPath.deleteMessage(id: "").shouldBeQueuedOffline)
     }
 
-    func test_addReaction_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.addReaction("").shouldBeQueuedOffline)
+    func test_sendReaction_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.sendReaction(id: "").shouldBeQueuedOffline)
     }
 
     func test_deleteReaction_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.deleteReaction("", "").shouldBeQueuedOffline)
+        XCTAssertTrue(EndpointPath.deleteReaction(id: "", type: "").shouldBeQueuedOffline)
     }
 
     func test_createChannel_shouldNOTBeQueuedOffline() {
@@ -42,8 +46,8 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.deleteChannel(type: "", id: "").shouldBeQueuedOffline)
     }
 
-    func test_banMember_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
+    func test_ban_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.ban.shouldBeQueuedOffline)
     }
 
     func test_queryBannedUsers_shouldNOTBeQueuedOffline() {
@@ -71,8 +75,9 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_threads_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.threads.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.thread(messageId: "1").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.queryThreads.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getThread(messageId: "1").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateThreadPartial(messageId: "1").shouldBeQueuedOffline)
     }
     
     func test_polls_shouldNOTBeQueuedOffline() {
@@ -86,8 +91,10 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_reminders_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.reminders.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.reminder("test_message").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.queryReminders.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.createReminder(messageId: "test_message").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateReminder(messageId: "test_message").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.deleteReminder(messageId: "test_message").shouldBeQueuedOffline)
     }
 
     func test_unread_shouldNOTBeQueuedOffline() {
@@ -187,12 +194,16 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertEqual(path, "/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/member")
     }
 
-    func test_drafts_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.drafts.shouldBeQueuedOffline)
+    func test_queryDrafts_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.queryDrafts.shouldBeQueuedOffline)
     }
 
-    func test_draftMessage_shouldBeQueuedOffline() {
-        XCTAssertTrue(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
+    func test_getDraft_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.getDraft(type: "messaging", id: "").shouldBeQueuedOffline)
+    }
+
+    func test_deleteDraft_shouldBeQueuedOffline() {
+        XCTAssertTrue(EndpointPath.deleteDraft(type: "messaging", id: "").shouldBeQueuedOffline)
     }
 
     func test_markDelivered_value() {
@@ -206,7 +217,8 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.custom("/custom-path"))
         assertResultEncodingAndDecoding(.connect)
         assertResultEncodingAndDecoding(.sync)
-        assertResultEncodingAndDecoding(.users)
+        assertResultEncodingAndDecoding(.queryUsers)
+        assertResultEncodingAndDecoding(.updateUsersPartial)
         assertResultEncodingAndDecoding(.guest)
         assertResultEncodingAndDecoding(.queryMembers)
         assertResultEncodingAndDecoding(.updateMemberPartial(type: "messaging", id: "2"))
@@ -214,8 +226,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.createDevice)
         assertResultEncodingAndDecoding(.deleteDevice)
         assertResultEncodingAndDecoding(.listDevices)
-        assertResultEncodingAndDecoding(.threads)
-        assertResultEncodingAndDecoding(.thread(messageId: "1"))
+        assertResultEncodingAndDecoding(.queryThreads)
+        assertResultEncodingAndDecoding(.getThread(messageId: "1"))
+        assertResultEncodingAndDecoding(.updateThreadPartial(messageId: "1"))
         assertResultEncodingAndDecoding(.updatePushNotificationPreferences)
         assertResultEncodingAndDecoding(.getApp)
         assertResultEncodingAndDecoding(.listUserGroups)
@@ -235,30 +248,32 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.channelUpdate("channel_idq"))
         assertResultEncodingAndDecoding(.hideChannel(type: "messaging", id: "channel_id"))
         assertResultEncodingAndDecoding(.showChannel(type: "messaging", id: "channel_id"))
-        assertResultEncodingAndDecoding(.truncateChannel("channel_idq"))
-        assertResultEncodingAndDecoding(.markChannelRead("channel_idq"))
-        assertResultEncodingAndDecoding(.markAllChannelsRead)
+        assertResultEncodingAndDecoding(.truncateChannel(type: "messaging", id: "channel_idq"))
+        assertResultEncodingAndDecoding(.markRead(type: "messaging", id: "channel_idq"))
+        assertResultEncodingAndDecoding(.markUnread(type: "messaging", id: "channel_idq"))
+        assertResultEncodingAndDecoding(.markChannelsRead)
         assertResultEncodingAndDecoding(.markDelivered)
-        assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
+        assertResultEncodingAndDecoding(.sendEvent(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.stopWatchingChannel(type: "messaging", id: "channel_idq"))
-        assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
+        assertResultEncodingAndDecoding(.getPinnedMessages(type: "messaging", id: "channel_idq"))
         assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
 
-        assertResultEncodingAndDecoding(.sendMessage(ChannelId(type: .messaging, id: "the_id")))
-        assertResultEncodingAndDecoding(.message("message_idm"))
-        assertResultEncodingAndDecoding(.editMessage("message_ide"))
-        assertResultEncodingAndDecoding(.deleteMessage("message_idd"))
-        assertResultEncodingAndDecoding(.pinMessage("message_idp"))
-        assertResultEncodingAndDecoding(.replies("message_idr"))
+        assertResultEncodingAndDecoding(.sendMessage(type: "messaging", id: "the_id"))
+        assertResultEncodingAndDecoding(.getMessage(id: "message_idm"))
+        assertResultEncodingAndDecoding(.updateMessage(id: "message_ide"))
+        assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
+        assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))
+        assertResultEncodingAndDecoding(.deleteMessage(id: "message_idd"))
+        assertResultEncodingAndDecoding(.getReplies(parentId: "message_idr"))
         assertResultEncodingAndDecoding(.getReactions(id: "message_idre"))
         assertResultEncodingAndDecoding(.queryReactions(id: "message_idqre"))
-        assertResultEncodingAndDecoding(.addReaction("message_ida"))
-        assertResultEncodingAndDecoding(.deleteReaction("message_id", MessageReactionType(rawValue: "love")))
-        assertResultEncodingAndDecoding(.messageAction("message_ida"))
+        assertResultEncodingAndDecoding(.sendReaction(id: "message_ida"))
+        assertResultEncodingAndDecoding(.deleteReaction(id: "message_id", type: "love"))
+        assertResultEncodingAndDecoding(.runMessageAction(id: "message_ida"))
 
-        assertResultEncodingAndDecoding(.banMember)
-        assertResultEncodingAndDecoding(.flagUser)
-        assertResultEncodingAndDecoding(.flagMessage)
+        assertResultEncodingAndDecoding(.ban)
+        assertResultEncodingAndDecoding(.unban)
+        assertResultEncodingAndDecoding(.flag)
         assertResultEncodingAndDecoding(.blockUsers)
         assertResultEncodingAndDecoding(.unblockUsers)
         assertResultEncodingAndDecoding(.getBlockedUsers)
@@ -272,11 +287,14 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.castPollVote(messageId: "test_message", pollId: "test_poll"))
         assertResultEncodingAndDecoding(.deletePollVote(messageId: "test_message", pollId: "test_poll", voteId: "test_vote"))
 
-        assertResultEncodingAndDecoding(.drafts)
-        assertResultEncodingAndDecoding(.draftMessage(ChannelId(type: .messaging, id: "test_channel")))
+        assertResultEncodingAndDecoding(.queryDrafts)
+        assertResultEncodingAndDecoding(.getDraft(type: "messaging", id: "draft_channel"))
+        assertResultEncodingAndDecoding(.deleteDraft(type: "messaging", id: "draft_channel"))
         
-        assertResultEncodingAndDecoding(.reminders)
-        assertResultEncodingAndDecoding(.reminder("test_message"))
+        assertResultEncodingAndDecoding(.queryReminders)
+        assertResultEncodingAndDecoding(.createReminder(messageId: "test_message"))
+        assertResultEncodingAndDecoding(.updateReminder(messageId: "test_message"))
+        assertResultEncodingAndDecoding(.deleteReminder(messageId: "test_message"))
     }
 }
 

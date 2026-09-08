@@ -4,20 +4,14 @@
 
 import Foundation
 
-final class UserGroupResponse: Sendable, Codable, JSONEncodable {
-    let duration: String
+final class UserGroupResponse: Sendable, Decodable {
     let userGroup: UserGroup?
 
-    init(
-        duration: String,
-        userGroup: UserGroup? = nil
-    ) {
-        self.duration = duration
+    init(userGroup: UserGroup? = nil) {
         self.userGroup = userGroup
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
         case userGroup = "user_group"
     }
 }

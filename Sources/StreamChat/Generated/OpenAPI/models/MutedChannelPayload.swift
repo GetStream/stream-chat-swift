@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MutedChannelPayload: Sendable, Codable, JSONEncodable {
+final class MutedChannelPayload: Sendable, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
     /// Date/time of creation

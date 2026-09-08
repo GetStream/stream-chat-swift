@@ -83,8 +83,15 @@ public final class ChatChannel: @unchecked Sendable {
     ///
     public let lastActiveMembers: [ChatChannelMember]
 
+    /// Users currently typing in the channel, including optional slim member info from the typing event.
+    public let typingUsers: Set<TypingUser>
+
     /// A list of currently typing users.
-    public let currentlyTypingUsers: Set<ChatUser>
+    ///
+    /// Prefer ``typingUsers`` when you need channel-member info from the typing event, such as custom extra data.
+    public var currentlyTypingUsers: Set<ChatUser> {
+        typingUsers.chatUsers
+    }
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: ChatChannelMember?
@@ -210,7 +217,7 @@ public final class ChatChannel: @unchecked Sendable {
         isBlocked: Bool = false,
         lastActiveMembers: [ChatChannelMember],
         membership: ChatChannelMember? = nil,
-        currentlyTypingUsers: Set<ChatUser>,
+        typingUsers: Set<TypingUser> = [],
         lastActiveWatchers: [ChatUser],
         team: TeamId? = nil,
         isAutoTranslationEnabled: Bool = false,
@@ -262,7 +269,7 @@ public final class ChatChannel: @unchecked Sendable {
         self.latestMessages = latestMessages
         self.lastMessageFromCurrentUser = lastMessageFromCurrentUser
         self.lastActiveMembers = lastActiveMembers
-        self.currentlyTypingUsers = currentlyTypingUsers
+        self.typingUsers = typingUsers
         self.lastActiveWatchers = lastActiveWatchers
         self.pinnedMessages = pinnedMessages
         self.muteDetails = muteDetails
@@ -298,7 +305,7 @@ public final class ChatChannel: @unchecked Sendable {
             isBlocked: isBlocked,
             lastActiveMembers: lastActiveMembers,
             membership: membership,
-            currentlyTypingUsers: currentlyTypingUsers,
+            typingUsers: typingUsers,
             lastActiveWatchers: lastActiveWatchers,
             team: team,
             isAutoTranslationEnabled: isAutoTranslationEnabled,
@@ -348,6 +355,7 @@ public final class ChatChannel: @unchecked Sendable {
         pinnedMessages: [ChatMessage]? = nil,
         pushPreference: PushPreference? = nil,
         currentlyTypingUsers: Set<ChatUser>? = nil,
+        typingUsers: Set<TypingUser>? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         // Resolve the coalesced values up front so the type-checker does not
@@ -369,7 +377,14 @@ public final class ChatChannel: @unchecked Sendable {
         let newIsBlocked = isBlocked ?? self.isBlocked
         let newMembers = members ?? lastActiveMembers
         let newMembership = membership ?? self.membership
-        let newCurrentlyTypingUsers = currentlyTypingUsers ?? self.currentlyTypingUsers
+        let newTypingUsers: Set<TypingUser>
+        if let typingUsers {
+            newTypingUsers = typingUsers
+        } else if let currentlyTypingUsers {
+            newTypingUsers = currentlyTypingUsers.asTypingUsers
+        } else {
+            newTypingUsers = self.typingUsers
+        }
         let newWatchers = watchers ?? lastActiveWatchers
         let newTeam = team ?? self.team
         let newWatcherCount = watcherCount ?? self.watcherCount
@@ -398,7 +413,7 @@ public final class ChatChannel: @unchecked Sendable {
             isBlocked: newIsBlocked,
             lastActiveMembers: newMembers,
             membership: newMembership,
-            currentlyTypingUsers: newCurrentlyTypingUsers,
+            typingUsers: newTypingUsers,
             lastActiveWatchers: newWatchers,
             team: newTeam,
             isAutoTranslationEnabled: isAutoTranslationEnabled,
@@ -506,6 +521,7 @@ extension ChatChannel: Hashable {
         guard lhs.isHidden == rhs.isHidden else { return false }
         guard lhs.memberCount == rhs.memberCount else { return false }
         guard lhs.membership == rhs.membership else { return false }
+        guard lhs.typingUsers == rhs.typingUsers else { return false }
         guard lhs.team == rhs.team else { return false }
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
         guard lhs.truncatedBy == rhs.truncatedBy else { return false }
@@ -539,96 +555,6 @@ public struct ChannelUnreadCount: Decodable, Equatable, Sendable {
         self.messages = messages
         self.mentions = mentions
     }
-}
-
-/// An action that can be performed in a channel.
-public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, Hashable, Sendable {
-    public var rawValue: String
-
-    public init?(rawValue: String) {
-        self.rawValue = rawValue
-    }
-
-    public init(stringLiteral value: String) {
-        rawValue = value
-    }
-
-    /// Ability to ban channel members.
-    public static let banChannelMembers: Self = "ban-channel-members"
-    /// Ability to receive connect events.
-    public static let connectEvents: Self = "connect-events"
-    /// Ability to delete any message from the channel.
-    public static let deleteAnyMessage: Self = "delete-any-message"
-    /// Ability to delete the channel.
-    public static let deleteChannel: Self = "delete-channel"
-    /// Ability to delete own messages from the channel.
-    public static let deleteOwnMessage: Self = "delete-own-message"
-    /// Ability to flag a message.
-    public static let flagMessage: Self = "flag-message"
-    /// Ability to freeze or unfreeze the channel.
-    public static let freezeChannel: Self = "freeze-channel"
-    /// Ability to leave the channel (remove own membership).
-    public static let leaveChannel: Self = "leave-channel"
-    /// Ability to join channel (add own membership).
-    public static let joinChannel: Self = "join-channel"
-    /// Ability to mute the channel.
-    public static let muteChannel: Self = "mute-channel"
-    /// Ability to pin a message.
-    public static let pinMessage: Self = "pin-message"
-    /// Ability to quote a message.
-    public static let quoteMessage: Self = "quote-message"
-    /// Ability to receive read events.
-    public static let readEvents: Self = "read-events"
-    /// Ability to use message search.
-    public static let searchMessages: Self = "search-messages"
-    /// Ability to send custom events.
-    public static let sendCustomEvents: Self = "send-custom-events"
-    /// Ability to attach links to messages.
-    public static let sendLinks: Self = "send-links"
-    /// Ability to send a message.
-    public static let sendMessage: Self = "send-message"
-    /// Ability to send reactions.
-    public static let sendReaction: Self = "send-reaction"
-    /// Ability to thread reply to a message.
-    public static let sendReply: Self = "send-reply"
-    /// Ability to enable or disable slow mode.
-    public static let setChannelCooldown: Self = "set-channel-cooldown"
-    /// Ability to send and receive typing events.
-    public static let sendTypingEvents: Self = "send-typing-events"
-    /// Ability to update any message in the channel.
-    public static let updateAnyMessage: Self = "update-any-message"
-    /// Ability to update channel data.
-    public static let updateChannel: Self = "update-channel"
-    /// Ability to update channel members.
-    public static let updateChannelMembers: Self = "update-channel-members"
-    /// Ability to update own messages in the channel.
-    public static let updateOwnMessage: Self = "update-own-message"
-    /// Ability to upload message attachments.
-    public static let uploadFile: Self = "upload-file"
-    /// Ability to send and receive typing events.
-    public static let typingEvents: Self = "typing-events"
-    /// Indicates that channel slow mode is active.
-    public static let slowMode: Self = "slow-mode"
-    /// Ability to skip the slow mode when it's active.
-    public static let skipSlowMode: Self = "skip-slow-mode"
-    /// Ability to join a call.
-    public static let joinCall: Self = "join-call"
-    /// Ability to create a call.
-    public static let createCall: Self = "create-call"
-    /// Ability to send a poll.
-    public static let sendPoll: Self = "send-poll"
-    /// Ability to cast a poll vote.
-    public static let castPollVote: Self = "cast-poll-vote"
-    /// Ability to share location.
-    public static let shareLocation: Self = "share-location"
-    /// Ability to mention the whole channel (`@channel`).
-    public static let notifyChannel: Self = "notify-channel"
-    /// Ability to mention a user group (`@group`).
-    public static let notifyGroup: Self = "notify-group"
-    /// Ability to mention the online members of the channel (`@here`).
-    public static let notifyHere: Self = "notify-here"
-    /// Ability to mention members that have a given role (`@role`).
-    public static let notifyRole: Self = "notify-role"
 }
 
 public extension ChatChannel {
@@ -763,11 +689,13 @@ public extension ChatChannel {
     }
 
     /// Can the current user join a call in this channel.
+    @available(*, deprecated, message: "Calling capabilities are no longer part of channel capabilities.")
     var canJoinCall: Bool {
         ownCapabilities.contains(.joinCall)
     }
 
     /// Can the current user create a call in this channel.
+    @available(*, deprecated, message: "Calling capabilities are no longer part of channel capabilities.")
     var canCreateCall: Bool {
         ownCapabilities.contains(.createCall)
     }

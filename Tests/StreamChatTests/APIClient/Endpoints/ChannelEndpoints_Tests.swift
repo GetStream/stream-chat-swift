@@ -165,70 +165,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(expectedEndpoint.method, endpoint.method)
     }
 
-    func test_truncateChannel_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let skipPush = false
-        let hardDelete = true
-        let systemMessage = "System Message"
-        let messageBody = MessageRequestBody(id: .unique, user: .dummy(userId: .unique), text: systemMessage, extraData: [:])
-        let payload = ChannelTruncateRequestPayload(skipPush: skipPush, hardDelete: hardDelete, message: messageBody)
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .truncateChannel(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: payload
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .truncateChannel(
-            cid: cid,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            message: messageBody
-        )
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/truncate", endpoint.path.value)
-    }
-
-    func test_sendMessage_buildsCorrectly() {
-        let cid = ChannelId.unique
-
-        let messageBody = MessageRequestBody(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            command: .unique,
-            args: .unique,
-            parentId: .unique,
-            showReplyInChannel: true,
-            extraData: [:]
-        )
-
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: .sendMessage(cid),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: [
-                "message": AnyEncodable(messageBody),
-                "skip_push": AnyEncodable(true),
-                "skip_enrich_url": AnyEncodable(false)
-            ]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: messageBody, skipPush: true, skipEnrichUrl: false)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/message", endpoint.path.value)
-    }
-
     func test_addMembers_buildsCorrectly() {
         let cid = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
@@ -358,118 +294,24 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/" + cid.apiPath, endpoint.path.value)
     }
-
-    func test_markRead_buildsCorrectly() {
-        let cid = ChannelId.unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .markChannelRead(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-
-        let endpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/read", endpoint.path.value)
-    }
-
-    func test_markUnreadWithMessageId_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let messageId = MessageId.unique
-        let userId = UserId.unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .markChannelUnread(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: MarkUnreadPayload(
-                criteria: .messageId(messageId),
-                userId: userId
-            )
-        )
-
-        let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
-    }
     
-    func test_markUnreadWithTimestamp_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let messageTimestamp = Date.unique
-        let userId = UserId.unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .markChannelUnread(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: MarkUnreadPayload(
-                criteria: .messageTimestamp(messageTimestamp),
-                userId: userId
-            )
-        )
-
-        let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageTimestamp(messageTimestamp), userId: userId))
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
-    }
-
-    func test_markAllRead_buildsCorrectly() {
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .markAllChannelsRead,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-
-        let endpoint = Endpoint<EmptyResponse>.markAllRead()
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/read", endpoint.path.value)
-    }
-
-    func test_sendEvent_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let eventType = EventType.userStartTyping
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .channelEvent(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["event": ["type": eventType]]
-        )
-
-        let endpoint = Endpoint<EmptyResponse>.sendEvent(cid: cid, eventType: eventType)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
-    }
-
     func test_startTypingEvent_withParentMessageId_buildsCorrectly() {
         let cid = ChannelId.unique
         let messageId = MessageId.unique
         let eventType = EventType.userStartTyping
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .channelEvent(cid.apiPath),
+            path: .sendEvent(type: cid.type.rawValue, id: cid.id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["event": ["type": eventType.rawValue, "parent_id": messageId]]
+            body: SendEventRequest(event: EventRequest(parentId: messageId, type: eventType.rawValue))
         )
 
         let endpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: cid, parentMessageId: messageId)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
     }
 
     func test_startTypingEvent_withoutParentMessageId_buildsCorrectly() {
@@ -477,17 +319,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let eventType = EventType.userStartTyping
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .channelEvent(cid.apiPath),
+            path: .sendEvent(type: cid.type.rawValue, id: cid.id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["event": ["type": eventType]]
+            body: SendEventRequest(event: EventRequest(type: eventType.rawValue))
         )
 
         let endpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: cid, parentMessageId: nil)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
     }
 
     func test_stopTypingEvent_withParentMessageId_buildsCorrectly() {
@@ -496,17 +338,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let eventType = EventType.userStopTyping
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .channelEvent(cid.apiPath),
+            path: .sendEvent(type: cid.type.rawValue, id: cid.id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["event": ["type": eventType.rawValue, "parent_id": messageId]]
+            body: SendEventRequest(event: EventRequest(parentId: messageId, type: eventType.rawValue))
         )
 
         let endpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: cid, parentMessageId: messageId)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
     }
 
     func test_stopTypingEvent_withoutParentMessageId_buildsCorrectly() {
@@ -514,17 +356,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let eventType = EventType.userStopTyping
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .channelEvent(cid.apiPath),
+            path: .sendEvent(type: cid.type.rawValue, id: cid.id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["event": ["type": eventType]]
+            body: SendEventRequest(event: EventRequest(type: eventType.rawValue))
         )
 
         let endpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: cid, parentMessageId: nil)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
+        XCTAssertEqual("/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/event", endpoint.path.value)
     }
 
     func test_enableSlowMode_buildsCorrectly() {
@@ -597,44 +439,5 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/" + cid.apiPath, endpoint.path.value)
-    }
-
-    func test_sendCustomEvent_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let ideaPayload = IdeaEventPayload(idea: .unique)
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .channelEvent(cid.apiPath),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["event": CustomEventRequestBody(payload: ideaPayload)]
-        )
-
-        let endpoint: Endpoint<EmptyResponse> = .sendEvent(ideaPayload, cid: cid)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath + "/event", endpoint.path.value)
-    }
-
-    func test_loadPinnedMessages_buildsCorrectly() {
-        let cid = ChannelId.unique
-        let query = PinnedMessagesQuery(
-            pageSize: .unique,
-            pagination: .aroundTimestamp(.unique)
-        )
-
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>(
-            path: .pinnedMessages(cid.apiPath),
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["payload": query]
-        )
-
-        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
-
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/" + cid.apiPath + "/pinned_messages", endpoint.path.value)
     }
 }

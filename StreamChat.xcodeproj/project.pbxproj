@@ -739,24 +739,19 @@
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ChannelEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/DeviceEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/DraftEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Endpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/EndpointPath_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/GuestEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/MemberEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/MessageEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ModerationEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelDeliveredPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelEditDetailPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelListPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelMemberListPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/ChannelMemberUnbanRequestPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelReadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CurrentUserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CustomDataHashMap_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/DraftPayloads_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/FlagMessagePayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/FlagUserPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/GuestUserTokenPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/IdentifiableModel_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/IdentifiablePayload_Tests.swift,
@@ -777,20 +772,11 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/UserListPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/UserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/PollsEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/ReactionEndpoint_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/ReminderEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/AttachmentActionRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/CallRequestBody_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/ChannelMemberBanRequestPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/ChannelTruncateRequestPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/CustomEventRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/GuestUserTokenRequestPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/MessageReactionRequestPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/MissingEventsRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/RoleEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/SyncEndpoint_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/ThreadEndpoint_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/UserEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/UserGroupEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/WebSocketConnectEndpoint_Tests.swift,
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
@@ -3355,7 +3341,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3379,7 +3365,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3402,7 +3388,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3432,7 +3418,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -3463,7 +3449,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -3494,7 +3480,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -3516,7 +3502,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3538,7 +3524,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3559,7 +3545,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3655,7 +3641,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/TestTools/StreamChatTestTools/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3685,7 +3671,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/TestTools/StreamChatTestTools/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3715,7 +3701,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/TestTools/StreamChatTestTools/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3737,7 +3723,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3758,7 +3744,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3778,7 +3764,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3808,7 +3794,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -3841,7 +3827,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -3867,7 +3853,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3893,7 +3879,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3927,7 +3913,7 @@
 				INFOPLIST_FILE = DemoShare/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3962,7 +3948,7 @@
 				INFOPLIST_FILE = DemoShare/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3997,7 +3983,7 @@
 				INFOPLIST_FILE = DemoShare/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4191,7 +4177,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4227,7 +4213,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4261,7 +4247,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4291,7 +4277,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
@@ -4322,7 +4308,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
@@ -4351,7 +4337,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
@@ -4385,7 +4371,7 @@
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4419,7 +4405,7 @@
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4452,7 +4438,7 @@
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4561,7 +4547,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -4586,7 +4572,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4685,7 +4671,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatCommonUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -4716,7 +4702,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatCommonUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -4747,7 +4733,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatCommonUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
@@ -4774,7 +4760,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCommonUITests;
@@ -4801,7 +4787,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCommonUITests;
@@ -4827,7 +4813,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCommonUITests;
@@ -4852,11 +4838,12 @@
 				DEVELOPMENT_TEAM = TT6EHSB5EG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Examples/EdgeCases/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4882,11 +4869,12 @@
 				DEVELOPMENT_TEAM = TT6EHSB5EG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Examples/EdgeCases/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4911,11 +4899,12 @@
 				DEVELOPMENT_TEAM = TT6EHSB5EG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Examples/EdgeCases/Info.plist;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Atlantis would use Bonjour Service to discover Proxyman app from your local network.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

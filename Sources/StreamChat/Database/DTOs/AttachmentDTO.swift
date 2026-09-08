@@ -172,7 +172,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
 
-        dto.attachmentType = payload.type
+        dto.attachmentType = payload.attachmentType
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.message = messageDTO
 
@@ -287,14 +287,30 @@ extension AttachmentDTO {
     /// It's possible to introduce custom attachment types outside the SDK.
     /// That is why `RawJSON` object is used for sending it to backend because SDK doesn't know the structure of custom attachment.
     func asRequestPayload() -> MessageAttachmentPayload? {
-        guard
-            let payload = try? JSONDecoder.default.decode(RawJSON.self, from: data)
-        else {
-            log.error("Internal error. Unable to decode attachment `data` for sending to backend.")
+        do {
+            let payload = try JSONDecoder.default.decode(RawJSON.self, from: data)
+            let reservedKeys = Set(MessageAttachmentPayload.CodingKeys.allCases.map(\.rawValue))
+            var nestedPayload: [String: RawJSON] = [:]
+            var custom: [String: RawJSON] = [:]
+            for (key, value) in payload.dictionaryValue ?? [:] {
+                if key == MessageAttachmentPayload.CodingKeys.custom.rawValue {
+                    if case let .dictionary(nested) = value {
+                        custom.merge(nested) { _, new in new }
+                    }
+                } else if reservedKeys.contains(key) {
+                    nestedPayload[key] = value
+                } else {
+                    custom[key] = value
+                }
+            }
+            nestedPayload[MessageAttachmentPayload.CodingKeys.custom.rawValue] = .dictionary(custom)
+            nestedPayload[MessageAttachmentPayload.CodingKeys.type.rawValue] = .string(attachmentType.rawValue)
+            let data = try JSONEncoder.default.encode(nestedPayload)
+            return try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: data)
+        } catch {
+            log.error("Internal error. Unable to decode attachment `data` for sending to backend with error: \(error)")
             return nil
         }
-
-        return .init(type: attachmentType, payload: payload)
     }
 }
 

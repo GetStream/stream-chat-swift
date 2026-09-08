@@ -11,20 +11,20 @@ extension UserPayload {
         ChatUser(
             id: id,
             name: name,
-            imageURL: imageURL,
-            isOnline: isOnline,
-            isBanned: isBanned,
+            imageURL: image.flatMap(URL.init(string:)),
+            isOnline: online,
+            isBanned: banned ?? false,
             isFlaggedByCurrentUser: false,
             userRole: UserRole(rawValue: role),
             teamsRole: teamsRole?.mapValues { UserRole(rawValue: $0) },
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
+            lastActiveAt: lastActive,
             teams: Set(teams ?? []),
             language: language.flatMap { $0.isEmpty ? nil : TranslationLanguage(languageCode: $0) },
             avgResponseTime: avgResponseTime,
-            extraData: extraData
+            extraData: custom
         )
     }
 }

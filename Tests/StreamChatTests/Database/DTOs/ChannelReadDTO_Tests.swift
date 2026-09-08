@@ -495,7 +495,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageId: messageId), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -511,7 +511,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageTimestamp(messageDate), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageTimestamp: messageDate), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -549,7 +549,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageId: messageId), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -588,7 +588,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageTimestamp(messageDate), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageTimestamp: messageDate), lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -632,7 +632,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: lastReadMessageId, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageId: messageId), lastReadMessageId: lastReadMessageId, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -679,7 +679,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN - Use the first message's timestamp
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageTimestamp(firstMessageDate), lastReadMessageId: lastReadMessageId, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageTimestamp: firstMessageDate), lastReadMessageId: lastReadMessageId, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -729,7 +729,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: lastReadMessageId, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageId: messageId), lastReadMessageId: lastReadMessageId, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
         }
 
         // THEN
@@ -786,7 +786,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN - Use the first message's timestamp
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: .messageTimestamp(firstMessageDate), lastReadMessageId: lastReadMessageId, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
+            session.markChannelAsUnread(for: cid, userId: userId, from: .init(messageTimestamp: firstMessageDate), lastReadMessageId: lastReadMessageId, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
         }
 
         // THEN

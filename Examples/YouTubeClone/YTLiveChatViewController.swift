@@ -169,8 +169,8 @@ final class YTLiveChatViewController: _ViewController,
             .store(in: &cancellables)
 
         livestreamChat.state.$typingUsers
-            .sink { [weak self] typingUsers in
-                self?.applyTypingUsersUpdate(typingUsers)
+            .sink { [weak self] _ in
+                self?.applyTypingUsersUpdate()
             }
             .store(in: &cancellables)
     }
@@ -193,13 +193,13 @@ final class YTLiveChatViewController: _ViewController,
         messageListVC.updateMessages(with: changes)
     }
 
-    private func applyTypingUsersUpdate(_ typingUsers: Set<ChatUser>) {
+    private func applyTypingUsersUpdate() {
         guard livestreamChat.state.channel?.canSendTypingEvents == true else { return }
 
         let currentUserId = client.currentUserId
-        let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
+        let typingUsersWithoutCurrentUser = livestreamChat.state.typingUsersWithMemberInfo
             .filter { $0.id != currentUserId }
+            .sorted { $0.id < $1.id }
 
         if typingUsersWithoutCurrentUser.isEmpty {
             messageListVC.hideTypingIndicator()
@@ -395,6 +395,8 @@ final class YTLiveChatViewController: _ViewController,
 // MARK: - Message List
 
 final class YTLiveChatMessageListViewController: ChatMessageListVC {
+    private static let premiumTypingColor = UIColor(red: 1, green: 0.84, blue: 0, alpha: 1)
+
     override func setUpLayout() {
         super.setUpLayout()
 
@@ -413,6 +415,23 @@ final class YTLiveChatMessageListViewController: ChatMessageListVC {
     }
 
     override func didSelectMessageCell(at indexPath: IndexPath) {}
+
+    override func showTypingIndicator(typingUsers: [TypingUser]) {
+        super.showTypingIndicator(typingUsers: typingUsers)
+        applyPremiumTypingAppearance(typingUsers: typingUsers)
+    }
+
+    override func hideTypingIndicator() {
+        super.hideTypingIndicator()
+        applyPremiumTypingAppearance(typingUsers: [])
+    }
+
+    private func applyPremiumTypingAppearance(typingUsers: [TypingUser]) {
+        let isPremium = typingUsers.contains { $0.memberInfo?.extraData["is_premium"]?.boolValue == true }
+        let color = isPremium ? Self.premiumTypingColor : appearance.colorPalette.chatTextTypingIndicator
+        typingIndicatorView.informationLabel.textColor = color
+        typingIndicatorView.typingAnimationView.dotLayer.backgroundColor = color.cgColor
+    }
 }
 
 // MARK: - Composer

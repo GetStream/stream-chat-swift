@@ -8,6 +8,18 @@ import Foundation
 typealias CurrentUserPayload = OwnUserResponse
 
 extension OwnUserResponse {
+    var extraData: [String: RawJSON] { custom }
+
+    var imageURL: URL? { image.flatMap(URL.init(string:)) }
+
+    var isBanned: Bool { banned ?? false }
+
+    var isOnline: Bool { online }
+
+    var lastActiveAt: Date? { lastActive }
+}
+
+extension OwnUserResponse {
     convenience init(
         id: String,
         name: String?,

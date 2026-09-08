@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SharedLocationsResponse: Sendable, Codable, JSONEncodable {
+final class SharedLocationsResponse: Sendable, Decodable {
     let activeLiveLocations: [SharedLocation]
 
     init(activeLiveLocations: [SharedLocation]) {

@@ -4,18 +4,14 @@
 
 import Foundation
 
-final class AddUserGroupMembersRequest: Sendable, Codable, JSONEncodable {
+final class AddUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to add the members as group admins. Defaults to false
     let asAdmin: Bool?
     /// List of user IDs to add as members
     let memberIds: [String]
     let teamId: String?
 
-    init(
-        asAdmin: Bool? = nil,
-        memberIds: [String],
-        teamId: String? = nil
-    ) {
+    init(asAdmin: Bool? = nil, memberIds: [String], teamId: String? = nil) {
         self.asAdmin = asAdmin
         self.memberIds = memberIds
         self.teamId = teamId

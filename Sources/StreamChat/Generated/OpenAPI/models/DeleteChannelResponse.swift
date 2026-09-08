@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class DeleteChannelResponse: Sendable, Codable, JSONEncodable {
+final class DeleteChannelResponse: Sendable, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
 

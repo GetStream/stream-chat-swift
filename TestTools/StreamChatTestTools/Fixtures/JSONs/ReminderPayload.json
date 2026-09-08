@@ -55,6 +55,8 @@
     "channel_cid": "messaging:26D82FB1-5",
     "created_at": "2025-03-19T00:38:38.697482729Z",
     "message": {
+      "mentioned_channel": false,
+      "mentioned_here": false,
       "attachments": [],
       "cid": "messaging:26D82FB1-5",
       "created_at": "2025-03-04T14:33:10.628163Z",

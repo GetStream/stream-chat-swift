@@ -48,7 +48,10 @@ final class UserListUpdater_Tests: XCTestCase {
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.update(userListQuery: query)
 
-        let referenceEndpoint: Endpoint<UserListPayload> = .users(query: query)
+        let referenceEndpoint: Endpoint<UserListPayload> = .queryUsers(
+            payload: query.asQueryUsersPayload(),
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -62,7 +65,7 @@ final class UserListUpdater_Tests: XCTestCase {
         })
 
         // Simualte API response with user data
-        let dummyUser1 = dummyUser
+        let dummyUser1 = dummyFullUser
         let id = dummyUser1.id
         let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
@@ -102,7 +105,7 @@ final class UserListUpdater_Tests: XCTestCase {
         })
 
         // Simualte API response with user data
-        let dummyUser1 = dummyUser
+        let dummyUser1 = dummyFullUser
         let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
@@ -232,7 +235,7 @@ final class UserListUpdater_Tests: XCTestCase {
         })
 
         // Simulate API response with user data
-        let user = dummyUser(id: dummyUserId)
+        let user = dummyFullUser(id: dummyUserId)
         let payload = UserListPayload(users: [user])
         apiClient.test_simulateResponse(.success(payload))
 
@@ -246,7 +249,10 @@ final class UserListUpdater_Tests: XCTestCase {
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.fetch(userListQuery: query, completion: { _ in })
 
-        let referenceEndpoint: Endpoint<UserListPayload> = .users(query: query)
+        let referenceEndpoint: Endpoint<UserListPayload> = .queryUsers(
+            payload: query.asQueryUsersPayload(),
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -260,7 +266,7 @@ final class UserListUpdater_Tests: XCTestCase {
         })
 
         // Simualte API response with user data
-        let payload = UserListPayload(users: [dummyUser])
+        let payload = UserListPayload(users: [dummyFullUser])
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeEqual(

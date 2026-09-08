@@ -10,6 +10,7 @@ extension ChannelPayload {
     func asModel(
         currentUserId: UserId?,
         currentlyTypingUsers: Set<ChatUser>?,
+        typingUsers: Set<TypingUser>?,
         unreadCount: ChannelUnreadCount?
     ) -> ChatChannel {
         let channelPayload = channel
@@ -43,13 +44,13 @@ extension ChannelPayload {
             createdBy: channelPayload.createdBy?.asModel(),
             config: channelPayload.config,
             filterTags: Set(channelPayload.filterTags ?? []),
-            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0.rawValue) } ?? []),
+            ownCapabilities: Set(channelPayload.ownCapabilities ?? []),
             isFrozen: channelPayload.frozen,
             isDisabled: channelPayload.disabled,
             isBlocked: channelPayload.blocked ?? false,
             lastActiveMembers: Array(mappedMembers),
             membership: membership?.asModel(channelId: channelPayload.cid),
-            currentlyTypingUsers: currentlyTypingUsers ?? [],
+            typingUsers: typingUsers ?? currentlyTypingUsers?.asTypingUsers ?? [],
             lastActiveWatchers: Array(mappedWatchers),
             team: channelPayload.team,
             isAutoTranslationEnabled: channelPayload.autoTranslationEnabled ?? false,

@@ -21,16 +21,16 @@ public enum MessageSearchSortingKey: String, SortingKey {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        let value: String
+        try container.encode(remoteKey)
+    }
 
+    var remoteKey: String {
         switch self {
-        case .createdAt: value = "created_at"
-        case .updatedAt: value = "updated_at"
-        case .relevance: value = "relevance"
-        case .id: value = "id"
+        case .createdAt: return "created_at"
+        case .updatedAt: return "updated_at"
+        case .relevance: return "relevance"
+        case .id: return "id"
         }
-
-        try container.encode(value)
     }
 
     private var canUseAsSortDescriptor: Bool {
@@ -126,6 +126,20 @@ public struct MessageSearchQuery: Encodable, Sendable {
         }
 
         try pagination.map { try $0.encode(to: encoder) }
+    }
+
+    func asSearchPayload() -> SearchPayload {
+        let sort = self.sort.map {
+            SortParamRequest(direction: $0.direction, field: $0.key.remoteKey)
+        }
+        return SearchPayload(
+            filterConditions: channelFilter,
+            limit: pagination?.pageSize,
+            messageFilterConditions: messageFilter,
+            next: pagination?.cursor,
+            offset: pagination.flatMap { $0.cursor == nil && $0.offset != 0 ? $0.offset : nil },
+            sort: sort.isEmpty ? nil : sort
+        )
     }
 }
 

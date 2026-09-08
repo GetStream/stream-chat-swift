@@ -1146,7 +1146,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             description: description,
             enforceUniqueVote: enforceUniqueVote,
             maxVotesAllowed: maxVotesAllowed,
-            votingVisibility: votingVisibility?.rawValue,
+            votingVisibility: votingVisibility,
             options: options,
             custom: extraData
         ) { [weak self] result in
@@ -1486,7 +1486,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         readStateHandler.markUnread(
-            from: .messageId(messageId),
+            from: .init(messageId: messageId),
             in: channel
         ) { [weak self] result in
             self?.callback {
@@ -1526,7 +1526,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         readStateHandler.markUnread(
-            from: .messageTimestamp(timestamp),
+            from: .init(messageTimestamp: timestamp),
             in: channel
         ) { [weak self] result in
             self?.callback {
@@ -1915,7 +1915,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         let channelPreference = PushPreferenceInput(
             channelCid: channelId.rawValue,
-            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
+            chatLevel: level,
             removeDisable: true
         )
 
@@ -2218,13 +2218,14 @@ private extension ChatChannelController {
                     $0.channelController(self, didUpdateChannel: change)
                 }
             }
-            .onFieldChange(\.currentlyTypingUsers) { [weak self] change in
+            .onFieldChange(\.typingUsers) { [weak self] change in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return
                     }
                     $0.channelController(self, didChangeTypingUsers: change.item)
+                    $0.channelController(self, didChangeTypingUsers: change.item.chatUsers)
                 }
             }
 

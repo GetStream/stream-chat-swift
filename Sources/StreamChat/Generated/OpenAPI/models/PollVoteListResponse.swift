@@ -4,28 +4,19 @@
 
 import Foundation
 
-final class PollVoteListResponse: Sendable, Codable, JSONEncodable {
-    /// Duration of the request in milliseconds
-    let duration: String
+final class PollVoteListResponse: Sendable, Decodable {
     let next: String?
     let prev: String?
     /// Poll votes
     let votes: [PollVotePayload?]
 
-    init(
-        duration: String,
-        next: String? = nil,
-        prev: String? = nil,
-        votes: [PollVotePayload?]
-    ) {
-        self.duration = duration
+    init(next: String? = nil, prev: String? = nil, votes: [PollVotePayload?]) {
         self.next = next
         self.prev = prev
         self.votes = votes
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
         case next
         case prev
         case votes

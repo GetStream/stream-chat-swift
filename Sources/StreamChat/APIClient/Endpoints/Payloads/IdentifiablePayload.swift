@@ -93,7 +93,7 @@ extension Array where Element: IdentifiablePayload {
     }
 }
 
-extension UserListPayload: IdentifiablePayloadProxy {
+extension QueryUsersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         users.fillIds(cache: &cache)
     }
@@ -111,13 +111,19 @@ extension MessageReactionsPayload: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageSearchResultsPayload: IdentifiablePayloadProxy {
+extension SearchResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         results.fillIds(cache: &cache)
     }
 }
 
-extension MessagePayload.Boxed: IdentifiablePayloadProxy {
+extension MessageResponse.Boxed: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        message.fillIds(cache: &cache)
+    }
+}
+
+extension SearchResult: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message.fillIds(cache: &cache)
     }
@@ -159,25 +165,25 @@ extension ChannelDetailPayload: IdentifiablePayload {
     }
 }
 
-extension ThreadListPayload: IdentifiablePayloadProxy {
+extension QueryThreadsResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         threads.fillIds(cache: &cache)
     }
 }
 
-extension ThreadPayload: IdentifiablePayloadProxy {
+extension ThreadStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        parentMessage.fillIds(cache: &cache)
-        channel.fillIds(cache: &cache)
-        createdBy.fillIds(cache: &cache)
+        parentMessage?.fillIds(cache: &cache)
+        channel?.fillIds(cache: &cache)
+        createdBy?.fillIds(cache: &cache)
         latestReplies.fillIds(cache: &cache)
-        threadParticipants.fillIds(cache: &cache)
-        read.fillIds(cache: &cache)
+        threadParticipants?.fillIds(cache: &cache)
+        read?.fillIds(cache: &cache)
     }
 }
 
-extension ThreadReadPayload: IdentifiablePayloadProxy {
+extension ReadStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
@@ -187,7 +193,16 @@ extension ThreadReadPayload: IdentifiablePayloadProxy {
 extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        user?.fillIds(cache: &cache)
+    }
+}
+
+extension FullUserResponse: IdentifiablePayload {
+    var databaseId: DatabaseId? { id }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
+
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        addId(cache: &cache)
     }
 }
 
@@ -200,7 +215,7 @@ extension UserPayload: IdentifiablePayload {
     }
 }
 
-extension MessagePayload: IdentifiablePayload {
+extension MessageResponse: IdentifiablePayload {
     var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = MessageDTO.self
 
@@ -209,10 +224,27 @@ extension MessagePayload: IdentifiablePayload {
         user.fillIds(cache: &cache)
         quotedMessage?.fillIds(cache: &cache)
         mentionedUsers.fillIds(cache: &cache)
-        threadParticipants.fillIds(cache: &cache)
+        threadParticipants?.fillIds(cache: &cache)
         latestReactions.fillIds(cache: &cache)
         ownReactions.fillIds(cache: &cache)
         pinnedBy?.fillIds(cache: &cache)
+        pinnedBy?.fillIds(cache: &cache)
+    }
+}
+
+extension SearchResultMessage: IdentifiablePayload {
+    var databaseId: DatabaseId? { id }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = MessageDTO.self
+
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        addId(cache: &cache)
+        channel?.fillIds(cache: &cache)
+        user.fillIds(cache: &cache)
+        quotedMessage?.fillIds(cache: &cache)
+        mentionedUsers.fillIds(cache: &cache)
+        threadParticipants?.fillIds(cache: &cache)
+        latestReactions.fillIds(cache: &cache)
+        ownReactions.fillIds(cache: &cache)
         pinnedBy?.fillIds(cache: &cache)
     }
 }

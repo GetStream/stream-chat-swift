@@ -64,7 +64,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MuteResponse, Error>.success(.init(duration: .unique)))
+        apiClient.test_simulateResponse(Result<MuteResponse, Error>.success(.init()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -93,7 +93,7 @@ final class UserUpdater_Tests: XCTestCase {
         // Mock the API response with the created mute
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
-                .init(duration: .unique, mutes: [.dummy(userId: mutedUserId)])
+                .init(mutes: [.dummy(userId: mutedUserId)])
             )
         )
 
@@ -115,7 +115,6 @@ final class UserUpdater_Tests: XCTestCase {
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
                 .init(
-                    duration: .unique,
                     mutes: nil,
                     ownUser: .dummy(
                         userId: currentUserId,
@@ -139,7 +138,7 @@ final class UserUpdater_Tests: XCTestCase {
         // Mock the API response with the created mute
         apiClient.test_mockResponseResult(
             Result<MuteResponse, Error>.success(
-                .init(duration: .unique, mutes: [.dummy(userId: .unique)])
+                .init(mutes: [.dummy(userId: .unique)])
             )
         )
 
@@ -204,7 +203,11 @@ final class UserUpdater_Tests: XCTestCase {
         userUpdater.loadUser(userId)
 
         // Assert correct endpoint is called.
-        let expectedEndpoint: Endpoint<UserListPayload> = .users(query: .user(withID: userId))
+        let query = UserListQuery.user(withID: userId)
+        let expectedEndpoint: Endpoint<UserListPayload> = .queryUsers(
+            payload: query.asQueryUsersPayload(),
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -279,7 +282,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with one user
-        let userPayload = UserPayload.dummy(userId: .unique)
+        let userPayload = FullUserResponse.dummy(userId: .unique)
         let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
@@ -295,7 +298,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with empty users list
-        let userPayload = UserPayload.dummy(userId: .unique)
+        let userPayload = FullUserResponse.dummy(userId: .unique)
         let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
@@ -323,7 +326,7 @@ final class UserUpdater_Tests: XCTestCase {
         userUpdater.flagUser(true, with: userId, reason: reason, extraData: extraData)
 
         // Assert correct endpoint is called.
-        let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(with: userId, reason: reason, extraData: extraData)
+        let expectedEndpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(userId: userId, reason: reason, custom: extraData))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -341,6 +344,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Create current user in the database.
         try database.createCurrentUser(id: currentUserId)
+        try database.createUser(id: flaggedUserId)
 
         // Simulate `flagUser` call.
         nonisolated(unsafe) var flagCompletionCalled = false
@@ -350,10 +354,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate `flagUser` API response with success.
-        let payload = FlagUserPayload(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedUser: .dummy(userId: flaggedUserId)
-        )
+        let payload = EmptyResponse()
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(flagCompletionCalled)
@@ -397,7 +398,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let error = TestError()
-        apiClient.test_simulateResponse(Result<FlagUserPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -415,10 +416,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success.
-        let payload = FlagUserPayload(
-            currentUser: .dummy(userId: .unique, role: .user),
-            flaggedUser: .dummy(userId: .unique)
-        )
+        let payload = EmptyResponse()
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert database error is propagated.
@@ -452,7 +450,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate API response with success
-        let payload = BlockUsersResponse(blockedByUserId: .unique, blockedUserId: .unique, createdAt: .unique, duration: "")
+        let payload = BlockUsersResponse(blockedByUserId: .unique, blockedUserId: .unique, createdAt: .unique)
         apiClient.test_simulateResponse(Result<BlockUsersResponse, Error>.success(payload))
 
         // Assert completion is called
@@ -501,7 +499,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.success(.init(duration: "")))
+        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.success(.init()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)

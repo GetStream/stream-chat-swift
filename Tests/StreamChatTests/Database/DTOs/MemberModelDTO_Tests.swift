@@ -24,21 +24,13 @@ final class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
 
-        let userPayload: UserPayload = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
+        let userPayload: UserPayload = .dummy(
+            userId: userId,
             teamsRole: ["ios": "guest"],
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: true,
+            extraData: ["k": .string("v")],
             teams: ["RED", "GREEN"],
             language: "pt",
-            extraData: ["k": .string("v")]
+            isBanned: true
         )
 
         let payload: MemberPayload = .init(
@@ -96,20 +88,11 @@ final class MemberModelDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let userPayload: UserPayload = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
+        let userPayload: UserPayload = .dummy(
+            userId: userId,
             teamsRole: ["ios": "guest"],
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: true,
-            language: nil,
-            extraData: .init()
+            teams: [],
+            isBanned: true
         )
 
         let payload: MemberPayload = .init(

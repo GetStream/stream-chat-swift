@@ -216,6 +216,7 @@ class ManualEventHandler: @unchecked Sendable {
             isTyping: payload.eventType == .userStartTyping,
             cid: cid,
             user: userPayload.asModel(),
+            memberInfo: payload.memberInfo?.asModel(),
             parentId: payload.parentId,
             createdAt: createdAt
         )

@@ -357,8 +357,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)dames"),
-                    for: cid,
+                    payload: self.dummyMessagePayload(id: "\($0)dames", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -395,8 +394,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)dames"),
-                    for: cid,
+                    payload: self.dummyMessagePayload(id: "\($0)dames", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -439,8 +437,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)"),
-                    for: cid,
+                    payload: self.dummyMessagePayload(id: "\($0)", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -483,8 +480,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
             try (1...3).forEach {
                 try session.saveMessage(
-                    payload: self.dummyMessagePayload(id: "\($0)"),
-                    for: cid,
+                    payload: self.dummyMessagePayload(id: "\($0)", cid: cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -1280,11 +1276,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .truncateChannel(
-            cid: channelID,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            message: nil
+        let referenceEndpoint: Endpoint<TruncateChannelResponse> = .truncateChannel(
+            type: channelID.type.rawValue,
+            id: channelID.id,
+            truncateChannelRequest: .init(hardDelete: hardDelete, skipPush: skipPush)
         )
 
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -1292,15 +1287,6 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_truncateChannel_makesCorrectAPICallWithMessage() throws {
         // GIVEN
-        let currentUserId: UserId = .unique
-        let currentUserName = "John"
-        try channelUpdater.database.createCurrentUser(id: currentUserId, name: currentUserName)
-        let currentUser: UserRequestBody = .dummy(
-            userId: currentUserId,
-            name: currentUserName,
-            imageURL: nil
-        )
-
         let channelID = ChannelId.unique
         let skipPush = true
         let hardDelete = true
@@ -1319,28 +1305,28 @@ final class ChannelUpdater_Tests: XCTestCase {
         AssertAsync { [unowned self] in
             // Assert correct endpoint is called
             Assert.willBeEqual(self.apiClient.request_endpoint, AnyEndpoint(.truncateChannel(
-                cid: channelID,
-                skipPush: skipPush,
-                hardDelete: hardDelete,
-                message: MessageRequestBody(
-                    // inject generated message id
-                    id: (
-                        self.apiClient
-                            .request_endpoint?.body?
-                            .encodable as? ChannelTruncateRequestPayload
-                    )?
-                        .message?.id ?? "id",
-                    user: currentUser,
-                    text: systemMessage,
-                    type: nil,
-                    extraData: [:]
+                type: channelID.type.rawValue,
+                id: channelID.id,
+                truncateChannelRequest: .init(
+                    hardDelete: hardDelete,
+                    message: MessageRequest(
+                        custom: [:],
+                        // inject generated message id
+                        id: (
+                            self.apiClient
+                                .request_endpoint?.body?
+                                .encodable as? TruncateChannelRequest
+                        )?
+                            .message?.id ?? "id",
+                        text: systemMessage
+                    ),
+                    skipPush: skipPush
                 )
             )))
         }
     }
 
     func test_truncateChannel_makesCorrectAPICallWithSystemMessageExtraData() throws {
-        try channelUpdater.database.createCurrentUser(id: .unique)
         let systemMessage = SystemMessage(text: "System message", extraData: ["warning": .bool(true)])
 
         // Simulate `truncateChannel` call with a system message carrying extra data
@@ -1349,39 +1335,14 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Assert the truncate message payload carries the system message text and extra data
         AssertAsync { [unowned self] in
             Assert.willBeEqual(
-                (self.apiClient.request_endpoint?.body?.encodable as? ChannelTruncateRequestPayload)?.message?.text,
+                (self.apiClient.request_endpoint?.body?.encodable as? TruncateChannelRequest)?.message?.text,
                 systemMessage.text
             )
             Assert.willBeEqual(
-                (self.apiClient.request_endpoint?.body?.encodable as? ChannelTruncateRequestPayload)?.message?.extraData,
+                (self.apiClient.request_endpoint?.body?.encodable as? TruncateChannelRequest)?.message?.custom,
                 systemMessage.extraData
             )
         }
-    }
-
-    func test_truncateChannel_failsAPICallWithMessageWhenNoCurrentUser() throws {
-        // GIVEN
-        let expectation = expectation(description: "When no current user is provided, truncate channel with system message fails")
-        let channelID = ChannelId.unique
-        let skipPush = true
-        let hardDelete = true
-        let systemMessage = "System message"
-
-        // WHEN
-        // Simulate `truncateChannel(cid:, completion:)` call
-        channelUpdater.truncateChannel(
-            cid: channelID,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            systemMessage: SystemMessage(text: systemMessage)
-        ) { error in
-            // THEN
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-
-        // In this case, timeout `10` should be used for both local and CI runs
-        wait(for: [expectation], timeout: 10)
     }
 
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
@@ -1396,7 +1357,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<TruncateChannelResponse, Error>.success(.dummy()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -1409,10 +1370,37 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<TruncateChannelResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    func test_truncateChannel_savesResponseChannelAndMessage() throws {
+        let cid = ChannelId.unique
+        let truncatedAt = Date().addingTimeInterval(-10)
+        let systemMessage = MessagePayload.dummy(messageId: .unique, text: "Channel truncated", cid: cid)
+
+        try database.createChannel(cid: cid, withMessages: false)
+
+        let error: Error? = try waitFor { done in
+            channelUpdater.truncateChannel(cid: cid, systemMessage: SystemMessage(text: "Channel truncated"), completion: done)
+            apiClient.test_simulateResponse(
+                Result<TruncateChannelResponse, Error>.success(
+                    .dummy(
+                        channel: .dummy(cid: cid, truncatedAt: truncatedAt),
+                        message: systemMessage
+                    )
+                )
+            )
+        }
+        XCTAssertNil(error)
+
+        // The response channel sets `truncatedAt` and the system message is persisted
+        try database.readSynchronously { session in
+            XCTAssertNearlySameDate(session.channel(cid: cid)?.truncatedAt?.bridgeDate, truncatedAt)
+            XCTAssertEqual(session.message(id: systemMessage.id)?.text, "Channel truncated")
+        }
     }
 
     // MARK: - Hide channel
@@ -2078,11 +2066,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         let messageId = MessageId.unique
         let lastReadMessageId = MessageId.unique
 
-        channelUpdater.markUnread(cid: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: lastReadMessageId)
+        channelUpdater.markUnread(cid: cid, userId: userId, from: .init(messageId: messageId), lastReadMessageId: lastReadMessageId)
 
         XCTAssertEqual(channelRepository.markUnreadCid, cid)
         XCTAssertEqual(channelRepository.markUnreadUserId, userId)
-        XCTAssertEqual(channelRepository.markUnreadCriteria, .messageId(messageId))
+        XCTAssertEqual(channelRepository.markUnreadRequest, .init(messageId: messageId))
         XCTAssertEqual(channelRepository.markUnreadLastReadMessageId, lastReadMessageId)
     }
 
@@ -2091,7 +2079,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markUnreadResult = .success(.mock(cid: .unique))
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .messageId(.unique), lastReadMessageId: .unique) { result in
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .init(messageId: .unique), lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -2106,7 +2094,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markUnreadResult = .failure(mockedError)
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .messageId(.unique), lastReadMessageId: .unique) { result in
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .init(messageId: .unique), lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -2488,7 +2476,24 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.loadPinnedMessages(in: cid, query: query, completion: { _ in })
 
         // Create expected endpoint
-        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
+        let endpoint: Endpoint<PinnedMessagesPayload> = .getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: query.pageSize,
+            offset: nil,
+            idGte: query.pagination?.messageIdAfterOrEqual,
+            idGt: query.pagination?.messageIdAfter,
+            idLte: query.pagination?.messageIdBeforeOrEqual,
+            idLt: query.pagination?.messageIdBefore,
+            pinnedAtAfterOrEqual: query.pagination?.timestampAfterOrEqual,
+            pinnedAtAfter: query.pagination?.timestampAfter,
+            pinnedAtBeforeOrEqual: query.pagination?.timestampBeforeOrEqual,
+            pinnedAtBefore: query.pagination?.timestampBefore,
+            idAround: query.pagination?.aroundMessageId,
+            pinnedAtAround: query.pagination?.aroundTimestamp,
+            sort: nil,
+            memberCustomInclude: nil
+        )
 
         // Assert correct endpoint is called
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
@@ -2513,9 +2518,9 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let payload = PinnedMessagesPayload(messages: [
-            .dummy(messageId: .unique, authorUserId: .unique),
-            .dummy(messageId: .unique, authorUserId: .unique),
-            .dummy(messageId: .unique, authorUserId: .unique)
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
+            .dummy(messageId: .unique, authorUserId: .unique, cid: cid)
         ])
 
         apiClient.test_simulateResponse(Result<PinnedMessagesPayload, Error>.success(payload))
@@ -2598,7 +2603,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -2646,7 +2651,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -2670,7 +2675,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 
@@ -2707,7 +2712,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
-            chatLevel: .mentions,
+            chatLevel: .directMentions,
             removeDisable: true
         )
 

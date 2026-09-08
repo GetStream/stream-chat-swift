@@ -4,15 +4,12 @@
 
 import Foundation
 
-final class RemoveUserGroupMembersRequest: Sendable, Codable, JSONEncodable {
+final class RemoveUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// List of user IDs to remove
     let memberIds: [String]
     let teamId: String?
 
-    init(
-        memberIds: [String],
-        teamId: String? = nil
-    ) {
+    init(memberIds: [String], teamId: String? = nil) {
         self.memberIds = memberIds
         self.teamId = teamId
     }

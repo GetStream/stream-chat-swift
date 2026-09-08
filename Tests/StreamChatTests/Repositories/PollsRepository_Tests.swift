@@ -51,7 +51,7 @@ final class PollsRepository_Tests: XCTestCase {
         }
         
         let payload = XCTestCase().dummyPollPayload()
-        let response = PollPayloadResponse(duration: "", poll: payload)
+        let response = PollPayloadResponse(poll: payload)
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -103,7 +103,7 @@ final class PollsRepository_Tests: XCTestCase {
             completionCalled.fulfill()
         }
         
-        let response = PollPayloadResponse(duration: "", poll: payload)
+        let response = PollPayloadResponse(poll: payload)
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -148,7 +148,7 @@ final class PollsRepository_Tests: XCTestCase {
             completionCalled.fulfill()
         }
         
-        let response = PollOptionResponse(duration: "", pollOption: payload)
+        let response = PollOptionResponse(pollOption: payload)
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)

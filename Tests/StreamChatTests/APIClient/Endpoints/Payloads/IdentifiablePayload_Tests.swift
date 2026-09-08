@@ -416,7 +416,6 @@ final class IdentifiablePayload_Tests: XCTestCase {
                     isSilent: false,
                     isShadowed: false,
                     attachments: [],
-                    channel: channelDetail,
                     pinned: false,
                     pinnedBy: nil,
                     pinnedAt: nil,

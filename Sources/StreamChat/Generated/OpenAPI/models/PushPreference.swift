@@ -4,15 +4,12 @@
 
 import Foundation
 
-public final class PushPreference: Sendable, Codable, JSONEncodable {
+public final class PushPreference: Sendable, Decodable {
     private let _level: PushPreferenceLevel?
     public var level: PushPreferenceLevel { _level ?? .all }
     public let disabledUntil: Date?
 
-    init(
-        level: PushPreferenceLevel? = nil,
-        disabledUntil: Date? = nil
-    ) {
+    init(level: PushPreferenceLevel? = nil, disabledUntil: Date? = nil) {
         self._level = level
         self.disabledUntil = disabledUntil
     }
@@ -24,10 +21,7 @@ public final class PushPreference: Sendable, Codable, JSONEncodable {
 }
 
 extension PushPreference: Hashable {
-    public static func == (
-        lhs: PushPreference,
-        rhs: PushPreference
-    ) -> Bool {
+    public static func == (lhs: PushPreference, rhs: PushPreference) -> Bool {
         lhs.level == rhs.level &&
             lhs.disabledUntil == rhs.disabledUntil
     }

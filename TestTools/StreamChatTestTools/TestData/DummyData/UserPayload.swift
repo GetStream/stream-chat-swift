@@ -5,6 +5,24 @@
 import Foundation
 @testable import StreamChat
 
+typealias CurrentUserUpdateResponse = UpdateUsersResponse
+typealias UserListPayload = QueryUsersResponse
+
+// The generated model's properties are slightly different from the previously
+// hand-written UserPayload. These wrappers keep the existing tests compiling
+// without rewriting them.
+extension UserPayload {
+    var extraData: [String: RawJSON] { custom }
+
+    var imageURL: URL? { image.flatMap(URL.init(string:)) }
+
+    var isBanned: Bool { banned ?? false }
+
+    var isOnline: Bool { online }
+
+    var lastActiveAt: Date? { lastActive }
+}
+
 extension UserPayload {
     /// Returns a dummy user payload with the given `id` and `extraData`
     static func dummy(
@@ -16,26 +34,30 @@ extension UserPayload {
         extraData: [String: RawJSON] = [:],
         teams: [TeamId] = [.unique, .unique, .unique],
         language: String? = nil,
+        avgResponseTime: Int? = nil,
         isOnline: Bool = true,
         isBanned: Bool = false,
+        createdAt: Date = .unique,
         updatedAt: Date = .unique,
-        deactivatedAt: Date? = nil
+        deactivatedAt: Date? = nil,
+        lastActiveAt: Date? = .unique
     ) -> UserPayload {
         .init(
-            id: userId,
-            name: name,
-            imageURL: imageUrl,
-            role: role,
-            teamsRole: teamsRole,
-            createdAt: .unique,
-            updatedAt: updatedAt,
+            avgResponseTime: avgResponseTime,
+            banned: isBanned,
+            createdAt: createdAt,
+            custom: extraData,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: .unique,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            teams: teams,
+            id: userId,
+            image: imageUrl?.absoluteString,
             language: language,
-            extraData: extraData
+            lastActive: lastActiveAt,
+            name: name,
+            online: isOnline,
+            role: role.rawValue,
+            teams: teams,
+            teamsRole: teamsRole?.mapValues(\.rawValue),
+            updatedAt: updatedAt
         )
     }
 }

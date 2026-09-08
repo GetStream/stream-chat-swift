@@ -107,6 +107,16 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveUser(payload: payload, query: query, cache: cache)
     }
 
+    func saveUser(fullResponse: FullUserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveUser(fullResponse: fullResponse, query: query, cache: cache)
+    }
+
+    func saveUser(ownResponse: OwnUserResponse) throws -> UserDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveUser(ownResponse: ownResponse)
+    }
+
     func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
         underlyingSession.saveUsers(payload: payload, query: query)
     }
@@ -135,6 +145,11 @@ class DatabaseSession_Mock: DatabaseSession {
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveCurrentUser(payload: payload)
+    }
+
+    func saveCurrentUser(fullResponse: FullUserResponse) throws -> CurrentUserDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveCurrentUser(fullResponse: fullResponse)
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {
@@ -243,7 +258,6 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
         cache: PreWarmedCache?
@@ -251,7 +265,6 @@ class DatabaseSession_Mock: DatabaseSession {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(
             payload: payload,
-            for: cid,
             syncOwnReactions: syncOwnReactions,
             skipDraftUpdate: skipDraftUpdate,
             cache: cache
@@ -260,11 +273,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        try saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, skipDraftUpdate: false, cache: cache)
+        try saveMessage(payload: payload, syncOwnReactions: syncOwnReactions, skipDraftUpdate: false, cache: cache)
     }
 
     func saveMessage(
@@ -299,11 +311,11 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
-        underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
+    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO] {
+        underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
     }
 
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
         underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
@@ -388,11 +400,11 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.markChannelAsUnread(cid: cid, by: userId)
     }
     
-    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from unreadCriteria: MarkUnreadCriteria, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
+    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from request: MarkUnreadRequest, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
         underlyingSession.markChannelAsUnread(
             for: cid,
             userId: userId,
-            from: unreadCriteria,
+            from: request,
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
             unreadMessagesCount: unreadMessagesCount
@@ -454,6 +466,15 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.member(userId: userId, cid: cid)
     }
 
+    func saveMemberInfo(
+        payload: MemberInfoPayload,
+        userId: UserId,
+        cid: ChannelId,
+        cache: PreWarmedCache?
+    ) -> MemberInfoDTO {
+        underlyingSession.saveMemberInfo(payload: payload, userId: userId, cid: cid, cache: cache)
+    }
+
     func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO? {
         underlyingSession.channelMemberListQuery(queryHash: queryHash)
     }
@@ -496,7 +517,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: SearchResultMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: query, cache: cache)
     }
@@ -540,11 +561,7 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveThread(payload: payload, cache: cache)
     }
 
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
-        try underlyingSession.saveThread(detailsPayload: detailsPayload)
-    }
-
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO? {
         try underlyingSession.saveThread(partialPayload: partialPayload)
     }
 
@@ -672,13 +689,11 @@ extension DatabaseSession {
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
         try saveMessage(
             payload: payload,
-            for: cid,
             syncOwnReactions: syncOwnReactions,
             skipDraftUpdate: false,
             cache: cache

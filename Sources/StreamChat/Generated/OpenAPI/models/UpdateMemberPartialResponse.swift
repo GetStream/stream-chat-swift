@@ -4,21 +4,14 @@
 
 import Foundation
 
-final class UpdateMemberPartialResponse: Sendable, Codable, JSONEncodable {
+final class UpdateMemberPartialResponse: Sendable, Decodable {
     let channelMember: MemberPayload?
-    /// Duration of the request in milliseconds
-    let duration: String
 
-    init(
-        channelMember: MemberPayload? = nil,
-        duration: String
-    ) {
+    init(channelMember: MemberPayload? = nil) {
         self.channelMember = channelMember
-        self.duration = duration
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case channelMember = "channel_member"
-        case duration
     }
 }

@@ -4,7 +4,18 @@
 
 import Foundation
 
-final class PollPayload: Sendable, Codable, JSONEncodable {
+final class PollResponseDataVotingVisibility: RawRepresentable, Codable, Hashable, Sendable {
+    let rawValue: String
+
+    init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    static let `public` = PollResponseDataVotingVisibility(rawValue: "public")
+    static let anonymous = PollResponseDataVotingVisibility(rawValue: "anonymous")
+}
+
+final class PollPayload: Sendable, Decodable {
     let allowAnswers: Bool
     let allowUserSuggestedOptions: Bool
     let answersCount: Int
@@ -26,7 +37,8 @@ final class PollPayload: Sendable, Codable, JSONEncodable {
     let updatedAt: Date
     let voteCount: Int
     let voteCountsByOption: [String: Int]?
-    let votingVisibility: String?
+    /// Voting visibility of the poll
+    let votingVisibility: PollResponseDataVotingVisibility?
 
     init(
         allowAnswers: Bool,
@@ -49,7 +61,7 @@ final class PollPayload: Sendable, Codable, JSONEncodable {
         updatedAt: Date,
         voteCount: Int,
         voteCountsByOption: [String: Int]? = nil,
-        votingVisibility: String? = nil
+        votingVisibility: PollResponseDataVotingVisibility? = nil
     ) {
         self.allowAnswers = allowAnswers
         self.allowUserSuggestedOptions = allowUserSuggestedOptions

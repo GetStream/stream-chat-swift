@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
+final class ChannelDetailPayload: Sendable, Decodable {
     /// Whether auto translation is enabled or not
     let autoTranslationEnabled: Bool?
     /// Language (or comma-separated list of languages) to translate to when auto translation is active
@@ -48,7 +48,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
     /// Whether this channel is muted or not
     let muted: Bool?
     /// List of channel capabilities of authenticated user
-    let ownCapabilities: [ChannelOwnCapability]?
+    let ownCapabilities: [ChannelCapability]?
     /// Team the channel belongs to (multi-tenant only)
     let team: String?
     /// Date of the latest truncation of the channel
@@ -83,7 +83,7 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
         messageCount: Int? = nil,
         muteExpiresAt: Date? = nil,
         muted: Bool? = nil,
-        ownCapabilities: [ChannelOwnCapability]? = nil,
+        ownCapabilities: [ChannelCapability]? = nil,
         team: String? = nil,
         truncatedAt: Date? = nil,
         truncatedBy: UserPayload? = nil,
@@ -157,8 +157,14 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        autoTranslationEnabled = try container.decodeIfPresent(Bool.self, forKey: .autoTranslationEnabled)
-        autoTranslationLanguage = try container.decodeIfPresent(String.self, forKey: .autoTranslationLanguage)
+        autoTranslationEnabled = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .autoTranslationEnabled
+        )
+        autoTranslationLanguage = try container.decodeIfPresent(
+            String.self,
+            forKey: .autoTranslationLanguage
+        )
         blocked = try container.decodeIfPresent(Bool.self, forKey: .blocked)
         cid = try container.decode(ChannelId.self, forKey: .cid)
         config = try container.decode(ChannelConfig.self, forKey: .config)
@@ -185,7 +191,10 @@ final class ChannelDetailPayload: Sendable, Codable, JSONEncodable {
         messageCount = try container.decodeIfPresent(Int.self, forKey: .messageCount)
         muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
         muted = try container.decodeIfPresent(Bool.self, forKey: .muted)
-        ownCapabilities = try container.decodeIfPresent([ChannelOwnCapability].self, forKey: .ownCapabilities)
+        ownCapabilities = try container.decodeIfPresent(
+            [ChannelCapability].self,
+            forKey: .ownCapabilities
+        )
         team = try container.decodeIfPresent(String.self, forKey: .team)
         truncatedAt = try container.decodeIfPresent(Date.self, forKey: .truncatedAt)
         truncatedBy = try container.decodeIfPresent(UserPayload.self, forKey: .truncatedBy)

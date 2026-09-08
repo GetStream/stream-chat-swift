@@ -26,3 +26,13 @@ public struct SystemMessage: Equatable, Sendable {
         self.extraData = extraData
     }
 }
+
+extension SystemMessage {
+    func toMessageRequest() -> MessageRequest {
+        MessageRequest(
+            custom: extraData,
+            id: .newUniqueId,
+            text: text
+        )
+    }
+}

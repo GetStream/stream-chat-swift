@@ -272,6 +272,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - skipPush: If true, skips sending push notification when message is edited.
     ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: The list of user ids mentioned in the message. When `nil`, existing mentions are preserved.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedChannel: If true, the message mentions all users in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message. When `nil`, existing group mentions are preserved.
+    ///   - mentionedRoles: The list of roles mentioned in the message. When `nil`, existing role mentions are preserved.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
     ///   - completion: Called when the message is edited locally.
@@ -280,6 +285,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         skipEnrichUrl: Bool = false,
         skipPush: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
@@ -299,6 +309,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             skipEnrichUrl: skipEnrichUrl,
             skipPush: skipPush,
             attachments: transformableInfo.attachments,
+            mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             restrictedVisibility: restrictedVisibility,
             extraData: transformableInfo.extraData
         ) { result in
@@ -863,7 +878,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
     public func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: (@MainActor (Error?) -> Void)? = nil) {
-        messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
+        messageUpdater.dispatchEphemeralMessageAction(messageId: messageId, action: action) { error in
             self.callback {
                 completion?(error)
             }
@@ -911,10 +926,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - replyLimit: The number of replies fetched.
     ///   - participantLimit: The number of participants fetches.
+    ///   - memberLimit: The number of members fetched from the thread's channel, between 0 and 100.
     ///   - completion: Returns the thread information if the message is the root of a thread.
     public func loadThread(
         replyLimit: Int? = nil,
         participantLimit: Int? = nil,
+        memberLimit: Int? = nil,
         completion: @escaping @MainActor (Result<ChatThread, Error>) -> Void
     ) {
         var query = ThreadQuery(
@@ -927,6 +944,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         if let participantLimit {
             query.participantLimit = participantLimit
         }
+        query.memberLimit = memberLimit
         messageUpdater.loadThread(query: query) { result in
             self.callback {
                 completion(result)
@@ -945,15 +963,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         unsetProperties: [String]? = nil,
         completion: @escaping @MainActor (Result<ChatThread, Error>) -> Void
     ) {
+        var set = extraData ?? [:]
+        set["title"] = title.map(RawJSON.string)
         messageUpdater.updateThread(
             for: messageId,
-            request: .init(
-                set: .init(
-                    title: title,
-                    extraData: extraData
-                ),
-                unset: unsetProperties
-            )
+            request: .init(set: set.isEmpty ? nil : set, unset: unsetProperties)
         ) { result in
             self.callback {
                 completion(result)

@@ -5,15 +5,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add `PinnedMessagesPagination.offset(Int)` for paginating messages using offset [#4249](https://github.com/GetStream/stream-chat-swift/pull/4249)
+- Add `ChatMemberInfo` for slim channel-member info on messages, mentions, and typing events [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add `ChatMessage.mentionedChannelMembers` for accessing channel-member info of mentioned users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add `TypingUser` and `ChatChannel.typingUsers` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add `LivestreamChatState.typingMemberInfos` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add `LivestreamChatState.typingUsersWithMemberInfo` for `TypingUser` values derived from `typingUsers` and `typingMemberInfos` [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add mention parameters to `ChatMessageController.editMessage` and `Chat.updateMessage` [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
+- Add `memberLimit` to `ThreadQuery` for specifying the number of returned members in the thread's channel response [#4256](https://github.com/GetStream/stream-chat-swift/pull/4256)
+- Add `Chat.queryBannedUsers` and `ChatChannelController.queryBannedUsers` for listing the bans of a channel [#4237](https://github.com/GetStream/stream-chat-swift/pull/4237)
+### 🐞 Fixed
+- Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
+- Fix rare crashes in `DataController.state` [#4248](https://github.com/GetStream/stream-chat-swift/pull/4248)
+### 🔄 Changed
+- Deprecate `ChatChannelControllerDelegate.channelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Deprecate `LivestreamChannelControllerDelegate.livestreamChannelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
+- Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
+### 🔄 Changed
+- Deprecate `ChatMessageListVC.showTypingIndicator(typingUsers:)` taking `[ChatUser]` in favour of the `[TypingUser]` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+
+# [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)
+_August 27, 2026_
+
+## StreamChat
+### ✅ Added
 - Add `clearResults()` to user, member, role, and user group search APIs [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Add `UserGroupSearchController` for debounced user group search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Add `MemberSearch` for debounced channel member search [#4213](https://github.com/GetStream/stream-chat-swift/pull/4213)
 - Add `ChatChannel.truncatedBy`, `ChatChannel.isAutoTranslationEnabled` and `ChatChannel.autoTranslationLanguages` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
 - Add `ChatChannelMember.memberStatus` and `ChatChannelMember.memberDeletedAt` [#4197](https://github.com/GetStream/stream-chat-swift/pull/4197)
-- Add `CurrentChatUserController.muteUsers(_:expiration:completion:)` and `ConnectedUser.muteUsers(_:expiration:)` for muting multiple users at once with an optional expiration
-- Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once
-- Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team
-- Add `Chat.queryBannedUsers` and `ChatChannelController.queryBannedUsers` for listing the bans of a channel [#4237](https://github.com/GetStream/stream-chat-swift/pull/4237)
+- Add `MessageModerationDetails.blocklistsMatched`, `MessageModerationDetails.textHarms`, `MessageModerationDetails.imageHarms`, `MessageModerationDetails.semanticFilterMatched` and `MessageModerationDetails.platformCircumvented` [#4220](https://github.com/GetStream/stream-chat-swift/pull/4220)
+- Add `CurrentChatUserController.muteUsers(_:expiration:completion:)` and `ConnectedUser.muteUsers(_:expiration:)` for muting multiple users at once with an optional expiration [#4208](https://github.com/GetStream/stream-chat-swift/pull/4208)
+- Add `CurrentChatUserController.unmuteUsers(_:completion:)` and `ConnectedUser.unmuteUsers(_:)` for unmuting multiple users at once [#4208](https://github.com/GetStream/stream-chat-swift/pull/4208)
+- Add `CurrentChatUser.totalUnreadCountByTeam` for accessing the unread message count per team [#4208](https://github.com/GetStream/stream-chat-swift/pull/4208)
 ### 🐞 Fixed
 - Fix the channel list showing "Message deleted" after hard deleting the last message [#4230](https://github.com/GetStream/stream-chat-swift/pull/4230)
 - Fix a rare crash caused by the main thread being blocked in `BackgroundDatabaseObserver.rawItems.getter` [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
@@ -30,12 +58,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Appearance.Images.iconAudio` for audio file type artwork [#4222](https://github.com/GetStream/stream-chat-swift/pull/4222)
 
 ## StreamChatUI
-### ✅ Added
-- Support selecting multiple photos and videos at once in the composer, up to the app's maximum attachment count [#4232](https://github.com/GetStream/stream-chat-swift/pull/4232)
 ### ⚡ Performance
 - Improve scrolling performance by caching background observer reads [#4218](https://github.com/GetStream/stream-chat-swift/pull/4218)
-### 🔄 Changed
-- Use the system photos picker in the composer, so that the photo library opens instantly and no longer asks for permission [#4232](https://github.com/GetStream/stream-chat-swift/pull/4232)
 ### 🐞 Fixed
 - Fix reused message cells keeping Markdown or mention styling when the next message has the same visible text [#4231](https://github.com/GetStream/stream-chat-swift/pull/4231)
 - Fix the scroll-to-bottom button not disappearing after sending a message from a mid-page jump [#4229](https://github.com/GetStream/stream-chat-swift/pull/4229)

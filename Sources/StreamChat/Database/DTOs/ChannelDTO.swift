@@ -71,6 +71,7 @@ class ChannelDTO: NSManagedObject {
     /// If the current user is a member of the channel, this is their MemberDTO
     @NSManaged var membership: MemberDTO?
     @NSManaged var currentlyTypingUsers: Set<UserDTO>
+    @NSManaged var typingMemberInfos: Set<MemberInfoDTO>
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var pendingMessages: Set<MessageDTO>
@@ -193,6 +194,7 @@ extension ChannelDTO {
     override class func prefetchedRelationshipKeyPaths() -> [String] {
         [
             KeyPath.string(\ChannelDTO.currentlyTypingUsers),
+            KeyPath.string(\ChannelDTO.typingMemberInfos),
             KeyPath.string(\ChannelDTO.pinnedMessages),
             KeyPath.string(\ChannelDTO.messages),
             KeyPath.string(\ChannelDTO.members),
@@ -212,7 +214,7 @@ extension ChannelDTO: EphemeralValuesContainer {
     
     static func resetEphemeralRelationshipValues(in context: NSManagedObjectContext) {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
-        request.predicate = NSPredicate(format: "watchers.@count > 0 OR currentlyTypingUsers.@count > 0")
+        request.predicate = NSPredicate(format: "watchers.@count > 0 OR currentlyTypingUsers.@count > 0 OR typingMemberInfos.@count > 0")
         let channels = load(by: request, context: context)
         channels.forEach { channel in
             channel.resetEphemeralValues()
@@ -220,6 +222,7 @@ extension ChannelDTO: EphemeralValuesContainer {
     }
     
     func resetEphemeralValues() {
+        clearAllTypingMemberInfo()
         currentlyTypingUsers.removeAll()
         watchers.removeAll()
         watcherCount = 0
@@ -664,10 +667,13 @@ extension ChatChannel {
             )
         }()
         let membership = try dto.membership.map { try $0.asModel() }
+        let typingUsers = Set(dto.currentlyTypingUsers.compactMap { user -> TypingUser? in
+            guard let chatUser = try? user.asModel() else { return nil }
+            return TypingUser(user: chatUser, memberInfo: dto.typingMemberInfo(for: user.id))
+        })
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let pendingMessages = dto.pendingMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
-        let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
         
         let pushPreference = try dto.pushPreference?.asModel()
@@ -686,13 +692,13 @@ extension ChatChannel {
             createdBy: dto.createdBy?.asModel(),
             config: dto.config.asModel(),
             filterTags: Set(dto.filterTags.map(\.name)),
-            ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
+            ownCapabilities: Set(dto.ownCapabilities.map(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
             isDisabled: dto.isDisabled,
             isBlocked: dto.isBlocked,
             lastActiveMembers: members,
             membership: membership,
-            currentlyTypingUsers: typingUsers,
+            typingUsers: typingUsers,
             lastActiveWatchers: watchers,
             team: dto.team,
             isAutoTranslationEnabled: dto.isAutoTranslationEnabled,

@@ -39,7 +39,16 @@ final class EventSender_Tests: XCTestCase {
         sender.sendEvent(payload, to: cid)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .sendEvent(payload, cid: cid)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .sendEvent(
+            type: cid.type.rawValue,
+            id: cid.id,
+            sendEventRequest: SendEventRequest(
+                event: EventRequest(
+                    custom: ["idea": .string(payload.idea)],
+                    type: IdeaEventPayload.eventType.rawValue
+                )
+            )
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 

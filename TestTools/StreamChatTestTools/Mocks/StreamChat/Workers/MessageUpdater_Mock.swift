@@ -31,6 +31,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var editMessage_skipPush: Bool?
     @Atomic var editMessage_restrictedVisibility: [UserId]?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
+    @Atomic var editMessage_mentionedUserIds: [UserId]?
+    @Atomic var editMessage_mentionedHere: Bool?
+    @Atomic var editMessage_mentionedChannel: Bool?
+    @Atomic var editMessage_mentionedGroupIds: [String]?
+    @Atomic var editMessage_mentionedRoles: [String]?
     @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
 
@@ -114,7 +119,6 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var resendMessage_completion: ((Error?) -> Void)?
     @Atomic var resendMessage_completion_result: Result<Void, Error>?
 
-    @Atomic var dispatchEphemeralMessageAction_cid: ChannelId?
     @Atomic var dispatchEphemeralMessageAction_messageId: MessageId?
     @Atomic var dispatchEphemeralMessageAction_action: AttachmentAction?
     @Atomic var dispatchEphemeralMessageAction_completion: ((Error?) -> Void)?
@@ -179,6 +183,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         editMessage_messageId = nil
         editMessage_text = nil
         editMessage_skipPush = nil
+        editMessage_mentionedUserIds = nil
+        editMessage_mentionedHere = nil
+        editMessage_mentionedChannel = nil
+        editMessage_mentionedGroupIds = nil
+        editMessage_mentionedRoles = nil
         editMessage_completion = nil
 
         createNewReply_cid = nil
@@ -250,7 +259,6 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         resendMessage_completion = nil
         resendMessage_completion_result = nil
         
-        dispatchEphemeralMessageAction_cid = nil
         dispatchEphemeralMessageAction_messageId = nil
         dispatchEphemeralMessageAction_action = nil
         dispatchEphemeralMessageAction_completion = nil
@@ -351,6 +359,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         skipEnrichUrl: Bool,
         skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
@@ -361,6 +374,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         editMessage_skipPush = skipPush
         editMessage_restrictedVisibility = restrictedVisibility
         editMessage_attachments = attachments
+        editMessage_mentionedUserIds = mentionedUserIds
+        editMessage_mentionedHere = mentionedHere
+        editMessage_mentionedChannel = mentionedChannel
+        editMessage_mentionedGroupIds = mentionedGroupIds
+        editMessage_mentionedRoles = mentionedRoles
         editMessage_extraData = extraData
         editMessage_completion = completion
     }
@@ -534,12 +552,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     }
 
     override func dispatchEphemeralMessageAction(
-        cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction,
         completion: ((Error?) -> Void)? = nil
     ) {
-        dispatchEphemeralMessageAction_cid = cid
         dispatchEphemeralMessageAction_messageId = messageId
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion
@@ -631,7 +647,7 @@ extension MessageUpdater.MessageSearchResults {
         .make(api: [], next: nil, models: [])
     }
     
-    static func make(api apiMessages: [MessagePayload.Boxed] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
-        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
+    static func make(api apiMessages: [SearchResult] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
+        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(next: next, results: apiMessages), models: models)
     }
 }

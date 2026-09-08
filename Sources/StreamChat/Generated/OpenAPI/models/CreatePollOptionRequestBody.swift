@@ -4,16 +4,13 @@
 
 import Foundation
 
-final class CreatePollOptionRequestBody: Sendable, Codable, JSONEncodable {
+final class CreatePollOptionRequestBody: Sendable, Encodable, JSONEncodable {
     /// Custom data for this object
     let custom: [String: RawJSON]?
     /// Option text
     let text: String
 
-    init(
-        custom: [String: RawJSON]? = nil,
-        text: String
-    ) {
+    init(custom: [String: RawJSON]? = nil, text: String) {
         self.custom = custom
         self.text = text
     }

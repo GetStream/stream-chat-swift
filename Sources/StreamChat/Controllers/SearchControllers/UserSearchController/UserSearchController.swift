@@ -214,11 +214,11 @@ private extension ChatUserSearchController {
     /// - Parameters:
     ///   - page: The page of users fetched from the API.
     ///   - completion: The completion that will be called with user models when database write is completed.
-    func save(page: UserListPayload, completion: @escaping @Sendable ([ChatUser]) -> Void) {
+    func save(page: QueryUsersResponse, completion: @escaping @Sendable ([ChatUser]) -> Void) {
         client.databaseContainer.write(converting: { session in
             page
                 .users
-                .compactMap { try? session.saveUser(payload: $0).asModel() }
+                .compactMap { try? session.saveUser(fullResponse: $0).asModel() }
         }, completion: { result in
             completion(result.value ?? [])
         })

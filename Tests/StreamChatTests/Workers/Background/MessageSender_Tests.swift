@@ -453,7 +453,7 @@ final class MessageSender_Tests: XCTestCase {
         try resumeAPIRequestAndWaitForLocalStateChange(messageId: "2", success: false)
         
         // We use mocked API client which does not do the automatic forwarding, therefore we simulate it here
-        apiClient.queueOfflineRequest?(DataEndpoint(path: .sendMessage(cid), method: .post))
+        apiClient.queueOfflineRequest?(DataEndpoint(path: .sendMessage(type: cid.type.rawValue, id: cid.id), method: .post))
         
         // Since connection error was received, all the remaining queued messages are sent directly to offline repository
         wait(for: [offlineQueuingExpectation], timeout: defaultTimeout)
@@ -493,8 +493,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
             let message = try session.saveMessage(
-                payload: .dummy(messageId: messageId),
-                for: channelId,
+                payload: .dummy(messageId: messageId, cid: channelId),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -546,9 +545,9 @@ final class MessageSender_Tests: XCTestCase {
             }
         }
         if success {
-            apiClient.test_simulateResponse(.success(MessagePayload.Boxed(message: .dummy(messageId: messageId, text: "processed", cid: cid))))
+            apiClient.test_simulateResponse(.success(SendMessageResponsePayload.dummy(message: .dummy(messageId: messageId, text: "processed", cid: cid))))
         } else {
-            apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorNetworkConnectionLost)))
+            apiClient.test_simulateResponse(Result<SendMessageResponsePayload, Error>.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorNetworkConnectionLost)))
         }
         wait(for: [localStateExpectation], timeout: defaultTimeout)
     }

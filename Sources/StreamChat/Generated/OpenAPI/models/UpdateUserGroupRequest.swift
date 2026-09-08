@@ -4,18 +4,14 @@
 
 import Foundation
 
-final class UpdateUserGroupRequest: Sendable, Codable, JSONEncodable {
+final class UpdateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// The new description for the group
     let description: String?
     /// The new name of the user group
     let name: String?
     let teamId: String?
 
-    init(
-        description: String? = nil,
-        name: String? = nil,
-        teamId: String? = nil
-    ) {
+    init(description: String? = nil, name: String? = nil, teamId: String? = nil) {
         self.description = description
         self.name = name
         self.teamId = teamId

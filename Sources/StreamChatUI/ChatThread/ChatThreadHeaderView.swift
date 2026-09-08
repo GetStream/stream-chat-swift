@@ -75,6 +75,15 @@ open class ChatThreadHeaderView: _View,
 
     open func channelController(
         _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    ) {
+        // By default the header view is not interested in typing events
+        // but this can be overridden by subclassing this component.
+    }
+
+    @available(*, deprecated, message: "Use `channelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
+    open func channelController(
+        _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         // By default the header view is not interested in typing events

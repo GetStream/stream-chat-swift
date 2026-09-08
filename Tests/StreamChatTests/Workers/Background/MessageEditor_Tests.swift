@@ -60,13 +60,13 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createMessage(id: message1Id, authorId: currentUserId, localState: .pendingSync)
         try database.createMessage(id: message2Id, authorId: currentUserId, localState: nil)
 
-        let message1Payload: MessageRequestBody = try XCTUnwrap(
+        let message1Payload: MessageRequest = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
-                .asRequestBody()
+                .asMessageRequest()
         )
-        let message2Payload: MessageRequestBody = try XCTUnwrap(
+        let message2Payload: MessageRequest = try XCTUnwrap(
             database.viewContext.message(id: message2Id)?
-                .asRequestBody()
+                .asMessageRequest()
         )
 
         // Check only the message1 was synced
@@ -75,10 +75,13 @@ final class MessageEditor_Tests: XCTestCase {
                 self.apiClient.request_allRecordedCalls.contains(
                     where: {
                         $0.endpoint == AnyEndpoint(
-                            .editMessage(
-                                payload: message1Payload,
-                                skipEnrichUrl: false,
-                                skipPush: false
+                            .updateMessage(
+                                id: message1Id,
+                                updateMessageRequest: UpdateMessageRequest(
+                                    message: message1Payload,
+                                    skipEnrichUrl: false,
+                                    skipPush: false
+                                )
                             )
                         )
                     })
@@ -87,10 +90,13 @@ final class MessageEditor_Tests: XCTestCase {
                 self.apiClient.request_allRecordedCalls.contains(
                     where: {
                         $0.endpoint == AnyEndpoint(
-                            .editMessage(
-                                payload: message2Payload,
-                                skipEnrichUrl: false,
-                                skipPush: false
+                            .updateMessage(
+                                id: message2Id,
+                                updateMessageRequest: UpdateMessageRequest(
+                                    message: message2Payload,
+                                    skipEnrichUrl: false,
+                                    skipPush: false
+                                )
                             )
                         )
                     })
@@ -125,18 +131,21 @@ final class MessageEditor_Tests: XCTestCase {
         }
 
         // Then the message editor updates the message.
-        let message1Payload: MessageRequestBody = try XCTUnwrap(
+        let message1Payload: MessageRequest = try XCTUnwrap(
             database.viewContext.message(id: messageId)?
-                .asRequestBody()
+                .asMessageRequest()
         )
         AssertAsync {
             Assert.willBeEqual(
                 self.apiClient.request_allRecordedCalls.filter {
                     $0.endpoint == AnyEndpoint(
-                        .editMessage(
-                            payload: message1Payload,
-                            skipEnrichUrl: false,
-                            skipPush: false
+                        .updateMessage(
+                            id: messageId,
+                            updateMessageRequest: UpdateMessageRequest(
+                                message: message1Payload,
+                                skipEnrichUrl: false,
+                                skipPush: false
+                            )
                         )
                     )
                 }.count,
@@ -204,8 +213,8 @@ final class MessageEditor_Tests: XCTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate successfull API response
-        let callback = apiClient.request_completion as! (Result<EmptyResponse, Error>) -> Void
-        callback(.success(.init()))
+        let callback = apiClient.request_completion as! (Result<UpdateMessageResponse, Error>) -> Void
+        callback(.success(.dummy(message: .dummy(messageId: messageId))))
 
         // Check the state is eventually changed to `nil`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, nil)
@@ -230,7 +239,7 @@ final class MessageEditor_Tests: XCTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate API response with the error
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        apiClient.test_simulateResponse(Result<UpdateMessageResponse, Error>.failure(TestError()))
 
         // Check the state is eventually changed to `syncingFailed`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncingFailed)

@@ -101,6 +101,9 @@
         },
         "parent_message_id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
         "parent_message": {
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
             "text": "Test",
             "html": "<p>Test</p>\n",

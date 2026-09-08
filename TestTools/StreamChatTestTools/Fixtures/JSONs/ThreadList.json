@@ -416,6 +416,9 @@
       },
       "parent_message_id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
       "parent_message": {
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": [],
         "id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
         "text": "Hhh",
         "html": "<p>Hhh</p>\n",
@@ -563,6 +566,9 @@
       "title": "Hhh",
       "latest_replies": [
         {
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "luke_skywalker-UnwW2Z7ZF8BSzoxFu-Dns",
           "text": "Testing.",
           "html": "<p>Testing.</p>\n",
@@ -602,6 +608,9 @@
           "pin_expires": null
         },
         {
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "03bd0b2e-6ddd-4396-9a4e-4a28d655b12d",
           "text": "@Luke Skywalker test",
           "html": "<p>@Luke Skywalker test</p>\n",
@@ -870,6 +879,9 @@
       },
       "parent_message_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
       "parent_message": {
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": [],
         "id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
         "text": "@Leia Organa hi @Leia Organa",
         "html": "<p>@Leia Organa hi @Leia Organa</p>\n",
@@ -1021,6 +1033,9 @@
       "title": "@Leia Organa hi @Leia Organa",
       "latest_replies": [
         {
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "9e0c7153-6081-4fc5-bbc8-e20625a4694f",
           "text": "B",
           "html": "<p>B</p>\n",
@@ -1051,6 +1066,9 @@
           "deleted_reply_count": 0,
           "quoted_message_id": "29f84334-aa27-4e8c-8ea3-d89303a588be",
           "quoted_message": {
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "id": "29f84334-aa27-4e8c-8ea3-d89303a588be",
             "text": "Bb",
             "html": "<p>Bb</p>\n",
@@ -1110,6 +1128,9 @@
           "pin_expires": null
         },
         {
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": [],
           "id": "47e9a195-765c-4878-ba97-2c2d832c837b",
           "text": "H",
           "html": "<p>H</p>\n",

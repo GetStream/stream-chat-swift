@@ -8,136 +8,95 @@ enum EndpointPath: Codable {
     case custom(String)
     case connect
     case sync
-    case users
     case guest
-    case search
-
-    case threads
-    case thread(messageId: MessageId)
-    case markThreadRead(cid: ChannelId)
-    case markThreadUnread(cid: ChannelId)
 
     case channels
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case truncateChannel(String)
-    case markChannelRead(String)
-    case markChannelUnread(String)
-    case markAllChannelsRead
-    case channelEvent(String)
-    case pinnedMessages(String)
-
-    case sendMessage(ChannelId)
-    case message(MessageId)
-    case editMessage(MessageId)
-    case deleteMessage(MessageId)
-    case pinMessage(MessageId)
-    case unpinMessage(MessageId)
-    case replies(MessageId)
-    case addReaction(MessageId)
-    case deleteReaction(
-        MessageId,
-        MessageReactionType
-    )
-    case messageAction(MessageId)
-    case translateMessage(MessageId)
-
-    // Drafts
-    case drafts
-    case draftMessage(ChannelId)
-
-    // Reminders
-    case reminders
-    case reminder(MessageId)
-
-    case banMember
-    case flagUser
-    case flagMessage
 
     case addUserGroupMembers(id: String)
+    case ban
     case blockUsers
-    case castPollVote(
-        messageId: String,
-        pollId: String
-    )
+    case castPollVote(messageId: String, pollId: String)
     case createDevice
+    case createDraft(type: String, id: String)
     case createPoll
     case createPollOption(pollId: String)
+    case createReminder(messageId: String)
     case createUserGroup
-    case deleteChannel(
-        type: String,
-        id: String
-    )
-    case deleteChannelFile(
-        type: String,
-        id: String
-    )
-    case deleteChannelImage(
-        type: String,
-        id: String
-    )
+    case deleteChannel(type: String, id: String)
+    case deleteChannelFile(type: String, id: String)
+    case deleteChannelImage(type: String, id: String)
     case deleteDevice
+    case deleteDraft(type: String, id: String)
     case deleteFile
     case deleteImage
+    case deleteMessage(id: String)
     case deletePoll(pollId: String)
-    case deletePollVote(
-        messageId: String,
-        pollId: String,
-        voteId: String
-    )
+    case deletePollVote(messageId: String, pollId: String, voteId: String)
+    case deleteReaction(id: String, type: String)
+    case deleteReminder(messageId: String)
     case deleteUserGroup(id: String)
+    case flag
     case getApp
     case getBlockedUsers
+    case getDraft(type: String, id: String)
+    case getMessage(id: String)
     case getOG
+    case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
+    case getReplies(parentId: String)
+    case getThread(messageId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
-    case hideChannel(
-        type: String,
-        id: String
-    )
+    case hideChannel(type: String, id: String)
     case listDevices
     case listUserGroups
+    case markChannelsRead
     case markDelivered
+    case markRead(type: String, id: String)
+    case markUnread(type: String, id: String)
     case mute
     case muteChannel
     case queryBannedUsers
+    case queryDrafts
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
+    case queryReminders
+    case queryThreads
+    case queryUsers
     case removeUserGroupMembers(id: String)
+    case runMessageAction(id: String)
+    case search
     case searchRoles
     case searchUserGroups
-    case showChannel(
-        type: String,
-        id: String
-    )
-    case stopWatchingChannel(
-        type: String,
-        id: String
-    )
+    case sendEvent(type: String, id: String)
+    case sendMessage(type: String, id: String)
+    case sendReaction(id: String)
+    case showChannel(type: String, id: String)
+    case stopWatchingChannel(type: String, id: String)
+    case translateMessage(id: String)
+    case truncateChannel(type: String, id: String)
+    case unban
     case unblockUsers
     case unmute
     case unmuteChannel
     case unreadCounts
     case updateLiveLocation
-    case updateMemberPartial(
-        type: String,
-        id: String
-    )
+    case updateMemberPartial(type: String, id: String)
+    case updateMessage(id: String)
+    case updateMessagePartial(id: String)
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
+    case updateReminder(messageId: String)
+    case updateThreadPartial(messageId: String)
     case updateUserGroup(id: String)
-    case uploadChannelFile(
-        type: String,
-        id: String
-    )
-    case uploadChannelImage(
-        type: String,
-        id: String
-    )
+    case updateUsersPartial
+    case uploadChannelFile(type: String, id: String)
+    case uploadChannelImage(type: String, id: String)
     case uploadFile
     case uploadImage
 
@@ -146,155 +105,144 @@ enum EndpointPath: Codable {
         case let .custom(path): return path
         case .connect: return "connect"
         case .sync: return "sync"
-        case .users: return "users"
         case .guest: return "guest"
-        case .search: return "search"
-
-        case .threads:
-            return "threads"
-        case let .thread(threadId):
-            return "threads/\(threadId)"
-        case let .markThreadRead(cid):
-            return "channels/\(cid.apiPath)/read"
-        case let .markThreadUnread(cid):
-            return "channels/\(cid.apiPath)/unread"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
-        case let .markChannelRead(channelId): return "channels/\(channelId)/read"
-        case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
-        case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-
-        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
-        case let .message(messageId): return "messages/\(messageId)"
-        case let .editMessage(messageId): return "messages/\(messageId)"
-        case let .deleteMessage(messageId): return "messages/\(messageId)"
-        case let .pinMessage(messageId): return "messages/\(messageId)"
-        case let .unpinMessage(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .addReaction(messageId): return "messages/\(messageId)/reaction"
-        case let .deleteReaction(
-            messageId,
-            reaction
-        ): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
-        case let .messageAction(messageId): return "messages/\(messageId)/action"
-        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
-
-        case .drafts: return "drafts/query"
-        case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
-
-        case .reminders: return "reminders/query"
-        case let .reminder(messageId): return "messages/\(messageId)/reminders"
-
-        case .banMember: return "moderation/ban"
-        case .flagUser: return "moderation/flag"
-        case .flagMessage: return "moderation/flag"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
+        case .ban:
+            return "/api/v2/moderation/ban"
         case .blockUsers:
             return "/api/v2/users/block"
-        case let .castPollVote(
-            messageId: messageId,
-            pollId: pollId
-        ):
+        case let .castPollVote(messageId: messageId, pollId: pollId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote"
         case .createDevice:
             return "/api/v2/devices"
+        case let .createDraft(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .createPoll:
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/options"
+        case let .createReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case .createUserGroup:
             return "/api/v2/usergroups"
-        case let .deleteChannel(
-            type: type,
-            id: id
-        ):
+        case let .deleteChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
-        case let .deleteChannelFile(
-            type: type,
-            id: id
-        ):
+        case let .deleteChannelFile(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/file"
-        case let .deleteChannelImage(
-            type: type,
-            id: id
-        ):
+        case let .deleteChannelImage(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/image"
         case .deleteDevice:
             return "/api/v2/devices"
+        case let .deleteDraft(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
         case .deleteFile:
             return "/api/v2/uploads/file"
         case .deleteImage:
             return "/api/v2/uploads/image"
+        case let .deleteMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case let .deletePoll(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
-        case let .deletePollVote(
-            messageId: messageId,
-            pollId: pollId,
-            voteId: voteId
-        ):
+        case let .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/polls/\(APIHelper.escapedPathItem(pollId))/vote/\(APIHelper.escapedPathItem(voteId))"
+        case let .deleteReaction(id: id, type: type):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction/\(APIHelper.escapedPathItem(type))"
+        case let .deleteReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
+        case .flag:
+            return "/api/v2/moderation/flag"
         case .getApp:
             return "/api/v2/app"
         case .getBlockedUsers:
             return "/api/v2/users/block"
+        case let .getDraft(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
+        case let .getMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case .getOG:
             return "/api/v2/og"
+        case let .getPinnedMessages(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case let .getReplies(parentId: parentId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(parentId))/replies"
+        case let .getThread(messageId: messageId):
+            return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
             return "/api/v2/users/live_locations"
-        case let .hideChannel(
-            type: type,
-            id: id
-        ):
+        case let .hideChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/hide"
         case .listDevices:
             return "/api/v2/devices"
         case .listUserGroups:
             return "/api/v2/usergroups"
+        case .markChannelsRead:
+            return "/api/v2/chat/channels/read"
         case .markDelivered:
             return "/api/v2/chat/channels/delivered"
+        case let .markRead(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/read"
+        case let .markUnread(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/unread"
         case .mute:
             return "/api/v2/moderation/mute"
         case .muteChannel:
             return "/api/v2/chat/moderation/mute/channel"
         case .queryBannedUsers:
             return "/api/v2/chat/query_banned_users"
+        case .queryDrafts:
+            return "/api/v2/chat/drafts/query"
         case .queryMembers:
             return "/api/v2/chat/members"
         case let .queryPollVotes(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))/votes"
         case let .queryReactions(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
+        case .queryReminders:
+            return "/api/v2/chat/reminders/query"
+        case .queryThreads:
+            return "/api/v2/chat/threads"
+        case .queryUsers:
+            return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members/delete"
+        case let .runMessageAction(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/action"
+        case .search:
+            return "/api/v2/chat/search"
         case .searchRoles:
             return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
-        case let .showChannel(
-            type: type,
-            id: id
-        ):
+        case let .sendEvent(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/event"
+        case let .sendMessage(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
+        case let .sendReaction(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction"
+        case let .showChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
-        case let .stopWatchingChannel(
-            type: type,
-            id: id
-        ):
+        case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
+        case let .translateMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
+        case let .truncateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/truncate"
+        case .unban:
+            return "/api/v2/moderation/unban"
         case .unblockUsers:
             return "/api/v2/users/unblock"
         case .unmute:
@@ -305,26 +253,27 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/unread"
         case .updateLiveLocation:
             return "/api/v2/users/live_locations"
-        case let .updateMemberPartial(
-            type: type,
-            id: id
-        ):
+        case let .updateMemberPartial(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/member"
+        case let .updateMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
+        case let .updateMessagePartial(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case let .updatePollPartial(pollId: pollId):
             return "/api/v2/polls/\(APIHelper.escapedPathItem(pollId))"
         case .updatePushNotificationPreferences:
             return "/api/v2/push_preferences"
+        case let .updateReminder(messageId: messageId):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .updateThreadPartial(messageId: messageId):
+            return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
-        case let .uploadChannelFile(
-            type: type,
-            id: id
-        ):
+        case .updateUsersPartial:
+            return "/api/v2/users"
+        case let .uploadChannelFile(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/file"
-        case let .uploadChannelImage(
-            type: type,
-            id: id
-        ):
+        case let .uploadChannelImage(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/image"
         case .uploadFile:
             return "/api/v2/uploads/file"
@@ -369,61 +318,25 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        path = try container.decode(
-            EndpointPath.self,
-            forKey: .path
-        )
-        method = try container.decode(
-            EndpointMethod.self,
-            forKey: .method
-        )
-        queryItems = try container.decodeIfPresent(
-            Data.self,
-            forKey: .queryItems
-        )
-        requiresConnectionId = try container.decode(
-            Bool.self,
-            forKey: .requiresConnectionId
-        )
-        requiresToken = try container.decode(
-            Bool.self,
-            forKey: .requiresToken
-        )
-        body = try container.decodeIfPresent(
-            Data.self,
-            forKey: .body
-        )
+        path = try container.decode(EndpointPath.self, forKey: .path)
+        method = try container.decode(EndpointMethod.self, forKey: .method)
+        queryItems = try container.decodeIfPresent(Data.self, forKey: .queryItems)
+        requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)
+        requiresToken = try container.decode(Bool.self, forKey: .requiresToken)
+        body = try container.decodeIfPresent(Data.self, forKey: .body)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(
-            path,
-            forKey: .path
-        )
-        try container.encode(
-            method,
-            forKey: .method
-        )
+        try container.encode(path, forKey: .path)
+        try container.encode(method, forKey: .method)
         if let queryItems = try queryItems?.encodedAsData() {
-            try container.encode(
-                queryItems,
-                forKey: .queryItems
-            )
+            try container.encode(queryItems, forKey: .queryItems)
         }
-        try container.encode(
-            requiresConnectionId,
-            forKey: .requiresConnectionId
-        )
-        try container.encode(
-            requiresToken,
-            forKey: .requiresToken
-        )
+        try container.encode(requiresConnectionId, forKey: .requiresConnectionId)
+        try container.encode(requiresToken, forKey: .requiresToken)
         if let body = try body?.encodedAsData() {
-            try container.encode(
-                body,
-                forKey: .body
-            )
+            try container.encode(body, forKey: .body)
         }
     }
 }
@@ -460,10 +373,17 @@ extension Endpoint {
         )
     }
 
-    static func blockUsers(
-        blockUsersRequest: BlockUsersRequest,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<BlockUsersResponse> {
+    static func ban(banRequest: BanRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .ban,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: banRequest
+        )
+    }
+
+    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
         return .init(
             path: .blockUsers,
             method: .post,
@@ -480,10 +400,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<PollVotePayloadResponse> {
         return .init(
-            path: .castPollVote(
-                messageId: messageId,
-                pollId: pollId
-            ),
+            path: .castPollVote(messageId: messageId, pollId: pollId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -501,6 +418,21 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createDeviceRequest
+        )
+    }
+
+    static func createDraft(
+        type: String,
+        id: String,
+        createDraftRequest: CreateDraftRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateDraftResponse> {
+        return .init(
+            path: .createDraft(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createDraftRequest
         )
     }
 
@@ -531,6 +463,20 @@ extension Endpoint {
         )
     }
 
+    static func createReminder(
+        messageId: String,
+        createReminderRequest: CreateReminderRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateReminderResponse> {
+        return .init(
+            path: .createReminder(messageId: messageId),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: createReminderRequest
+        )
+    }
+
     static func createUserGroup(
         createUserGroupRequest: CreateUserGroupRequest,
         requiresConnectionId: Bool = false
@@ -551,10 +497,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<DeleteChannelResponse> {
         return .init(
-            path: .deleteChannel(
-                type: type,
-                id: id
-            ),
+            path: .deleteChannel(type: type, id: id),
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "hard_delete": hardDelete
@@ -571,10 +514,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<EmptyResponse> {
         return .init(
-            path: .deleteChannelFile(
-                type: type,
-                id: id
-            ),
+            path: .deleteChannelFile(type: type, id: id),
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "url": url
@@ -591,10 +531,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<EmptyResponse> {
         return .init(
-            path: .deleteChannelImage(
-                type: type,
-                id: id
-            ),
+            path: .deleteChannelImage(type: type, id: id),
             method: .delete,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "url": url
@@ -604,10 +541,7 @@ extension Endpoint {
         )
     }
 
-    static func deleteDevice(
-        id: String,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<EmptyResponse> {
+    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteDevice,
             method: .delete,
@@ -619,10 +553,24 @@ extension Endpoint {
         )
     }
 
-    static func deleteFile(
-        url: String?,
+    static func deleteDraft(
+        type: String,
+        id: String,
+        parentId: String?,
         requiresConnectionId: Bool = false
     ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteDraft(type: type, id: id),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "parent_id": parentId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteFile(url: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteFile,
             method: .delete,
@@ -634,10 +582,7 @@ extension Endpoint {
         )
     }
 
-    static func deleteImage(
-        url: String?,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<EmptyResponse> {
+    static func deleteImage(url: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteImage,
             method: .delete,
@@ -649,10 +594,25 @@ extension Endpoint {
         )
     }
 
-    static func deletePoll(
-        pollId: String,
+    static func deleteMessage(
+        id: String,
+        hard: Bool?,
+        deleteForMe: Bool?,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<EmptyResponse> {
+    ) -> Endpoint<DeleteMessageResponse> {
+        return .init(
+            path: .deleteMessage(id: id),
+            method: .delete,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "hard": hard,
+                "delete_for_me": deleteForMe
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deletePoll(pollId: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deletePoll(pollId: pollId),
             method: .delete,
@@ -669,11 +629,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<PollVotePayloadResponse> {
         return .init(
-            path: .deletePollVote(
-                messageId: messageId,
-                pollId: pollId,
-                voteId: voteId
-            ),
+            path: .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -681,11 +637,27 @@ extension Endpoint {
         )
     }
 
-    static func deleteUserGroup(
-        id: String,
-        teamId: String?,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<EmptyResponse> {
+    static func deleteReaction(id: String, type: String, requiresConnectionId: Bool = false) -> Endpoint<DeleteReactionResponse> {
+        return .init(
+            path: .deleteReaction(id: id, type: type),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteReminder(messageId: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .deleteReminder(messageId: messageId),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteUserGroup(id: id),
             method: .delete,
@@ -694,6 +666,16 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func flag(flagRequest: FlagRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .flag,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: flagRequest
         )
     }
 
@@ -717,15 +699,85 @@ extension Endpoint {
         )
     }
 
-    static func getOG(
-        url: String,
+    static func getDraft(
+        type: String,
+        id: String,
+        parentId: String?,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<GetOGResponse> {
+    ) -> Endpoint<GetDraftResponse> {
+        return .init(
+            path: .getDraft(type: type, id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "parent_id": parentId
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<GetMessageResponse> {
+        return .init(
+            path: .getMessage(id: id),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getOG(url: String, requiresConnectionId: Bool = false) -> Endpoint<GetOGResponse> {
         return .init(
             path: .getOG,
             method: .get,
             queryItems: APIHelper.mapValuesToQueryDictionary([
                 "url": url
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getPinnedMessages(
+        type: String,
+        id: String,
+        limit: Int?,
+        offset: Int?,
+        idGte: String?,
+        idGt: String?,
+        idLte: String?,
+        idLt: String?,
+        pinnedAtAfterOrEqual: Date?,
+        pinnedAtAfter: Date?,
+        pinnedAtBeforeOrEqual: Date?,
+        pinnedAtBefore: Date?,
+        idAround: String?,
+        pinnedAtAround: Date?,
+        sort: [SortParamRequest]?,
+        memberCustomInclude: [String]?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<GetPinnedMessagesResponse> {
+        return .init(
+            path: .getPinnedMessages(type: type, id: id),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "offset": offset,
+                "id_gte": idGte,
+                "id_gt": idGt,
+                "id_lte": idLte,
+                "id_lt": idLt,
+                "pinned_at_after_or_equal": pinnedAtAfterOrEqual.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_after": pinnedAtAfter.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_before_or_equal": pinnedAtBeforeOrEqual.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "pinned_at_before": pinnedAtBefore.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "id_around": idAround,
+                "pinned_at_around": pinnedAtAround.flatMap { CodableHelper.dateFormatter.string(from: $0) },
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) },
+                "member_custom_include": memberCustomInclude
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -750,11 +802,62 @@ extension Endpoint {
         )
     }
 
-    static func getUserGroup(
-        id: String,
-        teamId: String?,
+    static func getReplies(
+        parentId: String,
+        limit: Int?,
+        idGte: String?,
+        idGt: String?,
+        idLte: String?,
+        idLt: String?,
+        idAround: String?,
+        sort: [SortParamRequest]?,
+        memberCustomInclude: [String]?,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<UserGroupResponse> {
+    ) -> Endpoint<GetRepliesResponse> {
+        return .init(
+            path: .getReplies(parentId: parentId),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "limit": limit,
+                "id_gte": idGte,
+                "id_gt": idGt,
+                "id_lte": idLte,
+                "id_lt": idLt,
+                "id_around": idAround,
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) },
+                "member_custom_include": memberCustomInclude
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getThread(
+        messageId: String,
+        watch: Bool?,
+        replyLimit: Int?,
+        participantLimit: Int?,
+        memberLimit: Int?,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<GetThreadResponse> {
+        return .init(
+            path: .getThread(messageId: messageId),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "watch": watch,
+                "reply_limit": replyLimit,
+                "participant_limit": participantLimit,
+                "member_limit": memberLimit
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<UserGroupResponse> {
         return .init(
             path: .getUserGroup(id: id),
             method: .get,
@@ -783,10 +886,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<EmptyResponse> {
         return .init(
-            path: .hideChannel(
-                type: type,
-                id: id
-            ),
+            path: .hideChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -825,6 +925,19 @@ extension Endpoint {
         )
     }
 
+    static func markChannelsRead(
+        markChannelsReadRequest: MarkChannelsReadRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markChannelsRead,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markChannelsReadRequest
+        )
+    }
+
     static func markDelivered(
         markDeliveredRequest: ChannelDeliveredRequestPayload,
         requiresConnectionId: Bool = false
@@ -838,10 +951,37 @@ extension Endpoint {
         )
     }
 
-    static func mute(
-        muteRequest: MuteRequest,
+    static func markRead(
+        type: String,
+        id: String,
+        markReadRequest: MarkReadRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<MuteResponse> {
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markRead(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markReadRequest
+        )
+    }
+
+    static func markUnread(
+        type: String,
+        id: String,
+        markUnreadRequest: MarkUnreadRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .markUnread(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: markUnreadRequest
+        )
+    }
+
+    static func mute(muteRequest: MuteRequest, requiresConnectionId: Bool = false) -> Endpoint<MuteResponse> {
         return .init(
             path: .mute,
             method: .post,
@@ -882,10 +1022,20 @@ extension Endpoint {
         )
     }
 
-    static func queryMembers(
-        payload: QueryMembersPayload?,
+    static func queryDrafts(
+        queryDraftsRequest: QueryDraftsRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<MembersResponse> {
+    ) -> Endpoint<QueryDraftsResponse> {
+        return .init(
+            path: .queryDrafts,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryDraftsRequest
+        )
+    }
+
+    static func queryMembers(payload: QueryMembersPayload?, requiresConnectionId: Bool = false) -> Endpoint<MembersResponse> {
         return .init(
             path: .queryMembers,
             method: .get,
@@ -928,6 +1078,47 @@ extension Endpoint {
         )
     }
 
+    static func queryReminders(
+        queryRemindersRequest: QueryRemindersRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryRemindersResponse> {
+        return .init(
+            path: .queryReminders,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryRemindersRequest
+        )
+    }
+
+    static func queryThreads(
+        queryThreadsRequest: QueryThreadsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<QueryThreadsResponse> {
+        return .init(
+            path: .queryThreads,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryThreadsRequest
+        )
+    }
+
+    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false) -> Endpoint<QueryUsersResponse> {
+        return .init(
+            path: .queryUsers,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func removeUserGroupMembers(
         id: String,
         removeUserGroupMembersRequest: RemoveUserGroupMembersRequest,
@@ -939,6 +1130,35 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: removeUserGroupMembersRequest
+        )
+    }
+
+    static func runMessageAction(
+        id: String,
+        messageActionRequest: MessageActionRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<MessageActionResponse> {
+        return .init(
+            path: .runMessageAction(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: messageActionRequest
+        )
+    }
+
+    static func search(payload: SearchPayload?, requiresConnectionId: Bool = false) -> Endpoint<SearchResponse> {
+        return .init(
+            path: .search,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 
@@ -988,16 +1208,53 @@ extension Endpoint {
         )
     }
 
-    static func showChannel(
+    static func sendEvent(
         type: String,
         id: String,
+        sendEventRequest: SendEventRequest,
         requiresConnectionId: Bool = false
     ) -> Endpoint<EmptyResponse> {
         return .init(
-            path: .showChannel(
-                type: type,
-                id: id
-            ),
+            path: .sendEvent(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendEventRequest
+        )
+    }
+
+    static func sendMessage(
+        type: String,
+        id: String,
+        sendMessageRequest: SendMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<SendMessageResponsePayload> {
+        return .init(
+            path: .sendMessage(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendMessageRequest
+        )
+    }
+
+    static func sendReaction(
+        id: String,
+        sendReactionRequest: SendReactionRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<SendReactionResponse> {
+        return .init(
+            path: .sendReaction(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: sendReactionRequest
+        )
+    }
+
+    static func showChannel(type: String, id: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .showChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -1005,18 +1262,53 @@ extension Endpoint {
         )
     }
 
-    static func stopWatchingChannel(
-        type: String,
-        id: String,
-        requiresConnectionId: Bool = true
-    ) -> Endpoint<EmptyResponse> {
+    static func stopWatchingChannel(type: String, id: String, requiresConnectionId: Bool = true) -> Endpoint<EmptyResponse> {
         return .init(
-            path: .stopWatchingChannel(
-                type: type,
-                id: id
-            ),
+            path: .stopWatchingChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func translateMessage(
+        id: String,
+        translateMessageRequest: TranslateMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<TranslateMessageResponse> {
+        return .init(
+            path: .translateMessage(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: translateMessageRequest
+        )
+    }
+
+    static func truncateChannel(
+        type: String,
+        id: String,
+        truncateChannelRequest: TruncateChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<TruncateChannelResponse> {
+        return .init(
+            path: .truncateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: truncateChannelRequest
+        )
+    }
+
+    static func unban(targetUserId: String, channelCid: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .unban,
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "target_user_id": targetUserId,
+                "channel_cid": channelCid
+            ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
         )
@@ -1035,10 +1327,7 @@ extension Endpoint {
         )
     }
 
-    static func unmute(
-        unmuteRequest: UnmuteRequest,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<UnmuteUsersResponse> {
+    static func unmute(unmuteRequest: UnmuteRequest, requiresConnectionId: Bool = false) -> Endpoint<UnmuteUsersResponse> {
         return .init(
             path: .unmute,
             method: .post,
@@ -1091,14 +1380,39 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<UpdateMemberPartialResponse> {
         return .init(
-            path: .updateMemberPartial(
-                type: type,
-                id: id
-            ),
+            path: .updateMemberPartial(type: type, id: id),
             method: .patch,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateMemberPartialRequest
+        )
+    }
+
+    static func updateMessage(
+        id: String,
+        updateMessageRequest: UpdateMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateMessageResponse> {
+        return .init(
+            path: .updateMessage(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateMessageRequest
+        )
+    }
+
+    static func updateMessagePartial(
+        id: String,
+        updateMessagePartialRequest: UpdateMessagePartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateMessagePartialResponse> {
+        return .init(
+            path: .updateMessagePartial(id: id),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateMessagePartialRequest
         )
     }
 
@@ -1129,6 +1443,34 @@ extension Endpoint {
         )
     }
 
+    static func updateReminder(
+        messageId: String,
+        updateReminderRequest: UpdateReminderRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateReminderResponse> {
+        return .init(
+            path: .updateReminder(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateReminderRequest
+        )
+    }
+
+    static func updateThreadPartial(
+        messageId: String,
+        updateThreadPartialRequest: UpdateThreadPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateThreadPartialResponse> {
+        return .init(
+            path: .updateThreadPartial(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateThreadPartialRequest
+        )
+    }
+
     static func updateUserGroup(
         id: String,
         updateUserGroupRequest: UpdateUserGroupRequest,
@@ -1143,6 +1485,19 @@ extension Endpoint {
         )
     }
 
+    static func updateUsersPartial(
+        updateUsersPartialRequest: UpdateUsersPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateUsersResponse> {
+        return .init(
+            path: .updateUsersPartial,
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateUsersPartialRequest
+        )
+    }
+
     static func uploadChannelFile(
         type: String,
         id: String,
@@ -1150,10 +1505,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<UploadChannelFileResponse> {
         return .init(
-            path: .uploadChannelFile(
-                type: type,
-                id: id
-            ),
+            path: .uploadChannelFile(type: type, id: id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -1168,10 +1520,7 @@ extension Endpoint {
         requiresConnectionId: Bool = false
     ) -> Endpoint<UploadChannelResponse> {
         return .init(
-            path: .uploadChannelImage(
-                type: type,
-                id: id
-            ),
+            path: .uploadChannelImage(type: type, id: id),
             method: .post,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -1179,10 +1528,7 @@ extension Endpoint {
         )
     }
 
-    static func uploadFile(
-        multipartFormData: MultipartFormData,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<FileUploadResponse> {
+    static func uploadFile(multipartFormData: MultipartFormData, requiresConnectionId: Bool = false) -> Endpoint<FileUploadResponse> {
         return .init(
             path: .uploadFile,
             method: .post,
@@ -1192,10 +1538,7 @@ extension Endpoint {
         )
     }
 
-    static func uploadImage(
-        multipartFormData: MultipartFormData,
-        requiresConnectionId: Bool = false
-    ) -> Endpoint<ImageUploadResponse> {
+    static func uploadImage(multipartFormData: MultipartFormData, requiresConnectionId: Bool = false) -> Endpoint<ImageUploadResponse> {
         return .init(
             path: .uploadImage,
             method: .post,

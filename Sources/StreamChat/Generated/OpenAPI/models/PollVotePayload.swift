@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class PollVotePayload: Sendable, Codable, JSONEncodable {
+final class PollVotePayload: Sendable, Decodable {
     let answerText: String?
     let createdAt: Date
     let id: String

@@ -119,8 +119,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyFullUser(id: .unique)
+        let userPayload2 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -154,8 +154,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 2nd query
-        let userPayload3 = dummyUser(id: .unique)
-        let userPayload4 = dummyUser(id: .unique)
+        let userPayload3 = dummyFullUser(id: .unique)
+        let userPayload4 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload3, userPayload4])))
 
         // Wait for 2nd query completion to be called
@@ -196,8 +196,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyFullUser(id: .unique)
+        let userPayload2 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -314,8 +314,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyFullUser(id: .unique)
+        let userPayload2 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -349,8 +349,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 2nd query
-        let userPayload3 = dummyUser(id: .unique)
-        let userPayload4 = dummyUser(id: .unique)
+        let userPayload3 = dummyFullUser(id: .unique)
+        let userPayload4 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload3, userPayload4])))
 
         // Wait for 2nd query completion to be called
@@ -390,8 +390,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyFullUser(id: .unique)
+        let userPayload2 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -510,7 +510,7 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for search call
-        let userPayload1 = dummyUser(id: .unique)
+        let userPayload1 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1])))
 
         // Wait for search completion to be called
@@ -540,8 +540,8 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.last, expectedQuery)
 
         // Simulate successful API response for `loadNextUsers`
-        let userPayload2 = dummyUser(id: .unique)
-        let userPayload3 = dummyUser(id: .unique)
+        let userPayload2 = dummyFullUser(id: .unique)
+        let userPayload3 = dummyFullUser(id: .unique)
         let nextPage = UserListPayload(users: [userPayload2, userPayload3])
         env.userListUpdater!.fetch_completion!(.success(nextPage))
 
@@ -574,7 +574,7 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for search call
-        let userPayload1 = dummyUser(id: .unique)
+        let userPayload1 = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1])))
 
         // Wait for search completion to be called
@@ -620,7 +620,7 @@ final class UserSearchController_Tests: XCTestCase {
         controller.delegate = delegate
 
         controller.search(term: "name")
-        let userPayload = dummyUser(id: .unique)
+        let userPayload = dummyFullUser(id: .unique)
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload])))
 
         AssertAsync.willBeEqual(controller.userArray.count, 1)

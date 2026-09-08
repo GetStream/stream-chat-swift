@@ -60,10 +60,7 @@ public final class Device: Sendable, Codable, JSONEncodable {
 }
 
 extension Device: Hashable {
-    public static func == (
-        lhs: Device,
-        rhs: Device
-    ) -> Bool {
+    public static func == (lhs: Device, rhs: Device) -> Bool {
         lhs.createdAt == rhs.createdAt &&
             lhs.disabled == rhs.disabled &&
             lhs.disabledReason == rhs.disabledReason &&

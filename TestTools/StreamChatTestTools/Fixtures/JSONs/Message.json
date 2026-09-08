@@ -1,5 +1,10 @@
 {
     "message" : {
+        "cid" : "messaging:channel-ex7-63",
+        "deleted_reply_count" : 0,
+        "mentioned_channel" : false,
+        "mentioned_here" : false,
+        "restricted_visibility" : [],
         "id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
         "reaction_counts" : {
             "love" : 1
@@ -193,6 +198,11 @@
             
         ],
         "quoted_message" : {
+            "cid": "messaging:channel-ex7-63",
+            "deleted_reply_count": 0,
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": [],
             "secret_note": "",
             "updated_at" : "2021-01-02T07:23:41.411638Z",
             "reply_count" : 0,
@@ -295,6 +305,7 @@
             "text_harms": ["sexual_harrassment", "self_harm"],
             "image_harms": ["nudity"],
             "blocklist_matched": "profanity_2021_01",
+            "blocklists_matched": ["profanity_2021_01"],
             "semantic_filter_matched": "bad_phrases",
             "platform_circumvented": false
         },

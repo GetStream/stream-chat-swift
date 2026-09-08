@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class BanResponse: Sendable, Codable, JSONEncodable {
+final class BanResponse: Sendable, Decodable {
     /// User response object
     let bannedBy: UserPayload?
     /// Represents channel in chat

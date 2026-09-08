@@ -50,8 +50,8 @@ final class MessageEvents_Tests: XCTestCase {
         ]
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         let userPayload = UserPayload.dummy(userId: .unique)
-        let messagePayload = MessagePayload.dummy(messageId: .unique, authorUserId: userPayload.id)
         let cid: ChannelId = .unique
+        let messagePayload = MessagePayload.dummy(messageId: .unique, authorUserId: userPayload.id, cid: cid)
         let eventPayload = EventPayload(
             eventType: .messageNew,
             cid: cid,
@@ -64,7 +64,7 @@ final class MessageEvents_Tests: XCTestCase {
 
         try session.saveUser(payload: userPayload)
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
-        _ = try session.saveMessage(payload: messagePayload, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: messagePayload, cache: nil)
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
         try session.saveEvent(payload: eventPayload)
 
@@ -132,7 +132,7 @@ final class MessageEvents_Tests: XCTestCase {
         let message = try XCTUnwrap(event?.message)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: channelId, cache: nil)
+        _ = try session.saveMessage(payload: message, cache: nil)
 
         let domainEvent = event?.toDomainEvent(session: session)
         XCTAssertEqual(domainEvent is MessageDeletedEvent, true)
@@ -159,14 +159,14 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
-        XCTAssertEqual(event?.payload.threadDetails?.value?.cid.rawValue, "messaging:general")
-        XCTAssertEqual(event?.payload.threadDetails?.value?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
-        XCTAssertEqual(event?.payload.threadDetails?.value?.replyCount, 4)
-        XCTAssertEqual(event?.payload.threadDetails?.value?.participantCount, 2)
-        XCTAssertEqual(event?.payload.threadDetails?.value?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.value?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.value?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.value?.title, "Test")
+        XCTAssertEqual(event?.payload.thread?.value?.channelCid, "messaging:general")
+        XCTAssertEqual(event?.payload.thread?.value?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
+        XCTAssertEqual(event?.payload.thread?.value?.replyCount, 4)
+        XCTAssertEqual(event?.payload.thread?.value?.participantCount, 2)
+        XCTAssertEqual(event?.payload.thread?.value?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.payload.thread?.value?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.payload.thread?.value?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
+        XCTAssertEqual(event?.payload.thread?.value?.title, "Test")
     }
 
     func test_read_withoutUnreadCount() throws {
@@ -203,7 +203,7 @@ final class MessageEvents_Tests: XCTestCase {
         let channelId = try XCTUnwrap(event?.cid)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: UserPayload.dummy(userId: event?.user.id ?? ""))
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
@@ -217,7 +217,7 @@ final class MessageEvents_Tests: XCTestCase {
         let channelId = try XCTUnwrap(event?.cid)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: UserPayload.dummy(userId: event?.user.id ?? ""))
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
@@ -241,7 +241,7 @@ final class MessageEvents_Tests: XCTestCase {
         let channelId = try XCTUnwrap(event?.cid)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: UserPayload.dummy(userId: event?.user.id ?? ""))
 
         let domainEvent = event?.toDomainEvent(session: session)
         XCTAssertEqual(domainEvent is MessageDeliveredEvent, true)

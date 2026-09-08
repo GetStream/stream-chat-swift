@@ -4,14 +4,11 @@
 
 import Foundation
 
-final class VoteDataRequestBody: Sendable, Codable, JSONEncodable {
+final class VoteDataRequestBody: Sendable, Encodable, JSONEncodable {
     let answerText: String?
     let optionId: String?
 
-    init(
-        answerText: String? = nil,
-        optionId: String? = nil
-    ) {
+    init(answerText: String? = nil, optionId: String? = nil) {
         self.answerText = answerText
         self.optionId = optionId
     }

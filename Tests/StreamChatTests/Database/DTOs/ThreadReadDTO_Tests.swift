@@ -35,16 +35,16 @@ final class ThreadReadDTO_Tests: XCTestCase {
             cache: nil
         )
 
-        XCTAssertEqual(dto.unreadMessagesCount, Int64(payload.unreadMessagesCount))
+        XCTAssertEqual(dto.unreadMessagesCount, Int64(payload.unreadMessages))
         XCTAssertEqual(dto.user.id, payload.user.id)
-        XCTAssertEqual(dto.lastReadAt, payload.lastReadAt?.bridgeDate)
+        XCTAssertEqual(dto.lastReadAt, payload.lastRead.bridgeDate)
     }
     
     func test_asModel() throws {
         let dto = ThreadReadDTO(context: database.viewContext)
         dto.lastReadAt = .unique
         dto.unreadMessagesCount = 10
-        dto.user = try database.viewContext.saveUser(payload: .dummy(
+        dto.user = try database.viewContext.saveUser(payload: UserPayload.dummy(
             userId: .unique
         ))
 

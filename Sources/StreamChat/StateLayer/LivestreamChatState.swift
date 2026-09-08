@@ -23,7 +23,7 @@ import Foundation
         messages = handler.messages
         isPaused = handler.isPaused
         skippedMessagesAmount = handler.skippedMessagesAmount
-        typingUsers = handler.channel?.currentlyTypingUsers ?? []
+        applyTypingUsersUpdate(handler.channel?.typingUsers ?? [])
         configureHandlerCallbacks()
     }
 
@@ -97,6 +97,17 @@ import Foundation
     /// The current set of users typing in the channel (excludes thread typing events).
     @Published public internal(set) var typingUsers: Set<ChatUser> = []
 
+    /// Slim channel-member info for currently typing users, keyed by user id, when present on the typing event.
+    public private(set) var typingMemberInfos: [UserId: ChatMemberInfo] = [:]
+
+    /// Users currently typing in the channel, including optional slim member info from the typing event.
+    ///
+    /// This is the livestream equivalent of ``ChatChannel/typingUsers``. Prefer it when you need
+    /// ``ChatMemberInfo`` such as custom extra data.
+    public var typingUsersWithMemberInfo: Set<TypingUser> {
+        Set(typingUsers.map { TypingUser(user: $0, memberInfo: typingMemberInfos[$0.id]) })
+    }
+
     // MARK: - Throttling and Slow Mode
 
     /// The duration until the current user can't send new messages when the channel has slow mode enabled.
@@ -124,9 +135,16 @@ import Foundation
                     self?.skippedMessagesAmount = skipped
                 },
                 typingUsersDidChange: { [weak self] typingUsers in
-                    self?.typingUsers = typingUsers
+                    self?.applyTypingUsersUpdate(typingUsers)
                 }
             )
         )
+    }
+
+    private func applyTypingUsersUpdate(_ typingUsers: Set<TypingUser>) {
+        typingMemberInfos = Dictionary(uniqueKeysWithValues: typingUsers.compactMap { typingUser in
+            typingUser.memberInfo.map { (typingUser.id, $0) }
+        })
+        self.typingUsers = typingUsers.chatUsers
     }
 }

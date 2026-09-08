@@ -4,14 +4,11 @@
 
 import Foundation
 
-final class PollOptionRequestBody: Sendable, Codable, JSONEncodable {
+final class PollOptionRequestBody: Sendable, Encodable, JSONEncodable {
     let custom: [String: RawJSON]?
     let text: String?
 
-    init(
-        custom: [String: RawJSON]? = nil,
-        text: String? = nil
-    ) {
+    init(custom: [String: RawJSON]? = nil, text: String? = nil) {
         self.custom = custom
         self.text = text
     }

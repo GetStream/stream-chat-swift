@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SortParamRequest: Sendable, Codable, JSONEncodable {
+final class SortParamRequest: Sendable, Encodable, JSONEncodable {
     /// Direction of sorting, 1 for Ascending, -1 for Descending, default is 1. One of: -1, 1
     let direction: Int?
     /// Name of field to sort by
@@ -12,11 +12,7 @@ final class SortParamRequest: Sendable, Codable, JSONEncodable {
     /// Type of field to sort by. Empty string or omitted means string type (default). One of: number, boolean
     let type: String?
 
-    init(
-        direction: Int? = nil,
-        field: String? = nil,
-        type: String? = nil
-    ) {
+    init(direction: Int? = nil, field: String? = nil, type: String? = nil) {
         self.direction = direction
         self.field = field
         self.type = type

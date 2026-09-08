@@ -566,7 +566,6 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func sendMessageAction(in messageId: MessageId, action: AttachmentAction) async throws {
         try await messageUpdater.dispatchEphemeralMessageAction(
-            cid: cid,
             messageId: messageId,
             action: action
         )
@@ -688,6 +687,11 @@ public class Chat: @unchecked Sendable {
     ///   - messageId: The id of the message to edit.
     ///   - text: Text of the message.
     ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: The list of user ids mentioned in the message. When `nil`, existing mentions are preserved.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedChannel: If true, the message mentions all users in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message. When `nil`, existing group mentions are preserved.
+    ///   - mentionedRoles: The list of roles mentioned in the message. When `nil`, existing role mentions are preserved.
     ///   - extraData: Additional extra data of the message object.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
@@ -699,6 +703,11 @@ public class Chat: @unchecked Sendable {
         _ messageId: MessageId,
         text: String,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         extraData: [String: RawJSON]? = nil,
         restrictedVisibility: [UserId] = [],
         skipEnrichURL: Bool = false,
@@ -712,6 +721,11 @@ public class Chat: @unchecked Sendable {
             skipEnrichUrl: skipEnrichURL,
             skipPush: skipPush,
             attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
@@ -1050,7 +1064,7 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateHandler.markUnread(from: .messageId(messageId), in: channel)
+        try await readStateHandler.markUnread(from: .init(messageId: messageId), in: channel)
     }
     
     /// Marks all the messages after the specified timestamp as unread.
@@ -1060,7 +1074,7 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from timestamp: Date) async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateHandler.markUnread(from: .messageTimestamp(timestamp), in: channel)
+        try await readStateHandler.markUnread(from: .init(messageTimestamp: timestamp), in: channel)
     }
     
     // MARK: - Message Replies and Pagination

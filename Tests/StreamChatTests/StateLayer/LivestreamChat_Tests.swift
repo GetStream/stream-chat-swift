@@ -76,6 +76,8 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertFalse(state.isPaused)
         XCTAssertEqual(state.skippedMessagesAmount, 0)
         XCTAssertTrue(state.typingUsers.isEmpty)
+        XCTAssertTrue(state.typingMemberInfos.isEmpty)
+        XCTAssertTrue(state.typingUsersWithMemberInfo.isEmpty)
         XCTAssertEqual(state.remainingCooldownDuration, 0)
         XCTAssertTrue(state.client === client)
 
@@ -460,8 +462,21 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(state.skippedMessagesAmount, 7)
 
         let typingUser = ChatUser.mock(id: "user-1")
-        mockHandler.simulateTypingUsersDidChange([typingUser])
+        let memberInfo = ChatMemberInfo(
+            channelRole: .member,
+            extraData: ["is_premium": .bool(true)]
+        )
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser, memberInfo: memberInfo)])
         XCTAssertEqual(state.typingUsers.map(\.id), [typingUser.id])
+        XCTAssertEqual(state.typingMemberInfos[typingUser.id], memberInfo)
+        XCTAssertEqual(
+            state.typingUsersWithMemberInfo,
+            Set([TypingUser(user: typingUser, memberInfo: memberInfo)])
+        )
+
+        mockHandler.simulateTypingUsersDidChange([TypingUser(user: typingUser)])
+        XCTAssertEqual(state.typingUsersWithMemberInfo, Set([TypingUser(user: typingUser)]))
+        XCTAssertTrue(state.typingMemberInfos.isEmpty)
     }
 
     func test_remainingCooldownDuration_returnsValueFromHandler() {
@@ -479,29 +494,29 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_deleteMessage_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            Result<MessagePayload.Boxed, Error>.success(MessagePayload.Boxed(message: .dummy(messageId: "msg-1")))
+            Result<DeleteMessageResponse, Error>.success(DeleteMessageResponse(message: .dummy(messageId: "msg-1")))
         )
 
         try await livestreamChat.deleteMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>.deleteMessage(messageId: "msg-1", hard: false)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: "msg-1", hard: false, deleteForMe: nil)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_deleteMessage_withHardTrue_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            Result<MessagePayload.Boxed, Error>.success(MessagePayload.Boxed(message: .dummy(messageId: "msg-1")))
+            Result<DeleteMessageResponse, Error>.success(DeleteMessageResponse(message: .dummy(messageId: "msg-1")))
         )
 
         try await livestreamChat.deleteMessage("msg-1", hard: true)
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>.deleteMessage(messageId: "msg-1", hard: true)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: "msg-1", hard: true, deleteForMe: nil)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_deleteMessage_propagatesAPIErrors() async {
         let testError = TestError()
-        client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(testError))
+        client.mockAPIClient.test_mockResponseResult(Result<DeleteMessageResponse, Error>.failure(testError))
 
         do {
             try await livestreamChat.deleteMessage("msg-1")
@@ -513,15 +528,13 @@ final class LivestreamChat_Tests: XCTestCase {
 
     func test_flagMessage_callsCorrectAPI() async throws {
         client.mockAPIClient.test_mockResponseResult(
-            Result<FlagMessagePayload, Error>.success(.init(currentUser: .dummy(userId: .unique), flaggedMessageId: "msg-1"))
+            Result<EmptyResponse, Error>.success(.init())
         )
 
         try await livestreamChat.flagMessage("msg-1", reason: "spam", extraData: ["k": .string("v")])
 
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            with: "msg-1",
-            reason: "spam",
-            extraData: ["k": .string("v")]
+        let expectedEndpoint = Endpoint<EmptyResponse>.flag(
+            flagRequest: .init(messageId: "msg-1", reason: "spam", custom: ["k": .string("v")])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -536,9 +549,12 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Message Reactions
 
     func test_sendReaction_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
-
         let reactionType = MessageReactionType(rawValue: "like")
+        client.mockAPIClient.test_mockResponseResult(Result<SendReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: "msg-1"),
+            reaction: .dummy(type: reactionType, messageId: "msg-1", user: .dummy(userId: .unique))
+        )))
+
         try await livestreamChat.sendReaction(
             to: "msg-1",
             with: reactionType,
@@ -549,25 +565,31 @@ final class LivestreamChat_Tests: XCTestCase {
             extraData: ["k": .string("v")]
         )
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
-            reactionType,
-            score: 2,
-            enforceUnique: true,
-            extraData: ["k": .string("v")],
-            skipPush: true,
-            emojiCode: "👍",
-            messageId: "msg-1"
+        let expectedEndpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: "msg-1",
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: true,
+                reaction: ReactionRequest(
+                    custom: ["k": .string("v"), "emoji_code": .string("👍")],
+                    score: 2,
+                    type: reactionType
+                ),
+                skipPush: true
+            )
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_deleteReaction_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
-
         let reactionType = MessageReactionType(rawValue: "like")
+        client.mockAPIClient.test_mockResponseResult(Result<DeleteReactionResponse, Error>.success(.dummy(
+            message: .dummy(messageId: "msg-1"),
+            reaction: .dummy(type: reactionType, messageId: "msg-1", user: .dummy(userId: .unique))
+        )))
+
         try await livestreamChat.deleteReaction(from: "msg-1", with: reactionType)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteReaction(reactionType, messageId: "msg-1")
+        let expectedEndpoint = Endpoint<DeleteReactionResponse>.deleteReaction(id: "msg-1", type: reactionType.rawValue)
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -597,25 +619,25 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Message Pinning
 
     func test_pinMessage_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: nil)))
 
         try await livestreamChat.pinMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: "msg-1",
-            request: .init(set: .init(pinned: true))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: "msg-1",
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_unpinMessage_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.success(.dummy(message: nil)))
 
         try await livestreamChat.unpinMessage("msg-1")
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: "msg-1",
-            request: .init(set: .init(pinned: false))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: "msg-1",
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -627,10 +649,24 @@ final class LivestreamChat_Tests: XCTestCase {
 
         _ = try await livestreamChat.loadPinnedMessages(pageSize: 15)
 
-        let expectedQuery = PinnedMessagesQuery(pageSize: 15, sorting: [], pagination: nil)
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(
-            cid: channelQuery.cid!,
-            query: expectedQuery
+        let cid = try XCTUnwrap(channelQuery.cid)
+        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: 15,
+            offset: nil,
+            idGte: nil,
+            idGt: nil,
+            idLte: nil,
+            idLt: nil,
+            pinnedAtAfterOrEqual: nil,
+            pinnedAtAfter: nil,
+            pinnedAtBeforeOrEqual: nil,
+            pinnedAtBefore: nil,
+            idAround: nil,
+            pinnedAtAround: nil,
+            sort: nil,
+            memberCustomInclude: nil
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }

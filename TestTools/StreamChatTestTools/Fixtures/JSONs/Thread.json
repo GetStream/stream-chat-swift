@@ -146,6 +146,9 @@
   },
   "parent_message_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
   "parent_message": {
+    "mentioned_channel": false,
+    "mentioned_here": false,
+    "restricted_visibility": [],
     "id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
     "text": "msg: 24",
     "html": "<p>msg: 24</p>\n",
@@ -307,6 +310,9 @@
   "title": "msg: 24",
   "latest_replies": [
     {
+      "mentioned_channel": false,
+      "mentioned_here": false,
+      "restricted_visibility": [],
       "id": "5468d7b8-639a-43df-b24f-6b18386d7202",
       "text": "Click here to win iphones",
       "html": "<p>Click here to win iphones</p>\n",
@@ -346,6 +352,9 @@
       "pin_expires": null
     },
     {
+      "mentioned_channel": false,
+      "mentioned_here": false,
+      "restricted_visibility": [],
       "id": "64add738-a860-47fd-a587-7187b6a0c289",
       "text": "Ggg",
       "html": "<p>Ggg</p>\n",

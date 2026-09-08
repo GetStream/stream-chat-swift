@@ -35,7 +35,7 @@ class RemindersRepository: @unchecked Sendable {
         query: MessageReminderListQuery,
         completion: @escaping @Sendable (Result<ReminderListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .queryReminders(query: query)) { [weak self] result in
+        apiClient.request(endpoint: .queryReminders(queryRemindersRequest: query.toRequest())) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.database.write(
@@ -71,25 +71,31 @@ class RemindersRepository: @unchecked Sendable {
         remindAt: Date?,
         completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
-        let requestBody = ReminderRequestBody(remindAt: remindAt)
-        let endpoint: Endpoint<ReminderResponsePayload> = .createReminder(
+        let endpoint: Endpoint<CreateReminderResponse> = .createReminder(
             messageId: messageId,
-            request: requestBody
+            createReminderRequest: CreateReminderRequest(remindAt: remindAt)
         )
 
         // First optimistically create the reminder locally
         database.write { session in
+            guard let currentUser = session.currentUser else {
+                throw ClientError.CurrentUserDoesNotExist()
+            }
             let now = Date()
             let reminderPayload = ReminderPayload(
-                channelCid: cid,
-                messageId: messageId,
-                message: nil,
-                remindAt: remindAt,
+                channelCid: cid.rawValue,
                 createdAt: now,
-                updatedAt: now
+                messageId: messageId,
+                remindAt: remindAt,
+                updatedAt: now,
+                userId: currentUser.user.id
             )
             try session.saveReminder(payload: reminderPayload, cache: nil)
-        } completion: { _ in
+        } completion: { error in
+            if let error {
+                completion(.failure(error))
+                return
+            }
             // Make the API call to create the reminder
             self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
@@ -121,8 +127,10 @@ class RemindersRepository: @unchecked Sendable {
         remindAt: Date?,
         completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
-        let requestBody = ReminderRequestBody(remindAt: remindAt)
-        let endpoint: Endpoint<ReminderResponsePayload> = .updateReminder(messageId: messageId, request: requestBody)
+        let endpoint: Endpoint<UpdateReminderResponse> = .updateReminder(
+            messageId: messageId,
+            updateReminderRequest: UpdateReminderRequest(remindAt: remindAt)
+        )
         
         // Save current data for potential rollback
         nonisolated(unsafe) var originalRemindAt: Date?
@@ -186,20 +194,27 @@ class RemindersRepository: @unchecked Sendable {
             
             // Get original reminder data for potential rollback
             if let reminderDTO = messageDTO.reminder {
+                guard let currentUser = session.currentUser else {
+                    throw ClientError.CurrentUserDoesNotExist()
+                }
                 // Store the original state for potential rollback
                 originalPayload = ReminderPayload(
-                    channelCid: cid,
-                    messageId: messageId,
-                    message: nil,
-                    remindAt: reminderDTO.remindAt?.bridgeDate,
+                    channelCid: cid.rawValue,
                     createdAt: reminderDTO.createdAt.bridgeDate,
-                    updatedAt: reminderDTO.updatedAt.bridgeDate
+                    messageId: messageId,
+                    remindAt: reminderDTO.remindAt?.bridgeDate,
+                    updatedAt: reminderDTO.updatedAt.bridgeDate,
+                    userId: currentUser.user.id
                 )
             }
             
             // Delete optimistically
             session.deleteReminder(messageId: messageId)
-        } completion: { _ in
+        } completion: { error in
+            if let error {
+                completion(error)
+                return
+            }
             // Make the API call to delete the reminder
             self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {

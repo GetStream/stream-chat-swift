@@ -306,41 +306,38 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         systemMessage: SystemMessage? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        guard let systemMessage = systemMessage else {
-            truncate(cid: cid, skipPush: skipPush, hardDelete: hardDelete, completion: completion)
-            return
-        }
-
-        let context = database.backgroundReadOnlyContext
-        context.perform { [weak self] in
-            guard let user = context.currentUser?.user.asRequestBody() else {
-                completion?(ClientError.Unknown("Couldn't fetch current user from local cache."))
-                return
+        apiClient.request(
+            endpoint: .truncateChannel(
+                type: cid.type.rawValue,
+                id: cid.id,
+                truncateChannelRequest: TruncateChannelRequest(
+                    hardDelete: hardDelete,
+                    message: systemMessage?.toMessageRequest(),
+                    skipPush: skipPush
+                )
+            )
+        ) { [weak self] result in
+            switch result {
+            case let .success(payload):
+                self?.database.write { session in
+                    if let channel = payload.channel {
+                        try session.saveChannel(payload: channel, query: nil, cache: nil)
+                    }
+                    if let message = payload.message {
+                        try session.saveMessage(
+                            payload: message,
+                            syncOwnReactions: true,
+                            skipDraftUpdate: false,
+                            cache: nil
+                        )
+                    }
+                } completion: { error in
+                    completion?(error)
+                }
+            case let .failure(error):
+                log.error(error)
+                completion?(error)
             }
-            let requestBody = MessageRequestBody(
-                id: .newUniqueId,
-                user: user,
-                text: systemMessage.text,
-                type: nil,
-                command: nil,
-                args: nil,
-                parentId: nil,
-                showReplyInChannel: false,
-                isSilent: false,
-                quotedMessageId: nil,
-                attachments: [],
-                mentionedUserIds: [],
-                pinned: false,
-                pinExpires: nil,
-                extraData: systemMessage.extraData
-            )
-            self?.truncate(
-                cid: cid,
-                skipPush: skipPush,
-                hardDelete: hardDelete,
-                requestBody: requestBody,
-                completion: completion
-            )
         }
     }
 
@@ -586,20 +583,20 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - cid: The id of the channel to be marked as unread
     ///   - userId: The id of the current user
-    ///   - unreadCriteria: The id or timestamp of the first message that will be marked as unread.
+    ///   - request: The id or timestamp of the first message that will be marked as unread.
     ///   - lastReadMessageId: The id of the last message that was read.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markUnread(
         cid: ChannelId,
         userId: UserId,
-        from unreadCriteria: MarkUnreadCriteria,
+        from request: MarkUnreadRequest,
         lastReadMessageId: MessageId?,
         completion: (@Sendable (Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         channelRepository.markUnread(
             for: cid,
             userId: userId,
-            from: unreadCriteria,
+            from: request,
             lastReadMessageId: lastReadMessageId,
             completion: completion
         )
@@ -800,13 +797,32 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         completion: @escaping @Sendable (Result<[ChatMessage], Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .pinnedMessages(cid: cid, query: query)
+            endpoint: .getPinnedMessages(
+                type: cid.type.rawValue,
+                id: cid.id,
+                limit: query.pageSize,
+                offset: query.pagination?.offset,
+                idGte: query.pagination?.messageIdAfterOrEqual,
+                idGt: query.pagination?.messageIdAfter,
+                idLte: query.pagination?.messageIdBeforeOrEqual,
+                idLt: query.pagination?.messageIdBefore,
+                pinnedAtAfterOrEqual: query.pagination?.timestampAfterOrEqual,
+                pinnedAtAfter: query.pagination?.timestampAfter,
+                pinnedAtBeforeOrEqual: query.pagination?.timestampBeforeOrEqual,
+                pinnedAtBefore: query.pagination?.timestampBefore,
+                idAround: query.pagination?.aroundMessageId,
+                pinnedAtAround: query.pagination?.aroundTimestamp,
+                sort: query.sorting.isEmpty ? nil : query.sorting.map {
+                    SortParamRequest(direction: $0.direction, field: $0.key.rawValue)
+                },
+                memberCustomInclude: nil
+            )
         ) { [weak self] result in
             switch result {
             case let .success(payload):
                 nonisolated(unsafe) var pinnedMessages: [ChatMessage] = []
                 self?.database.write { (session) in
-                    pinnedMessages = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: false)
+                    pinnedMessages = session.saveMessages(messagesPayload: MessageListPayload(messages: payload.messages), syncOwnReactions: false)
                         .compactMap { try? $0.asModel() }
                 } completion: { _ in
                     completion(.success(pinnedMessages.compactMap { $0 }))
@@ -830,21 +846,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
 
     // MARK: - private
-
-    private func truncate(
-        cid: ChannelId,
-        skipPush: Bool = false,
-        hardDelete: Bool = true,
-        requestBody: MessageRequestBody? = nil,
-        completion: (@Sendable (Error?) -> Void)? = nil
-    ) {
-        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
-            if let error = $0.error {
-                log.error(error)
-            }
-            completion?($0.error)
-        }
-    }
 
     private func messagePayload(for systemMessage: SystemMessage?, currentUserId: UserId?) -> MessageRequestBody? {
         guard let systemMessage = systemMessage, let currentUserId = currentUserId else {

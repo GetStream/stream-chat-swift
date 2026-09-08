@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class BlockedUserResponse: Sendable, Codable, JSONEncodable {
+final class BlockedUserResponse: Sendable, Decodable {
     /// User response object
     let blockedUser: UserPayload
     /// ID of the user who got blocked

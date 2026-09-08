@@ -78,7 +78,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
             apiClient?.request(
                 endpoint: .deleteMessage(
-                    messageId: messageId,
+                    id: messageId,
                     hard: hard,
                     deleteForMe: deleteForMe
                 )
@@ -106,6 +106,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message
     ///   - skipPush: If true, skips sending push notification when message is edited.
     ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: The list of user ids mentioned in the message. When `nil`, existing mentions are preserved.
+    ///   - mentionedHere: If true, the message mentions users currently online in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedChannel: If true, the message mentions all users in the channel. When `nil`, the existing value is preserved.
+    ///   - mentionedGroupIds: The list of user group ids mentioned in the message. When `nil`, existing group mentions are preserved.
+    ///   - mentionedRoles: The list of roles mentioned in the message. When `nil`, existing role mentions are preserved.
     ///   - extraData: Extra Data for the message.
     ///   - completion: The completion handler with the local updated message.
     func editMessage(
@@ -114,6 +119,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
         skipEnrichUrl: Bool,
         skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]? = nil,
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
@@ -139,6 +149,23 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 messageDTO.skipEnrichUrl = skipEnrichUrl
                 messageDTO.skipPush = skipPush
                 messageDTO.restrictedVisibility = Set(restrictedVisibility)
+
+                if let mentionedUserIds {
+                    messageDTO.mentionedUserIds = mentionedUserIds
+                    messageDTO.mentionedUsers = Set(mentionedUserIds.compactMap { session.user(id: $0) })
+                }
+                if let mentionedHere {
+                    messageDTO.mentionedHere = mentionedHere
+                }
+                if let mentionedChannel {
+                    messageDTO.mentionedChannel = mentionedChannel
+                }
+                if let mentionedGroupIds {
+                    messageDTO.mentionedGroupIds = mentionedGroupIds
+                }
+                if let mentionedRoles {
+                    messageDTO.mentionedRoles = mentionedRoles
+                }
 
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt
@@ -196,55 +223,37 @@ class MessageUpdater: Worker, @unchecked Sendable {
         unset: [String]? = nil,
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
-            guard let payloadData = try? JSONEncoder.default.encode(attachment.payload) else {
-                return nil
-            }
-            guard let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
-                return nil
-            }
-            return MessageAttachmentPayload(
-                type: attachment.type,
-                payload: payloadRawJSON
-            )
+        var set: [String: RawJSON] = extraData ?? [:]
+        if let text {
+            set["text"] = .string(text)
+        }
+        if let attachments {
+            set["attachments"] = .array(attachments.compactMap { attachment in
+                // Note: partial update expects flattened data without custom being nested
+                guard var flattenedPayload = attachment.payload.rawJSON?.dictionaryValue else { return nil }
+                flattenedPayload[MessageAttachmentPayload.CodingKeys.type.rawValue] = .string(attachment.type.rawValue)
+                return .dictionary(flattenedPayload)
+            })
         }
 
         apiClient.request(
-            endpoint: .partialUpdateMessage(
-                messageId: messageId,
-                request: .init(
-                    set: .init(
-                        text: text,
-                        extraData: extraData,
-                        attachments: attachmentPayloads
-                    ),
+            endpoint: .updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(
+                    set: set,
                     unset: unset
                 )
             )
         ) { [weak self] result in
             switch result {
-            case .success(let messagePayloadBoxed):
-                let messagePayload = messagePayloadBoxed.message
+            case .success(let response):
+                guard let messagePayload = response.message else {
+                    completion?(.failure(ClientError.Unknown()))
+                    return
+                }
                 self?.database.write { session in
-                    let cid: ChannelId?
-
-                    if let payloadCid = messagePayloadBoxed.message.cid {
-                        cid = payloadCid
-                    } else if let cidFromLocal = session.message(id: messageId)?.cid,
-                              let localCid = try? ChannelId(cid: cidFromLocal) {
-                        cid = localCid
-                    } else {
-                        cid = nil
-                    }
-
-                    guard let cid = cid else {
-                        completion?(.failure(ClientError.ChannelNotCreatedYet()))
-                        return
-                    }
-                    
                     let messageDTO = try session.saveMessage(
                         payload: messagePayload,
-                        for: cid,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil
@@ -442,13 +451,23 @@ class MessageUpdater: Worker, @unchecked Sendable {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling,
-        completion: (@Sendable (Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = pagination.parameter == nil
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
-        let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
+        let endpoint: Endpoint<GetRepliesResponse> = .getReplies(
+            parentId: messageId,
+            limit: pagination.pageSize,
+            idGte: pagination.parameter?.messageIdAfterOrEqual,
+            idGt: pagination.parameter?.messageIdAfter,
+            idLte: pagination.parameter?.messageIdBeforeOrEqual,
+            idLt: pagination.parameter?.messageIdBefore,
+            idAround: pagination.parameter?.aroundMessageId,
+            sort: nil,
+            memberCustomInclude: nil
+        )
 
         apiClient.request(endpoint: endpoint) {
             paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
@@ -467,7 +486,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
-                    let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
+                    let replies = session.saveMessages(messagesPayload: MessageListPayload(messages: payload.messages), syncOwnReactions: true)
                     replies.forEach {
                         $0.showInsideThread = true
                     }
@@ -548,12 +567,12 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(with: messageId, reason: reason, extraData: extraData)
+            let endpoint: Endpoint<EmptyResponse> = .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
-                case let .success(payload):
+                case .success:
                     self.database.write({ session in
-                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
+                        guard let messageDTO = session.message(id: messageId) else {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
 
@@ -590,14 +609,16 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ) {
         let version = UUID().uuidString
 
-        let endpoint: Endpoint<EmptyResponse> = .addReaction(
-            type,
-            score: score,
-            enforceUnique: enforceUnique,
-            extraData: extraData,
-            skipPush: skipPush,
-            emojiCode: pushEmojiCode,
-            messageId: messageId
+        let endpoint: Endpoint<SendReactionResponse> = .sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: enforceUnique,
+                extraData: extraData,
+                pushEmojiCode: pushEmojiCode,
+                score: score,
+                skipPush: skipPush,
+                type: type
+            )
         )
 
         database.write { session in
@@ -616,11 +637,14 @@ class MessageUpdater: Worker, @unchecked Sendable {
             }
         } completion: { [weak self, weak repository] error in
             self?.apiClient.request(endpoint: endpoint) { [weak self, weak repository] result in
-                guard let error = result.error else { return }
+                switch result {
+                case .success(let response):
+                    repository?.saveSentReaction(message: response.message, reaction: response.reaction, version: version)
+                case .failure(let error):
+                    if self?.canKeepReactionState(for: error) == true { return }
 
-                if self?.canKeepReactionState(for: error) == true { return }
-
-                repository?.undoReactionAddition(on: messageId, type: type)
+                    repository?.undoReactionAddition(on: messageId, type: type)
+                }
             }
             completion?(error)
         }
@@ -646,13 +670,17 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self, weak repository] result in
-                guard let error = result.error else { return }
+            let endpoint: Endpoint<DeleteReactionResponse> = .deleteReaction(id: messageId, type: type.rawValue)
+            self?.apiClient.request(endpoint: endpoint) { [weak self, weak repository] result in
+                switch result {
+                case .success(let response):
+                    repository?.saveDeletedReaction(message: response.message, reaction: response.reaction)
+                case .failure(let error):
+                    if self?.canKeepReactionState(for: error) == true { return }
+                    if error.isClientError { return }
 
-                if self?.canKeepReactionState(for: error) == true { return }
-                if error.isClientError { return }
-
-                repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
+                    repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
+                }
             }
             completion?(error)
         }
@@ -672,9 +700,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let pinError):
                 completion?(.failure(pinError))
             case .success(let message):
-                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                    messageId: messageId,
-                    request: .init(set: .init(pinned: true))
+                let endpoint: Endpoint<UpdateMessagePartialResponse> = .updateMessagePartial(
+                    id: messageId,
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -701,9 +729,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let unpinError):
                 completion?(.failure(unpinError))
             case .success(let message):
-                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                    messageId: messageId,
-                    request: .init(set: .init(pinned: false))
+                let endpoint: Endpoint<UpdateMessagePartialResponse> = .updateMessagePartial(
+                    id: messageId,
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -916,12 +944,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     /// Executes the provided action on the message.
     /// - Parameters:
-    ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier to take the action on.
     ///   - action: The action to take.
     ///   - completion: The completion called when the API call is finished. Called with `Error` if request fails.
     func dispatchEphemeralMessageAction(
-        cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction,
         completion: (@Sendable (Error?) -> Void)? = nil
@@ -946,18 +972,20 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 if action.isCancel {
                     completion?(nil)
                 } else {
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-                        cid: cid,
-                        messageId: messageId,
-                        action: action
+                    let endpoint: Endpoint<MessageActionResponse> = .runMessageAction(
+                        id: messageId,
+                        messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
                     )
                     self.apiClient.request(endpoint: endpoint) {
                         switch $0 {
-                        case let .success(payload):
+                        case let .success(response):
+                            guard let message = response.message else {
+                                completion?(nil)
+                                return
+                            }
                             self.database.write({ session in
                                 try session.saveMessage(
-                                    payload: payload.message,
-                                    for: cid,
+                                    payload: message,
                                     syncOwnReactions: true,
                                     skipDraftUpdate: true,
                                     cache: nil
@@ -975,7 +1003,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<MessageSearchResults, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .search(query: query)) { result in
+        apiClient.request(endpoint: .search(payload: query.asSearchPayload())) { result in
             switch result {
             case let .success(payload):
                 nonisolated(unsafe) var messages = [ChatMessage]()
@@ -1012,14 +1040,17 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
+        let endpoint: Endpoint<TranslateMessageResponse> = .translateMessage(
+            id: messageId,
+            translateMessageRequest: TranslateMessageRequest(language: language)
+        )
+        apiClient.request(endpoint: endpoint, completion: { result in
             switch result {
-            case let .success(boxedMessage):
+            case let .success(response):
                 nonisolated(unsafe) var translatedMessage: ChatMessage?
                 self.database.write { session in
                     let messageDTO = try session.saveMessage(
-                        payload: boxedMessage.message,
-                        for: boxedMessage.message.cid,
+                        payload: response.message,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil
@@ -1046,7 +1077,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadRead(cid: cid, threadId: threadId)
+            endpoint: .markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest(threadId: threadId))
         ) { result in
             completion(result.error)
         }
@@ -1058,20 +1089,28 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadUnread(cid: cid, threadId: threadId)
+            endpoint: .markUnread(type: cid.type.rawValue, id: cid.id, markUnreadRequest: MarkUnreadRequest(threadId: threadId))
         ) { result in
             completion(result.error)
         }
     }
 
     func loadThread(query: ThreadQuery, completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void) {
-        apiClient.request(endpoint: .thread(query: query)) { result in
+        apiClient.request(
+            endpoint: .getThread(
+                messageId: query.messageId,
+                watch: query.watch,
+                replyLimit: query.replyLimit,
+                participantLimit: query.participantLimit,
+                memberLimit: query.memberLimit,
+                requiresConnectionId: query.watch
+            )
+        ) { result in
             switch result {
             case .success(let response):
-                self.database.write { session in
-                    let thread = try session.saveThread(payload: response.thread, cache: nil).asModel()
-                    completion(.success(thread))
-                }
+                self.database.write(converting: { session in
+                    try session.saveThread(payload: response.thread, cache: nil).asModel()
+                }, completion: completion)
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -1080,20 +1119,22 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     func updateThread(
         for messageId: MessageId,
-        request: ThreadPartialUpdateRequest,
+        request: UpdateThreadPartialRequest,
         completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .partialThreadUpdate(
+            endpoint: .updateThreadPartial(
                 messageId: messageId,
-                request: request
+                updateThreadPartialRequest: request
             )) { result in
                 switch result {
                 case .success(let response):
-                    self.database.write { session in
-                        let thread = try session.saveThread(partialPayload: response.thread).asModel()
-                        completion(.success(thread))
-                    }
+                    self.database.write(converting: { session in
+                        guard let threadDTO = try session.saveThread(partialPayload: response.thread) else {
+                            throw ClientError("Thread \(response.thread.parentMessageId) was not saved")
+                        }
+                        return try threadDTO.asModel()
+                    }, completion: completion)
                 case .failure(let error):
                     completion(.failure(error))
                 }
@@ -1103,7 +1144,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
 extension MessageUpdater {
     struct MessageSearchResults {
-        let payload: MessageSearchResultsPayload
+        let payload: SearchResponse
         let models: [ChatMessage]
 
         var next: String? { payload.next }
@@ -1273,13 +1314,11 @@ extension MessageUpdater {
     }
 
     func dispatchEphemeralMessageAction(
-        cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             dispatchEphemeralMessageAction(
-                cid: cid,
                 messageId: messageId,
                 action: action
             ) { error in
@@ -1305,6 +1344,11 @@ extension MessageUpdater {
         skipEnrichUrl: Bool,
         skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId]? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedChannel: Bool? = nil,
+        mentionedGroupIds: [String]? = nil,
+        mentionedRoles: [String]? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil
     ) async throws -> ChatMessage {
@@ -1315,6 +1359,11 @@ extension MessageUpdater {
                 skipEnrichUrl: skipEnrichUrl,
                 skipPush: skipPush,
                 attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                mentionedHere: mentionedHere,
+                mentionedChannel: mentionedChannel,
+                mentionedGroupIds: mentionedGroupIds,
+                mentionedRoles: mentionedRoles,
                 restrictedVisibility: restrictedVisibility,
                 extraData: extraData
             ) { result in
@@ -1372,7 +1421,7 @@ extension MessageUpdater {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling
-    ) async throws -> MessageRepliesPayload {
+    ) async throws -> GetRepliesResponse {
         try await withCheckedThrowingContinuation { continuation in
             loadReplies(
                 cid: cid,

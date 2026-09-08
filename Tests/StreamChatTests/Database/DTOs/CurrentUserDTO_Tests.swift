@@ -115,6 +115,66 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(payload.pushPreferences?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
     }
 
+    func test_saveCurrentUser_fullUserResponse_isStoredAndLoadedFromDB() throws {
+        let device = Device(id: .unique, pushProvider: "apn", userId: .unique)
+        let payload = FullUserResponse.dummy(
+            userId: .unique,
+            teamsRole: ["ios": .guest],
+            extraData: ["k": .string("v")],
+            teams: [.unique],
+            language: "pt",
+            isInvisible: true,
+            isBanned: true,
+            devices: [device],
+            mutedUsers: [.dummy(userId: .unique), .dummy(userId: .unique)],
+            mutedChannels: [
+                .init(
+                    mutedChannel: .dummy(cid: .unique),
+                    user: .dummy(userId: .unique),
+                    createdAt: .unique,
+                    updatedAt: .unique
+                )
+            ],
+            unreadCount: .dummy,
+            privacySettings: .init(readReceipts: .init(enabled: false), typingIndicators: .init(enabled: false)),
+            blockedUserIds: [.unique]
+        )
+
+        let mutedUserIds = Set(payload.mutes.compactMap(\.target?.id))
+        let mutedChannelIds = Set(payload.channelMutes.compactMap(\.channel?.cid))
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(fullResponse: payload)
+        }
+
+        // Load the user from the db and check the fields are correct
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
+
+        XCTAssertEqual(payload.id, loadedCurrentUser.id)
+        XCTAssertEqual(payload.name, loadedCurrentUser.name)
+        XCTAssertEqual(payload.image, loadedCurrentUser.imageURL?.absoluteString)
+        XCTAssertEqual(payload.online, loadedCurrentUser.isOnline)
+        XCTAssertEqual(payload.invisible, loadedCurrentUser.isInvisible)
+        XCTAssertEqual(payload.banned, loadedCurrentUser.isBanned)
+        XCTAssertEqual(payload.role, loadedCurrentUser.userRole.rawValue)
+        XCTAssertEqual(payload.createdAt, loadedCurrentUser.userCreatedAt)
+        XCTAssertEqual(payload.updatedAt, loadedCurrentUser.userUpdatedAt)
+        XCTAssertEqual(payload.lastActive, loadedCurrentUser.lastActiveAt)
+        XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
+        XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
+        XCTAssertEqual(payload.custom, loadedCurrentUser.extraData)
+        XCTAssertEqual(loadedCurrentUser.unreadCount.channels, payload.unreadChannels)
+        XCTAssertEqual(loadedCurrentUser.unreadCount.messages, payload.totalUnreadCount)
+        XCTAssertEqual(loadedCurrentUser.unreadCount.threads, payload.unreadThreads)
+        XCTAssertEqual(mutedUserIds, Set(loadedCurrentUser.mutedUsers.map(\.id)))
+        XCTAssertEqual(mutedChannelIds, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
+        XCTAssertEqual(Set(payload.blockedUserIds), loadedCurrentUser.blockedUserIds)
+        XCTAssertEqual(payload.devices.map(\.id), loadedCurrentUser.devices.map(\.id))
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
+        XCTAssertNil(loadedCurrentUser.pushPreference)
+    }
+
     func test_savingCurrentUser_removesCurrentDevice() throws {
         let initialDevice = Device.dummy()
         let initialCurrentUserPayload = CurrentUserPayload.dummy(userId: .unique, role: .admin, devices: [initialDevice])

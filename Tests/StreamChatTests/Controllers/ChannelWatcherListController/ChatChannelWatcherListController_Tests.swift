@@ -165,7 +165,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: self.query.cid))
             channel.watchers.removeAll() // Make sure we remove all existing data
-            channel.watchers.insert(try session.saveUser(payload: .dummy(userId: watcherId)))
+            channel.watchers.insert(try session.saveUser(payload: UserPayload.dummy(userId: watcherId)))
         }
 
         // Simulate the updater callback

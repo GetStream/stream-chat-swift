@@ -159,8 +159,9 @@ import XCTest
         nonisolated(unsafe) var messageDTOWithoutCid: MessageDTO!
         nonisolated(unsafe) var mockedMessageWithoutCid: ChatMessage!
         try mockedClient.databaseContainer.writeSynchronously { session in
-            let messagePayload = self.dummyMessagePayload(cid: nil)
-            let channel = try session.saveChannel(payload: .dummy())
+            let cid = ChannelId.unique
+            let messagePayload = self.dummyMessagePayload(cid: cid)
+            let channel = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             messageDTOWithoutCid = try session.saveMessage(
                 payload: messagePayload,
                 channelDTO: channel,
@@ -168,9 +169,10 @@ import XCTest
                 cache: nil
             )
             messageDTOWithoutCid.channel = nil
+            messageDTOWithoutCid.cid = nil
             mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
         }
-        
+
         mockedListView.mockedCellForRow = .init()
         mockedListView.mockedCellForRow?.mockedMessage = mockedMessageWithoutCid
 
@@ -1339,6 +1341,27 @@ import XCTest
         _ = sut.attachmentViewInjectorClassForMessage(at: .init(item: 0, section: 0))
 
         XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
+    }
+
+    func test_showTypingIndicator_typingUsers_invokesOverridableChatUserOverload() {
+        final class ChatUserTypingIndicatorOverrideVC: ChatMessageListVC {
+            var showTypingIndicatorChatUsersCallCount = 0
+            var showTypingIndicatorChatUsersCalledWith: [ChatUser]?
+
+            @available(*, deprecated)
+            override func showTypingIndicator(typingUsers: [ChatUser]) {
+                showTypingIndicatorChatUsersCallCount += 1
+                showTypingIndicatorChatUsersCalledWith = typingUsers
+            }
+        }
+
+        let vc = ChatUserTypingIndicatorOverrideVC()
+        let user = ChatUser.mock(id: .unique, name: "Martin")
+
+        vc.showTypingIndicator(typingUsers: [TypingUser(user: user)])
+
+        XCTAssertEqual(vc.showTypingIndicatorChatUsersCallCount, 1)
+        XCTAssertEqual(vc.showTypingIndicatorChatUsersCalledWith, [user])
     }
 }
 

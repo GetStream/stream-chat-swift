@@ -35,6 +35,7 @@ public extension ChatMessage {
         reactionCounts: [MessageReactionType: Int] = [:],
         reactionGroups: [MessageReactionType: ChatMessageReactionGroup] = [:],
         mentionedUsers: Set<ChatUser> = [],
+        mentionedChannelMembers: [UserId: ChatMemberInfo] = [:],
         mentionedHere: Bool = false,
         mentionedChannel: Bool = false,
         mentionedGroups: Set<UserGroupMention> = [],
@@ -57,7 +58,7 @@ public extension ChatMessage {
         draftReply: DraftMessage? = nil,
         reminder: MessageReminderInfo? = nil,
         sharedLocation: SharedLocation? = nil,
-        member: ChatMessage.MemberInfo? = nil,
+        member: ChatMemberInfo? = nil,
         deletedForMe: Bool = false,
         // Kept for source compatibility with existing call sites; prefer `member`.
         channelRole: MemberRole? = nil
@@ -87,6 +88,7 @@ public extension ChatMessage {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedChannelMembers: mentionedChannelMembers,
             mentionedHere: mentionedHere,
             mentionedChannel: mentionedChannel,
             mentionedGroups: mentionedGroups,
@@ -109,7 +111,7 @@ public extension ChatMessage {
             draftReply: draftReply,
             reminder: reminder,
             sharedLocation: sharedLocation,
-            member: member ?? channelRole.map { ChatMessage.MemberInfo(channelRole: $0) }
+            member: member ?? channelRole.map { ChatMemberInfo(channelRole: $0) }
         )
     }
 }
@@ -120,16 +122,16 @@ extension MessageModerationDetails {
         action: MessageModerationAction,
         textHarms: [String]? = nil,
         imageHarms: [String]? = nil,
-        blocklistMatched: String? = nil,
+        blocklistsMatched: [String]? = nil,
         semanticFilterMatched: String? = nil,
-        platformCircumvented: Bool? = nil
+        platformCircumvented: Bool = false
     ) -> Self {
         .init(
             originalText: originalText,
             action: action,
+            blocklistsMatched: blocklistsMatched,
             textHarms: textHarms,
             imageHarms: imageHarms,
-            blocklistMatched: blocklistMatched,
             semanticFilterMatched: semanticFilterMatched,
             platformCircumvented: platformCircumvented
         )

@@ -229,6 +229,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
                     guard let self else { return }
                     self.multicastDelegate.invoke {
                         $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers)
+                        $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers.chatUsers)
                     }
                 }
             )
@@ -494,8 +495,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     ) {
         apiClient.request(
             endpoint: .deleteMessage(
-                messageId: messageId,
-                hard: hard
+                id: messageId,
+                hard: hard,
+                deleteForMe: nil
             )
         ) { [weak self] result in
             self?.callback {
@@ -547,11 +549,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .flagMessage(
-                with: messageId,
-                reason: reason,
-                extraData: extraData
-            )
+            endpoint: .flag(flagRequest: .init(messageId: messageId, reason: reason, custom: extraData))
         ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
@@ -594,14 +592,16 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .addReaction(
-                type,
-                score: score,
-                enforceUnique: enforceUnique,
-                extraData: extraData,
-                skipPush: skipPush,
-                emojiCode: pushEmojiCode,
-                messageId: messageId
+            endpoint: .sendReaction(
+                id: messageId,
+                sendReactionRequest: SendReactionRequest(
+                    enforceUnique: enforceUnique,
+                    extraData: extraData,
+                    pushEmojiCode: pushEmojiCode,
+                    score: score,
+                    skipPush: skipPush,
+                    type: type
+                )
             )
         ) { [weak self] result in
             self?.callback {
@@ -620,7 +620,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         from messageId: MessageId,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
+        apiClient.request(endpoint: .deleteReaction(id: messageId, type: type.rawValue)) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
@@ -635,9 +635,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         messageId: MessageId,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
+        apiClient.request(endpoint: .updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )) { [weak self] result in
             self?.callback {
                 completion?(result.error)
@@ -654,9 +654,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: false))
+            endpoint: .updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
             )
         ) { [weak self] result in
             self?.callback {
@@ -684,13 +684,27 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
             return
         }
 
-        let query = PinnedMessagesQuery(
-            pageSize: pageSize,
-            sorting: sorting,
-            pagination: pagination
+        let endpoint: Endpoint<GetPinnedMessagesResponse> = .getPinnedMessages(
+            type: cid.type.rawValue,
+            id: cid.id,
+            limit: pageSize,
+            offset: pagination?.offset,
+            idGte: pagination?.messageIdAfterOrEqual,
+            idGt: pagination?.messageIdAfter,
+            idLte: pagination?.messageIdBeforeOrEqual,
+            idLt: pagination?.messageIdBefore,
+            pinnedAtAfterOrEqual: pagination?.timestampAfterOrEqual,
+            pinnedAtAfter: pagination?.timestampAfter,
+            pinnedAtBeforeOrEqual: pagination?.timestampBeforeOrEqual,
+            pinnedAtBefore: pagination?.timestampBefore,
+            idAround: pagination?.aroundMessageId,
+            pinnedAtAround: pagination?.aroundTimestamp,
+            sort: sorting.isEmpty ? nil : sorting.map {
+                SortParamRequest(direction: $0.direction, field: $0.key.rawValue)
+            },
+            memberCustomInclude: nil
         )
-
-        apiClient.request(endpoint: .pinnedMessages(cid: cid, query: query)) { [weak self] result in
+        apiClient.request(endpoint: endpoint) { [weak self] result in
             self?.callback {
                 switch result {
                 case .success(let payload):
@@ -1103,6 +1117,16 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
     ///   - typingUsers: The current set of users typing in the channel (excludes thread typing events).
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    )
+
+    /// Called when the set of currently typing users in the channel changes.
+    /// - Parameters:
+    ///   - controller: The controller that updated.
+    ///   - typingUsers: The current set of users typing in the channel (excludes thread typing events).
+    @available(*, deprecated, message: "Use `livestreamChannelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     )
 }
@@ -1130,6 +1154,12 @@ public extension LivestreamChannelControllerDelegate {
         didChangeSkippedMessagesAmount skippedMessagesAmount: Int
     ) {}
 
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<TypingUser>
+    ) {}
+
+    @available(*, deprecated, message: "Use `livestreamChannelController(_:didChangeTypingUsers:)` with `Set<TypingUser>` instead.")
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>

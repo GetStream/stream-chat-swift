@@ -1,6 +1,12 @@
 {
   "messages" : [
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
       "reaction_counts" : {
         
@@ -52,6 +58,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
       "reaction_counts" : {
         
@@ -95,6 +107,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
       "reaction_counts" : {
         
@@ -138,6 +156,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "jolly-base-0-9543fe87-8bb9-4145-8781-029661669844",
       "reaction_counts" : {
         
@@ -181,6 +205,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "jolly-base-0-c6321eed-2d81-46c8-9c65-72f49ef0e9f2",
       "reaction_counts" : {
         
@@ -234,6 +264,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "example-user-699e467b-580e-4c97-a8ad-117080ffdf14",
       "reaction_counts" : {
         
@@ -277,6 +313,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "hidden-lake-6-abf534d4-08f3-4d47-886b-a7d8739f60c6",
       "reaction_counts" : {
         
@@ -324,6 +366,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "a7e192f1-0c4f-4c0d-91ad-5451403487ec",
       "reaction_counts" : {
         
@@ -372,6 +420,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "ff3dc0c3-217b-45c3-b318-ec9631737810",
       "reaction_counts" : {
         
@@ -420,6 +474,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "711b1eac-24ec-4482-ba2a-38f8eb91d041",
       "reaction_counts" : {
         
@@ -472,6 +532,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "25580938-597f-42db-b5fa-a3551fce93df",
       "reaction_counts" : {
         
@@ -527,6 +593,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "79eb1a37-4367-4729-bf2e-72becb16abf5",
       "reaction_counts" : {
         
@@ -582,6 +654,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "2adae507-1051-435f-a4c7-232b75d5b242",
       "reaction_counts" : {
         
@@ -642,6 +720,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "bitter-cloud-0-184d7818-6282-4047-977c-43102352866c",
       "reaction_counts" : {
         
@@ -685,6 +769,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "bitter-cloud-0-6f6edd0e-06dd-406f-ac58-a4cfc63a357e",
       "reaction_counts" : {
         
@@ -732,6 +822,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "139c8acf-e405-44a8-a8a6-7e3922a7ea7f",
       "reaction_counts" : {
         
@@ -784,6 +880,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "0e5083af-e7d1-4278-a10c-8e9990976234",
       "reaction_counts" : {
         
@@ -839,6 +941,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "wispy-bird-9-59ad6b82-a45e-4f83-849b-01d79f3248a0",
       "reaction_counts" : {
         
@@ -882,6 +990,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "wispy-bird-9-5252269d-4d51-4c32-acb0-985be29cf17a",
       "reaction_counts" : {
         
@@ -925,6 +1039,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "wispy-bird-9-cbb34e46-6f22-4c1d-8105-f4df78d5914a",
       "reaction_counts" : {
         
@@ -968,6 +1088,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "throbbing-salad-6-8187e80d-88ff-468a-8670-7c60a4f11e20",
       "reaction_counts" : {
         
@@ -1011,6 +1137,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "throbbing-salad-6-9ea5ca14-fe37-4144-87ef-345de2c72cf1",
       "reaction_counts" : {
         
@@ -1058,6 +1190,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "aged-moon-3-423c9b17-78a3-41ff-8aa7-47e6afb9157e",
       "reaction_counts" : {
         
@@ -1101,6 +1239,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "bitter-cloud-4-988809fa-b534-4f6a-8e22-0f547fe46129",
       "reaction_counts" : {
         
@@ -1148,6 +1292,12 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:general",
+      "deleted_reply_count" : 0,
+      "mentioned_channel" : false,
+      "mentioned_here" : false,
+      "restricted_visibility" : [],
+      "shadowed" : false,
       "id" : "white-boat-1-c9d54585-f046-4785-9d81-72fd930bf2a3",
       "reaction_counts" : {
         
@@ -1196,6 +1346,9 @@
       "user": null,
       "channel": null,
       "message": {
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": [],
         "id": "a55451b7-ae6d-441f-a7b2-60e895226914",
         "text": "My pending message",
         "html": "\\u003cp\\u003eS\\u003c/p\\u003e\\n",
@@ -1239,6 +1392,12 @@
   ],
   "pinned_messages": [
       {
+        "cid" : "messaging:general",
+        "deleted_reply_count" : 0,
+        "mentioned_channel" : false,
+        "mentioned_here" : false,
+        "restricted_visibility" : [],
+        "shadowed" : false,
         "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
         "reaction_counts" : {
 

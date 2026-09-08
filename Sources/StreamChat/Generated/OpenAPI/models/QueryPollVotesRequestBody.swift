@@ -38,26 +38,11 @@ final class QueryPollVotesRequestBody: Sendable, Encodable, JSONEncodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         if let filter {
-            try container.encode(
-                filter,
-                forKey: .filter
-            )
+            try container.encode(filter, forKey: .filter)
         }
-        try container.encodeIfPresent(
-            limit,
-            forKey: .limit
-        )
-        try container.encodeIfPresent(
-            next,
-            forKey: .next
-        )
-        try container.encodeIfPresent(
-            prev,
-            forKey: .prev
-        )
-        try container.encodeIfPresent(
-            sort,
-            forKey: .sort
-        )
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(next, forKey: .next)
+        try container.encodeIfPresent(prev, forKey: .prev)
+        try container.encodeIfPresent(sort, forKey: .sort)
     }
 }

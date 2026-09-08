@@ -58,8 +58,9 @@ final class EventPayload: Decodable, Sendable {
     let user: UserPayload?
     let createdBy: UserPayload?
     let memberContainer: MemberContainerPayload?
+    let memberInfo: MemberInfoPayload?
     let channel: ChannelDetailPayload?
-    let message: MessagePayload?
+    let message: MessageResponse?
     let reaction: MessageReactionPayload?
     let watcherCount: Int?
     let unreadCount: UnreadCountPayload?
@@ -82,8 +83,7 @@ final class EventPayload: Decodable, Sendable {
     let vote: PollVotePayload?
 
     /// Thread Data, it is stored in Result, to be easier to debug decoding errors
-    let threadDetails: Result<ThreadDetailsPayload, Error>?
-    let threadPartial: Result<ThreadPartialPayload, Error>?
+    let thread: Result<ThreadResponse, Error>?
     
     let aiState: String?
     let messageId: String?
@@ -102,8 +102,9 @@ final class EventPayload: Decodable, Sendable {
         user: UserPayload? = nil,
         createdBy: UserPayload? = nil,
         memberContainer: MemberContainerPayload? = nil,
+        memberInfo: MemberInfoPayload? = nil,
         channel: ChannelDetailPayload? = nil,
-        message: MessagePayload? = nil,
+        message: MessageResponse? = nil,
         reaction: MessageReactionPayload? = nil,
         watcherCount: Int? = nil,
         unreadCount: UnreadCountPayload? = nil,
@@ -119,8 +120,7 @@ final class EventPayload: Decodable, Sendable {
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
-        threadDetails: Result<ThreadDetailsPayload, Error>? = nil,
-        threadPartial: Result<ThreadPartialPayload, Error>? = nil,
+        thread: Result<ThreadResponse, Error>? = nil,
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil,
         aiState: String? = nil,
@@ -142,6 +142,7 @@ final class EventPayload: Decodable, Sendable {
         self.user = user
         self.createdBy = createdBy
         self.memberContainer = memberContainer
+        self.memberInfo = memberInfo
         self.channel = channel
         self.message = message
         self.reaction = reaction
@@ -159,8 +160,7 @@ final class EventPayload: Decodable, Sendable {
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
         self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
-        self.threadPartial = threadPartial
-        self.threadDetails = threadDetails
+        self.thread = thread
         self.poll = poll
         self.vote = vote
         self.aiState = aiState
@@ -187,8 +187,9 @@ final class EventPayload: Decodable, Sendable {
         user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         memberContainer = try container.decodeIfPresent(MemberContainerPayload.self, forKey: .memberContainer)
+        memberInfo = try? container.decodeIfPresent(MemberInfoPayload.self, forKey: .memberContainer)
         channel = try? container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        message = try container.decodeIfPresent(MessagePayload.self, forKey: .message)
+        message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
         reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         unreadCount = try? UnreadCountPayload(from: decoder)
@@ -204,8 +205,7 @@ final class EventPayload: Decodable, Sendable {
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
         unreadChannelCountsByGroup = try container.decodeIfPresent([String: Int].self, forKey: .unreadChannelCountsByGroup)
-        threadDetails = container.decodeAsResultIfPresent(ThreadDetailsPayload.self, forKey: .thread)
-        threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
+        thread = container.decodeAsResultIfPresent(ThreadResponse.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
         aiState = try container.decodeIfPresent(String.self, forKey: .aiState)
@@ -244,6 +244,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.user: return "user"
         case \EventPayload.createdBy: return "createdBy"
         case \EventPayload.memberContainer: return "memberContainer"
+        case \EventPayload.memberInfo: return "memberInfo"
         case \EventPayload.channel: return "channel"
         case \EventPayload.message: return "message"
         case \EventPayload.reaction: return "reaction"
@@ -257,8 +258,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.parentId: return "parentId"
         case \EventPayload.hardDelete: return "hardDelete"
         case \EventPayload.shadow: return "shadow"
-        case \EventPayload.threadPartial: return "thread"
-        case \EventPayload.threadDetails: return "thread"
+        case \EventPayload.thread: return "thread"
         default: return String(describing: self)
         }
     }

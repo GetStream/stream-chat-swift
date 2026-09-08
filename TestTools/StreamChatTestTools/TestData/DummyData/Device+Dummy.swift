@@ -18,6 +18,6 @@ extension Device {
 
 extension ListDevicesResponse {
     static func dummy(devices: [Device] = [.dummy(), .dummy()]) -> ListDevicesResponse {
-        .init(devices: devices, duration: "")
+        .init(devices: devices)
     }
 }

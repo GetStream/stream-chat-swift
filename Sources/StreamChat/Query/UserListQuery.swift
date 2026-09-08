@@ -142,5 +142,20 @@ public extension UserListQuery {
     }
 }
 
+extension UserListQuery {
+    func asQueryUsersPayload() -> QueryUsersPayload {
+        let sort = self.sort.map {
+            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+        }
+        return QueryUsersPayload(
+            filterConditions: filter ?? EmptyObject(),
+            limit: pagination?.pageSize == .backendDefaultPageSize ? nil : pagination?.pageSize,
+            offset: pagination?.offset == 0 ? nil : pagination?.offset,
+            presence: options.contains(.presence),
+            sort: sort.isEmpty ? nil : sort
+        )
+    }
+}
+
 // Backend expects empty object for "filter_conditions" in case no filter specified.
 private struct EmptyObject: Encodable {}

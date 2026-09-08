@@ -46,13 +46,13 @@ extension UserGroupMember {
 }
 
 extension ListUserGroupsResponse {
-    static func dummy(duration: String = "", userGroups: [UserGroup] = [.dummy(), .dummy()]) -> ListUserGroupsResponse {
-        .init(duration: duration, userGroups: userGroups)
+    static func dummy(userGroups: [UserGroup] = [.dummy(), .dummy()]) -> ListUserGroupsResponse {
+        .init(userGroups: userGroups)
     }
 }
 
 extension UserGroupResponse {
-    static func dummy(duration: String = "", userGroup: UserGroup? = .dummy()) -> UserGroupResponse {
-        .init(duration: duration, userGroup: userGroup)
+    static func dummy(userGroup: UserGroup? = .dummy()) -> UserGroupResponse {
+        .init(userGroup: userGroup)
     }
 }

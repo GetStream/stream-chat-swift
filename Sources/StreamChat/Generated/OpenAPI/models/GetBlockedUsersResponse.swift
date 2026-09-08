@@ -4,22 +4,15 @@
 
 import Foundation
 
-final class GetBlockedUsersResponse: Sendable, Codable, JSONEncodable {
+final class GetBlockedUsersResponse: Sendable, Decodable {
     /// Array of blocked user object
     let blocks: [BlockedUserResponse]
-    /// Duration of the request in milliseconds
-    let duration: String
 
-    init(
-        blocks: [BlockedUserResponse],
-        duration: String
-    ) {
+    init(blocks: [BlockedUserResponse]) {
         self.blocks = blocks
-        self.duration = duration
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case blocks
-        case duration
     }
 }

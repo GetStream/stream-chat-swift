@@ -76,7 +76,7 @@ extension ChannelDetailPayload {
             memberCount: memberCount,
             members: members,
             messageCount: messageCount,
-            ownCapabilities: ownCapabilities?.compactMap(ChannelOwnCapability.init(rawValue:)),
+            ownCapabilities: ownCapabilities?.map(ChannelCapability.init(rawValue:)),
             team: team,
             truncatedAt: truncatedAt,
             truncatedBy: truncatedBy,

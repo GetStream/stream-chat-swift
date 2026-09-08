@@ -12,21 +12,7 @@ extension XCTestCase {
     // MARK: - Dummy data with extra data
 
     var dummyCurrentUser: UserPayload {
-        UserPayload(
-            id: "dummyCurrentUser",
-            name: .unique,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
+        .dummy(userId: "dummyCurrentUser", imageUrl: nil, role: .user, teams: [])
     }
 
     var dummyCurrentUserPayload: CurrentUserPayload {
@@ -54,27 +40,12 @@ extension XCTestCase {
     }
 
     func dummyUser(id: String) -> UserPayload {
-        UserPayload(
-            id: id,
-            name: .unique,
-            imageURL: .unique(),
-            role: .user,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isBanned: true,
-            teams: [],
-            language: nil,
-            extraData: [:]
-        )
+        .dummy(userId: id, role: .user, teams: [], isBanned: true)
     }
 
     func dummyMessagePayload(
         id: MessageId = .unique,
-        cid: ChannelId? = nil,
+        cid: ChannelId = .unique,
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
     ) -> MessagePayload {
         MessagePayload(
@@ -187,7 +158,7 @@ extension XCTestCase {
             payloadMessages = messages
         } else {
             for _ in 0..<numberOfMessages {
-                payloadMessages += [dummyMessagePayload()]
+                payloadMessages += [dummyMessagePayload(cid: channelId)]
             }
         }
 
@@ -267,22 +238,7 @@ extension XCTestCase {
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload {
         let member: MemberPayload =
             .init(
-                user: .init(
-                    id: .unique,
-                    name: .unique,
-                    imageURL: nil,
-                    role: .admin,
-                    teamsRole: nil,
-                    createdAt: .unique,
-                    updatedAt: .unique,
-                    deactivatedAt: nil,
-                    lastActiveAt: .unique,
-                    isOnline: true,
-                    isBanned: true,
-                    teams: [],
-                    language: nil,
-                    extraData: [:]
-                ),
+                user: .dummy(userId: .unique, imageUrl: nil, teams: [], isBanned: true),
                 userId: .unique,
                 role: .member,
                 createdAt: .unique,
@@ -357,7 +313,7 @@ extension XCTestCase {
 
     func dummyThreadPayload(
         parentMessageId: MessageId = .unique,
-        parentMessage: MessagePayload = .dummy(),
+        parentMessage: MessagePayload? = nil,
         channel: ChannelDetailPayload = .dummy(),
         createdBy: UserPayload = .dummy(userId: .newUniqueId),
         replyCount: Int = 0,
@@ -366,42 +322,44 @@ extension XCTestCase {
         threadParticipants: [ThreadParticipantPayload] = [],
         lastMessageAt: Date? = .unique,
         createdAt: Date = .unique,
-        updatedAt: Date? = .unique,
-        title: String? = .unique,
+        updatedAt: Date = .unique,
+        title: String = .unique,
         latestReplies: [MessagePayload] = [],
         read: [ThreadReadPayload] = [],
         draft: DraftPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ThreadPayload {
         .init(
-            parentMessageId: parentMessageId,
-            parentMessage: parentMessage,
-            channel: channel,
-            createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
             activeParticipantCount: activeParticipantCount,
-            threadParticipants: threadParticipants,
-            lastMessageAt: lastMessageAt,
+            channel: channel,
+            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title,
-            latestReplies: latestReplies,
-            read: read,
+            createdBy: createdBy,
+            createdByUserId: createdBy.id,
+            custom: extraData,
             draft: draft,
-            extraData: extraData
+            lastMessageAt: lastMessageAt,
+            latestReplies: latestReplies,
+            parentMessage: parentMessage ?? .dummy(cid: channel.cid),
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            read: read,
+            replyCount: replyCount,
+            threadParticipants: threadParticipants,
+            title: title,
+            updatedAt: updatedAt
         )
     }
 
     func dummyThreadReadPayload(
         user: UserPayload = .dummy(userId: .unique),
-        lastReadAt: Date? = .unique,
+        lastReadAt: Date = .unique,
         unreadMessagesCount: Int = 0
     ) -> ThreadReadPayload {
         .init(
-            user: user,
-            lastReadAt: lastReadAt,
-            unreadMessagesCount: unreadMessagesCount
+            lastRead: lastReadAt,
+            unreadMessages: unreadMessagesCount,
+            user: user
         )
     }
 
@@ -409,13 +367,15 @@ extension XCTestCase {
         user: UserPayload = .dummy(userId: .unique),
         threadId: String = .unique,
         createdAt: Date = .unique,
-        lastReadAt: Date? = .unique
+        lastReadAt: Date = .unique
     ) -> ThreadParticipantPayload {
         .init(
-            user: user,
-            threadId: threadId,
+            channelCid: .unique,
             createdAt: createdAt,
-            lastReadAt: lastReadAt
+            custom: [:],
+            lastReadAt: lastReadAt,
+            threadId: threadId,
+            user: user
         )
     }
     
@@ -439,7 +399,7 @@ extension XCTestCase {
         voteCountsByOption: [String: Int] = [:],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
-        votingVisibility: String? = nil,
+        votingVisibility: PollResponseDataVotingVisibility? = nil,
         user: UserPayload? = .dummy(userId: .unique)
     ) -> PollPayload {
         .init(
@@ -509,7 +469,7 @@ extension PollVotePayloadResponse {
         poll: PollPayload? = nil,
         vote: PollVotePayload? = nil
     ) -> PollVotePayloadResponse {
-        .init(duration: "", poll: poll, vote: vote)
+        .init(poll: poll, vote: vote)
     }
 }
 
@@ -519,7 +479,7 @@ extension PollVoteListResponse {
         prev: String? = nil,
         votes: [PollVotePayload] = []
     ) -> PollVoteListResponse {
-        .init(duration: "", next: next, prev: prev, votes: votes)
+        .init(next: next, prev: prev, votes: votes)
     }
 }
 
@@ -531,22 +491,7 @@ private extension MemberPayload {
     static func withLastActivity(at date: Date) -> MemberPayload {
         let userId = String.unique
         return .init(
-            user: .init(
-                id: userId,
-                name: .unique,
-                imageURL: nil,
-                role: .admin,
-                teamsRole: nil,
-                createdAt: .unique,
-                updatedAt: .unique,
-                deactivatedAt: nil,
-                lastActiveAt: date,
-                isOnline: true,
-                isBanned: true,
-                teams: [],
-                language: nil,
-                extraData: [:]
-            ),
+            user: .dummy(userId: userId, imageUrl: nil, teams: [], isBanned: true, lastActiveAt: date),
             userId: userId,
             role: .moderator,
             createdAt: .unique,
@@ -557,21 +502,6 @@ private extension MemberPayload {
 
 private extension UserPayload {
     static func withLastActivity(at date: Date) -> UserPayload {
-        .init(
-            id: .unique,
-            name: .unique,
-            imageURL: nil,
-            role: .admin,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: date,
-            isOnline: true,
-            isBanned: true,
-            teams: [],
-            language: nil,
-            extraData: [:]
-        )
+        .dummy(userId: .unique, imageUrl: nil, teams: [], isBanned: true, lastActiveAt: date)
     }
 }

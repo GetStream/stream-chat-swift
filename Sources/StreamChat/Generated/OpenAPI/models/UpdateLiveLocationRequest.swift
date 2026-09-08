@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdateLiveLocationRequest: Sendable, Codable, JSONEncodable {
+final class UpdateLiveLocationRequest: Sendable, Encodable, JSONEncodable {
     /// Time when the live location expires
     let endAt: Date?
     /// Latitude coordinate
@@ -14,12 +14,7 @@ final class UpdateLiveLocationRequest: Sendable, Codable, JSONEncodable {
     /// Live location ID
     let messageId: String
 
-    init(
-        endAt: Date? = nil,
-        latitude: Double? = nil,
-        longitude: Double? = nil,
-        messageId: String
-    ) {
+    init(endAt: Date? = nil, latitude: Double? = nil, longitude: Double? = nil, messageId: String) {
         self.endAt = endAt
         self.latitude = latitude
         self.longitude = longitude

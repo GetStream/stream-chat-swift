@@ -200,7 +200,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             cid: cid,
             user: .dummy(userId: .unique),
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, authorUserId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
             createdAt: .unique
         )
@@ -214,7 +214,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: eventPayload.message!, for: cid, cache: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
 
         // Assert event can be created and has correct fields

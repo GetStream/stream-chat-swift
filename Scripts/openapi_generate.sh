@@ -12,51 +12,84 @@ CHAT_DIR="$REPO_ROOT/../chat"
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
     addUserGroupMembers
+    ban
     blockUsers
     castPollVote
     createDevice
+    createDraft
     createPoll
     createPollOption
+    createReminder
     createUserGroup
     deleteChannel
     deleteChannelFile
     deleteChannelImage
     deleteDevice
+    deleteDraft
     deletePoll
     deletePollVote
     deleteFile
     deleteImage
+    deleteMessage
+    deleteReaction
+    deleteReminder
     deleteUserGroup
+    flag
     getApp
+    getDraft
     getBlockedUsers
+    getMessage
     getOG
+    getPinnedMessages
     getReactions
+    getReplies
+    getThread
     getUserGroup
     getUserLiveLocations
     hideChannel
     listDevices
     listUserGroups
+    markChannelsRead
     markDelivered
+    markRead
+    markUnread
     mute
     muteChannel
     queryBannedUsers
+    queryDrafts
     queryMembers
     queryPollVotes
     queryReactions
+    queryReminders
+    queryThreads
+    queryUsers
     removeUserGroupMembers
+    runMessageAction
+    search
     searchRoles
     searchUserGroups
+    sendEvent
+    sendMessage
+    sendReaction
     showChannel
     stopWatchingChannel
+    translateMessage
+    truncateChannel
+    unban
     unblockUsers
     unmute
     unmuteChannel
     unreadCounts
     updateLiveLocation
     updateMemberPartial
+    updateMessage
+    updateMessagePartial
     updatePollPartial
     updatePushNotificationPreferences
+    updateReminder
+    updateThreadPartial
     updateUserGroup
+    updateUsersPartial
     uploadChannelFile
     uploadChannelImage
     uploadFile
@@ -66,31 +99,50 @@ allowed_models=(
   Action
   AddUserGroupMembersRequest
   AppResponseFields
+  Attachment
+  BanRequest
   BanResponse
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
+  ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
   ChannelMute
   ChannelOwnCapability
   ChannelResponse
   CreateDeviceRequest
+  CreateDraftRequest
+  CreateDraftResponse
   CreatePollOptionRequest
   CreatePollRequest
+  CreateReminderRequest
+  CreateReminderResponse
   CreateUserGroupRequest
   DeleteChannelResponse
+  DeleteMessageResponse
+  DeleteReactionResponse
   DeliveredMessagePayload
   DeliveryReceiptsResponse
   DeviceResponse
+  DraftPayloadResponse
+  DraftResponse
+  EventRequest
   Field
   FileUploadConfig
   FileUploadResponse
+  FlagRequest
+  FullUserResponse
   GetApplicationResponse
   GetBlockedUsersResponse
+  GetDraftResponse
+  GetMessageResponse
   GetOGResponse
+  GetPinnedMessagesResponse
   GetReactionsResponse
+  GetRepliesResponse
+  GetThreadResponse
   GetUserGroupResponse
   HideChannelRequest
   ImageData
@@ -99,8 +151,17 @@ allowed_models=(
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
+  MarkChannelsReadRequest
   MarkDeliveredRequest
+  MarkReadRequest
+  MarkUnreadRequest
+  MemberUserRequest
   MembersResponse
+  MessageActionRequest
+  MessageActionResponse
+  MessageRequest
+  MessageResponse
+  ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
   MuteRequest
@@ -119,17 +180,46 @@ allowed_models=(
   PushPreferencesResponse
   QueryBannedUsersPayload
   QueryBannedUsersResponse
+  QueryDraftsRequest
+  QueryDraftsResponse
   QueryMembersPayload
   QueryPollVotesRequest
   QueryReactionsRequest
+  QueryRemindersRequest
+  QueryRemindersResponse
+  QueryThreadsRequest
+  QueryThreadsResponse
+  QueryUsersPayload
+  QueryUsersResponse
+  ReactionGroupResponse
+  ReactionRequest
   ReactionResponse
   ReadReceiptsResponse
+  ReadStateResponse
+  ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  SearchPayload
+  SearchResponse
+  SearchResult
+  SearchResultMessage
   SearchRolesResponse
+  SendEventRequest
+  SendMessageRequest
+  SendMessageResponse
+  SendReactionRequest
+  SendReactionResponse
+  SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  ThreadParticipant
+  ThreadResponse
+  ThreadStateResponse
+  TranslateMessageRequest
+  TranslateMessageResponse
+  TruncateChannelRequest
+  TruncateChannelResponse
   TypingIndicatorsResponse
   UnblockUsersRequest
   UnblockUsersResponse
@@ -142,8 +232,19 @@ allowed_models=(
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
+  UpdateMessagePartialRequest
+  UpdateMessagePartialResponse
+  UpdateMessageRequest
+  UpdateMessageResponse
   UpdatePollPartialRequest
+  UpdateReminderRequest
+  UpdateReminderResponse
+  UpdateThreadPartialRequest
+  UpdateThreadPartialResponse
   UpdateUserGroupRequest
+  UpdateUserPartialRequest
+  UpdateUsersPartialRequest
+  UpdateUsersResponse
   UploadChannelFileResponse
   UploadChannelResponse
   UpsertPushPreferencesRequest
@@ -162,6 +263,7 @@ allowed_models=(
 allowed_hashable_models=(
   AppSettings
   Device
+  MarkUnreadRequest
   PushPreference
   PushPreferenceInput
   Role
@@ -169,6 +271,180 @@ allowed_hashable_models=(
   UploadConfig
   UserGroup
   UserGroupMember
+)
+
+# Coding conformances for retained models after the renames in step 4b. Every
+# generated model must belong to exactly one group so new models fail closed until
+# their request/response direction is classified.
+# Required because OpenAPI generator does not currently support emitting models
+# with Encodable or Decodable based on how they are used in API calls. Every model
+# is Codable which makes the SDK size larger.
+encodable_only_models=(
+  AddUserGroupMembersRequest
+  BanRequest
+  BlockUsersRequest
+  CastPollVoteRequestBody
+  ChannelDeliveredRequestPayload
+  ChannelMemberRequest
+  CreateDeviceRequest
+  CreateDraftRequest
+  CreatePollOptionRequestBody
+  CreatePollRequestBody
+  CreateReminderRequest
+  CreateUserGroupRequest
+  DeliveredMessagePayload
+  EventRequest
+  FlagRequest
+  HideChannelRequest
+  MarkChannelsReadRequest
+  MarkReadRequest
+  MarkUnreadRequest
+  MessageActionRequest
+  MessageRequest
+  MuteChannelRequest
+  MuteRequest
+  NewLocationRequestPayload
+  PollOptionRequestBody
+  PushPreferenceInput
+  QueryBannedUsersPayload
+  QueryDraftsRequest
+  QueryMembersPayload
+  QueryPollVotesRequestBody
+  QueryReactionsRequest
+  QueryRemindersRequest
+  QueryThreadsRequest
+  QueryUsersPayload
+  ReactionRequest
+  RemoveUserGroupMembersRequest
+  SearchPayload
+  SendEventRequest
+  SendMessageRequest
+  SendReactionRequest
+  SortParamRequest
+  TranslateMessageRequest
+  TruncateChannelRequest
+  UnblockUsersRequest
+  UnmuteChannelRequest
+  UnmuteRequest
+  UpdateLiveLocationRequest
+  UpdateMemberPartialRequest
+  UpdateMessagePartialRequest
+  UpdateMessageRequest
+  UpdatePollPartialRequestBody
+  UpdateReminderRequest
+  UpdateThreadPartialRequest
+  UpdateUserGroupRequest
+  UpdateUserPartialRequest
+  UpdateUsersPartialRequest
+  UpsertPushPreferencesRequest
+  VoteDataRequestBody
+)
+
+decodable_only_models=(
+  AppSettings
+  BanResponse
+  BlockUsersResponse
+  BlockedUserResponse
+  ChannelDetailPayload
+  CreateDraftResponse
+  CreateReminderResponse
+  CurrentUserUnreads
+  DeleteChannelResponse
+  DeleteMessageResponse
+  DeleteReactionResponse
+  DraftMessagePayload
+  DraftPayload
+  FileUploadResponse
+  FullUserResponse
+  GetApplicationResponse
+  GetBlockedUsersResponse
+  GetDraftResponse
+  GetMessageResponse
+  GetOGResponse
+  GetPinnedMessagesResponse
+  GetRepliesResponse
+  GetThreadResponse
+  ImageSize
+  ImageUploadResponse
+  ListDevicesResponse
+  ListUserGroupsResponse
+  MemberPayload
+  MembersResponse
+  MessageActionResponse
+  MessageModerationDetailsPayload
+  MessageReactionGroupPayload
+  MessageReactionPayload
+  MessageReactionsPayload
+  MessageResponse
+  MuteResponse
+  MutedChannelPayload
+  MutedChannelPayloadResponse
+  MutedUserPayload
+  OwnUserResponse
+  PollOptionPayload
+  PollOptionResponse
+  PollPayload
+  PollPayloadResponse
+  PollVoteListResponse
+  PollVotePayload
+  PollVotePayloadResponse
+  PushPreference
+  QueryBannedUsersResponse
+  QueryDraftsResponse
+  QueryRemindersResponse
+  QueryThreadsResponse
+  QueryUsersResponse
+  ReadStateResponse
+  ReminderPayload
+  SearchResponse
+  SearchResult
+  SearchResultMessage
+  SearchRolesResponse
+  SendMessageResponsePayload
+  SendReactionResponse
+  SharedLocation
+  SharedLocationsResponse
+  ThreadParticipantPayload
+  ThreadResponse
+  ThreadStateResponse
+  TranslateMessageResponse
+  TruncateChannelResponse
+  UnblockUsersResponse
+  UnmuteUsersResponse
+  UnreadChannel
+  UnreadChannelByType
+  UnreadThread
+  UpdateMemberPartialResponse
+  UpdateMessagePartialResponse
+  UpdateMessageResponse
+  UpdateReminderResponse
+  UpdateThreadPartialResponse
+  UpdateUsersResponse
+  UploadChannelFileResponse
+  UploadChannelResponse
+  UploadConfig
+  UpsertPushPreferencesResponse
+  UserGroup
+  UserGroupMember
+  UserGroupResponse
+)
+
+codable_models=(
+  AttachmentActionPayload
+  AttachmentFieldPayload
+  ChannelCapability
+  DeliveryReceiptsPrivacySettings
+  Device
+  GiphyImageData
+  GiphyImages
+  MemberInfoPayload
+  MemberUserRequest
+  MessageAttachmentPayload
+  ReadReceiptsPrivacySettings
+  Role
+  TypingIndicatorPrivacySettings
+  UserPayload
+  UserPrivacySettings
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -207,6 +483,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/chat-manager openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
+    --opt raw_representable_over_enum=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # 2. Drop the generated async API client — the SDK ships its own APIClient.
@@ -286,6 +563,33 @@ prune_models() {
 }
 prune_models
 
+# Remove a generated property (declaration, doc comment, init param, assignment,
+#     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
+#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+remove_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v p="$2" '
+    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+    { s = $0; sub(/^[[:space:]]+/, "", s) }
+    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+    s ~ "^let " p ": "                 { n = 0; next }
+    s ~ "^self\\." p " = " p "$"       { next }
+    s ~ "^case " p "( =|$)"            { next }
+    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
+    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
+    s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
+    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+    { flush(); print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
+  perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+}
+
+for model in "${allowed_models[@]}"; do
+  remove_property "$model" duration
+done
+
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration). The memberwise init
@@ -334,6 +638,7 @@ retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVo
 retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
 retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
+retype_property ReactionRequest type String MessageReactionType
 retype_property ReactionResponse type String MessageReactionType
 retype_property UnreadCountsChannel channelId String ChannelId
 retype_property UnreadCountsChannelType channelType String ChannelType
@@ -393,6 +698,7 @@ rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
 rename_generated_type UpdateUserGroupResponse UserGroupResponse
 rename_generated_type SearchUserGroupsResponse ListUserGroupsResponse
+rename_generated SharedLocation NewLocationRequestPayload
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated_type SharedLocationResponse SharedLocation
 rename_generated MarkDeliveredRequest ChannelDeliveredRequestPayload
@@ -414,37 +720,40 @@ rename_generated ReactionResponse MessageReactionPayload
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
+rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
+rename_generated Attachment MessageAttachmentPayload
+rename_generated ChannelMemberPartialResponse MemberInfoPayload
+rename_generated DraftPayloadResponse DraftMessagePayload
+rename_generated DraftResponse DraftPayload
+rename_generated ModerationV2Response MessageModerationDetailsPayload
+rename_generated ReactionGroupResponse MessageReactionGroupPayload
+rename_generated ReminderResponseData ReminderPayload
+rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated UnmuteResponse UnmuteUsersResponse
 rename_generated UserMuteResponse MutedUserPayload
 rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
 rename_generated PrivacySettingsResponse UserPrivacySettings
 rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
+rename_generated ThreadParticipant ThreadParticipantPayload
 
+rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
+rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
+rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
+
+rename_generated_type DeleteReminderResponse EmptyResponse
+# TODO: EventResponse is not used and would bring in WSEvent
+rename_generated_type EventResponse EmptyResponse
+rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
+rename_generated_type MarkReadResponse EmptyResponse
+rename_generated_type ModerationBanResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
-
-# Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
-remove_property() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^self\\." p " = " p "$"       { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-}
-remove_property FileUploadResponse duration
+rename_generated_type UnbanResponse EmptyResponse
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
@@ -471,28 +780,6 @@ optionalize_property OwnUserResponse totalUnreadCount
 optionalize_property OwnUserResponse unreadChannels
 optionalize_property OwnUserResponse unreadThreads
 
-# Remove a generated property (declaration, doc comment, init param, assignment,
-#     CodingKeys case). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
-remove_property() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^self\\." p " = " p "$"       { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
-    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
-  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
-}
-remove_property CurrentUserUnreads duration
-remove_property MessageReactionsPayload duration
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsLevel
@@ -501,35 +788,64 @@ remove_property PushPreference callLevel
 remove_property PushPreference chatPreferences
 remove_property PushPreference feedsLevel
 remove_property PushPreference feedsPreferences
-remove_property UpsertPushPreferencesResponse duration
+remove_property UpdateUsersResponse membershipDeletionTaskId
 remove_property UserGroupMember appPk
 remove_property UserPayload blockedUserIds
 remove_property SharedLocation channel
 remove_property SharedLocation message
-remove_property SharedLocationsResponse duration
-remove_property DeleteChannelResponse duration
 remove_property MutedChannelPayloadResponse channelMutes
-remove_property MutedChannelPayloadResponse duration
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
-remove_property UnmuteUsersResponse duration
+# CHA-5068
+remove_property BanRequest ipBan
+remove_property FlagRequest entityCreatorId
+remove_property FlagRequest moderationPayload
+
+# Unused channel context (cid, createdBy, id, type)
+remove_property SendMessageRequest includeChannelContext
+remove_property SendMessageResponsePayload channelContext
+
+# TODO: reaction group reactors need CoreData and public API design first
+remove_property MessageReactionGroupPayload latestReactionsBy
+
+# CHA-5106
+remove_property SearchPayload forceDefaultSearch
+remove_property SearchPayload forceSqlV2Backend
+
+# Unused
+remove_property SearchPayload messageOptions
+# Unused
+remove_property SearchResponse resultsWarning
 
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
 require_property ChannelDetailPayload config
+# CHA-5105
+require_property SearchResult message
 
-remove_nested_enum() {
+# TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
+optionalize_property MessageResponse reactionCounts
+optionalize_property SearchResultMessage reactionCounts
+
+# v1 payloads may omit the count when it is zero.
+optionalize_property ThreadResponse activeParticipantCount
+optionalize_property ThreadStateResponse activeParticipantCount
+
+# v1 read events may omit it.
+optionalize_property ThreadResponse createdByUserId
+
+remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   awk -v e="$2" '
-    $0 ~ "^    enum " e ":" { skip = 1; next }
-    skip && /^    }$/       { skip = 0; next }
-    skip                    { next }
+    $0 ~ "^final class " e ":" { skip = 1; next }
+    skip && /^}$/               { skip = 0; next }
+    skip                        { next }
     { print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
-remove_nested_enum PushPreferenceInput PushPreferenceInputCallLevel
-remove_nested_enum PushPreferenceInput PushPreferenceInputFeedsLevel
+remove_type PushPreferenceInput PushPreferenceInputCallLevel
+remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
 # Give a generated model mutable stored properties, so it can replace a hand-written
 #     public type whose properties were var. Mutable state rules out checked Sendable,
@@ -578,6 +894,58 @@ publicize_model UserGroup
 publicize_model UserGroupMember
 publicize_model UserPrivacySettings
 
+# Expose a generated RawRepresentable class as public API. Unlike publicize_model, the
+#     init must be public too — it is the RawRepresentable requirement — along with every
+#     static let holding a known value. The class is looked up by name, since the file
+#     named after a model also holds the classes generated for its string properties.
+publicize_raw_representable() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  awk -v n="${2:-$1}" '
+    $0 ~ "^final class " n ":" { sub(/^final class /, "public final class "); inside = 1; print; next }
+    inside && /^}$/       { inside = 0; print; next }
+    inside {
+      sub(/^    let /, "    public let ")
+      sub(/^    init\(/, "    public init(")
+      sub(/^    static let /, "    public static let ")
+    }
+    { print }
+  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+publicize_raw_representable ChannelCapability
+publicize_raw_representable CreatePollRequestBody VotingVisibility
+publicize_raw_representable PushPreferenceInput PushPreferenceLevel
+publicize_raw_representable TranslateMessageRequest TranslationLanguage
+
+# Mark a generated RawRepresentable value as deprecated while keeping its legacy
+# raw value available. Fail if the generated declaration changes so the annotation
+# cannot silently disappear from the public API.
+deprecate_raw_representable_value() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  local type="$2"
+  local value="$3"
+  local renamed="$4"
+  if ! awk -v t="$type" -v v="$value" -v r="$renamed" '
+    $0 ~ "^public final class " t ":" { inside = 1 }
+    inside && $0 ~ "^    public static let " v " = " {
+      print "    @available(*, deprecated, renamed: \"" r "\")"
+      matches++
+    }
+    { print }
+    inside && /^}$/ { inside = 0 }
+    END {
+      if (matches != 1) {
+        print "Expected exactly one " t "." v " declaration, found " matches > "/dev/stderr"
+        exit 1
+      }
+    }
+  ' "$file" > "$file.tmp"; then
+    rm -f "$file.tmp"
+    return 1
+  fi
+  mv "$file.tmp" "$file"
+}
+deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
+
 # Expose a generated model's memberwise init, for models whose hand-written public
 #     counterpart had a public init.
 publicize_init() {
@@ -601,7 +969,89 @@ default_init_parameter DeliveryReceiptsPrivacySettings enabled true
 default_init_parameter ReadReceiptsPrivacySettings enabled true
 default_init_parameter TypingIndicatorPrivacySettings enabled true
 
-# 4d. Strip the generated Hashable conformance from every model not in
+# 4d. Keep only the coding direction each internal model needs.
+# Required because OpenAPI generator emits all models with Codable conformance
+# even when it is used for decoding or encoding only. This helps to save
+# SDK size when Codable is reduced to Encodable or Decodable.
+# Requires bigger change in the generator for applying it there.
+apply_directional_coding_conformances() {
+  local encodable_csv decodable_csv codable_csv
+  encodable_csv="$(IFS=,; echo "${encodable_only_models[*]}")"
+  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]}")"
+  codable_csv="$(IFS=,; echo "${codable_models[*]}")"
+
+  python3 - \
+    "$OUTPUT_DIR_CHAT/models" \
+    "$encodable_csv" \
+    "$decodable_csv" \
+    "$codable_csv" <<'PY'
+import pathlib
+import re
+import sys
+
+models_dir = pathlib.Path(sys.argv[1])
+groups = {
+    "Encodable": set(filter(None, sys.argv[2].split(","))),
+    "Decodable": set(filter(None, sys.argv[3].split(","))),
+    "Codable": set(filter(None, sys.argv[4].split(","))),
+}
+
+all_classified = set()
+for direction, names in groups.items():
+    overlap = all_classified.intersection(names)
+    if overlap:
+        raise SystemExit(f"Models classified more than once: {sorted(overlap)}")
+    all_classified.update(names)
+
+generated = {path.stem for path in models_dir.glob("*.swift")}
+unclassified = generated - all_classified
+missing = all_classified - generated
+if unclassified:
+    raise SystemExit(f"Unclassified generated models: {sorted(unclassified)}")
+if missing:
+    raise SystemExit(f"Classified models missing from generated output: {sorted(missing)}")
+
+declaration = re.compile(
+    r"^(\s*(?:public )?(?:final )?(?:class|struct|enum)\s+([A-Za-z0-9_]+)[^:\n]*:\s*)(.*)$"
+)
+
+for direction, names in groups.items():
+    for name in sorted(names):
+        path = models_dir / f"{name}.swift"
+        lines = path.read_text().splitlines(keepends=True)
+        output = []
+        top_level_conformances = None
+
+        for line in lines:
+            ending = "\n" if line.endswith("\n") else ""
+            content = line[:-1] if ending else line
+            match = declaration.match(content)
+            if match:
+                prefix, declared_name, conformances = match.groups()
+                if declared_name == name:
+                    if direction != "Codable":
+                        conformances = re.sub(r"\bCodable\b", direction, conformances)
+                        if direction == "Decodable":
+                            conformances = re.sub(r",\s*JSONEncodable\b", "", conformances)
+                    content = f"{prefix}{conformances}"
+                    top_level_conformances = conformances
+            output.append(content + ending)
+
+        if top_level_conformances is None:
+            raise SystemExit(f"Could not find the top-level declaration for {name}")
+        if not re.search(rf"\b{direction}\b", top_level_conformances):
+            raise SystemExit(f"{name} does not conform to {direction}")
+        if direction == "Decodable" and re.search(
+            r"\bEncodable\b|\bJSONEncodable\b", top_level_conformances
+        ):
+            raise SystemExit(f"{name} retains an encoding conformance")
+
+        path.write_text("".join(output))
+PY
+}
+apply_directional_coding_conformances
+
+# 4e. Strip the generated Hashable conformance from every model not in
 #     allowed_hashable_models. The Hashable extension is always the last block in
 #     the file (opening at column 0, running to EOF), so delete from its opening
 #     line to end of file; swiftformat (step 5) tidies the leftover blank line.
@@ -638,50 +1088,13 @@ inject_v1_endpoint_paths() {
     case custom(String)
     case connect
     case sync
-    case users
     case guest
-    case search
-
-    case threads
-    case thread(messageId: MessageId)
-    case markThreadRead(cid: ChannelId)
-    case markThreadUnread(cid: ChannelId)
 
     case channels
     case groupedChannels
     case createChannel(String)
     case updateChannel(String)
     case channelUpdate(String)
-    case truncateChannel(String)
-    case markChannelRead(String)
-    case markChannelUnread(String)
-    case markAllChannelsRead
-    case channelEvent(String)
-    case pinnedMessages(String)
-
-    case sendMessage(ChannelId)
-    case message(MessageId)
-    case editMessage(MessageId)
-    case deleteMessage(MessageId)
-    case pinMessage(MessageId)
-    case unpinMessage(MessageId)
-    case replies(MessageId)
-    case addReaction(MessageId)
-    case deleteReaction(MessageId, MessageReactionType)
-    case messageAction(MessageId)
-    case translateMessage(MessageId)
-
-    // Drafts
-    case drafts
-    case draftMessage(ChannelId)
-
-    // Reminders
-    case reminders
-    case reminder(MessageId)
-
-    case banMember
-    case flagUser
-    case flagMessage
 
 EOF
 
@@ -689,52 +1102,13 @@ EOF
         case let .custom(path): return path
         case .connect: return "connect"
         case .sync: return "sync"
-        case .users: return "users"
         case .guest: return "guest"
-        case .search: return "search"
-
-        case .threads:
-            return "threads"
-        case let .thread(threadId):
-            return "threads/\(threadId)"
-        case let .markThreadRead(cid):
-            return "channels/\(cid.apiPath)/read"
-        case let .markThreadUnread(cid):
-            return "channels/\(cid.apiPath)/unread"
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-        case let .truncateChannel(channelId): return "channels/\(channelId)/truncate"
-        case let .markChannelRead(channelId): return "channels/\(channelId)/read"
-        case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
-        case .markAllChannelsRead: return "channels/read"
-        case let .channelEvent(channelId): return "channels/\(channelId)/event"
-        case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-
-        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
-        case let .message(messageId): return "messages/\(messageId)"
-        case let .editMessage(messageId): return "messages/\(messageId)"
-        case let .deleteMessage(messageId): return "messages/\(messageId)"
-        case let .pinMessage(messageId): return "messages/\(messageId)"
-        case let .unpinMessage(messageId): return "messages/\(messageId)"
-        case let .replies(messageId): return "messages/\(messageId)/replies"
-        case let .addReaction(messageId): return "messages/\(messageId)/reaction"
-        case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
-        case let .messageAction(messageId): return "messages/\(messageId)/action"
-        case let .translateMessage(messageId): return "messages/\(messageId)/translate"
-
-        case .drafts: return "drafts/query"
-        case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
-
-        case .reminders: return "reminders/query"
-        case let .reminder(messageId): return "messages/\(messageId)/reminders"
-
-        case .banMember: return "moderation/ban"
-        case .flagUser: return "moderation/flag"
-        case .flagMessage: return "moderation/flag"
 
 EOF
 
@@ -757,14 +1131,7 @@ PY
 }
 inject_v1_endpoint_paths
 
-# 7. Force generated OpenAPI function declarations to wrap one parameter per line.
-swiftformat "$OUTPUT_DIR_CHAT" \
-  --rules wrapArguments \
-  --wrapparameters before-first \
-  --wraparguments preserve \
-  --maxwidth 1
-
-# 8. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
+# 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
 #    body, where a `required` initializer is allowed.
 splice_generated_decoders() {
   local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
@@ -789,3 +1156,10 @@ PY
 }
 sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 splice_generated_decoders
+
+# 8. Wrap generated OpenAPI function declarations that exceed the maximum width.
+swiftformat "$OUTPUT_DIR_CHAT" \
+  --rules wrapArguments \
+  --wrapparameters before-first \
+  --wraparguments preserve \
+  --maxwidth 100

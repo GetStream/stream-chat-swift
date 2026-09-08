@@ -4,7 +4,7 @@
 
 import Foundation
 
-public final class UnmuteUsersResponse: Sendable, Codable, JSONEncodable {
+public final class UnmuteUsersResponse: Sendable, Decodable {
     /// A list of users that can't be found. Common cause for this is deleted users
     public let nonExistingUsers: [String]?
 

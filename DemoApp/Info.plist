@@ -38,6 +38,8 @@
 	<string>We need access to your location to share it in the chat.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need access to your microphone for taking a video.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library for sending photo attachments.</string>
 	<key>PushNotification-Configuration</key>
 	<string>APN-Configuration</string>
 	<key>UIApplicationSceneManifest</key>

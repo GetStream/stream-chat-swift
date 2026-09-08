@@ -277,6 +277,8 @@ public extension MemberStatus {
 }
 
 /// The member information when adding a member to a channel.
+///
+/// Distinct from ``ChatMemberInfo``, the slim membership snapshot on messages and typing events.
 public struct MemberInfo {
     public var userId: UserId
     public var extraData: [String: RawJSON]?
