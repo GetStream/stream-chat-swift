@@ -147,10 +147,12 @@ public enum L10n {
       public static var title: String { L10n.tr("Localizable", "composer.links-disabled.title") }
     }
     public enum MediaProcessing {
-      /// Preparing photo…
-      public static var preparingPhoto: String { L10n.tr("Localizable", "composer.media-processing.preparing-photo") }
-      /// Preparing video…
-      public static var preparingVideo: String { L10n.tr("Localizable", "composer.media-processing.preparing-video") }
+      public enum Accessibility {
+        /// Preparing photo…
+        public static var preparingPhoto: String { L10n.tr("Localizable", "composer.media-processing.accessibility.preparing-photo") }
+        /// Preparing video…
+        public static var preparingVideo: String { L10n.tr("Localizable", "composer.media-processing.accessibility.preparing-video") }
+      }
     }
     public enum Picker {
       /// Camera
