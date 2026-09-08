@@ -1178,6 +1178,46 @@ import XCTest
         XCTAssertFalse(composerVC.attachmentsVC.content.contains { $0 is ProcessingAttachmentPreview })
     }
 
+    func test_enqueuePendingMedia_whenMediaIsAlreadyPending_thenItIsKeptAndTheNewItemsComeAfter() throws {
+        _ = composerVC.view
+        let firstIDs = composerVC.enqueuePendingMedia(from: [
+            try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov"))
+        ])
+
+        let secondIDs = composerVC.enqueuePendingMedia(from: [
+            try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov"))
+        ])
+
+        XCTAssertEqual(composerVC.pendingMediaItems.map(\.id), firstIDs + secondIDs)
+        XCTAssertEqual(composerVC.pendingMediaItems.map(\.order), [0, 1])
+    }
+
+    // MARK: - remainingNumberOfAttachments
+
+    func test_remainingNumberOfAttachments_thenMediaBeingProcessedAlreadyTakesASlot() throws {
+        _ = composerVC.view
+        try composerVC.addAttachmentToContent(from: makeTemporaryImageFile(width: 10, height: 10), type: .image)
+        let expectedRemaining = composerVC.maxNumberOfAttachments - 2
+
+        composerVC.enqueuePendingMedia(from: [
+            try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov"))
+        ])
+
+        XCTAssertGreaterThan(expectedRemaining, 0)
+        XCTAssertEqual(composerVC.remainingNumberOfAttachments, expectedRemaining)
+    }
+
+    @available(iOS 14.0, *)
+    func test_mediaPickerVC_whenMediaIsStillBeingProcessed_thenSelectionIsLimitedToTheRemainingSlots() throws {
+        _ = composerVC.view
+        composerVC.enqueuePendingMedia(from: [
+            try makeItemProvider(for: try makeTemporaryFile(named: "\(UUID().uuidString).mov"))
+        ])
+
+        let picker = try XCTUnwrap(composerVC.mediaPickerVC as? PHPickerViewController)
+        XCTAssertEqual(picker.configuration.selectionLimit, composerVC.maxNumberOfAttachments - 1)
+    }
+
     func test_loadPendingPreview_whenItemProviderHasAnImage_thenThePlaceholderShowsIt() async throws {
         _ = composerVC.view
         let imageURL = try makeTemporaryImageFile(width: 40, height: 20)

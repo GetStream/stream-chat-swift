@@ -461,7 +461,7 @@ open class ComposerVC: _ViewController,
     open var mediaPickerConfiguration: PHPickerConfiguration {
         var configuration = PHPickerConfiguration()
         configuration.filter = .any(of: [.images, .videos])
-        configuration.selectionLimit = max(1, maxNumberOfAttachments - content.attachments.count)
+        configuration.selectionLimit = max(1, remainingNumberOfAttachments)
         configuration.preferredAssetRepresentationMode = .current
         return configuration
     }
@@ -491,8 +491,17 @@ open class ComposerVC: _ViewController,
         return picker
     }()
 
-    /// The task which loads and compresses the media selected in the media picker.
-    private var mediaSelectionTask: Task<Void, Never>?
+    /// The tasks which load and compress the media selected in the media picker.
+    /// There is one per picker selection, because a new selection does not cancel
+    /// the media which is already being processed.
+    private var mediaSelectionTasks: [UUID: Task<Void, Never>] = [:]
+
+    /// The number of attachments the composer had when the current pending media
+    /// started being processed. Pending items are positioned relative to it.
+    private var pendingMediaAnchorCount = 0
+
+    /// The position the next picked item takes within the current pending media.
+    private var nextPendingMediaOrder = 0
 
     /// Media picked in the photos picker that is still being downloaded, written, or compressed.
     struct PendingMediaItem {
@@ -526,6 +535,14 @@ open class ComposerVC: _ViewController,
     /// A boolean that checks if any composer attachment is still being processed.
     open var hasProcessingAttachments: Bool {
         !pendingMediaItems.isEmpty
+    }
+
+    /// The number of attachments which can still be added to the message.
+    ///
+    /// Media which was picked but is not ready to be sent yet already occupies a slot,
+    /// so that picking again while a video compresses cannot exceed the limit.
+    open var remainingNumberOfAttachments: Int {
+        max(0, maxNumberOfAttachments - content.attachments.count - pendingMediaItems.count)
     }
 
     /// Thumbnails loaded from the photos picker, keyed by the attachment's local file URL.
@@ -1769,37 +1786,44 @@ open class ComposerVC: _ViewController,
     /// override `mediaPickerConfiguration` instead.
     @available(iOS 14.0, *)
     open func handleMediaPickerResults(_ results: [PHPickerResult]) {
-        let allowedResults = results.prefix(max(0, maxNumberOfAttachments - content.attachments.count))
+        let allowedResults = results.prefix(remainingNumberOfAttachments)
         if allowedResults.count < results.count {
             showAttachmentsCountExceedingLimitAlert(maxNumberOfAttachments)
         }
         guard !allowedResults.isEmpty else { return }
 
-        let itemProviders = allowedResults.map(\.itemProvider)
-        enqueuePendingMedia(from: itemProviders)
-        mediaSelectionTask = Task { @MainActor [weak self] in
-            await self?.processPendingMedia()
+        let ids = enqueuePendingMedia(from: allowedResults.map(\.itemProvider))
+        let taskID = UUID()
+        mediaSelectionTasks[taskID] = Task { @MainActor [weak self] in
+            await self?.processPendingMedia(ids: ids)
+            self?.mediaSelectionTasks[taskID] = nil
         }
     }
 
     /// Cancels loading and compressing the media which was selected in the media picker.
     open func cancelMediaSelection() {
-        mediaSelectionTask?.cancel()
-        mediaSelectionTask = nil
+        mediaSelectionTasks.values.forEach { $0.cancel() }
+        mediaSelectionTasks.removeAll()
         pendingMediaItems.removeAll()
     }
 
     /// Shows placeholder previews for the picked media, then loads and compresses the files.
     func addSelectedMedia(from itemProviders: [NSItemProvider]) async {
-        enqueuePendingMedia(from: itemProviders)
-        await processPendingMedia()
+        await processPendingMedia(ids: enqueuePendingMedia(from: itemProviders))
     }
 
     /// Inserts placeholder previews so the composer can show them before the files are ready.
-    func enqueuePendingMedia(from itemProviders: [NSItemProvider]) {
-        mediaSelectionTask?.cancel()
-        mediaSelectionTask = nil
-        pendingMediaItems.removeAll()
+    ///
+    /// Media from an earlier selection which is still being processed is kept, so that
+    /// picking again does not discard videos that are already compressing.
+    ///
+    /// - Returns: The identifiers of the items which were added.
+    @discardableResult
+    func enqueuePendingMedia(from itemProviders: [NSItemProvider]) -> [UUID] {
+        if pendingMediaItems.isEmpty {
+            pendingMediaAnchorCount = content.attachments.count
+            nextPendingMediaOrder = 0
+        }
 
         let items = itemProviders.enumerated().map { index, itemProvider in
             PendingMediaItem(
@@ -1809,24 +1833,24 @@ open class ComposerVC: _ViewController,
                 progress: 0,
                 downloadShare: 0,
                 itemProvider: itemProvider,
-                order: index
+                order: nextPendingMediaOrder + index
             )
         }
-        pendingMediaItems = items
+        nextPendingMediaOrder += items.count
+        pendingMediaItems.append(contentsOf: items)
+        return items.map(\.id)
     }
 
-    /// Loads, copies, and compresses every pending item at the same time.
+    /// Loads, copies, and compresses the given pending items at the same time.
     ///
     /// Images are added as soon as their file is ready. Videos compress
     /// alongside them and keep the original picker order when they finish.
-    func processPendingMedia() async {
-        let batchStartCount = content.attachments.count
-        let ids = pendingMediaItems.map(\.id)
+    func processPendingMedia(ids: [UUID]) async {
         await withTaskGroup(of: Void.self) { group in
             for id in ids {
                 group.addTask { [weak self] in
                     await self?.loadPendingPreview(for: id)
-                    await self?.processPendingItem(id: id, batchStartCount: batchStartCount)
+                    await self?.processPendingItem(id: id)
                 }
             }
         }
@@ -1871,7 +1895,7 @@ open class ComposerVC: _ViewController,
         updatePendingProgress(share + min(max(progress, 0), 1) * (1 - share), for: id)
     }
 
-    private func processPendingItem(id: UUID, batchStartCount: Int) async {
+    private func processPendingItem(id: UUID) async {
         guard let item = pendingMediaItems.first(where: { $0.id == id }) else { return }
         guard let media = await Self.loadMedia(
             from: item.itemProvider,
@@ -1922,7 +1946,7 @@ open class ComposerVC: _ViewController,
             removeTemporaryMedia(at: processedMedia.url)
             return
         }
-        await commitPendingMedia(id: id, media: processedMedia, batchStartCount: batchStartCount)
+        await commitPendingMedia(id: id, media: processedMedia)
     }
 
     /// How a picked video should be compressed before it is added to the composer.
@@ -1967,7 +1991,7 @@ open class ComposerVC: _ViewController,
         batchStartCount + order - unfinishedItemsBefore
     }
 
-    private func commitPendingMedia(id: UUID, media: SelectedMediaItem, batchStartCount: Int) async {
+    private func commitPendingMedia(id: UUID, media: SelectedMediaItem) async {
         guard let pending = pendingMediaItems.first(where: { $0.id == id }) else {
             removeTemporaryMedia(at: media.url)
             return
@@ -1985,7 +2009,7 @@ open class ComposerVC: _ViewController,
         }
         let unfinishedItemsBefore = pendingMediaItems.filter { $0.id != id && $0.order < pending.order }.count
         let desiredIndex = Self.attachmentIndex(
-            batchStartCount: batchStartCount,
+            batchStartCount: pendingMediaAnchorCount,
             order: pending.order,
             unfinishedItemsBefore: unfinishedItemsBefore
         )
