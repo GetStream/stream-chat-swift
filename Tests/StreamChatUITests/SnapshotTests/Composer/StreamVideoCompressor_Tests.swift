@@ -60,12 +60,22 @@ import XCTest
         )
         XCTAssertEqual(
             StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium),
-            33_408_750
+            16_704_375
         )
         XCTAssertEqual(
             StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low),
             5_568_125
         )
+    }
+
+    func test_estimatedFileLength_thenALowerQualityAlwaysEstimatesASmallerFile() throws {
+        let duration = CMTime(seconds: 60, preferredTimescale: 600)
+        let low = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low))
+        let medium = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium))
+        let high = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .high))
+
+        XCTAssertLessThan(low, medium)
+        XCTAssertLessThan(medium, high)
     }
 
     func test_estimatedFileLength_whenTheVideoIsLong_thenTheLowEstimateCanExceedTheUploadLimit() {

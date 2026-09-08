@@ -104,8 +104,9 @@ struct StreamVideoCompressor: VideoCompressor {
     /// Total bitrate used by the system photos picker for 720p H.264.
     static let highQualityBitRate: Double = 2_700_000
 
-    /// Typical bitrate of `AVAssetExportPresetMediumQuality`.
-    static let mediumQualityBitRate: Double = 3_000_000
+    /// Typical bitrate of `AVAssetExportPresetMediumQuality`, which encodes at a
+    /// lower resolution than `.high` and therefore produces smaller files.
+    static let mediumQualityBitRate: Double = 1_500_000
 
     /// Typical bitrate of `AVAssetExportPresetLowQuality`.
     static let lowQualityBitRate: Double = 500_000
