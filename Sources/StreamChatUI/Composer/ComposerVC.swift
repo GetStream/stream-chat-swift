@@ -2129,7 +2129,7 @@ open class ComposerVC: _ViewController,
         } else if let object {
             let anyObject = object as AnyObject
             guard CFGetTypeID(anyObject) == CGImage.typeID else { return nil }
-            image = UIImage(cgImage: unsafeBitCast(anyObject, to: CGImage.self))
+            image = UIImage(cgImage: unsafeDowncast(anyObject, to: CGImage.self))
         } else {
             return nil
         }

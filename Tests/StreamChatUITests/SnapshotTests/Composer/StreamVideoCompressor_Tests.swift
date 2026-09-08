@@ -136,11 +136,16 @@ import XCTest
     }
 
     private func duration(of url: URL) async -> TimeInterval {
-        let asset = AVURLAsset(url: url)
-        return await withCheckedContinuation { continuation in
-            nonisolated(unsafe) let unsafeAsset = asset
-            StreamAssetPropertyLoader().loadProperties([AssetProperty(\AVURLAsset.duration)], of: asset) { _ in
-                continuation.resume(returning: CMTimeGetSeconds(unsafeAsset.duration))
+        await withCheckedContinuation { continuation in
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\AVURLAsset.duration)],
+                of: AVURLAsset(url: url)
+            ) { result in
+                guard case .success(let asset) = result else {
+                    continuation.resume(returning: 0)
+                    return
+                }
+                continuation.resume(returning: CMTimeGetSeconds(asset.duration))
             }
         }
     }

@@ -125,18 +125,16 @@ struct StreamVideoCompressor: VideoCompressor {
     /// The duration is loaded asynchronously, so that reading it does not block the
     /// caller, which is usually the main actor.
     static func estimatedFileLength(at url: URL, quality: VideoCompressionQuality) async -> Int64? {
-        let asset = AVURLAsset(url: url)
         let duration: CMTime? = await withCheckedContinuation { continuation in
-            nonisolated(unsafe) let unsafeAsset = asset
             StreamAssetPropertyLoader().loadProperties(
                 [AssetProperty(\AVURLAsset.duration)],
-                of: asset
+                of: AVURLAsset(url: url)
             ) { result in
-                guard case .success = result else {
+                guard case .success(let asset) = result else {
                     continuation.resume(returning: nil)
                     return
                 }
-                continuation.resume(returning: unsafeAsset.duration)
+                continuation.resume(returning: asset.duration)
             }
         }
         guard let duration else { return nil }
