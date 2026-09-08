@@ -146,6 +146,12 @@ public enum L10n {
       /// Links are disabled
       public static var title: String { L10n.tr("Localizable", "composer.links-disabled.title") }
     }
+    public enum MediaProcessing {
+      /// Preparing photo…
+      public static var preparingPhoto: String { L10n.tr("Localizable", "composer.media-processing.preparing-photo") }
+      /// Preparing video…
+      public static var preparingVideo: String { L10n.tr("Localizable", "composer.media-processing.preparing-video") }
+    }
     public enum Picker {
       /// Camera
       public static var camera: String { L10n.tr("Localizable", "composer.picker.camera") }
@@ -187,10 +193,6 @@ public enum L10n {
       public static var edit: String { L10n.tr("Localizable", "composer.title.edit") }
       /// Reply to Message
       public static var reply: String { L10n.tr("Localizable", "composer.title.reply") }
-    }
-    public enum VideoCompression {
-      /// Preparing video…
-      public static var preparing: String { L10n.tr("Localizable", "composer.video-compression.preparing") }
     }
   }
 

@@ -87,12 +87,12 @@ open class ProcessingAttachmentComposerPreview: _View, ThemeProvider {
         isAccessibilityElement = !showsProgress
         if showsProgress {
             uploadingOverlay.content = uploadingState
-            uploadingOverlay.accessibilityLabel = L10n.Composer.VideoCompression.preparing
+            uploadingOverlay.accessibilityLabel = L10n.Composer.MediaProcessing.preparingVideo
             uploadingOverlay.accessibilityValue = appearance.formatters.uploadingProgress.format(progress)
             accessibilityLabel = nil
             accessibilityValue = nil
         } else {
-            accessibilityLabel = L10n.Composer.QuotedMessage.photo
+            accessibilityLabel = L10n.Composer.MediaProcessing.preparingPhoto
             accessibilityValue = nil
         }
     }

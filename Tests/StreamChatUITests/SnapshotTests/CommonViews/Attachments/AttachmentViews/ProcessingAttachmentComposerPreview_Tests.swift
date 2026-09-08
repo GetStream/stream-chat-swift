@@ -13,7 +13,7 @@ import XCTest
 
         XCTAssertNil(view.imageView.image)
         XCTAssertFalse(view.uploadingOverlay.isHidden)
-        XCTAssertEqual(view.uploadingOverlay.accessibilityLabel, L10n.Composer.VideoCompression.preparing)
+        XCTAssertEqual(view.uploadingOverlay.accessibilityLabel, L10n.Composer.MediaProcessing.preparingVideo)
         let formattedZero = view.appearance.formatters.uploadingProgress.format(0)
         XCTAssertEqual(view.uploadingOverlay.accessibilityValue, formattedZero)
         XCTAssertFalse(view.uploadingOverlay.loadingIndicator.isHidden)
@@ -29,7 +29,7 @@ import XCTest
         XCTAssertEqual(view.imageView.image, image)
         XCTAssertTrue(view.uploadingOverlay.isHidden)
         XCTAssertTrue(view.isAccessibilityElement)
-        XCTAssertEqual(view.accessibilityLabel, L10n.Composer.QuotedMessage.photo)
+        XCTAssertEqual(view.accessibilityLabel, L10n.Composer.MediaProcessing.preparingPhoto)
     }
 
     func test_whenContentIsAnImage_thenTheCompressionOverlayIsHidden() {
