@@ -2008,11 +2008,7 @@ open class ComposerVC: _ViewController,
         let thumbnail: UIImage?
         switch media.type {
         case .image:
-            guard let data = try? Data(contentsOf: media.url) else { return }
-            thumbnail = Self.thumbnail(
-                fromImageData: data,
-                maxPixelSize: Self.composerPreviewMaxPixelSize
-            )
+            thumbnail = await Self.imageThumbnail(at: media.url)
         case .video:
             thumbnail = await withCheckedContinuation { continuation in
                 let generator = AVAssetImageGenerator(asset: AVURLAsset(url: media.url))
@@ -2116,12 +2112,25 @@ open class ComposerVC: _ViewController,
         return toneMap ? sdrPreviewImage(from: image) : image
     }
 
+    /// Decoding a full size photo is expensive, so it happens off the main actor.
+    /// The file is read by ImageIO instead of being loaded into memory as a whole.
+    private nonisolated static func imageThumbnail(at url: URL) async -> UIImage? {
+        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else { return nil }
+        return thumbnail(from: source, maxPixelSize: composerPreviewMaxPixelSize)
+    }
+
     private nonisolated static func thumbnail(
         fromImageData data: Data,
         maxPixelSize: Int = composerPreviewMaxPixelSize
     ) -> UIImage? {
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions) else { return nil }
+        return thumbnail(from: source, maxPixelSize: maxPixelSize)
+            ?? UIImage(data: data).map { sdrPreviewImage(from: $0) }
+    }
+
+    private nonisolated static func thumbnail(from source: CGImageSource, maxPixelSize: Int) -> UIImage? {
         let options: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
@@ -2129,7 +2138,7 @@ open class ComposerVC: _ViewController,
             kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
         ]
         guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
-            return UIImage(data: data).flatMap { sdrPreviewImage(from: $0) }
+            return nil
         }
         return UIImage(cgImage: cgImage)
     }
