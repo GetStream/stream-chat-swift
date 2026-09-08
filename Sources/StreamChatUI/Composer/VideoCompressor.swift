@@ -16,14 +16,16 @@ public struct VideoCompressionQuality: Equatable, Sendable {
         self.exportPreset = exportPreset
     }
 
-    /// The videos are compressed to the smallest file size.
-    public static let low = Self(exportPreset: AVAssetExportPresetLowQuality)
+    /// The videos are scaled down to 480p H.264.
+    ///
+    /// A 16:9 video becomes 640x360.
+    public static let low = Self(exportPreset: AVAssetExportPreset640x480)
 
-    /// The videos are compressed to a size which is suitable for sharing in a chat.
-    public static let medium = Self(exportPreset: AVAssetExportPresetMediumQuality)
+    /// The videos are scaled down to 720p H.264.
+    public static let medium = Self(exportPreset: AVAssetExportPreset1280x720)
 
-    /// The videos are scaled to 720p H.264, matching the system photos picker.
-    public static let high = Self(exportPreset: AVAssetExportPreset1280x720)
+    /// The videos are scaled down to 1080p H.264.
+    public static let high = Self(exportPreset: AVAssetExportPreset1920x1080)
 }
 
 /// The errors which can occur while a video is being compressed.
@@ -102,17 +104,21 @@ struct StreamVideoCompressor: VideoCompressor {
         return outputURL
     }
 
-    /// Total bitrate used by the system photos picker for 720p H.264.
-    static let highQualityBitRate: Double = 2_700_000
+    // `AVAssetExportSession` does not expose the bitrate, so the presets below were measured by
+    // exporting the same 1080p source at each of them. Sources as different as high motion camera
+    // footage and flat shaded animation stayed within 3% of each other, so the presets encode at a
+    // fixed rate rather than adapting to the content.
 
-    /// Typical bitrate of `AVAssetExportPresetMediumQuality`, which encodes at a
-    /// lower resolution than `.high` and therefore produces smaller files.
-    static let mediumQualityBitRate: Double = 1_500_000
+    /// Total bitrate of `AVAssetExportPreset1920x1080`.
+    static let highQualityBitRate: Double = 15_200_000
 
-    /// Typical bitrate of `AVAssetExportPresetLowQuality`.
-    static let lowQualityBitRate: Double = 500_000
+    /// Total bitrate of `AVAssetExportPreset1280x720`.
+    static let mediumQualityBitRate: Double = 10_600_000
 
-    /// A low size estimate for the compressed video, based on duration and the
+    /// Total bitrate of `AVAssetExportPreset640x480`.
+    static let lowQualityBitRate: Double = 2_700_000
+
+    /// The expected size of the compressed video, based on duration and the
     /// bitrate of the given quality. Returns `nil` when the duration is unknown
     /// or the quality has no known bitrate.
     static func estimatedFileLength(for duration: CMTime, quality: VideoCompressionQuality) -> Int64? {
