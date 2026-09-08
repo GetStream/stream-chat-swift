@@ -6,7 +6,6 @@ import Foundation
 @testable import StreamChat
 
 extension BanResponse {
-    /// Returns dummy ban response with the given values.
     static func dummy(
         user: UserPayload? = .dummy(userId: .unique),
         bannedBy: UserPayload? = .dummy(userId: .unique),

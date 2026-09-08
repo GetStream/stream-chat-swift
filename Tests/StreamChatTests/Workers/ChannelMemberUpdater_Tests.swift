@@ -153,7 +153,10 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         updater.queryBannedUsers(query: query) { _ in }
 
         // Assert correct endpoint is called
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.queryBannedUsers(query: query)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(.queryBannedUsers(payload: query.asQueryBannedUsersPayload()))
+        )
     }
 
     func test_queryBannedUsers_propagatesSuccessfulResponse() throws {

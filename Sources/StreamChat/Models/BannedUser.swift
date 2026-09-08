@@ -4,8 +4,8 @@
 
 import Foundation
 
-/// A type representing a ban of a user.
-public struct BannedUser: Sendable {
+/// A type representing a ban of a user. `BannedUser` is an immutable snapshot of a ban at the given time.
+public final class BannedUser: Sendable {
     /// The banned user.
     public let user: ChatUser
 
@@ -45,5 +45,17 @@ public struct BannedUser: Sendable {
         self.expiresAt = expiresAt
         self.reason = reason
         self.isShadowBan = isShadowBan
+    }
+}
+
+extension BannedUser: Equatable {
+    public static func == (lhs: BannedUser, rhs: BannedUser) -> Bool {
+        lhs.user == rhs.user &&
+            lhs.bannedBy == rhs.bannedBy &&
+            lhs.cid == rhs.cid &&
+            lhs.createdAt == rhs.createdAt &&
+            lhs.expiresAt == rhs.expiresAt &&
+            lhs.reason == rhs.reason &&
+            lhs.isShadowBan == rhs.isShadowBan
     }
 }

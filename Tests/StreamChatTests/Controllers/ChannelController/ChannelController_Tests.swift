@@ -5403,10 +5403,12 @@ final class ChannelController_Tests: XCTestCase {
     func test_queryBannedUsers_callsMemberUpdaterWithChannelScopedQuery() throws {
         // Simulate `queryBannedUsers` call
         controller.queryBannedUsers(
-            filter: .equal(.bannedById, to: "leia"),
-            sort: [.init(key: .createdAt, isAscending: true)],
-            pagination: Pagination(pageSize: 10, offset: 20),
-            excludeExpiredBans: true
+            with: BannedUserListQuery(
+                filter: .equal(.bannedById, to: "leia"),
+                sort: [.init(key: .createdAt, isAscending: true)],
+                pagination: Pagination(pageSize: 10, offset: 20),
+                excludeExpiredBans: true
+            )
         ) { _ in }
 
         // Assert call is propagated to updater with the channel filter applied

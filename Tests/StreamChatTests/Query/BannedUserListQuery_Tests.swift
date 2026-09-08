@@ -112,16 +112,10 @@ final class BannedUserListQuery_Tests: XCTestCase {
 
     // MARK: - Channel scoped query
 
-    func test_channelBans_whenAdditionalFilterIsNil_thenFiltersByChannelOnly() throws {
+    func test_scopedToChannel_whenQueryHasNoFilter_thenFiltersByChannelOnly() throws {
         let cid: ChannelId = .unique
 
-        let query = BannedUserListQuery.channelBans(
-            cid: cid,
-            filter: nil,
-            sort: [],
-            pagination: Pagination(pageSize: 30),
-            excludeExpiredBans: false
-        )
+        let query = BannedUserListQuery().scoped(toChannel: cid)
 
         AssertJSONEqual(
             try JSONEncoder.default.encode(query.asQueryBannedUsersPayload().filterConditions),
@@ -129,16 +123,10 @@ final class BannedUserListQuery_Tests: XCTestCase {
         )
     }
 
-    func test_channelBans_whenAdditionalFilterIsSet_thenCombinesBothFilters() throws {
+    func test_scopedToChannel_whenQueryHasFilter_thenCombinesBothFilters() throws {
         let cid: ChannelId = .unique
 
-        let query = BannedUserListQuery.channelBans(
-            cid: cid,
-            filter: .equal(.bannedById, to: "leia"),
-            sort: [],
-            pagination: Pagination(pageSize: 30),
-            excludeExpiredBans: false
-        )
+        let query = BannedUserListQuery(filter: .equal(.bannedById, to: "leia")).scoped(toChannel: cid)
 
         let expectedFilter: [String: Any] = [
             "$and": [
@@ -152,14 +140,12 @@ final class BannedUserListQuery_Tests: XCTestCase {
         )
     }
 
-    func test_channelBans_forwardsSortPaginationAndExcludeExpiredBans() {
-        let query = BannedUserListQuery.channelBans(
-            cid: .unique,
-            filter: nil,
+    func test_scopedToChannel_forwardsSortPaginationAndExcludeExpiredBans() {
+        let query = BannedUserListQuery(
             sort: [.init(key: .createdAt, isAscending: true)],
             pagination: Pagination(pageSize: 15, offset: 5),
             excludeExpiredBans: true
-        )
+        ).scoped(toChannel: .unique)
 
         XCTAssertEqual(query.sort.count, 1)
         XCTAssertEqual(query.sort[0].key, .createdAt)

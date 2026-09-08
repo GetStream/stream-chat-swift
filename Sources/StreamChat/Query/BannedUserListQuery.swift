@@ -113,14 +113,7 @@ extension BannedUserListQuery: CustomDebugStringConvertible {
 }
 
 extension BannedUserListQuery {
-    /// Builds a query returning the bans scoped to the given channel, narrowed down by an optional additional filter.
-    static func channelBans(
-        cid: ChannelId,
-        filter: Filter<BannedUserListFilterScope>?,
-        sort: [Sorting<BannedUserListSortingKey>],
-        pagination: Pagination,
-        excludeExpiredBans: Bool
-    ) -> Self {
+    func scoped(toChannel cid: ChannelId) -> Self {
         let channelFilter: Filter<BannedUserListFilterScope> = .equal(.cid, to: cid)
         return .init(
             filter: filter.map { .and([channelFilter, $0]) } ?? channelFilter,

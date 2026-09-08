@@ -5,8 +5,6 @@
 import Foundation
 
 extension BanResponse {
-    /// Converts the BanResponse to a BannedUser model.
-    /// - Returns: A BannedUser instance, or nil if the banned user is missing.
     func asModel() -> BannedUser? {
         guard let user = user else { return nil }
 

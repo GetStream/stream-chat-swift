@@ -447,31 +447,17 @@ public class Chat: @unchecked Sendable {
 
     /// Queries the bans of the channel.
     ///
-    /// Both regular and shadow bans are returned, and expired bans are included unless `excludeExpiredBans` is set.
+    /// Both regular and shadow bans are returned, and expired bans are included unless
+    /// ``BannedUserListQuery/excludeExpiredBans`` is set.
     ///
-    /// - Parameters:
-    ///   - filter: An additional filter narrowing down the channel's bans (see `Filter`).
-    ///   - sort: The sorting order for the bans. When empty, bans are sorted ascending by ``BannedUserListSortingKey/createdAt``.
-    ///   - pagination: The pagination option used for retrieving the bans. The maximum page size is 300.
-    ///   - excludeExpiredBans: True, if bans which have already expired should be left out of the results.
+    /// - Parameter query: The query describing which of the channel's bans to return. The query is always
+    /// scoped to the channel, therefore any filter it carries narrows down the channel's bans.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of the bans matching the query.
-    public func queryBannedUsers(
-        filter: Filter<BannedUserListFilterScope>? = nil,
-        sort: [Sorting<BannedUserListSortingKey>] = [],
-        pagination: Pagination = Pagination(pageSize: .bannedUsersPageSize),
-        excludeExpiredBans: Bool = false
-    ) async throws -> [BannedUser] {
+    public func queryBannedUsers(with query: BannedUserListQuery = .init()) async throws -> [BannedUser] {
         let cid = try await self.cid
-        let query = BannedUserListQuery.channelBans(
-            cid: cid,
-            filter: filter,
-            sort: sort,
-            pagination: pagination,
-            excludeExpiredBans: excludeExpiredBans
-        )
-        return try await memberUpdater.queryBannedUsers(query: query)
+        return try await memberUpdater.queryBannedUsers(query: query.scoped(toChannel: cid))
     }
 
     // MARK: - Messages

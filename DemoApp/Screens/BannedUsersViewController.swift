@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-/// Shows the result of `ChatChannelController.queryBannedUsers()` for a channel.
+/// Shows the result of `ChatChannelController.queryBannedUsers(with:)` for a channel.
 ///
 /// Unlike a member query filtered by `banned`, this lists the ban records themselves, so it also
 /// covers expired bans, bans of users who are not members, and the reason/author of each ban.
@@ -15,6 +15,7 @@ class BannedUsersViewController: UITableViewController {
 
     private var bannedUsers: [BannedUser] = []
     private var excludeExpiredBans = false
+    private var latestQueryId = 0
 
     init(channelController: ChatChannelController) {
         self.channelController = channelController
@@ -53,16 +54,20 @@ class BannedUsersViewController: UITableViewController {
     }
 
     private func queryBannedUsers() {
-        channelController.queryBannedUsers(
+        latestQueryId += 1
+        let queryId = latestQueryId
+        let query = BannedUserListQuery(
             sort: [.init(key: .createdAt, isAscending: false)],
             excludeExpiredBans: excludeExpiredBans
-        ) { [weak self] result in
+        )
+        channelController.queryBannedUsers(with: query) { [weak self] result in
+            guard let self, queryId == self.latestQueryId else { return }
             switch result {
             case .success(let bannedUsers):
-                self?.bannedUsers = bannedUsers
-                self?.tableView.reloadData()
+                self.bannedUsers = bannedUsers
+                self.tableView.reloadData()
             case .failure(let error):
-                self?.presentAlert(title: "Couldn't query banned users", message: "\(error)")
+                self.presentAlert(title: "Couldn't query banned users", message: "\(error)")
             }
         }
     }

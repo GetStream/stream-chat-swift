@@ -574,10 +574,12 @@ final class Chat_Tests: XCTestCase {
         env.memberUpdaterMock.queryBannedUsers_completion_result = .success(expectedBans)
 
         let bans = try await chat.queryBannedUsers(
-            filter: .equal(.bannedById, to: "leia"),
-            sort: [Sorting(key: .createdAt, isAscending: true)],
-            pagination: Pagination(pageSize: 10, offset: 20),
-            excludeExpiredBans: true
+            with: BannedUserListQuery(
+                filter: .equal(.bannedById, to: "leia"),
+                sort: [Sorting(key: .createdAt, isAscending: true)],
+                pagination: Pagination(pageSize: 10, offset: 20),
+                excludeExpiredBans: true
+            )
         )
 
         XCTAssertEqual(expectedBans.map(\.user.id), bans.map(\.user.id))

@@ -145,10 +145,6 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    /// Queries the bans matching the given query.
-    /// - Parameters:
-    ///   - query: The query describing which bans to return.
-    ///   - completion: Called when the API call is finished. Called with `Error` if the remote fetch fails.
     func queryBannedUsers(
         query: BannedUserListQuery,
         completion: @escaping @Sendable (Result<[BannedUser], Error>) -> Void
