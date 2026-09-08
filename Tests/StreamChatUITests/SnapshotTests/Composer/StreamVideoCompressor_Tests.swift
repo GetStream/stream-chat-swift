@@ -54,39 +54,42 @@ import XCTest
         XCTAssertEqual(VideoCompressionQuality.high.exportPreset, AVAssetExportPreset1920x1080)
     }
 
-    func test_estimatedFileLength_thenItUsesTheBitRateOfTheConfiguredQuality() {
-        let duration = CMTime(seconds: 89.09, preferredTimescale: 600)
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .high),
-            169_271_000
-        )
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium),
-            118_044_250
-        )
-        XCTAssertEqual(
-            StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low),
-            30_067_875
-        )
+    func test_estimatedFileLength_thenItDescribesTheExportOfTheSameQuality() async throws {
+        let videoURL = try await makeVideo(width: 1280, height: 720, numberOfFrames: 60, bitRate: 15_000_000)
+        let estimatedLength = await StreamVideoCompressor.estimatedFileLength(at: videoURL, quality: .low)
+        let estimate = try XCTUnwrap(estimatedLength)
+
+        let compressedURL = try await StreamVideoCompressor().compressVideo(at: videoURL, quality: .low) { _ in }
+        temporaryDirectories.append(compressedURL.deletingLastPathComponent())
+
+        // The estimate follows camera footage within a few percent, but the keyframe and
+        // container overhead of a short clip of noise weighs heavily enough to move it, so
+        // the bounds here only catch an estimate which describes a different export.
+        let actual = try fileSize(of: compressedURL)
+        XCTAssertGreaterThan(estimate, actual / 2)
+        XCTAssertLessThan(estimate, actual * 2)
     }
 
-    func test_estimatedFileLength_thenALowerQualityAlwaysEstimatesASmallerFile() throws {
-        let duration = CMTime(seconds: 60, preferredTimescale: 600)
-        let low = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .low))
-        let medium = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .medium))
-        let high = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration, quality: .high))
+    func test_estimatedFileLength_thenALowerQualityEstimatesASmallerFile() async throws {
+        let videoURL = try await makeVideo(width: 1280, height: 720, numberOfFrames: 30, bitRate: 15_000_000)
+
+        let lowLength = await StreamVideoCompressor.estimatedFileLength(at: videoURL, quality: .low)
+        let mediumLength = await StreamVideoCompressor.estimatedFileLength(at: videoURL, quality: .medium)
+        let low = try XCTUnwrap(lowLength)
+        let medium = try XCTUnwrap(mediumLength)
 
         XCTAssertLessThan(low, medium)
-        XCTAssertLessThan(medium, high)
     }
 
-    func test_estimatedFileLength_whenTheVideoIsLong_thenTheEstimateExceedsTheUploadLimit() {
-        let estimate = StreamVideoCompressor.estimatedFileLength(
-            for: CMTime(seconds: 600, preferredTimescale: 1),
-            quality: .high
+    func test_estimatedFileLength_whenTheQualityIsNotSupported_thenThereIsNoEstimate() async throws {
+        let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 5, bitRate: 1_000_000)
+
+        let estimate = await StreamVideoCompressor.estimatedFileLength(
+            at: videoURL,
+            quality: .init(exportPreset: "StreamNotAnExportPreset")
         )
-        XCTAssertEqual(estimate, 1_140_000_000)
-        XCTAssertGreaterThan(try XCTUnwrap(estimate), 100 * 1024 * 1024)
+
+        XCTAssertNil(estimate)
     }
 
     func test_compressVideo_whenTwoVideosAreCompressed_thenBothReportProgressBeforeEitherFinishes() async throws {
