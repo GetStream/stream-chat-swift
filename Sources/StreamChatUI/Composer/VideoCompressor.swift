@@ -4,6 +4,7 @@
 
 import AVFoundation
 import Foundation
+import StreamChat
 
 /// The quality which is used when the videos added to the composer are compressed.
 public struct VideoCompressionQuality: Equatable, Sendable {
@@ -103,30 +104,49 @@ struct StreamVideoCompressor: VideoCompressor {
         return outputURL
     }
 
-    /// The size the compressed video is expected to have, as `AVFoundation` estimates it for
-    /// the given quality. Returns `nil` when no estimate is available.
-    ///
-    /// The estimate assumes the video is re-encoded. An export which only has to copy the
-    /// video track, because the quality does not ask for a smaller resolution, comes out
-    /// considerably smaller than this.
-    static func estimatedFileLength(
-        at url: URL,
-        quality: VideoCompressionQuality,
-        outputFileType: AVFileType = .mp4
-    ) async -> Int64? {
-        guard let session = AVAssetExportSession(
-            asset: AVURLAsset(url: url),
-            presetName: quality.exportPreset
-        ) else { return nil }
-        session.outputFileType = outputFileType
-        // The estimate is loaded asynchronously, so that it does not block the
-        // caller, which is usually the main actor.
-        let length: Int64 = await withCheckedContinuation { continuation in
-            session.estimateOutputFileLength { length, _ in
-                continuation.resume(returning: length)
+    /// Total bitrate used to estimate a 1080p H.264 export.
+    static let highQualityBitRate: Double = 5_000_000
+
+    /// Total bitrate used to estimate a 720p H.264 export.
+    static let mediumQualityBitRate: Double = 2_700_000
+
+    /// Total bitrate used to estimate a 480p H.264 export.
+    static let lowQualityBitRate: Double = 1_000_000
+
+    /// The expected size of the compressed video, based on duration and the
+    /// bitrate of the given quality. Returns `nil` when the duration is unknown
+    /// or the quality has no known bitrate.
+    static func estimatedFileLength(for duration: CMTime, quality: VideoCompressionQuality) -> Int64? {
+        guard let bitRate = bitRate(for: quality) else { return nil }
+        let seconds = CMTimeGetSeconds(duration)
+        guard seconds.isFinite, seconds > 0 else { return nil }
+        return Int64((seconds * bitRate / 8).rounded())
+    }
+
+    /// The duration is loaded asynchronously, so that reading it does not block the
+    /// caller, which is usually the main actor.
+    static func estimatedFileLength(at url: URL, quality: VideoCompressionQuality) async -> Int64? {
+        let duration: CMTime? = await withCheckedContinuation { continuation in
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\AVURLAsset.duration)],
+                of: AVURLAsset(url: url)
+            ) { result in
+                guard case .success(let asset) = result else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: asset.duration)
             }
         }
-        return length > 0 ? length : nil
+        guard let duration else { return nil }
+        return estimatedFileLength(for: duration, quality: quality)
+    }
+
+    private static func bitRate(for quality: VideoCompressionQuality) -> Double? {
+        if quality == .high { return highQualityBitRate }
+        if quality == .medium { return mediumQualityBitRate }
+        if quality == .low { return lowQualityBitRate }
+        return nil
     }
 
     private func makeOutputURL(for inputURL: URL) throws -> URL {
