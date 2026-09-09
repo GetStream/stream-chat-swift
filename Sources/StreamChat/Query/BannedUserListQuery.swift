@@ -29,6 +29,9 @@ public extension FilterKey where Scope == BannedUserListFilterScope {
     static var reason: FilterKey<Scope, String> { "reason" }
 }
 
+// Internal on purpose: the SDK always scopes client-side queries to a channel itself
+// (see `scoped(toChannel:)`), so exposing this key would only let callers add a duplicate
+// or conflicting channel condition.
 extension FilterKey where Scope == BannedUserListFilterScope {
     static var cid: FilterKey<Scope, ChannelId> { "channel_cid" }
 }
