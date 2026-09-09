@@ -519,7 +519,7 @@ open class GalleryVC: _ViewController,
         guard let attachment = item.attachment(payloadType: VideoAttachmentPayload.self) else {
             return nil
         }
-        let fileName = GalleryVC.sanitizedShareFileName(
+        let fileName = sanitizedShareFileName(
             title: attachment.payload.title,
             messageId: attachment.id.messageId
         )
@@ -529,10 +529,10 @@ open class GalleryVC: _ViewController,
 
         do {
             if sourceURL.isFileURL, FileManager.default.fileExists(atPath: sourceURL.path) {
-                return try await Self.copyFileForSharing(from: sourceURL, fileName: fileName)
+                return try await copyFileForSharing(from: sourceURL, fileName: fileName)
             }
             let fileRequest = try await components.mediaLoader.loadFileRequest(for: attachment.videoURL)
-            return try await Self.downloadFileForSharing(
+            return try await downloadFileForSharing(
                 request: fileRequest.urlRequest,
                 fileName: fileName
             )
@@ -542,11 +542,22 @@ open class GalleryVC: _ViewController,
         }
     }
 
-    private nonisolated static func copyFileForSharing(from sourceURL: URL, fileName: String) async throws -> URL {
+    private func sanitizedShareFileName(title: String?, messageId: String) -> String {
+        let fallback = messageId.lowercased() + ".mp4"
+        guard let title else { return fallback }
+        let name = URL(fileURLWithPath: title).lastPathComponent
+        if name.isEmpty || name == "." || name == ".." {
+            return fallback
+        }
+        return name
+    }
+
+    // File I/O stays off the main actor so sharing a large video does not stall the gallery.
+    private nonisolated func copyFileForSharing(from sourceURL: URL, fileName: String) async throws -> URL {
         try moveOrCopyFileForSharing(from: sourceURL, fileName: fileName, copy: true)
     }
 
-    private nonisolated static func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
+    private nonisolated func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
         let temporaryURL: URL
         if #available(iOS 15.0, *) {
             (temporaryURL, _) = try await URLSession.shared.download(for: request)
@@ -556,7 +567,7 @@ open class GalleryVC: _ViewController,
         return try moveOrCopyFileForSharing(from: temporaryURL, fileName: fileName, copy: false)
     }
 
-    private nonisolated static func downloadFileUsingDownloadTask(_ request: URLRequest) async throws -> URL {
+    private nonisolated func downloadFileUsingDownloadTask(_ request: URLRequest) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             let task = URLSession.shared.downloadTask(with: request) { url, _, error in
                 if let error {
@@ -580,17 +591,7 @@ open class GalleryVC: _ViewController,
         }
     }
 
-    private nonisolated static func sanitizedShareFileName(title: String?, messageId: String) -> String {
-        let fallback = messageId.lowercased() + ".mp4"
-        guard let title else { return fallback }
-        let name = URL(fileURLWithPath: title).lastPathComponent
-        if name.isEmpty || name == "." || name == ".." {
-            return fallback
-        }
-        return name
-    }
-
-    private nonisolated static func moveOrCopyFileForSharing(
+    private nonisolated func moveOrCopyFileForSharing(
         from sourceURL: URL,
         fileName: String,
         copy: Bool
@@ -614,7 +615,7 @@ open class GalleryVC: _ViewController,
         return destination
     }
 
-    private nonisolated static func isShareDestination(_ destination: URL, inside directory: URL) -> Bool {
+    private nonisolated func isShareDestination(_ destination: URL, inside directory: URL) -> Bool {
         let directoryPath = directory.path
         let destinationPath = destination.path
         let prefix = directoryPath.hasSuffix("/") ? directoryPath : directoryPath + "/"
