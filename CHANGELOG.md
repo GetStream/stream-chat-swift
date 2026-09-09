@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.11.0)
+_September 09, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `PinnedMessagesPagination.offset(Int)` for paginating messages using offset [#4249](https://github.com/GetStream/stream-chat-swift/pull/4249)
