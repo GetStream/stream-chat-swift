@@ -560,7 +560,9 @@ open class GalleryVC: _ViewController,
     private nonisolated func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
         let temporaryURL: URL
         if #available(iOS 15.0, *) {
-            (temporaryURL, _) = try await URLSession.shared.download(for: request)
+            let (downloadedURL, response) = try await URLSession.shared.download(for: request)
+            try validateShareDownloadResponse(response)
+            temporaryURL = downloadedURL
         } else {
             temporaryURL = try await downloadFileUsingDownloadTask(request)
         }
@@ -569,7 +571,7 @@ open class GalleryVC: _ViewController,
 
     private nonisolated func downloadFileUsingDownloadTask(_ request: URLRequest) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
-            let task = URLSession.shared.downloadTask(with: request) { url, _, error in
+            let task = URLSession.shared.downloadTask(with: request) { url, response, error in
                 if let error {
                     continuation.resume(throwing: error)
                     return
@@ -579,6 +581,7 @@ open class GalleryVC: _ViewController,
                     return
                 }
                 do {
+                    try validateShareDownloadResponse(response)
                     let preservedURL = FileManager.default.temporaryDirectory
                         .appendingPathComponent(UUID().uuidString)
                     try FileManager.default.moveItem(at: url, to: preservedURL)
@@ -676,5 +679,12 @@ open class GalleryVC: _ViewController,
         let index = indexPath.item
         items.assertIndexIsPresent(index)
         return items[safe: index]
+    }
+}
+
+private func validateShareDownloadResponse(_ response: URLResponse?) throws {
+    guard let httpResponse = response as? HTTPURLResponse else { return }
+    guard (200..<300).contains(httpResponse.statusCode) else {
+        throw URLError(.badServerResponse)
     }
 }
