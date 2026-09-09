@@ -72,7 +72,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
             subscribeToPlayerNotifications()
 
             player?.seek(to: .zero)
-            player?.play()
+            playPlayer()
         }
     }
 
@@ -210,7 +210,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     @objc open func timeSliderEditingDidEnd(_ sender: UISlider) {
         seekPlayer(toProgress: sender.value)
         isScrubbing = false
-        player?.play()
+        playPlayer()
     }
 
     /// Seeks the player to the given timeline progress, a value between 0 and 1.
@@ -235,11 +235,26 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         player?.seek(to: .zero)
     }
 
+    /// Starts playback so video audio is heard even when the ringer switch is off.
+    open func playPlayer() {
+        activatePlaybackAudioSession()
+        player?.play()
+    }
+
+    /// Uses the playback category so the hardware ringer switch does not mute gallery video.
+    open func activatePlaybackAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+        } catch {
+            log.error("Failed to configure the audio session for gallery playback: \(error)")
+        }
+    }
+
     /// Is invoked when playback button is touched up inide.
     @objc open func handleTapOnPlayPauseButton() {
         switch player?.timeControlStatus {
         case .paused:
-            player?.play()
+            playPlayer()
         case .playing:
             player?.pause()
         default:
