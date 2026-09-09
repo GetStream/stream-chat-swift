@@ -74,6 +74,40 @@ import XCTest
         XCTAssertTrue(bothWereInFlight)
     }
 
+    func test_estimatedFileLength_thenItUsesThe540pBitRate() {
+        XCTAssertEqual(
+            StreamVideoCompressor.estimatedFileLength(for: 89),
+            58_962_500
+        )
+    }
+
+    func test_estimatedFileLength_whenTheVideoIsATypicalClip_thenTheEstimateFitsTheDefaultUploadLimit() throws {
+        let estimate = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: 89))
+        XCTAssertLessThan(estimate, 100 * 1024 * 1024)
+    }
+
+    func test_estimatedFileLength_whenTheVideoIsLong_thenTheEstimateExceedsTheDefaultUploadLimit() throws {
+        let estimate = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: 600))
+        XCTAssertGreaterThan(estimate, 100 * 1024 * 1024)
+    }
+
+    func test_estimatedFileLength_whenTheDurationIsUnknown_thenThereIsNoEstimate() {
+        XCTAssertNil(StreamVideoCompressor.estimatedFileLength(for: 0))
+        XCTAssertNil(StreamVideoCompressor.estimatedFileLength(for: .nan))
+        XCTAssertNil(StreamVideoCompressor.estimatedFileLength(for: -.infinity))
+    }
+
+    func test_estimatedFileLength_whenTheVideoHasADuration_thenTheEstimateMatchesTheBitRate() async throws {
+        let videoURL = try await makeVideo(width: 640, height: 480, numberOfFrames: 30, bitRate: 4_000_000)
+        let duration = await duration(of: videoURL)
+        let expected = try XCTUnwrap(StreamVideoCompressor.estimatedFileLength(for: duration))
+
+        let estimate = await StreamVideoCompressor().estimatedFileLength(at: videoURL)
+
+        XCTAssertEqual(estimate, expected)
+        XCTAssertGreaterThan(estimate ?? 0, 0)
+    }
+
     // MARK: - Helpers
 
     private func fileSize(of url: URL) throws -> Int64 {

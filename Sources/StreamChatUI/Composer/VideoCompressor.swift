@@ -4,6 +4,7 @@
 
 import AVFoundation
 import Foundation
+import StreamChat
 
 /// The errors which can occur while a video is being compressed.
 enum VideoCompressionError: Error {
@@ -24,6 +25,9 @@ protocol VideoCompressor: Sendable {
         at url: URL,
         progressHandler: @escaping @Sendable (Double) -> Void
     ) async throws -> URL
+
+    /// The expected size of the compressed video, or `nil` when it cannot be estimated.
+    func estimatedFileLength(at url: URL) async -> Int64?
 }
 
 /// The default video compressor, which transcodes videos with `AVAssetExportSession`.
@@ -42,6 +46,32 @@ struct StreamVideoCompressor: VideoCompressor {
     ) {
         self.progressUpdateInterval = progressUpdateInterval
         self.outputFileType = outputFileType
+    }
+
+    /// Typical total bitrate of `AVAssetExportPreset960x540` on camera video (~5.3 Mbps).
+    static let estimatedBitRate: Double = 5_300_000
+
+    /// The expected size of a 540p export, based on duration and `estimatedBitRate`.
+    static func estimatedFileLength(for duration: TimeInterval) -> Int64? {
+        guard duration.isFinite, duration > 0 else { return nil }
+        return Int64((duration * estimatedBitRate / 8).rounded())
+    }
+
+    func estimatedFileLength(at url: URL) async -> Int64? {
+        let duration: TimeInterval? = await withCheckedContinuation { continuation in
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\AVURLAsset.duration)],
+                of: AVURLAsset(url: url)
+            ) { result in
+                guard case .success(let asset) = result else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: CMTimeGetSeconds(asset.duration))
+            }
+        }
+        guard let duration else { return nil }
+        return Self.estimatedFileLength(for: duration)
     }
 
     func compressVideo(

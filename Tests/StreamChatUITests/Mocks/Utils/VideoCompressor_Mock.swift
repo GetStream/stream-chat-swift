@@ -24,6 +24,13 @@ final class VideoCompressor_Mock: VideoCompressor, @unchecked Sendable {
     /// Suspends compression so other pending items can finish first.
     var compressionGate: (@MainActor () async -> Void)?
 
+    /// The size reported by `estimatedFileLength(at:)`. `nil` keeps the default of unknown.
+    var estimatedFileLengthResult: Int64?
+
+    func estimatedFileLength(at url: URL) async -> Int64? {
+        estimatedFileLengthResult
+    }
+
     @MainActor
     func compressVideo(
         at url: URL,

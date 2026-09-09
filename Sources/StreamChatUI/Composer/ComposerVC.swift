@@ -1909,6 +1909,12 @@ open class ComposerVC: _ViewController,
 
         var processedMedia = media
         if media.type == .video {
+            if await compressedVideoWouldExceedUploadLimit(at: media.url) {
+                mediaLoader.removeTemporaryMedia(at: media.url)
+                removePendingMedia(id: id)
+                showAttachmentExceedsMaxSizeAlert()
+                return
+            }
             do {
                 let compressedURL = try await compressVideo(
                     at: media.url,
@@ -1994,6 +2000,14 @@ open class ComposerVC: _ViewController,
         }
         guard let thumbnail else { return }
         updatePendingPreview(thumbnail, for: id)
+    }
+
+    // Skip compression when a 540p export would still be over the upload limit.
+    private func compressedVideoWouldExceedUploadLimit(at url: URL) async -> Bool {
+        guard let estimatedSize = await components.videoCompressor.estimatedFileLength(at: url) else {
+            return false
+        }
+        return estimatedSize > maxAttachmentSize(for: .video)
     }
 
     /// Compresses the video at the given location and removes the video it was created from.
