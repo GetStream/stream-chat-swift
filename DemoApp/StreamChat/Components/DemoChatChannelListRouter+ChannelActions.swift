@@ -627,6 +627,14 @@ extension DemoChatChannelListRouter {
                         query: .init(cid: cid, filter: .equal(.banned, to: true))
                     )
                 ), animated: true)
+            },
+            .item("Query Bans") { [unowned self] in
+                self.rootViewController.present(
+                    UINavigationController(
+                        rootViewController: BannedUsersViewController(channelController: context.channelController)
+                    ),
+                    animated: true
+                )
             }
         ]
     }

@@ -55,6 +55,7 @@ allowed_endpoints=(
     markUnread
     mute
     muteChannel
+    queryBannedUsers
     queryDrafts
     queryMembers
     queryPollVotes
@@ -100,6 +101,7 @@ allowed_models=(
   AppResponseFields
   Attachment
   BanRequest
+  BanResponse
   BlockedUserResponse
   BlockUsersRequest
   BlockUsersResponse
@@ -176,6 +178,8 @@ allowed_models=(
   PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
+  QueryBannedUsersPayload
+  QueryBannedUsersResponse
   QueryDraftsRequest
   QueryDraftsResponse
   QueryMembersPayload
@@ -302,6 +306,7 @@ encodable_only_models=(
   NewLocationRequestPayload
   PollOptionRequestBody
   PushPreferenceInput
+  QueryBannedUsersPayload
   QueryDraftsRequest
   QueryMembersPayload
   QueryPollVotesRequestBody
@@ -337,6 +342,7 @@ encodable_only_models=(
 
 decodable_only_models=(
   AppSettings
+  BanResponse
   BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
@@ -383,6 +389,7 @@ decodable_only_models=(
   PollVotePayload
   PollVotePayloadResponse
   PushPreference
+  QueryBannedUsersResponse
   QueryDraftsResponse
   QueryRemindersResponse
   QueryThreadsResponse

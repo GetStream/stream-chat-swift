@@ -63,6 +63,7 @@ extension EndpointPath {
              .markUnread,
              .mute,
              .muteChannel,
+             .queryBannedUsers,
              .queryDrafts,
              .queryMembers,
              .queryPollVotes,
