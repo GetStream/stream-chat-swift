@@ -16,6 +16,12 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
+    /// A thumbnail provided by the photos picker. When set, it is shown immediately
+    /// instead of generating a preview from the video file.
+    public var previewImage: UIImage? {
+        didSet { updateContentIfNeeded() }
+    }
+
     /// The view that displays the video preview.
     open private(set) lazy var previewImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -44,6 +50,9 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         super.setUpAppearance()
 
         previewImageView.contentMode = .scaleAspectFill
+        if #available(iOS 17.0, *) {
+            previewImageView.preferredImageDynamicRange = .standard
+        }
 
         cameraIconView.image = appearance.images.camera
         cameraIconView.contentMode = .scaleAspectFit
@@ -88,18 +97,20 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        loadingIndicator.isHidden = false
-        previewImageView.image = nil
+        loadingIndicator.isHidden = previewImage != nil
+        previewImageView.image = previewImage
         videoDurationLabel.text = nil
 
         if let url = content {
-            components.mediaLoader.loadVideoPreview(at: url) { [weak self] in
-                self?.loadingIndicator.isHidden = true
-                switch $0 {
-                case let .success(preview):
-                    self?.previewImageView.image = preview.image
-                case .failure:
-                    self?.previewImageView.image = nil
+            if previewImage == nil {
+                components.mediaLoader.loadVideoPreview(at: url) { [weak self] in
+                    self?.loadingIndicator.isHidden = true
+                    switch $0 {
+                    case let .success(preview):
+                        self?.previewImageView.image = preview.image
+                    case .failure:
+                        self?.previewImageView.image = nil
+                    }
                 }
             }
             components.mediaLoader.loadVideoAsset(at: url) { [weak self] result in
