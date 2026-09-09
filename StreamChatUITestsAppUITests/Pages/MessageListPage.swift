@@ -322,6 +322,14 @@ class MessageListPage {
             app.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
         }
 
+        /// Confirms the selection in the system photos picker, which allows selecting multiple items.
+        static var addButton: XCUIElement {
+            app.navigationBars["Photos"]
+                .buttons
+                .matching(NSPredicate(format: "identifier == 'Add' OR label IN {'Add', 'Done'}"))
+                .firstMatch
+        }
+
         static var images: XCUIElementQuery {
             if ProcessInfo().operatingSystemVersion.majorVersion > 13 {
                 return app.scrollViews.images

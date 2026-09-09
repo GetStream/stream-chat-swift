@@ -2,9 +2,10 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import AVFoundation
 import Foundation
+import PhotosUI
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// The possible errors that can occur in attachment validation
@@ -442,14 +443,100 @@ open class ComposerVC: _ViewController,
         .messageComposerAttachmentsVC
         .init()
 
+    /// The configuration of the system photos picker presented by `mediaPickerVC`.
+    ///
+    /// Override this property to customize the picker without reimplementing result handling.
+    /// For example, to only allow selecting images:
+    /// ```
+    /// override var mediaPickerConfiguration: PHPickerConfiguration {
+    ///     var configuration = super.mediaPickerConfiguration
+    ///     configuration.filter = .images
+    ///     return configuration
+    /// }
+    /// ```
+    @available(iOS 14.0, *)
+    open var mediaPickerConfiguration: PHPickerConfiguration {
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .any(of: [.images, .videos])
+        configuration.selectionLimit = max(1, remainingNumberOfAttachments)
+        // `.current` returns the file already on disk. `.compatible` transcodes in
+        // Photos first, which is much slower for camera videos.
+        configuration.preferredAssetRepresentationMode = .current
+        return configuration
+    }
+
     /// The view controller for selecting image attachments.
-    open private(set) lazy var mediaPickerVC: UIViewController = {
+    ///
+    /// On iOS 14 and above `PHPickerViewController` is used. Set
+    /// `Components.isLegacyPhotosPickerEnabled` to `true` to keep the
+    /// legacy `UIImagePickerController`.
+    ///
+    /// To customize the system photos picker, override `mediaPickerConfiguration`.
+    /// Override this property only when replacing the picker with a completely custom view controller.
+    open var mediaPickerVC: UIViewController {
+        if #available(iOS 14.0, *), !components.isLegacyPhotosPickerEnabled {
+            let picker = PHPickerViewController(configuration: mediaPickerConfiguration)
+            picker.delegate = self
+            return picker
+        }
+        return legacyMediaPickerVC
+    }
+
+    private lazy var legacyMediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
         picker.delegate = self
         return picker
     }()
+
+    /// The tasks which load and compress the media selected in the media picker.
+    /// There is one per picker selection, because a new selection does not cancel
+    /// the media which is already being processed.
+    private var mediaSelectionTasks: [UUID: Task<Void, Never>] = [:]
+
+    /// The number of attachments the composer had when the current pending media
+    /// started being processed. Pending items are positioned relative to it.
+    private var pendingMediaAnchorCount = 0
+
+    /// The position the next picked item takes within the current pending media.
+    private var nextPendingMediaOrder = 0
+
+    // Loads picker files, previews, and metadata. Replace in tests to avoid Photos I/O.
+    var mediaLoader: ComposerMediaLoading = ComposerMediaLoader()
+
+    /// Attachments that should already show a preview, but are not ready to send yet.
+    private(set) var pendingMediaItems: [PendingMediaItem] = [] {
+        didSet {
+            let structureChanged = oldValue.map(\.id) != pendingMediaItems.map(\.id)
+                || oldValue.count != pendingMediaItems.count
+                || zip(oldValue, pendingMediaItems).contains { $0.previewImage !== $1.previewImage }
+            if structureChanged {
+                updateInputAttachmentsView()
+                updateSendButtonEnabled()
+                updateConfirmButtonEnabled()
+            }
+            attachmentsVC.processingProgressByID = Dictionary(
+                uniqueKeysWithValues: pendingMediaItems.map { ($0.id, $0.progress) }
+            )
+        }
+    }
+
+    /// A boolean that checks if any composer attachment is still being processed.
+    open var hasProcessingAttachments: Bool {
+        !pendingMediaItems.isEmpty
+    }
+
+    /// The number of attachments which can still be added to the message.
+    ///
+    /// Media which was picked but is not ready to be sent yet already occupies a slot,
+    /// so that picking again while a video compresses cannot exceed the limit.
+    open var remainingNumberOfAttachments: Int {
+        max(0, maxNumberOfAttachments - content.attachments.count - pendingMediaItems.count)
+    }
+
+    /// Thumbnails loaded from the photos picker, keyed by the attachment's local file URL.
+    private var attachmentPreviewImages: [URL: UIImage] = [:]
 
     /// The View Controller for taking a picture.
     open private(set) lazy var cameraVC: UIViewController = {
@@ -532,7 +619,16 @@ open class ComposerVC: _ViewController,
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
-            self?.content.attachments.remove(at: index)
+            guard let self else { return }
+            let readyCount = self.content.attachments.count
+            if index < readyCount {
+                if let url = self.content.attachments[index].localFileURL {
+                    self.attachmentPreviewImages.removeValue(forKey: url)
+                }
+                self.content.attachments.remove(at: index)
+            } else if let pendingPreview = self.attachmentsVC.content[safe: index] as? ProcessingAttachmentPreview {
+                self.removePendingMedia(id: pendingPreview.id)
+            }
         }
     }
 
@@ -654,11 +750,11 @@ open class ComposerVC: _ViewController,
     }
 
     open func updateSendButtonEnabled() {
-        composerView.sendButton.isEnabled = !content.isEmpty
+        composerView.sendButton.isEnabled = !content.isEmpty && !hasProcessingAttachments
     }
 
     open func updateConfirmButtonEnabled() {
-        composerView.confirmButton.isEnabled = !content.isEmpty
+        composerView.confirmButton.isEnabled = !content.isEmpty && !hasProcessingAttachments
     }
 
     open func updateAttachmentButtonVisibility() {
@@ -701,7 +797,8 @@ open class ComposerVC: _ViewController,
     }
 
     open func updateInputAttachmentsView() {
-        attachmentsVC.content = content.attachments.map {
+        attachmentsVC.previewImagesByURL = attachmentPreviewImages
+        let readyPreviews: [AttachmentPreviewProvider] = content.attachments.map {
             if let provider = $0.payload as? AttachmentPreviewProvider {
                 return provider
             } else {
@@ -712,7 +809,19 @@ open class ComposerVC: _ViewController,
                 return DefaultAttachmentPreviewProvider()
             }
         }
-        composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
+        let pendingPreviews: [AttachmentPreviewProvider] = pendingMediaItems.compactMap { item in
+            if item.type == .image, item.previewImage == nil {
+                return nil
+            }
+            return ProcessingAttachmentPreview(
+                id: item.id,
+                type: item.type,
+                previewImage: item.previewImage,
+                progress: item.progress
+            )
+        }
+        attachmentsVC.content = readyPreviews + pendingPreviews
+        composerView.inputMessageView.attachmentsViewContainer.isHidden = readyPreviews.isEmpty && pendingPreviews.isEmpty
     }
 
     open func updateLinkPreview() {
@@ -818,6 +927,8 @@ open class ComposerVC: _ViewController,
     // MARK: - Actions
 
     @objc open func publishMessage(sender: UIButton) {
+        guard !hasProcessingAttachments else { return }
+
         if !canSendLinks && inputContainsLinks {
             presentAlert(title: L10n.Composer.LinksDisabled.title, message: L10n.Composer.LinksDisabled.subtitle)
             return
@@ -834,6 +945,8 @@ open class ComposerVC: _ViewController,
             // in CIS-883
             channelController?.sendStopTypingEvent()
             content.clear()
+            pendingMediaItems.removeAll()
+            attachmentPreviewImages.removeAll()
         } else {
             createNewMessage(text: text)
 
@@ -844,6 +957,8 @@ open class ComposerVC: _ViewController,
             }
 
             content.clear()
+            pendingMediaItems.removeAll()
+            attachmentPreviewImages.removeAll()
         }
     }
 
@@ -953,6 +1068,8 @@ open class ComposerVC: _ViewController,
 
     @objc open func clearContent(sender: UIButton) {
         content.clear()
+        attachmentPreviewImages.removeAll()
+        cancelMediaSelection()
     }
 
     /// Creates a new message and notifies the delegate that a new message was created.
@@ -1443,6 +1560,22 @@ open class ComposerVC: _ViewController,
         info: [LocalAttachmentInfoKey: Any],
         extraData: (Encodable & Sendable)?
     ) throws {
+        try addAttachmentToContent(
+            from: url,
+            type: type,
+            info: info,
+            extraData: extraData,
+            validateFileSize: true
+        )
+    }
+
+    func addAttachmentToContent(
+        from url: URL,
+        type: AttachmentType,
+        info: [LocalAttachmentInfoKey: Any],
+        extraData: (Encodable & Sendable)?,
+        validateFileSize: Bool
+    ) throws {
         guard let chatConfig = channelController?.client.config else {
             log.assertionFailure("Channel controller must be set at this point")
             return
@@ -1455,10 +1588,12 @@ open class ComposerVC: _ViewController,
             )
         }
 
-        let fileSize = try AttachmentFile(url: url).size
-        let maxAttachmentSize = maxAttachmentSize(for: type)
-        guard fileSize <= maxAttachmentSize else {
-            throw AttachmentValidationError.maxFileSizeExceeded
+        if validateFileSize {
+            let fileSize = try AttachmentFile(url: url).size
+            let maxAttachmentSize = maxAttachmentSize(for: type)
+            guard fileSize <= maxAttachmentSize else {
+                throw AttachmentValidationError.maxFileSizeExceeded
+            }
         }
 
         var localMetadata = AnyAttachmentLocalMetadata()
@@ -1496,6 +1631,17 @@ open class ComposerVC: _ViewController,
             extraData: extraData
         )
         content.attachments.append(attachment)
+    }
+
+    /// The maximum number of attachments which can be added to a message.
+    ///
+    /// The limit can be changed with `ChatClientConfig.maxAttachmentCountPerMessage`.
+    open var maxNumberOfAttachments: Int {
+        guard let config = channelController?.client.config else {
+            log.assertionFailure("Channel controller must be set at this point")
+            return 1
+        }
+        return config.maxAttachmentCountPerMessage
     }
 
     /// The maximum upload file size depending on the attachment type.
@@ -1599,82 +1745,333 @@ open class ComposerVC: _ViewController,
     }
 
     private func handleImagePickerMediaSelected(info: [UIImagePickerController.InfoKey: Any]) {
-        let urlAndType: (URL, AttachmentType)
+        let media: SelectedMediaItem
         if let imageURL = info[.imageURL] as? URL {
-            urlAndType = (imageURL, .image)
+            media = .init(url: imageURL, type: .image)
         } else if let videoURL = info[.mediaURL] as? URL {
-            urlAndType = (videoURL, .video)
+            media = .init(url: videoURL, type: .video)
         } else if let editedImage = info[.editedImage] as? UIImage,
                   let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
-            urlAndType = (editedImageURL, .image)
+            media = .init(url: editedImageURL, type: .image)
         } else if let originalImage = info[.originalImage] as? UIImage,
                   let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
-            urlAndType = (originalImageURL, .image)
+            media = .init(url: originalImageURL, type: .image)
         } else {
             log.error("Unexpected item selected in image picker")
             return
         }
 
-        nonisolated(unsafe) var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
-            localAttachmentInfo[.originalImage] = originalImage
+        let originalImage = media.type == .image ? info[.originalImage] as? UIImage : nil
+        Task { @MainActor [weak self] in
+            await self?.addAttachmentToContent(for: media, originalImage: originalImage)
         }
-        if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
-            let asset = AVURLAsset(url: videoURL)
-            let url = urlAndType.0
-            let type = urlAndType.1
-            StreamAssetPropertyLoader().loadProperties(
-                [AssetProperty(\.duration), AssetProperty(\.tracks)],
-                of: asset
-            ) { [weak self] result in
-                guard let self else { return }
-                Task { @MainActor in
-                    var info = localAttachmentInfo
-                    switch result {
-                    case .success(let loadedAsset):
-                        let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
-                        if durationSeconds.isFinite && !durationSeconds.isNaN {
-                            info[.duration] = durationSeconds
-                        }
-                        if let track = loadedAsset.tracks(withMediaType: .video).first {
-                            let (width, height) = Self.videoDimensions(from: track)
-                            info[.originalWidth] = width
-                            info[.originalHeight] = height
-                        }
-                    case .failure:
-                        break
-                    }
-                    do {
-                        try self.addAttachmentToContent(from: url, type: type, info: info)
-                    } catch {
-                        self.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
-                    }
+    }
+
+    // MARK: - Photos Picker
+
+    /// Adds the media items which were selected in the photos picker to the composer's content.
+    ///
+    /// Override to filter or transform the picker results. Call `super` to keep loading,
+    /// compression, and validation. To change which media the picker itself allows,
+    /// override `mediaPickerConfiguration` instead.
+    @available(iOS 14.0, *)
+    open func handleMediaPickerResults(_ results: [PHPickerResult]) {
+        let allowedResults = results.prefix(remainingNumberOfAttachments)
+        if allowedResults.count < results.count {
+            showAttachmentsCountExceedingLimitAlert(maxNumberOfAttachments)
+        }
+        guard !allowedResults.isEmpty else { return }
+
+        let ids = enqueuePendingMedia(from: allowedResults.map(\.itemProvider))
+        let taskID = UUID()
+        mediaSelectionTasks[taskID] = Task { @MainActor [weak self] in
+            await self?.processPendingMedia(ids: ids)
+            self?.mediaSelectionTasks[taskID] = nil
+        }
+    }
+
+    /// Cancels loading and compressing the media which was selected in the media picker.
+    open func cancelMediaSelection() {
+        mediaSelectionTasks.values.forEach { $0.cancel() }
+        mediaSelectionTasks.removeAll()
+        pendingMediaItems.removeAll()
+    }
+
+    /// Shows placeholder previews for the picked media, then loads and compresses the files.
+    func addSelectedMedia(from itemProviders: [NSItemProvider]) async {
+        await processPendingMedia(ids: enqueuePendingMedia(from: itemProviders))
+    }
+
+    /// Inserts placeholder previews so the composer can show them before the files are ready.
+    ///
+    /// Media from an earlier selection which is still being processed is kept, so that
+    /// picking again does not discard videos that are already compressing.
+    ///
+    /// - Returns: The identifiers of the items which were added.
+    @discardableResult
+    func enqueuePendingMedia(from itemProviders: [NSItemProvider]) -> [UUID] {
+        if pendingMediaItems.isEmpty {
+            pendingMediaAnchorCount = content.attachments.count
+            nextPendingMediaOrder = 0
+        }
+
+        let items = itemProviders.enumerated().map { index, itemProvider in
+            PendingMediaItem(
+                id: UUID(),
+                type: itemProvider.hasItemConformingToTypeIdentifier(mediaLoader.videoTypeIdentifier) ? .video : .image,
+                previewImage: nil,
+                progress: 0,
+                downloadShare: 0,
+                itemProvider: itemProvider,
+                order: nextPendingMediaOrder + index
+            )
+        }
+        nextPendingMediaOrder += items.count
+        pendingMediaItems.append(contentsOf: items)
+        return items.map(\.id)
+    }
+
+    /// Loads, copies, and compresses the given pending items at the same time.
+    ///
+    /// Images are added as soon as their file is ready. Videos compress
+    /// alongside them and keep the original picker order when they finish.
+    func processPendingMedia(ids: [UUID]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for id in ids {
+                group.addTask { [weak self] in
+                    await self?.loadPendingPreview(for: id)
                 }
-            }
-        } else {
-            do {
-                try addAttachmentToContent(
-                    from: urlAndType.0,
-                    type: urlAndType.1,
-                    info: localAttachmentInfo
-                )
-            } catch {
-                handleAddAttachmentError(
-                    attachmentURL: urlAndType.0,
-                    attachmentType: urlAndType.1,
-                    error: error
-                )
+                group.addTask { [weak self] in
+                    await self?.processPendingItem(id: id)
+                }
             }
         }
     }
 
-    private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
-        let size = track.naturalSize
-        let transform = track.preferredTransform
-        if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
-            return (Double(size.height), Double(size.width))
+    func loadPendingPreview(for id: UUID) async {
+        guard let itemProvider = pendingMediaItems.first(where: { $0.id == id })?.itemProvider else { return }
+        guard let previewImage = await mediaLoader.loadPreviewImage(from: itemProvider) else { return }
+        updatePendingPreview(previewImage, for: id)
+    }
+
+    private func updatePendingPreview(_ image: UIImage, for id: UUID) {
+        guard let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        pendingMediaItems[index].previewImage = image
+    }
+
+    /// The part of the progress bar an iCloud download takes when compression follows it.
+    static let cloudDownloadProgressShare: Double = 0.5
+
+    /// The reported progress never goes backwards.
+    private func updatePendingProgress(_ progress: Double, for id: UUID) {
+        guard let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        let progress = min(max(progress, 0), 1)
+        guard progress > pendingMediaItems[index].progress else { return }
+        pendingMediaItems[index].progress = progress
+    }
+
+    /// Reports how much of the file was downloaded from iCloud.
+    ///
+    /// Local videos skip this so compression can use the whole bar from 0%.
+    /// iCloud videos use half of the bar, then compression fills the rest.
+    func updateDownloadProgress(_ progress: Double, isCloudDownload: Bool, for id: UUID) {
+        guard isCloudDownload, let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        let share = pendingMediaItems[index].type == .video ? Self.cloudDownloadProgressShare : 1
+        if pendingMediaItems[index].downloadShare != share {
+            pendingMediaItems[index].downloadShare = share
         }
-        return (Double(size.width), Double(size.height))
+        updatePendingProgress(min(max(progress, 0), 1) * share, for: id)
+    }
+
+    /// Reports the compression progress, which continues where the iCloud download stopped.
+    func updateCompressionProgress(_ progress: Double, for id: UUID) {
+        guard let index = pendingMediaItems.firstIndex(where: { $0.id == id }) else { return }
+        let share = pendingMediaItems[index].downloadShare
+        updatePendingProgress(share + min(max(progress, 0), 1) * (1 - share), for: id)
+    }
+
+    private func processPendingItem(id: UUID) async {
+        guard let item = pendingMediaItems.first(where: { $0.id == id }) else { return }
+        guard let media = await mediaLoader.loadMedia(
+            from: item.itemProvider,
+            progressHandler: { [weak self] progress, isCloudDownload in
+                self?.updateDownloadProgress(progress, isCloudDownload: isCloudDownload, for: id)
+            }
+        ) else {
+            removePendingMedia(id: id)
+            return
+        }
+        guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
+            mediaLoader.removeTemporaryMedia(at: media.url)
+            return
+        }
+        await applyLocalThumbnailIfNeeded(id: id, media: media)
+
+        var processedMedia = media
+        if media.type == .video {
+            if await compressedVideoWouldExceedUploadLimit(at: media.url) {
+                mediaLoader.removeTemporaryMedia(at: media.url)
+                removePendingMedia(id: id)
+                showAttachmentExceedsMaxSizeAlert()
+                return
+            }
+            do {
+                let compressedURL = try await compressVideo(
+                    at: media.url,
+                    progressHandler: { [weak self] progress in
+                        Task { @MainActor [weak self] in
+                            self?.updateCompressionProgress(progress, for: id)
+                        }
+                    }
+                )
+                processedMedia = .init(url: compressedURL, type: .video)
+            } catch is CancellationError {
+                mediaLoader.removeTemporaryMedia(at: media.url)
+                removePendingMedia(id: id)
+                return
+            } catch {
+                log.error("Failed to compress the selected video, the original video is used instead: \(error)")
+            }
+        } else {
+            updatePendingProgress(1, for: id)
+        }
+
+        guard !Task.isCancelled, pendingMediaItems.contains(where: { $0.id == id }) else {
+            mediaLoader.removeTemporaryMedia(at: processedMedia.url)
+            return
+        }
+        await commitPendingMedia(id: id, media: processedMedia)
+    }
+
+    /// Where a finished item should sit when others from the same picker batch
+    /// may still be compressing.
+    static func attachmentIndex(
+        batchStartCount: Int,
+        order: Int,
+        unfinishedItemsBefore: Int
+    ) -> Int {
+        batchStartCount + order - unfinishedItemsBefore
+    }
+
+    private func commitPendingMedia(id: UUID, media: SelectedMediaItem) async {
+        guard let pending = pendingMediaItems.first(where: { $0.id == id }) else {
+            mediaLoader.removeTemporaryMedia(at: media.url)
+            return
+        }
+        if let previewImage = pending.previewImage {
+            attachmentPreviewImages[media.url] = previewImage
+        }
+        await addAttachmentToContent(for: media, validateFileSize: true)
+        guard let currentIndex = content.attachments.firstIndex(where: { $0.localFileURL == media.url }) else {
+            // The attachment was rejected, for example because it is still too big to upload.
+            attachmentPreviewImages.removeValue(forKey: media.url)
+            mediaLoader.removeTemporaryMedia(at: media.url)
+            removePendingMedia(id: id)
+            return
+        }
+        let unfinishedItemsBefore = pendingMediaItems.filter { $0.id != id && $0.order < pending.order }.count
+        let desiredIndex = Self.attachmentIndex(
+            batchStartCount: pendingMediaAnchorCount,
+            order: pending.order,
+            unfinishedItemsBefore: unfinishedItemsBefore
+        )
+        if currentIndex != desiredIndex {
+            var attachments = content.attachments
+            let attachment = attachments.remove(at: currentIndex)
+            attachments.insert(attachment, at: min(desiredIndex, attachments.count))
+            content.attachments = attachments
+        }
+        removePendingMedia(id: id)
+    }
+
+    private func removePendingMedia(id: UUID) {
+        pendingMediaItems.removeAll { $0.id == id }
+    }
+
+    private func applyLocalThumbnailIfNeeded(id: UUID, media: SelectedMediaItem) async {
+        let thumbnail: UIImage?
+        switch media.type {
+        case .image:
+            thumbnail = await mediaLoader.imageThumbnail(at: media.url)
+        case .video:
+            thumbnail = await mediaLoader.videoThumbnail(at: media.url)
+        default:
+            thumbnail = nil
+        }
+        guard let thumbnail else { return }
+        updatePendingPreview(thumbnail, for: id)
+    }
+
+    // Skip compression when a 540p export would still be over the upload limit.
+    private func compressedVideoWouldExceedUploadLimit(at url: URL) async -> Bool {
+        guard let estimatedSize = await components.videoCompressor.estimatedFileLength(at: url) else {
+            return false
+        }
+        return estimatedSize > maxAttachmentSize(for: .video)
+    }
+
+    /// Compresses the video at the given location and removes the video it was created from.
+    private func compressVideo(
+        at url: URL,
+        progressHandler: @escaping @Sendable (Double) -> Void
+    ) async throws -> URL {
+        let compressedURL = try await components.videoCompressor.compressVideo(
+            at: url,
+            progressHandler: progressHandler
+        )
+        if compressedURL != url {
+            mediaLoader.removeTemporaryMedia(at: url)
+        }
+        return compressedURL
+    }
+
+    /// Adds the given media item to the composer's content, together with the metadata
+    /// which is needed for rendering it before it is uploaded.
+    private func addAttachmentToContent(
+        for media: SelectedMediaItem,
+        originalImage: UIImage? = nil,
+        validateFileSize: Bool = true
+    ) async {
+        let info = await localInfo(for: media, originalImage: originalImage)
+        do {
+            try addAttachmentToContent(
+                from: media.url,
+                type: media.type,
+                info: info,
+                extraData: nil,
+                validateFileSize: validateFileSize
+            )
+        } catch {
+            handleAddAttachmentError(attachmentURL: media.url, attachmentType: media.type, error: error)
+        }
+    }
+
+    private func localInfo(
+        for media: SelectedMediaItem,
+        originalImage: UIImage? = nil
+    ) async -> [LocalAttachmentInfoKey: Any] {
+        var info: [LocalAttachmentInfoKey: Any] = [:]
+        switch media.type {
+        case .image:
+            if let originalImage = originalImage {
+                info[.originalImage] = originalImage
+            } else if let dimensions = mediaLoader.imageDimensions(at: media.url) {
+                info[.originalWidth] = dimensions.width
+                info[.originalHeight] = dimensions.height
+            }
+        case .video:
+            let metadata = await mediaLoader.loadVideoMetadata(at: media.url)
+            if let duration = metadata.duration {
+                info[.duration] = duration
+            }
+            if let width = metadata.width, let height = metadata.height {
+                info[.originalWidth] = width
+                info[.originalHeight] = height
+            }
+        default:
+            break
+        }
+        return info
     }
 
     // MARK: - UIDocumentPickerViewControllerDelegate
@@ -1827,6 +2224,14 @@ open class ComposerVC: _ViewController,
                 content.mentionedUsers.remove(user)
             }
         }
+    }
+}
+
+@available(iOS 14.0, *)
+extension ComposerVC: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        handleMediaPickerResults(results)
+        picker.dismiss(animated: true)
     }
 }
 
