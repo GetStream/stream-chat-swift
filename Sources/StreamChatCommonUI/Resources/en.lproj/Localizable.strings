@@ -179,6 +179,8 @@
 /// The first placeholder is the number of the selected image.
 /// The second placeholder is the total number of images in the attachment.
 "current-selection" = "%d of %d";
+/// VoiceOver label for the gallery close button.
+"gallery.close.accessibility" = "Close";
 /// VoiceOver label for the gallery share button.
 "gallery.share.accessibility" = "Share";
 /// VoiceOver label while the gallery prepares a video for the share sheet.

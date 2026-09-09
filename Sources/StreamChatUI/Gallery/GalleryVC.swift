@@ -222,6 +222,12 @@ open class GalleryVC: _ViewController,
         topBarContainerStackView.preservesSuperviewLayoutMargins = true
         topBarContainerStackView.isLayoutMarginsRelativeArrangement = true
 
+        closeButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
+        closeButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        closeButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        closeButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        closeButton.accessibilityLabel = L10n.Gallery.Close.accessibility
+        closeButton.accessibilityUserInputLabels = [L10n.Gallery.Close.accessibility]
         topBarContainerStackView.addArrangedSubview(closeButton)
 
         infoContainerStackView.axis = .vertical

@@ -238,6 +238,10 @@ public enum L10n {
   }
 
   public enum Gallery {
+    public enum Close {
+      /// Close
+      public static var accessibility: String { L10n.tr("Localizable", "gallery.close.accessibility") }
+    }
     public enum Playback {
       /// Pause
       public static var pause: String { L10n.tr("Localizable", "gallery.playback.pause") }
