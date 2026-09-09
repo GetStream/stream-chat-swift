@@ -290,6 +290,7 @@ open class GalleryVC: _ViewController,
         super.viewWillDisappear(animated)
 
         videoPlaybackBar.player?.pause()
+        videoPlaybackBar.deactivatePlaybackAudioSession()
     }
 
     override open func updateContent() {

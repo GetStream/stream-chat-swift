@@ -71,8 +71,12 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
             content = .initial
             subscribeToPlayerNotifications()
 
-            player?.seek(to: .zero)
-            playPlayer()
+            if player != nil {
+                player?.seek(to: .zero)
+                playPlayer()
+            } else {
+                deactivatePlaybackAudioSession()
+            }
         }
     }
 
@@ -245,8 +249,18 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     open func activatePlaybackAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             log.error("Failed to configure the audio session for gallery playback: \(error)")
+        }
+    }
+
+    /// Releases the playback session so the ringer switch and other audio can take over again.
+    open func deactivatePlaybackAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            log.error("Failed to deactivate the audio session after gallery playback: \(error)")
         }
     }
 
