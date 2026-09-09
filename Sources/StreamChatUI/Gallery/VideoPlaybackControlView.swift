@@ -57,6 +57,9 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     /// Whether the timeline is being scrubbed, so periodic time updates do not move it back.
     open private(set) var isScrubbing = false
 
+    /// Whether the player was playing when the user started scrubbing the timeline.
+    open private(set) var wasPlayingBeforeScrubbing = false
+
     /// A content displayed by the view.
     open var content: Content = .initial {
         didSet { updateContentIfNeeded() }
@@ -202,6 +205,7 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     /// Called when the user starts dragging the timeline.
     @objc open func timeSliderEditingDidBegin(_ sender: UISlider) {
         isScrubbing = true
+        wasPlayingBeforeScrubbing = player?.timeControlStatus == .playing
         player?.pause()
     }
 
@@ -214,7 +218,10 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     @objc open func timeSliderEditingDidEnd(_ sender: UISlider) {
         seekPlayer(toProgress: sender.value)
         isScrubbing = false
-        playPlayer()
+        if wasPlayingBeforeScrubbing {
+            playPlayer()
+        }
+        wasPlayingBeforeScrubbing = false
     }
 
     /// Seeks the player to the given timeline progress, a value between 0 and 1.

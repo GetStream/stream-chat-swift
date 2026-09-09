@@ -224,8 +224,10 @@ open class GalleryVC: _ViewController,
 
         closeButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
         closeButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        closeButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
-        closeButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+        NSLayoutConstraint.activate([
+            closeButton.widthAnchor.pin(greaterThanOrEqualToConstant: 44),
+            closeButton.heightAnchor.pin(greaterThanOrEqualToConstant: 44)
+        ])
         closeButton.accessibilityLabel = L10n.Gallery.Close.accessibility
         closeButton.accessibilityUserInputLabels = [L10n.Gallery.Close.accessibility]
         topBarContainerStackView.addArrangedSubview(closeButton)
@@ -368,7 +370,7 @@ open class GalleryVC: _ViewController,
         let shareItem = await prepareShareItem(at: indexPath)
         setSharePreparationInProgress(false)
         guard let shareItem else {
-            log.assertionFailure("Share item is missing for item at \(indexPath).")
+            log.error("Share item is missing for item at \(indexPath).")
             return
         }
         presentShareSheet(with: shareItem)
@@ -517,7 +519,10 @@ open class GalleryVC: _ViewController,
         guard let attachment = item.attachment(payloadType: VideoAttachmentPayload.self) else {
             return nil
         }
-        let fileName = attachment.payload.title ?? attachment.id.messageId.lowercased() + ".mp4"
+        let fileName = GalleryVC.sanitizedShareFileName(
+            title: attachment.payload.title,
+            messageId: attachment.id.messageId
+        )
         let sourceURL = attachment.downloadingState?.localFileURL
             ?? attachment.uploadingState?.localFileURL
             ?? attachment.videoURL
@@ -542,8 +547,47 @@ open class GalleryVC: _ViewController,
     }
 
     private nonisolated static func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
-        let (temporaryURL, _) = try await URLSession.shared.download(for: request)
+        let temporaryURL: URL
+        if #available(iOS 15.0, *) {
+            (temporaryURL, _) = try await URLSession.shared.download(for: request)
+        } else {
+            temporaryURL = try await downloadFileUsingDownloadTask(request)
+        }
         return try moveOrCopyFileForSharing(from: temporaryURL, fileName: fileName, copy: false)
+    }
+
+    private nonisolated static func downloadFileUsingDownloadTask(_ request: URLRequest) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            let task = URLSession.shared.downloadTask(with: request) { url, _, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let url else {
+                    continuation.resume(throwing: URLError(.cannotOpenFile))
+                    return
+                }
+                do {
+                    let preservedURL = FileManager.default.temporaryDirectory
+                        .appendingPathComponent(UUID().uuidString)
+                    try FileManager.default.moveItem(at: url, to: preservedURL)
+                    continuation.resume(returning: preservedURL)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+            task.resume()
+        }
+    }
+
+    private nonisolated static func sanitizedShareFileName(title: String?, messageId: String) -> String {
+        let fallback = messageId.lowercased() + ".mp4"
+        guard let title else { return fallback }
+        let name = URL(fileURLWithPath: title).lastPathComponent
+        if name.isEmpty || name == "." || name == ".." {
+            return fallback
+        }
+        return name
     }
 
     private nonisolated static func moveOrCopyFileForSharing(
@@ -551,8 +595,14 @@ open class GalleryVC: _ViewController,
         fileName: String,
         copy: Bool
     ) throws -> URL {
-        let destination = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            .appendingPathComponent(fileName)
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .standardizedFileURL
+        let destination = temporaryDirectory
+            .appendingPathComponent(URL(fileURLWithPath: fileName).lastPathComponent)
+            .standardizedFileURL
+        guard isShareDestination(destination, inside: temporaryDirectory) else {
+            throw URLError(.cannotCreateFile)
+        }
         if FileManager.default.fileExists(atPath: destination.path) {
             try FileManager.default.removeItem(at: destination)
         }
@@ -562,6 +612,13 @@ open class GalleryVC: _ViewController,
             try FileManager.default.moveItem(at: sourceURL, to: destination)
         }
         return destination
+    }
+
+    private nonisolated static func isShareDestination(_ destination: URL, inside directory: URL) -> Bool {
+        let directoryPath = directory.path
+        let destinationPath = destination.path
+        let prefix = directoryPath.hasSuffix("/") ? directoryPath : directoryPath + "/"
+        return destinationPath.hasPrefix(prefix) && destinationPath != directoryPath
     }
 
     /// Returns cell reuse identifier for a gallery item at given index path.
