@@ -179,6 +179,18 @@
 /// The first placeholder is the number of the selected image.
 /// The second placeholder is the total number of images in the attachment.
 "current-selection" = "%d of %d";
+/// VoiceOver label for the gallery close button.
+"gallery.close.accessibility" = "Close";
+/// VoiceOver label for the gallery share button.
+"gallery.share.accessibility" = "Share";
+/// VoiceOver label while the gallery prepares a video for the share sheet.
+"gallery.share.accessibility.preparing" = "Preparing…";
+/// VoiceOver label for the play button in the gallery video controls.
+"gallery.playback.play" = "Play";
+/// VoiceOver label for the pause button in the gallery video controls.
+"gallery.playback.pause" = "Pause";
+/// VoiceOver label for the video timeline slider in the gallery.
+"gallery.playback.timeline" = "Playback";
 
 /// Text shown when the user was last seen seconds ago.
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";

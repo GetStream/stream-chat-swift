@@ -26,6 +26,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Components.isLegacyPhotosPickerEnabled` to keep using `UIImagePickerController` in the composer [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 - Add `Components.processingAttachmentComposerPreview` to customize the preview shown while a picked attachment is being processed [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 ### 🐞 Fixed
+- Fix the gallery share button blocking the main thread when preparing a video [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix scrubbing the gallery video timeline not seeking the player [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix the gallery close button being too close to the screen edge to tap reliably [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix gallery video audio not playing when the ringer switch is off [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
 - Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
 ### 🔄 Changed
