@@ -116,11 +116,13 @@ import XCTest
 
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: GalleryVC {
-            override lazy var closeButton: UIButton = {
+            private lazy var customCloseButton: UIButton = {
                 let button = CloseButton()
                 button.setTitle("Test title", for: .normal)
                 return button
             }()
+
+            override var closeButton: UIButton { customCloseButton }
         }
 
         let vc = TestView()
