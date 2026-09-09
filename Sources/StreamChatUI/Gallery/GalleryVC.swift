@@ -536,16 +536,16 @@ open class GalleryVC: _ViewController,
         }
     }
 
-    nonisolated private static func copyFileForSharing(from sourceURL: URL, fileName: String) async throws -> URL {
+    private nonisolated static func copyFileForSharing(from sourceURL: URL, fileName: String) async throws -> URL {
         try moveOrCopyFileForSharing(from: sourceURL, fileName: fileName, copy: true)
     }
 
-    nonisolated private static func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
+    private nonisolated static func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
         let (temporaryURL, _) = try await URLSession.shared.download(for: request)
         return try moveOrCopyFileForSharing(from: temporaryURL, fileName: fileName, copy: false)
     }
 
-    nonisolated private static func moveOrCopyFileForSharing(
+    private nonisolated static func moveOrCopyFileForSharing(
         from sourceURL: URL,
         fileName: String,
         copy: Bool
