@@ -316,6 +316,15 @@ open class GalleryVC: _ViewController,
         videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
     }
 
+    /// Lets the video timeline and other controls keep their own gestures.
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        guard let touchedView = touch.view else { return true }
+        if touchedView is UIControl || touchedView.isDescendant(of: videoPlaybackBar) {
+            return false
+        }
+        return true
+    }
+
     /// Called whenever user pans with a given `gestureRecognizer`.
     @objc open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {

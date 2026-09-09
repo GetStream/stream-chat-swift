@@ -4,6 +4,7 @@
 
 import AVKit
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A view that shows playback controls and timeline for the given player.
@@ -52,6 +53,9 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     private var playerStatusObserver: NSKeyValueObservation?
     private var playerItemObserver: NSKeyValueObservation?
     private var itemDurationObserver: NSKeyValueObservation?
+
+    /// Whether the timeline is being scrubbed, so periodic time updates do not move it back.
+    open private(set) var isScrubbing = false
 
     /// A content displayed by the view.
     open var content: Content = .initial {
@@ -110,7 +114,13 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
         timeSlider.minimumValue = 0
         timeSlider.maximumValue = 1
+        timeSlider.addTarget(self, action: #selector(timeSliderEditingDidBegin), for: .touchDown)
         timeSlider.addTarget(self, action: #selector(timeSliderDidChange), for: .valueChanged)
+        timeSlider.addTarget(
+            self,
+            action: #selector(timeSliderEditingDidEnd),
+            for: [.touchUpInside, .touchUpOutside, .touchCancel]
+        )
 
         timestampLabel.font = appearance.fonts.footnoteBold
         durationLabel.font = appearance.fonts.footnoteBold
@@ -147,6 +157,11 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         playPauseButton.setTitleColor(.black, for: .normal)
         timestampLabel.text = videoDurationFormatter.format(0)
         durationLabel.text = videoDurationFormatter.format(0)
+        timeSlider.accessibilityLabel = L10n.Gallery.Playback.timeline
+        timeSlider.accessibilityUserInputLabels = [L10n.Gallery.Playback.timeline]
+        playPauseButton.accessibilityLabel = L10n.Gallery.Playback.play
+        timestampLabel.isAccessibilityElement = false
+        durationLabel.isAccessibilityElement = false
     }
 
     override open func updateContent() {
@@ -155,16 +170,23 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         timeSlider.value = .init(content.playingProgress)
         timestampLabel.text = videoDurationFormatter.format(content.currentTime)
         durationLabel.text = videoDurationFormatter.format(content.videoDuration)
+        timeSlider.accessibilityValue = videoDurationFormatter.format(content.currentTime)
 
         switch content.videoState {
         case .playing:
             playPauseButton.isHidden = false
             playPauseButton.setImage(appearance.images.pause, for: .normal)
+            playPauseButton.accessibilityLabel = L10n.Gallery.Playback.pause
+            playPauseButton.accessibilityUserInputLabels = [L10n.Gallery.Playback.pause]
         case .paused:
             playPauseButton.isHidden = false
             playPauseButton.setImage(appearance.images.play, for: .normal)
+            playPauseButton.accessibilityLabel = L10n.Gallery.Playback.play
+            playPauseButton.accessibilityUserInputLabels = [L10n.Gallery.Playback.play]
         case .loading:
             playPauseButton.isHidden = true
+            playPauseButton.accessibilityLabel = L10n.Gallery.Playback.play
+            playPauseButton.accessibilityUserInputLabels = [L10n.Gallery.Playback.play]
         }
 
         let showLoader = playPauseButton.isHidden
@@ -173,20 +195,39 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         }
     }
 
+    /// Called when the user starts dragging the timeline.
+    @objc open func timeSliderEditingDidBegin(_ sender: UISlider) {
+        isScrubbing = true
+        player?.pause()
+    }
+
     /// Is invoked when time slider changes the value.
     @objc open func timeSliderDidChange(_ sender: UISlider, event: UIEvent) {
-        switch event.allTouches?.first?.phase {
-        case .began:
-            player?.pause()
-        case .moved:
-            let duration = player?.currentItem?.duration.seconds ?? 0
-            let time = CMTime(seconds: duration * .init(sender.value), preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-            player?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
-        case .ended, .cancelled:
-            player?.play()
-        default:
-            break
+        seekPlayer(toProgress: sender.value)
+    }
+
+    /// Called when the user stops dragging the timeline.
+    @objc open func timeSliderEditingDidEnd(_ sender: UISlider) {
+        seekPlayer(toProgress: sender.value)
+        isScrubbing = false
+        player?.play()
+    }
+
+    /// Seeks the player to the given timeline progress, a value between 0 and 1.
+    open func seekPlayer(toProgress progress: Float) {
+        let progress = min(max(progress, 0), 1)
+        let duration: TimeInterval
+        if content.videoDuration.isFinite, content.videoDuration > 0 {
+            duration = content.videoDuration
+        } else if let itemDuration = player?.currentItem?.duration, itemDuration.isNumeric {
+            duration = itemDuration.seconds
+        } else {
+            content.playingProgress = Double(progress)
+            return
         }
+        let time = CMTime(seconds: duration * Double(progress), preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        player?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
+        content.playingProgress = Double(progress)
     }
 
     /// Is invoked when current track reached the end.
@@ -230,12 +271,12 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         let interval = CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         playerTimeChangesObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             StreamConcurrency.onMain {
-                guard let currentItem = self?.player?.currentItem else { return }
-                
+                guard let self, !self.isScrubbing, let currentItem = self.player?.currentItem else { return }
+
                 if time.isNumeric && currentItem.duration.isNumeric {
-                    self?.content.playingProgress = time.seconds / currentItem.duration.seconds
+                    self.content.playingProgress = time.seconds / currentItem.duration.seconds
                 } else {
-                    self?.content.playingProgress = 0
+                    self.content.playingProgress = 0
                 }
             }
         }

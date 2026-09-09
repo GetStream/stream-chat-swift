@@ -238,6 +238,14 @@ public enum L10n {
   }
 
   public enum Gallery {
+    public enum Playback {
+      /// Pause
+      public static var pause: String { L10n.tr("Localizable", "gallery.playback.pause") }
+      /// Play
+      public static var play: String { L10n.tr("Localizable", "gallery.playback.play") }
+      /// Playback
+      public static var timeline: String { L10n.tr("Localizable", "gallery.playback.timeline") }
+    }
     public enum Share {
       /// Share
       public static var accessibility: String { L10n.tr("Localizable", "gallery.share.accessibility") }
