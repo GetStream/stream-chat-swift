@@ -179,6 +179,10 @@
 /// The first placeholder is the number of the selected image.
 /// The second placeholder is the total number of images in the attachment.
 "current-selection" = "%d of %d";
+/// VoiceOver label for the gallery share button.
+"gallery.share.accessibility" = "Share";
+/// VoiceOver label while the gallery prepares a video for the share sheet.
+"gallery.share.accessibility.preparing" = "Preparing…";
 
 /// Text shown when the user was last seen seconds ago.
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";

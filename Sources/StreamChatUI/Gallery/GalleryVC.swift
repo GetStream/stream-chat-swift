@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A viewcontroller to showcase and slide through multiple attachments
@@ -130,6 +131,14 @@ open class GalleryVC: _ViewController,
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "shareButton")
 
+    /// Shown in place of the share icon while a video is copied or downloaded for sharing.
+    open private(set) lazy var shareActivityIndicator = UIActivityIndicatorView(style: .medium)
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "shareActivityIndicator")
+
+    /// Whether a share item is currently being prepared off the main thread.
+    open private(set) var isPreparingShareItem = false
+
     /// A constaint between `topBarView.topAnchor` and `view.topAnchor`.
     open private(set) var topBarTopConstraint: NSLayoutConstraint?
 
@@ -163,6 +172,11 @@ open class GalleryVC: _ViewController,
         currentPhotoLabel.textColor = appearance.colorPalette.textPrimary
         currentPhotoLabel.adjustsFontForContentSizeCategory = true
         currentPhotoLabel.textAlignment = .center
+
+        shareActivityIndicator.color = appearance.colorPalette.textPrimary
+        shareActivityIndicator.hidesWhenStopped = true
+        shareActivityIndicator.isAccessibilityElement = false
+        shareActivityIndicator.stopAnimating()
     }
 
     override open func setUp() {
@@ -235,6 +249,8 @@ open class GalleryVC: _ViewController,
         shareButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
         shareButton.contentEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         bottomBarContainerStackView.addArrangedSubview(shareButton)
+        shareButton.addSubview(shareActivityIndicator)
+        shareActivityIndicator.pin(anchors: [.centerX, .centerY], to: shareButton)
 
         currentPhotoLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         bottomBarContainerStackView.addArrangedSubview(currentPhotoLabel)
@@ -323,11 +339,46 @@ open class GalleryVC: _ViewController,
 
     /// Called when `shareButton` is tapped.
     @objc open func shareButtonTapped() {
-        guard let shareItem = shareItem(at: currentItemIndexPath) else {
-            log.assertionFailure("Share item is missing for item at \(currentItemIndexPath).")
+        guard !isPreparingShareItem else { return }
+        Task { [weak self] in
+            await self?.shareCurrentItem()
+        }
+    }
+
+    /// Prepares the current gallery item and presents the share sheet.
+    open func shareCurrentItem() async {
+        let indexPath = currentItemIndexPath
+        setSharePreparationInProgress(true)
+        let shareItem = await prepareShareItem(at: indexPath)
+        setSharePreparationInProgress(false)
+        guard let shareItem else {
+            log.assertionFailure("Share item is missing for item at \(indexPath).")
             return
         }
+        presentShareSheet(with: shareItem)
+    }
 
+    /// Shows or hides the spinner that replaces the share icon.
+    open func setSharePreparationInProgress(_ inProgress: Bool) {
+        isPreparingShareItem = inProgress
+        shareButton.isUserInteractionEnabled = !inProgress
+        shareButton.setImage(inProgress ? nil : appearance.images.share, for: .normal)
+        shareButton.accessibilityLabel = inProgress
+            ? L10n.Gallery.Share.Accessibility.preparing
+            : L10n.Gallery.Share.accessibility
+        if inProgress {
+            shareActivityIndicator.startAnimating()
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: L10n.Gallery.Share.Accessibility.preparing
+            )
+        } else {
+            shareActivityIndicator.stopAnimating()
+        }
+    }
+
+    /// Presents the system share sheet for the given item.
+    open func presentShareSheet(with shareItem: Any) {
         let activityViewController = UIActivityViewController(
             activityItems: [shareItem],
             applicationActivities: nil
@@ -416,6 +467,9 @@ open class GalleryVC: _ViewController,
     }
 
     /// Returns a share item for the gallery item at given index path.
+    ///
+    /// Images are returned immediately. Videos should be prepared with
+    /// `prepareShareItem(at:)` so the file is copied off the main thread.
     /// - Parameter indexPath: An index path.
     /// - Returns: An item to share.
     open func shareItem(at indexPath: IndexPath) -> Any? {
@@ -426,24 +480,72 @@ open class GalleryVC: _ViewController,
             let cell = attachmentsCollectionView
                 .cellForItem(at: indexPath) as? ImageAttachmentGalleryCell
             return cell?.imageView.image
-        case .video:
-            guard let itemAttachment = item.attachment(payloadType: VideoAttachmentPayload.self),
-                  let urlData = try? Data(contentsOf: itemAttachment.videoURL) else {
-                return nil
-            }
-
-            let fileName = itemAttachment.payload.title ?? itemAttachment.id.messageId.lowercased() + ".mp4"
-            let filePath = NSTemporaryDirectory().appending("\(fileName)")
-            let url = URL(fileURLWithPath: filePath)
-            do {
-                try urlData.write(to: url)
-                return url
-            } catch {
-                return nil
-            }
         default:
             return nil
         }
+    }
+
+    /// Returns a share item, copying or downloading videos off the main thread.
+    /// - Parameter indexPath: An index path.
+    /// - Returns: An item to share.
+    open func prepareShareItem(at indexPath: IndexPath) async -> Any? {
+        guard let item = getItem(at: indexPath) else { return nil }
+        if item.type == .video {
+            return await localVideoURLForSharing(item)
+        }
+        return shareItem(at: indexPath)
+    }
+
+    // Copy or download the video without loading it into memory on the main thread.
+    private func localVideoURLForSharing(_ item: AnyChatMessageAttachment) async -> URL? {
+        guard let attachment = item.attachment(payloadType: VideoAttachmentPayload.self) else {
+            return nil
+        }
+        let fileName = attachment.payload.title ?? attachment.id.messageId.lowercased() + ".mp4"
+        let sourceURL = attachment.downloadingState?.localFileURL
+            ?? attachment.uploadingState?.localFileURL
+            ?? attachment.videoURL
+
+        do {
+            if sourceURL.isFileURL, FileManager.default.fileExists(atPath: sourceURL.path) {
+                return try await Self.copyFileForSharing(from: sourceURL, fileName: fileName)
+            }
+            let fileRequest = try await components.mediaLoader.loadFileRequest(for: attachment.videoURL)
+            return try await Self.downloadFileForSharing(
+                request: fileRequest.urlRequest,
+                fileName: fileName
+            )
+        } catch {
+            log.error("Failed to prepare the video for sharing: \(error)")
+            return nil
+        }
+    }
+
+    nonisolated private static func copyFileForSharing(from sourceURL: URL, fileName: String) async throws -> URL {
+        try moveOrCopyFileForSharing(from: sourceURL, fileName: fileName, copy: true)
+    }
+
+    nonisolated private static func downloadFileForSharing(request: URLRequest, fileName: String) async throws -> URL {
+        let (temporaryURL, _) = try await URLSession.shared.download(for: request)
+        return try moveOrCopyFileForSharing(from: temporaryURL, fileName: fileName, copy: false)
+    }
+
+    nonisolated private static func moveOrCopyFileForSharing(
+        from sourceURL: URL,
+        fileName: String,
+        copy: Bool
+    ) throws -> URL {
+        let destination = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            .appendingPathComponent(fileName)
+        if FileManager.default.fileExists(atPath: destination.path) {
+            try FileManager.default.removeItem(at: destination)
+        }
+        if copy {
+            try FileManager.default.copyItem(at: sourceURL, to: destination)
+        } else {
+            try FileManager.default.moveItem(at: sourceURL, to: destination)
+        }
+        return destination
     }
 
     /// Returns cell reuse identifier for a gallery item at given index path.

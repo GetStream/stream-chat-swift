@@ -237,6 +237,17 @@ public enum L10n {
     public static var timeAgoWeeksSingular: String { L10n.tr("Localizable", "dates.time-ago-weeks-singular") }
   }
 
+  public enum Gallery {
+    public enum Share {
+      /// Share
+      public static var accessibility: String { L10n.tr("Localizable", "gallery.share.accessibility") }
+      public enum Accessibility {
+        /// Preparing…
+        public static var preparing: String { L10n.tr("Localizable", "gallery.share.accessibility.preparing") }
+      }
+    }
+  }
+
   public enum Message {
     /// Message deleted
     public static var deletedMessagePlaceholder: String { L10n.tr("Localizable", "message.deleted-message-placeholder") }
