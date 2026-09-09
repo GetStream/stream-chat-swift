@@ -50,6 +50,14 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.ban.shouldBeQueuedOffline)
     }
 
+    func test_queryBannedUsers_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.queryBannedUsers.shouldBeQueuedOffline)
+    }
+
+    func test_queryBannedUsers_value() {
+        XCTAssertEqual(EndpointPath.queryBannedUsers.value, "/api/v2/chat/query_banned_users")
+    }
+
     func test_getOG_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.getOG.shouldBeQueuedOffline)
     }
@@ -269,6 +277,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.blockUsers)
         assertResultEncodingAndDecoding(.unblockUsers)
         assertResultEncodingAndDecoding(.getBlockedUsers)
+        assertResultEncodingAndDecoding(.queryBannedUsers)
 
         assertResultEncodingAndDecoding(.createPoll)
         assertResultEncodingAndDecoding(.updatePollPartial(pollId: "test_poll"))
