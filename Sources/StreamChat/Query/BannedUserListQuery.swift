@@ -20,10 +20,6 @@ public extension FilterKey where Scope == BannedUserListFilterScope {
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `exists`
     static var bannedById: FilterKey<Scope, UserId> { "banned_by_id" }
 
-    /// A filter key for matching the channel the ban is scoped to.
-    /// Supported operators: `equal`, `in`
-    static var cid: FilterKey<Scope, ChannelId> { "channel_cid" }
-
     /// A filter key for matching the date the ban was created at.
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `exists`
     static var createdAt: FilterKey<Scope, Date> { "created_at" }
@@ -31,6 +27,10 @@ public extension FilterKey where Scope == BannedUserListFilterScope {
     /// A filter key for matching the reason the ban was created with.
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `exists`, `autocomplete`
     static var reason: FilterKey<Scope, String> { "reason" }
+}
+
+extension FilterKey where Scope == BannedUserListFilterScope {
+    static var cid: FilterKey<Scope, ChannelId> { "channel_cid" }
 }
 
 /// The type describing a value that can be used for sorting when querying banned users.
@@ -51,8 +51,8 @@ public extension BannedUserListSortingKey {
 /// A query is used for querying banned users from the backend.
 /// You can specify filter, sorting, and pagination options.
 ///
-/// - Important: Client-side requests must filter on `cid`. The backend rejects a query without a
-/// channel filter, so app-wide bans can only be queried server-side.
+/// - Important: Client-side requests are always scoped to a channel by the SDK, because the backend
+/// rejects a query without a channel filter. Therefore app-wide bans can only be queried server-side.
 public struct BannedUserListQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
