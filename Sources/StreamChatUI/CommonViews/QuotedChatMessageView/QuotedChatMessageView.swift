@@ -241,6 +241,16 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     /// the attachments preview of the message, or if you want to support your custom attachment.
     /// - Parameter message: The message that contains all the attachments.
     open func setAttachmentPreview(for message: ChatMessage) {
+        let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload
+        if let voiceRecordingPayload = voiceRecordingPayload {
+            voiceRecordingAttachmentQuotedPreview.content = .init(
+                title: voiceRecordingPayload.title ?? message.text,
+                size: voiceRecordingPayload.file.size,
+                duration: voiceRecordingPayload.duration ?? 0,
+                audioAssetURL: voiceRecordingPayload.voiceRecordingURL
+            )
+        }
+
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             let fileKey = filePayload.file.type.rawValue
@@ -267,13 +277,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             attachmentPreviewView.contentMode = .scaleAspectFill
             textView.text = message.text.isEmpty ? videoAttachment.payload.title : message.text
             setVideoAttachmentPreviewImage(attachment: videoAttachment)
-        } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
-            voiceRecordingAttachmentQuotedPreview.content = .init(
-                title: voiceRecordingPayload.title ?? message.text,
-                size: voiceRecordingPayload.file.size,
-                duration: voiceRecordingPayload.duration ?? 0,
-                audioAssetURL: voiceRecordingPayload.voiceRecordingURL
-            )
+        } else if voiceRecordingPayload != nil {
             textView.text = nil
         } else {
             setUnsupportedAttachmentPreview(for: message)
