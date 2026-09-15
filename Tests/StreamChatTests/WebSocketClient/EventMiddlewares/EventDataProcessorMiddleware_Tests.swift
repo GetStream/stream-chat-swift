@@ -54,8 +54,8 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
     func test_channelUpdated_thenMemberUpdatedWithOlderChannel_doesNotRewindChannelState() throws {
         let cid: ChannelId = .unique
         let memberId: UserId = .unique
-        let newerUpdatedAt = Date()
-        let olderUpdatedAt = newerUpdatedAt.addingTimeInterval(-60)
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
         let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
         let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
         let updatedMemberExtraData: [String: RawJSON] = ["status": .string("updated")]

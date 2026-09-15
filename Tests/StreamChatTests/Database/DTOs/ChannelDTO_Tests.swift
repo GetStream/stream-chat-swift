@@ -352,9 +352,9 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_saveChannel_skipsUpdate_whenPayloadUpdatedAtIsOlder() throws {
         let channelId: ChannelId = .unique
-        let newerUpdatedAt = Date()
-        let olderUpdatedAt = newerUpdatedAt.addingTimeInterval(-60)
-        let newerLastMessageAt = newerUpdatedAt.addingTimeInterval(-10)
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
+        let newerLastMessageAt = Date(timeIntervalSince1970: 1990)
         let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
         let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
 
