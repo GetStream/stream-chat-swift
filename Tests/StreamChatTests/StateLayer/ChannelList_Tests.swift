@@ -714,7 +714,8 @@ final class ChannelList_Tests: XCTestCase {
             let nextChannelListPayload = makeMatchingChannelListPayload(
                 channelCount: Int.channelsPageSize,
                 createdAtOffset: offset,
-                namePrefix: "Updated Name"
+                namePrefix: "Updated Name",
+                updatedAt: Date().addingTimeInterval(60)
             )
             env.client.mockAPIClient.test_mockResponseResult(.success(nextChannelListPayload))
         }
@@ -768,6 +769,7 @@ final class ChannelList_Tests: XCTestCase {
         channelCount: Int,
         createdAtOffset: Int,
         namePrefix: String = "Name",
+        updatedAt: Date = Date(),
         membersCreator: ((ChannelId, Int) -> [MemberPayload])? = nil,
         messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil,
         blocked: ((ChannelId, Int) -> Bool) = { _, _ in false },
@@ -783,6 +785,7 @@ final class ChannelList_Tests: XCTestCase {
                     members: members,
                     messages: messagesCreator?(channelId, $0 + createdAtOffset),
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
+                    updatedAt: updatedAt,
                     blocked: blocked(channelId, $0 + createdAtOffset),
                     hidden: hidden(channelId, $0 + createdAtOffset)
                 )
