@@ -350,6 +350,58 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
     }
 
+    func test_saveChannel_skipsUpdate_whenPayloadUpdatedAtIsOlder() throws {
+        let channelId: ChannelId = .unique
+        let newerUpdatedAt = Date()
+        let olderUpdatedAt = newerUpdatedAt.addingTimeInterval(-60)
+        let newerLastMessageAt = newerUpdatedAt.addingTimeInterval(-10)
+        let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
+        let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    cid: channelId,
+                    name: "Conversation",
+                    extraData: newerExtraData,
+                    lastMessageAt: newerLastMessageAt,
+                    updatedAt: newerUpdatedAt,
+                    isFrozen: true,
+                    memberCount: 1,
+                    messageCount: 1
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    cid: channelId,
+                    name: "Initiated",
+                    extraData: olderExtraData,
+                    lastMessageAt: newerUpdatedAt,
+                    updatedAt: olderUpdatedAt,
+                    isFrozen: false,
+                    memberCount: 2,
+                    messageCount: 2
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        XCTAssertEqual(channel.name, "Conversation")
+        XCTAssertEqual(channel.extraData, newerExtraData)
+        XCTAssertEqual(channel.updatedAt, newerUpdatedAt)
+        XCTAssertEqual(channel.lastMessageAt, newerLastMessageAt)
+        XCTAssertEqual(channel.memberCount, 1)
+        XCTAssertEqual(channel.messageCount, 1)
+        XCTAssertTrue(channel.isFrozen)
+    }
+
     func test_saveChannel_doesNotUpdateTruncatedAt_whenItsEarlierThanExisting() throws {
         let channelId: ChannelId = .unique
         let originalTruncatedAt = Date().addingTimeInterval(1200)
