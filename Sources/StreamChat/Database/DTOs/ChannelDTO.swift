@@ -262,9 +262,7 @@ extension NSManagedObjectContext {
         // mutations. Events such as `member.updated` can still carry a full `channel`
         // object snapshotted before a concurrent `channel.updated`. Skip the stale
         // snapshot entirely so channel state is not rewound.
-        // A newly inserted DTO has no server timestamp yet, so the first payload always applies.
-        let existingUpdatedAt = dto.primitiveValue(forKey: #keyPath(ChannelDTO.updatedAt)) as? Date
-        if let existingUpdatedAt, payload.updatedAt < existingUpdatedAt {
+        if payload.updatedAt < dto.updatedAt.bridgeDate {
             if let query {
                 let queryDTO = saveQuery(query: query)
                 queryDTO.channels.insert(dto)

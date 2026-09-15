@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
-- Fix channel state being overwritten by older snapshots on events such as `member.updated` [#4278](https://github.com/GetStream/stream-chat-swift/pull/4278)
+- Fix stale channel data from events overriding fresher channel data [#4278](https://github.com/GetStream/stream-chat-swift/pull/4278)
 
 ### 🔄 Changed
 
