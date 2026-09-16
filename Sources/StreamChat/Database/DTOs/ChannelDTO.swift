@@ -258,6 +258,18 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
+        // `updatedAt` is only written from server payloads, never from optimistic local
+        // mutations. Events such as `member.updated` can still carry a full `channel`
+        // object snapshotted before a concurrent `channel.updated`. Skip the stale
+        // snapshot entirely so channel state is not rewound.
+        if payload.updatedAt < dto.updatedAt.bridgeDate {
+            if let query {
+                let queryDTO = saveQuery(query: query)
+                queryDTO.channels.insert(dto)
+            }
+            return dto
+        }
+
         dto.name = payload.name
         dto.imageURL = payload.imageURL
         do {

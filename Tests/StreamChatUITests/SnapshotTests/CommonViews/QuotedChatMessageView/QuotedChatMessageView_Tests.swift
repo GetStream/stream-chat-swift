@@ -212,6 +212,30 @@ import XCTest
         AssertSnapshot(view)
     }
 
+    func test_withVoiceRecordingAndImageAttachmentAppearance() {
+        let voiceRecording = ChatMessageVoiceRecordingAttachment.mock(
+            id: .unique,
+            duration: 59
+        )
+        let image = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url,
+            title: ""
+        )
+        let attachments = [image.asAnyAttachment, voiceRecording.asAnyAttachment]
+
+        view.content = makeContent(text: "", attachments: attachments)
+
+        AssertSnapshot(view)
+
+        view.content = makeContent(
+            text: "Hello Darth Vader! Where is my light saber?",
+            attachments: attachments
+        )
+
+        AssertSnapshot(view, suffix: "-longText")
+    }
+
     func test_withLongTextAppearance() {
         let attachment = ChatMessageImageAttachment.mock(
             id: .unique,
