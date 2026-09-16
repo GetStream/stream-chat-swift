@@ -15,6 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // First statement on purpose: everything after this is inside the launch interval.
+        PerfSignpost.beginLaunch()
+
         // Sentry
         DemoAppConfiguration.configureSentry()
 

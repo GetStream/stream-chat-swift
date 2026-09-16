@@ -85,6 +85,20 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         navigationController?.popViewController(animated: true)
     }
 
+    // MARK: - Performance signposts
+
+    override func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
+    ) {
+        super.channelController(channelController, didUpdateMessages: changes)
+
+        // Closes the channel-open interval started by the tap in the channel list. With no
+        // interval open (a live message, a pagination page) this is a no-op.
+        guard !channelController.messages.isEmpty else { return }
+        PerfSignpost.finishSettleOnNextRenderedFrame()
+    }
+
     // MARK: - Loading previous and next messages state handling.
 
     override func loadPreviousMessages(completion: @escaping @MainActor (Error?) -> Void) {

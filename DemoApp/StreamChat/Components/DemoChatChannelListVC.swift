@@ -434,6 +434,9 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // The tap itself is the start of the channel-open interval.
+        PerfSignpost.beginSettle("channel-open")
+
         collectionView.deselectItem(at: indexPath, animated: true)
         let channel = controller.channels[indexPath.row]
         selectedChannel = controller.channels[indexPath.row]
@@ -442,6 +445,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
     override func controller(_ controller: DataController, didChangeState state: DataController.State) {
         super.controller(controller, didChangeState: state)
+
+        finishLaunchIfListIsPopulated()
 
         if highlightSelectedChannel && (state == .remoteDataFetched || state == .localDataFetched) && selectedChannel == nil {
             guard let channel = self.controller.channels.first else { return }
@@ -454,6 +459,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
     override func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
         super.controller(controller, didChangeChannels: changes)
+
+        finishLaunchIfListIsPopulated()
 
         guard highlightSelectedChannel else { return }
         guard let selectedChannel = selectedChannel else { return }
@@ -468,5 +475,17 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             animated: false,
             scrollPosition: .centeredHorizontally
         )
+    }
+
+    /// Closes the launch interval the first time the list has rows.
+    ///
+    /// Called from both controller callbacks because either can be the first to carry
+    /// content: a warm cache arrives via `didChangeChannels` from the local store, a cold
+    /// one with the state change after the network query. `PerfSignpost` ignores every
+    /// call after the first. Gated on a non-empty list, since the empty state is not the
+    /// list a user is waiting for.
+    private func finishLaunchIfListIsPopulated() {
+        guard !controller.channels.isEmpty else { return }
+        PerfSignpost.finishLaunchOnNextRenderedFrame(reason: "channel-list")
     }
 }
