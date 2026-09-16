@@ -171,7 +171,7 @@ final class ChannelSearchController_Tests: XCTestCase {
         }
 
         // The channel is updated without being re-linked to the query.
-        try writeChannel(cid: cid, name: "general channel", query: nil, updatedAt: Date().addingTimeInterval(60))
+        try writeChannel(cid: cid, name: "general channel", query: nil, updatedAt: XCTestCase.channelLaterUpdateDate)
 
         wait(for: [change], timeout: defaultTimeout)
     }
@@ -234,7 +234,7 @@ final class ChannelSearchController_Tests: XCTestCase {
         cid: ChannelId,
         name: String,
         query: ChannelListQuery?,
-        updatedAt: Date = Date()
+        updatedAt: Date = .unique
     ) throws {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(

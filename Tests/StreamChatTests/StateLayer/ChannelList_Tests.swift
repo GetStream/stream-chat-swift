@@ -715,7 +715,7 @@ final class ChannelList_Tests: XCTestCase {
                 channelCount: Int.channelsPageSize,
                 createdAtOffset: offset,
                 namePrefix: "Updated Name",
-                updatedAt: Date().addingTimeInterval(60)
+                updatedAt: XCTestCase.channelLaterUpdateDate
             )
             env.client.mockAPIClient.test_mockResponseResult(.success(nextChannelListPayload))
         }
@@ -769,7 +769,7 @@ final class ChannelList_Tests: XCTestCase {
         channelCount: Int,
         createdAtOffset: Int,
         namePrefix: String = "Name",
-        updatedAt: Date = Date(),
+        updatedAt: Date = .unique,
         membersCreator: ((ChannelId, Int) -> [MemberPayload])? = nil,
         messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil,
         blocked: ((ChannelId, Int) -> Bool) = { _, _ in false },

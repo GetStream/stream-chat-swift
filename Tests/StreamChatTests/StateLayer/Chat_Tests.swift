@@ -2106,7 +2106,7 @@ final class Chat_Tests: XCTestCase {
         let payload = ChannelPayload.dummy(
             channel: .dummy(
                 cid: channelId,
-                updatedAt: Date().addingTimeInterval(60),
+                updatedAt: XCTestCase.channelLaterUpdateDate,
                 ownCapabilities: ownCapabilities
             )
         )
