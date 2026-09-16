@@ -61,8 +61,35 @@ struct UserCredentials {
 // MARK: - Built-in users
 
 extension UserCredentials {
+    /// A user supplied through the environment, for pointing the app at another Stream app.
+    ///
+    /// Present only when `CUSTOM_API_KEY`, `CUSTOM_USER_ID` and `CUSTOM_TOKEN` are all set
+    /// and the token parses; otherwise the login list is unchanged.
+    static var environmentUsers: [UserCredentials] {
+        let environment = ProcessInfo.processInfo.environment
+        guard let userId = environment["CUSTOM_USER_ID"], !userId.isEmpty,
+              let rawToken = environment["CUSTOM_TOKEN"], !rawToken.isEmpty,
+              environment["CUSTOM_API_KEY"]?.isEmpty == false,
+              let token = try? Token(rawValue: rawToken) else { return [] }
+
+        return [
+            .init(
+                id: userId,
+                name: userId,
+                avatarURL: URL(string: "https://getstream.io/random_png/?name=\(userId)")!,
+                token: token,
+                birthLand: ""
+            )
+        ]
+    }
+
     static var builtInUsers: [UserCredentials] {
-        [
+        // The built-in users' tokens are signed with the demo apps' secrets, and
+        // `DemoUserTokens` returns "" for an unknown key, which traps in
+        // `Token(stringLiteral:)`. On any other key only the environment user is offered.
+        guard DemoApiKeys(rawValue: apiKeyString).appName != nil else { return environmentUsers }
+
+        return environmentUsers + [
             luke,
             leia,
             hanSolo,

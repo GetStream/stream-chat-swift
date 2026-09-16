@@ -16,6 +16,11 @@ extension DemoAppCoordinator {
     func start(cid: ChannelId? = nil, completion: @escaping @MainActor @Sendable (Error?) -> Void) {
         if let user = UserDefaults.shared.currentUser {
             showChat(for: .credentials(user), cid: cid, animated: false, completion: completion)
+        } else if let environmentUser = UserCredentials.environmentUsers.first {
+            // No stored session but a full environment triple: log in directly so a first
+            // launch reaches the channel list without a tap. With no environment this branch
+            // is never taken and the login screen shows as before.
+            showChat(for: .credentials(environmentUser), cid: cid, animated: false, completion: completion)
         } else {
             showLogin(animated: false)
         }
