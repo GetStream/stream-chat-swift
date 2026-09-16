@@ -812,6 +812,62 @@ import XCTest
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_appearance_whenMessageHasImageBelowAnotherAttachment_doesNotMaskTopCorners() throws {
+        class CustomBubbleView: ChatMessageBubbleView {
+            override func updateContent() {
+                super.updateContent()
+                backgroundColor = .red
+            }
+        }
+
+        var components = Components.mock
+        components.messageBubbleView = CustomBubbleView.self
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: .unique,
+            createdAt: createdAt,
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .voiceRecording,
+                    payload: try JSONEncoder.stream.encode(VoiceRecordingAttachmentPayload(
+                        title: "Recording",
+                        voiceRecordingRemoteURL: .unique(),
+                        file: .init(type: .aac, size: 120, mimeType: nil),
+                        duration: 10,
+                        waveformData: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                        extraData: nil
+                    )),
+                    uploadingState: nil
+                ),
+                .dummy(
+                    id: .unique,
+                    type: .image,
+                    payload: try JSONEncoder.stream.encode(ImageAttachmentPayload(
+                        title: nil,
+                        imageRemoteURL: TestImages.r2.url,
+                        file: try .init(url: TestImages.r2.url)
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique)),
+            components: components,
+            attachmentInjector: MixedAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearance_whenMessageHasTranslation_whenIsSentByCurrentUser() throws {
         let message: ChatMessage = .mock(
             id: .unique,
