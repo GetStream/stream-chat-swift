@@ -2100,9 +2100,17 @@ final class Chat_Tests: XCTestCase {
     
     /// Sets up a chat backed by real updaters and loads a channel with the given capabilities into the state.
     @MainActor private func setUpChatWithLoadedChannel(ownCapabilities: [String]) async throws {
-        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId, ownCapabilities: ownCapabilities))
-        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await setUpChat(usesMockedUpdaters: false)
+        // `setUpChat` already saved a channel. The watch/get payload must have a newer
+        // `updatedAt` or `saveChannel` will skip ownCapabilities from this snapshot.
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: channelId,
+                updatedAt: XCTestCase.channelLaterUpdateDate,
+                ownCapabilities: ownCapabilities
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await chat.get(watch: false)
         env.client.mockAPIClient.cleanUp()
     }

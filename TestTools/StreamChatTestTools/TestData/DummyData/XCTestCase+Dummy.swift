@@ -8,6 +8,8 @@ import XCTest
 extension XCTestCase {
     static let channelCreatedDate = Date.unique
     static let channelUpdateDate = Date.unique
+    /// Newer than `Date()` and any `Date.unique`, for payloads that must be applied on top of an already saved channel.
+    static let channelLaterUpdateDate = Date(timeIntervalSince1970: 2_000_000_000)
 
     // MARK: - Dummy data with extra data
 
@@ -146,6 +148,7 @@ extension XCTestCase {
         ownCapabilities: [String] = [],
         channelExtraData: [String: RawJSON] = [:],
         createdAt: Date = XCTestCase.channelCreatedDate,
+        updatedAt: Date = .unique,
         blocked: Bool? = false,
         hidden: Bool? = nil,
         truncatedAt: Date? = nil,
@@ -174,7 +177,7 @@ extension XCTestCase {
                     lastMessageAt: lastMessageAt,
                     createdAt: createdAt,
                     deletedAt: nil,
-                    updatedAt: .unique,
+                    updatedAt: updatedAt,
                     truncatedAt: truncatedAt,
                     createdBy: dummyUser,
                     config: channelConfig,
