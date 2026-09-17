@@ -232,7 +232,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         }
         adjustContentInsetToPositionMessagesAtTheTop()
 
-        let reloadMessages: () -> Void = {
+        let reloadMessages: () -> Void = { [self] in
             self.reloadMessages(
                 previousSnapshot: previousMessagesSnapshot,
                 newSnapshot: newMessagesWithoutSkipped,

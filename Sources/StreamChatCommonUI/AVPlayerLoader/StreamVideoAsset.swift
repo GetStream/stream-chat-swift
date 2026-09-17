@@ -190,7 +190,7 @@ final class StreamVideoResourceLoaderDelegate: NSObject, AVAssetResourceLoaderDe
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        queue.async {
+        queue.async { [self] in
             guard !self.isInvalidated else { return }
             self.finished = true
             self.finishError = error ?? self.finishError

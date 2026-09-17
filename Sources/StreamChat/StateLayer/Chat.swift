@@ -600,7 +600,7 @@ public class Chat: @unchecked Sendable {
         messageId: MessageId? = nil,
         restrictedVisibility: [UserId] = []
     ) async throws -> ChatMessage {
-        Task { try await stopTyping() } // errors explicitly ignored
+        Task { try? await stopTyping() }
         let cid = try await self.cid
         let newMessageId = messageId ?? .newUniqueId
         async let sentMessage = waitForMessageSender(messageId: newMessageId)
@@ -699,7 +699,7 @@ public class Chat: @unchecked Sendable {
         skipEnrichURL: Bool = false,
         skipPush: Bool = false
     ) async throws -> ChatMessage {
-        Task { try await stopTyping() } // errors explicitly ignored
+        Task { try? await stopTyping() }
         async let updatedMessage = waitForMessageEditor(messageId: messageId)
         _ = try await messageUpdater.editMessage(
             messageId: messageId,
@@ -1108,7 +1108,7 @@ public class Chat: @unchecked Sendable {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
-        Task { try await stopTyping() } // errors explicitly ignored
+        Task { try? await stopTyping() }
         let cid = try await self.cid
         let newMessageId = messageId ?? .newUniqueId
         async let sentMessage = waitForMessageSender(messageId: newMessageId)
