@@ -25,7 +25,7 @@ class ChannelWatcherHandler: ChannelWatcherHandling, @unchecked Sendable {
     }
 
     func attemptToWatch(channelIds: [ChannelId], completion: (@Sendable ((any Error)?) -> Void)?) {
-        queue.async {
+        queue.async { [self] in
             // Filter out channels that are already being watched
             let channelsToWatch = channelIds.filter { !self.activeWatchRequests.contains($0) }
 

@@ -1478,7 +1478,6 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_flagMessage_propagatesFlagDatabaseError() throws {
-        let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
         let reason = "Test"
@@ -1509,7 +1508,6 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_flagMessage_propagatesMessageDoesNotExistError() throws {
-        let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
         let reason = "Test"

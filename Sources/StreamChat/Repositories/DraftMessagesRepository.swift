@@ -78,7 +78,7 @@ class DraftMessagesRepository: @unchecked Sendable {
                 extraData: extraData
             )
             draftRequestBody = newMessageDTO.asDraftMessageRequest()
-        }) { error in
+        }) { [self] error in
             guard let requestBody = draftRequestBody, error == nil else {
                 completion?(.failure(error ?? ClientError.Unknown()))
                 return
