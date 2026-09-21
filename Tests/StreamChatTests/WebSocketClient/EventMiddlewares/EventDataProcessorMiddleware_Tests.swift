@@ -60,7 +60,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
         let updatedMemberExtraData: [String: RawJSON] = ["status": .string("updated")]
 
-        let middlewares: [EventMiddleware] = [
+        nonisolated(unsafe) let middlewares: [EventMiddleware] = [
             EventDataProcessorMiddleware(),
             MemberEventMiddleware()
         ]
