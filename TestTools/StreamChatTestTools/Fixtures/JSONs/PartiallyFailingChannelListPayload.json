@@ -716,6 +716,7 @@
           "pin_expires": null
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "deleted_reply_count": 0,
@@ -2547,6 +2548,7 @@
           "pin_expires": null
         }
       ],
+      "threads": [],
       "pinned_messages": [
         {
           "deleted_reply_count": 0,
@@ -4780,6 +4782,7 @@
           "pin_expires": null
         }
       ],
+      "threads": [],
       "pinned_messages": [
         {
           "deleted_reply_count": 0,

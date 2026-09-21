@@ -810,8 +810,6 @@ remove_property SharedLocation message
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
-# TODO: add it when IOS-1839 is done
-remove_property ChannelStateResponse threads
 # CHA-5096
 remove_property ChannelGetOrCreateRequest hideForCreator
 # CHA-5096

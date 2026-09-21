@@ -430,6 +430,10 @@ extension NSManagedObjectContext {
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
+
+        _ = payload.threads.compactMapLoggingError {
+            try saveThread(payload: $0, cache: cache)
+        }
         
         // Save push preference
         if let pushPreference = payload.pushPreferences {

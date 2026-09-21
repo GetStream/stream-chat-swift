@@ -150,6 +150,7 @@ extension ChannelPayload: IdentifiablePayloadProxy {
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
         read?.fillIds(cache: &cache, channelCid: channel.cid)
+        threads.fillIds(cache: &cache)
     }
 }
 

@@ -18,6 +18,7 @@ final class ChannelStateResponse: Sendable, Decodable {
     let pinnedMessages: [MessageResponse]
     let pushPreferences: PushPreference?
     let read: [ReadStateResponse]?
+    let threads: [ThreadStateResponse]
     let watcherCount: Int?
     let watchers: [UserPayload]?
 
@@ -34,6 +35,7 @@ final class ChannelStateResponse: Sendable, Decodable {
         pinnedMessages: [MessageResponse],
         pushPreferences: PushPreference? = nil,
         read: [ReadStateResponse]? = nil,
+        threads: [ThreadStateResponse],
         watcherCount: Int? = nil,
         watchers: [UserPayload]? = nil
     ) {
@@ -49,6 +51,7 @@ final class ChannelStateResponse: Sendable, Decodable {
         self.pinnedMessages = pinnedMessages
         self.pushPreferences = pushPreferences
         self.read = read
+        self.threads = threads
         self.watcherCount = watcherCount
         self.watchers = watchers
     }
@@ -66,6 +69,7 @@ final class ChannelStateResponse: Sendable, Decodable {
         case pinnedMessages = "pinned_messages"
         case pushPreferences = "push_preferences"
         case read
+        case threads
         case watcherCount = "watcher_count"
         case watchers
     }

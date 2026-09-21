@@ -21,7 +21,8 @@ extension ChannelPayload {
         isHidden: Bool? = nil,
         draft: DraftPayload? = nil,
         activeLiveLocations: [SharedLocation] = [],
-        pushPreference: PushPreference? = nil
+        pushPreference: PushPreference? = nil,
+        threads: [ThreadPayload] = []
     ) -> Self {
         .init(
             activeLiveLocations: activeLiveLocations,
@@ -35,6 +36,7 @@ extension ChannelPayload {
             pinnedMessages: pinnedMessages,
             pushPreferences: pushPreference,
             read: channelReads,
+            threads: threads,
             watcherCount: watcherCount ?? watchers.count,
             watchers: watchers
         )
@@ -55,7 +57,8 @@ extension ChannelPayload {
         isHidden: Bool? = nil,
         draft: DraftPayload? = nil,
         activeLiveLocations: [SharedLocation] = [],
-        pushPreference: PushPreference? = nil
+        pushPreference: PushPreference? = nil,
+        threads: [ThreadPayload] = []
     ) {
         self.init(
             activeLiveLocations: activeLiveLocations,
@@ -69,6 +72,7 @@ extension ChannelPayload {
             pinnedMessages: pinnedMessages,
             pushPreferences: pushPreference,
             read: channelReads,
+            threads: threads,
             watcherCount: watcherCount,
             watchers: watchers
         )

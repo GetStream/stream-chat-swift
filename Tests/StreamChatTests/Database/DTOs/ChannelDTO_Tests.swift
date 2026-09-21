@@ -1780,6 +1780,72 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.activeLiveLocations.first?.longitude, 10)
     }
 
+    func test_saveChannel_savesThreads() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let channelDetail: ChannelDetailPayload = .dummy(cid: cid)
+        let parentMessageId: MessageId = .unique
+        let reply: MessagePayload = .dummy(messageId: .unique, parentId: parentMessageId, cid: cid)
+        let threadPayload: ThreadPayload = .dummy(
+            parentMessageId: parentMessageId,
+            channel: channelDetail,
+            replyCount: 1,
+            title: "Thread title",
+            latestReplies: [reply]
+        )
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetail, threads: [threadPayload])
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // THEN
+        let thread = try database.readSynchronously { session in
+            try XCTUnwrap(session.thread(parentMessageId: parentMessageId, cache: nil)?.asModel())
+        }
+        XCTAssertEqual(thread.parentMessageId, parentMessageId)
+        XCTAssertEqual(thread.title, "Thread title")
+        XCTAssertEqual(thread.channel.cid, cid)
+        XCTAssertEqual(thread.latestReplies.map(\.id), [reply.id])
+
+        let threadIds = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)).threads.map(\.parentMessageId)
+        }
+        XCTAssertEqual(threadIds, [parentMessageId])
+    }
+
+    func test_saveChannel_whenThreadIsNotEnriched_skipsThreadAndSavesChannel() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let channelDetail: ChannelDetailPayload = .dummy(cid: cid)
+        let parentMessageId: MessageId = .unique
+        let threadPayload = ThreadPayload(
+            channelCid: cid.rawValue,
+            createdAt: .unique,
+            createdByUserId: .unique,
+            custom: [:],
+            latestReplies: [],
+            parentMessageId: parentMessageId,
+            participantCount: 0,
+            replyCount: 0,
+            title: "",
+            updatedAt: .unique
+        )
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetail, threads: [threadPayload])
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // THEN
+        let threadIds = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)).threads.map(\.parentMessageId)
+        }
+        XCTAssertTrue(threadIds.isEmpty)
+    }
+
     func test_saveChannel_whenDraftMessageIsNil_removesExistingDraft() throws {
         // GIVEN
         let cid: ChannelId = .unique
