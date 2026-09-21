@@ -165,25 +165,25 @@ extension ChannelDetailPayload: IdentifiablePayload {
     }
 }
 
-extension ThreadListPayload: IdentifiablePayloadProxy {
+extension QueryThreadsResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         threads.fillIds(cache: &cache)
     }
 }
 
-extension ThreadPayload: IdentifiablePayloadProxy {
+extension ThreadStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        parentMessage.fillIds(cache: &cache)
-        channel.fillIds(cache: &cache)
-        createdBy.fillIds(cache: &cache)
+        parentMessage?.fillIds(cache: &cache)
+        channel?.fillIds(cache: &cache)
+        createdBy?.fillIds(cache: &cache)
         latestReplies.fillIds(cache: &cache)
-        threadParticipants.fillIds(cache: &cache)
-        read.fillIds(cache: &cache)
+        threadParticipants?.fillIds(cache: &cache)
+        read?.fillIds(cache: &cache)
     }
 }
 
-extension ThreadReadPayload: IdentifiablePayloadProxy {
+extension ReadStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
@@ -193,7 +193,7 @@ extension ThreadReadPayload: IdentifiablePayloadProxy {
 extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        user?.fillIds(cache: &cache)
     }
 }
 

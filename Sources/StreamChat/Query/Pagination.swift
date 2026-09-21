@@ -15,6 +15,8 @@ public extension Int {
     static let channelMembersPageSize = 30
     /// A default channel watchers page size.
     static let channelWatchersPageSize = 30
+    /// A default banned users page size.
+    static let bannedUsersPageSize = 30
 }
 
 extension Int {

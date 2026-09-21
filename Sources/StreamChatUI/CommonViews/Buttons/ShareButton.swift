@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A Button subclass that should be used for sharing content.
@@ -17,6 +18,8 @@ open class ShareButton: _Button, AppearanceProvider {
         super.setUpAppearance()
 
         setImage(appearance.images.share, for: .normal)
+        accessibilityLabel = L10n.Gallery.Share.accessibility
+        accessibilityUserInputLabels = [L10n.Gallery.Share.accessibility]
     }
 
     override open func updateContent() {

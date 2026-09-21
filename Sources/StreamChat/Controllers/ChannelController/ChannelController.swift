@@ -1396,6 +1396,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Queries the bans of the channel.
+    ///
+    /// Both regular and shadow bans are returned, and expired bans are included unless
+    /// ``BannedUserListQuery/excludeExpiredBans`` is set.
+    ///
+    /// - Parameters:
+    ///   - query: The query describing which of the channel's bans to return. The query is always scoped to
+    ///   the channel, therefore any filter it carries narrows down the channel's bans.
+    ///   - completion: The completion to be called on **callbackQueue** when the request is completed.
+    public func queryBannedUsers(
+        with query: BannedUserListQuery = .init(),
+        completion: @escaping @MainActor (Result<[BannedUser], Error>) -> Void
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { completion(.failure($0 ?? ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+
+        channelMemberUpdater.queryBannedUsers(query: query.scoped(toChannel: cid)) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
     /// Marks the channel as read.
     ///
     /// - Parameter completion: The completion will be called on a **callbackQueue** when the network request is finished.

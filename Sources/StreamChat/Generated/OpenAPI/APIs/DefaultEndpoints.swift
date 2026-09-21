@@ -10,14 +10,9 @@ enum EndpointPath: Codable {
     case sync
     case guest
 
-    case threads
-    case thread(messageId: MessageId)
-
     case channels
     case groupedChannels
     case channelUpdate(String)
-
-    case message(MessageId)
 
     case addUserGroupMembers(id: String)
     case ban
@@ -46,12 +41,14 @@ enum EndpointPath: Codable {
     case getApp
     case getBlockedUsers
     case getDraft(type: String, id: String)
+    case getMessage(id: String)
     case getOG
     case getOrCreateChannel(type: String, id: String)
     case getOrCreateDistinctChannel(type: String)
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
     case getReplies(parentId: String)
+    case getThread(messageId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
     case hideChannel(type: String, id: String)
@@ -63,11 +60,13 @@ enum EndpointPath: Codable {
     case markUnread(type: String, id: String)
     case mute
     case muteChannel
+    case queryBannedUsers
     case queryDrafts
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
     case queryReminders
+    case queryThreads
     case queryUsers
     case removeUserGroupMembers(id: String)
     case runMessageAction(id: String)
@@ -93,6 +92,7 @@ enum EndpointPath: Codable {
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
     case updateReminder(messageId: String)
+    case updateThreadPartial(messageId: String)
     case updateUserGroup(id: String)
     case updateUsersPartial
     case uploadChannelFile(type: String, id: String)
@@ -107,16 +107,9 @@ enum EndpointPath: Codable {
         case .sync: return "sync"
         case .guest: return "guest"
 
-        case .threads:
-            return "threads"
-        case let .thread(threadId):
-            return "threads/\(threadId)"
-
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-
-        case let .message(messageId): return "messages/\(messageId)"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
@@ -172,6 +165,8 @@ enum EndpointPath: Codable {
             return "/api/v2/users/block"
         case let .getDraft(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
+        case let .getMessage(id: id):
+            return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case .getOG:
             return "/api/v2/og"
         case let .getOrCreateChannel(type: type, id: id):
@@ -184,6 +179,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case let .getReplies(parentId: parentId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(parentId))/replies"
+        case let .getThread(messageId: messageId):
+            return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .getUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
@@ -206,6 +203,8 @@ enum EndpointPath: Codable {
             return "/api/v2/moderation/mute"
         case .muteChannel:
             return "/api/v2/chat/moderation/mute/channel"
+        case .queryBannedUsers:
+            return "/api/v2/chat/query_banned_users"
         case .queryDrafts:
             return "/api/v2/chat/drafts/query"
         case .queryMembers:
@@ -216,6 +215,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case .queryReminders:
             return "/api/v2/chat/reminders/query"
+        case .queryThreads:
+            return "/api/v2/chat/threads"
         case .queryUsers:
             return "/api/v2/users"
         case let .removeUserGroupMembers(id: id):
@@ -266,6 +267,8 @@ enum EndpointPath: Codable {
             return "/api/v2/push_preferences"
         case let .updateReminder(messageId: messageId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .updateThreadPartial(messageId: messageId):
+            return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .updateUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .updateUsersPartial:
@@ -715,6 +718,16 @@ extension Endpoint {
         )
     }
 
+    static func getMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<GetMessageResponse> {
+        return .init(
+            path: .getMessage(id: id),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func getOG(url: String, requiresConnectionId: Bool = false) -> Endpoint<GetOGResponse> {
         return .init(
             path: .getOG,
@@ -847,6 +860,28 @@ extension Endpoint {
                     encoding: .utf8
                 ) },
                 "member_custom_include": memberCustomInclude
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func getThread(
+        messageId: String,
+        watch: Bool?,
+        replyLimit: Int?,
+        participantLimit: Int?,
+        memberLimit: Int?,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<GetThreadResponse> {
+        return .init(
+            path: .getThread(messageId: messageId),
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "watch": watch,
+                "reply_limit": replyLimit,
+                "participant_limit": participantLimit,
+                "member_limit": memberLimit
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
@@ -1000,6 +1035,24 @@ extension Endpoint {
         )
     }
 
+    static func queryBannedUsers(
+        payload: QueryBannedUsersPayload?,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryBannedUsersResponse> {
+        return .init(
+            path: .queryBannedUsers,
+            method: .get,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(
+                    data: $0,
+                    encoding: .utf8
+                ) }
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func queryDrafts(
         queryDraftsRequest: QueryDraftsRequest,
         requiresConnectionId: Bool = false
@@ -1066,6 +1119,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryRemindersRequest
+        )
+    }
+
+    static func queryThreads(
+        queryThreadsRequest: QueryThreadsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<QueryThreadsResponse> {
+        return .init(
+            path: .queryThreads,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryThreadsRequest
         )
     }
 
@@ -1419,6 +1485,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateReminderRequest
+        )
+    }
+
+    static func updateThreadPartial(
+        messageId: String,
+        updateThreadPartialRequest: UpdateThreadPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateThreadPartialResponse> {
+        return .init(
+            path: .updateThreadPartial(messageId: messageId),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateThreadPartialRequest
         )
     }
 

@@ -587,6 +587,17 @@ import UIKit
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
         .Type = VideoAttachmentComposerPreview.self
 
+    /// A view that displays a placeholder preview while a picked attachment is processed.
+    public var processingAttachmentComposerPreview: ProcessingAttachmentComposerPreview
+        .Type = ProcessingAttachmentComposerPreview.self
+
+    /// Whether the composer presents the legacy `UIImagePickerController`
+    /// instead of the system photos picker.
+    public var isLegacyPhotosPickerEnabled = false
+
+    /// The object responsible for compressing the videos which are added as attachments in the composer.
+    var videoCompressor: VideoCompressor = StreamVideoCompressor()
+
     // MARK: - Composer suggestion components
 
     /// A view controller that shows suggestions of commands or mentions.

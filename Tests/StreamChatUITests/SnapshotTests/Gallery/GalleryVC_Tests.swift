@@ -116,19 +116,23 @@ import XCTest
 
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: GalleryVC {
-            override var closeButton: UIButton {
+            private lazy var customCloseButton: UIButton = {
                 let button = CloseButton()
                 button.setTitle("Test title", for: .normal)
                 return button
-            }
+            }()
+
+            override var closeButton: UIButton { customCloseButton }
         }
 
         let vc = TestView()
         vc.components = .mock
         vc.content = content
         vc.showMessageTimestamp = false
+        vc.loadViewIfNeeded()
 
-        AssertSnapshot(vc)
+        XCTAssertEqual(vc.closeButton.currentTitle, "Test title")
+        XCTAssertTrue(vc.topBarContainerStackView.subviews.contains(vc.closeButton))
     }
 
     func test_snapshotWithMessageTimestampToday() {

@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that displays the VoiceRecording attachment in the quoted flow.
-open class VoiceRecordingAttachmentQuotedPreview: _View, ComponentsProvider {
+open class VoiceRecordingAttachmentQuotedPreview: _View, AppearanceProvider, ComponentsProvider {
     public struct Content {
         /// The title of the attachment.
         public var title: String
@@ -44,7 +44,27 @@ open class VoiceRecordingAttachmentQuotedPreview: _View, ComponentsProvider {
         .init()
         .withoutAutoresizingMaskConstraints
 
+    /// The minimum scale factor applied to the labels when the available width is not
+    /// enough to render them at their default font size.
+    open var minimumFontScaleFactor: CGFloat = 0.6
+
     // MARK: - UI Lifecycle
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        previewView.fileNameLabel.font = appearance.fonts.subheadlineBold
+        previewView.fileNameLabel.lineBreakMode = .byTruncatingTail
+        previewView.fileNameLabel.adjustsFontSizeToFitWidth = true
+        previewView.fileNameLabel.minimumScaleFactor = minimumFontScaleFactor
+
+        previewView.durationLabel.font = .monospacedDigitSystemFont(
+            ofSize: appearance.fonts.caption1.pointSize,
+            weight: .regular
+        )
+        previewView.durationLabel.adjustsFontSizeToFitWidth = true
+        previewView.durationLabel.minimumScaleFactor = minimumFontScaleFactor
+    }
 
     override open func setUpLayout() {
         embed(previewView, insets: .zero)
@@ -58,6 +78,9 @@ open class VoiceRecordingAttachmentQuotedPreview: _View, ComponentsProvider {
         previewView.container.spacing = 4
 
         previewView.playPauseButton.removeFromSuperview()
+
+        previewView.fileNameLabel.setContentCompressionResistancePriority(.streamAlmostRequire, for: .horizontal)
+        previewView.durationLabel.setContentCompressionResistancePriority(.streamAlmostRequire, for: .horizontal)
     }
 
     override open func updateContent() {

@@ -38,8 +38,68 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.count, 2)
     }
 
+    func test_saveThreadPartialPayload_whenPayloadIsNotEnriched_thenExistingThreadIsUpdated() throws {
+        let parentMessageId = MessageId.unique
+        let thread = try database.viewContext.saveThread(
+            payload: .dummy(parentMessageId: parentMessageId, replyCount: 1, title: "Old Title"),
+            cache: nil
+        )
+        let channel = thread.channel
+
+        let dto = try database.viewContext.saveThread(
+            partialPayload: ThreadResponse(
+                channelCid: channel.cid,
+                createdAt: .unique,
+                custom: [:],
+                parentMessageId: parentMessageId,
+                participantCount: 3,
+                replyCount: 10,
+                title: "New Title",
+                updatedAt: .unique
+            )
+        )
+
+        XCTAssertEqual(dto?.replyCount, 10)
+        XCTAssertEqual(dto?.participantCount, 3)
+        XCTAssertEqual(dto?.title, "New Title")
+        XCTAssertEqual(dto?.channel.cid, channel.cid)
+        XCTAssertEqual(dto?.parentMessage.id, parentMessageId)
+    }
+
+    func test_saveThreadPartialPayload_whenPayloadIsNotEnrichedAndThreadIsMissing_thenNothingIsSaved() throws {
+        let parentMessageId = MessageId.unique
+
+        let dto = try database.viewContext.saveThread(
+            partialPayload: ThreadResponse(
+                channelCid: ChannelId.unique.rawValue,
+                createdAt: .unique,
+                custom: [:],
+                parentMessageId: parentMessageId,
+                participantCount: 3,
+                replyCount: 10,
+                title: "",
+                updatedAt: .unique
+            )
+        )
+
+        XCTAssertNil(dto)
+        XCTAssertNil(database.viewContext.thread(parentMessageId: parentMessageId, cache: nil))
+    }
+
+    func test_saveThreadListPayload_whenThreadHasNoParentMessage_thenThreadIsSkipped() throws {
+        let url = XCTestCase.mockData(fromJSONFile: "ThreadList")
+        let payload = try JSONDecoder.default.decode(ThreadListPayload.self, from: url)
+
+        let dto = database.viewContext.saveThreadList(
+            payload: payload
+        )
+
+        XCTAssertEqual(payload.threads.count, 3)
+        XCTAssertEqual(dto.count, 2)
+    }
+
     func test_saveThreadPayload() throws {
-        let payload = ThreadPayload(
+        let payload = ThreadPayload.dummy(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -71,16 +131,16 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.latestReplies.count, 2)
         XCTAssertEqual(dto.read.count, 1)
         XCTAssertEqual(dto.parentMessageId, payload.parentMessageId)
-        XCTAssertEqual(dto.parentMessage.id, payload.parentMessage.id)
-        XCTAssertEqual(dto.channel.cid, payload.channel.cid.rawValue)
-        XCTAssertEqual(dto.createdBy.id, payload.createdBy.id)
+        XCTAssertEqual(dto.parentMessage.id, payload.parentMessage?.id)
+        XCTAssertEqual(dto.channel.cid, payload.channel?.cid.rawValue)
+        XCTAssertEqual(dto.createdBy.id, payload.createdBy?.id)
         XCTAssertEqual(dto.lastMessageAt, payload.lastMessageAt?.bridgeDate)
         XCTAssertEqual(dto.createdAt, payload.createdAt.bridgeDate)
-        XCTAssertEqual(dto.updatedAt, payload.updatedAt?.bridgeDate)
+        XCTAssertEqual(dto.updatedAt, payload.updatedAt.bridgeDate)
     }
 
     func test_asModel() throws {
-        let payload = ThreadPayload(
+        let payload = ThreadPayload.dummy(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -114,9 +174,9 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.latestReplies.count, 2)
         XCTAssertEqual(model.reads.count, 1)
         XCTAssertEqual(model.parentMessageId, payload.parentMessageId)
-        XCTAssertEqual(model.parentMessage.id, payload.parentMessage.id)
-        XCTAssertEqual(model.channel.cid, payload.channel.cid)
-        XCTAssertEqual(model.createdBy.id, payload.createdBy.id)
+        XCTAssertEqual(model.parentMessage.id, payload.parentMessage?.id)
+        XCTAssertEqual(model.channel.cid, payload.channel?.cid)
+        XCTAssertEqual(model.createdBy.id, payload.createdBy?.id)
         XCTAssertEqual(model.lastMessageAt, payload.lastMessageAt)
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
@@ -170,7 +230,7 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessage: nil
         )
 
-        let payload = ThreadPayload(
+        let payload = ThreadPayload.dummy(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -232,7 +292,7 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessage: nil
         )
 
-        let payloadWithDraft = ThreadPayload(
+        let payloadWithDraft = ThreadPayload.dummy(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -263,23 +323,23 @@ final class ThreadDTO_Tests: XCTestCase {
 
         // WHEN
         // Save the same thread without a draft
-        let payloadWithoutDraft = ThreadPayload(
+        let payloadWithoutDraft = ThreadPayload.dummy(
             parentMessageId: payloadWithDraft.parentMessageId,
-            parentMessage: payloadWithDraft.parentMessage,
-            channel: payloadWithDraft.channel,
-            createdBy: payloadWithDraft.createdBy,
+            parentMessage: try XCTUnwrap(payloadWithDraft.parentMessage),
+            channel: try XCTUnwrap(payloadWithDraft.channel),
+            createdBy: try XCTUnwrap(payloadWithDraft.createdBy),
             replyCount: payloadWithDraft.replyCount,
             participantCount: payloadWithDraft.participantCount,
             activeParticipantCount: 2,
-            threadParticipants: payloadWithDraft.threadParticipants,
+            threadParticipants: payloadWithDraft.threadParticipants ?? [],
             lastMessageAt: payloadWithDraft.lastMessageAt,
             createdAt: payloadWithDraft.createdAt,
             updatedAt: payloadWithDraft.updatedAt,
             title: payloadWithDraft.title,
             latestReplies: payloadWithDraft.latestReplies,
-            read: payloadWithDraft.read,
+            read: payloadWithDraft.read ?? [],
             draft: nil,
-            extraData: payloadWithDraft.extraData
+            extraData: payloadWithDraft.custom
         )
 
         let updatedDto = try database.viewContext.saveThread(

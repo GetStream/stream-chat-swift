@@ -566,6 +566,67 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(memberId, env.memberUpdaterMock.unbanMember_userId)
     }
     
+    func test_queryBannedUsers_whenMemberUpdaterSucceeds_thenQueryBannedUsersSucceeds() async throws {
+        let expectedBans: [BannedUser] = [
+            .mock(user: .mock(id: "1"), cid: channelId),
+            .mock(user: .mock(id: "2"), cid: channelId)
+        ]
+        env.memberUpdaterMock.queryBannedUsers_completion_result = .success(expectedBans)
+
+        let bans = try await chat.queryBannedUsers(
+            with: BannedUserListQuery(
+                filter: .equal(.bannedById, to: "leia"),
+                sort: [Sorting(key: .createdAt, isAscending: true)],
+                pagination: Pagination(pageSize: 10, offset: 20),
+                excludeExpiredBans: true
+            )
+        )
+
+        XCTAssertEqual(expectedBans.map(\.user.id), bans.map(\.user.id))
+
+        let query = try XCTUnwrap(env.memberUpdaterMock.queryBannedUsers_query)
+        XCTAssertEqual(10, query.pagination.pageSize)
+        XCTAssertEqual(20, query.pagination.offset)
+        XCTAssertEqual(true, query.excludeExpiredBans)
+        XCTAssertEqual([Sorting(key: BannedUserListSortingKey.createdAt, isAscending: true)], query.sort)
+        let expectedFilter: [String: Any] = [
+            "$and": [
+                ["channel_cid": ["$eq": channelId.rawValue]],
+                ["banned_by_id": ["$eq": "leia"]]
+            ]
+        ]
+        AssertJSONEqual(
+            try JSONEncoder.default.encode(XCTUnwrap(query.filter)),
+            try JSONSerialization.data(withJSONObject: expectedFilter, options: [])
+        )
+    }
+
+    func test_queryBannedUsers_whenNoFilterIsGiven_thenQueryIsScopedToTheChannel() async throws {
+        env.memberUpdaterMock.queryBannedUsers_completion_result = .success([])
+
+        let bans = try await chat.queryBannedUsers()
+
+        XCTAssertTrue(bans.isEmpty)
+
+        let query = try XCTUnwrap(env.memberUpdaterMock.queryBannedUsers_query)
+        XCTAssertEqual(Int.bannedUsersPageSize, query.pagination.pageSize)
+        XCTAssertEqual(0, query.pagination.offset)
+        XCTAssertEqual(false, query.excludeExpiredBans)
+        XCTAssertTrue(query.sort.isEmpty)
+        AssertJSONEqual(
+            try JSONEncoder.default.encode(XCTUnwrap(query.filter)),
+            ["channel_cid": ["$eq": channelId.rawValue]]
+        )
+    }
+
+    func test_queryBannedUsers_whenMemberUpdaterFails_thenQueryBannedUsersFails() async throws {
+        env.memberUpdaterMock.queryBannedUsers_completion_result = .failure(expectedTestError)
+
+        await XCTAssertAsyncFailure(try await chat.queryBannedUsers(), expectedTestError)
+
+        XCTAssertNotNil(env.memberUpdaterMock.queryBannedUsers_query)
+    }
+
     // MARK: - Messages
     
     func test_deleteMessage_whenMessageUpdaterSucceeds_thenDeleteMessageSucceeds() async throws {
@@ -1135,7 +1196,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         
         // Set dummy response for failing the API call if it is mistakenly made
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<GetMessageResponse, Error>.failure(expectedTestError))
         let messageState = try await chat.messageState(for: messageId)
         
         XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint)
@@ -1147,7 +1208,14 @@ final class Chat_Tests: XCTestCase {
         
         let messageId = String.unique
         let messagePayload = try XCTUnwrap(makeChannelPayload(messageCount: 1, createdAtOffset: 0).messages.first)
-        let apiResponse = MessagePayload.Boxed(message: messagePayload)
+        let apiResponse = GetMessageResponse.dummy(
+            message: .dummy(
+                messageId: messagePayload.id,
+                authorUserId: messagePayload.user.id,
+                cid: channelId,
+                createdAt: messagePayload.createdAt
+            )
+        )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let messageState = try await chat.messageState(for: messageId)
         
@@ -2032,9 +2100,17 @@ final class Chat_Tests: XCTestCase {
     
     /// Sets up a chat backed by real updaters and loads a channel with the given capabilities into the state.
     @MainActor private func setUpChatWithLoadedChannel(ownCapabilities: [String]) async throws {
-        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId, ownCapabilities: ownCapabilities))
-        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await setUpChat(usesMockedUpdaters: false)
+        // `setUpChat` already saved a channel. The watch/get payload must have a newer
+        // `updatedAt` or `saveChannel` will skip ownCapabilities from this snapshot.
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: channelId,
+                updatedAt: XCTestCase.channelLaterUpdateDate,
+                ownCapabilities: ownCapabilities
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await chat.get(watch: false)
         env.client.mockAPIClient.cleanUp()
     }

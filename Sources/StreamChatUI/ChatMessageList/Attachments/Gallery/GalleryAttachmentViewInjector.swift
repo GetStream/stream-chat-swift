@@ -60,14 +60,18 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
         super.contentViewDidUpdateContent()
 
         if let options = contentView.layoutOptions {
+            var bubbleCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
+            if contentView.bubbleContentContainer.subviews.first !== galleryView {
+                // Another attachment is rendered above, so the gallery's top edge is not a bubble edge.
+                bubbleCorners.subtract([.layerMinXMinYCorner, .layerMaxXMinYCorner])
+            }
+
             // We need to apply corners to the left and right containers because the previewsContainerView
             // is applying extra layout margins and the rounded corners wouldn't match the margins.
             let leftCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-            let leftMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
-                .intersection(leftCorners)
+            let leftMaskedCorners = bubbleCorners.intersection(leftCorners)
             let rightCorners: CACornerMask = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-            let rightMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
-                .intersection(rightCorners)
+            let rightMaskedCorners = bubbleCorners.intersection(rightCorners)
 
             let newLeftPreviewsMaskedCorners: CACornerMask
             if contentView.content?.allAttachments.count == 1 {
@@ -78,13 +82,8 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
                 newLeftPreviewsMaskedCorners = leftMaskedCorners
             }
 
-            if galleryView.leftPreviewsContainerView.layer.maskedCorners != newLeftPreviewsMaskedCorners {
-                galleryView.leftPreviewsContainerView.layer.maskedCorners = newLeftPreviewsMaskedCorners
-            }
-
-            if galleryView.rightPreviewsContainerView.layer.maskedCorners != rightMaskedCorners {
-                galleryView.rightPreviewsContainerView.layer.maskedCorners = rightMaskedCorners
-            }
+            apply(maskedCorners: newLeftPreviewsMaskedCorners, to: galleryView.leftPreviewsContainerView)
+            apply(maskedCorners: rightMaskedCorners, to: galleryView.rightPreviewsContainerView)
         }
 
         let videos = attachments(payloadType: VideoAttachmentPayload.self)
@@ -113,6 +112,13 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
 }
 
 private extension GalleryAttachmentViewInjector {
+    func apply(maskedCorners: CACornerMask, to view: UIView) {
+        guard view.layer.maskedCorners != maskedCorners else { return }
+        view.layer.maskedCorners = maskedCorners
+        // Core Animation ignores an empty corner mask, so the radius is reset instead.
+        view.layer.cornerRadius = maskedCorners.isEmpty ? 0 : 16
+    }
+
     var delegate: GalleryContentViewDelegate? {
         contentView.delegate as? GalleryContentViewDelegate
     }

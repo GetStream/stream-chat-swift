@@ -146,6 +146,14 @@ public enum L10n {
       /// Links are disabled
       public static var title: String { L10n.tr("Localizable", "composer.links-disabled.title") }
     }
+    public enum MediaProcessing {
+      public enum Accessibility {
+        /// Preparing photo…
+        public static var preparingPhoto: String { L10n.tr("Localizable", "composer.media-processing.accessibility.preparing-photo") }
+        /// Preparing video…
+        public static var preparingVideo: String { L10n.tr("Localizable", "composer.media-processing.accessibility.preparing-video") }
+      }
+    }
     public enum Picker {
       /// Camera
       public static var camera: String { L10n.tr("Localizable", "composer.picker.camera") }
@@ -227,6 +235,29 @@ public enum L10n {
     }
     /// last seen one week ago
     public static var timeAgoWeeksSingular: String { L10n.tr("Localizable", "dates.time-ago-weeks-singular") }
+  }
+
+  public enum Gallery {
+    public enum Close {
+      /// Close
+      public static var accessibility: String { L10n.tr("Localizable", "gallery.close.accessibility") }
+    }
+    public enum Playback {
+      /// Pause
+      public static var pause: String { L10n.tr("Localizable", "gallery.playback.pause") }
+      /// Play
+      public static var play: String { L10n.tr("Localizable", "gallery.playback.play") }
+      /// Playback
+      public static var timeline: String { L10n.tr("Localizable", "gallery.playback.timeline") }
+    }
+    public enum Share {
+      /// Share
+      public static var accessibility: String { L10n.tr("Localizable", "gallery.share.accessibility") }
+      public enum Accessibility {
+        /// Preparing…
+        public static var preparing: String { L10n.tr("Localizable", "gallery.share.accessibility.preparing") }
+      }
+    }
   }
 
   public enum Message {

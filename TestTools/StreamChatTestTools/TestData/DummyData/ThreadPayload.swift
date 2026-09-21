@@ -6,6 +6,26 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
+typealias ThreadListPayload = QueryThreadsResponse
+typealias ThreadPartialPayload = ThreadResponse
+typealias ThreadPartialUpdateRequest = UpdateThreadPartialRequest
+typealias ThreadPartialUpdateResponse = UpdateThreadPartialResponse
+typealias ThreadPayload = ThreadStateResponse
+typealias ThreadPayloadResponse = GetThreadResponse
+typealias ThreadReadPayload = ReadStateResponse
+
+extension ThreadListPayload {
+    convenience init(threads: [ThreadPayload], next: String?) {
+        self.init(next: next, prev: nil, threads: threads)
+    }
+}
+
+extension ThreadReadPayload {
+    convenience init(user: UserPayload, lastReadAt: Date, unreadMessagesCount: Int) {
+        self.init(lastRead: lastReadAt, unreadMessages: unreadMessagesCount, user: user)
+    }
+}
+
 extension ThreadPayload {
     /// Returns dummy thread payload with the given values.
     static func dummy(
@@ -19,30 +39,32 @@ extension ThreadPayload {
         threadParticipants: [ThreadParticipantPayload] = [],
         lastMessageAt: Date? = nil,
         createdAt: Date = .unique,
-        updatedAt: Date? = .unique,
-        title: String? = nil,
+        updatedAt: Date = .unique,
+        title: String = "",
         latestReplies: [MessagePayload] = [],
         read: [ThreadReadPayload] = [],
         draft: DraftPayload? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
-            parentMessageId: parentMessageId,
-            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
-            channel: channel,
-            createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
             activeParticipantCount: activeParticipantCount,
-            threadParticipants: threadParticipants,
-            lastMessageAt: lastMessageAt,
+            channel: channel,
+            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title,
-            latestReplies: latestReplies,
-            read: read,
+            createdBy: createdBy,
+            createdByUserId: createdBy.id,
+            custom: extraData,
             draft: draft,
-            extraData: extraData
+            lastMessageAt: lastMessageAt,
+            latestReplies: latestReplies,
+            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            read: read,
+            replyCount: replyCount,
+            threadParticipants: threadParticipants,
+            title: title,
+            updatedAt: updatedAt
         )
     }
 }
@@ -58,49 +80,25 @@ extension ThreadPartialPayload {
         activeParticipantCount: Int = 0,
         lastMessageAt: Date? = nil,
         createdAt: Date = .unique,
-        updatedAt: Date? = .unique,
-        title: String? = nil,
+        updatedAt: Date = .unique,
+        title: String = "",
         extraData: [String: RawJSON] = [:]
     ) -> ThreadPartialPayload {
         .init(
-            parentMessageId: parentMessageId,
-            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
+            activeParticipantCount: activeParticipantCount,
             channel: channel,
+            channelCid: channel.cid.rawValue,
+            createdAt: createdAt,
             createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
-            activeParticipantCount: activeParticipantCount,
+            createdByUserId: createdBy.id,
+            custom: extraData,
             lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title,
-            extraData: extraData
-        )
-    }
-}
-
-extension ThreadDetailsPayload {
-    static func dummy(
-        parentMessageId: MessageId,
-        cid: ChannelId = .unique,
-        replyCount: Int = 0,
-        participantCount: Int = 0,
-        activeParticipantCount: Int = 0,
-        lastMessageAt: Date? = nil,
-        createdAt: Date = .unique,
-        updatedAt: Date = .unique,
-        title: String? = nil
-    ) -> ThreadDetailsPayload {
-        .init(
-            cid: cid,
+            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
             parentMessageId: parentMessageId,
-            replyCount: replyCount,
             participantCount: participantCount,
-            activeParticipantCount: activeParticipantCount,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title
+            replyCount: replyCount,
+            title: title,
+            updatedAt: updatedAt
         )
     }
 }

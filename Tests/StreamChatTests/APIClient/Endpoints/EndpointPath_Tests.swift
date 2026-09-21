@@ -47,6 +47,14 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.ban.shouldBeQueuedOffline)
     }
 
+    func test_queryBannedUsers_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.queryBannedUsers.shouldBeQueuedOffline)
+    }
+
+    func test_queryBannedUsers_value() {
+        XCTAssertEqual(EndpointPath.queryBannedUsers.value, "/api/v2/chat/query_banned_users")
+    }
+
     func test_getOG_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.getOG.shouldBeQueuedOffline)
     }
@@ -64,8 +72,9 @@ final class EndpointPathTests: XCTestCase {
     }
 
     func test_threads_shouldNOTBeQueuedOffline() {
-        XCTAssertFalse(EndpointPath.threads.shouldBeQueuedOffline)
-        XCTAssertFalse(EndpointPath.thread(messageId: "1").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.queryThreads.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.getThread(messageId: "1").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.updateThreadPartial(messageId: "1").shouldBeQueuedOffline)
     }
     
     func test_polls_shouldNOTBeQueuedOffline() {
@@ -214,8 +223,9 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.createDevice)
         assertResultEncodingAndDecoding(.deleteDevice)
         assertResultEncodingAndDecoding(.listDevices)
-        assertResultEncodingAndDecoding(.threads)
-        assertResultEncodingAndDecoding(.thread(messageId: "1"))
+        assertResultEncodingAndDecoding(.queryThreads)
+        assertResultEncodingAndDecoding(.getThread(messageId: "1"))
+        assertResultEncodingAndDecoding(.updateThreadPartial(messageId: "1"))
         assertResultEncodingAndDecoding(.updatePushNotificationPreferences)
         assertResultEncodingAndDecoding(.getApp)
         assertResultEncodingAndDecoding(.listUserGroups)
@@ -246,7 +256,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.uploadChannelFile(type: "messaging", id: "channel_id"))
 
         assertResultEncodingAndDecoding(.sendMessage(type: "messaging", id: "the_id"))
-        assertResultEncodingAndDecoding(.message("message_idm"))
+        assertResultEncodingAndDecoding(.getMessage(id: "message_idm"))
         assertResultEncodingAndDecoding(.updateMessage(id: "message_ide"))
         assertResultEncodingAndDecoding(.updateMessagePartial(id: "message_idp"))
         assertResultEncodingAndDecoding(.createDraft(type: "messaging", id: "draft_channel"))
@@ -264,6 +274,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.blockUsers)
         assertResultEncodingAndDecoding(.unblockUsers)
         assertResultEncodingAndDecoding(.getBlockedUsers)
+        assertResultEncodingAndDecoding(.queryBannedUsers)
 
         assertResultEncodingAndDecoding(.createPoll)
         assertResultEncodingAndDecoding(.updatePollPartial(pollId: "test_poll"))

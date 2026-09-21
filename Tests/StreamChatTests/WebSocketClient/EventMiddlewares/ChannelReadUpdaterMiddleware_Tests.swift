@@ -1151,7 +1151,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             user: dummyCurrentUser,
             unreadCount: .init(channels: 0, messages: 0, threads: 5),
             createdAt: newReadDate,
-            threadDetails: .success(.dummy(parentMessageId: .unique))
+            thread: .success(.dummy(parentMessageId: .unique))
         )
         let messageReadEvent = try MessageReadEventDTO(from: threadEventPayload)
 
@@ -1269,7 +1269,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channel: channelDetailPayload,
             unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate,
-            threadDetails: .success(.dummy(parentMessageId: .unique))
+            thread: .success(.dummy(parentMessageId: .unique))
         )
         let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: threadEventPayload)
 

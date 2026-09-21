@@ -486,17 +486,25 @@ extension UserRobot {
 
     @discardableResult
     func uploadImage(count: Int = 1, send: Bool = true) -> Self {
-        for i in 1...count {
-            MessageListPage.Composer.attachmentButton.wait(timeout: 10).safeTap()
-            MessageListPage.AttachmentMenu.photoOrVideoButton.wait(timeout: 10).safeTap()
+        MessageListPage.Composer.attachmentButton.wait(timeout: 10).safeTap()
+        MessageListPage.AttachmentMenu.photoOrVideoButton.wait(timeout: 10).safeTap()
 
-            // Wait for privacy message to appear before proceed on iOS 17, otherwise XCTest crashes
-            if #available(iOS 17.0, *) {
-                app.otherElements["PXGSingleViewContainerView_AX"].wait()
-            }
-
-            MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
+        // Wait for privacy message to appear before proceed on iOS 17, otherwise XCTest crashes
+        if #available(iOS 17.0, *) {
+            app.otherElements["PXGSingleViewContainerView_AX"].wait()
         }
+
+        let images = MessageListPage.AttachmentMenu.images.waitCount(count + 1, timeout: 10).allElementsBoundByIndex
+        for i in 1...count {
+            images[i].tapFrameCenter()
+        }
+
+        // On iOS 14 and above the system photos picker is used, where the selection has to be confirmed
+        if #available(iOS 14.0, *) {
+            MessageListPage.AttachmentMenu.addButton.wait(timeout: 10).safeTap()
+        }
+
+        _ = composer.inputField.waitForHitPoint(timeout: 10)
         if send { sendMessage("", waitForAppearance: false) }
         return self
     }

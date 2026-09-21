@@ -15,6 +15,7 @@ final class ThreadListQuery_Tests: XCTestCase {
         let limit = 25
         let replyLimit = 5
         let participantLimit = 15
+        let memberLimit = 20
         let next = "next_token"
 
         // Create ThreadListQuery
@@ -25,6 +26,7 @@ final class ThreadListQuery_Tests: XCTestCase {
             limit: limit,
             replyLimit: replyLimit,
             participantLimit: participantLimit,
+            memberLimit: memberLimit,
             next: next
         )
 
@@ -32,6 +34,7 @@ final class ThreadListQuery_Tests: XCTestCase {
             "limit": limit,
             "reply_limit": replyLimit,
             "participant_limit": participantLimit,
+            "member_limit": memberLimit,
             "sort": [["field": "created_at", "direction": -1] as [String: Any]],
             "filter": ["channel_cid": ["$eq": cid.rawValue]],
             "watch": watch,
@@ -57,6 +60,7 @@ final class ThreadListQuery_Tests: XCTestCase {
         XCTAssertEqual(query.limit, 20)
         XCTAssertEqual(query.replyLimit, 3)
         XCTAssertEqual(query.participantLimit, 10)
+        XCTAssertNil(query.memberLimit)
         XCTAssertNil(query.next)
     }
 

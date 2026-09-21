@@ -13,6 +13,21 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         }
     }
 
+    /// Picker-provided thumbnails keyed by the attachment's local file URL.
+    open var previewImagesByURL: [URL: UIImage] = [:] {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    /// Processing progress for pending composer attachments, keyed by pending item id.
+    open var processingProgressByID: [UUID: Double] = [:] {
+        didSet {
+            guard processingProgressByID != oldValue else { return }
+            applyProcessingProgress()
+        }
+    }
+
     /// The maximum number of vertical items before scrolling is enabled.
     open var maxNumberOfVerticalItems: Int = 3
 
@@ -56,6 +71,10 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     /// The audioPlayer that will be used by VoiceRecording attachments for playback.
     public var audioPlayer: AudioPlaying?
 
+    /// The processing previews which are currently shown, keyed by the pending item's id.
+    /// Rebuilt together with the stacks, so that progress updates do not have to look them up.
+    private var processingPreviewsByID: [UUID: ProcessingAttachmentComposerPreview] = [:]
+
     /// The attachment views for each attachment preview.
     ///
     /// - Parameter axises: The desired axises of which the previews belong.
@@ -71,6 +90,22 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             .map { index, attachment in
                 let view = attachment.previewView(components: components)
                     .withoutAutoresizingMaskConstraints
+
+                if let processingPreview = view as? ProcessingAttachmentComposerPreview,
+                   let pending = attachment as? ProcessingAttachmentPreview {
+                    processingPreview.progress = processingProgressByID[pending.id] ?? pending.progress
+                    processingPreviewsByID[pending.id] = processingPreview
+                }
+
+                if let videoPreview = view as? VideoAttachmentComposerPreview,
+                   let video = attachment as? VideoAttachmentPayload {
+                    videoPreview.previewImage = previewImagesByURL[video.videoURL]
+                }
+
+                if let imagePreview = view as? ImageAttachmentComposerPreview,
+                   let image = attachment as? ImageAttachmentPayload {
+                    imagePreview.previewImage = previewImagesByURL[image.imageURL]
+                }
 
                 if
                     let voiceRecordingView = view as? VoiceRecordingAttachmentComposerPreview,
@@ -132,6 +167,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
 
         horizontalScrollView.isHidden = true
         verticalScrollView.isHidden = true
+        processingPreviewsByID.removeAll()
 
         let axises = Set(content.map { type(of: $0).preferredAxis })
 
@@ -183,6 +219,14 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             // reset the scroll view height constraint.
             verticalScrollViewHeightConstraint?.isActive = false
             verticalScrollViewHeightConstraint = nil
+        }
+    }
+
+    /// Updates in-place progress on pending attachment previews without rebuilding the stack.
+    open func applyProcessingProgress() {
+        for (id, preview) in processingPreviewsByID {
+            guard let progress = processingProgressByID[id] else { continue }
+            preview.progress = progress
         }
     }
 

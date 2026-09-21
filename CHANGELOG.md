@@ -3,6 +3,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- Fix channel data being overridden by events with stale channel data [#4278](https://github.com/GetStream/stream-chat-swift/pull/4278)
+
+### 🔄 Changed
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix incorrect rounded corner on image attachments shown below other attachments [#4277](https://github.com/GetStream/stream-chat-swift/pull/4277)
+- Fix empty voice recording preview when quoting a message with multiple attachments [#4276](https://github.com/GetStream/stream-chat-swift/pull/4276)
+
+# [5.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.11.0)
+_September 09, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `PinnedMessagesPagination.offset(Int)` for paginating messages using offset [#4249](https://github.com/GetStream/stream-chat-swift/pull/4249)
@@ -11,16 +24,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `TypingUser` and `ChatChannel.typingUsers` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 - Add `LivestreamChatState.typingMemberInfos` for accessing channel-member info of typing users [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 - Add `LivestreamChatState.typingUsersWithMemberInfo` for `TypingUser` values derived from `typingUsers` and `typingMemberInfos` [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
+- Add mention parameters to `ChatMessageController.editMessage` and `Chat.updateMessage` [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
+- Add `memberLimit` to `ThreadQuery` for specifying the number of returned members in the thread's channel response [#4256](https://github.com/GetStream/stream-chat-swift/pull/4256)
+- Add `Chat.queryBannedUsers` and `ChatChannelController.queryBannedUsers` for listing the bans of a channel [#4237](https://github.com/GetStream/stream-chat-swift/pull/4237)
 ### 🐞 Fixed
+- Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix rare crashes in `DataController.state` [#4248](https://github.com/GetStream/stream-chat-swift/pull/4248)
 ### 🔄 Changed
 - Deprecate `ChatChannelControllerDelegate.channelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 - Deprecate `LivestreamChannelControllerDelegate.livestreamChannelController(_:didChangeTypingUsers:)` taking `Set<ChatUser>` in favour of the `Set<TypingUser>` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 
 ## StreamChatUI
+### ✅ Added
+- Add `Components.isLegacyPhotosPickerEnabled` to keep using `UIImagePickerController` in the composer [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
+- Add `Components.processingAttachmentComposerPreview` to customize the preview shown while a picked attachment is being processed [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 ### 🐞 Fixed
+- Fix the gallery share button blocking the main thread when preparing a video [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix scrubbing the gallery video timeline not seeking the player [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix the gallery close button being too close to the screen edge to tap reliably [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix gallery video audio not playing when the ringer switch is off [#4272](https://github.com/GetStream/stream-chat-swift/pull/4272)
+- Fix mentions not being persisted when editing a message [#4268](https://github.com/GetStream/stream-chat-swift/pull/4268)
 - Fix a custom message background, like the one for pinned messages, being removed after jumping to the message [#4254](https://github.com/GetStream/stream-chat-swift/pull/4254)
 ### 🔄 Changed
+- Use Apple's `PHPickerViewController` by default instead of `UIImagePickerController` to better support iOS 27 [#4271](https://github.com/GetStream/stream-chat-swift/pull/4271)
 - Deprecate `ChatMessageListVC.showTypingIndicator(typingUsers:)` taking `[ChatUser]` in favour of the `[TypingUser]` overload [#4241](https://github.com/GetStream/stream-chat-swift/pull/4241)
 
 # [5.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.10.0)

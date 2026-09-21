@@ -543,22 +543,18 @@ protocol ThreadDatabaseSession {
 
     /// Creates `ThreadDTO` objects for the given thread payloads.
     @discardableResult
-    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO]
+    func saveThreadList(payload: QueryThreadsResponse) -> [ThreadDTO]
     
     /// Creates a new `ThreadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThread(
-        payload: ThreadPayload,
+        payload: ThreadStateResponse,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO
 
-    /// Updates the thread with details from a thread event.
-    @discardableResult
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO
-
     /// Updates the thread with partial thread information.
     @discardableResult
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO
+    func saveThread(partialPayload: ThreadResponse) throws -> ThreadDTO?
 
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
@@ -579,7 +575,7 @@ protocol ThreadReadDatabaseSession {
     /// Creates a new `ThreadReadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadRead(
-        payload: ThreadReadPayload,
+        payload: ReadStateResponse,
         parentMessageId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadReadDTO
@@ -830,12 +826,8 @@ extension DatabaseSession {
             try mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         }
 
-        if let threadDetailsPayload = payload.threadDetails?.value {
-            try saveThread(detailsPayload: threadDetailsPayload)
-        }
-
-        if let threadPartialPayload = payload.threadPartial?.value {
-            try saveThread(partialPayload: threadPartialPayload)
+        if let threadPayload = payload.thread?.value {
+            try saveThread(partialPayload: threadPayload)
         }
 
         try saveMessageIfNeeded(from: payload)
