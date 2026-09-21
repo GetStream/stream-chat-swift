@@ -184,7 +184,10 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension ReadStateResponse: IdentifiablePayloadProxy {
+extension ReadStateResponse: IdentifiablePayload {
+    var databaseId: DatabaseId? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
+    static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelReadDTO.self
+
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
