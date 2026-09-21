@@ -286,6 +286,7 @@ open class GalleryVC: _ViewController,
             at: .centeredHorizontally,
             animated: false
         )
+        bindVideoPlaybackBar()
     }
 
     override open func viewWillDisappear(_ animated: Bool) {
@@ -317,12 +318,7 @@ open class GalleryVC: _ViewController,
 
         currentPhotoLabel.text = L10n.currentSelection(content.currentPage + 1, items.count)
 
-        let videoCell = attachmentsCollectionView.cellForItem(
-            at: currentItemIndexPath
-        ) as? VideoAttachmentGalleryCell
-
-        videoPlaybackBar.player = videoCell?.player
-        videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
+        bindVideoPlaybackBar()
     }
 
     /// Lets the video timeline and other controls keep their own gestures.
@@ -482,6 +478,34 @@ open class GalleryVC: _ViewController,
     open var currentItem: AnyChatMessageAttachment {
         items.assertIndexIsPresent(currentItemIndexPath.item)
         return items[currentItemIndexPath.item]
+    }
+
+    private weak var boundVideoCell: VideoAttachmentGalleryCell?
+
+    private func bindVideoPlaybackBar() {
+        let videoCell = attachmentsCollectionView.cellForItem(
+            at: currentItemIndexPath
+        ) as? VideoAttachmentGalleryCell
+
+        if boundVideoCell !== videoCell {
+            boundVideoCell?.onAssetLoadingErrorChange = nil
+            boundVideoCell = videoCell
+        }
+
+        videoPlaybackBar.player = videoCell?.player
+        videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
+
+        guard let videoCell else { return }
+
+        if let error = videoCell.currentAssetLoadingError {
+            videoPlaybackBar.setPlaybackFailure(error)
+        } else if videoCell.player.currentItem?.status != .failed {
+            videoPlaybackBar.setPlaybackFailure(nil)
+        }
+        videoCell.onAssetLoadingErrorChange = { [weak self, weak videoCell] error in
+            guard let self, let videoCell, videoCell === self.boundVideoCell else { return }
+            self.videoPlaybackBar.setPlaybackFailure(error)
+        }
     }
 
     /// Returns a share item for the gallery item at given index path.
