@@ -79,8 +79,12 @@ final class YTLiveChatViewController: _ViewController,
 
         Task { [weak self] in
             guard let self = self else { return }
-            try await self.livestreamChat.get()
-            messageComposerVC.updateContent()
+            do {
+                try await self.livestreamChat.get()
+                messageComposerVC.updateContent()
+            } catch {
+                log.error("Failed to load the livestream chat: \(error)")
+            }
         }
 
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in

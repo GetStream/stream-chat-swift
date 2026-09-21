@@ -91,7 +91,7 @@ class RemindersRepository: @unchecked Sendable {
                 userId: currentUser.user.id
             )
             try session.saveReminder(payload: reminderPayload, cache: nil)
-        } completion: { error in
+        } completion: { [self] error in
             if let error {
                 completion(.failure(error))
                 return
@@ -146,7 +146,7 @@ class RemindersRepository: @unchecked Sendable {
             originalRemindAt = messageDTO.reminder?.remindAt?.bridgeDate
 
             messageDTO.reminder?.remindAt = remindAt?.bridgeDate
-        } completion: { _ in
+        } completion: { [self] _ in
             // Make the API call to update the reminder
             self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
@@ -210,7 +210,7 @@ class RemindersRepository: @unchecked Sendable {
             
             // Delete optimistically
             session.deleteReminder(messageId: messageId)
-        } completion: { error in
+        } completion: { [self] error in
             if let error {
                 completion(error)
                 return
