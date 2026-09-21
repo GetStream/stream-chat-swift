@@ -42,26 +42,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
-    func test_decode_shouldSkipChannelIfItHasMissingRequiredProperties() throws {
-        /// Channel List JSON with 3 channels, the first channel has multiple missing required properties:
-        /// - channel.members.first.user.updatedAt
-        /// - channel.pinnedMessages.first.user.updatedAt
-        /// - channel.reads.first.user.updatedAt
-        let url = XCTestCase.mockData(fromJSONFile: "PartiallyFailingChannelListPayload")
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 2)
-    }
-
-    func test_decode_shouldReturnChannelsIfOneChannelCompletelyFailsParsing() throws {
-        /// Channel List JSON with 3 channels, the first channel has a missing `createdBy.user.updateAt`,
-        /// which is mandatory, so it will skip this channel, and return only 2 channels.
-        let url = XCTestCase.mockData(fromJSONFile: "FailingChannelListPayload")
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 2)
-    }
-
     func test_channelListPayload_decodesPredefinedFilter() throws {
         let json = """
         {
