@@ -188,6 +188,13 @@ extension ReadStateResponse: IdentifiablePayloadProxy {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
     }
+
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], channelCid: ChannelId) {
+        user.fillIds(cache: &cache)
+        cache[ChannelReadDTO.className, default: []].insert(
+            ChannelReadDTO.createId(cid: channelCid, userId: user.id)
+        )
+    }
 }
 
 extension ThreadParticipantPayload: IdentifiablePayloadProxy {
@@ -269,25 +276,6 @@ extension MemberPayload: IdentifiablePayload {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user?.fillIds(cache: &cache)
-    }
-}
-
-extension ChannelReadPayload: IdentifiablePayload {
-    var databaseId: DatabaseId? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
-    static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelReadDTO.self
-
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        addId(cache: &cache)
-        user.fillIds(cache: &cache)
-    }
-
-    /// Registers the composed read id in the cache. Requires the parent channel cid because reads do not
-    /// carry it on the payload.
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], channelCid: ChannelId) {
-        user.fillIds(cache: &cache)
-        cache[ChannelReadDTO.className, default: []].insert(
-            ChannelReadDTO.createId(cid: channelCid, userId: user.id)
-        )
     }
 }
 
