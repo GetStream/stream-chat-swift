@@ -93,6 +93,19 @@ public extension AudioSessionConfiguring {
     }
 }
 
+// MARK: - Queue
+
+enum AudioSessionQueue {
+    // Interacting with the `AVAudioSession` performs synchronous inter-process calls which block the
+    // caller long enough to make the UI unresponsive, so they are never performed on the caller's
+    // thread. A single serial queue is shared by everything that touches the session, to ensure the
+    // calls are applied in the order they were requested.
+    static let shared = DispatchQueue(
+        label: "io.getstream.audio-session",
+        qos: .userInitiated
+    )
+}
+
 // MARK: - Implementation
 
 #if os(macOS) && !targetEnvironment(macCatalyst)
@@ -120,15 +133,6 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 }
 #else
 open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked Sendable {
-    // Activating or deactivating an `AVAudioSession` is a synchronous inter-process call which blocks
-    // the caller long enough to make the UI unresponsive, so it's never performed on the caller's
-    // thread. The queue is shared by every configurator, to ensure that activations and deactivations
-    // are applied in the order they were requested.
-    private static let sessionQueue = DispatchQueue(
-        label: "io.getstream.audio-session",
-        qos: .userInitiated
-    )
-
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
@@ -258,7 +262,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
         _ isActive: Bool,
         completion: (@Sendable (Error?) -> Void)?
     ) {
-        Self.sessionQueue.async { [self] in
+        AudioSessionQueue.shared.async { [self] in
             do {
                 try audioSession.setActive(isActive, options: [])
                 completion?(nil)

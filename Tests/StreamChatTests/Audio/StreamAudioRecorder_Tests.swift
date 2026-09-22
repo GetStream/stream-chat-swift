@@ -123,6 +123,12 @@ import XCTest
         XCTAssertTrue(stubAVAudioRecorder.prepareToRecordWasCalled)
     }
 
+    func test_beginRecording_prepareToRecordIsNotCalledOnTheMainThread() {
+        simulateIsRecording()
+
+        XCTAssertEqual(stubAVAudioRecorder.prepareToRecordWasCalledOnMainThread, false)
+    }
+
     func test_beginRecording_failedToBeginRecording_callsDidFailWithErrorOnDelegate() throws {
         stubAVAudioRecorder.recordResult = false
         setAudioRecorder()
@@ -424,11 +430,13 @@ import XCTest
         }
 
         stubAVAudioRecorder.stubProperty(\.currentTime, with: 10)
+        // The recording observers read `isRecording` as soon as the recording starts, which now
+        // happens asynchronously, so the property is stubbed before the recording begins.
+        stubAVAudioRecorder.stubProperty(\.isRecording, with: true)
         subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
-        assertContextUpdate(.init(state: .recording, duration: 0, averagePower: 0), file: file, line: line)
-        stubAVAudioRecorder.stubProperty(\.isRecording, with: true)
         wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
+        assertContextUpdate(.init(state: .recording, duration: 0, averagePower: 0), file: file, line: line)
     }
 
     private func assertContextUpdate(
@@ -500,6 +508,7 @@ private final class StubAudioRecorder: AVAudioRecorder, Stub, @unchecked Sendabl
     var recordResult: Bool = false
 
     var prepareToRecordWasCalled = false
+    var prepareToRecordWasCalledOnMainThread: Bool?
     var prepareToRecordResult: Bool = false
 
     var averagePowerWasCalledWithChannelNumber: Int?
@@ -534,6 +543,7 @@ private final class StubAudioRecorder: AVAudioRecorder, Stub, @unchecked Sendabl
 
     override func prepareToRecord() -> Bool {
         prepareToRecordWasCalled = true
+        prepareToRecordWasCalledOnMainThread = Thread.isMainThread
         return prepareToRecordResult
     }
 

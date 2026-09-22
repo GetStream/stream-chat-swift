@@ -404,7 +404,6 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         /// Configure the AVAudioRecorder instance
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
-        audioRecorder.prepareToRecord()
 
         return audioRecorder
     }
@@ -423,26 +422,44 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     private func handleRecordRequest(
         _ permissionGranted: Bool,
-        completionHandler: @escaping () -> Void
+        completionHandler: @escaping @Sendable () -> Void
     ) {
+        guard permissionGranted else {
+            notifyDelegatesForError(AudioRecorderError.noRecordPermission())
+            return
+        }
+
         do {
-            guard permissionGranted else {
-                throw AudioRecorderError.noRecordPermission()
-            }
+            let audioRecorder = try makeAudioRecorder()
+            self.audioRecorder = audioRecorder
 
-            audioRecorder = try makeAudioRecorder()
-
-            if audioRecorder?.record() == true {
-                context = .init(state: .recording, duration: 0, averagePower: 0)
-                startObservers()
-                completionHandler()
-            } else {
-                // This error may occur due to the audio file name.
-                throw AudioRecorderError.failedToBegin()
+            // `AVAudioRecorder.prepareToRecord` activates the `AVAudioSession`, which is a synchronous
+            // inter-process call that blocks the caller long enough to make the UI unresponsive, so the
+            // recorder is never prepared on the caller's thread.
+            AudioSessionQueue.shared.async { [weak self] in
+                audioRecorder.prepareToRecord()
+                StreamConcurrency.onMain {
+                    self?.startRecording(with: audioRecorder, completionHandler: completionHandler)
+                }
             }
         } catch {
-            multicastDelegate.invokeOnMain { $0.audioRecorder(self, didFailWithError: error) }
+            notifyDelegatesForError(error)
         }
+    }
+
+    private func startRecording(
+        with audioRecorder: AVAudioRecorder,
+        completionHandler: @escaping @Sendable () -> Void
+    ) {
+        guard audioRecorder.record() else {
+            // This error may occur due to the audio file name.
+            notifyDelegatesForError(AudioRecorderError.failedToBegin())
+            return
+        }
+
+        context = .init(state: .recording, duration: 0, averagePower: 0)
+        startObservers()
+        completionHandler()
     }
 
     // MARK: AudioRecorder observation
