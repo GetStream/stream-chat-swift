@@ -89,6 +89,8 @@ extension ChatMessageFileAttachmentListView {
 
         override open func setUpLayout() {
             super.setUpLayout()
+            directionalLayoutMargins = .streamDefaultLayoutMargins
+
             addSubview(mainContainerStackView)
             mainContainerStackView.pin(to: layoutMarginsGuide)
 
