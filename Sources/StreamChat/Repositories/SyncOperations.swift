@@ -134,7 +134,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
             Task {
                 do {
                     let state = try await channelListUpdater.paginationState(for: sampleGroupKey)
-                    let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { ($0, GroupedQueryChannelsRequestGroup(limit: nil, next: nil)) })
+                    let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { ($0, GroupedChannelsGroupRequest(limit: nil, next: nil)) })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,

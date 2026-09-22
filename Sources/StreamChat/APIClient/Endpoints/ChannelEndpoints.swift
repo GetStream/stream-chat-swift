@@ -5,18 +5,6 @@
 import Foundation
 
 extension Endpoint {
-    static func groupedChannels(
-        request: GroupedQueryChannelsRequestBody
-    ) -> Endpoint<GroupedQueryChannelsPayload> {
-        .init(
-            path: .groupedChannels,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: request.watch || request.presence,
-            body: request
-        )
-    }
-
     static func startTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
         .sendEvent(
             type: cid.type.rawValue,

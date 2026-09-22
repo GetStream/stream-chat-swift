@@ -681,8 +681,8 @@ public class ChatClient: @unchecked Sendable {
         presence: Bool = false,
         watch: Bool = true
     ) async throws -> [ChannelGroup] {
-        let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
-            result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
+        let groupRequests: [String: GroupedChannelsGroupRequest]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
+            result[key] = GroupedChannelsGroupRequest(limit: limit, next: nil)
         }
         return try await channelListUpdater.queryGroupedChannels(
             groups: groupRequests,
