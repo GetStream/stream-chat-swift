@@ -218,8 +218,14 @@ open class GalleryVC: _ViewController,
         topBarTopConstraint = topBarView.topAnchor.pin(equalTo: view.topAnchor)
         topBarTopConstraint?.isActive = true
 
-        topBarView.embed(topBarContainerStackView)
-        topBarContainerStackView.preservesSuperviewLayoutMargins = true
+        // The bar's background stays edge to edge while its content is laid out inside the safe
+        // area. Keeping the safe area out of the container's own margins matters: UIKit adds the
+        // two together, and where that sum also drives the bar's height it has two answers to
+        // choose from, which it resolves by looping until it throws a degenerate layout.
+        topBarView.addSubview(topBarContainerStackView)
+        topBarContainerStackView.pin(to: topBarView.safeAreaLayoutGuide)
+        topBarContainerStackView.insetsLayoutMarginsFromSafeArea = false
+        topBarContainerStackView.directionalLayoutMargins = .streamDefaultLayoutMargins
         topBarContainerStackView.isLayoutMarginsRelativeArrangement = true
 
         closeButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
@@ -250,9 +256,11 @@ open class GalleryVC: _ViewController,
         bottomBarBottomConstraint = bottomBarView.bottomAnchor.pin(equalTo: view.bottomAnchor)
         bottomBarBottomConstraint?.isActive = true
 
-        bottomBarContainerStackView.preservesSuperviewLayoutMargins = true
+        bottomBarView.addSubview(bottomBarContainerStackView)
+        bottomBarContainerStackView.pin(to: bottomBarView.safeAreaLayoutGuide)
+        bottomBarContainerStackView.insetsLayoutMarginsFromSafeArea = false
+        bottomBarContainerStackView.directionalLayoutMargins = .streamDefaultLayoutMargins
         bottomBarContainerStackView.isLayoutMarginsRelativeArrangement = true
-        bottomBarView.embed(bottomBarContainerStackView)
 
         shareButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
         shareButton.contentEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
