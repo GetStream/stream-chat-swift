@@ -84,25 +84,12 @@ struct ChannelEditDetailPayload: Encodable {
     }
 }
 
-extension ChannelEditDetailPayload: APIPathConvertible {
-    var apiPath: String {
-        guard let id = id else {
-            return type.rawValue
-        }
-        return type.rawValue + "/" + id
-    }
-}
-
 extension ChannelEditDetailPayload {
-    func toChannelInput() -> ChannelInput {
-        var custom = extraData
-        if let name {
-            custom[ChannelCodingKeys.name.rawValue] = .string(name)
-        }
-        if let imageURL {
-            custom[ChannelCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
-        }
+    var cid: ChannelId? {
+        id.map { ChannelId(type: type, id: $0) }
+    }
 
+    func toChannelInput() -> ChannelInput {
         let allMembers = members.union(invites)
 
         return ChannelInput(
@@ -112,5 +99,45 @@ extension ChannelEditDetailPayload {
             members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
             team: team
         )
+    }
+
+    func toChannelInputRequest() -> ChannelInputRequest {
+        let allMembers = members.union(invites)
+
+        return ChannelInputRequest(
+            custom: custom,
+            invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
+            members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
+            team: team
+        )
+    }
+
+    func toPartialUpdateSet() -> [String: RawJSON] {
+        var set = custom
+        if let team {
+            set[ChannelCodingKeys.team.rawValue] = .string(team)
+        }
+        if !invites.isEmpty {
+            set[ChannelCodingKeys.invites.rawValue] = .array(invites.map { .string($0) })
+        }
+        if !filterTags.isEmpty {
+            set[ChannelCodingKeys.filterTags.rawValue] = .array(filterTags.map { .string($0) })
+        }
+        let allMembers = members.union(invites)
+        if !allMembers.isEmpty {
+            set[ChannelCodingKeys.members.rawValue] = .array(allMembers.map { .string($0) })
+        }
+        return set
+    }
+
+    private var custom: [String: RawJSON] {
+        var custom = extraData
+        if let name {
+            custom[ChannelCodingKeys.name.rawValue] = .string(name)
+        }
+        if let imageURL {
+            custom[ChannelCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+        }
+        return custom
     }
 }
