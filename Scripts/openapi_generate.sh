@@ -40,12 +40,15 @@ allowed_endpoints=(
     getBlockedUsers
     getMessage
     getOG
+    getOrCreateChannel
+    getOrCreateDistinctChannel
     getPinnedMessages
     getReactions
     getReplies
     getThread
     getUserGroup
     getUserLiveLocations
+    groupedQueryChannels
     hideChannel
     listDevices
     listUserGroups
@@ -56,6 +59,7 @@ allowed_endpoints=(
     mute
     muteChannel
     queryBannedUsers
+    queryChannels
     queryDrafts
     queryMembers
     queryPollVotes
@@ -80,6 +84,8 @@ allowed_endpoints=(
     unmute
     unmuteChannel
     unreadCounts
+    updateChannel
+    updateChannelPartial
     updateLiveLocation
     updateMemberPartial
     updateMessage
@@ -106,12 +112,16 @@ allowed_models=(
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
+  ChannelGetOrCreateRequest
+  ChannelInput
+  ChannelInputRequest
   ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
   ChannelMute
   ChannelOwnCapability
   ChannelResponse
+  ChannelStateResponse
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
@@ -144,6 +154,10 @@ allowed_models=(
   GetRepliesResponse
   GetThreadResponse
   GetUserGroupResponse
+  GroupedChannelsBucket
+  GroupedChannelsGroupRequest
+  GroupedQueryChannelsRequest
+  GroupedQueryChannelsResponse
   HideChannelRequest
   ImageData
   Images
@@ -159,6 +173,7 @@ allowed_models=(
   MembersResponse
   MessageActionRequest
   MessageActionResponse
+  MessagePaginationParams
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -167,6 +182,9 @@ allowed_models=(
   MuteRequest
   MuteResponse
   OwnUserResponse
+  PaginationParams
+  ParsedPredefinedFilterResponse
+  PendingMessageResponse
   PollOptionInput
   PollOptionResponse
   PollOptionResponseData
@@ -180,6 +198,8 @@ allowed_models=(
   PushPreferencesResponse
   QueryBannedUsersPayload
   QueryBannedUsersResponse
+  QueryChannelsRequest
+  QueryChannelsResponse
   QueryDraftsRequest
   QueryDraftsResponse
   QueryMembersPayload
@@ -229,6 +249,10 @@ allowed_models=(
   UnreadCountsChannel
   UnreadCountsChannelType
   UnreadCountsThread
+  UpdateChannelPartialRequest
+  UpdateChannelPartialResponse
+  UpdateChannelRequest
+  UpdateChannelResponse
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMemberPartialResponse
@@ -285,6 +309,9 @@ encodable_only_models=(
   BlockUsersRequest
   CastPollVoteRequestBody
   ChannelDeliveredRequestPayload
+  ChannelGetOrCreateRequest
+  ChannelInput
+  ChannelInputRequest
   ChannelMemberRequest
   CreateDeviceRequest
   CreateDraftRequest
@@ -295,18 +322,23 @@ encodable_only_models=(
   DeliveredMessagePayload
   EventRequest
   FlagRequest
+  GroupedChannelsGroupRequest
+  GroupedQueryChannelsRequest
   HideChannelRequest
   MarkChannelsReadRequest
   MarkReadRequest
   MarkUnreadRequest
   MessageActionRequest
+  MessagePaginationParams
   MessageRequest
   MuteChannelRequest
   MuteRequest
   NewLocationRequestPayload
+  PaginationParams
   PollOptionRequestBody
   PushPreferenceInput
   QueryBannedUsersPayload
+  QueryChannelsRequest
   QueryDraftsRequest
   QueryMembersPayload
   QueryPollVotesRequestBody
@@ -320,12 +352,13 @@ encodable_only_models=(
   SendEventRequest
   SendMessageRequest
   SendReactionRequest
-  SortParamRequest
   TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
   UnmuteChannelRequest
   UnmuteRequest
+  UpdateChannelPartialRequest
+  UpdateChannelRequest
   UpdateLiveLocationRequest
   UpdateMemberPartialRequest
   UpdateMessagePartialRequest
@@ -346,6 +379,7 @@ decodable_only_models=(
   BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
+  ChannelStateResponse
   CreateDraftResponse
   CreateReminderResponse
   CurrentUserUnreads
@@ -364,6 +398,8 @@ decodable_only_models=(
   GetPinnedMessagesResponse
   GetRepliesResponse
   GetThreadResponse
+  GroupedChannelsBucket
+  GroupedQueryChannelsResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -381,6 +417,8 @@ decodable_only_models=(
   MutedChannelPayloadResponse
   MutedUserPayload
   OwnUserResponse
+  ParsedPredefinedFilterResponse
+  PendingMessageResponse
   PollOptionPayload
   PollOptionResponse
   PollPayload
@@ -390,6 +428,7 @@ decodable_only_models=(
   PollVotePayloadResponse
   PushPreference
   QueryBannedUsersResponse
+  QueryChannelsResponse
   QueryDraftsResponse
   QueryRemindersResponse
   QueryThreadsResponse
@@ -414,6 +453,8 @@ decodable_only_models=(
   UnreadChannel
   UnreadChannelByType
   UnreadThread
+  UpdateChannelPartialResponse
+  UpdateChannelResponse
   UpdateMemberPartialResponse
   UpdateMessagePartialResponse
   UpdateMessageResponse
@@ -442,6 +483,7 @@ codable_models=(
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
   Role
+  SortParamRequest
   TypingIndicatorPrivacySettings
   UserPayload
   UserPrivacySettings
@@ -722,6 +764,8 @@ rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
+# CHA-5170
+rename_generated_type ChannelStateResponseFields ChannelStateResponse
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 rename_generated Attachment MessageAttachmentPayload
 rename_generated ChannelMemberPartialResponse MemberInfoPayload
@@ -796,6 +840,16 @@ remove_property SharedLocation message
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
+# CHA-5096
+remove_property ChannelGetOrCreateRequest hideForCreator
+# CHA-5096
+remove_property ChannelInput configOverrides
+# CHA-5096
+remove_property ChannelInput createdBy
+# CHA-5096
+remove_property ChannelInputRequest configOverrides
+# CHA-5096
+remove_property ChannelInputRequest createdBy
 # CHA-5068
 remove_property BanRequest ipBan
 remove_property FlagRequest entityCreatorId
@@ -820,7 +874,10 @@ remove_property SearchResponse resultsWarning
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
+# CHA-4621
 require_property ChannelDetailPayload config
+# CHA-5028
+require_property ChannelStateResponse channel
 # CHA-5105
 require_property SearchResult message
 
@@ -1090,12 +1147,6 @@ inject_v1_endpoint_paths() {
     case sync
     case guest
 
-    case channels
-    case groupedChannels
-    case createChannel(String)
-    case updateChannel(String)
-    case channelUpdate(String)
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -1103,12 +1154,6 @@ EOF
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-
-        case .channels: return "channels"
-        case .groupedChannels: return "channels/grouped"
-        case let .createChannel(queryString): return "channels/\(queryString)/query"
-        case let .updateChannel(queryString): return "channels/\(queryString)/query"
-        case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
 EOF
 

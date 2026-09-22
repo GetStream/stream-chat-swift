@@ -10,12 +10,6 @@ enum EndpointPath: Codable {
     case sync
     case guest
 
-    case channels
-    case groupedChannels
-    case createChannel(String)
-    case updateChannel(String)
-    case channelUpdate(String)
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
@@ -45,12 +39,15 @@ enum EndpointPath: Codable {
     case getDraft(type: String, id: String)
     case getMessage(id: String)
     case getOG
+    case getOrCreateChannel(type: String, id: String)
+    case getOrCreateDistinctChannel(type: String)
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
     case getReplies(parentId: String)
     case getThread(messageId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
+    case groupedQueryChannels
     case hideChannel(type: String, id: String)
     case listDevices
     case listUserGroups
@@ -61,6 +58,7 @@ enum EndpointPath: Codable {
     case mute
     case muteChannel
     case queryBannedUsers
+    case queryChannels
     case queryDrafts
     case queryMembers
     case queryPollVotes(pollId: String)
@@ -85,6 +83,8 @@ enum EndpointPath: Codable {
     case unmute
     case unmuteChannel
     case unreadCounts
+    case updateChannel(type: String, id: String)
+    case updateChannelPartial(type: String, id: String)
     case updateLiveLocation
     case updateMemberPartial(type: String, id: String)
     case updateMessage(id: String)
@@ -106,12 +106,6 @@ enum EndpointPath: Codable {
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-
-        case .channels: return "channels"
-        case .groupedChannels: return "channels/grouped"
-        case let .createChannel(queryString): return "channels/\(queryString)/query"
-        case let .updateChannel(queryString): return "channels/\(queryString)/query"
-        case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
@@ -171,6 +165,10 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case .getOG:
             return "/api/v2/og"
+        case let .getOrCreateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/query"
+        case let .getOrCreateDistinctChannel(type: type):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/query"
         case let .getPinnedMessages(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
@@ -183,6 +181,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
             return "/api/v2/users/live_locations"
+        case .groupedQueryChannels:
+            return "/api/v2/chat/channels/grouped"
         case let .hideChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/hide"
         case .listDevices:
@@ -203,6 +203,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/moderation/mute/channel"
         case .queryBannedUsers:
             return "/api/v2/chat/query_banned_users"
+        case .queryChannels:
+            return "/api/v2/chat/channels"
         case .queryDrafts:
             return "/api/v2/chat/drafts/query"
         case .queryMembers:
@@ -251,6 +253,10 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/moderation/unmute/channel"
         case .unreadCounts:
             return "/api/v2/chat/unread"
+        case let .updateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
+        case let .updateChannelPartial(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
         case .updateLiveLocation:
             return "/api/v2/users/live_locations"
         case let .updateMemberPartial(type: type, id: id):
@@ -738,6 +744,35 @@ extension Endpoint {
         )
     }
 
+    static func getOrCreateChannel(
+        type: String,
+        id: String,
+        channelGetOrCreateRequest: ChannelGetOrCreateRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<ChannelStateResponse> {
+        return .init(
+            path: .getOrCreateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: channelGetOrCreateRequest
+        )
+    }
+
+    static func getOrCreateDistinctChannel(
+        type: String,
+        channelGetOrCreateRequest: ChannelGetOrCreateRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<ChannelStateResponse> {
+        return .init(
+            path: .getOrCreateDistinctChannel(type: type),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: channelGetOrCreateRequest
+        )
+    }
+
     static func getPinnedMessages(
         type: String,
         id: String,
@@ -876,6 +911,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func groupedQueryChannels(
+        groupedQueryChannelsRequest: GroupedQueryChannelsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<GroupedQueryChannelsResponse> {
+        return .init(
+            path: .groupedQueryChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: groupedQueryChannelsRequest
         )
     }
 
@@ -1019,6 +1067,19 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func queryChannels(
+        queryChannelsRequest: QueryChannelsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<QueryChannelsResponse> {
+        return .init(
+            path: .queryChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryChannelsRequest
         )
     }
 
@@ -1357,6 +1418,36 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func updateChannel(
+        type: String,
+        id: String,
+        updateChannelRequest: UpdateChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateChannelResponse> {
+        return .init(
+            path: .updateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateChannelRequest
+        )
+    }
+
+    static func updateChannelPartial(
+        type: String,
+        id: String,
+        updateChannelPartialRequest: UpdateChannelPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateChannelPartialResponse> {
+        return .init(
+            path: .updateChannelPartial(type: type, id: id),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateChannelPartialRequest
         )
     }
 

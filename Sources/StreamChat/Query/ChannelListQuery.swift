@@ -192,6 +192,31 @@ extension ChannelListQuery {
     }
 }
 
+extension ChannelListQuery {
+    var endpoint: Endpoint<ChannelListPayload> {
+        let hasPredefinedFilter = predefinedFilter.map { !$0.isEmpty } ?? false
+        let sort = sort.map { SortParamRequest(direction: $0.direction, field: $0.key.remoteKey) }
+        let request = QueryChannelsRequest(
+            filterConditions: hasPredefinedFilter ? nil : filter,
+            filterValues: hasPredefinedFilter ? filterValues.flatMap { $0.isEmpty ? nil : $0 } : nil,
+            limit: pagination.pageSize != .backendDefaultPageSize ? pagination.pageSize : nil,
+            memberLimit: membersLimit,
+            messageLimit: messagesLimit,
+            offset: pagination.offset != 0 ? pagination.offset : nil,
+            predefinedFilter: hasPredefinedFilter ? predefinedFilter : nil,
+            presence: options.contains(.presence),
+            sort: hasPredefinedFilter || sort.isEmpty ? nil : sort,
+            sortValues: hasPredefinedFilter ? sortValues.flatMap { $0.isEmpty ? nil : $0 } : nil,
+            state: options.contains(.state),
+            watch: options.contains(.watch)
+        )
+        return .queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: options.contains(oneOf: [.presence, .state, .watch])
+        )
+    }
+}
+
 extension ChannelListQuery: CustomDebugStringConvertible {
     public var debugDescription: String {
         "Filter: \(filter) | Sort: \(sort)"

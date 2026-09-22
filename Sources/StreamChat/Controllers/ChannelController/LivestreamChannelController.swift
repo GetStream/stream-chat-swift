@@ -748,11 +748,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
             return
         }
 
-        apiClient.request(
-            endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
-        ) { result in
+        updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
             self.callback {
-                completion?(result.error)
+                completion?(error)
             }
         }
     }
