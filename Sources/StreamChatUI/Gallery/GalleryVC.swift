@@ -145,6 +145,9 @@ open class GalleryVC: _ViewController,
     /// A constaint between `bottomBarView.bottomAnchor` and `view.bottomAnchor`.
     open private(set) var bottomBarBottomConstraint: NSLayoutConstraint?
 
+    private var attachmentsBottomToBottomBarConstraint: NSLayoutConstraint?
+    private var attachmentsBottomToVideoPlaybackBarConstraint: NSLayoutConstraint?
+
     override open func setUpAppearance() {
         super.setUpAppearance()
 
@@ -276,24 +279,29 @@ open class GalleryVC: _ViewController,
         videoPlaybackBar.pin(anchors: [.leading, .trailing], to: view)
         videoPlaybackBar.bottomAnchor.pin(equalTo: bottomBarView.topAnchor).isActive = true
 
-        // The attachments are laid out in the area between the bars so that they are never covered
-        // by them. The guides stay where the bars rest, which keeps the content in place while the
-        // bars slide out of the view and back in.
+        // The attachments are laid out in the area between the bars, and inside the safe area
+        // horizontally, so that they are never covered by a bar or by whatever the system draws
+        // along an edge. The guides stay where the bars rest, which keeps the content in place
+        // while the bars slide out of the view and back in.
         let topBarLayoutGuide = UILayoutGuide()
         let bottomBarLayoutGuide = UILayoutGuide()
         view.addLayoutGuide(topBarLayoutGuide)
         view.addLayoutGuide(bottomBarLayoutGuide)
         view.insertSubview(attachmentsCollectionView, at: 0)
+        attachmentsBottomToBottomBarConstraint = attachmentsCollectionView.bottomAnchor
+            .pin(equalTo: bottomBarLayoutGuide.topAnchor)
+        attachmentsBottomToVideoPlaybackBarConstraint = attachmentsCollectionView.bottomAnchor
+            .pin(equalTo: videoPlaybackBar.topAnchor)
         NSLayoutConstraint.activate([
             topBarLayoutGuide.topAnchor.pin(equalTo: view.topAnchor),
             topBarLayoutGuide.heightAnchor.pin(equalTo: topBarView.heightAnchor),
             bottomBarLayoutGuide.bottomAnchor.pin(equalTo: view.bottomAnchor),
             bottomBarLayoutGuide.heightAnchor.pin(equalTo: bottomBarView.heightAnchor),
-            attachmentsCollectionView.leadingAnchor.pin(equalTo: view.leadingAnchor),
-            attachmentsCollectionView.trailingAnchor.pin(equalTo: view.trailingAnchor),
-            attachmentsCollectionView.topAnchor.pin(equalTo: topBarLayoutGuide.bottomAnchor),
-            attachmentsCollectionView.bottomAnchor.pin(equalTo: bottomBarLayoutGuide.topAnchor)
+            attachmentsCollectionView.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            attachmentsCollectionView.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            attachmentsCollectionView.topAnchor.pin(equalTo: topBarLayoutGuide.bottomAnchor)
         ])
+        updateAttachmentsBottomConstraint()
     }
 
     override open func viewDidLoad() {
@@ -352,6 +360,7 @@ open class GalleryVC: _ViewController,
 
         videoPlaybackBar.player = videoCell?.player
         videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
+        updateAttachmentsBottomConstraint()
     }
 
     /// Lets the video timeline and other controls keep their own gestures.
@@ -500,6 +509,14 @@ open class GalleryVC: _ViewController,
     override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         attachmentsFlowLayout.invalidateLayout()
         super.viewWillTransition(to: size, with: coordinator)
+    }
+
+    override open func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+
+        // The area the attachments are laid out in is derived from the safe area, and an item
+        // fills that area, so it is measured again whenever the safe area changes.
+        attachmentsFlowLayout.invalidateLayout()
     }
 
     /// An index path for the currently visible cell.
@@ -667,6 +684,25 @@ open class GalleryVC: _ViewController,
             return components.videoAttachmentGalleryCell.reuseId
         default:
             return nil
+        }
+    }
+
+    /// The playback bar is shown for videos only, and it sits inside the area the attachments are
+    /// laid out in, so the content ends above it while it is shown.
+    private func updateAttachmentsBottomConstraint() {
+        let endsAboveVideoPlaybackBar = !videoPlaybackBar.isHidden
+        let changed = attachmentsBottomToVideoPlaybackBarConstraint?.isActive != endsAboveVideoPlaybackBar
+
+        attachmentsBottomToBottomBarConstraint?.isActive = false
+        attachmentsBottomToVideoPlaybackBarConstraint?.isActive = false
+        if endsAboveVideoPlaybackBar {
+            attachmentsBottomToVideoPlaybackBarConstraint?.isActive = true
+        } else {
+            attachmentsBottomToBottomBarConstraint?.isActive = true
+        }
+
+        if changed {
+            attachmentsFlowLayout.invalidateLayout()
         }
     }
 
