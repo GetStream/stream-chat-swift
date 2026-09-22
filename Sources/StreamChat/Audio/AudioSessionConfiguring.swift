@@ -50,6 +50,15 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 }
 #else
 open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked Sendable {
+    /// Activating or deactivating an `AVAudioSession` is a synchronous inter-process call which blocks
+    /// the caller long enough to make the UI unresponsive, so it's never performed on the caller's
+    /// thread. The queue is shared by every configurator, to ensure that activations and deactivations
+    /// are applied in the order they were requested.
+    private static let sessionQueue = DispatchQueue(
+        label: "io.getstream.audio-session",
+        qos: .userInitiated
+    )
+
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
@@ -77,7 +86,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
                 .allowBluetoothDevice
             ]
         )
-        try activateSession()
+        setSessionActive(true)
     }
 
     /// Calling this method should deactivate the provided `AVAudioSession`.
@@ -85,7 +94,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     /// - Note: The method will check if the audioSession's category contains the `record` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed.
     open func deactivateRecordingSession() throws {
-        try deactivateSession()
+        setSessionActive(false)
     }
 
     /// Calling this method should activate the provided `AVAudioSession` for playback and record.
@@ -101,7 +110,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
                 .allowBluetoothDevice
             ]
         )
-        try activateSession()
+        setSessionActive(true)
     }
 
     /// Calling this method should deactivate the provided `AVAudioSession`.
@@ -109,7 +118,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed.
     open func deactivatePlaybackSession() throws {
-        try deactivateSession()
+        setSessionActive(false)
     }
 
     /// Requests recording permission from the underline `AVAudioSession` and invokes the provided
@@ -129,12 +138,14 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
 
     // MARK: - Helpers
 
-    private func activateSession() throws {
-        try audioSession.setActive(true, options: [])
-    }
-
-    private func deactivateSession() throws {
-        try audioSession.setActive(false, options: [])
+    private func setSessionActive(_ isActive: Bool) {
+        Self.sessionQueue.async { [self] in
+            do {
+                try audioSession.setActive(isActive, options: [])
+            } catch {
+                log.error(error, subsystems: .audioPlayback)
+            }
+        }
     }
 
     private func handleRecordPermissionResponse(
