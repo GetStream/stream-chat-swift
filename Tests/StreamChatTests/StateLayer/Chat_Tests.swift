@@ -343,7 +343,6 @@ final class Chat_Tests: XCTestCase {
             XCTAssertEqual(members.map(\.userId).sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
             XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
             XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
-            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
         }
     }
     
@@ -361,7 +360,6 @@ final class Chat_Tests: XCTestCase {
             XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
             XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
             XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
-            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
         }
     }
     
@@ -382,7 +380,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
         XCTAssertEqual(false, env.channelUpdaterMock.addMembers_hideHistory)
         XCTAssertEqual(hideHistoryBefore, env.channelUpdaterMock.addMembers_hideHistoryBefore)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
     }
     
     func test_addMembers_withHideHistoryBefore_takesPrecedenceOverHideHistory() async throws {
@@ -411,7 +408,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
         XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
         XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
     func test_removeMembers_whenChannelUpdaterFails_thenRemoveMembersSucceeds() async throws {
@@ -426,7 +422,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
         XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
         XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
     func test_addMembers_withSystemMessageExtraData_passesSystemMessageToChannelUpdater() async throws {

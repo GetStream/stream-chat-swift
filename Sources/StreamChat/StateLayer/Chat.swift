@@ -263,9 +263,7 @@ public class Chat: @unchecked Sendable {
         hideHistory: Bool = false,
         hideHistoryBefore: Date? = nil
     ) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(
-            currentUserId: currentUserId,
             cid: cid,
             members: members,
             systemMessage: systemMessage,
@@ -343,9 +341,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func removeMembers(_ members: [UserId], systemMessage: SystemMessage?) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(
-            currentUserId: currentUserId,
             cid: cid,
             userIds: Set(members),
             systemMessage: systemMessage

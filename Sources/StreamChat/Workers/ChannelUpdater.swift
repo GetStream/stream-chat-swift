@@ -130,9 +130,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - channelPayload: New channel data.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func updateChannel(channelPayload: ChannelEditDetailPayload, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .updateChannel(channelPayload: channelPayload)) {
-            completion?($0.error)
+        guard let cid = channelPayload.cid else {
+            completion?(ClientError.ChannelNotCreatedYet())
+            return
         }
+        let request = UpdateChannelRequest(
+            addFilterTags: channelPayload.filterTags.isEmpty ? nil : Array(channelPayload.filterTags),
+            data: channelPayload.toChannelInputRequest()
+        )
+        updateChannel(cid: cid, request: request, completion: completion)
     }
 
     /// Updates specific channel with provided data, and removes unneeded properties.
@@ -145,9 +151,12 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         unsetProperties: [String],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)) {
-            completion?($0.error)
+        guard let cid = updates.cid else {
+            completion?(ClientError.ChannelNotCreatedYet())
+            return
         }
+        let request = UpdateChannelPartialRequest(set: updates.toPartialUpdateSet(), unset: unsetProperties)
+        updateChannelPartial(cid: cid, request: request, completion: completion)
     }
 
     /// Loads channel members and reads for these members using channel query endpoint.
@@ -462,7 +471,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
 
     /// Add users to the channel as members.
     /// - Parameters:
-    ///   - currentUserId: the id of the current user.
     ///   - cid: The Id of the channel where you want to add the users.
     ///   - members: The members input data to be added.
     ///   - systemMessage: Optional system message sent when adding a member.
@@ -470,7 +478,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func addMembers(
-        currentUserId: UserId? = nil,
         cid: ChannelId,
         members: [MemberInfo],
         systemMessage: SystemMessage? = nil,
@@ -478,44 +485,32 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         hideHistoryBefore: Date? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        let messagePayload = messagePayload(for: systemMessage, currentUserId: currentUserId)
-        apiClient.request(
-            endpoint: .addMembers(
-                cid: cid,
-                members: members.map { MemberInfoRequest(userId: $0.userId, extraData: $0.extraData) },
-                hideHistory: hideHistory,
-                hideHistoryBefore: hideHistoryBefore,
-                messagePayload: messagePayload
-            )
-        ) {
-            completion?($0.error)
-        }
+        let request = UpdateChannelRequest(
+            addMembers: members.map { ChannelMemberRequest(custom: $0.extraData, userId: $0.userId) },
+            hideHistory: hideHistoryBefore == nil ? hideHistory : nil,
+            hideHistoryBefore: hideHistoryBefore,
+            message: systemMessage?.toMessageRequest()
+        )
+        updateChannel(cid: cid, request: request, completion: completion)
     }
 
     /// Remove users to the channel as members.
     /// - Parameters:
-    ///   - currentUserId: the id of the current user.
     ///   - cid: The Id of the channel where you want to remove the users.
     ///   - userIds: User ids to remove from the channel.
     ///   - systemMessage: Optional system message sent when removing a member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func removeMembers(
-        currentUserId: UserId? = nil,
         cid: ChannelId,
         userIds: Set<UserId>,
         systemMessage: SystemMessage? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        let messagePayload = messagePayload(for: systemMessage, currentUserId: currentUserId)
-        apiClient.request(
-            endpoint: .removeMembers(
-                cid: cid,
-                userIds: userIds,
-                messagePayload: messagePayload
-            )
-        ) {
-            completion?($0.error)
-        }
+        let request = UpdateChannelRequest(
+            message: systemMessage?.toMessageRequest(),
+            removeMembers: Array(userIds)
+        )
+        updateChannel(cid: cid, request: request, completion: completion)
     }
 
     /// Invite members to a channel. They can then accept or decline the invitation
@@ -528,9 +523,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         userIds: Set<UserId>,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .inviteMembers(cid: cid, userIds: userIds)) {
-            completion?($0.error)
-        }
+        let request = UpdateChannelRequest(invites: userIds.map { ChannelMemberRequest(userId: $0) })
+        updateChannel(cid: cid, request: request, completion: completion)
     }
 
     /// Accept invitation to a channel
@@ -543,9 +537,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         message: String?,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .acceptInvite(cid: cid, message: message)) {
-            completion?($0.error)
-        }
+        let request = UpdateChannelRequest(
+            acceptInvite: true,
+            message: message.map { MessageRequest(id: .newUniqueId, text: $0) }
+        )
+        updateChannel(cid: cid, request: request, completion: completion)
     }
 
     /// Reject invitation to a channel
@@ -556,9 +552,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
-            completion?($0.error)
-        }
+        updateChannel(cid: cid, request: UpdateChannelRequest(rejectInvite: true), completion: completion)
     }
 
     /// Marks a channel as read
@@ -610,16 +604,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
-            completion?($0.error)
-        }
+        let request = UpdateChannelPartialRequest(set: ["cooldown": .number(Double(cooldownDuration))])
+        updateChannelPartial(cid: cid, request: request, completion: completion)
     }
 
     /// Disables slow mode for the channel.
     func disableSlowMode(cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
-        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: 0)) {
-            completion($0.error)
-        }
+        enableSlowMode(cid: cid, cooldownDuration: 0, completion: completion)
     }
 
     /// Start watching a channel
@@ -709,9 +700,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameter cid: Channel id of the channel to be watched
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func freezeChannel(_ freeze: Bool, cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .freezeChannel(freeze, cid: cid)) {
-            completion?($0.error)
-        }
+        let request = UpdateChannelPartialRequest(set: ["frozen": .bool(freeze)])
+        updateChannelPartial(cid: cid, request: request, completion: completion)
     }
 
     func uploadFile(
@@ -851,23 +841,66 @@ class ChannelUpdater: Worker, @unchecked Sendable {
 
     // MARK: - private
 
-    private func messagePayload(for systemMessage: SystemMessage?, currentUserId: UserId?) -> MessageRequestBody? {
-        guard let systemMessage = systemMessage, let currentUserId = currentUserId else {
-            return nil
+    private func updateChannel(
+        cid: ChannelId,
+        request: UpdateChannelRequest,
+        completion: (@Sendable (Error?) -> Void)?
+    ) {
+        apiClient.request(
+            endpoint: .updateChannel(type: cid.type.rawValue, id: cid.id, updateChannelRequest: request)
+        ) { [weak self] result in
+            switch result {
+            case let .success(payload):
+                self?.database.write { session in
+                    if let channel = payload.channel {
+                        try session.saveChannel(payload: channel, query: nil, cache: nil)
+                    }
+                    for member in payload.members {
+                        try session.saveMember(payload: member, channelId: cid)
+                    }
+                    if let message = payload.message {
+                        try session.saveMessage(
+                            payload: message,
+                            syncOwnReactions: true,
+                            skipDraftUpdate: false,
+                            cache: nil
+                        )
+                    }
+                } completion: { error in
+                    completion?(error)
+                }
+            case let .failure(error):
+                log.error(error)
+                completion?(error)
+            }
         }
-        let userRequestBody = UserRequestBody(
-            id: currentUserId,
-            name: nil,
-            imageURL: nil,
-            extraData: [:]
-        )
-        return MessageRequestBody(
-            id: .newUniqueId,
-            user: userRequestBody,
-            text: systemMessage.text,
-            type: nil,
-            extraData: systemMessage.extraData
-        )
+    }
+
+    private func updateChannelPartial(
+        cid: ChannelId,
+        request: UpdateChannelPartialRequest,
+        completion: (@Sendable (Error?) -> Void)?
+    ) {
+        apiClient.request(
+            endpoint: .updateChannelPartial(type: cid.type.rawValue, id: cid.id, updateChannelPartialRequest: request)
+        ) { [weak self] result in
+            switch result {
+            case let .success(payload):
+                self?.database.write { session in
+                    if let channel = payload.channel {
+                        try session.saveChannel(payload: channel, query: nil, cache: nil)
+                    }
+                    for member in payload.members {
+                        try session.saveMember(payload: member, channelId: cid)
+                    }
+                } completion: { error in
+                    completion?(error)
+                }
+            case let .failure(error):
+                log.error(error)
+                completion?(error)
+            }
+        }
     }
 
     /// When the channel was last left in a mid-page state (the user jumped to a message and
@@ -925,7 +958,6 @@ extension ChannelUpdater {
     }
 
     func addMembers(
-        currentUserId: UserId? = nil,
         cid: ChannelId,
         members: [MemberInfo],
         systemMessage: SystemMessage? = nil,
@@ -934,7 +966,6 @@ extension ChannelUpdater {
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             addMembers(
-                currentUserId: currentUserId,
                 cid: cid,
                 members: members,
                 systemMessage: systemMessage,
@@ -1115,14 +1146,12 @@ extension ChannelUpdater {
     }
 
     func removeMembers(
-        currentUserId: UserId? = nil,
         cid: ChannelId,
         userIds: Set<UserId>,
         systemMessage: SystemMessage? = nil
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             removeMembers(
-                currentUserId: currentUserId,
                 cid: cid,
                 userIds: userIds,
                 systemMessage: systemMessage
