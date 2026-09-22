@@ -211,8 +211,6 @@ open class GalleryVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.embed(attachmentsCollectionView)
-
         view.addSubview(topBarView)
         topBarView.pin(anchors: [.leading, .trailing], to: view)
         topBarTopConstraint = topBarView.topAnchor.pin(equalTo: view.topAnchor)
@@ -277,10 +275,33 @@ open class GalleryVC: _ViewController,
         view.addSubview(videoPlaybackBar)
         videoPlaybackBar.pin(anchors: [.leading, .trailing], to: view)
         videoPlaybackBar.bottomAnchor.pin(equalTo: bottomBarView.topAnchor).isActive = true
+
+        // The attachments are laid out in the area between the bars so that they are never covered
+        // by them. The guides stay where the bars rest, which keeps the content in place while the
+        // bars slide out of the view and back in.
+        let topBarLayoutGuide = UILayoutGuide()
+        let bottomBarLayoutGuide = UILayoutGuide()
+        view.addLayoutGuide(topBarLayoutGuide)
+        view.addLayoutGuide(bottomBarLayoutGuide)
+        view.insertSubview(attachmentsCollectionView, at: 0)
+        NSLayoutConstraint.activate([
+            topBarLayoutGuide.topAnchor.pin(equalTo: view.topAnchor),
+            topBarLayoutGuide.heightAnchor.pin(equalTo: topBarView.heightAnchor),
+            bottomBarLayoutGuide.bottomAnchor.pin(equalTo: view.bottomAnchor),
+            bottomBarLayoutGuide.heightAnchor.pin(equalTo: bottomBarView.heightAnchor),
+            attachmentsCollectionView.leadingAnchor.pin(equalTo: view.leadingAnchor),
+            attachmentsCollectionView.trailingAnchor.pin(equalTo: view.trailingAnchor),
+            attachmentsCollectionView.topAnchor.pin(equalTo: topBarLayoutGuide.bottomAnchor),
+            attachmentsCollectionView.bottomAnchor.pin(equalTo: bottomBarLayoutGuide.topAnchor)
+        ])
     }
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+
+        // The zoom lands on the area the attachments are laid out in rather than on the whole view,
+        // which the bars overlap.
+        transitionController?.zoomAnimator.toContentView = attachmentsCollectionView
 
         attachmentsCollectionView.reloadData()
     }
