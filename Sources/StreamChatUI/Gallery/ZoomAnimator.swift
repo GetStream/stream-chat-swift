@@ -39,6 +39,10 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
         toVC.view.alpha = 0
         containerView.addSubview(toVC.view)
+        // The presented view fills the container. Without this it keeps the size its view was
+        // created with, which comes from the main screen — a different display than the one the
+        // app runs on when a device has more than one, like the iPhone Duo.
+        toVC.view.frame = containerView.bounds
 
         let backgroundColorView = UIView().withoutAutoresizingMaskConstraints
         containerView.addSubview(backgroundColorView)
