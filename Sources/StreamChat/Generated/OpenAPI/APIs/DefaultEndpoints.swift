@@ -10,8 +10,6 @@ enum EndpointPath: Codable {
     case sync
     case guest
 
-    case groupedChannels
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
@@ -49,6 +47,7 @@ enum EndpointPath: Codable {
     case getThread(messageId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
+    case groupedQueryChannels
     case hideChannel(type: String, id: String)
     case listDevices
     case listUserGroups
@@ -107,8 +106,6 @@ enum EndpointPath: Codable {
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-
-        case .groupedChannels: return "channels/grouped"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
@@ -184,6 +181,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
             return "/api/v2/users/live_locations"
+        case .groupedQueryChannels:
+            return "/api/v2/chat/channels/grouped"
         case let .hideChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/hide"
         case .listDevices:
@@ -912,6 +911,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func groupedQueryChannels(
+        groupedQueryChannelsRequest: GroupedQueryChannelsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<GroupedQueryChannelsResponse> {
+        return .init(
+            path: .groupedQueryChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: groupedQueryChannelsRequest
         )
     }
 

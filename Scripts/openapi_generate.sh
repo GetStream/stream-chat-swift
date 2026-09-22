@@ -48,6 +48,7 @@ allowed_endpoints=(
     getThread
     getUserGroup
     getUserLiveLocations
+    groupedQueryChannels
     hideChannel
     listDevices
     listUserGroups
@@ -153,6 +154,10 @@ allowed_models=(
   GetRepliesResponse
   GetThreadResponse
   GetUserGroupResponse
+  GroupedChannelsBucket
+  GroupedChannelsGroupRequest
+  GroupedQueryChannelsRequest
+  GroupedQueryChannelsResponse
   HideChannelRequest
   ImageData
   Images
@@ -317,6 +322,8 @@ encodable_only_models=(
   DeliveredMessagePayload
   EventRequest
   FlagRequest
+  GroupedChannelsGroupRequest
+  GroupedQueryChannelsRequest
   HideChannelRequest
   MarkChannelsReadRequest
   MarkReadRequest
@@ -391,6 +398,8 @@ decodable_only_models=(
   GetPinnedMessagesResponse
   GetRepliesResponse
   GetThreadResponse
+  GroupedChannelsBucket
+  GroupedQueryChannelsResponse
   ImageSize
   ImageUploadResponse
   ListDevicesResponse
@@ -1138,8 +1147,6 @@ inject_v1_endpoint_paths() {
     case sync
     case guest
 
-    case groupedChannels
-
 EOF
 
   cat > "$values_file" <<'EOF'
@@ -1147,8 +1154,6 @@ EOF
         case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
-
-        case .groupedChannels: return "channels/grouped"
 
 EOF
 

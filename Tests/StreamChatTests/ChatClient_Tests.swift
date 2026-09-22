@@ -268,7 +268,7 @@ final class ChatClient_Tests: XCTestCase {
         let firstCid = ChannelId.unique
         let secondCid = ChannelId.unique
 
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "new": .init(
                     channels: [dummyPayload(with: firstCid)],
@@ -291,7 +291,7 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
         try client.databaseContainer.createCurrentUser()
 
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "new": .init(channels: [], unreadChannels: 0),
                 "current": .init(channels: [], unreadChannels: 0)
@@ -315,7 +315,7 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
         try client.databaseContainer.createCurrentUser()
 
-        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsPayload(groups: [:])))
+        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: [:])))
         _ = try await client.queryGroupedChannels(groups: [], limit: 4)
 
         let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
