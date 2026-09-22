@@ -449,6 +449,21 @@ import XCTest
         XCTAssertTrue(player.playWasCalled)
     }
 
+    func test_play_audioSessionActivationFailsAsynchronously_doesNotCallPlayOnPlayerAndStopsThePlayback() {
+        mockAsset.stubProperty(\.duration, with: assetDuration)
+        assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
+        subject.subscribe(audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
+        player.pause()
+        player.playWasCalled = false
+        audioSessionConfigurator.activatePlaybackSessionCompletionError = NSError(domain: "test", code: 11)
+
+        subject.play()
+
+        XCTAssertFalse(player.playWasCalled)
+        XCTAssertEqual(audioPlayerDelegate.didUpdateContextWasCalledWithContext?.state, .stopped)
+    }
+
     // MARK: - pause
 
     func test_pause_callsPauseOnPlayerAndUpdatesContextAndDelegate() {

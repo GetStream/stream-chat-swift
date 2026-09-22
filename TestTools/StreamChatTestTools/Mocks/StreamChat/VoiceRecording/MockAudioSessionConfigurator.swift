@@ -22,6 +22,11 @@ public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfigur
     public var activatePlaybackSessionThrowsError: Error?
     public var deactivatePlaybackSessionThrowsError: Error?
 
+    public var activateRecordingSessionCompletionError: Error?
+    public var deactivateRecordingSessionCompletionError: Error?
+    public var activatePlaybackSessionCompletionError: Error?
+    public var deactivatePlaybackSessionCompletionError: Error?
+
     public init() { /* No-op */ }
 
     public func activateRecordingSession() throws {
@@ -29,9 +34,19 @@ public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfigur
         try activateRecordingSessionThrowsError.map { throw $0 }
     }
 
+    public func activateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try activateRecordingSession()
+        completion?(activateRecordingSessionCompletionError)
+    }
+
     public func deactivateRecordingSession() throws {
         record()
         try deactivateRecordingSessionThrowsError.map { throw $0 }
+    }
+
+    public func deactivateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try deactivateRecordingSession()
+        completion?(deactivateRecordingSessionCompletionError)
     }
 
     public func activatePlaybackSession() throws {
@@ -39,9 +54,19 @@ public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfigur
         try activatePlaybackSessionThrowsError.map { throw $0 }
     }
 
+    public func activatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try activatePlaybackSession()
+        completion?(activatePlaybackSessionCompletionError)
+    }
+
     public func deactivatePlaybackSession() throws {
         record()
         try deactivatePlaybackSessionThrowsError.map { throw $0 }
+    }
+
+    public func deactivatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try deactivatePlaybackSession()
+        completion?(deactivatePlaybackSessionCompletionError)
     }
 
     public func requestRecordPermission(

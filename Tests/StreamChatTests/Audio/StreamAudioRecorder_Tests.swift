@@ -67,6 +67,16 @@ import XCTest
         assertDidFailWithError(genericError)
     }
 
+    func test_beginRecording_audioSessionActivationFailsAsynchronously_callsDidFailWithErrorOnDelegateAndDoesNotRequestPermission() throws {
+        audioSessionConfigurator.activateRecordingSessionCompletionError = genericError
+        setAudioRecorder()
+
+        subject.beginRecording {}
+
+        XCTAssertEqual(audioSessionConfigurator.recordedFunctions, ["activateRecordingSession()"])
+        assertDidFailWithError(genericError)
+    }
+
     func test_beginRecording_audioSessionConfiguratorRequestRecordPersmissionReturnsFalse_callsDidFailWithErrorOnDelegate() throws {
         setAudioRecorder()
         let completionHandlerExpectation = expectation(description: "Completion handler was called.")
@@ -202,6 +212,20 @@ import XCTest
         XCTAssertFalse(stubAVAudioRecorder.recordWasCalled)
     }
 
+    func test_resumeRecording_audioRecorderIsNotRecording_audioSessionActivationFailsAsynchronously_callsDidFailOnDelegate() {
+        simulateIsRecording()
+        subject.pauseRecording()
+        audioSessionConfigurator.clear()
+        stubAVAudioRecorder.recordWasCalled = false
+        stubAVAudioRecorder.stubProperty(\.isRecording, with: false)
+        audioSessionConfigurator.activateRecordingSessionCompletionError = genericError
+
+        subject.resumeRecording()
+
+        assertDidFailWithError(genericError)
+        XCTAssertFalse(stubAVAudioRecorder.recordWasCalled)
+    }
+
     func test_resumeRecording_audioRecorderIsNotRecording_failsToStartRecording_callsDidFailOnDelegate() {
         simulateIsRecording()
         subject.pauseRecording()
@@ -268,6 +292,15 @@ import XCTest
     func test_stopRecording_audioRecorderIsRecording_failsToDeactiveRecordingSession_callsDidFailOnDelegate() {
         simulateIsRecording()
         audioSessionConfigurator.deactivateRecordingSessionThrowsError = genericError
+
+        subject.stopRecording()
+
+        assertDidFailWithError(genericError)
+    }
+
+    func test_stopRecording_audioRecorderIsRecording_audioSessionDeactivationFailsAsynchronously_callsDidFailOnDelegate() {
+        simulateIsRecording()
+        audioSessionConfigurator.deactivateRecordingSessionCompletionError = genericError
 
         subject.stopRecording()
 
