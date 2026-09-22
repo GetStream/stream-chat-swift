@@ -10,7 +10,6 @@ enum EndpointPath: Codable {
     case sync
     case guest
 
-    case channels
     case groupedChannels
     case channelUpdate(String)
 
@@ -61,6 +60,7 @@ enum EndpointPath: Codable {
     case mute
     case muteChannel
     case queryBannedUsers
+    case queryChannels
     case queryDrafts
     case queryMembers
     case queryPollVotes(pollId: String)
@@ -107,7 +107,6 @@ enum EndpointPath: Codable {
         case .sync: return "sync"
         case .guest: return "guest"
 
-        case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
@@ -205,6 +204,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/moderation/mute/channel"
         case .queryBannedUsers:
             return "/api/v2/chat/query_banned_users"
+        case .queryChannels:
+            return "/api/v2/chat/channels"
         case .queryDrafts:
             return "/api/v2/chat/drafts/query"
         case .queryMembers:
@@ -1050,6 +1051,19 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func queryChannels(
+        queryChannelsRequest: QueryChannelsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<QueryChannelsResponse> {
+        return .init(
+            path: .queryChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryChannelsRequest
         )
     }
 

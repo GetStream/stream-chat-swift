@@ -58,6 +58,7 @@ allowed_endpoints=(
     mute
     muteChannel
     queryBannedUsers
+    queryChannels
     queryDrafts
     queryMembers
     queryPollVotes
@@ -174,6 +175,7 @@ allowed_models=(
   MuteResponse
   OwnUserResponse
   PaginationParams
+  ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionInput
   PollOptionResponse
@@ -188,6 +190,8 @@ allowed_models=(
   PushPreferencesResponse
   QueryBannedUsersPayload
   QueryBannedUsersResponse
+  QueryChannelsRequest
+  QueryChannelsResponse
   QueryDraftsRequest
   QueryDraftsResponse
   QueryMembersPayload
@@ -319,6 +323,7 @@ encodable_only_models=(
   PollOptionRequestBody
   PushPreferenceInput
   QueryBannedUsersPayload
+  QueryChannelsRequest
   QueryDraftsRequest
   QueryMembersPayload
   QueryPollVotesRequestBody
@@ -332,7 +337,6 @@ encodable_only_models=(
   SendEventRequest
   SendMessageRequest
   SendReactionRequest
-  SortParamRequest
   TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
@@ -394,6 +398,7 @@ decodable_only_models=(
   MutedChannelPayloadResponse
   MutedUserPayload
   OwnUserResponse
+  ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionPayload
   PollOptionResponse
@@ -404,6 +409,7 @@ decodable_only_models=(
   PollVotePayloadResponse
   PushPreference
   QueryBannedUsersResponse
+  QueryChannelsResponse
   QueryDraftsResponse
   QueryRemindersResponse
   QueryThreadsResponse
@@ -456,6 +462,7 @@ codable_models=(
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
   Role
+  SortParamRequest
   TypingIndicatorPrivacySettings
   UserPayload
   UserPrivacySettings
@@ -736,6 +743,8 @@ rename_generated ChannelMemberResponse MemberPayload
 rename_generated ChannelMute MutedChannelPayload
 rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
+# CHA-5170
+rename_generated_type ChannelStateResponseFields ChannelStateResponse
 rename_generated MuteChannelResponse MutedChannelPayloadResponse
 rename_generated Attachment MessageAttachmentPayload
 rename_generated ChannelMemberPartialResponse MemberInfoPayload
@@ -1113,7 +1122,6 @@ inject_v1_endpoint_paths() {
     case sync
     case guest
 
-    case channels
     case groupedChannels
     case channelUpdate(String)
 
@@ -1125,7 +1133,6 @@ EOF
         case .sync: return "sync"
         case .guest: return "guest"
 
-        case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
