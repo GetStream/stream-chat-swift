@@ -40,6 +40,8 @@ allowed_endpoints=(
     getBlockedUsers
     getMessage
     getOG
+    getOrCreateChannel
+    getOrCreateDistinctChannel
     getPinnedMessages
     getReactions
     getReplies
@@ -106,12 +108,15 @@ allowed_models=(
   BlockUsersRequest
   BlockUsersResponse
   CastPollVoteRequest
+  ChannelGetOrCreateRequest
+  ChannelInput
   ChannelMemberPartialResponse
   ChannelMemberRequest
   ChannelMemberResponse
   ChannelMute
   ChannelOwnCapability
   ChannelResponse
+  ChannelStateResponse
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
@@ -159,6 +164,7 @@ allowed_models=(
   MembersResponse
   MessageActionRequest
   MessageActionResponse
+  MessagePaginationParams
   MessageRequest
   MessageResponse
   ModerationV2Response
@@ -167,6 +173,8 @@ allowed_models=(
   MuteRequest
   MuteResponse
   OwnUserResponse
+  PaginationParams
+  PendingMessageResponse
   PollOptionInput
   PollOptionResponse
   PollOptionResponseData
@@ -285,6 +293,8 @@ encodable_only_models=(
   BlockUsersRequest
   CastPollVoteRequestBody
   ChannelDeliveredRequestPayload
+  ChannelGetOrCreateRequest
+  ChannelInput
   ChannelMemberRequest
   CreateDeviceRequest
   CreateDraftRequest
@@ -300,10 +310,12 @@ encodable_only_models=(
   MarkReadRequest
   MarkUnreadRequest
   MessageActionRequest
+  MessagePaginationParams
   MessageRequest
   MuteChannelRequest
   MuteRequest
   NewLocationRequestPayload
+  PaginationParams
   PollOptionRequestBody
   PushPreferenceInput
   QueryBannedUsersPayload
@@ -346,6 +358,7 @@ decodable_only_models=(
   BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
+  ChannelStateResponse
   CreateDraftResponse
   CreateReminderResponse
   CurrentUserUnreads
@@ -381,6 +394,7 @@ decodable_only_models=(
   MutedChannelPayloadResponse
   MutedUserPayload
   OwnUserResponse
+  PendingMessageResponse
   PollOptionPayload
   PollOptionResponse
   PollPayload
@@ -796,6 +810,12 @@ remove_property SharedLocation message
 remove_property MutedChannelPayloadResponse channelMutes
 remove_property MutedChannelPayloadResponse ownUser
 remove_property OwnUserResponse unreadCount
+# CHA-5096
+remove_property ChannelGetOrCreateRequest hideForCreator
+# CHA-5096
+remove_property ChannelInput configOverrides
+# CHA-5096
+remove_property ChannelInput createdBy
 # CHA-5068
 remove_property BanRequest ipBan
 remove_property FlagRequest entityCreatorId
@@ -820,7 +840,10 @@ remove_property SearchResponse resultsWarning
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
+# CHA-4621
 require_property ChannelDetailPayload config
+# CHA-5028
+require_property ChannelStateResponse channel
 # CHA-5105
 require_property SearchResult message
 
@@ -1092,8 +1115,6 @@ inject_v1_endpoint_paths() {
 
     case channels
     case groupedChannels
-    case createChannel(String)
-    case updateChannel(String)
     case channelUpdate(String)
 
 EOF
@@ -1106,8 +1127,6 @@ EOF
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
-        case let .createChannel(queryString): return "channels/\(queryString)/query"
-        case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
 EOF

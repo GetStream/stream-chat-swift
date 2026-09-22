@@ -307,8 +307,9 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 50, parameter: .lessThan("specific-message-id"))
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadPreviousMessages_usesDefaultLimit() throws {
@@ -323,8 +324,9 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: .lessThan("specific-message-id"))
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadNextMessages_successfulResponse_prependsMessages() {
@@ -386,8 +388,9 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 40, parameter: .around("target-message-id"))
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadFirstPage_makesCorrectAPICall() throws {
@@ -398,8 +401,9 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadPreviousMessages_successfulResponse_appendsMessages() {
@@ -529,8 +533,9 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_resume_whenNotPaused_doesNothing() {
@@ -842,7 +847,7 @@ extension LivestreamChannelController_Tests {
         XCTAssertTrue(mockHandler.didReceiveEvent_event is MessageNewEvent)
     }
 
-    func test_applicationDidReceiveMemoryWarning_callsLoadFirstPage() {
+    func test_applicationDidReceiveMemoryWarning_callsLoadFirstPage() throws {
         let apiClient = client.mockAPIClient
 
         controller.applicationDidReceiveMemoryWarning()
@@ -850,11 +855,12 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = channelQuery!
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
-    func test_applicationDidMoveToForeground_whenNotConnected_callsLoadFirstPage() {
+    func test_applicationDidMoveToForeground_whenNotConnected_callsLoadFirstPage() throws {
         let apiClient = client.mockAPIClient
         client.connectionStatus_mock = .disconnected(error: ClientError())
 
@@ -863,8 +869,9 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = channelQuery!
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_applicationDidMoveToForeground_whenConnected_doesNotCallLoadFirstPage() {

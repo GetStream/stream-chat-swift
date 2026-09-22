@@ -12,8 +12,6 @@ enum EndpointPath: Codable {
 
     case channels
     case groupedChannels
-    case createChannel(String)
-    case updateChannel(String)
     case channelUpdate(String)
 
     case addUserGroupMembers(id: String)
@@ -45,6 +43,8 @@ enum EndpointPath: Codable {
     case getDraft(type: String, id: String)
     case getMessage(id: String)
     case getOG
+    case getOrCreateChannel(type: String, id: String)
+    case getOrCreateDistinctChannel(type: String)
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
     case getReplies(parentId: String)
@@ -109,8 +109,6 @@ enum EndpointPath: Codable {
 
         case .channels: return "channels"
         case .groupedChannels: return "channels/grouped"
-        case let .createChannel(queryString): return "channels/\(queryString)/query"
-        case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
 
         case let .addUserGroupMembers(id: id):
@@ -171,6 +169,10 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case .getOG:
             return "/api/v2/og"
+        case let .getOrCreateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/query"
+        case let .getOrCreateDistinctChannel(type: type):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/query"
         case let .getPinnedMessages(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
@@ -735,6 +737,35 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func getOrCreateChannel(
+        type: String,
+        id: String,
+        channelGetOrCreateRequest: ChannelGetOrCreateRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<ChannelStateResponse> {
+        return .init(
+            path: .getOrCreateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: channelGetOrCreateRequest
+        )
+    }
+
+    static func getOrCreateDistinctChannel(
+        type: String,
+        channelGetOrCreateRequest: ChannelGetOrCreateRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<ChannelStateResponse> {
+        return .init(
+            path: .getOrCreateDistinctChannel(type: type),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: channelGetOrCreateRequest
         )
     }
 

@@ -1390,6 +1390,7 @@
       }
     }
   ],
+  "threads": [],
   "pinned_messages": [
       {
         "cid" : "messaging:general",

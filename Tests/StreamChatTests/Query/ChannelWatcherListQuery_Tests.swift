@@ -42,4 +42,16 @@ final class ChannelWatcherListQuery_Tests: XCTestCase {
             "watchers": ["limit": Int.channelWatchersPageSize]
         ])
     }
+
+    func test_toRequest_backendDefaultPageSize_omitsLimitAndOffset() throws {
+        let query = ChannelWatcherListQuery(cid: .unique, pagination: .init(pageSize: .backendDefaultPageSize))
+
+        let json = try JSONEncoder.default.encode(query.toRequest())
+
+        AssertJSONEqual(json, [
+            "state": true,
+            "watch": true,
+            "watchers": [:]
+        ])
+    }
 }

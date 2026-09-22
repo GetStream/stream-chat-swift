@@ -46,22 +46,76 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     // MARK: - UpdateChannelQuery
 
-    func test_updateChannelQuery_makesCorrectAPICall() {
+    func test_updateChannelQuery_makesCorrectAPICall() throws {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
 
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
     }
 
-    func test_updateChannelQueryRecovery_makesCorrectAPICall() {
+    func test_updateChannelQueryRecovery_makesCorrectAPICall() throws {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query, isInRecoveryMode: true)
 
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.recoveryRequest_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(apiClient.recoveryRequest_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
+    }
+
+    func test_createChannelQuery_makesCorrectAPICall() throws {
+        // Simulate `update(channelQuery:onChannelCreated:)` call for an existing channel id
+        let cid = ChannelId.unique
+        let payload = ChannelEditDetailPayload(
+            cid: cid,
+            name: "Team",
+            imageURL: URL(string: "https://getstream.io/image.jpg"),
+            team: nil,
+            members: [.unique],
+            invites: [],
+            filterTags: [],
+            extraData: ["color": .string("blue")]
+        )
+        let query = ChannelQuery(channelPayload: payload)
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, onChannelCreated: { _ in })
+
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/query")
+
+        let body = try endpoint.bodyAsDictionary()
+        let data = try XCTUnwrap(body["data"] as? [String: Any])
+        let custom = try XCTUnwrap(data["custom"] as? [String: Any])
+        XCTAssertEqual(custom["name"] as? String, "Team")
+        XCTAssertEqual(custom["image"] as? String, "https://getstream.io/image.jpg")
+        XCTAssertEqual(custom["color"] as? String, "blue")
+    }
+
+    func test_createDistinctChannelQuery_makesCorrectAPICall() throws {
+        // Simulate `update(channelQuery:onChannelCreated:)` call for a distinct channel without an id
+        let memberIds: Set<UserId> = [.unique, .unique]
+        let payload = ChannelEditDetailPayload(
+            type: .messaging,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: memberIds,
+            invites: [],
+            filterTags: [],
+            extraData: [:]
+        )
+        let query = ChannelQuery(channelPayload: payload)
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, onChannelCreated: { _ in })
+
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/query")
+
+        let body = try endpoint.bodyAsDictionary()
+        let data = try XCTUnwrap(body["data"] as? [String: Any])
+        let members = try XCTUnwrap(data["members"] as? [[String: Any]])
+        XCTAssertEqual(Set(members.compactMap { $0["user_id"] as? String }), memberIds)
     }
 
     func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
@@ -1560,10 +1614,9 @@ final class ChannelUpdater_Tests: XCTestCase {
             watchersLimit: 0 // avoid default set of watchers
         )
         expectedQuery.options = .state
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(
-            query: expectedQuery
-        )
+        let referenceEndpoint = expectedQuery.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     // MARK: - Add members
@@ -2177,26 +2230,28 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     // MARK: - Start watching
 
-    func test_startWatching_makesCorrectAPICall() {
+    func test_startWatching_makesCorrectAPICall() throws {
         let cid = ChannelId.unique
 
         channelUpdater.startWatching(cid: cid, isInRecoveryMode: false)
 
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
     }
 
-    func test_startWatchingRecovery_makesCorrectAPICall() {
+    func test_startWatchingRecovery_makesCorrectAPICall() throws {
         let cid = ChannelId.unique
 
         channelUpdater.startWatching(cid: cid, isInRecoveryMode: true)
 
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.recoveryRequest_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(apiClient.recoveryRequest_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
     }
 
     func test_startWatching_successfulResponse_isPropagatedToCompletion() {
@@ -2292,15 +2347,22 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     // MARK: - Channel watchers
 
-    func test_channelWatchers_makesCorrectAPICall() {
+    func test_channelWatchers_makesCorrectAPICall() throws {
         let cid = ChannelId.unique
-        let query = ChannelWatcherListQuery(cid: cid)
+        let query = ChannelWatcherListQuery(cid: cid, pagination: Pagination(pageSize: 10, offset: 20))
 
         channelUpdater.channelWatchers(query: query)
 
-        let referenceEndpoint: Endpoint<ChannelPayload> = .channelWatchers(query: query)
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/query")
+        XCTAssertTrue(endpoint.requiresConnectionId)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        let body = try endpoint.bodyAsDictionary()
+        XCTAssertEqual(body["state"] as? Bool, true)
+        XCTAssertEqual(body["watch"] as? Bool, true)
+        let watchers = try XCTUnwrap(body["watchers"] as? [String: Any])
+        XCTAssertEqual(watchers["limit"] as? Int, 10)
+        XCTAssertEqual(watchers["offset"] as? Int, 20)
     }
 
     func test_channelWatchers_successfulResponse_isPropagatedToCompletion() {
