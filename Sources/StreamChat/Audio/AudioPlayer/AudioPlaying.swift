@@ -142,9 +142,16 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
 
     open func play() {
         do {
-            try audioSessionConfigurator.activatePlaybackSession()
-            StreamConcurrency.onMain {
-                player.play()
+            try audioSessionConfigurator.activatePlaybackSession { [weak self] error in
+                guard let self else { return }
+                if let error {
+                    log.error(error)
+                    stop()
+                } else {
+                    StreamConcurrency.onMain {
+                        self.player.play()
+                    }
+                }
             }
         } catch {
             log.error(error)
@@ -164,7 +171,10 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
             /// by calling pause
             pause()
 
-            try audioSessionConfigurator.deactivatePlaybackSession()
+            try audioSessionConfigurator.deactivatePlaybackSession { error in
+                guard let error else { return }
+                log.error(error)
+            }
 
             updateContext { value in
                 value = .init(

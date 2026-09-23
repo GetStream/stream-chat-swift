@@ -39,19 +39,23 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.allowBluetoothDevice])
     }
 
-    func test_activateRecordingSession_setActiveFailed() {
+    func test_activateRecordingSession_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
         stubAudioSession.setActiveResult = .failure(genericError)
 
-        XCTAssertThrowsError(try subject.activateRecordingSession(), genericError)
-        XCTAssertTrue(stubAudioSession.setActiveWasCalledWithActive ?? false)
+        let error = try waitForSessionCompletion { try subject.activateRecordingSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, true)
+        XCTAssertEqual(error as NSError?, genericError as NSError?)
     }
 
     func test_activateRecordingSession_setActiveCompletedSuccessfully() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
 
-        try subject.activateRecordingSession()
-        XCTAssertTrue(stubAudioSession.setActiveWasCalledWithActive ?? false)
+        let error = try waitForSessionCompletion { try subject.activateRecordingSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, true)
+        XCTAssertNil(error)
     }
 
     // MARK: - deactivateRecordingSession
@@ -59,33 +63,39 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
     func test_deactivateRecordingSession_categoryIsRecord_setActiveCompletedSuccesfully() throws {
         stubAudioSession.stubProperty(\.category, with: .record)
 
-        try subject.deactivateRecordingSession()
+        let error = try waitForSessionCompletion { try subject.deactivateRecordingSession(completion: $0) }
 
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertNil(error)
     }
 
-    func test_deactivateRecordingSession_categoryIsRecord_setActiveFailed() throws {
+    func test_deactivateRecordingSession_categoryIsRecord_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .record)
         stubAudioSession.setActiveResult = .failure(genericError)
 
-        XCTAssertThrowsError(try subject.deactivateRecordingSession(), genericError)
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        let error = try waitForSessionCompletion { try subject.deactivateRecordingSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertEqual(error as NSError?, genericError as NSError?)
     }
 
     func test_deactivateRecordingSession_categoryIsPlayAndRecord_setActiveCompletedSuccesfully() throws {
         stubAudioSession.stubProperty(\.category, with: .playAndRecord)
 
-        try subject.deactivateRecordingSession()
+        let error = try waitForSessionCompletion { try subject.deactivateRecordingSession(completion: $0) }
 
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertNil(error)
     }
 
-    func test_deactivateRecordingSession_categoryIsPlayAndRecord_setActiveFailed() throws {
+    func test_deactivateRecordingSession_categoryIsPlayAndRecord_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .playAndRecord)
         stubAudioSession.setActiveResult = .failure(genericError)
 
-        XCTAssertThrowsError(try subject.deactivateRecordingSession(), genericError)
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        let error = try waitForSessionCompletion { try subject.deactivateRecordingSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertEqual(error as NSError?, genericError as NSError?)
     }
 
     // MARK: - activatePlaybackSession
@@ -108,19 +118,23 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.defaultToSpeaker, .allowBluetoothDevice])
     }
 
-    func test_activatePlaybackSession_setActiveFailed() {
+    func test_activatePlaybackSession_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
         stubAudioSession.setActiveResult = .failure(genericError)
 
-        XCTAssertThrowsError(try subject.activatePlaybackSession(), genericError)
-        XCTAssertTrue(stubAudioSession.setActiveWasCalledWithActive ?? false)
+        let error = try waitForSessionCompletion { try subject.activatePlaybackSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, true)
+        XCTAssertEqual(error as NSError?, genericError as NSError?)
     }
 
     func test_activatePlaybackSession_setActiveCompletedSuccessfully() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
 
-        try subject.activatePlaybackSession()
-        XCTAssertTrue(stubAudioSession.setActiveWasCalledWithActive ?? false)
+        let error = try waitForSessionCompletion { try subject.activatePlaybackSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, true)
+        XCTAssertNil(error)
     }
 
     // MARK: - deactivatePlaybackSession
@@ -128,33 +142,57 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
     func test_deactivatePlaybackSession_categoryIsPlayback_setActiveCompletedSuccesfully() throws {
         stubAudioSession.stubProperty(\.category, with: .playback)
 
-        try subject.deactivatePlaybackSession()
+        let error = try waitForSessionCompletion { try subject.deactivatePlaybackSession(completion: $0) }
 
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertNil(error)
     }
 
-    func test_deactivatePlaybackSession_categoryIsPlayback_setActiveFailed() throws {
+    func test_deactivatePlaybackSession_categoryIsPlayback_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .playback)
         stubAudioSession.setActiveResult = .failure(genericError)
 
-        XCTAssertThrowsError(try subject.deactivatePlaybackSession(), genericError)
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        let error = try waitForSessionCompletion { try subject.deactivatePlaybackSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertEqual(error as NSError?, genericError as NSError?)
     }
 
     func test_deactivatePlaybackSession_categoryIsPlayAndRecord_setActiveCompletedSuccesfully() throws {
         stubAudioSession.stubProperty(\.category, with: .playAndRecord)
 
-        try subject.deactivatePlaybackSession()
+        let error = try waitForSessionCompletion { try subject.deactivatePlaybackSession(completion: $0) }
 
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertNil(error)
     }
 
-    func test_deactivatePlaybackSession_categoryIsPlayAndRecord_setActiveFailed() throws {
+    func test_deactivatePlaybackSession_categoryIsPlayAndRecord_setActiveFailed_reportsTheErrorOnTheCompletion() throws {
         stubAudioSession.stubProperty(\.category, with: .playAndRecord)
         stubAudioSession.setActiveResult = .failure(genericError)
 
-        XCTAssertThrowsError(try subject.deactivatePlaybackSession(), genericError)
-        XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
+        let error = try waitForSessionCompletion { try subject.deactivatePlaybackSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledWithActive, false)
+        XCTAssertEqual(error as NSError?, genericError as NSError?)
+    }
+
+    // MARK: - Main thread
+
+    func test_activatePlaybackSession_setActiveIsNotCalledOnTheMainThread() throws {
+        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
+
+        _ = try waitForSessionCompletion { try subject.activatePlaybackSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledOnMainThread, false)
+    }
+
+    func test_deactivatePlaybackSession_setActiveIsNotCalledOnTheMainThread() throws {
+        stubAudioSession.stubProperty(\.category, with: .playAndRecord)
+
+        _ = try waitForSessionCompletion { try subject.deactivatePlaybackSession(completion: $0) }
+
+        XCTAssertEqual(stubAudioSession.setActiveWasCalledOnMainThread, false)
     }
 
     // MARK: - requestRecordPermission
@@ -163,6 +201,22 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         subject.requestRecordPermission { _ in }
 
         XCTAssertNotNil(stubAudioSession.requestRecordPermissionWasCalledWithResponse)
+    }
+
+    // MARK: - Helpers
+
+    private func waitForSessionCompletion(
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        _ action: (@escaping @Sendable (Error?) -> Void) throws -> Void
+    ) throws -> Error? {
+        try waitFor(file: file, line: line) { done in
+            do {
+                try action(done)
+            } catch {
+                done(error)
+            }
+        }
     }
 }
 
@@ -179,6 +233,7 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
     var setCategoryResult: Result<Void, Error> = .success(())
 
     private(set) var setActiveWasCalledWithActive: Bool?
+    private(set) var setActiveWasCalledOnMainThread: Bool?
     var setActiveResult: Result<Void, Error> = .success(())
 
     private(set) var requestRecordPermissionWasCalledWithResponse: ((Bool) -> Void)?
@@ -211,6 +266,7 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
         options: AVAudioSession.SetActiveOptions = []
     ) throws {
         setActiveWasCalledWithActive = active
+        setActiveWasCalledOnMainThread = Thread.isMainThread
 
         switch setActiveResult {
         case .success:

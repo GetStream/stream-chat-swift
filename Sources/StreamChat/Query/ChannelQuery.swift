@@ -120,26 +120,30 @@ public struct ChannelQuery: Encodable, Sendable {
     }
 }
 
-extension ChannelQuery: APIPathConvertible {
-    var apiPath: String { cid?.apiPath ?? type.rawValue }
-}
-
-/// An answer for an invite to a channel.
-struct ChannelInvitePayload: Encodable {
-    struct Message: Encodable {
-        let message: String?
+extension ChannelQuery {
+    var endpoint: Endpoint<ChannelStateResponse> {
+        let request = ChannelGetOrCreateRequest(
+            data: channelPayload?.toChannelInput(),
+            members: membersPagination?.toPaginationParams(),
+            messages: pagination?.toMessagePaginationParams(),
+            presence: options.contains(.presence),
+            state: options.contains(.state),
+            watch: options.contains(.watch),
+            watchers: watchersLimit.map { Pagination(pageSize: $0).toPaginationParams() }
+        )
+        let requiresConnectionId = options.contains(oneOf: [.presence, .watch])
+        if let id {
+            return .getOrCreateChannel(
+                type: type.rawValue,
+                id: id,
+                channelGetOrCreateRequest: request,
+                requiresConnectionId: requiresConnectionId
+            )
+        }
+        return .getOrCreateDistinctChannel(
+            type: type.rawValue,
+            channelGetOrCreateRequest: request,
+            requiresConnectionId: requiresConnectionId
+        )
     }
-
-    private enum CodingKeys: String, CodingKey {
-        case accept = "accept_invite"
-        case reject = "reject_invite"
-        case message
-    }
-
-    /// Accept the invite.
-    let accept: Bool?
-    /// Reject the invite.
-    let reject: Bool?
-    /// Additional message.
-    let message: Message?
 }

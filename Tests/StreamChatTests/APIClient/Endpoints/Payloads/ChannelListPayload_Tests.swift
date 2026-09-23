@@ -42,26 +42,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
-    func test_decode_shouldReturnChannelsIfOneChannelHasMissingRequiredProperties() throws {
-        /// Channel List JSON with 3 channels, the first channel has multiple missing required properties:
-        /// - channel.members.first.user.updatedAt
-        /// - channel.pinnedMessages.first.user.updatedAt
-        /// - channel.reads.first.user.updatedAt
-        let url = XCTestCase.mockData(fromJSONFile: "PartiallyFailingChannelListPayload")
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 3)
-    }
-
-    func test_decode_shouldReturnChannelsIfOneChannelCompletelyFailsParsing() throws {
-        /// Channel List JSON with 3 channels, the first channel has a missing `createdBy.user.updateAt`,
-        /// which is mandatory, so it will skip this channel, and return only 2 channels.
-        let url = XCTestCase.mockData(fromJSONFile: "FailingChannelListPayload")
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 2)
-    }
-
     func test_channelListPayload_decodesPredefinedFilter() throws {
         let json = """
         {
@@ -83,9 +63,9 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(predefined.name, "user_per_channel_type_channels")
         XCTAssertEqual(predefined.filter["type"], .string("messaging"))
         XCTAssertEqual(predefined.filter["members"], .dictionary(["$in": .array([.string("r2-d2")])]))
-        XCTAssertEqual(predefined.sort.count, 2)
-        XCTAssertEqual(predefined.sort.first?["field"], .string("last_message_at"))
-        XCTAssertEqual(predefined.sort.first?["direction"], .number(-1))
+        XCTAssertEqual(predefined.sort?.count, 2)
+        XCTAssertEqual(predefined.sort?.first?.field, "last_message_at")
+        XCTAssertEqual(predefined.sort?.first?.direction, -1)
     }
 
     func test_channelListPayload_predefinedFilter_isNilWhenAbsent() throws {
@@ -136,6 +116,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                   },
                   "members": [],
                   "messages": [],
+                  "threads": [],
                   "pinned_messages": [],
                   "watchers": [],
                   "watcher_count": 0,
@@ -149,7 +130,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: json)
 
         XCTAssertEqual(payload.groups.keys.sorted(), ["all"])
         XCTAssertEqual(payload.groups["all"]?.channels.map(\.channel.cid), [channelId])
@@ -171,7 +152,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: json)
 
         XCTAssertEqual("current-next-cursor", payload.groups["current"]?.next)
         XCTAssertEqual("current-prev-cursor", payload.groups["current"]?.prev)
@@ -187,14 +168,14 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: json)
 
         XCTAssertNil(payload.groups["all"]?.next)
         XCTAssertNil(payload.groups["all"]?.prev)
     }
 
     func test_groupedQueryChannelsRequestBody_allGroups_encodesWithoutGroupsKey() throws {
-        let body = GroupedQueryChannelsRequestBody(limit: 10, groups: nil, watch: true, presence: false)
+        let body = GroupedQueryChannelsRequest(groups: nil, limit: 10, presence: false, watch: true)
 
         let encoded = try JSONEncoder.stream.encode(body)
         let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
@@ -206,11 +187,11 @@ final class ChannelListPayload_Tests: XCTestCase {
     }
 
     func test_groupedQueryChannelsRequestBody_paginatedGroup_encodesWithGroupsKeyAndCursor() throws {
-        let body = GroupedQueryChannelsRequestBody(
-            limit: nil,
+        let body = GroupedQueryChannelsRequest(
             groups: ["old": .init(limit: 5, next: "old-cursor")],
-            watch: false,
-            presence: true
+            limit: nil,
+            presence: true,
+            watch: false
         )
 
         let encoded = try JSONEncoder.stream.encode(body)
@@ -263,6 +244,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                   },
                   "members": [],
                   "messages": [],
+                  "threads": [],
                   "pinned_messages": [],
                   "watchers": [],
                   "watcher_count": 0,
@@ -275,10 +257,10 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: json)
 
         XCTAssertEqual(payload.groups["expired"]?.channels.map(\.channel.cid), [channelId])
-        XCTAssertEqual(payload.groups["expired"]?.unreadChannels, 0)
+        XCTAssertNil(payload.groups["expired"]?.unreadChannels)
     }
 
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
@@ -494,7 +476,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
-        XCTAssertEqual(payload.isHidden, true)
+        XCTAssertEqual(payload.hidden, true)
         XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
 
         XCTAssertEqual(payload.messages.count, 25)
@@ -515,7 +497,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertFalse(firstMessage.silent)
 
         XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
-        let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first)
+        let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first?.message)
         XCTAssertEqual(pendingMessage.text, "My pending message")
         
         XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
@@ -539,9 +521,9 @@ final class ChannelPayload_Tests: XCTestCase {
             "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
         )
 
-        let firstChannelRead = payload.channelReads.first!
-        XCTAssertEqual(firstChannelRead.lastReadAt, "2020-06-10T07:43:11.812841984Z".toDate())
-        XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
+        let firstChannelRead = try XCTUnwrap(payload.read?.first)
+        XCTAssertEqual(firstChannelRead.lastRead, "2020-06-10T07:43:11.812841984Z".toDate())
+        XCTAssertEqual(firstChannelRead.unreadMessages, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
 
         let config = channel.config
@@ -570,10 +552,10 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.channel.filterTags, ["football"])
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
-        XCTAssertEqual(payload.activeLiveLocations.count, 1)
-        XCTAssertNotNil(payload.pushPreference)
-        XCTAssertEqual(payload.pushPreference?.level, "all")
-        XCTAssertNil(payload.pushPreference?.disabledUntil)
+        XCTAssertEqual(payload.activeLiveLocations?.count, 1)
+        XCTAssertNotNil(payload.pushPreferences)
+        XCTAssertEqual(payload.pushPreferences?.level, "all")
+        XCTAssertNil(payload.pushPreferences?.disabledUntil)
     }
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {

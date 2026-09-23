@@ -212,18 +212,24 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     open func beginRecording(_ completionHandler: @escaping @Sendable () -> Void) {
         do {
             /// Enable recording on `AudioSession`
-            try audioSessionConfigurator.activateRecordingSession()
+            try audioSessionConfigurator.activateRecordingSession { [weak self] error in
+                guard let self else { return }
 
-            /// Request record permission. The first time this will be executed, it will prompt the user
-            /// to allow recording.
-            audioSessionConfigurator.requestRecordPermission { [weak self] in
-                self?.handleRecordRequest($0, completionHandler: completionHandler)
+                /// In case we failed to activate the `AudioSession` for recording, inform the delegates
+                if let error {
+                    notifyDelegatesForError(error)
+                    return
+                }
+
+                /// Request record permission. The first time this will be executed, it will prompt the user
+                /// to allow recording.
+                audioSessionConfigurator.requestRecordPermission { [weak self] in
+                    self?.handleRecordRequest($0, completionHandler: completionHandler)
+                }
             }
         } catch {
             /// In case we failed to activate the `AudioSession` for recording, inform the delegates
-            multicastDelegate.invokeOnMain {
-                $0.audioRecorder(self, didFailWithError: error)
-            }
+            notifyDelegatesForError(error)
         }
     }
 
@@ -246,21 +252,28 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         }
         do {
             /// Re-enable recording on `AudioSession`
-            try audioSessionConfigurator.activateRecordingSession()
+            try audioSessionConfigurator.activateRecordingSession { [weak self] error in
+                guard let self else { return }
 
-            if audioRecorder?.record() == false {
-                throw AudioRecorderError.failedToResume()
-            } else {
-                context = .init(
-                    state: .recording,
-                    duration: context.duration,
-                    averagePower: context.averagePower
-                )
+                if let error {
+                    notifyDelegatesForError(error)
+                    return
+                }
+
+                StreamConcurrency.onMain {
+                    if self.audioRecorder?.record() == false {
+                        self.notifyDelegatesForError(AudioRecorderError.failedToResume())
+                    } else {
+                        self.context = .init(
+                            state: .recording,
+                            duration: self.context.duration,
+                            averagePower: self.context.averagePower
+                        )
+                    }
+                }
             }
         } catch {
-            multicastDelegate.invokeOnMain {
-                $0.audioRecorder(self, didFailWithError: error)
-            }
+            notifyDelegatesForError(error)
         }
     }
 
@@ -275,11 +288,12 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
         do {
             /// We will try to deactivate recording from the `AudioSession`
-            try audioSessionConfigurator.deactivateRecordingSession()
-        } catch {
-            multicastDelegate.invokeOnMain {
-                $0.audioRecorder(self, didFailWithError: error)
+            try audioSessionConfigurator.deactivateRecordingSession { [weak self] error in
+                guard let error else { return }
+                self?.notifyDelegatesForError(error)
             }
+        } catch {
+            notifyDelegatesForError(error)
         }
     }
 
@@ -372,6 +386,12 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         appStateObserver.subscribe(self)
     }
 
+    private func notifyDelegatesForError(_ error: Error) {
+        multicastDelegate.invokeOnMain {
+            $0.audioRecorder(self, didFailWithError: error)
+        }
+    }
+
     /// Private method to create a new AVAudioRecorder instance
     private func makeAudioRecorder() throws -> AVAudioRecorder {
         let audioRecorder = try audioRecorderAVProvider(
@@ -384,7 +404,6 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         /// Configure the AVAudioRecorder instance
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
-        audioRecorder.prepareToRecord()
 
         return audioRecorder
     }
@@ -403,26 +422,44 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     private func handleRecordRequest(
         _ permissionGranted: Bool,
-        completionHandler: @escaping () -> Void
+        completionHandler: @escaping @Sendable () -> Void
     ) {
+        guard permissionGranted else {
+            notifyDelegatesForError(AudioRecorderError.noRecordPermission())
+            return
+        }
+
         do {
-            guard permissionGranted else {
-                throw AudioRecorderError.noRecordPermission()
-            }
+            let audioRecorder = try makeAudioRecorder()
+            self.audioRecorder = audioRecorder
 
-            audioRecorder = try makeAudioRecorder()
-
-            if audioRecorder?.record() == true {
-                context = .init(state: .recording, duration: 0, averagePower: 0)
-                startObservers()
-                completionHandler()
-            } else {
-                // This error may occur due to the audio file name.
-                throw AudioRecorderError.failedToBegin()
+            // `AVAudioRecorder.prepareToRecord` activates the `AVAudioSession`, which is a synchronous
+            // inter-process call that blocks the caller long enough to make the UI unresponsive, so the
+            // recorder is never prepared on the caller's thread.
+            AudioSessionQueue.shared.async { [weak self] in
+                audioRecorder.prepareToRecord()
+                StreamConcurrency.onMain {
+                    self?.startRecording(with: audioRecorder, completionHandler: completionHandler)
+                }
             }
         } catch {
-            multicastDelegate.invokeOnMain { $0.audioRecorder(self, didFailWithError: error) }
+            notifyDelegatesForError(error)
         }
+    }
+
+    private func startRecording(
+        with audioRecorder: AVAudioRecorder,
+        completionHandler: @escaping @Sendable () -> Void
+    ) {
+        guard audioRecorder.record() else {
+            // This error may occur due to the audio file name.
+            notifyDelegatesForError(AudioRecorderError.failedToBegin())
+            return
+        }
+
+        context = .init(state: .recording, duration: 0, averagePower: 0)
+        startObservers()
+        completionHandler()
     }
 
     // MARK: AudioRecorder observation

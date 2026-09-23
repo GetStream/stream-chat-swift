@@ -51,7 +51,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var showChannel_completion: ((Error?) -> Void)?
     @Atomic var showChannel_completion_result: Result<Void, Error>?
     
-    @Atomic var addMembers_currentUserId: UserId?
     @Atomic var addMembers_cid: ChannelId?
     @Atomic var addMembers_userIds: Set<UserId>?
     @Atomic var addMembers_memberInfos: [MemberInfo]?
@@ -76,7 +75,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var rejectInvite_completion: ((Error?) -> Void)?
     @Atomic var rejectInvite_completion_result: Result<Void, Error>?
     
-    @Atomic var removeMembers_currentUserId: UserId?
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
     @Atomic var removeMembers_message: String?
@@ -220,7 +218,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         showChannel_completion = nil
         showChannel_completion_result = nil
 
-        addMembers_currentUserId = nil
         addMembers_cid = nil
         addMembers_message = nil
         addMembers_systemMessage = nil
@@ -244,7 +241,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         rejectInvite_completion = nil
         rejectInvite_completion_result = nil
 
-        removeMembers_currentUserId = nil
         removeMembers_cid = nil
         removeMembers_message = nil
         removeMembers_systemMessage = nil
@@ -465,7 +461,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     override func addMembers(
-        currentUserId: UserId?,
         cid: ChannelId,
         members: [MemberInfo],
         systemMessage: SystemMessage?,
@@ -473,7 +468,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         hideHistoryBefore: Date? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        addMembers_currentUserId = currentUserId
         addMembers_cid = cid
         addMembers_userIds = Set(members.map(\.userId))
         addMembers_memberInfos = members
@@ -486,7 +480,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     func addMembers(
-        currentUserId: UserId?,
         cid: ChannelId,
         userIds: Set<UserId>,
         systemMessage: SystemMessage?,
@@ -494,7 +487,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         completion: ((Error?) -> Void)? = nil
     ) {
         addMembers(
-            currentUserId: currentUserId,
             cid: cid,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
             systemMessage: systemMessage,
@@ -535,13 +527,11 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     override func removeMembers(
-        currentUserId: UserId?,
         cid: ChannelId,
         userIds: Set<UserId>,
         systemMessage: SystemMessage?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        removeMembers_currentUserId = currentUserId
         removeMembers_cid = cid
         removeMembers_userIds = userIds
         removeMembers_message = systemMessage?.text

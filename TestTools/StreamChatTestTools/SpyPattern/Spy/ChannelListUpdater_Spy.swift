@@ -19,7 +19,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
 
     @Atomic var queryGroupedChannels_callCount = 0
-    @Atomic var queryGroupedChannels_groups: [[String: GroupedQueryChannelsRequestGroup]?] = []
+    @Atomic var queryGroupedChannels_groups: [[String: GroupedChannelsGroupRequest]?] = []
     @Atomic var queryGroupedChannels_limits: [Int?] = []
     @Atomic var queryGroupedChannels_watchValues: [Bool] = []
     @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
@@ -107,7 +107,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     }
 
     override func queryGroupedChannels(
-        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
         watch: Bool,
         presence: Bool,
