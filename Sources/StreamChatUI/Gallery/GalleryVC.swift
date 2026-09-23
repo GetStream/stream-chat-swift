@@ -281,8 +281,9 @@ open class GalleryVC: _ViewController,
 
         // The attachments are laid out in the area between the bars, and inside the safe area
         // horizontally, so that they are never covered by a bar or by whatever the system draws
-        // along an edge. The guides stay where the bars rest, which keeps the content in place
-        // while the bars slide out of the view and back in.
+        // along an edge. They keep the default margin from both horizontal edges on top of that,
+        // so they never sit flush against the screen. The guides stay where the bars rest, which
+        // keeps the content in place while the bars slide out of the view and back in.
         let topBarLayoutGuide = UILayoutGuide()
         let bottomBarLayoutGuide = UILayoutGuide()
         view.addLayoutGuide(topBarLayoutGuide)
@@ -297,8 +298,14 @@ open class GalleryVC: _ViewController,
             topBarLayoutGuide.heightAnchor.pin(equalTo: topBarView.heightAnchor),
             bottomBarLayoutGuide.bottomAnchor.pin(equalTo: view.bottomAnchor),
             bottomBarLayoutGuide.heightAnchor.pin(equalTo: bottomBarView.heightAnchor),
-            attachmentsCollectionView.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            attachmentsCollectionView.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            attachmentsCollectionView.leadingAnchor.pin(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: NSDirectionalEdgeInsets.streamDefaultLayoutMargins.leading
+            ),
+            attachmentsCollectionView.trailingAnchor.pin(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -NSDirectionalEdgeInsets.streamDefaultLayoutMargins.trailing
+            ),
             attachmentsCollectionView.topAnchor.pin(equalTo: topBarLayoutGuide.bottomAnchor)
         ])
         updateAttachmentsBottomConstraint()
