@@ -27,6 +27,8 @@ open class ChatSuggestionsHeaderView: _View, AppearanceProvider {
     }
 
     override open func setUpLayout() {
+        directionalLayoutMargins = .streamDefaultLayoutMargins
+
         let view = UIView().withoutAutoresizingMaskConstraints
         embed(view, insets: directionalLayoutMargins)
 
