@@ -94,6 +94,15 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         view.addGestureRecognizer(tapRecognizer)
     }
 
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        // Everything here is laid out around where the message sits in the view this was opened
+        // from, which a size change invalidates and which cannot be measured again from here, so it
+        // closes rather than leaving the reactions somewhere they do not belong.
+        dismiss(animated: false)
+    }
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         view.backgroundColor = .clear

@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Improved support for the iPhone Duo [#4287](https://github.com/GetStream/stream-chat-swift/pull/4287)
 ### 🐞 Fixed
+- Fix the message actions pop-up ending up out of bounds after an orientation change [#4287](https://github.com/GetStream/stream-chat-swift/pull/4287)
 - Fix gallery attachments being covered by the gallery's bars or by system UI along the screen edges [#4287](https://github.com/GetStream/stream-chat-swift/pull/4287)
 - Fix incorrect rounded corner on image attachments shown below other attachments [#4277](https://github.com/GetStream/stream-chat-swift/pull/4277)
 - Fix empty voice recording preview when quoting a message with multiple attachments [#4276](https://github.com/GetStream/stream-chat-swift/pull/4276)
