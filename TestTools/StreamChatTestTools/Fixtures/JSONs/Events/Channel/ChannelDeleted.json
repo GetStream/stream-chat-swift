@@ -1,5 +1,4 @@
 {
-  "custom": {},
   "type": "channel.deleted",
   "cid": "messaging:default-channel-1",
   "channel_id": "default-channel-1",

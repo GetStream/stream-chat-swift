@@ -51,7 +51,6 @@ final class MemberEvents_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -84,7 +83,6 @@ final class MemberEvents_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -117,8 +115,6 @@ final class MemberEvents_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
-            member: .dummy(),
             user: .dummy(userId: .unique)
         )
 

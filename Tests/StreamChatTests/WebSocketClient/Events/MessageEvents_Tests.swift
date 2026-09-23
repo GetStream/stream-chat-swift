@@ -57,7 +57,6 @@ final class MessageEvents_Tests: XCTestCase {
         let dto = MessageNewEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             groupedUnreadChannels: unreadChannelCountsByGroup,
             message: messagePayload,
             totalUnreadCount: 9,

@@ -42,7 +42,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             createdAt: .unique,
             createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            custom: [:],
             expiration: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
@@ -62,7 +61,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let event = UserUnbannedEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
 
@@ -83,7 +81,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             createdAt: .unique,
             createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            custom: [:],
             expiration: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
@@ -114,7 +111,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             createdAt: .unique,
             createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            custom: [:],
             expiration: .unique,
             shadow: true,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
@@ -145,8 +141,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let event = UserUnbannedEventDTO(
             cid: .unique,
             createdAt: .unique,
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            custom: [:],
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
 
@@ -188,9 +182,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     func test_middleware_handlesUserMessagesDeletedEventCorrectly() throws {
         // Create event payload
         let event = UserMessagesDeletedEventDTO(
-            cid: .unique,
             createdAt: .unique,
-            custom: [:],
             hardDelete: false,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
@@ -199,11 +191,12 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let userId = event.user.id
         let messageId1: MessageId = .unique
         let messageId2: MessageId = .unique
+        let cid: ChannelId = .unique
         
         try database.createCurrentUser(id: userId)
-        try database.createChannel(cid: event.cid!)
-        try database.createMessage(id: messageId1, authorId: userId, cid: event.cid!)
-        try database.createMessage(id: messageId2, authorId: userId, cid: event.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMessage(id: messageId1, authorId: userId, cid: cid)
+        try database.createMessage(id: messageId2, authorId: userId, cid: cid)
 
         // Verify user and messages exist
         _ = try XCTUnwrap(database.viewContext.user(id: userId))
@@ -232,9 +225,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     func test_middleware_handlesUserMessagesDeletedEvent_hardDelete_marksMessagesAsHardDeleted() throws {
         // Create event payload with hard delete
         let event = UserMessagesDeletedEventDTO(
-            cid: .unique,
             createdAt: .unique,
-            custom: [:],
             hardDelete: true,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
@@ -243,11 +234,12 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let userId = event.user.id
         let messageId1: MessageId = .unique
         let messageId2: MessageId = .unique
+        let cid: ChannelId = .unique
         
         try database.createCurrentUser(id: userId)
-        try database.createChannel(cid: event.cid!)
-        try database.createMessage(id: messageId1, authorId: userId, cid: event.cid!)
-        try database.createMessage(id: messageId2, authorId: userId, cid: event.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMessage(id: messageId1, authorId: userId, cid: cid)
+        try database.createMessage(id: messageId2, authorId: userId, cid: cid)
 
         // Verify user and messages exist
         _ = try XCTUnwrap(database.viewContext.user(id: userId))
@@ -276,9 +268,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     func test_userMessagesDeletedEventDTO_toDomainEvent_whenUserExistsInDB_returnsEventWithDBUser() throws {
         // Create event payload
         let eventDTO = UserMessagesDeletedEventDTO(
-            cid: .unique,
             createdAt: .unique,
-            custom: [:],
             hardDelete: false,
             user: .dummy(userId: .unique, name: "ExistingUser", imageUrl: nil, extraData: [:])
         )
@@ -303,9 +293,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     func test_userMessagesDeletedEventDTO_toDomainEvent_whenUserDoesNotExistInDB_returnsEventWithPayloadUser() throws {
         // Create event payload for user not in DB
         let eventDTO = UserMessagesDeletedEventDTO(
-            cid: .unique,
             createdAt: .unique,
-            custom: [:],
             hardDelete: true,
             user: .dummy(userId: .unique, name: "NonExistentUser", imageUrl: nil, extraData: [:])
         )

@@ -27,9 +27,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let eventPayload = NotificationAddedToChannelEventDTO(
             channel: channelPayload.channel,
-            cid: channelPayload.channel.cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy()
         )
 
@@ -96,7 +94,6 @@ final class DatabaseSession_Tests: XCTestCase {
             channelMessageCount: 5,
             cid: channelId,
             createdAt: .unique,
-            custom: [:],
             message: messagePayload,
             watcherCount: 0
         )
@@ -131,7 +128,6 @@ final class DatabaseSession_Tests: XCTestCase {
             try session.saveEvent(event: .typeMessageNewEvent(MessageNewEventDTO(
                 cid: .unique,
                 createdAt: .unique,
-                custom: [:],
                 groupedUnreadChannels: unreadChannelCountsByGroup,
                 message: .dummy(messageId: .unique, authorUserId: .unique),
                 user: .dummy(userId: .unique),
@@ -253,10 +249,8 @@ final class DatabaseSession_Tests: XCTestCase {
         let unreadThreads = Int.random(in: 0...Int.max)
         let eventPayload = NotificationMarkReadEventDTO(
             createdAt: .unique,
-            custom: [:],
             totalUnreadCount: unreadMessages,
             unreadChannels: unreadChannels,
-            unreadCount: 0,
             unreadThreads: unreadThreads
         )
 
@@ -264,7 +258,6 @@ final class DatabaseSession_Tests: XCTestCase {
             try session.saveEvent(event: .typeHealthCheckEvent(HealthCheckEventDTO(
                 connectionId: .unique,
                 createdAt: .unique,
-                custom: [:],
                 me: currentUserPayload
             )))
             try session.saveEvent(event: .typeNotificationMarkReadEvent(eventPayload))
@@ -289,7 +282,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventPayload = MessageNewEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             groupedUnreadChannels: ["all": 7, "new": 2],
             message: .dummy(messageId: .unique, authorUserId: .unique)
         )
@@ -335,9 +327,7 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventPayload = MessageUpdatedEventDTO(
             cid: channelId,
             createdAt: .unique,
-            custom: [:],
-            message: .dummy(messageId: messageId, authorUserId: userId),
-            messageId: messageId
+            message: .dummy(messageId: messageId, authorUserId: userId)
         )
 
         try database.writeSynchronously { session in
@@ -361,7 +351,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventDTO = MessageUpdatedEventDTO(
             cid: cid,
             createdAt: .distantFuture,
-            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 restrictedVisibility: [currentUserId],
@@ -397,7 +386,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventPayload = MessageUpdatedEventDTO(
             cid: cid,
             createdAt: .distantFuture,
-            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 restrictedVisibility: [.unique],
@@ -433,10 +421,8 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventPayload = MessageDeletedEventDTO(
             cid: channelId,
             createdAt: .unique,
-            custom: [:],
             hardDelete: true,
-            message: .dummy(messageId: messageId, authorUserId: userId),
-            messageId: messageId
+            message: .dummy(messageId: messageId, authorUserId: userId)
         )
 
         let messageBeforeEvent = database.viewContext.message(id: messageId)
@@ -470,10 +456,8 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventPayload = MessageDeletedEventDTO(
             cid: channelId,
             createdAt: .unique,
-            custom: [:],
             hardDelete: false,
-            message: .dummy(messageId: messageId, authorUserId: userId),
-            messageId: messageId
+            message: .dummy(messageId: messageId, authorUserId: userId)
         )
 
         let messageBeforeEvent = database.viewContext.message(id: messageId)
@@ -510,7 +494,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: newMessage
         )
 
@@ -543,12 +526,8 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let messageNewEvent = NotificationNewMessageEventDTO(
             channel: channel.channel,
-            cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
-            message: newMessage,
-            messageId: newMessage.id,
-            watcherCount: 0
+            message: newMessage
         )
 
         try database.writeSynchronously { session in
@@ -591,7 +570,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: newMessage
         )
 
@@ -632,7 +610,6 @@ final class DatabaseSession_Tests: XCTestCase {
             channel: channel.channel,
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: newMessage
         )
 
@@ -671,7 +648,6 @@ final class DatabaseSession_Tests: XCTestCase {
             channel: channel.channel,
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: newMessage
         )
 
@@ -705,12 +681,8 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let messageNewEvent = NotificationNewMessageEventDTO(
             channel: channel.channel,
-            cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
-            message: newMessage,
-            messageId: newMessage.id,
-            watcherCount: 0
+            message: newMessage
         )
 
         try database.writeSynchronously { session in
@@ -740,7 +712,6 @@ final class DatabaseSession_Tests: XCTestCase {
             channel: channel.channel,
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: newMessage
         )
 
@@ -784,10 +755,8 @@ final class DatabaseSession_Tests: XCTestCase {
         let messageDeletedEvent = MessageDeletedEventDTO(
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             hardDelete: true,
-            message: hardDeletedMessage,
-            messageId: hardDeletedMessage.id
+            message: hardDeletedMessage
         )
 
         try database.writeSynchronously { session in
@@ -829,7 +798,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let messageDeletedEvent = MessageDeletedEventDTO(
             cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: deletedMessage
         )
 
@@ -871,9 +839,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let channelTruncatedEvent = ChannelTruncatedEventDTO(
             channel: .dummy(cid: channel.channel.cid, truncatedAt: systemMessage.createdAt),
-            cid: channel.channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: systemMessage
         )
 
@@ -918,7 +884,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let event = WSEvent.typePollVoteRemovedEvent(
             PollVoteRemovedEventDTO(
                 createdAt: .unique,
-                custom: [:],
                 poll: poll,
                 pollVote: votePayload
             )
@@ -976,7 +941,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let event = WSEvent.typePollVoteChangedEvent(
             PollVoteChangedEventDTO(
                 createdAt: .unique,
-                custom: [:],
                 poll: poll,
                 pollVote: votePayload
             )
@@ -1022,7 +986,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let event = WSEvent.typePollVoteCastedEvent(
             PollVoteCastedEventDTO(
                 createdAt: .unique,
-                custom: [:],
                 poll: poll,
                 pollVote: votePayload
             )
@@ -1070,7 +1033,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let event = WSEvent.typePollVoteCastedEvent(
             PollVoteCastedEventDTO(
                 createdAt: .unique,
-                custom: [:],
                 poll: poll,
                 pollVote: votePayload
             )
@@ -1098,7 +1060,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let updatedEvent = WSEvent.typePollVoteCastedEvent(
             PollVoteCastedEventDTO(
                 createdAt: .unique,
-                custom: [:],
                 poll: poll,
                 pollVote: updatedVotePayload
             )
@@ -1138,7 +1099,6 @@ final class DatabaseSession_Tests: XCTestCase {
                 channel: channelPayload,
                 cid: channelId,
                 createdAt: .unique,
-                custom: [:],
                 thread: ThreadResponse(
                     channelCid: channelId.rawValue,
                     createdAt: .unique,
@@ -1180,12 +1140,8 @@ final class DatabaseSession_Tests: XCTestCase {
                 channel: channelPayload,
                 cid: channelId,
                 createdAt: .unique,
-                custom: [:],
                 message: message,
-                messageId: message.id,
-                threadId: .unique,
-                unreadThreads: 7,
-                watcherCount: 0
+                unreadThreads: 7
             )
         )
 
@@ -1220,9 +1176,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let event = WSEvent.typeThreadUpdatedEvent(
             ThreadUpdatedEventDTO(
-                cid: channelId,
                 createdAt: .unique,
-                custom: [:],
                 thread: ThreadResponse(
                     channelCid: channelId.rawValue,
                     createdAt: .unique,
@@ -1254,7 +1208,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveEvent(event: .typePollClosedEvent(
-                PollClosedEventDTO(createdAt: .unique, custom: [:], poll: poll)
+                PollClosedEventDTO(createdAt: .unique, poll: poll)
             ))
         }
 
@@ -1271,7 +1225,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveEvent(event: .typePollDeletedEvent(
-                PollDeletedEventDTO(createdAt: .unique, custom: [:], poll: poll)
+                PollDeletedEventDTO(createdAt: .unique, poll: poll)
             ))
         }
 
@@ -1287,7 +1241,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveEvent(event: .typePollUpdatedEvent(
-                PollUpdatedEventDTO(createdAt: .unique, custom: [:], poll: poll)
+                PollUpdatedEventDTO(createdAt: .unique, poll: poll)
             ))
         }
 

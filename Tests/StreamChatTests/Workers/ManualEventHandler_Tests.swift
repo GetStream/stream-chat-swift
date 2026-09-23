@@ -61,7 +61,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         // Create a simple event DTO that has no cid
         let eventDTO = UserPresenceChangedEventDTO(
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
         nonisolated(unsafe) var result: Event!
@@ -79,7 +78,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = MessageNewEventDTO(
             cid: unregisteredCid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique),
             user: .dummy(userId: .unique),
             watcherCount: 0
@@ -99,7 +97,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = UserWatchingStartEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique),
             watcherCount: 1
         )
@@ -119,7 +116,6 @@ final class ManualEventHandler_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -142,7 +138,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = MessageNewEventDTO(
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
             totalUnreadCount: 2,
             unreadChannels: 1,
@@ -174,7 +169,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = MessageUpdatedEventDTO(
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
             user: .dummy(userId: userId)
         )
@@ -201,7 +195,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = MessageDeletedEventDTO(
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             hardDelete: true,
             message: .dummy(messageId: messageId, authorUserId: userId),
             user: .dummy(userId: userId)
@@ -227,7 +220,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = MessageDeletedEventDTO(
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             hardDelete: false,
             message: .dummy(messageId: messageId, authorUserId: .unique),
             user: nil
@@ -258,7 +250,6 @@ final class ManualEventHandler_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
             user: .dummy(userId: userId)
@@ -289,7 +280,6 @@ final class ManualEventHandler_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
             user: .dummy(userId: userId)
@@ -320,7 +310,6 @@ final class ManualEventHandler_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
             user: .dummy(userId: userId)
@@ -348,7 +337,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = TypingStartEventDTO(
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             user: .dummy(userId: userId)
         )
 
@@ -373,7 +361,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = TypingStopEventDTO(
             cid: cid,
             createdAt: createdAt,
-            custom: [:],
             user: .dummy(userId: userId)
         )
 
@@ -393,7 +380,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = TypingStartEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             parentId: parentMessageId,
             user: .dummy(userId: .unique)
         )
@@ -413,7 +399,6 @@ final class ManualEventHandler_Tests: XCTestCase {
         let eventDTO = TypingStartEventDTO(
             cid: unregisteredCid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 

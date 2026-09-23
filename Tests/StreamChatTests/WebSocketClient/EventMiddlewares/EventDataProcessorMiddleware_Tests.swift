@@ -29,9 +29,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
 
         let testEvent = NotificationAddedToChannelEventDTO(
             channel: channelPayload.channel,
-            cid: channelPayload.channel.cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy()
         )
 
@@ -69,9 +67,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
                 isFrozen: true,
                 memberCount: 1
             ),
-            cid: cid,
-            createdAt: newerUpdatedAt,
-            custom: [:]
+            createdAt: newerUpdatedAt
         )
 
         let memberUpdatedEvent = MemberUpdatedEventDTO(
@@ -85,7 +81,6 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             ),
             cid: cid,
             createdAt: newerUpdatedAt.addingTimeInterval(0.03),
-            custom: [:],
             member: .dummy(user: .dummy(userId: memberId), extraData: updatedMemberExtraData),
             user: .dummy(userId: memberId)
         )
@@ -135,7 +130,6 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 authorUserId: reactionPayload.user.id,
@@ -180,7 +174,6 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload], cid: cid),
             reaction: reactionPayload,
             user: user
@@ -229,7 +222,6 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload], cid: cid),
             reaction: reactionPayload,
             user: user
@@ -260,7 +252,6 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         // Prepare an Event with an invalid payload data
         let testEvent = UserUpdatedEventDTO(
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 

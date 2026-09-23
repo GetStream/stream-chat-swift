@@ -1,5 +1,4 @@
 {
-    "custom": {},
     "type": "notification.channel_mutes_updated",
     "me": {
         "id": "luke_skywalker",

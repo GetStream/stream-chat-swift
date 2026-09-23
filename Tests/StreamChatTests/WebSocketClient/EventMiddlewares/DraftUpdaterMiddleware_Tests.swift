@@ -41,7 +41,6 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
         let event = DraftUpdatedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             draft: .dummy(
                 cid: cid,
                 message: .dummy(
@@ -77,7 +76,6 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
         let event = DraftDeletedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             draft: .dummy(
                 cid: cid,
                 message: .dummy(
@@ -117,7 +115,6 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
         let event = DraftDeletedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             draft: .dummy(
                 cid: cid,
                 message: .dummy(

@@ -41,7 +41,6 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let event = UserWatchingStartEventDTO(
             cid: .unique,
             createdAt: Date.unique,
-            custom: [:],
             user: .dummy(userId: .unique),
             watcherCount: .random(in: 0...10)
         )
@@ -66,7 +65,6 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let event = UserWatchingStartEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: userId),
             watcherCount: watcherCount
         )
@@ -103,7 +101,6 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let event = UserWatchingStopEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: watchingUserId),
             watcherCount: watcherCount
         )

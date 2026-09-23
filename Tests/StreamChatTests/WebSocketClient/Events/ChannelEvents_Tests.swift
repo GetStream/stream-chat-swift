@@ -112,9 +112,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let eventPayload = ChannelUpdatedEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             user: .dummy(userId: .unique)
         )
@@ -143,7 +141,6 @@ final class ChannelEvents_Tests: XCTestCase {
         let eventPayload = ChannelDeletedEventDTO(
             channel: .dummy(cid: .unique),
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -169,7 +166,6 @@ final class ChannelEvents_Tests: XCTestCase {
         let eventPayload = ChannelTruncatedEventDTO(
             channel: .dummy(cid: .unique),
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -196,7 +192,6 @@ final class ChannelEvents_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -223,7 +218,6 @@ final class ChannelEvents_Tests: XCTestCase {
             cid: .unique,
             clearHistory: true,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 

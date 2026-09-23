@@ -254,7 +254,6 @@ final class EventNotificationCenter_Tests: XCTestCase {
         let dto = MessageNewEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique),
             user: .dummy(userId: .unique)
         )
@@ -313,7 +312,6 @@ final class EventNotificationCenter_Tests: XCTestCase {
             MessageNewEventDTO(
                 cid: channelId,
                 createdAt: Date(),
-                custom: [:],
                 message: message,
                 user: UserPayload.dummy(userId: .unique)
             )

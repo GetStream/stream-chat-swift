@@ -1,5 +1,4 @@
 {
-    "custom" : {},
     "type" : "user.presence.changed",
     "user" : {
         "id" : "steep-moon-9",

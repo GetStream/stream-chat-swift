@@ -237,7 +237,6 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             channel: channel,
             cid: channelId,
             createdAt: message.createdAt,
-            custom: [:],
             message: message,
             user: user
         )
@@ -251,10 +250,8 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             channel: channel,
             cid: channelId,
             createdAt: .unique(after: Date()),
-            custom: [:],
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadCount: 0,
             user: user
         )
     }
@@ -272,7 +269,6 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             channel: channel,
             cid: channelId,
             createdAt: .unique(after: Date()),
-            custom: [:],
             lastDeliveredAt: deliveredAt,
             lastDeliveredMessageId: messageId,
             user: user

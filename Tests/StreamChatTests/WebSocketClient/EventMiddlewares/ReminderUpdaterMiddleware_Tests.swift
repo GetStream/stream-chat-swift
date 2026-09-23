@@ -35,12 +35,9 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         )
         
         let event = ReminderCreatedEventDTO(
-            cid: cid,
             createdAt: Date(),
-            custom: [:],
             messageId: messageId,
-            reminder: reminderPayload,
-            userId: "test-user"
+            reminder: reminderPayload
         )
 
         // Save required data for reminder to reference
@@ -100,12 +97,9 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         )
         
         let event = ReminderUpdatedEventDTO(
-            cid: cid,
             createdAt: Date(),
-            custom: [:],
             messageId: messageId,
-            reminder: updatedReminderPayload,
-            userId: "test-user"
+            reminder: updatedReminderPayload
         )
 
         // Execute
@@ -145,12 +139,9 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         
         // Create due notification payload (same as the original in this case)
         let event = ReminderNotificationEventDTO(
-            cid: cid,
             createdAt: Date(),
-            custom: [:],
             messageId: messageId,
-            reminder: initialReminderPayload,
-            userId: "test-user"
+            reminder: initialReminderPayload
         )
 
         // Execute
@@ -191,12 +182,9 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
 
         // Create delete event payload
         let event = ReminderDeletedEventDTO(
-            cid: cid,
             createdAt: Date(),
-            custom: [:],
             messageId: messageId,
-            reminder: reminderPayload,
-            userId: "test-user"
+            reminder: reminderPayload
         )
         
         // Execute

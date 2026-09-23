@@ -155,7 +155,6 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
             channel: channel,
             cid: channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: message,
             reaction: reaction,
             user: user
@@ -194,7 +193,6 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
             channel: channel,
             cid: channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: message,
             reaction: reaction,
             user: user
@@ -233,7 +231,6 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
             channel: channel,
             cid: channel.cid,
             createdAt: .unique,
-            custom: [:],
             message: message,
             reaction: reaction,
             user: user

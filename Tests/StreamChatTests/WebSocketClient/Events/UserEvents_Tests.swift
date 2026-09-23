@@ -83,7 +83,6 @@ final class UserEvents_Tests: XCTestCase {
         // Create event DTO
         let dto = UserPresenceChangedEventDTO(
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -106,7 +105,6 @@ final class UserEvents_Tests: XCTestCase {
         // Create event DTO
         let dto = UserUpdatedEventDTO(
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -130,7 +128,6 @@ final class UserEvents_Tests: XCTestCase {
         let dto = UserWatchingStartEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique),
             watcherCount: 10
         )
@@ -158,7 +155,6 @@ final class UserEvents_Tests: XCTestCase {
         let dto = UserWatchingStopEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique),
             watcherCount: 10
         )
@@ -186,7 +182,6 @@ final class UserEvents_Tests: XCTestCase {
             cid: .unique,
             createdAt: .unique,
             createdBy: .dummy(userId: .unique),
-            custom: [:],
             expiration: .unique,
             reason: .unique,
             user: .dummy(userId: .unique)
@@ -216,7 +211,6 @@ final class UserEvents_Tests: XCTestCase {
         let dto = UserUnbannedEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -240,7 +234,6 @@ final class UserEvents_Tests: XCTestCase {
         // Create event DTO
         let dto = UserBannedEventDTO(
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -263,7 +256,6 @@ final class UserEvents_Tests: XCTestCase {
         // Create event DTO
         let dto = UserUnbannedEventDTO(
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 

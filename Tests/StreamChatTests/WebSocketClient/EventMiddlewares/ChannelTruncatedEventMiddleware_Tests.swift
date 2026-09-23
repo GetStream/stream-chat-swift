@@ -40,9 +40,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
         let event = ChannelTruncatedEventDTO(
             channel: .dummy(cid: .unique),
-            cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -63,9 +61,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         // Create channel truncate event
         let event = ChannelTruncatedEventDTO(
             channel: .dummy(cid: cid, truncatedAt: date),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 

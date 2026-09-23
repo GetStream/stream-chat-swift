@@ -205,14 +205,10 @@ final class NotificationsEvents_Tests: XCTestCase {
         let unreadCount = UnreadCountPayload(channels: .unique, messages: .unique, threads: .unique)
         let eventPayload = NotificationNewMessageEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: message,
-            messageId: message.id,
             totalUnreadCount: unreadCount.messages,
-            unreadChannels: unreadCount.channels,
-            watcherCount: 0
+            unreadChannels: unreadCount.channels
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -225,7 +221,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? NotificationMessageNewEvent)
-        XCTAssertEqual(event.channel.cid, eventPayload.cid)
+        XCTAssertEqual(event.channel.cid, cid)
         XCTAssertEqual(event.message.id, eventPayload.message.id)
         XCTAssert(event.unreadCount?.isEqual(toPayload: unreadCount) == true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
@@ -239,10 +235,8 @@ final class NotificationsEvents_Tests: XCTestCase {
         let unreadCount = UnreadCountPayload(channels: 12, messages: 34, threads: 10)
         let eventPayload = NotificationMarkReadEventDTO(
             createdAt: .unique,
-            custom: [:],
             totalUnreadCount: 34,
             unreadChannels: 12,
-            unreadCount: 34,
             unreadThreads: 10,
             user: .dummy(userId: .unique)
         )
@@ -273,12 +267,10 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             groupedUnreadChannels: unreadChannelCountsByGroup,
             lastReadMessageId: "lastRead",
             totalUnreadCount: 55,
             unreadChannels: 8,
-            unreadCount: 55,
             unreadThreads: 10,
             user: .dummy(userId: .unique)
         )
@@ -311,7 +303,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = NotificationMarkUnreadEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             firstUnreadMessageId: "Hello",
             groupedUnreadChannels: unreadChannelCountsByGroup,
             lastReadAt: lastReadAt,
@@ -347,7 +338,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         // Create event payload
         let eventPayload = NotificationMutesUpdatedEventDTO(
             createdAt: .unique,
-            custom: [:],
             me: .dummy(userId: .unique, role: .admin)
         )
 
@@ -372,7 +362,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = NotificationAddedToChannelEventDTO(
             channel: .dummy(cid: .unique),
             createdAt: .unique,
-            custom: [:],
             member: .dummy()
         )
 
@@ -405,7 +394,6 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -435,7 +423,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         // Create event payload
         let eventPayload = NotificationChannelMutesUpdatedEventDTO(
             createdAt: .unique,
-            custom: [:],
             me: .dummy(userId: .unique, role: .admin)
         )
 
@@ -460,7 +447,6 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -491,7 +477,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = NotificationInviteAcceptedEventDTO(
             channel: .dummy(cid: .unique),
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -523,7 +508,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let eventPayload = NotificationInviteRejectedEventDTO(
             channel: .dummy(cid: .unique),
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -557,7 +541,6 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             groupedUnreadChannels: unreadChannelCountsByGroup
         )
 

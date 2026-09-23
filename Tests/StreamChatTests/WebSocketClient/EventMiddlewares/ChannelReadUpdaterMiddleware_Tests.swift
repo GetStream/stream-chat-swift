@@ -104,7 +104,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: message.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: message,
             user: anotherUserPayload
@@ -133,7 +132,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: messageFromCurrentUser.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: messageFromCurrentUser,
             user: currentUserPayload
@@ -168,7 +166,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: messageFromMutedUser.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: messageFromMutedUser,
             user: anotherUserPayload
@@ -196,7 +193,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: softDeletedMessage.deletedAt!,
-            custom: [:],
             hardDelete: false,
             message: softDeletedMessage,
             user: anotherUserPayload
@@ -224,7 +220,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: silentMessage.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: silentMessage,
             user: anotherUserPayload
@@ -254,7 +249,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: threadReply.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: threadReply,
             user: anotherUserPayload
@@ -282,7 +276,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: systemMessage.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: systemMessage,
             user: anotherUserPayload
@@ -309,7 +302,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: message.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: message,
             user: anotherUserPayload
@@ -337,7 +329,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: message.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: message,
             user: anotherUserPayload
@@ -367,7 +358,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: message.deletedAt!,
-            custom: [:],
             hardDelete: true,
             message: message,
             user: anotherUserPayload
@@ -423,7 +413,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageNewEventDTO(
             cid: cid,
             createdAt: message.createdAt,
-            custom: [:],
             message: message,
             user: anotherUserPayload
         )
@@ -472,7 +461,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageNewEventDTO(
             cid: cid,
             createdAt: ownMessage.createdAt,
-            custom: [:],
             message: ownMessage,
             user: currentUserPayload
         )
@@ -525,7 +513,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let firstEvent = MessageNewEventDTO(
             cid: cid,
             createdAt: firstMessage.createdAt,
-            custom: [:],
             message: firstMessage,
             user: anotherUserPayload
         )
@@ -556,7 +543,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let secondEvent = MessageNewEventDTO(
             cid: cid,
             createdAt: secondMessage.createdAt,
-            custom: [:],
             message: secondMessage,
             user: anotherUserPayload
         )
@@ -596,7 +582,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: message.createdAt,
-            custom: [:],
             message: message,
             user: anotherUserPayload
         )
@@ -623,7 +608,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: messageFromCurrentUser.createdAt,
-            custom: [:],
             message: messageFromCurrentUser,
             user: currentUserPayload
         )
@@ -656,7 +640,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: messageFromMutedUser.createdAt,
-            custom: [:],
             message: messageFromMutedUser,
             user: anotherUserPayload
         )
@@ -682,7 +665,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: silentMessage.createdAt,
-            custom: [:],
             message: silentMessage,
             user: anotherUserPayload
         )
@@ -710,7 +692,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: threadReplyPayload.createdAt,
-            custom: [:],
             message: threadReplyPayload,
             user: anotherUserPayload
         )
@@ -739,7 +720,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: systemMessage.createdAt,
-            custom: [:],
             message: systemMessage,
             user: anotherUserPayload
         )
@@ -766,7 +746,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: shadowedMessage.createdAt,
-            custom: [:],
             message: shadowedMessage,
             user: anotherUserPayload
         )
@@ -792,7 +771,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageNewEvent = MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: regularMessageEarlierThanLastRead.createdAt,
-            custom: [:],
             message: regularMessageEarlierThanLastRead,
             user: anotherUserPayload
         )
@@ -902,12 +880,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             let oldMessage: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate))
             let oldMessageNewEvent = NotificationNewMessageEventDTO(
                 channel: .dummy(cid: channelId),
-                cid: channelId,
                 createdAt: .unique(before: oldReadDate),
-                custom: [:],
-                message: oldMessage,
-                messageId: oldMessage.id,
-                watcherCount: 0
+                message: oldMessage
             )
 
             nonisolated(unsafe) var handledEvent: Event?
@@ -926,12 +900,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             let message: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate))
             let messageNewEvent = NotificationNewMessageEventDTO(
                 channel: .dummy(cid: channelId),
-                cid: channelId,
                 createdAt: .unique(after: oldReadDate),
-                custom: [:],
-                message: message,
-                messageId: message.id,
-                watcherCount: 0
+                message: message
             )
 
             center.newMessageIdsMock = [message.id]
@@ -972,12 +942,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
         let messageNewEvent = NotificationNewMessageEventDTO(
             channel: .dummy(cid: channelId),
-            cid: channelId,
             createdAt: .unique(after: Date.distantPast),
-            custom: [:],
-            message: .dummy(messageId: messageId, authorUserId: user.id, createdAt: .unique(after: Date.distantPast)),
-            messageId: messageId,
-            watcherCount: 0
+            message: .dummy(messageId: messageId, authorUserId: user.id, createdAt: .unique(after: Date.distantPast))
         )
 
         try database.writeSynchronously { session in
@@ -1015,7 +981,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageReadEvent = MessageReadEventDTO(
             cid: channelId,
             createdAt: newReadDate,
-            custom: [:],
             user: dummyCurrentUser
         )
 
@@ -1061,7 +1026,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageReadEvent = MessageReadEventDTO(
             cid: channelId,
             createdAt: newReadDate,
-            custom: [:],
             user: dummyUser(id: memberId)
         )
 
@@ -1104,7 +1068,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageReadEvent = MessageReadEventDTO(
             cid: channelId,
             createdAt: newReadDate,
-            custom: [:],
             thread: .dummy(parentMessageId: .unique),
             user: dummyCurrentUser
         )
@@ -1173,10 +1136,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channel: channelDetailPayload,
             cid: channelDetailPayload.cid,
             createdAt: newReadDate,
-            custom: [:],
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadCount: 0,
             user: dummyCurrentUser
         )
 
@@ -1220,11 +1181,9 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channel: channelDetailPayload,
             cid: channelDetailPayload.cid,
             createdAt: newReadDate,
-            custom: [:],
             thread: .dummy(parentMessageId: .unique),
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadCount: 0,
             user: dummyCurrentUser
         )
 
@@ -1270,10 +1229,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channel: payload.channel,
             cid: payload.channel.cid,
             createdAt: newReadDate,
-            custom: [:],
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadCount: 0,
             user: dummyUser(id: memberId)
         )
 
@@ -1316,10 +1273,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let newReadDate = Date(timeIntervalSince1970: 2)
         let notificationMarkAllReadEvent = NotificationMarkReadEventDTO(
             createdAt: newReadDate,
-            custom: [:],
             totalUnreadCount: 124,
             unreadChannels: 19,
-            unreadCount: 0,
             unreadThreads: 20,
             user: dummyCurrentUser
         )
@@ -1496,9 +1451,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
         return ChannelUpdatedEventDTO(
             channel: updatedChannel,
-            cid: channelPayload.channel.cid,
             createdAt: .unique,
-            custom: [:],
             user: anotherUserPayload
         )
     }
@@ -1526,7 +1479,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         return MessageNewEventDTO(
             cid: channelPayload.channel.cid,
             createdAt: regularMessage.createdAt,
-            custom: [:],
             message: regularMessage,
             user: anotherUserPayload
         )

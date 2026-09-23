@@ -16,7 +16,6 @@ extension TypingStartEventDTO {
         TypingStartEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: member,
             user: .dummy(userId: userId)
         )
@@ -28,7 +27,6 @@ extension TypingStopEventDTO {
         TypingStopEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: userId)
         )
     }

@@ -219,9 +219,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         // Simulate incoming events.
         let eventPayload = ChannelUpdatedEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
-            createdAt: .unique,
-            custom: [:]
+            createdAt: .unique
         )
         try database.writeSynchronously {
             try $0.saveChannel(payload: eventPayload.channel, query: nil, cache: nil)

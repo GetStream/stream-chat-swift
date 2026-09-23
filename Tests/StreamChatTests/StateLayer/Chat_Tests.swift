@@ -969,7 +969,6 @@ final class Chat_Tests: XCTestCase {
         let queuedWSEventPayload1 = MessageUpdatedEventDTO(
             cid: channelId,
             createdAt: Date(),
-            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 text: textUpdate1,
@@ -985,7 +984,6 @@ final class Chat_Tests: XCTestCase {
         let queuedWSEventPayload2 = MessageUpdatedEventDTO(
             cid: channelId,
             createdAt: Date(),
-            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 text: textUpdate2,

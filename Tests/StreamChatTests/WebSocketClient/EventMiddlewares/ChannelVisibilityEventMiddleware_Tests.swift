@@ -48,7 +48,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: .unique,
             clearHistory: false,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
         var forwardedEvent = middleware.handle(event: hiddenEvent, session: database.viewContext)
@@ -61,7 +60,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
         forwardedEvent = middleware.handle(event: visibleEvent, session: database.viewContext)
@@ -79,7 +77,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid,
             clearHistory: false,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -103,7 +100,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid,
             clearHistory: false,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -134,7 +130,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid,
             clearHistory: true,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -160,7 +155,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -192,7 +186,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let event = MessageNewEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique),
             user: .dummy(userId: .unique)
         )
@@ -219,7 +212,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let event = MessageNewEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
             user: .dummy(userId: .unique)
         )
@@ -246,7 +238,6 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let event = MessageNewEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique, campaignId: "campaign_123"),
             user: .dummy(userId: .unique)
         )
@@ -273,12 +264,8 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         let event = NotificationNewMessageEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            watcherCount: 0
+            message: message
         )
 
         // Create a channel in the DB with `isHidden` set to true
@@ -303,12 +290,8 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true)
         let event = NotificationNewMessageEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            watcherCount: 0
+            message: message
         )
 
         // Create a channel in the DB with `isHidden` set to true
@@ -333,12 +316,8 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, campaignId: "campaign_123")
         let event = NotificationNewMessageEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            watcherCount: 0
+            message: message
         )
 
         // Create a channel in the DB with `isHidden` set to true

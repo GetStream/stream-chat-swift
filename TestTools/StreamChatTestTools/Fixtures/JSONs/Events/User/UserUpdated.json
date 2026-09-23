@@ -1,5 +1,4 @@
 {
-  "custom" : {},
   "type" : "user.updated",
   "user" : {
     "banned" : false,

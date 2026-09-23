@@ -599,10 +599,8 @@ final class ChannelList_Tests: XCTestCase {
             channel: channelPayloadWithoutBlockedAndHidden,
             cid: channelPayloadWithoutBlockedAndHidden.cid,
             createdAt: Date(),
-            custom: [:],
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadCount: 0,
             user: .dummy(userId: memberId)
         ))
         let expectation = XCTestExpectation()

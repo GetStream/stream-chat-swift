@@ -40,7 +40,6 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     func test_whenDatabaseWriteFails_eventIsForwarded() throws {
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -69,7 +68,6 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         let updatedUserPayload = UserPayload.dummy(userId: userId, name: "Updated name")
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
-            custom: [:],
             user: updatedUserPayload
         )
 
@@ -99,7 +97,6 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         let updatedUserPayload = UserPayload.dummy(userId: currentUserId, name: "Name 2")
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
-            custom: [:],
             user: updatedUserPayload
         )
 

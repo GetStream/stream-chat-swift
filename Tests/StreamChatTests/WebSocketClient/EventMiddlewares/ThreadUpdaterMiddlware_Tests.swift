@@ -32,7 +32,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             thread: .dummy(parentMessageId: .unique),
             user: .dummy(userId: .unique)
         )
@@ -48,7 +47,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let event = NotificationMarkUnreadEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             firstUnreadMessageId: "Hello",
             lastReadAt: .unique,
             lastReadMessageId: nil, // This must be nil to be considered thread event
@@ -72,11 +70,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            threadId: parentMessageId,
-            watcherCount: 0
+            message: message
         )
 
         try database.writeSynchronously { session in
@@ -116,11 +110,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            threadId: parentMessageId,
-            watcherCount: 0
+            message: message
         )
 
         try database.writeSynchronously { session in
@@ -152,11 +142,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            threadId: parentMessageId,
-            watcherCount: 0
+            message: message
         )
 
         try database.writeSynchronously { session in
@@ -197,11 +183,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
-            message: message,
-            messageId: message.id,
-            threadId: parentMessageId,
-            watcherCount: 0
+            message: message
         )
 
         try database.writeSynchronously { session in
@@ -243,9 +225,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         let event = ChannelDeletedEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -283,9 +263,7 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         let event = ChannelTruncatedEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 
@@ -325,7 +303,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             hardDelete: false,
             message: .dummy(messageId: .unique, parentId: parentMessageId),
             user: .dummy(userId: .unique)
@@ -359,7 +336,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             hardDelete: false,
             message: .dummy(messageId: parentMessageId),
             user: .dummy(userId: .unique)
@@ -393,7 +369,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageDeletedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             hardDelete: true,
             message: .dummy(messageId: parentMessageId),
             user: .dummy(userId: .unique)
@@ -427,7 +402,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageUpdatedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: .unique),
             user: .dummy(userId: .unique)
         )
@@ -460,7 +434,6 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let event = MessageUpdatedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: nil),
             user: .dummy(userId: .unique)
         )

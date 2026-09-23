@@ -75,7 +75,6 @@ final class TypingEvent_Tests: XCTestCase {
         let eventPayload = TypingStartEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             parentId: .unique,
             user: .dummy(userId: .unique)
         )
@@ -95,7 +94,6 @@ final class TypingEvent_Tests: XCTestCase {
         let eventPayload = TypingStopEventDTO(
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             user: .dummy(userId: .unique)
         )
 

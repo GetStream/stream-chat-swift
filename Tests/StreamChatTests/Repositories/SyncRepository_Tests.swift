@@ -979,7 +979,6 @@ extension SyncRepository_Tests {
                 MessageNewEventDTO(
                     cid: cid,
                     createdAt: $0,
-                    custom: [:],
                     message: .dummy(messageId: "\($0)", authorUserId: .unique, latestReactions: [], cid: cid),
                     user: .dummy(userId: "")
                 )

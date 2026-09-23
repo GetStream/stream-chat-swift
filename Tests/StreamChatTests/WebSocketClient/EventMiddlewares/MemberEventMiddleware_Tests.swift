@@ -45,7 +45,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -71,7 +70,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
             user: .dummy(userId: userId)
         )
@@ -118,7 +116,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: newMemberId)),
             user: .dummy(userId: newMemberId)
         )
@@ -168,7 +165,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: newMemberId)),
             user: .dummy(userId: newMemberId)
         )
@@ -207,7 +203,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: channelPayload.channel,
             cid: channelPayload.channel.cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: newMemberId)),
             user: .dummy(userId: newMemberId)
         )
@@ -231,8 +226,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
-            member: .dummy(),
             user: .dummy(userId: .unique)
         )
 
@@ -294,8 +287,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
-            member: .dummy(user: .dummy(userId: memberId)),
             user: .dummy(userId: memberId)
         )
 
@@ -344,8 +335,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: channelPayload.channel,
             cid: channelPayload.channel.cid,
             createdAt: .unique,
-            custom: [:],
-            member: member,
             user: member.user
         )
         _ = middleware.handle(event: event, session: mockSession)
@@ -363,7 +352,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             cid: .unique,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -402,7 +390,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
             user: .dummy(userId: .unique)
         )
@@ -437,9 +424,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create NotificationAddedToChannelEvent payload
         let event = NotificationAddedToChannelEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy()
         )
 
@@ -486,9 +471,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create NotificationAddedToChannelEvent payload
         let event = NotificationAddedToChannelEventDTO(
             channel: .dummy(cid: cid),
-            cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: newMemberId))
         )
 
@@ -549,7 +532,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
             user: .dummy(userId: .unique)
         )
@@ -575,7 +557,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -625,7 +606,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: cid),
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             member: .dummy(user: .dummy(userId: newMemberId)),
             user: .dummy(userId: newMemberId)
         )
@@ -666,7 +646,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = NotificationInviteAcceptedEventDTO(
             channel: .dummy(cid: cid),
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )
@@ -716,7 +695,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = NotificationInviteRejectedEventDTO(
             channel: .dummy(cid: cid),
             createdAt: .unique,
-            custom: [:],
             member: .dummy(),
             user: .dummy(userId: .unique)
         )

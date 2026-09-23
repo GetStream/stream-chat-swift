@@ -148,7 +148,6 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let eventPayload = MessageNewEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             totalUnreadCount: unreadCount.messages,
             unreadChannels: unreadCount.channels,
@@ -187,7 +186,6 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let eventPayload = MessageUpdatedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             user: .dummy(userId: .unique)
         )
@@ -219,7 +217,6 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let eventPayload = MessageDeletedEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
             user: .dummy(userId: .unique)
         )
@@ -253,7 +250,6 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let eventPayload = MessageReadEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             thread: .dummy(
                 parentMessageId: parentMessageId,
                 channel: .dummy(cid: cid),
@@ -298,7 +294,6 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let eventPayload = MessageReadEventDTO(
             cid: cid,
             createdAt: .unique,
-            custom: [:],
             team: teamId,
             user: .dummy(userId: .unique)
         )
