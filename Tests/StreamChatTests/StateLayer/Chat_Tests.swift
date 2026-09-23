@@ -966,9 +966,10 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse())) // typing indicator
         env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessageResponse.dummy(message: .dummy()))) // update message
         try await chat.updateMessage(messageId, text: textUpdate1)
-        let queuedWSEventPayload1 = EventPayload(
-            eventType: .messageUpdated,
+        let queuedWSEventPayload1 = MessageUpdatedEventDTO(
             cid: channelId,
+            createdAt: Date(),
+            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 text: textUpdate1,
@@ -981,9 +982,10 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(UpdateMessageResponse.dummy(message: .dummy()))) // update message
         let textUpdate2 = "Editted text 2"
         try await chat.updateMessage(messageId, text: textUpdate2)
-        let queuedWSEventPayload2 = EventPayload(
-            eventType: .messageUpdated,
+        let queuedWSEventPayload2 = MessageUpdatedEventDTO(
             cid: channelId,
+            createdAt: Date(),
+            custom: [:],
             message: .dummy(
                 messageId: messageId,
                 text: textUpdate2,
@@ -994,13 +996,13 @@ final class Chat_Tests: XCTestCase {
         
         // Web-socket events coming in with a delay
         try await env.client.databaseContainer.write { session in
-            try session.saveEvent(payload: queuedWSEventPayload1)
+            try session.saveEvent(event: .typeMessageUpdatedEvent(queuedWSEventPayload1))
         }
         let currentTextAfterEvent1 = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)).text }
         XCTAssertEqual(textUpdate2, currentTextAfterEvent1, "Latest edit should persist")
         
         try await env.client.databaseContainer.write { session in
-            try session.saveEvent(payload: queuedWSEventPayload2)
+            try session.saveEvent(event: .typeMessageUpdatedEvent(queuedWSEventPayload2))
         }
         let currentTextAfterEvent2 = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)).text }
         XCTAssertEqual(textUpdate2, currentTextAfterEvent2, "Latest edit should persist")

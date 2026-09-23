@@ -8,11 +8,11 @@ import Foundation
 extension EndpointPath: Equatable {
     public static func == (_ lhs: EndpointPath, _ rhs: EndpointPath) -> Bool {
         switch (lhs, rhs) {
-        case (.connect, .connect): return true
+        case let (.custom(path1), .custom(path2)): return path1 == path2
         case (.sync, .sync): return true
         case (.queryUsers, .queryUsers): return true
         case (.updateUsersPartial, .updateUsersPartial): return true
-        case (.guest, .guest): return true
+        case (.createGuest, .createGuest): return true
         case (.queryMembers, .queryMembers): return true
         case let (.updateMemberPartial(type1, id1), .updateMemberPartial(type2, id2)): return type1 == type2 && id1 == id2
         case (.search, .search): return true

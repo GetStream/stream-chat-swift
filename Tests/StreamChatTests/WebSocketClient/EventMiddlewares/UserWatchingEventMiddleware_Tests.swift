@@ -38,12 +38,12 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userStartWatching,
+        let event = UserWatchingStartEventDTO(
             cid: .unique,
+            createdAt: Date.unique,
+            custom: [:],
             user: .dummy(userId: .unique),
-            watcherCount: .random(in: 0...10),
-            createdAt: Date.unique
+            watcherCount: .random(in: 0...10)
         )
 
         // Set error to be thrown on write.
@@ -52,7 +52,6 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         session.errorToReturn = error
 
         // Simulate and handle user watching event.
-        let event = try UserWatchingEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
@@ -64,14 +63,13 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let userId = UserId.unique
         let watcherCount = Int.random(in: 100...200)
         // Create userStartWatching event
-        let eventPayload: EventPayload = .init(
-            eventType: .userStartWatching,
+        let event = UserWatchingStartEventDTO(
             cid: cid,
+            createdAt: .unique,
+            custom: [:],
             user: .dummy(userId: userId),
-            watcherCount: watcherCount,
-            createdAt: .unique
+            watcherCount: watcherCount
         )
-        let event = try UserWatchingEventDTO(from: eventPayload)
 
         // Channel and user must exist for the middleware to work
         try database.createChannel(cid: cid, withMessages: false)
@@ -102,14 +100,13 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let watchingUserId = database.viewContext.channel(cid: cid)!.watchers.first!.id
         let watcherCount = Int.random(in: 100...200)
         // Create userStopWatching event
-        let eventPayload: EventPayload = .init(
-            eventType: .userStopWatching,
+        let event = UserWatchingStopEventDTO(
             cid: cid,
+            createdAt: .unique,
+            custom: [:],
             user: .dummy(userId: watchingUserId),
-            watcherCount: watcherCount,
-            createdAt: .unique
+            watcherCount: watcherCount
         )
-        let event = try UserWatchingEventDTO(from: eventPayload)
 
         // Simulate incoming event
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)

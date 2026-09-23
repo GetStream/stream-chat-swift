@@ -38,7 +38,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_requiredQueryItems() throws {
         // Prepare a new endpoint
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -57,7 +57,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringToken_hasCorrectHeaders_ifTokenIsProvided() throws {
         // Prepare a new endpoint
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             requiresConnectionId: false,
             requiresToken: true
@@ -78,7 +78,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringToken_hasCorrectHeaders_ifAnonymousTokenIsProvided() throws {
         // Prepare a new endpoint
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             requiresConnectionId: false,
             requiresToken: true
@@ -97,7 +97,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringToken_isCancelled_ifNilTokenIsProvided() throws {
         // Prepare a new endpoint.
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             requiresConnectionId: false,
             requiresToken: true
@@ -120,7 +120,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringToken_whenTokenProviderTimeouts_returnsCorrectError() throws {
         // Prepare a new endpoint.
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             requiresConnectionId: false,
             requiresToken: true
@@ -140,7 +140,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringToken_whenTokenProviderFailsWithUnknownError_returnsMissingTokenError() throws {
         // Prepare a new endpoint.
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             requiresConnectionId: false,
             requiresToken: true
@@ -160,7 +160,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringConnectionId_hasCorrectQueryItems_ifConnectionIdIsProvided() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -183,7 +183,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringConnectionId_isCanceled_ifNilConnectionIdIsProvided() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -208,7 +208,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringConnectionId_whenConnectionIdProviderTimeouts_returnsCorrectError() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -230,7 +230,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringConnectionId_whenConnectionIdFailsWithUnknownError_returnsMissingConnectionIdError() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -252,7 +252,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_endpointRequiringConnectionIdAndToken_isEncodedCorrectly_ifBothAreProvided() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -281,7 +281,7 @@ final class RequestEncoder_Tests: XCTestCase {
 
     func test_encodeRequest_syncVersion_whenEndpointRequiresConnectionId_shouldReturnRequest() {
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -296,7 +296,7 @@ final class RequestEncoder_Tests: XCTestCase {
 
     func test_encodeRequest_syncVersion_whenEndpointRequiresConnectionId_whenConnectionFails_shouldThrow() {
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -314,7 +314,7 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Prepare a request with query items
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .post,
             queryItems: ["stringValue": testStringValue],
             requiresConnectionId: false,
@@ -330,7 +330,7 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(request.url?.scheme, baseURL.scheme)
         XCTAssertEqual(request.url?.host, baseURL.host)
         XCTAssertEqual(request.url?.port, baseURL.port)
-        XCTAssertEqual(request.url?.path, "/" + endpoint.path.value)
+        XCTAssertEqual(request.url?.path, endpoint.path.value)
 
         // Check custom query items
         let urlComponenets = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
@@ -370,7 +370,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_encodingRequestBody_POST() throws {
         // Prepare a POST endpoint with JSON body
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -393,7 +393,7 @@ final class RequestEncoder_Tests: XCTestCase {
         let bodyAsData = try JSONEncoder.stream.encode(TestUser(name: "Luke", age: 22))
 
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -439,7 +439,7 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Prepare a POST endpoint with JSON body
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -460,7 +460,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_encodingRequestBody_PATCH() throws {
         // Prepare a PATCH endpoint with JSON body
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
@@ -483,7 +483,7 @@ final class RequestEncoder_Tests: XCTestCase {
         let bodyAsData = try JSONEncoder.stream.encode(TestUser(name: "Luke", age: 22))
 
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
@@ -502,7 +502,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_encodingRequestWithoutBody_PATCH() throws {
         // Prepare a PATCH endpoint without JSON body
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
@@ -524,7 +524,7 @@ final class RequestEncoder_Tests: XCTestCase {
         let testName = "Leia1234567890 (`!@£$%^&*_-+=\\|]}{['\";:/?.>,<£#¢§ˆ¶¨¡€@№`)+♥️;"
         // Prepare a GET endpoint with JSON body
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -567,7 +567,7 @@ final class RequestEncoder_Tests: XCTestCase {
             "user2": TestUser(name: "Leia is the best! + ♥️", age: 22)
         ])
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -597,7 +597,7 @@ final class RequestEncoder_Tests: XCTestCase {
     func test_encodingGETRequestBody_withQueryItems() throws {
         // Prepare a GET endpoint with both, the query items and JSON body
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: ["father": "Anakin"],
             requiresConnectionId: false,
@@ -625,7 +625,7 @@ final class RequestEncoder_Tests: XCTestCase {
         let bodyAsData = try JSONEncoder.stream.encode(["user": TestUser(name: "Luke", age: 22)])
 
         let endpoint = Endpoint<Data>(
-            path: .guest,
+            path: .createGuest,
             method: .get,
             queryItems: queryItemsData,
             requiresConnectionId: false,

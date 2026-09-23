@@ -1,4 +1,5 @@
 {
+  "custom": {},
   "type": "notification.removed_from_channel",
   "cid": "messaging:91DC91CC-0",
   "channel_id": "91DC91CC-0",
@@ -7,6 +8,8 @@
     "id": "91DC91CC-0",
     "type": "messaging",
     "cid": "messaging:91DC91CC-0",
+    "created_at": "2022-08-30T15:15:56.430062017Z",
+    "updated_at": "2022-08-30T15:15:56.430062017Z",
     "created_by": null,
     "disabled": false,
     "frozen": false,
@@ -34,7 +37,21 @@
         "channel_role": ""
       }
     ],
-    "config": {}
+    "config": {
+      "reactions": true,
+      "typing_events": true,
+      "read_events": true,
+      "connect_events": true,
+      "replies": true,
+      "quotes": true,
+      "search": true,
+      "mutes": true,
+      "url_enrichment": true,
+      "message_retention": "infinite",
+      "max_message_length": 5000,
+      "created_at": "2021-03-01T19:26:18.406502Z",
+      "updated_at": "2021-03-01T19:26:18.406502Z"
+    }
   },
   "member": {
     "user_id": "leia_organa",

@@ -101,15 +101,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: message,
-                createdAt: message.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: message.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: message,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -132,15 +130,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: currentUserPayload,
-                message: messageFromCurrentUser,
-                createdAt: messageFromCurrentUser.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: messageFromCurrentUser.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: messageFromCurrentUser,
+            user: currentUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -169,15 +165,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: messageFromMutedUser,
-                createdAt: messageFromMutedUser.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: messageFromMutedUser.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: messageFromMutedUser,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -199,15 +193,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: softDeletedMessage,
-                createdAt: softDeletedMessage.deletedAt!,
-                hardDelete: false
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: softDeletedMessage.deletedAt!,
+            custom: [:],
+            hardDelete: false,
+            message: softDeletedMessage,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -229,15 +221,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isSilent: true
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: silentMessage,
-                createdAt: silentMessage.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: silentMessage.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: silentMessage,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -261,15 +251,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: threadReply,
-                createdAt: threadReply.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: threadReply.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: threadReply,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -291,15 +279,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: systemMessage,
-                createdAt: systemMessage.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: systemMessage.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: systemMessage,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -320,15 +306,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: message,
-                createdAt: message.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: message.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: message,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -350,15 +334,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: message,
-                createdAt: message.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: message.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: message,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -382,15 +364,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
-        let event = try MessageDeletedEventDTO(
-            from: .init(
-                eventType: .messageDeleted,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: message,
-                createdAt: message.deletedAt!,
-                hardDelete: true
-            )
+        let event = MessageDeletedEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: message.deletedAt!,
+            custom: [:],
+            hardDelete: true,
+            message: message,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -440,13 +420,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             authorUserId: anotherUserPayload.id,
             createdAt: Date()
         )
-        let event = try MessageNewEventDTO(from: .init(
-            eventType: .messageNew,
+        let event = MessageNewEventDTO(
             cid: cid,
-            user: anotherUserPayload,
+            createdAt: message.createdAt,
+            custom: [:],
             message: message,
-            createdAt: message.createdAt
-        ))
+            user: anotherUserPayload
+        )
         center.newMessageIdsMock = [messageId]
 
         try database.writeSynchronously { session in
@@ -489,13 +469,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             authorUserId: currentUserPayload.id,
             createdAt: Date()
         )
-        let event = try MessageNewEventDTO(from: .init(
-            eventType: .messageNew,
+        let event = MessageNewEventDTO(
             cid: cid,
-            user: currentUserPayload,
+            createdAt: ownMessage.createdAt,
+            custom: [:],
             message: ownMessage,
-            createdAt: ownMessage.createdAt
-        ))
+            user: currentUserPayload
+        )
         center.newMessageIdsMock = [messageId]
 
         try database.writeSynchronously { session in
@@ -542,13 +522,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             authorUserId: anotherUserPayload.id,
             createdAt: Date()
         )
-        let firstEvent = try MessageNewEventDTO(from: .init(
-            eventType: .messageNew,
+        let firstEvent = MessageNewEventDTO(
             cid: cid,
-            user: anotherUserPayload,
+            createdAt: firstMessage.createdAt,
+            custom: [:],
             message: firstMessage,
-            createdAt: firstMessage.createdAt
-        ))
+            user: anotherUserPayload
+        )
         center.newMessageIdsMock = [firstMessageId]
         try database.writeSynchronously { session in
             _ = self.middleware.handle(event: firstEvent, session: session)
@@ -573,13 +553,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             authorUserId: anotherUserPayload.id,
             createdAt: markReadAt.addingTimeInterval(1)
         )
-        let secondEvent = try MessageNewEventDTO(from: .init(
-            eventType: .messageNew,
+        let secondEvent = MessageNewEventDTO(
             cid: cid,
-            user: anotherUserPayload,
+            createdAt: secondMessage.createdAt,
+            custom: [:],
             message: secondMessage,
-            createdAt: secondMessage.createdAt
-        ))
+            user: anotherUserPayload
+        )
         center.newMessageIdsMock = [secondMessageId]
         try database.writeSynchronously { session in
             _ = self.middleware.handle(event: secondEvent, session: session)
@@ -613,14 +593,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: message,
-                createdAt: message.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: message.createdAt,
+            custom: [:],
+            message: message,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -642,14 +620,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isSilent: false
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: currentUserPayload,
-                message: messageFromCurrentUser,
-                createdAt: messageFromCurrentUser.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: messageFromCurrentUser.createdAt,
+            custom: [:],
+            message: messageFromCurrentUser,
+            user: currentUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -677,14 +653,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: messageFromMutedUser,
-                createdAt: messageFromMutedUser.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: messageFromMutedUser.createdAt,
+            custom: [:],
+            message: messageFromMutedUser,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -705,14 +679,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isSilent: true
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: silentMessage,
-                createdAt: silentMessage.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: silentMessage.createdAt,
+            custom: [:],
+            message: silentMessage,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -735,14 +707,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: threadReplyPayload,
-                createdAt: threadReplyPayload.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: threadReplyPayload.createdAt,
+            custom: [:],
+            message: threadReplyPayload,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -766,14 +736,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Mark id as new message
         center.newMessageIdsMock = [systemMessage.id]
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: systemMessage,
-                createdAt: systemMessage.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: systemMessage.createdAt,
+            custom: [:],
+            message: systemMessage,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -795,14 +763,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isShadowed: true
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: shadowedMessage,
-                createdAt: shadowedMessage.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: shadowedMessage.createdAt,
+            custom: [:],
+            message: shadowedMessage,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -823,14 +789,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: currentUserReadPayload.lastRead.addingTimeInterval(-1)
         )
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: regularMessageEarlierThanLastRead,
-                createdAt: regularMessageEarlierThanLastRead.createdAt
-            )
+        let messageNewEvent = MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: regularMessageEarlierThanLastRead.createdAt,
+            custom: [:],
+            message: regularMessageEarlierThanLastRead,
+            user: anotherUserPayload
         )
 
         try database.writeSynchronously { session in
@@ -935,15 +899,16 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         ].forEach { (user, expectedCount) in
             // Create a MessageNewEvent with a `createdAt` date before `oldReadDate`
-            let eldEventPayload = EventPayload(
-                eventType: .notificationMessageNew,
-                cid: channelId,
-                user: user,
+            let oldMessage: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate))
+            let oldMessageNewEvent = NotificationNewMessageEventDTO(
                 channel: .dummy(cid: channelId),
-                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
-                createdAt: .unique(before: oldReadDate)
+                cid: channelId,
+                createdAt: .unique(before: oldReadDate),
+                custom: [:],
+                message: oldMessage,
+                messageId: oldMessage.id,
+                watcherCount: 0
             )
-            let oldMessageNewEvent = try NotificationMessageNewEventDTO(from: eldEventPayload)
 
             nonisolated(unsafe) var handledEvent: Event?
             try database.writeSynchronously { session in
@@ -958,21 +923,18 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
 
             // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
-            let eventPayload = EventPayload(
-                eventType: .notificationMessageNew,
-                cid: channelId,
-                user: user,
+            let message: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate))
+            let messageNewEvent = NotificationNewMessageEventDTO(
                 channel: .dummy(cid: channelId),
-                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
-                createdAt: .unique(after: oldReadDate)
+                cid: channelId,
+                createdAt: .unique(after: oldReadDate),
+                custom: [:],
+                message: message,
+                messageId: message.id,
+                watcherCount: 0
             )
-            let messageNewEvent = try NotificationMessageNewEventDTO(from: eventPayload)
 
-            guard let messageId = eventPayload.message?.id else {
-                XCTFail("Should have a message")
-                return
-            }
-            center.newMessageIdsMock = [messageId]
+            center.newMessageIdsMock = [message.id]
 
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
@@ -1008,15 +970,15 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertTrue(loadedChannel?.reads.isEmpty ?? false)
 
         // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            cid: channelId,
-            user: user,
+        let messageNewEvent = NotificationNewMessageEventDTO(
             channel: .dummy(cid: channelId),
+            cid: channelId,
+            createdAt: .unique(after: Date.distantPast),
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: user.id, createdAt: .unique(after: Date.distantPast)),
-            createdAt: .unique(after: Date.distantPast)
+            messageId: messageId,
+            watcherCount: 0
         )
-        let messageNewEvent = try NotificationMessageNewEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             // Let the middleware handle the event
@@ -1050,15 +1012,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a MessageReadEvent
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
-        // Create EventPayload for MessageReadEvent
-        let eventPayload = EventPayload(
-            eventType: .messageRead,
+        let messageReadEvent = MessageReadEventDTO(
             cid: channelId,
-            user: dummyCurrentUser,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: newReadDate
+            createdAt: newReadDate,
+            custom: [:],
+            user: dummyCurrentUser
         )
-        let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
@@ -1099,15 +1058,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Create a MessageReadEvent from a channel member (but not currentUser)
         let newReadDate = Date(timeIntervalSince1970: 2)
-        // Create EventPayload for MessageReadEvent
-        let eventPayload = EventPayload(
-            eventType: .messageRead,
+        let messageReadEvent = MessageReadEventDTO(
             cid: channelId,
-            user: dummyUser(id: memberId),
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: newReadDate
+            createdAt: newReadDate,
+            custom: [:],
+            user: dummyUser(id: memberId)
         )
-        let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
         // Middleware should create a read event for the member
@@ -1145,15 +1101,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a MessageReadEvent
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
-        let threadEventPayload = EventPayload(
-            eventType: .messageRead,
+        let messageReadEvent = MessageReadEventDTO(
             cid: channelId,
-            user: dummyCurrentUser,
-            unreadCount: .init(channels: 0, messages: 0, threads: 5),
             createdAt: newReadDate,
-            thread: .success(.dummy(parentMessageId: .unique))
+            custom: [:],
+            thread: .dummy(parentMessageId: .unique),
+            user: dummyCurrentUser
         )
-        let messageReadEvent = try MessageReadEventDTO(from: threadEventPayload)
 
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
@@ -1215,16 +1169,16 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             team: "",
             cooldownDuration: .random(in: 0...120)
         )
-        // Create EventPayload for NotificationMarkReadEvent
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: channelDetailPayload.cid,
-            user: dummyCurrentUser,
+        let notificationMarkReadEvent = NotificationMarkReadEventDTO(
             channel: channelDetailPayload,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: newReadDate
+            cid: channelDetailPayload.cid,
+            createdAt: newReadDate,
+            custom: [:],
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            user: dummyCurrentUser
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
@@ -1262,16 +1216,17 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: channelId)
-        let threadEventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: channelDetailPayload.cid,
-            user: dummyCurrentUser,
+        let notificationMarkReadEvent = NotificationMarkReadEventDTO(
             channel: channelDetailPayload,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
+            cid: channelDetailPayload.cid,
             createdAt: newReadDate,
-            thread: .success(.dummy(parentMessageId: .unique))
+            custom: [:],
+            thread: .dummy(parentMessageId: .unique),
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            user: dummyCurrentUser
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: threadEventPayload)
 
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
@@ -1311,16 +1266,16 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Create a NotificationMarkReadEvent from a channel member (but not currentUser)
         let newReadDate = Date(timeIntervalSince1970: 2)
-        // Create EventPayload for NotificationMarkReadEvent
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: payload.channel.cid,
-            user: dummyUser(id: memberId),
+        let messageReadEvent = NotificationMarkReadEventDTO(
             channel: payload.channel,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: newReadDate
+            cid: payload.channel.cid,
+            createdAt: newReadDate,
+            custom: [:],
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            user: dummyUser(id: memberId)
         )
-        let messageReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
         // Middleware should create a read event for the member
@@ -1359,14 +1314,15 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a NotificationMarkAllReadEvent
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
-        // Create EventPayload for NotificationMarkAllReadEvent
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            user: dummyCurrentUser,
-            unreadCount: .init(channels: 19, messages: 124, threads: 20),
-            createdAt: newReadDate
+        let notificationMarkAllReadEvent = NotificationMarkReadEventDTO(
+            createdAt: newReadDate,
+            custom: [:],
+            totalUnreadCount: 124,
+            unreadChannels: 19,
+            unreadCount: 0,
+            unreadThreads: 20,
+            user: dummyCurrentUser
         )
-        let notificationMarkAllReadEvent = try NotificationMarkAllReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext)
@@ -1402,7 +1358,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
 
         // Create an event that won't be handled by this middleware
-        let startTypingEvent = TypingEventDTO.startTyping(cid: channelId, userId: payload.members.first!.user!.id)
+        let startTypingEvent = TypingStartEventDTO.startTyping(cid: channelId, userId: payload.members.first!.user!.id)
 
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: startTypingEvent, session: database.viewContext)
@@ -1538,13 +1494,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: channelPayload.channel.cid,
             extraData: extraData
         )
-        return try ChannelUpdatedEventDTO(from: EventPayload(
-            eventType: .channelUpdated,
-            cid: channelPayload.channel.cid,
-            user: anotherUserPayload,
+        return ChannelUpdatedEventDTO(
             channel: updatedChannel,
-            createdAt: .unique
-        ))
+            cid: channelPayload.channel.cid,
+            createdAt: .unique,
+            custom: [:],
+            user: anotherUserPayload
+        )
     }
 
     private func linkChannelToGroupedQueries(_ groupKeys: [String], session: DatabaseSession) {
@@ -1567,14 +1523,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isSilent: false
         )
 
-        return try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: regularMessage,
-                createdAt: regularMessage.createdAt
-            )
+        return MessageNewEventDTO(
+            cid: channelPayload.channel.cid,
+            createdAt: regularMessage.createdAt,
+            custom: [:],
+            message: regularMessage,
+            user: anotherUserPayload
         )
     }
 }

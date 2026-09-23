@@ -1,4 +1,21 @@
 {
+  "custom": {},
+  "member": {
+    "created_at": "2020-07-20T16:42:20.040635Z",
+    "user_id": "r2-d2",
+    "updated_at": "2020-07-20T16:42:20.040635Z",
+    "user": {
+      "id": "r2-d2",
+      "role": "user",
+      "created_at": "2020-12-07T11:37:35.98087Z",
+      "updated_at": "2021-04-15T12:21:26.713041Z",
+      "last_active": "2021-04-23T05:59:55.497672433Z",
+      "banned": false,
+      "online": false,
+      "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+      "name": "R2-D2"
+    }
+  },
   "type": "member.removed",
   "cid": "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
   "channel_id": "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",

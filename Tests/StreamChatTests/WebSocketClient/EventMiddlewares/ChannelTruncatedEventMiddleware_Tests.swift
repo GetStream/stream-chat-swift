@@ -38,12 +38,12 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .channelTruncated,
-            cid: .unique,
-            user: .dummy(userId: .unique),
+        let event = ChannelTruncatedEventDTO(
             channel: .dummy(cid: .unique),
-            createdAt: .unique
+            cid: .unique,
+            createdAt: .unique,
+            custom: [:],
+            user: .dummy(userId: .unique)
         )
 
         // Set error to be thrown on write.
@@ -51,7 +51,6 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
 
         // Simulate and handle channel truncated event.
-        let event = try ChannelTruncatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
@@ -62,14 +61,13 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let date = Date()
         // Create channel truncate event
-        let eventPayload: EventPayload = .init(
-            eventType: .channelTruncated,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let event = ChannelTruncatedEventDTO(
             channel: .dummy(cid: cid, truncatedAt: date),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            user: .dummy(userId: .unique)
         )
-        let event = try ChannelTruncatedEventDTO(from: eventPayload)
 
         try database.createChannel(cid: cid, withMessages: true, truncatedAt: nil)
 
@@ -81,7 +79,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
         // Assert the `truncatedAt` value is updated
         let truncatedAt = database.viewContext.channel(cid: cid)?.truncatedAt as? Date
-        XCTAssertNearlySameDate(truncatedAt, eventPayload.channel?.truncatedAt)
+        XCTAssertNearlySameDate(truncatedAt, event.channel.truncatedAt)
         XCTAssertNearlySameDate(truncatedAt, date)
         XCTAssert(forwardedEvent is ChannelTruncatedEventDTO)
     }

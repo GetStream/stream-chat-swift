@@ -38,10 +38,10 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     }
 
     func test_whenDatabaseWriteFails_eventIsForwarded() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: .dummy(userId: .unique),
-            createdAt: Date.unique
+        let event = UserUpdatedEventDTO(
+            createdAt: Date.unique,
+            custom: [:],
+            user: .dummy(userId: .unique)
         )
 
         // Set error to be thrown on write.
@@ -50,7 +50,6 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         session.errorToReturn = error
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
@@ -68,14 +67,13 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
 
         // When
         let updatedUserPayload = UserPayload.dummy(userId: userId, name: "Updated name")
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: updatedUserPayload,
-            createdAt: Date.unique
+        let event = UserUpdatedEventDTO(
+            createdAt: Date.unique,
+            custom: [:],
+            user: updatedUserPayload
         )
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Then
@@ -99,14 +97,13 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
 
         // When
         let updatedUserPayload = UserPayload.dummy(userId: currentUserId, name: "Name 2")
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: updatedUserPayload,
-            createdAt: Date.unique
+        let event = UserUpdatedEventDTO(
+            createdAt: Date.unique,
+            custom: [:],
+            user: updatedUserPayload
         )
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Then

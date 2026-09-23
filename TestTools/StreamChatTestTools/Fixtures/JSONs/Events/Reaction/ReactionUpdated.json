@@ -1,4 +1,29 @@
 {
+    "custom" : {},
+    "channel" : {
+        "id" : "general",
+        "type" : "messaging",
+        "cid" : "messaging:general",
+        "created_at" : "2020-07-16T12:50:34.786899Z",
+        "updated_at" : "2020-07-17T11:44:16.63728Z",
+        "frozen" : false,
+        "disabled" : false,
+        "config" : {
+            "reactions" : true,
+            "typing_events" : true,
+            "read_events" : true,
+            "connect_events" : true,
+            "replies" : true,
+            "quotes" : true,
+            "search" : false,
+            "mutes" : true,
+            "url_enrichment" : true,
+            "message_retention" : "infinite",
+            "max_message_length" : 5000,
+            "created_at" : "2019-03-21T15:49:15.40182Z",
+            "updated_at" : "2020-03-17T18:54:09.460881Z"
+        }
+    },
     "user" : {
         "id" : "broken-waterfall-5",
         "banned" : false,

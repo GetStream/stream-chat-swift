@@ -28,17 +28,14 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     func test_messageReadEvent_marksThreadRead() throws {
         let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
 
-        let eventPayload = EventPayload(
-            eventType: .messageRead,
-            cid: .unique,
-            user: .dummy(userId: .unique),
+        let event = MessageReadEventDTO(
             channel: .dummy(),
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
+            cid: .unique,
             createdAt: .unique,
-            thread: .success(.dummy(parentMessageId: .unique))
+            custom: [:],
+            thread: .dummy(parentMessageId: .unique),
+            user: .dummy(userId: .unique)
         )
-
-        let event = try MessageReadEventDTO(from: eventPayload)
 
         _ = middleware.handle(event: event, session: mockSession)
 
@@ -48,19 +45,19 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     func test_messageMarkUnreadEvent_marksThreadAsUnread() throws {
         let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
 
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkUnread,
+        let event = NotificationMarkUnreadEventDTO(
             cid: .unique,
-            user: .dummy(userId: .unique),
-            unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
             createdAt: .unique,
+            custom: [:],
             firstUnreadMessageId: "Hello",
             lastReadAt: .unique,
             lastReadMessageId: nil, // This must be nil to be considered thread event
-            unreadMessagesCount: 6
+            totalUnreadCount: .unique,
+            unreadChannels: .unique,
+            unreadMessages: 6,
+            unreadThreads: .unique,
+            user: .dummy(userId: .unique)
         )
-
-        let event = try NotificationMarkUnreadEventDTO(from: eventPayload)
 
         _ = middleware.handle(event: event, session: mockSession)
 
@@ -70,15 +67,17 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     func test_threadMessageNewEvent_addsMessageToThreadReplies_increasesUnreadCount() throws {
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .threadMessageNew,
-            cid: cid,
+        let message: MessagePayload = .dummy(messageId: .unique, parentId: parentMessageId, cid: cid)
+        let event = NotificationThreadMessageNewEventDTO(
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, parentId: parentMessageId, cid: cid),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            message: message,
+            messageId: message.id,
+            threadId: parentMessageId,
+            watcherCount: 0
         )
-
-        let event = try ThreadMessageNewEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             let currentUserId = UserId.unique
@@ -112,15 +111,17 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     func test_threadMessageNewEvent_whenThreadReadDoesNotExist_stillIncreasesUnreadCount() throws {
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .threadMessageNew,
-            cid: cid,
+        let message: MessagePayload = .dummy(messageId: .unique, parentId: parentMessageId, cid: cid)
+        let event = NotificationThreadMessageNewEventDTO(
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, parentId: parentMessageId, cid: cid),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            message: message,
+            messageId: message.id,
+            threadId: parentMessageId,
+            watcherCount: 0
         )
-
-        let event = try ThreadMessageNewEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             let currentUserId = UserId.unique
@@ -146,15 +147,17 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .threadMessageNew,
-            cid: cid,
+        let message: MessagePayload = .dummy(messageId: .unique, parentId: parentMessageId, authorUserId: currentUserId, cid: cid)
+        let event = NotificationThreadMessageNewEventDTO(
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, parentId: parentMessageId, authorUserId: currentUserId, cid: cid),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            message: message,
+            messageId: message.id,
+            threadId: parentMessageId,
+            watcherCount: 0
         )
-
-        let event = try ThreadMessageNewEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -189,15 +192,17 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let mutedUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .threadMessageNew,
-            cid: cid,
+        let message: MessagePayload = .dummy(messageId: .unique, parentId: parentMessageId, authorUserId: mutedUserId, cid: cid)
+        let event = NotificationThreadMessageNewEventDTO(
             channel: .dummy(cid: cid),
-            message: .dummy(messageId: .unique, parentId: parentMessageId, authorUserId: mutedUserId, cid: cid),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            message: message,
+            messageId: message.id,
+            threadId: parentMessageId,
+            watcherCount: 0
         )
-
-        let event = try ThreadMessageNewEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(
@@ -236,15 +241,13 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     func test_channelDeletedEvent_shouldDeleteAllThreadsBelongingToTheDeletedChannel() throws {
         let currentUserId = UserId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .channelDeleted,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let event = ChannelDeletedEventDTO(
             channel: .dummy(cid: cid),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            user: .dummy(userId: .unique)
         )
-
-        let event = try ChannelDeletedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -278,15 +281,13 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
     func test_channelTruncatedEvent_shouldDeleteAllThreadsBelongingToTheTruncatedChannel() throws {
         let currentUserId = UserId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .channelTruncated,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let event = ChannelTruncatedEventDTO(
             channel: .dummy(cid: cid),
-            createdAt: .unique
+            cid: cid,
+            createdAt: .unique,
+            custom: [:],
+            user: .dummy(userId: .unique)
         )
-
-        let event = try ChannelTruncatedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -321,16 +322,14 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
+        let event = MessageDeletedEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
-            message: .dummy(messageId: .unique, parentId: parentMessageId),
             createdAt: .unique,
-            hardDelete: false
+            custom: [:],
+            hardDelete: false,
+            message: .dummy(messageId: .unique, parentId: parentMessageId),
+            user: .dummy(userId: .unique)
         )
-
-        let event = try MessageDeletedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -357,16 +356,14 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
+        let event = MessageDeletedEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
-            message: .dummy(messageId: parentMessageId),
             createdAt: .unique,
-            hardDelete: false
+            custom: [:],
+            hardDelete: false,
+            message: .dummy(messageId: parentMessageId),
+            user: .dummy(userId: .unique)
         )
-
-        let event = try MessageDeletedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -393,16 +390,14 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
+        let event = MessageDeletedEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
-            message: .dummy(messageId: parentMessageId),
             createdAt: .unique,
-            hardDelete: true
+            custom: [:],
+            hardDelete: true,
+            message: .dummy(messageId: parentMessageId),
+            user: .dummy(userId: .unique)
         )
-
-        let event = try MessageDeletedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -429,16 +424,13 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
+        let event = MessageUpdatedEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
-            message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: .unique),
             createdAt: .unique,
-            hardDelete: false
+            custom: [:],
+            message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: .unique),
+            user: .dummy(userId: .unique)
         )
-
-        let event = try MessageUpdatedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
@@ -465,16 +457,13 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let parentMessageId = MessageId.unique
         let cid = ChannelId.unique
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
+        let event = MessageUpdatedEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
-            message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: nil),
             createdAt: .unique,
-            hardDelete: false
+            custom: [:],
+            message: .dummy(messageId: .unique, parentId: parentMessageId, messageTextUpdatedAt: nil),
+            user: .dummy(userId: .unique)
         )
-
-        let event = try MessageUpdatedEventDTO(from: eventPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))

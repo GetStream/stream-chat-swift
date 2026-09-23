@@ -13,12 +13,12 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
 
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(
-            GuestUserTokenPayload.self,
+            CreateGuestResponse.self,
             from: guestUserDefaultExtraDataJSON
         )
 
         XCTAssertEqual(
-            payload.token,
+            try payload.validatedToken().rawValue,
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
         )
         XCTAssertNotNil(payload.user)
@@ -36,10 +36,10 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     }
 
     func test_guestUserCustomExtraData_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(GuestUserTokenPayload.self, from: guestUserCustomExtraDataJSON)
+        let payload = try JSONDecoder.default.decode(CreateGuestResponse.self, from: guestUserCustomExtraDataJSON)
 
         XCTAssertEqual(
-            payload.token,
+            try payload.validatedToken().rawValue,
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
         )
         XCTAssertNotNil(payload.user)
@@ -53,9 +53,8 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     }
 
     func test_guestUserWithInvalidToken_isFailedToBeSerialized() throws {
-        XCTAssertThrowsError(
-            try JSONDecoder.default.decode(GuestUserTokenPayload.self, from: guestUserInvalidTokenJSON)
-        ) { error in
+        let payload = try JSONDecoder.default.decode(CreateGuestResponse.self, from: guestUserInvalidTokenJSON)
+        XCTAssertThrowsError(try payload.validatedToken()) { error in
             XCTAssertTrue(error is ClientError.InvalidToken)
         }
     }

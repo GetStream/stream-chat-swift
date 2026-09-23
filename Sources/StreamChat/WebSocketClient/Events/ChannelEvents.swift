@@ -29,21 +29,7 @@ public final class ChannelUpdatedEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelUpdatedEventDTO: EventDTO {
-    let channel: ChannelDetailPayload
-    let user: UserPayload?
-    let message: MessageResponse?
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        channel = try response.value(at: \.channel)
-        user = try? response.value(at: \.user)
-        message = try? response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension ChannelUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
 
@@ -80,19 +66,7 @@ public final class ChannelDeletedEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelDeletedEventDTO: EventDTO {
-    let user: UserPayload?
-    let channel: ChannelDetailPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try? response.value(at: \.user)
-        channel = try response.value(at: \.channel)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension ChannelDeletedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
 
@@ -141,21 +115,7 @@ public final class ChannelTruncatedEvent: ChannelSpecificEvent, HasUnreadChannel
     }
 }
 
-final class ChannelTruncatedEventDTO: EventDTO {
-    let channel: ChannelDetailPayload
-    let user: UserPayload?
-    let createdAt: Date
-    let payload: EventPayload
-    let message: MessageResponse?
-
-    init(from response: EventPayload) throws {
-        channel = try response.value(at: \.channel)
-        user = try? response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        message = try? response.value(at: \.message)
-        payload = response
-    }
-
+extension ChannelTruncatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
 
@@ -190,21 +150,9 @@ public final class ChannelVisibleEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelVisibleEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension ChannelVisibleEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let user, let userDTO = session.user(id: user.id) else { return nil }
 
         return try? ChannelVisibleEvent(
             cid: cid,
@@ -236,28 +184,14 @@ public final class ChannelHiddenEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelHiddenEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserPayload
-    let isHistoryCleared: Bool
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        user = try response.value(at: \.user)
-        isHistoryCleared = (try? response.value(at: \.isChannelHistoryCleared)) ?? false
-        payload = response
-    }
-
+extension ChannelHiddenEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let user, let userDTO = session.user(id: user.id) else { return nil }
 
         return try? ChannelHiddenEvent(
             cid: cid,
             user: userDTO.asModel(),
-            isHistoryCleared: isHistoryCleared,
+            isHistoryCleared: clearHistory ?? false,
             createdAt: createdAt
         )
     }

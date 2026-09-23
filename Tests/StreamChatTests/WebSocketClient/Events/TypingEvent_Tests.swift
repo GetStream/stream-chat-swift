@@ -23,32 +23,32 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_parseTypingStartEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartTyping")
-        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
 
         XCTAssertTrue(event.isTyping)
         XCTAssertEqual(event.cid, cid)
-        XCTAssertEqual(event.user.id, userId)
+        XCTAssertEqual(event.user?.id, userId)
     }
 
     func test_parseTypingStoptEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTyping")
-        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
 
         XCTAssertFalse(event.isTyping)
         XCTAssertEqual(event.cid, cid)
-        XCTAssertEqual(event.user.id, userId)
+        XCTAssertEqual(event.user?.id, userId)
         XCTAssertFalse(event.isThread)
     }
 
     func test_parseTypingStartEventInThread() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartTypingThread")
-        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
@@ -59,7 +59,7 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_parseTypingStoptEventInThread() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTypingThread")
-        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
@@ -72,16 +72,15 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_startTypingEventDTO_toDomainEvent() throws {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        let eventPayload = EventPayload(
-            eventType: .userStartTyping,
+        let eventPayload = TypingStartEventDTO(
             cid: .unique,
-            user: .dummy(userId: .unique),
             createdAt: .unique,
-            parentId: .unique
+            custom: [:],
+            parentId: .unique,
+            user: .dummy(userId: .unique)
         )
-        let dto = try TypingEventDTO(from: eventPayload)
 
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? TypingEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? TypingEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.isTyping, true)
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
@@ -93,15 +92,14 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_stopTypingEventDTO_toDomainEvent() throws {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        let eventPayload = EventPayload(
-            eventType: .userStopTyping,
+        let eventPayload = TypingStopEventDTO(
             cid: .unique,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            custom: [:],
+            user: .dummy(userId: .unique)
         )
-        let dto = try TypingEventDTO(from: eventPayload)
 
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? TypingEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? TypingEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.isTyping, false)
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
@@ -130,13 +128,14 @@ final class TypingEvent_Tests: XCTestCase {
             "is_premium": true,
             "nickname": "Marty"
           },
-          "created_at": "2021-04-22T22:05:51.726128615Z"
+          "created_at": "2021-04-22T22:05:51.726128615Z",
+          "custom": {}
         }
         """.data(using: .utf8)!
 
-        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? TypingEventDTO)
+        let event = try XCTUnwrap(try eventDecoder.decodeDTO(from: json) as? TypingEventDTO)
 
-        XCTAssertEqual(event.user.id, userId)
+        XCTAssertEqual(event.user?.id, userId)
         XCTAssertEqual(event.member?.channelRole, "channel_member")
         XCTAssertEqual(event.member?.custom?["is_premium"], .bool(true))
         XCTAssertEqual(event.member?.custom?["nickname"], .string("Marty"))

@@ -10,12 +10,9 @@ public extension Event {
     }
 }
 
-/// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
-/// i.e. for storing the data to the database.
+/// An internal protocol marking the generated v2 event models the SDK understands. Conformance is opt-in,
+/// one `extension XEventDTO: EventDTO` per handled event type.
 protocol EventDTO: Event {
-    /// The entire event payload.
-    var payload: EventPayload { get }
-
     /// Converts event DTO to event with evaluated models.
     ///
     /// If some model is missing in database `nil` is returned.
@@ -24,8 +21,128 @@ protocol EventDTO: Event {
     func toDomainEvent(session: DatabaseSession) -> Event?
 }
 
-extension EventDTO {
-    func toDomainEvent(session: DatabaseSession) -> Event? { nil }
+extension WSEvent: @unchecked Sendable, Event {
+    func healthcheck() -> HealthCheckInfo? {
+        guard case .typeHealthCheckEvent(let event) = self else { return nil }
+        return HealthCheckInfo(connectionId: event.connectionId)
+    }
+
+    func error() -> (any Error)? {
+        nil
+    }
+
+    var createdAt: Date {
+        switch self {
+        case let .typeAIIndicatorClearEvent(value):
+            return value.createdAt
+        case let .typeAIIndicatorStopEvent(value):
+            return value.createdAt
+        case let .typeAIIndicatorUpdateEvent(value):
+            return value.createdAt
+        case let .typeChannelDeletedEvent(value):
+            return value.createdAt
+        case let .typeChannelHiddenEvent(value):
+            return value.createdAt
+        case let .typeChannelTruncatedEvent(value):
+            return value.createdAt
+        case let .typeChannelUpdatedEvent(value):
+            return value.createdAt
+        case let .typeChannelVisibleEvent(value):
+            return value.createdAt
+        case let .typeDraftDeletedEvent(value):
+            return value.createdAt
+        case let .typeDraftUpdatedEvent(value):
+            return value.createdAt
+        case let .typeHealthCheckEvent(value):
+            return value.createdAt
+        case let .typeMemberAddedEvent(value):
+            return value.createdAt
+        case let .typeMemberRemovedEvent(value):
+            return value.createdAt
+        case let .typeMemberUpdatedEvent(value):
+            return value.createdAt
+        case let .typeMessageDeletedEvent(value):
+            return value.createdAt
+        case let .typeMessageDeliveredEvent(value):
+            return value.createdAt
+        case let .typeMessageNewEvent(value):
+            return value.createdAt
+        case let .typeMessageReadEvent(value):
+            return value.createdAt
+        case let .typeMessageUpdatedEvent(value):
+            return value.createdAt
+        case let .typeNotificationAddedToChannelEvent(value):
+            return value.createdAt
+        case let .typeNotificationChannelDeletedEvent(value):
+            return value.createdAt
+        case let .typeNotificationChannelMutesUpdatedEvent(value):
+            return value.createdAt
+        case let .typeNotificationInviteAcceptedEvent(value):
+            return value.createdAt
+        case let .typeNotificationInviteRejectedEvent(value):
+            return value.createdAt
+        case let .typeNotificationInvitedEvent(value):
+            return value.createdAt
+        case let .typeNotificationMarkReadEvent(value):
+            return value.createdAt
+        case let .typeNotificationMarkUnreadEvent(value):
+            return value.createdAt
+        case let .typeNotificationNewMessageEvent(value):
+            return value.createdAt
+        case let .typeNotificationMutesUpdatedEvent(value):
+            return value.createdAt
+        case let .typeReminderNotificationEvent(value):
+            return value.createdAt
+        case let .typeNotificationRemovedFromChannelEvent(value):
+            return value.createdAt
+        case let .typeNotificationThreadMessageNewEvent(value):
+            return value.createdAt
+        case let .typePollClosedEvent(value):
+            return value.createdAt
+        case let .typePollDeletedEvent(value):
+            return value.createdAt
+        case let .typePollUpdatedEvent(value):
+            return value.createdAt
+        case let .typePollVoteCastedEvent(value):
+            return value.createdAt
+        case let .typePollVoteChangedEvent(value):
+            return value.createdAt
+        case let .typePollVoteRemovedEvent(value):
+            return value.createdAt
+        case let .typeReactionDeletedEvent(value):
+            return value.createdAt
+        case let .typeReactionNewEvent(value):
+            return value.createdAt
+        case let .typeReactionUpdatedEvent(value):
+            return value.createdAt
+        case let .typeReminderCreatedEvent(value):
+            return value.createdAt
+        case let .typeReminderDeletedEvent(value):
+            return value.createdAt
+        case let .typeReminderUpdatedEvent(value):
+            return value.createdAt
+        case let .typeThreadUpdatedEvent(value):
+            return value.createdAt
+        case let .typeTypingStartEvent(value):
+            return value.createdAt
+        case let .typeTypingStopEvent(value):
+            return value.createdAt
+        case let .typeUserBannedEvent(value):
+            return value.createdAt
+        case let .typeUserMessagesDeletedEvent(value):
+            return value.createdAt
+        case let .typeUserPresenceChangedEvent(value):
+            return value.createdAt
+        case let .typeUserUnbannedEvent(value):
+            return value.createdAt
+        case let .typeUserUpdatedEvent(value):
+            return value.createdAt
+        case let .typeUserWatchingStartEvent(value):
+            return value.createdAt
+        case let .typeUserWatchingStopEvent(value):
+            return value.createdAt
+        }
+    }
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.

@@ -37,24 +37,6 @@ extension MemberPayload {
     }
 }
 
-extension MemberContainerPayload {
-    static func dummy(
-        userId: UserId = .unique,
-        role: MemberRole = .member,
-        notificationsMuted: Bool = false,
-        extraData: [String: RawJSON] = [:]
-    ) -> MemberContainerPayload {
-        .init(
-            member: .dummy(
-                user: .dummy(userId: userId),
-                role: role,
-                notificationsMuted: notificationsMuted,
-                extraData: extraData
-            )
-        )
-    }
-}
-
 extension MembersResponse {
     static func dummy(members: [MemberPayload] = []) -> MembersResponse {
         .init(members: members)

@@ -595,15 +595,16 @@ final class ChannelList_Tests: XCTestCase {
             isHidden: nil,
             members: secondChannel.members ?? []
         )
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: channelPayloadWithoutBlockedAndHidden.cid,
-            user: .dummy(userId: memberId),
+        let notificationMarkReadEvent = WSEvent.typeNotificationMarkReadEvent(NotificationMarkReadEventDTO(
             channel: channelPayloadWithoutBlockedAndHidden,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: Date()
-        )
-        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
+            cid: channelPayloadWithoutBlockedAndHidden.cid,
+            createdAt: Date(),
+            custom: [:],
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            user: .dummy(userId: memberId)
+        ))
         let expectation = XCTestExpectation()
         env.client.eventNotificationCenter.process(notificationMarkReadEvent, postNotification: true) {
             expectation.fulfill()

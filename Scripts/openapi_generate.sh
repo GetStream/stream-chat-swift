@@ -17,10 +17,12 @@ allowed_endpoints=(
     castPollVote
     createDevice
     createDraft
+    createGuest
     createPoll
     createPollOption
     createReminder
     createUserGroup
+    custom
     deleteChannel
     deleteChannelFile
     deleteChannelImage
@@ -77,6 +79,7 @@ allowed_endpoints=(
     sendReaction
     showChannel
     stopWatchingChannel
+    sync
     translateMessage
     truncateChannel
     unban
@@ -122,9 +125,12 @@ allowed_models=(
   ChannelOwnCapability
   ChannelResponse
   ChannelStateResponse
+  ConnectUserDetailsRequest
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
+  CreateGuestRequest
+  CreateGuestResponse
   CreatePollOptionRequest
   CreatePollRequest
   CreateReminderRequest
@@ -173,9 +179,11 @@ allowed_models=(
   MembersResponse
   MessageActionRequest
   MessageActionResponse
+  MessageChangeSet
   MessagePaginationParams
   MessageRequest
   MessageResponse
+  MessageUpdate
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
@@ -233,6 +241,8 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  SyncRequest
+  SyncResponse
   ThreadParticipant
   ThreadResponse
   ThreadStateResponse
@@ -276,9 +286,68 @@ allowed_models=(
   UserGroupMember
   UserGroupResponse
   UserMuteResponse
+  UserRequest
   UserResponse
   VoteData
   WrappedUnreadCountsResponse
+  WSAuthMessage
+  WSEvent
+)
+allowed_events=(
+  AIIndicatorClearEvent
+  AIIndicatorStopEvent
+  AIIndicatorUpdateEvent
+  ChannelDeletedEvent
+  ChannelHiddenEvent
+  ChannelTruncatedEvent
+  ChannelUpdatedEvent
+  ChannelVisibleEvent
+  DraftDeletedEvent
+  DraftUpdatedEvent
+  HealthCheckEvent
+  MemberAddedEvent
+  MemberRemovedEvent
+  MemberUpdatedEvent
+  MessageDeletedEvent
+  MessageDeliveredEvent
+  MessageNewEvent
+  MessageReadEvent
+  MessageUpdatedEvent
+  NotificationAddedToChannelEvent
+  NotificationChannelDeletedEvent
+  NotificationChannelMutesUpdatedEvent
+  NotificationInviteAcceptedEvent
+  NotificationInvitedEvent
+  NotificationInviteRejectedEvent
+  NotificationMarkReadEvent
+  NotificationMarkUnreadEvent
+  NotificationMutesUpdatedEvent
+  NotificationNewMessageEvent
+  NotificationRemovedFromChannelEvent
+  NotificationThreadMessageNewEvent
+  PollClosedEvent
+  PollDeletedEvent
+  PollUpdatedEvent
+  PollVoteCastedEvent
+  PollVoteChangedEvent
+  PollVoteRemovedEvent
+  ReactionDeletedEvent
+  ReactionNewEvent
+  ReactionUpdatedEvent
+  ReminderCreatedEvent
+  ReminderDeletedEvent
+  ReminderNotificationEvent
+  ReminderUpdatedEvent
+  ThreadUpdatedEvent
+  TypingStartEvent
+  TypingStopEvent
+  UserBannedEvent
+  UserMessagesDeletedEvent
+  UserPresenceChangedEvent
+  UserUnbannedEvent
+  UserUpdatedEvent
+  UserWatchingStartEvent
+  UserWatchingStopEvent
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
@@ -315,6 +384,7 @@ encodable_only_models=(
   ChannelMemberRequest
   CreateDeviceRequest
   CreateDraftRequest
+  CreateGuestRequest
   CreatePollOptionRequestBody
   CreatePollRequestBody
   CreateReminderRequest
@@ -352,6 +422,7 @@ encodable_only_models=(
   SendEventRequest
   SendMessageRequest
   SendReactionRequest
+  SyncRequest
   TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
@@ -370,6 +441,7 @@ encodable_only_models=(
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
   UpsertPushPreferencesRequest
+  UserRequest
   VoteDataRequestBody
 )
 
@@ -381,6 +453,7 @@ decodable_only_models=(
   ChannelDetailPayload
   ChannelStateResponse
   CreateDraftResponse
+  CreateGuestResponse
   CreateReminderResponse
   CurrentUserUnreads
   DeleteChannelResponse
@@ -407,11 +480,13 @@ decodable_only_models=(
   MemberPayload
   MembersResponse
   MessageActionResponse
+  MessageChangeSet
   MessageModerationDetailsPayload
   MessageReactionGroupPayload
   MessageReactionPayload
   MessageReactionsPayload
   MessageResponse
+  MessageUpdate
   MuteResponse
   MutedChannelPayload
   MutedChannelPayloadResponse
@@ -443,6 +518,7 @@ decodable_only_models=(
   SendReactionResponse
   SharedLocation
   SharedLocationsResponse
+  SyncResponse
   ThreadParticipantPayload
   ThreadResponse
   ThreadStateResponse
@@ -468,12 +544,14 @@ decodable_only_models=(
   UserGroup
   UserGroupMember
   UserGroupResponse
+  WSEvent
 )
 
 codable_models=(
   AttachmentActionPayload
   AttachmentFieldPayload
   ChannelCapability
+  ConnectUserDetailsRequest
   DeliveryReceiptsPrivacySettings
   Device
   GiphyImageData
@@ -487,6 +565,7 @@ codable_models=(
   TypingIndicatorPrivacySettings
   UserPayload
   UserPrivacySettings
+  WSAuthMessage
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -543,9 +622,7 @@ prune_endpoint_factories() {
 }
 prune_endpoint_factories
 
-# Keep generated v2 EndpointPath cases aligned with allowed_endpoints before v1
-# cases are injected. Future migrations should remove matching v1 cases when
-# adding a generated v2 path with the same case name.
+# Keep generated v2 EndpointPath cases aligned with allowed_endpoints.
 prune_generated_endpoint_paths() {
   local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
   local allowed_endpoints_csv
@@ -599,11 +676,50 @@ prune_models() {
   for f in "$OUTPUT_DIR_CHAT"/models/*.swift; do
     [ -e "$f" ] || continue
     base="$(basename "$f" .swift)"
-    contains "$base" "${allowed_models[@]}" && continue
+    contains "$base" "${allowed_models[@]}" "${allowed_events[@]}" && continue
     rm -f "$f"
   done
 }
 prune_models
+
+prune_wsevent_cases() {
+  local file="$OUTPUT_DIR_CHAT/models/WSEvent.swift"
+  local allowed_events_csv
+  allowed_events_csv="$(IFS=,; echo "${allowed_events[*]}")"
+
+  python3 - "$file" "$allowed_events_csv" <<'PY'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+allowed = set(filter(None, sys.argv[2].split(",")))
+text = path.read_text()
+
+cases = dict(re.findall(r"^    case (\w+)\((\w+)\)$", text, flags=re.M))
+missing = allowed - set(cases.values())
+if missing:
+    raise SystemExit(f"Allowed events missing from WSEvent: {sorted(missing)}")
+
+for name, model in cases.items():
+    if model in allowed:
+        continue
+    text = re.sub(rf"^    case {name}\({model}\)\n", "", text, flags=re.M)
+    text = re.sub(rf"^        case \.{name}\(let value\):\n.*\n", "", text, flags=re.M)
+    text = re.sub(
+        rf"^        (\}} else )?if dto\.type == \"[^\"]*\" \{{\n"
+        rf"            let value = try container\.decode\({model}\.self\)\n"
+        rf"            self = \.{name}\(value\)\n",
+        "",
+        text,
+        flags=re.M,
+    )
+text = re.sub(r"(WSEventMapping\.self\)\n        )\} else if", r"\1if", text)
+
+path.write_text(text)
+PY
+}
+prune_wsevent_cases
 
 # Remove a generated property (declaration, doc comment, init param, assignment,
 #     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
@@ -719,6 +835,25 @@ rename_property() {
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
+rename_generated_events() {
+  local f base
+  for f in "$OUTPUT_DIR_CHAT"/models/*Event.swift; do
+    [ -e "$f" ] || continue
+    base="$(basename "$f" .swift)"
+    [[ "$base" == "WSEvent" ]] && continue
+    rename_generated "$base" "${base}DTO"
+  done
+}
+rename_generated_events
+
+shape_wsevent() {
+  local file="$OUTPUT_DIR_CHAT/models/WSEvent.swift"
+  sed -i '' -E 's/^enum WSEvent: Codable, Hashable \{[[:space:]]*$/enum WSEvent: Codable {/' "$file"
+  sed -i '' -E 's/^    var rawValue: Event \{[[:space:]]*$/    var rawValue: EventDTO {/' "$file"
+  perl -0777 -pi -e 's/\n    func encode\(to encoder: Encoder\) throws \{\n.*?\n    \}\n//s' "$file"
+}
+shape_wsevent
+
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
 rename_generated PushPreferencesResponse PushPreference
@@ -734,6 +869,10 @@ rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
 rename_generated UserResponse UserPayload
+# These are equal
+rename_generated_type UserResponseCommonFields UserPayload
+# Has isInvisible and privacySettings, but SDK never consumes these
+rename_generated_type UserResponsePrivacyFields UserPayload
 rename_generated_type ChannelPushPreferencesResponse PushPreference
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
@@ -788,7 +927,6 @@ rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
 rename_generated_type DeleteReminderResponse EmptyResponse
-# TODO: EventResponse is not used and would bring in WSEvent
 rename_generated_type EventResponse EmptyResponse
 rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
@@ -823,6 +961,22 @@ optionalize_property OwnUserResponse teams
 optionalize_property OwnUserResponse totalUnreadCount
 optionalize_property OwnUserResponse unreadChannels
 optionalize_property OwnUserResponse unreadThreads
+
+# /sync replays events without fields the spec marks required.
+# Remove when fixed: CHA-3482
+optionalize_property ChannelHiddenEventDTO clearHistory
+optionalize_property MessageDeletedEventDTO hardDelete
+optionalize_property MessageDeletedEventDTO messageId
+optionalize_property MessageNewEventDTO messageId
+optionalize_property MessageNewEventDTO watcherCount
+optionalize_property MessageUpdatedEventDTO messageId
+optionalize_property ReactionUpdatedEventDTO messageId
+
+# member.* events sent from UpdateMembers lack the channel the spec marks required.
+# Remove when fixed: CHA-5608
+optionalize_property MemberAddedEventDTO channel
+optionalize_property MemberRemovedEventDTO channel
+optionalize_property MemberUpdatedEventDTO channel
 
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
@@ -891,6 +1045,40 @@ optionalize_property ThreadStateResponse activeParticipantCount
 
 # v1 read events may omit it.
 optionalize_property ThreadResponse createdByUserId
+
+for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
+  [ -e "$f" ] || continue
+  base="$(basename "$f" .swift)"
+  [[ "$base" == "HealthCheckEventDTO" ]] && continue
+  retype_property "$base" cid String ChannelId
+done
+# CHA-5607
+require_property ChannelHiddenEventDTO cid
+require_property ChannelVisibleEventDTO cid
+require_property DraftDeletedEventDTO cid
+require_property DraftUpdatedEventDTO cid
+require_property MemberAddedEventDTO cid
+require_property MemberRemovedEventDTO cid
+require_property MemberUpdatedEventDTO cid
+require_property MessageDeletedEventDTO cid
+require_property MessageDeliveredEventDTO cid
+require_property MessageNewEventDTO cid
+require_property MessageReadEventDTO cid
+require_property MessageUpdatedEventDTO cid
+require_property NotificationChannelDeletedEventDTO cid
+require_property NotificationInvitedEventDTO cid
+require_property NotificationMarkUnreadEventDTO cid
+require_property NotificationRemovedFromChannelEventDTO cid
+require_property NotificationThreadMessageNewEventDTO cid
+require_property ReactionDeletedEventDTO cid
+require_property ReactionNewEventDTO cid
+require_property ReactionUpdatedEventDTO cid
+require_property TypingStartEventDTO cid
+require_property TypingStopEventDTO cid
+require_property UserWatchingStartEventDTO cid
+require_property UserWatchingStopEventDTO cid
+# CHA-5587
+retype_property MessageDeliveredEventDTO lastDeliveredAt String Date
 
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -1034,7 +1222,7 @@ default_init_parameter TypingIndicatorPrivacySettings enabled true
 apply_directional_coding_conformances() {
   local encodable_csv decodable_csv codable_csv
   encodable_csv="$(IFS=,; echo "${encodable_only_models[*]}")"
-  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]}")"
+  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]},${allowed_events[*]/%/DTO}")"
   codable_csv="$(IFS=,; echo "${codable_models[*]}")"
 
   python3 - \
@@ -1130,51 +1318,6 @@ strip_streamcore_imports
 
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
-
-# 6. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
-#    The OpenAPI generator owns v2 paths; these v1 cases keep the hand-written
-#    endpoint factories compiling while each endpoint migrates incrementally.
-inject_v1_endpoint_paths() {
-  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
-  local cases_file values_file
-  cases_file="$(mktemp)"
-  values_file="$(mktemp)"
-  trap 'rm -f "$cases_file" "$values_file"' RETURN
-
-  cat > "$cases_file" <<'EOF'
-    case custom(String)
-    case connect
-    case sync
-    case guest
-
-EOF
-
-  cat > "$values_file" <<'EOF'
-        case let .custom(path): return path
-        case .connect: return "connect"
-        case .sync: return "sync"
-        case .guest: return "guest"
-
-EOF
-
-  python3 - "$file" "$cases_file" "$values_file" <<'PY'
-import pathlib
-import sys
-
-file_path = pathlib.Path(sys.argv[1])
-cases = pathlib.Path(sys.argv[2]).read_text()
-values = pathlib.Path(sys.argv[3]).read_text()
-text = file_path.read_text()
-
-enum_marker = "enum EndpointPath: Codable {\n"
-switch_marker = "        switch self {\n"
-
-text = text.replace(enum_marker, enum_marker + cases, 1)
-text = text.replace(switch_marker, switch_marker + values, 1)
-file_path.write_text(text)
-PY
-}
-inject_v1_endpoint_paths
 
 # 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
 #    body, where a `required` initializer is allowed.

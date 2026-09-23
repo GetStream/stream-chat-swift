@@ -217,11 +217,10 @@ final class EndpointPathTests: XCTestCase {
 
     func test_isProperlyEncodedAndDecoded() throws {
         assertResultEncodingAndDecoding(.custom("/custom-path"))
-        assertResultEncodingAndDecoding(.connect)
         assertResultEncodingAndDecoding(.sync)
         assertResultEncodingAndDecoding(.queryUsers)
         assertResultEncodingAndDecoding(.updateUsersPartial)
-        assertResultEncodingAndDecoding(.guest)
+        assertResultEncodingAndDecoding(.createGuest)
         assertResultEncodingAndDecoding(.queryMembers)
         assertResultEncodingAndDecoding(.updateMemberPartial(type: "messaging", id: "2"))
         assertResultEncodingAndDecoding(.search)

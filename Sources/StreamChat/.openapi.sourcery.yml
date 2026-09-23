@@ -8,6 +8,7 @@ sources:
   - ./Generated/OpenAPI/models/MessageResponse.swift
   - ./Generated/OpenAPI/models/OwnUserResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
+  - ./Generated/OpenAPI/models/SyncResponse.swift
   - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
   - ./Generated/OpenAPI/models/ThreadStateResponse.swift
@@ -24,3 +25,5 @@ args:
     OwnUserResponse: UserPayloadsCodingKeys
     SearchResultMessage: MessagePayloadsCodingKeys
     UserPayload: UserPayloadsCodingKeys
+  tolerantArrays:
+    SyncResponse: true

@@ -1,4 +1,8 @@
 {
+    "custom": {},
+    "message_id": "74625138-f60a-4d19-a3f1-4d97ec3f1390",
+    "thread_id": "6967a9d8-eb89-461e-a12a-97ae531d4400",
+    "watcher_count": 1,
     "type": "notification.thread_message_new",
     "cid": "messaging:456F834D-1",
     "channel_id": "456F834D-1",
