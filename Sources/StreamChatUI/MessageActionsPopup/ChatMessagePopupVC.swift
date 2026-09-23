@@ -94,12 +94,31 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         view.addGestureRecognizer(tapRecognizer)
     }
 
+    /// The size the content was laid out in.
+    private var laidOutSize: CGSize?
+
     override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         // Everything here is laid out around where the message sits in the view this was opened
         // from, which a size change invalidates and which cannot be measured again from here, so it
         // closes rather than leaving the reactions somewhere they do not belong.
+        dismiss(animated: false)
+    }
+
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // Not every change of size arrives as a transition. A device with more than one screen, like
+        // an iPhone Duo, moves the app from one to the other as it is folded, and the content is
+        // laid out again at the new size without one.
+        guard let laidOutSize else {
+            laidOutSize = view.bounds.size
+            return
+        }
+        guard laidOutSize != view.bounds.size else { return }
+
+        self.laidOutSize = view.bounds.size
         dismiss(animated: false)
     }
 
