@@ -803,296 +803,90 @@ extension DatabaseSession {
 
     // MARK: - Event
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func saveEvent(event: WSEvent) throws {
-        switch event {
-        case let .typeHealthCheckEvent(dto):
-            if let me = dto.me {
-                try saveCurrentUser(payload: me)
-            }
-
-        case let .typeChannelUpdatedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.channel.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: true
-            )
-        case let .typeChannelDeletedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeChannelHiddenEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeChannelVisibleEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeChannelTruncatedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.channel.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: true
-            )
-
-        case let .typeMemberAddedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-        case let .typeMemberUpdatedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-        case let .typeMemberRemovedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-
-        case let .typeMessageNewEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-            try saveEventUnreadCounts(
-                channels: dto.unreadChannels,
-                messages: dto.totalUnreadCount,
-                threads: nil,
-                byGroup: dto.groupedUnreadChannels
-            )
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: true,
-                isNewMessage: true
-            )
-        case let .typeMessageUpdatedEvent(dto):
-            try saveEventUser(dto.user)
-            let isRestrictedToCurrentUser = currentUser.map { dto.message.restrictedVisibility.contains($0.user.id) } ?? false
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: isRestrictedToCurrentUser,
-                isMessageUpdated: true
-            )
-        case let .typeMessageDeletedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: false,
-                hardDelete: dto.hardDelete ?? false,
-                deletedForMe: dto.deletedForMe ?? false
-            )
-        case let .typeMessageReadEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-            try saveEventThread(dto.thread)
-        case let .typeMessageDeliveredEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-
-        // handle reaction events for messages that already exist in the database and for this user
-        // this is needed because WS events do not contain message.own_reactions
-        case let .typeReactionNewEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: false
-            )
-            guard let reaction = dto.reaction, isCurrentUser(dto.user) else { break }
+        let dto = event.rawValue
+        if let user = dto.eventUser {
+            try saveUser(payload: user)
+        }
+        if let channel = dto.eventChannel {
+            try saveChannel(payload: channel, query: nil, cache: nil)
+        }
+        if let currentUser = dto.eventCurrentUser {
+            try saveCurrentUser(payload: currentUser)
+        }
+        let unreadCount = dto.eventUnreadCount
+        if let unreadCount, (unreadCount.channels != nil && unreadCount.messages != nil) || unreadCount.threads != nil {
+            try saveCurrentUserUnreadCount(count: unreadCount)
+        }
+        if let byGroup = dto.eventGroupedUnreadChannels {
+            try mergeCurrentUserUnreadChannelCountsByGroup(byGroup)
+        }
+        if let thread = dto.eventThread {
+            try saveThread(partialPayload: thread)
+        }
+        try saveMessageIfNeeded(from: event)
+        if let currentUser = self.currentUser, currentUser.user.id == dto.eventUser?.id {
             do {
-                let reactionDTO = try saveReaction(payload: reaction, query: nil, cache: nil)
-                if !reactionDTO.message.ownReactions.contains(reactionDTO.id) {
-                    reactionDTO.message.ownReactions.append(reactionDTO.id)
+                switch event {
+                case let .typeReactionNewEvent(reactionEvent):
+                    guard let reaction = reactionEvent.reaction else { break }
+                    let reactionDTO = try saveReaction(payload: reaction, query: nil, cache: nil)
+                    if !reactionDTO.message.ownReactions.contains(reactionDTO.id) {
+                        reactionDTO.message.ownReactions.append(reactionDTO.id)
+                    }
+                case let .typeReactionUpdatedEvent(reactionEvent):
+                    guard let reaction = reactionEvent.reaction else { break }
+                    try saveReaction(payload: reaction, query: nil, cache: nil)
+                case let .typeReactionDeletedEvent(reactionEvent):
+                    guard
+                        let user = reactionEvent.user,
+                        let message = reactionEvent.message,
+                        let reactionPayload = reactionEvent.reaction,
+                        let reactionDTO = reaction(messageId: message.id, userId: user.id, type: reactionPayload.type)
+                    else { break }
+                    reactionDTO.message.ownReactions.removeAll(where: { $0 == reactionDTO.id })
+                    delete(reaction: reactionDTO)
+                default:
+                    break
                 }
             } catch {
                 log.warning("Failed to update message reaction in the database, error: \(error)")
             }
-        case let .typeReactionUpdatedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: false
-            )
-            guard let reaction = dto.reaction, isCurrentUser(dto.user) else { break }
-            do {
-                try saveReaction(payload: reaction, query: nil, cache: nil)
-            } catch {
-                log.warning("Failed to update message reaction in the database, error: \(error)")
-            }
-        case let .typeReactionDeletedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: false
-            )
-            guard
-                let user = dto.user,
-                let message = dto.message,
-                let reactionPayload = dto.reaction,
-                isCurrentUser(user),
-                let reactionDTO = reaction(messageId: message.id, userId: user.id, type: reactionPayload.type)
-            else { break }
-            reactionDTO.message.ownReactions.removeAll(where: { $0 == reactionDTO.id })
-            delete(reaction: reactionDTO)
+        }
 
-        case let .typeTypingStartEvent(dto):
-            try saveEventUser(dto.user)
-        case let .typeTypingStopEvent(dto):
-            try saveEventUser(dto.user)
-        case let .typeUserWatchingStartEvent(dto):
-            try saveUser(payload: dto.user)
-        case let .typeUserWatchingStopEvent(dto):
-            try saveUser(payload: dto.user)
-        case let .typeUserPresenceChangedEvent(dto):
-            try saveUser(payload: dto.user)
-        case let .typeUserUpdatedEvent(dto):
-            try saveUser(payload: dto.user)
-        case let .typeUserBannedEvent(dto):
-            try saveUser(payload: dto.user)
-        case let .typeUserUnbannedEvent(dto):
-            try saveUser(payload: dto.user)
-        case let .typeUserMessagesDeletedEvent(dto):
-            try saveUser(payload: dto.user)
-
-        case let .typeNotificationNewMessageEvent(dto):
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventUnreadCounts(
-                channels: dto.unreadChannels,
-                messages: dto.totalUnreadCount,
-                threads: nil,
-                byGroup: dto.groupedUnreadChannels
-            )
-            try saveEventMessage(
-                dto.message,
-                cid: dto.channel.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: true,
-                isNewMessage: true
-            )
-        case let .typeNotificationMarkReadEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-            try saveEventUnreadCounts(
-                channels: dto.unreadChannels,
-                messages: dto.totalUnreadCount,
-                threads: dto.unreadThreads,
-                byGroup: dto.groupedUnreadChannels
-            )
-            try saveEventThread(dto.thread)
-        case let .typeNotificationMarkUnreadEvent(dto):
-            try saveEventUser(dto.user)
-            try saveEventChannel(dto.channel)
-            try saveEventUnreadCounts(
-                channels: dto.unreadChannels,
-                messages: dto.totalUnreadCount,
-                threads: dto.unreadThreads,
-                byGroup: dto.groupedUnreadChannels
-            )
-        case let .typeNotificationMutesUpdatedEvent(dto):
-            try saveCurrentUser(payload: dto.me)
-        case let .typeNotificationChannelMutesUpdatedEvent(dto):
-            try saveCurrentUser(payload: dto.me)
-        case let .typeNotificationAddedToChannelEvent(dto):
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeNotificationRemovedFromChannelEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeNotificationInvitedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeNotificationInviteAcceptedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeNotificationInviteRejectedEvent(dto):
-            try saveEventUser(dto.user)
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-        case let .typeNotificationChannelDeletedEvent(dto):
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventUnreadCounts(
-                channels: dto.unreadChannels,
-                messages: dto.totalUnreadCount,
-                threads: nil,
-                byGroup: dto.groupedUnreadChannels
-            )
-        case let .typeNotificationThreadMessageNewEvent(dto):
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
-            try saveEventUnreadCounts(channels: nil, messages: nil, threads: dto.unreadThreads, byGroup: nil)
-            try saveEventMessage(
-                dto.message,
-                cid: dto.cid,
-                channelMessageCount: dto.channelMessageCount,
-                createIfMissing: false
-            )
-
-        case let .typeThreadUpdatedEvent(dto):
-            try saveEventThread(dto.thread)
-
-        case let .typePollVoteCastedEvent(dto):
-            try handlePollVoteCastedEvent(vote: dto.pollVote)
-            try savePoll(payload: dto.poll, cache: nil, fromEvent: true)
-        case let .typePollVoteChangedEvent(dto):
-            try handlePollVoteChangedEvent(vote: dto.pollVote)
-            try savePoll(payload: dto.poll, cache: nil, fromEvent: true)
-        case let .typePollVoteRemovedEvent(dto):
-            if let voteDTO = try? pollVote(id: dto.pollVote.id, pollId: dto.pollVote.pollId) {
+        switch event {
+        case let .typePollVoteCastedEvent(pollEvent):
+            try handlePollVoteCastedEvent(vote: pollEvent.pollVote)
+        case let .typePollVoteChangedEvent(pollEvent):
+            try handlePollVoteChangedEvent(vote: pollEvent.pollVote)
+        case let .typePollVoteRemovedEvent(pollEvent):
+            if let voteDTO = try? pollVote(id: pollEvent.pollVote.id, pollId: pollEvent.pollVote.pollId) {
                 delete(pollVote: voteDTO)
             }
-            try savePoll(payload: dto.poll, cache: nil, fromEvent: true)
-        case let .typePollClosedEvent(dto):
-            try savePoll(payload: dto.poll, cache: nil, fromEvent: true)
-        case let .typePollDeletedEvent(dto):
-            try savePoll(payload: dto.poll, cache: nil, fromEvent: true)
-        case let .typePollUpdatedEvent(dto):
-            try savePoll(payload: dto.poll, cache: nil, fromEvent: true)
-
-        case .typeAIIndicatorClearEvent,
-             .typeAIIndicatorStopEvent,
-             .typeAIIndicatorUpdateEvent,
-             .typeDraftDeletedEvent,
-             .typeDraftUpdatedEvent,
-             .typeReminderCreatedEvent,
-             .typeReminderDeletedEvent,
-             .typeReminderNotificationEvent,
-             .typeReminderUpdatedEvent:
+        default:
             break
+        }
+        if let poll = dto.eventPoll {
+            try savePoll(payload: poll, cache: nil, fromEvent: true)
         }
     }
 
-    private func saveEventMessage(
-        _ messagePayload: MessageResponse?,
-        cid: ChannelId?,
-        channelMessageCount: Int?,
-        createIfMissing: Bool,
-        isNewMessage: Bool = false,
-        isMessageUpdated: Bool = false,
-        hardDelete: Bool = false,
-        deletedForMe: Bool = false
-    ) throws {
-        guard let messagePayload else {
+    func saveMessageIfNeeded(from event: WSEvent) throws {
+        let dto = event.rawValue
+        guard let messagePayload = dto.eventMessage else {
             // Event does not contain message
             return
         }
 
-        guard let cid, let channelDTO = channel(cid: cid) else {
+        guard let cid = dto.eventCID, let channelDTO = channel(cid: cid) else {
             // Channel does not exist locally
             return
         }
 
         let messageExistsLocally = message(id: messagePayload.id) != nil
+        let messageMustBeCreated = shouldCreateMessageInDatabase(event: event, message: messagePayload)
 
-        guard messageExistsLocally || createIfMissing else {
+        guard messageExistsLocally || messageMustBeCreated else {
             // Message does not exits locally and should not be saved
             return
         }
@@ -1105,7 +899,7 @@ extension DatabaseSession {
             cache: nil
         )
 
-        if hardDelete {
+        if case let .typeMessageDeletedEvent(deleted) = event, deleted.hardDelete == true {
             // We should in fact delete it from the DB, but right now this produces a crash
             // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
             savedMessage.isHardDeleted = true
@@ -1113,18 +907,25 @@ extension DatabaseSession {
         }
 
         // Update the message if deleted only for the current user.
-        if deletedForMe {
+        if case let .typeMessageDeletedEvent(deleted) = event, deleted.deletedForMe == true {
             savedMessage.deletedForMe = true
         }
 
         // When a message is updated, make sure to update
         // the messages quoting the edited message by triggering a DB Update.
-        if isMessageUpdated {
+        if case .typeMessageUpdatedEvent = event {
             savedMessage.quotedBy.forEach { message in
                 message.updatedAt = savedMessage.updatedAt
             }
         }
 
+        let isNewMessage: Bool
+        switch event {
+        case .typeMessageNewEvent, .typeNotificationNewMessageEvent:
+            isNewMessage = true
+        default:
+            isNewMessage = false
+        }
         let isThreadReply = savedMessage.parentMessageId != nil
         if isNewMessage && isThreadReply {
             savedMessage.showInsideThread = true
@@ -1134,7 +935,7 @@ extension DatabaseSession {
             savedMessage.markMessageAsSent()
         }
         
-        if let messageCount = channelMessageCount {
+        if let messageCount = dto.eventChannelMessageCount {
             channelDTO.messageCount = NSNumber(value: messageCount)
         }
     }
@@ -1203,32 +1004,15 @@ extension DatabaseSession {
 }
 
 private extension DatabaseSession {
-    func saveEventUser(_ user: UserPayload?) throws {
-        guard let user else { return }
-        try saveUser(payload: user)
-    }
-
-    func saveEventChannel(_ channel: ChannelDetailPayload?) throws {
-        guard let channel else { return }
-        try saveChannel(payload: channel, query: nil, cache: nil)
-    }
-
-    func saveEventThread(_ thread: ThreadResponse?) throws {
-        guard let thread else { return }
-        try saveThread(partialPayload: thread)
-    }
-
-    func isCurrentUser(_ user: UserPayload?) -> Bool {
-        guard let user, let currentUser else { return false }
-        return currentUser.user.id == user.id
-    }
-
-    func saveEventUnreadCounts(channels: Int?, messages: Int?, threads: Int?, byGroup: [String: Int]?) throws {
-        if (channels != nil && messages != nil) || threads != nil {
-            try saveCurrentUserUnreadCount(count: UnreadCountPayload(channels: channels, messages: messages, threads: threads))
-        }
-        if let byGroup {
-            try mergeCurrentUserUnreadChannelCountsByGroup(byGroup)
+    func shouldCreateMessageInDatabase(event: WSEvent, message: MessageResponse) -> Bool {
+        switch event {
+        case .typeChannelUpdatedEvent, .typeMessageNewEvent, .typeNotificationNewMessageEvent, .typeChannelTruncatedEvent:
+            return true
+        case .typeMessageUpdatedEvent:
+            guard let currentUserId = currentUser?.user.id else { return false }
+            return message.restrictedVisibility.contains(currentUserId)
+        default:
+            return false
         }
     }
 }

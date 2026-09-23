@@ -13,12 +13,295 @@ public extension Event {
 /// An internal protocol marking the generated v2 event models the SDK understands. Conformance is opt-in,
 /// one `extension XEventDTO: EventDTO` per handled event type.
 protocol EventDTO: Event {
+    var createdAt: Date { get }
+    var eventChannel: ChannelDetailPayload? { get }
+    var eventChannelMessageCount: Int? { get }
+    var eventCID: ChannelId? { get }
+    var eventCurrentUser: OwnUserResponse? { get }
+    var eventGroupedUnreadChannels: [String: Int]? { get }
+    var eventMessage: MessageResponse? { get }
+    var eventPoll: PollPayload? { get }
+    var eventThread: ThreadResponse? { get }
+    var eventUnreadCount: UnreadCountPayload? { get }
+    var eventUser: UserPayload? { get }
+
     /// Converts event DTO to event with evaluated models.
     ///
     /// If some model is missing in database `nil` is returned.
     ///
     /// - Parameter session: The database session used to load event models from database.
     func toDomainEvent(session: DatabaseSession) -> Event?
+}
+
+extension EventDTO {
+    var eventChannel: ChannelDetailPayload? { nil }
+    var eventChannelMessageCount: Int? { nil }
+    var eventCID: ChannelId? { eventChannel?.cid }
+    var eventCurrentUser: OwnUserResponse? { nil }
+    var eventGroupedUnreadChannels: [String: Int]? { nil }
+    var eventMessage: MessageResponse? { nil }
+    var eventPoll: PollPayload? { nil }
+    var eventThread: ThreadResponse? { nil }
+    var eventUnreadCount: UnreadCountPayload? { nil }
+    var eventUser: UserPayload? { nil }
+}
+
+extension ChannelDeletedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension ChannelHiddenEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension ChannelTruncatedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { channel.cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension ChannelUpdatedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { channel.cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension ChannelVisibleEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension HealthCheckEventDTO {
+    var eventCurrentUser: OwnUserResponse? { me }
+}
+
+extension MemberAddedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension MemberRemovedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension MemberUpdatedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension MessageDeletedEventDTO {
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension MessageDeliveredEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension MessageNewEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventGroupedUnreadChannels: [String: Int]? { groupedUnreadChannels }
+    var eventMessage: MessageResponse? { message }
+    var eventUnreadCount: UnreadCountPayload? {
+        .init(channels: unreadChannels, messages: totalUnreadCount, threads: nil)
+    }
+
+    var eventUser: UserPayload? { user }
+}
+
+extension MessageReadEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventThread: ThreadResponse? { thread }
+    var eventUser: UserPayload? { user }
+}
+
+extension MessageUpdatedEventDTO {
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationAddedToChannelEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+}
+
+extension NotificationChannelDeletedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventGroupedUnreadChannels: [String: Int]? { groupedUnreadChannels }
+    var eventUnreadCount: UnreadCountPayload? {
+        .init(channels: unreadChannels, messages: totalUnreadCount, threads: nil)
+    }
+}
+
+extension NotificationChannelMutesUpdatedEventDTO {
+    var eventCurrentUser: OwnUserResponse? { me }
+}
+
+extension NotificationInviteAcceptedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationInvitedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationInviteRejectedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationMarkReadEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventGroupedUnreadChannels: [String: Int]? { groupedUnreadChannels }
+    var eventThread: ThreadResponse? { thread }
+    var eventUnreadCount: UnreadCountPayload? {
+        .init(channels: unreadChannels, messages: totalUnreadCount, threads: unreadThreads)
+    }
+
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationMarkUnreadEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventGroupedUnreadChannels: [String: Int]? { groupedUnreadChannels }
+    var eventUnreadCount: UnreadCountPayload? {
+        .init(channels: unreadChannels, messages: totalUnreadCount, threads: unreadThreads)
+    }
+
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationMutesUpdatedEventDTO {
+    var eventCurrentUser: OwnUserResponse? { me }
+}
+
+extension NotificationNewMessageEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { channel.cid }
+    var eventGroupedUnreadChannels: [String: Int]? { groupedUnreadChannels }
+    var eventMessage: MessageResponse? { message }
+    var eventUnreadCount: UnreadCountPayload? {
+        .init(channels: unreadChannels, messages: totalUnreadCount, threads: nil)
+    }
+}
+
+extension NotificationRemovedFromChannelEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventUser: UserPayload? { user }
+}
+
+extension NotificationThreadMessageNewEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUnreadCount: UnreadCountPayload? {
+        .init(channels: nil, messages: nil, threads: unreadThreads)
+    }
+}
+
+extension PollClosedEventDTO {
+    var eventPoll: PollPayload? { poll }
+}
+
+extension PollDeletedEventDTO {
+    var eventPoll: PollPayload? { poll }
+}
+
+extension PollUpdatedEventDTO {
+    var eventPoll: PollPayload? { poll }
+}
+
+extension PollVoteCastedEventDTO {
+    var eventPoll: PollPayload? { poll }
+}
+
+extension PollVoteChangedEventDTO {
+    var eventPoll: PollPayload? { poll }
+}
+
+extension PollVoteRemovedEventDTO {
+    var eventPoll: PollPayload? { poll }
+}
+
+extension ReactionDeletedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension ReactionNewEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension ReactionUpdatedEventDTO {
+    var eventChannel: ChannelDetailPayload? { channel }
+    var eventChannelMessageCount: Int? { channelMessageCount }
+    var eventCID: ChannelId? { cid }
+    var eventMessage: MessageResponse? { message }
+    var eventUser: UserPayload? { user }
+}
+
+extension ThreadUpdatedEventDTO {
+    var eventThread: ThreadResponse? { thread }
+}
+
+extension TypingStartEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension TypingStopEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserBannedEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserMessagesDeletedEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserPresenceChangedEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserUnbannedEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserUpdatedEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserWatchingStartEventDTO {
+    var eventUser: UserPayload? { user }
+}
+
+extension UserWatchingStopEventDTO {
+    var eventUser: UserPayload? { user }
 }
 
 extension WSEvent: @unchecked Sendable, Event {
@@ -31,118 +314,7 @@ extension WSEvent: @unchecked Sendable, Event {
         nil
     }
 
-    var createdAt: Date {
-        switch self {
-        case let .typeAIIndicatorClearEvent(value):
-            return value.createdAt
-        case let .typeAIIndicatorStopEvent(value):
-            return value.createdAt
-        case let .typeAIIndicatorUpdateEvent(value):
-            return value.createdAt
-        case let .typeChannelDeletedEvent(value):
-            return value.createdAt
-        case let .typeChannelHiddenEvent(value):
-            return value.createdAt
-        case let .typeChannelTruncatedEvent(value):
-            return value.createdAt
-        case let .typeChannelUpdatedEvent(value):
-            return value.createdAt
-        case let .typeChannelVisibleEvent(value):
-            return value.createdAt
-        case let .typeDraftDeletedEvent(value):
-            return value.createdAt
-        case let .typeDraftUpdatedEvent(value):
-            return value.createdAt
-        case let .typeHealthCheckEvent(value):
-            return value.createdAt
-        case let .typeMemberAddedEvent(value):
-            return value.createdAt
-        case let .typeMemberRemovedEvent(value):
-            return value.createdAt
-        case let .typeMemberUpdatedEvent(value):
-            return value.createdAt
-        case let .typeMessageDeletedEvent(value):
-            return value.createdAt
-        case let .typeMessageDeliveredEvent(value):
-            return value.createdAt
-        case let .typeMessageNewEvent(value):
-            return value.createdAt
-        case let .typeMessageReadEvent(value):
-            return value.createdAt
-        case let .typeMessageUpdatedEvent(value):
-            return value.createdAt
-        case let .typeNotificationAddedToChannelEvent(value):
-            return value.createdAt
-        case let .typeNotificationChannelDeletedEvent(value):
-            return value.createdAt
-        case let .typeNotificationChannelMutesUpdatedEvent(value):
-            return value.createdAt
-        case let .typeNotificationInviteAcceptedEvent(value):
-            return value.createdAt
-        case let .typeNotificationInviteRejectedEvent(value):
-            return value.createdAt
-        case let .typeNotificationInvitedEvent(value):
-            return value.createdAt
-        case let .typeNotificationMarkReadEvent(value):
-            return value.createdAt
-        case let .typeNotificationMarkUnreadEvent(value):
-            return value.createdAt
-        case let .typeNotificationNewMessageEvent(value):
-            return value.createdAt
-        case let .typeNotificationMutesUpdatedEvent(value):
-            return value.createdAt
-        case let .typeReminderNotificationEvent(value):
-            return value.createdAt
-        case let .typeNotificationRemovedFromChannelEvent(value):
-            return value.createdAt
-        case let .typeNotificationThreadMessageNewEvent(value):
-            return value.createdAt
-        case let .typePollClosedEvent(value):
-            return value.createdAt
-        case let .typePollDeletedEvent(value):
-            return value.createdAt
-        case let .typePollUpdatedEvent(value):
-            return value.createdAt
-        case let .typePollVoteCastedEvent(value):
-            return value.createdAt
-        case let .typePollVoteChangedEvent(value):
-            return value.createdAt
-        case let .typePollVoteRemovedEvent(value):
-            return value.createdAt
-        case let .typeReactionDeletedEvent(value):
-            return value.createdAt
-        case let .typeReactionNewEvent(value):
-            return value.createdAt
-        case let .typeReactionUpdatedEvent(value):
-            return value.createdAt
-        case let .typeReminderCreatedEvent(value):
-            return value.createdAt
-        case let .typeReminderDeletedEvent(value):
-            return value.createdAt
-        case let .typeReminderUpdatedEvent(value):
-            return value.createdAt
-        case let .typeThreadUpdatedEvent(value):
-            return value.createdAt
-        case let .typeTypingStartEvent(value):
-            return value.createdAt
-        case let .typeTypingStopEvent(value):
-            return value.createdAt
-        case let .typeUserBannedEvent(value):
-            return value.createdAt
-        case let .typeUserMessagesDeletedEvent(value):
-            return value.createdAt
-        case let .typeUserPresenceChangedEvent(value):
-            return value.createdAt
-        case let .typeUserUnbannedEvent(value):
-            return value.createdAt
-        case let .typeUserUpdatedEvent(value):
-            return value.createdAt
-        case let .typeUserWatchingStartEvent(value):
-            return value.createdAt
-        case let .typeUserWatchingStopEvent(value):
-            return value.createdAt
-        }
-    }
+    var createdAt: Date { rawValue.createdAt }
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.
