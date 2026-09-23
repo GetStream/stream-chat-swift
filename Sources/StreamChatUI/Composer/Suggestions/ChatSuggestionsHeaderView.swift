@@ -29,8 +29,12 @@ open class ChatSuggestionsHeaderView: _View, AppearanceProvider {
     override open func setUpLayout() {
         directionalLayoutMargins = .streamDefaultLayoutMargins
 
+        // The content follows the margins rather than the value they have while this runs, which is
+        // read once and goes stale as soon as the margins change, as they do on an orientation
+        // change.
         let view = UIView().withoutAutoresizingMaskConstraints
-        embed(view, insets: directionalLayoutMargins)
+        addSubview(view)
+        view.pin(to: layoutMarginsGuide)
 
         view.addSubview(commandImageView)
         view.addSubview(headerLabel)
