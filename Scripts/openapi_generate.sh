@@ -175,7 +175,6 @@ allowed_models=(
   MarkDeliveredRequest
   MarkReadRequest
   MarkUnreadRequest
-  MemberUserRequest
   MembersResponse
   MessageActionRequest
   MessageActionResponse
@@ -553,7 +552,6 @@ codable_models=(
   GiphyImageData
   GiphyImages
   MemberInfoPayload
-  MemberUserRequest
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
   Role
@@ -717,27 +715,30 @@ PY
 }
 prune_wsevent_cases
 
-# Remove a generated property (declaration, doc comment, init param, assignment,
+# Remove generated properties (declaration, doc comment, init param, assignment,
 #     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
 #     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^self\\." p " = " p "$"       { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
-    s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
-    s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
-  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
-  perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+  local p
+  for p in "${@:2}"; do
+    awk -v p="$p" '
+      function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+      { s = $0; sub(/^[[:space:]]+/, "", s) }
+      s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+      s ~ "^let " p ": "                 { n = 0; next }
+      s ~ "^self\\." p " = " p "$"       { next }
+      s ~ "^case " p "( =|$)"            { next }
+      s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
+      s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
+      s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
+      s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+      { flush(); print }
+    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+    perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
+    perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+  done
 }
 
 for model in "${allowed_models[@]}"; do
@@ -970,53 +971,6 @@ optionalize_property MemberAddedEventDTO channel
 optionalize_property MemberRemovedEventDTO channel
 optionalize_property MemberUpdatedEventDTO channel
 
-remove_property PushPreferenceInput callLevel
-remove_property PushPreferenceInput chatPreferences
-remove_property PushPreferenceInput feedsLevel
-remove_property PushPreferenceInput feedsPreferences
-remove_property PushPreference callLevel
-remove_property PushPreference chatPreferences
-remove_property PushPreference feedsLevel
-remove_property PushPreference feedsPreferences
-remove_property UpdateUsersResponse membershipDeletionTaskId
-remove_property UserGroupMember appPk
-remove_property UserPayload blockedUserIds
-remove_property SharedLocation channel
-remove_property SharedLocation message
-remove_property MutedChannelPayloadResponse channelMutes
-remove_property MutedChannelPayloadResponse ownUser
-remove_property OwnUserResponse unreadCount
-# CHA-5096
-remove_property ChannelGetOrCreateRequest hideForCreator
-# CHA-5096
-remove_property ChannelInput configOverrides
-# CHA-5096
-remove_property ChannelInput createdBy
-# CHA-5096
-remove_property ChannelInputRequest configOverrides
-# CHA-5096
-remove_property ChannelInputRequest createdBy
-# CHA-5068
-remove_property BanRequest ipBan
-remove_property FlagRequest entityCreatorId
-remove_property FlagRequest moderationPayload
-
-# Unused channel context (cid, createdBy, id, type)
-remove_property SendMessageRequest includeChannelContext
-remove_property SendMessageResponsePayload channelContext
-
-# TODO: reaction group reactors need CoreData and public API design first
-remove_property MessageReactionGroupPayload latestReactionsBy
-
-# CHA-5106
-remove_property SearchPayload forceDefaultSearch
-remove_property SearchPayload forceSqlV2Backend
-
-# Unused
-remove_property SearchPayload messageOptions
-# Unused
-remove_property SearchResponse resultsWarning
-
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
@@ -1073,373 +1027,112 @@ require_property UserWatchingStopEventDTO cid
 retype_property MessageDeliveredEventDTO lastDeliveredAt String Date
 
 # Unread by the SDK
-remove_property AIIndicatorClearEventDTO channelId
-remove_property AIIndicatorClearEventDTO channelType
-remove_property AIIndicatorClearEventDTO custom
-remove_property AIIndicatorClearEventDTO receivedAt
-remove_property AIIndicatorStopEventDTO channelId
-remove_property AIIndicatorStopEventDTO channelType
-remove_property AIIndicatorStopEventDTO custom
-remove_property AIIndicatorStopEventDTO receivedAt
-remove_property AIIndicatorUpdateEventDTO channelId
-remove_property AIIndicatorUpdateEventDTO channelType
-remove_property AIIndicatorUpdateEventDTO custom
-remove_property AIIndicatorUpdateEventDTO receivedAt
-remove_property ChannelDeletedEventDTO channelCustom
-remove_property ChannelDeletedEventDTO channelId
-remove_property ChannelDeletedEventDTO channelMemberCount
-remove_property ChannelDeletedEventDTO channelMessageCount
-remove_property ChannelDeletedEventDTO channelType
-remove_property ChannelDeletedEventDTO cid
-remove_property ChannelDeletedEventDTO custom
-remove_property ChannelDeletedEventDTO receivedAt
-remove_property ChannelDeletedEventDTO team
-remove_property ChannelHiddenEventDTO channelCustom
-remove_property ChannelHiddenEventDTO channelId
-remove_property ChannelHiddenEventDTO channelMemberCount
-remove_property ChannelHiddenEventDTO channelMessageCount
-remove_property ChannelHiddenEventDTO channelType
-remove_property ChannelHiddenEventDTO custom
-remove_property ChannelHiddenEventDTO receivedAt
-remove_property ChannelHiddenEventDTO team
-remove_property ChannelTruncatedEventDTO channelCustom
-remove_property ChannelTruncatedEventDTO channelId
-remove_property ChannelTruncatedEventDTO channelMemberCount
-remove_property ChannelTruncatedEventDTO channelType
-remove_property ChannelTruncatedEventDTO cid
-remove_property ChannelTruncatedEventDTO custom
-remove_property ChannelTruncatedEventDTO messageId
-remove_property ChannelTruncatedEventDTO receivedAt
-remove_property ChannelTruncatedEventDTO team
-remove_property ChannelUpdatedEventDTO channelCustom
-remove_property ChannelUpdatedEventDTO channelId
-remove_property ChannelUpdatedEventDTO channelMemberCount
-remove_property ChannelUpdatedEventDTO channelType
-remove_property ChannelUpdatedEventDTO cid
-remove_property ChannelUpdatedEventDTO custom
-remove_property ChannelUpdatedEventDTO messageId
-remove_property ChannelUpdatedEventDTO receivedAt
-remove_property ChannelUpdatedEventDTO team
-remove_property ChannelVisibleEventDTO channelCustom
-remove_property ChannelVisibleEventDTO channelId
-remove_property ChannelVisibleEventDTO channelMemberCount
-remove_property ChannelVisibleEventDTO channelMessageCount
-remove_property ChannelVisibleEventDTO channelType
-remove_property ChannelVisibleEventDTO custom
-remove_property ChannelVisibleEventDTO receivedAt
-remove_property ChannelVisibleEventDTO team
-remove_property DraftDeletedEventDTO custom
-remove_property DraftDeletedEventDTO parentId
-remove_property DraftDeletedEventDTO receivedAt
-remove_property DraftUpdatedEventDTO custom
-remove_property DraftUpdatedEventDTO parentId
-remove_property DraftUpdatedEventDTO receivedAt
-remove_property HealthCheckEventDTO cid
-remove_property HealthCheckEventDTO custom
-remove_property HealthCheckEventDTO receivedAt
-remove_property MemberAddedEventDTO channelCustom
-remove_property MemberAddedEventDTO channelId
-remove_property MemberAddedEventDTO channelMemberCount
-remove_property MemberAddedEventDTO channelMessageCount
-remove_property MemberAddedEventDTO channelType
-remove_property MemberAddedEventDTO custom
-remove_property MemberAddedEventDTO receivedAt
-remove_property MemberAddedEventDTO team
-remove_property MemberRemovedEventDTO channelCustom
-remove_property MemberRemovedEventDTO channelId
-remove_property MemberRemovedEventDTO channelMemberCount
-remove_property MemberRemovedEventDTO channelMessageCount
-remove_property MemberRemovedEventDTO channelType
-remove_property MemberRemovedEventDTO custom
-remove_property MemberRemovedEventDTO member
-remove_property MemberRemovedEventDTO receivedAt
-remove_property MemberRemovedEventDTO team
-remove_property MemberUpdatedEventDTO channelCustom
-remove_property MemberUpdatedEventDTO channelId
-remove_property MemberUpdatedEventDTO channelMemberCount
-remove_property MemberUpdatedEventDTO channelMessageCount
-remove_property MemberUpdatedEventDTO channelType
-remove_property MemberUpdatedEventDTO custom
-remove_property MemberUpdatedEventDTO receivedAt
-remove_property MemberUpdatedEventDTO team
-remove_property MessageDeletedEventDTO channelCustom
-remove_property MessageDeletedEventDTO channelId
-remove_property MessageDeletedEventDTO channelMemberCount
-remove_property MessageDeletedEventDTO channelType
-remove_property MessageDeletedEventDTO custom
-remove_property MessageDeletedEventDTO messageId
-remove_property MessageDeletedEventDTO receivedAt
-remove_property MessageDeletedEventDTO team
-remove_property MessageDeliveredEventDTO channelCustom
-remove_property MessageDeliveredEventDTO channelId
-remove_property MessageDeliveredEventDTO channelMemberCount
-remove_property MessageDeliveredEventDTO channelMessageCount
-remove_property MessageDeliveredEventDTO channelType
-remove_property MessageDeliveredEventDTO custom
-remove_property MessageDeliveredEventDTO receivedAt
-remove_property MessageDeliveredEventDTO team
-remove_property MessageNewEventDTO channelCustom
-remove_property MessageNewEventDTO channelId
-remove_property MessageNewEventDTO channelMemberCount
-remove_property MessageNewEventDTO channelType
-remove_property MessageNewEventDTO custom
-remove_property MessageNewEventDTO messageId
-remove_property MessageNewEventDTO parentAuthor
-remove_property MessageNewEventDTO receivedAt
-remove_property MessageNewEventDTO team
-remove_property MessageNewEventDTO threadParticipants
-remove_property MessageNewEventDTO unreadCount
-remove_property MessageReadEventDTO channelCustom
-remove_property MessageReadEventDTO channelId
-remove_property MessageReadEventDTO channelMemberCount
-remove_property MessageReadEventDTO channelMessageCount
-remove_property MessageReadEventDTO channelType
-remove_property MessageReadEventDTO custom
-remove_property MessageReadEventDTO lastReadMessageId
-remove_property MessageReadEventDTO receivedAt
-remove_property MessageUpdatedEventDTO channelCustom
-remove_property MessageUpdatedEventDTO channelId
-remove_property MessageUpdatedEventDTO channelMemberCount
-remove_property MessageUpdatedEventDTO channelType
-remove_property MessageUpdatedEventDTO custom
-remove_property MessageUpdatedEventDTO messageId
-remove_property MessageUpdatedEventDTO messageUpdate
-remove_property MessageUpdatedEventDTO receivedAt
-remove_property MessageUpdatedEventDTO team
-remove_property NotificationAddedToChannelEventDTO channelCustom
-remove_property NotificationAddedToChannelEventDTO channelId
-remove_property NotificationAddedToChannelEventDTO channelMemberCount
-remove_property NotificationAddedToChannelEventDTO channelMessageCount
-remove_property NotificationAddedToChannelEventDTO channelType
-remove_property NotificationAddedToChannelEventDTO cid
-remove_property NotificationAddedToChannelEventDTO custom
-remove_property NotificationAddedToChannelEventDTO receivedAt
-remove_property NotificationAddedToChannelEventDTO team
-remove_property NotificationChannelDeletedEventDTO channelCustom
-remove_property NotificationChannelDeletedEventDTO channelId
-remove_property NotificationChannelDeletedEventDTO channelMemberCount
-remove_property NotificationChannelDeletedEventDTO channelMessageCount
-remove_property NotificationChannelDeletedEventDTO channelType
-remove_property NotificationChannelDeletedEventDTO custom
-remove_property NotificationChannelDeletedEventDTO receivedAt
-remove_property NotificationChannelDeletedEventDTO team
-remove_property NotificationChannelDeletedEventDTO unreadCount
-remove_property NotificationChannelMutesUpdatedEventDTO custom
-remove_property NotificationChannelMutesUpdatedEventDTO receivedAt
-remove_property NotificationInviteAcceptedEventDTO channelCustom
-remove_property NotificationInviteAcceptedEventDTO channelId
-remove_property NotificationInviteAcceptedEventDTO channelMemberCount
-remove_property NotificationInviteAcceptedEventDTO channelMessageCount
-remove_property NotificationInviteAcceptedEventDTO channelType
-remove_property NotificationInviteAcceptedEventDTO cid
-remove_property NotificationInviteAcceptedEventDTO custom
-remove_property NotificationInviteAcceptedEventDTO receivedAt
-remove_property NotificationInviteAcceptedEventDTO team
-remove_property NotificationInviteRejectedEventDTO channelCustom
-remove_property NotificationInviteRejectedEventDTO channelId
-remove_property NotificationInviteRejectedEventDTO channelMemberCount
-remove_property NotificationInviteRejectedEventDTO channelMessageCount
-remove_property NotificationInviteRejectedEventDTO channelType
-remove_property NotificationInviteRejectedEventDTO cid
-remove_property NotificationInviteRejectedEventDTO custom
-remove_property NotificationInviteRejectedEventDTO receivedAt
-remove_property NotificationInviteRejectedEventDTO team
-remove_property NotificationInvitedEventDTO channelCustom
-remove_property NotificationInvitedEventDTO channelId
-remove_property NotificationInvitedEventDTO channelMemberCount
-remove_property NotificationInvitedEventDTO channelMessageCount
-remove_property NotificationInvitedEventDTO channelType
-remove_property NotificationInvitedEventDTO custom
-remove_property NotificationInvitedEventDTO receivedAt
-remove_property NotificationInvitedEventDTO team
-remove_property NotificationMarkReadEventDTO channelCustom
-remove_property NotificationMarkReadEventDTO channelId
-remove_property NotificationMarkReadEventDTO channelMemberCount
-remove_property NotificationMarkReadEventDTO channelMessageCount
-remove_property NotificationMarkReadEventDTO channelType
-remove_property NotificationMarkReadEventDTO custom
-remove_property NotificationMarkReadEventDTO receivedAt
-remove_property NotificationMarkReadEventDTO team
-remove_property NotificationMarkReadEventDTO threadId
-remove_property NotificationMarkReadEventDTO unreadCount
-remove_property NotificationMarkReadEventDTO unreadThreadMessages
-remove_property NotificationMarkUnreadEventDTO channelCustom
-remove_property NotificationMarkUnreadEventDTO channelId
-remove_property NotificationMarkUnreadEventDTO channelMemberCount
-remove_property NotificationMarkUnreadEventDTO channelMessageCount
-remove_property NotificationMarkUnreadEventDTO channelType
-remove_property NotificationMarkUnreadEventDTO custom
-remove_property NotificationMarkUnreadEventDTO receivedAt
-remove_property NotificationMarkUnreadEventDTO team
-remove_property NotificationMarkUnreadEventDTO threadId
-remove_property NotificationMarkUnreadEventDTO unreadCount
-remove_property NotificationMarkUnreadEventDTO unreadThreadMessages
-remove_property NotificationMutesUpdatedEventDTO custom
-remove_property NotificationMutesUpdatedEventDTO receivedAt
-remove_property NotificationNewMessageEventDTO channelCustom
-remove_property NotificationNewMessageEventDTO channelId
-remove_property NotificationNewMessageEventDTO channelMemberCount
-remove_property NotificationNewMessageEventDTO channelType
-remove_property NotificationNewMessageEventDTO cid
-remove_property NotificationNewMessageEventDTO custom
-remove_property NotificationNewMessageEventDTO messageId
-remove_property NotificationNewMessageEventDTO parentAuthor
-remove_property NotificationNewMessageEventDTO receivedAt
-remove_property NotificationNewMessageEventDTO team
-remove_property NotificationNewMessageEventDTO threadParticipants
-remove_property NotificationNewMessageEventDTO unreadCount
-remove_property NotificationNewMessageEventDTO watcherCount
-remove_property NotificationRemovedFromChannelEventDTO channelCustom
-remove_property NotificationRemovedFromChannelEventDTO channelId
-remove_property NotificationRemovedFromChannelEventDTO channelMemberCount
-remove_property NotificationRemovedFromChannelEventDTO channelMessageCount
-remove_property NotificationRemovedFromChannelEventDTO channelType
-remove_property NotificationRemovedFromChannelEventDTO custom
-remove_property NotificationRemovedFromChannelEventDTO receivedAt
-remove_property NotificationRemovedFromChannelEventDTO team
-remove_property NotificationThreadMessageNewEventDTO channelCustom
-remove_property NotificationThreadMessageNewEventDTO channelId
-remove_property NotificationThreadMessageNewEventDTO channelMemberCount
-remove_property NotificationThreadMessageNewEventDTO channelType
-remove_property NotificationThreadMessageNewEventDTO custom
-remove_property NotificationThreadMessageNewEventDTO messageId
-remove_property NotificationThreadMessageNewEventDTO parentAuthor
-remove_property NotificationThreadMessageNewEventDTO receivedAt
-remove_property NotificationThreadMessageNewEventDTO team
-remove_property NotificationThreadMessageNewEventDTO threadId
-remove_property NotificationThreadMessageNewEventDTO threadParticipants
-remove_property NotificationThreadMessageNewEventDTO unreadThreadMessages
-remove_property NotificationThreadMessageNewEventDTO watcherCount
-remove_property PollClosedEventDTO activityId
-remove_property PollClosedEventDTO cid
-remove_property PollClosedEventDTO custom
-remove_property PollClosedEventDTO messageId
-remove_property PollClosedEventDTO receivedAt
-remove_property PollDeletedEventDTO activityId
-remove_property PollDeletedEventDTO cid
-remove_property PollDeletedEventDTO custom
-remove_property PollDeletedEventDTO messageId
-remove_property PollDeletedEventDTO receivedAt
-remove_property PollUpdatedEventDTO activityId
-remove_property PollUpdatedEventDTO cid
-remove_property PollUpdatedEventDTO custom
-remove_property PollUpdatedEventDTO messageId
-remove_property PollUpdatedEventDTO receivedAt
-remove_property PollVoteCastedEventDTO activityId
-remove_property PollVoteCastedEventDTO cid
-remove_property PollVoteCastedEventDTO custom
-remove_property PollVoteCastedEventDTO messageId
-remove_property PollVoteCastedEventDTO receivedAt
-remove_property PollVoteChangedEventDTO activityId
-remove_property PollVoteChangedEventDTO cid
-remove_property PollVoteChangedEventDTO custom
-remove_property PollVoteChangedEventDTO messageId
-remove_property PollVoteChangedEventDTO receivedAt
-remove_property PollVoteRemovedEventDTO activityId
-remove_property PollVoteRemovedEventDTO cid
-remove_property PollVoteRemovedEventDTO custom
-remove_property PollVoteRemovedEventDTO messageId
-remove_property PollVoteRemovedEventDTO receivedAt
-remove_property ReactionDeletedEventDTO channelCustom
-remove_property ReactionDeletedEventDTO channelId
-remove_property ReactionDeletedEventDTO channelMemberCount
-remove_property ReactionDeletedEventDTO channelType
-remove_property ReactionDeletedEventDTO custom
-remove_property ReactionDeletedEventDTO messageId
-remove_property ReactionDeletedEventDTO receivedAt
-remove_property ReactionDeletedEventDTO team
-remove_property ReactionDeletedEventDTO threadParticipants
-remove_property ReactionNewEventDTO channelCustom
-remove_property ReactionNewEventDTO channelId
-remove_property ReactionNewEventDTO channelMemberCount
-remove_property ReactionNewEventDTO channelType
-remove_property ReactionNewEventDTO custom
-remove_property ReactionNewEventDTO messageId
-remove_property ReactionNewEventDTO receivedAt
-remove_property ReactionNewEventDTO team
-remove_property ReactionNewEventDTO threadParticipants
-remove_property ReactionUpdatedEventDTO channelCustom
-remove_property ReactionUpdatedEventDTO channelId
-remove_property ReactionUpdatedEventDTO channelMemberCount
-remove_property ReactionUpdatedEventDTO channelType
-remove_property ReactionUpdatedEventDTO custom
-remove_property ReactionUpdatedEventDTO messageId
-remove_property ReactionUpdatedEventDTO receivedAt
-remove_property ReactionUpdatedEventDTO team
-remove_property ReminderCreatedEventDTO cid
-remove_property ReminderCreatedEventDTO custom
-remove_property ReminderCreatedEventDTO parentId
-remove_property ReminderCreatedEventDTO receivedAt
-remove_property ReminderCreatedEventDTO userId
-remove_property ReminderDeletedEventDTO cid
-remove_property ReminderDeletedEventDTO custom
-remove_property ReminderDeletedEventDTO parentId
-remove_property ReminderDeletedEventDTO receivedAt
-remove_property ReminderDeletedEventDTO userId
-remove_property ReminderNotificationEventDTO cid
-remove_property ReminderNotificationEventDTO custom
-remove_property ReminderNotificationEventDTO parentId
-remove_property ReminderNotificationEventDTO receivedAt
-remove_property ReminderNotificationEventDTO userId
-remove_property ReminderUpdatedEventDTO cid
-remove_property ReminderUpdatedEventDTO custom
-remove_property ReminderUpdatedEventDTO parentId
-remove_property ReminderUpdatedEventDTO receivedAt
-remove_property ReminderUpdatedEventDTO userId
-remove_property ThreadUpdatedEventDTO channelId
-remove_property ThreadUpdatedEventDTO channelType
-remove_property ThreadUpdatedEventDTO cid
-remove_property ThreadUpdatedEventDTO custom
-remove_property ThreadUpdatedEventDTO receivedAt
-remove_property TypingStartEventDTO channelId
-remove_property TypingStartEventDTO channelType
-remove_property TypingStartEventDTO custom
-remove_property TypingStartEventDTO receivedAt
-remove_property TypingStopEventDTO channelId
-remove_property TypingStopEventDTO channelType
-remove_property TypingStopEventDTO custom
-remove_property TypingStopEventDTO receivedAt
-remove_property UserBannedEventDTO channelCustom
-remove_property UserBannedEventDTO channelId
-remove_property UserBannedEventDTO channelMemberCount
-remove_property UserBannedEventDTO channelMessageCount
-remove_property UserBannedEventDTO channelType
-remove_property UserBannedEventDTO custom
-remove_property UserBannedEventDTO receivedAt
-remove_property UserBannedEventDTO reviewQueueItemId
-remove_property UserBannedEventDTO team
-remove_property UserBannedEventDTO totalBans
-remove_property UserMessagesDeletedEventDTO channelCustom
-remove_property UserMessagesDeletedEventDTO channelId
-remove_property UserMessagesDeletedEventDTO channelMemberCount
-remove_property UserMessagesDeletedEventDTO channelMessageCount
-remove_property UserMessagesDeletedEventDTO channelType
-remove_property UserMessagesDeletedEventDTO cid
-remove_property UserMessagesDeletedEventDTO custom
-remove_property UserMessagesDeletedEventDTO receivedAt
-remove_property UserMessagesDeletedEventDTO team
-remove_property UserPresenceChangedEventDTO custom
-remove_property UserPresenceChangedEventDTO receivedAt
-remove_property UserUnbannedEventDTO channelCustom
-remove_property UserUnbannedEventDTO channelId
-remove_property UserUnbannedEventDTO channelMemberCount
-remove_property UserUnbannedEventDTO channelMessageCount
-remove_property UserUnbannedEventDTO channelType
-remove_property UserUnbannedEventDTO createdBy
-remove_property UserUnbannedEventDTO custom
-remove_property UserUnbannedEventDTO receivedAt
-remove_property UserUnbannedEventDTO shadow
-remove_property UserUnbannedEventDTO team
-remove_property UserUpdatedEventDTO custom
-remove_property UserUpdatedEventDTO receivedAt
-remove_property UserWatchingStartEventDTO channelId
-remove_property UserWatchingStartEventDTO channelType
-remove_property UserWatchingStartEventDTO custom
-remove_property UserWatchingStartEventDTO receivedAt
-remove_property UserWatchingStopEventDTO channelId
-remove_property UserWatchingStopEventDTO channelType
-remove_property UserWatchingStopEventDTO custom
-remove_property UserWatchingStopEventDTO receivedAt
+remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt
+remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt
+remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt
+remove_property BanRequest deleteMessages ipBan
+remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
+remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
+remove_property ChannelInputRequest autoTranslationEnabled autoTranslationLanguage configOverrides createdBy disabled frozen
+remove_property ChannelMemberRequest channelRole user
+remove_property ChannelStateResponse hideMessagesBefore
+remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
+remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
+remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property CreateDeviceRequest hardwareId voipToken
+remove_property CreatePollRequestBody team
+remove_property DraftDeletedEventDTO custom parentId receivedAt
+remove_property DraftUpdatedEventDTO custom parentId receivedAt
+remove_property FlagRequest entityCreatorId moderationPayload
+remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore
+remove_property GetOGResponse actions authorIcon authorLink color fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
+remove_property GroupedChannelsGroupRequest prev
+remove_property HealthCheckEventDTO cid custom receivedAt
+remove_property MarkReadRequest messageId
+remove_property MemberAddedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MemberRemovedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom member receivedAt team
+remove_property MemberUpdatedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MessageDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team
+remove_property MessageDeliveredEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MessageModerationDetailsPayload blocklistMatched
+remove_property MessageNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId parentAuthor receivedAt team threadParticipants unreadCount
+remove_property MessagePaginationParams createdAtAfter createdAtAfterOrEqual createdAtAround createdAtBefore createdAtBeforeOrEqual
+remove_property MessageReactionGroupPayload latestReactionsBy
+remove_property MessageReadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom lastReadMessageId receivedAt
+remove_property MessageRequest mml pinnedAt
+remove_property MessageUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId messageUpdate receivedAt team
+remove_property MutedChannelPayloadResponse channelMutes ownUser
+remove_property MutedUserPayload user
+remove_property NotificationAddedToChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team unreadCount
+remove_property NotificationChannelMutesUpdatedEventDTO custom receivedAt
+remove_property NotificationInviteAcceptedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationInviteRejectedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationInvitedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property NotificationMarkReadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team threadId unreadCount unreadThreadMessages
+remove_property NotificationMarkUnreadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team threadId unreadCount unreadThreadMessages
+remove_property NotificationMutesUpdatedEventDTO custom receivedAt
+remove_property NotificationNewMessageEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId parentAuthor receivedAt team threadParticipants unreadCount watcherCount
+remove_property NotificationRemovedFromChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property NotificationThreadMessageNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId parentAuthor receivedAt team threadId threadParticipants unreadThreadMessages watcherCount
+remove_property OwnUserResponse unreadCount
+remove_property PaginationParams idGt idGte idLt idLte
+remove_property PendingMessageResponse channel user
+remove_property PollClosedEventDTO activityId cid custom messageId receivedAt
+remove_property PollDeletedEventDTO activityId cid custom messageId receivedAt
+remove_property PollOptionPayload textI18n
+remove_property PollPayload descriptionI18n nameI18n
+remove_property PollUpdatedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVoteCastedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVoteChangedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVotePayload answerTextI18n
+remove_property PollVoteRemovedEventDTO activityId cid custom messageId receivedAt
+remove_property PushPreference callLevel chatPreferences feedsLevel feedsPreferences
+remove_property PushPreferenceInput callLevel chatPreferences feedsLevel feedsPreferences userId
+remove_property QueryBannedUsersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual
+remove_property QueryChannelsRequest memberCustomInclude
+remove_property QueryDraftsRequest prev
+remove_property QueryDraftsResponse prev
+remove_property QueryMembersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual members userIdGt userIdGte userIdLt userIdLte
+remove_property QueryReactionsRequest next prev sort
+remove_property QueryRemindersRequest prev
+remove_property QueryRemindersResponse prev
+remove_property QueryThreadsRequest prev
+remove_property QueryUsersPayload idGt idGte idLt idLte includeDeactivatedUsers
+remove_property ReactionDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
+remove_property ReactionNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
+remove_property ReactionRequest createdAt updatedAt
+remove_property ReactionUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team
+remove_property ReminderCreatedEventDTO cid custom parentId receivedAt userId
+remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
+remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
+remove_property ReminderPayload user
+remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
+remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
+remove_property SearchResponse previous resultsWarning
+remove_property SendMessageRequest includeChannelContext includeMentionedMembers keepChannelHidden
+remove_property SendMessageResponsePayload channelContext mentionedMembers
+remove_property SharedLocation channel message
+remove_property ThreadUpdatedEventDTO channelId channelType cid custom receivedAt
+remove_property TruncateChannelRequest memberIds truncatedAt
+remove_property TypingStartEventDTO channelId channelType custom receivedAt
+remove_property TypingStopEventDTO channelId channelType custom receivedAt
+remove_property UnmuteChannelRequest expiration
+remove_property UpdateChannelRequest cooldown removeFilterTags skipPush
+remove_property UpdateMessagePartialRequest skipEnrichUrl skipPush
+remove_property UpdateUsersResponse membershipDeletionTaskId
+remove_property UserBannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt reviewQueueItemId team totalBans
+remove_property UserGroupMember appPk
+remove_property UserMessagesDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property UserPayload blockedUserIds
+remove_property UserPresenceChangedEventDTO custom receivedAt
+remove_property UserRequest invisible language privacySettings
+remove_property UserUnbannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType createdBy custom receivedAt shadow team
+remove_property UserUpdatedEventDTO custom receivedAt
+remove_property UserWatchingStartEventDTO channelId channelType custom receivedAt
+remove_property UserWatchingStopEventDTO channelId channelType custom receivedAt
 
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -1450,6 +1143,7 @@ remove_type() {
     { print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
+remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 

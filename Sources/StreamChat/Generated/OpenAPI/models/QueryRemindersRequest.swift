@@ -9,7 +9,6 @@ final class QueryRemindersRequest: Sendable, Encodable, JSONEncodable {
     let filter: (any Encodable & Sendable)?
     let limit: Int?
     let next: String?
-    let prev: String?
     /// Array of sort parameters
     let sort: [SortParamRequest]?
 
@@ -17,13 +16,11 @@ final class QueryRemindersRequest: Sendable, Encodable, JSONEncodable {
         filter: (any Encodable & Sendable)? = nil,
         limit: Int? = nil,
         next: String? = nil,
-        prev: String? = nil,
         sort: [SortParamRequest]? = nil
     ) {
         self.filter = filter
         self.limit = limit
         self.next = next
-        self.prev = prev
         self.sort = sort
     }
 
@@ -31,7 +28,6 @@ final class QueryRemindersRequest: Sendable, Encodable, JSONEncodable {
         case filter
         case limit
         case next
-        case prev
         case sort
     }
 
@@ -42,7 +38,6 @@ final class QueryRemindersRequest: Sendable, Encodable, JSONEncodable {
         }
         try container.encodeIfPresent(limit, forKey: .limit)
         try container.encodeIfPresent(next, forKey: .next)
-        try container.encodeIfPresent(prev, forKey: .prev)
         try container.encodeIfPresent(sort, forKey: .sort)
     }
 }
