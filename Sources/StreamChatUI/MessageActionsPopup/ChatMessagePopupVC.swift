@@ -171,7 +171,10 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         scrollView.addSubview(contentView)
 
         NSLayoutConstraint.activate([
-            contentView.widthAnchor.pin(equalTo: scrollView.widthAnchor),
+            // The scroll view insets its content by the safe area, so the content is as wide as
+            // what the safe area leaves rather than as wide as the whole view, which would hang off
+            // the screen by the inset on a device that has one, like an unfolded iPhone Duo.
+            contentView.widthAnchor.pin(equalTo: view.safeAreaLayoutGuide.widthAnchor),
             contentView.topAnchor.pin(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.pin(equalTo: scrollView.bottomAnchor)
         ])
@@ -219,13 +222,16 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             messageContainerStackView.bottomAnchor.pin(lessThanOrEqualTo: contentView.bottomAnchor)
         ]
 
+        // The message opens where it sits in the message list, but only as far as it fits. The
+        // constraints above keep it inside the content, which they can only do if they outrank the
+        // one placing it.
         if message.isSentByCurrentUser {
             messageContainerStackView.alignment = .trailing
             constraints += [
                 messageContainerStackView.trailingAnchor.pin(
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.maxX
-                )
+                ).with(priority: .streamLow)
             ]
         } else {
             messageContainerStackView.alignment = .leading
@@ -233,7 +239,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
                 messageContainerStackView.leadingAnchor.pin(
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.minX
-                )
+                ).with(priority: .streamLow)
             ]
         }
 
@@ -244,7 +250,12 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// The position of the message is calculated in ` layoutPositionOfMessageView()`.
     open func layoutMessageView() {
         NSLayoutConstraint.activate([
-            messageContentContainerView.widthAnchor.pin(equalToConstant: messageViewFrame.width),
+            // The message keeps the size it has in the message list, unless that is wider than the
+            // space there is for it.
+            messageContentContainerView.widthAnchor
+                .pin(equalToConstant: messageViewFrame.width)
+                .with(priority: .streamAlmostRequire),
+            messageContentContainerView.widthAnchor.pin(lessThanOrEqualTo: contentView.widthAnchor),
             messageContentContainerView.heightAnchor.pin(equalToConstant: messageViewFrame.height)
         ])
     }
