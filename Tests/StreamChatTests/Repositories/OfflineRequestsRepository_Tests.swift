@@ -70,9 +70,9 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(pendingRequests.count, 0)
     }
 
-    func test_runQueuedRequestsWithPendingRequests_createChannel() throws {
-        // We add one .createChannel request to the queue. This is NOT a supported offline action anymore.
-        try createRequest(id: .unique, path: .createChannel(""))
+    func test_runQueuedRequestsWithPendingRequests_getOrCreateChannel() throws {
+        // We add one .getOrCreateChannel request to the queue. This is NOT a supported offline action anymore.
+        try createRequest(id: .unique, path: .getOrCreateChannel(type: "messaging", id: .unique))
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {

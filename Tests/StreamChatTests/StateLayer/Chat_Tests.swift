@@ -343,7 +343,6 @@ final class Chat_Tests: XCTestCase {
             XCTAssertEqual(members.map(\.userId).sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
             XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
             XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
-            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
         }
     }
     
@@ -361,7 +360,6 @@ final class Chat_Tests: XCTestCase {
             XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
             XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
             XCTAssertEqual(hideHistory, env.channelUpdaterMock.addMembers_hideHistory)
-            XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
         }
     }
     
@@ -382,7 +380,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
         XCTAssertEqual(false, env.channelUpdaterMock.addMembers_hideHistory)
         XCTAssertEqual(hideHistoryBefore, env.channelUpdaterMock.addMembers_hideHistoryBefore)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
     }
     
     func test_addMembers_withHideHistoryBefore_takesPrecedenceOverHideHistory() async throws {
@@ -411,7 +408,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
         XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
         XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
     func test_removeMembers_whenChannelUpdaterFails_thenRemoveMembersSucceeds() async throws {
@@ -426,7 +422,6 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.channelUpdaterMock.removeMembers_cid)
         XCTAssertEqual(memberIds.sorted(), env.channelUpdaterMock.removeMembers_userIds?.sorted())
         XCTAssertEqual("My system message", env.channelUpdaterMock.removeMembers_message)
-        XCTAssertEqual(currentUserId, env.channelUpdaterMock.removeMembers_currentUserId)
     }
     
     func test_addMembers_withSystemMessageExtraData_passesSystemMessageToChannelUpdater() async throws {
@@ -461,7 +456,7 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(apiResponse.members.map(\.user?.id), chat.state.members.map(\.id))
         
         let channel = try await MainActor.run { try XCTUnwrap(chat.state.channel) }
-        XCTAssertEqual(apiResponse.channelReads.map(\.user.id).sorted(), channel.reads.map(\.user.id).sorted())
+        XCTAssertEqual(try XCTUnwrap(apiResponse.read).map(\.user.id).sorted(), channel.reads.map(\.user.id).sorted())
     }
     
     func test_loadMoreMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -479,7 +474,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(moreResponse.members.map(\.user?.id), paginationMembers.map(\.id))
         
         let allMembers = initialResponse.members + moreResponse.members
-        let allReads = initialResponse.channelReads + moreResponse.channelReads
+        let allReads = try XCTUnwrap(initialResponse.read) + XCTUnwrap(moreResponse.read)
         await XCTAssertEqual(allMembers.map(\.user?.id), chat.state.members.map(\.id))
         
         let channel = try await MainActor.run { try XCTUnwrap(chat.state.channel) }
@@ -1036,7 +1031,7 @@ final class Chat_Tests: XCTestCase {
         try await setUpChat(usesMockedUpdaters: false, loadState: false)
         
         // Accessing the state triggers loading the initial states
-        let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages ?? [])
+        let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages?.compactMap(\.message) ?? [])
         await XCTAssertEqual(allMessages.map(\.id), chat.state.messages.map(\.id))
     }
     
@@ -2100,9 +2095,17 @@ final class Chat_Tests: XCTestCase {
     
     /// Sets up a chat backed by real updaters and loads a channel with the given capabilities into the state.
     @MainActor private func setUpChatWithLoadedChannel(ownCapabilities: [String]) async throws {
-        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId, ownCapabilities: ownCapabilities))
-        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await setUpChat(usesMockedUpdaters: false)
+        // `setUpChat` already saved a channel. The watch/get payload must have a newer
+        // `updatedAt` or `saveChannel` will skip ownCapabilities from this snapshot.
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: channelId,
+                updatedAt: XCTestCase.channelLaterUpdateDate,
+                ownCapabilities: ownCapabilities
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await chat.get(watch: false)
         env.client.mockAPIClient.cleanUp()
     }

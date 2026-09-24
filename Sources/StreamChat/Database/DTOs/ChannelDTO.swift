@@ -258,6 +258,18 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
+        // `updatedAt` is only written from server payloads, never from optimistic local
+        // mutations. Events such as `member.updated` can still carry a full `channel`
+        // object snapshotted before a concurrent `channel.updated`. Skip the stale
+        // snapshot entirely so channel state is not rewound.
+        if payload.updatedAt < dto.updatedAt.bridgeDate {
+            if let query {
+                let queryDTO = saveQuery(query: query)
+                queryDTO.channels.insert(dto)
+            }
+            return dto
+        }
+
         dto.name = payload.name
         dto.imageURL = payload.imageURL
         do {
@@ -368,16 +380,16 @@ extension NSManagedObjectContext {
 
         // Save reads (note that returned reads are for currently fetched members)
         let reads = Set(
-            try payload.channelReads.map {
+            try payload.read?.map {
                 try saveChannelRead(payload: $0, for: payload.channel.cid, cache: cache)
-            }
+            } ?? []
         )
         dto.reads.formUnion(reads)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
         
         var pendingMessages = Set<MessageDTO>()
-        try payload.pendingMessages?.forEach {
+        try payload.pendingMessages?.compactMap(\.message).forEach {
             let pending = try saveMessage(
                 payload: $0,
                 channelDTO: dto,
@@ -392,7 +404,7 @@ extension NSManagedObjectContext {
         // Recalculate reads for existing messages (saveMessage updates it for messages in the payload)
         let channelReadDTOs = dto.reads
         let currentUserId = currentUser?.user.id
-        let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.map(\.id) ?? []))
+        let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.compactMap { $0.message?.id } ?? []))
         for message in dto.messages {
             guard message.user.id == currentUserId else { continue }
             guard !payloadMessageIds.contains(message.id) else { continue }
@@ -411,16 +423,20 @@ extension NSManagedObjectContext {
             }
         }
 
-        dto.activeLiveLocations = Set(try payload.activeLiveLocations.map {
+        dto.activeLiveLocations = Set(try payload.activeLiveLocations?.map {
             try saveLocation(payload: $0, cache: cache)
-        })
+        } ?? [])
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
+
+        _ = payload.threads.compactMapLoggingError {
+            try saveThread(payload: $0, cache: cache)
+        }
         
         // Save push preference
-        if let pushPreference = payload.pushPreference {
+        if let pushPreference = payload.pushPreferences {
             dto.pushPreference = try savePushPreference(
                 id: payload.channel.cid.rawValue,
                 payload: pushPreference

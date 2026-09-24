@@ -207,13 +207,13 @@ final class ChannelDTO_Tests: XCTestCase {
         let ownMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
-            createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-10)
+            createdAt: anotherMemberRead.lastRead.addingTimeInterval(-10)
         )
 
         let ownPinnedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
-            createdAt: anotherMemberRead.lastReadAt.addingTimeInterval(-20),
+            createdAt: anotherMemberRead.lastRead.addingTimeInterval(-20),
             pinned: true,
             pinnedByUserId: anotherMember.user!.id
         )
@@ -348,6 +348,58 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
+    }
+
+    func test_saveChannel_skipsUpdate_whenPayloadUpdatedAtIsOlder() throws {
+        let channelId: ChannelId = .unique
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
+        let newerLastMessageAt = Date(timeIntervalSince1970: 1990)
+        let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
+        let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    cid: channelId,
+                    name: "Conversation",
+                    extraData: newerExtraData,
+                    lastMessageAt: newerLastMessageAt,
+                    updatedAt: newerUpdatedAt,
+                    isFrozen: true,
+                    memberCount: 1,
+                    messageCount: 1
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    cid: channelId,
+                    name: "Initiated",
+                    extraData: olderExtraData,
+                    lastMessageAt: newerUpdatedAt,
+                    updatedAt: olderUpdatedAt,
+                    isFrozen: false,
+                    memberCount: 2,
+                    messageCount: 2
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        XCTAssertEqual(channel.name, "Conversation")
+        XCTAssertEqual(channel.extraData, newerExtraData)
+        XCTAssertEqual(channel.updatedAt, newerUpdatedAt)
+        XCTAssertEqual(channel.lastMessageAt, newerLastMessageAt)
+        XCTAssertEqual(channel.memberCount, 1)
+        XCTAssertEqual(channel.messageCount, 1)
+        XCTAssertTrue(channel.isFrozen)
     }
 
     func test_saveChannel_doesNotUpdateTruncatedAt_whenItsEarlierThanExisting() throws {
@@ -510,7 +562,7 @@ final class ChannelDTO_Tests: XCTestCase {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel.cid)
 
-            Assert.willBeEqual(payload.isHidden, loadedChannel.isHidden)
+            Assert.willBeEqual(payload.hidden, loadedChannel.isHidden)
             Assert.willBeEqual(payload.watcherCount, loadedChannel.watcherCount)
             Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.lastActiveWatchers.map(\.id)))
             Assert.willBeEqual(payload.channel.name, loadedChannel.name)
@@ -603,8 +655,8 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.pinnedMessages[0].pinnedBy?.id, loadedChannel.pinnedMessages[0].pinDetails?.pinnedBy.id)
             
             // Pending Messages
-            Assert.willBeEqual(payload.pendingMessages?[0].id, loadedChannel.pendingMessages[0].id)
-            Assert.willBeEqual(payload.pendingMessages?[0].text, loadedChannel.pendingMessages[0].text)
+            Assert.willBeEqual(payload.pendingMessages?[0].message?.id, loadedChannel.pendingMessages[0].id)
+            Assert.willBeEqual(payload.pendingMessages?[0].message?.text, loadedChannel.pendingMessages[0].text)
             
             // Message user
             Assert.willBeEqual(payload.messages[0].user.id, loadedChannel.latestMessages.first?.author.id)
@@ -617,18 +669,18 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel.latestMessages.first?.author.extraData)
 
             // Read
-            Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel.reads.first?.lastReadAt)
-            Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel.reads.first?.unreadMessagesCount)
-            Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel.reads.first?.user.id)
+            Assert.willBeEqual(payload.read?[0].lastRead, loadedChannel.reads.first?.lastReadAt)
+            Assert.willBeEqual(payload.read?[0].unreadMessages, loadedChannel.reads.first?.unreadMessagesCount)
+            Assert.willBeEqual(payload.read?[0].user.id, loadedChannel.reads.first?.user.id)
 
             // Truncated
             Assert.willBeEqual(payload.channel.truncatedAt, loadedChannel.truncatedAt)
             
             // Push Preference
-            Assert.willNotBeNil(payload.pushPreference)
-            Assert.willBeEqual(payload.pushPreference?.level, loadedChannel.pushPreference?.level)
+            Assert.willNotBeNil(payload.pushPreferences)
+            Assert.willBeEqual(payload.pushPreferences?.level, loadedChannel.pushPreference?.level)
             Assert.willBeEqual(
-                payload.pushPreference?.disabledUntil?.timeIntervalSince1970,
+                payload.pushPreferences?.disabledUntil?.timeIntervalSince1970,
                 loadedChannel.pushPreference?.disabledUntil?.timeIntervalSince1970
             )
         }
@@ -1289,7 +1341,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let messageMentioningCurrentUser: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            createdAt: currentUserChannelReadPayload.lastReadAt.addingTimeInterval(5),
+            createdAt: currentUserChannelReadPayload.lastRead.addingTimeInterval(5),
             mentionedUsers: [currentUserPayload]
         )
 
@@ -1726,6 +1778,72 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(draftMessage.extraData, draftMessagePayload.custom)
         XCTAssertEqual(channel.activeLiveLocations.first?.latitude, 10)
         XCTAssertEqual(channel.activeLiveLocations.first?.longitude, 10)
+    }
+
+    func test_saveChannel_savesThreads() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let channelDetail: ChannelDetailPayload = .dummy(cid: cid)
+        let parentMessageId: MessageId = .unique
+        let reply: MessagePayload = .dummy(messageId: .unique, parentId: parentMessageId, cid: cid)
+        let threadPayload: ThreadPayload = .dummy(
+            parentMessageId: parentMessageId,
+            channel: channelDetail,
+            replyCount: 1,
+            title: "Thread title",
+            latestReplies: [reply]
+        )
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetail, threads: [threadPayload])
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // THEN
+        let thread = try database.readSynchronously { session in
+            try XCTUnwrap(session.thread(parentMessageId: parentMessageId, cache: nil)?.asModel())
+        }
+        XCTAssertEqual(thread.parentMessageId, parentMessageId)
+        XCTAssertEqual(thread.title, "Thread title")
+        XCTAssertEqual(thread.channel.cid, cid)
+        XCTAssertEqual(thread.latestReplies.map(\.id), [reply.id])
+
+        let threadIds = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)).threads.map(\.parentMessageId)
+        }
+        XCTAssertEqual(threadIds, [parentMessageId])
+    }
+
+    func test_saveChannel_whenThreadIsNotEnriched_skipsThreadAndSavesChannel() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let channelDetail: ChannelDetailPayload = .dummy(cid: cid)
+        let parentMessageId: MessageId = .unique
+        let threadPayload = ThreadPayload(
+            channelCid: cid.rawValue,
+            createdAt: .unique,
+            createdByUserId: .unique,
+            custom: [:],
+            latestReplies: [],
+            parentMessageId: parentMessageId,
+            participantCount: 0,
+            replyCount: 0,
+            title: "",
+            updatedAt: .unique
+        )
+        let channelPayload: ChannelPayload = .dummy(channel: channelDetail, threads: [threadPayload])
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // THEN
+        let threadIds = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)).threads.map(\.parentMessageId)
+        }
+        XCTAssertTrue(threadIds.isEmpty)
     }
 
     func test_saveChannel_whenDraftMessageIsNil_removesExistingDraft() throws {

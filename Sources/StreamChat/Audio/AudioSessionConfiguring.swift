@@ -12,22 +12,97 @@ public protocol AudioSessionConfiguring {
     init()
 
     /// Calling this method should activate the provided `AVAudioSession` for recording.
+    ///
+    /// - Note: The activation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report activation failures. Prefer `activateRecordingSession(completion:)` to get
+    /// informed about them.
     func activateRecordingSession() throws
 
+    /// Calling this method should activate the provided `AVAudioSession` for recording and call the
+    /// provided completion handler once the activation has been completed.
+    /// - Parameter completion: The closure to call with the activation's error or `nil` if the
+    /// activation completed successfully.
+    func activateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws
+
     /// Calling this method should deactivate recording from the provided `AVAudioSession`.
+    ///
+    /// - Note: The deactivation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report deactivation failures. Prefer `deactivateRecordingSession(completion:)` to get
+    /// informed about them.
     func deactivateRecordingSession() throws
 
+    /// Calling this method should deactivate recording from the provided `AVAudioSession` and call
+    /// the provided completion handler once the deactivation has been completed.
+    /// - Parameter completion: The closure to call with the deactivation's error or `nil` if the
+    /// deactivation completed successfully.
+    func deactivateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws
+
     /// Calling this method should activate the provided `AVAudioSession` for playback.
+    ///
+    /// - Note: The activation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report activation failures. Prefer `activatePlaybackSession(completion:)` to get
+    /// informed about them.
     func activatePlaybackSession() throws
 
+    /// Calling this method should activate the provided `AVAudioSession` for playback and call the
+    /// provided completion handler once the activation has been completed.
+    /// - Parameter completion: The closure to call with the activation's error or `nil` if the
+    /// activation completed successfully.
+    func activatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws
+
     /// Calling this method should deactivate playback from the provided `AVAudioSession`.
+    ///
+    /// - Note: The deactivation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report deactivation failures. Prefer `deactivatePlaybackSession(completion:)` to get
+    /// informed about them.
     func deactivatePlaybackSession() throws
+
+    /// Calling this method should deactivate playback from the provided `AVAudioSession` and call
+    /// the provided completion handler once the deactivation has been completed.
+    /// - Parameter completion: The closure to call with the deactivation's error or `nil` if the
+    /// deactivation completed successfully.
+    func deactivatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws
 
     /// Calling this method should go through iOS to get or request permission to record and once provided
     /// with a result, call the completionHandler to continue the flow.
     /// - Parameter completionHandler: The completion handler that will be called to continue the flow.
     func requestRecordPermission(
         _ completionHandler: @escaping @Sendable (Bool) -> Void
+    )
+}
+
+public extension AudioSessionConfiguring {
+    func activateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try activateRecordingSession()
+        completion?(nil)
+    }
+
+    func deactivateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try deactivateRecordingSession()
+        completion?(nil)
+    }
+
+    func activatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try activatePlaybackSession()
+        completion?(nil)
+    }
+
+    func deactivatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        try deactivatePlaybackSession()
+        completion?(nil)
+    }
+}
+
+// MARK: - Queue
+
+enum AudioSessionQueue {
+    // Interacting with the `AVAudioSession` performs synchronous inter-process calls which block the
+    // caller long enough to make the UI unresponsive, so they are never performed on the caller's
+    // thread. A single serial queue is shared by everything that touches the session, to ensure the
+    // calls are applied in the order they were requested.
+    static let shared = DispatchQueue(
+        label: "io.getstream.audio-session",
+        qos: .userInitiated
     )
 }
 
@@ -40,11 +115,19 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     public func activateRecordingSession() throws { /* No-op */ }
 
+    public func activateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws { completion?(nil) }
+
     public func deactivateRecordingSession() throws { /* No-op */ }
+
+    public func deactivateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws { completion?(nil) }
 
     public func activatePlaybackSession() throws { /* No-op */ }
 
+    public func activatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws { completion?(nil) }
+
     public func deactivatePlaybackSession() throws { /* No-op */ }
+
+    public func deactivatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws { completion?(nil) }
 
     public func requestRecordPermission(_ completionHandler: @escaping @Sendable (Bool) -> Void) { completionHandler(true) }
 }
@@ -68,7 +151,20 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     /// Calling this method should activate the provided `AVAudioSession` for recording and playback.
     ///
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
+    /// - Note: The activation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report activation failures. Prefer `activateRecordingSession(completion:)` to get
+    /// informed about them.
     open func activateRecordingSession() throws {
+        try activateRecordingSession(completion: nil)
+    }
+
+    /// Calling this method should activate the provided `AVAudioSession` for recording and playback
+    /// and call the provided completion handler once the activation has been completed.
+    ///
+    /// - Parameter completion: The closure to call with the activation's error or `nil` if the
+    /// activation completed successfully.
+    /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
+    open func activateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .spokenAudio,
@@ -77,21 +173,44 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
                 .allowBluetoothDevice
             ]
         )
-        try activateSession()
+        setSessionActive(true, completion: completion)
     }
 
     /// Calling this method should deactivate the provided `AVAudioSession`.
     ///
-    /// - Note: The method will check if the audioSession's category contains the `record` capability
-    /// and if it does it will deactivate it. Otherwise, no action will be performed.
+    /// - Note: The deactivation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report deactivation failures. Prefer `deactivateRecordingSession(completion:)` to get
+    /// informed about them.
     open func deactivateRecordingSession() throws {
-        try deactivateSession()
+        try deactivateRecordingSession(completion: nil)
+    }
+
+    /// Calling this method should deactivate the provided `AVAudioSession` and call the provided
+    /// completion handler once the deactivation has been completed.
+    ///
+    /// - Parameter completion: The closure to call with the deactivation's error or `nil` if the
+    /// deactivation completed successfully.
+    open func deactivateRecordingSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        setSessionActive(false, completion: completion)
     }
 
     /// Calling this method should activate the provided `AVAudioSession` for playback and record.
     ///
     /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
+    /// - Note: The activation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report activation failures. Prefer `activatePlaybackSession(completion:)` to get
+    /// informed about them.
     open func activatePlaybackSession() throws {
+        try activatePlaybackSession(completion: nil)
+    }
+
+    /// Calling this method should activate the provided `AVAudioSession` for playback and record and
+    /// call the provided completion handler once the activation has been completed.
+    ///
+    /// - Parameter completion: The closure to call with the activation's error or `nil` if the
+    /// activation completed successfully.
+    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
+    open func activatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
@@ -101,15 +220,25 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
                 .allowBluetoothDevice
             ]
         )
-        try activateSession()
+        setSessionActive(true, completion: completion)
     }
 
     /// Calling this method should deactivate the provided `AVAudioSession`.
     ///
-    /// - Note: The method will check if the audioSession's category contains the `playback` capability
-    /// and if it does it will deactivate it. Otherwise, no action will be performed.
+    /// - Note: The deactivation of the `AVAudioSession` is performed asynchronously, so this method
+    /// won't report deactivation failures. Prefer `deactivatePlaybackSession(completion:)` to get
+    /// informed about them.
     open func deactivatePlaybackSession() throws {
-        try deactivateSession()
+        try deactivatePlaybackSession(completion: nil)
+    }
+
+    /// Calling this method should deactivate the provided `AVAudioSession` and call the provided
+    /// completion handler once the deactivation has been completed.
+    ///
+    /// - Parameter completion: The closure to call with the deactivation's error or `nil` if the
+    /// deactivation completed successfully.
+    open func deactivatePlaybackSession(completion: (@Sendable (Error?) -> Void)?) throws {
+        setSessionActive(false, completion: completion)
     }
 
     /// Requests recording permission from the underline `AVAudioSession` and invokes the provided
@@ -129,12 +258,22 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
 
     // MARK: - Helpers
 
-    private func activateSession() throws {
-        try audioSession.setActive(true, options: [])
-    }
-
-    private func deactivateSession() throws {
-        try audioSession.setActive(false, options: [])
+    private func setSessionActive(
+        _ isActive: Bool,
+        completion: (@Sendable (Error?) -> Void)?
+    ) {
+        AudioSessionQueue.shared.async { [self] in
+            do {
+                try audioSession.setActive(isActive, options: [])
+                completion?(nil)
+            } catch {
+                if let completion {
+                    completion(error)
+                } else {
+                    log.error(error, subsystems: .audioPlayback)
+                }
+            }
+        }
     }
 
     private func handleRecordPermissionResponse(

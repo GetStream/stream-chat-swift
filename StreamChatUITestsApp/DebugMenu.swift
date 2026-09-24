@@ -80,7 +80,7 @@ final class DebugMenu {
                 .init(
                     title: "Truncate channel w/o message",
                     style: .default,
-                    handler: { _ in
+                    handler: { [self] _ in
                         channelController.truncateChannel { [unowned self] error in
                             if let error = error {
                                 self.presentAlert(
@@ -96,7 +96,7 @@ final class DebugMenu {
                 .init(
                     title: "Truncate channel with message",
                     style: .default,
-                    handler: { _ in
+                    handler: { [self] _ in
                         channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
                             if let error = error {
                                 self.presentAlert(

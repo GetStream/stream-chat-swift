@@ -179,8 +179,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         try await livestreamChat.get()
 
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: channelQuery)
+        let expectedEndpoint = channelQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(channelQuery.type.rawValue)/\(try XCTUnwrap(channelQuery.id))/query")
     }
 
     func test_get_callsPopulateFromCacheOnHandler() async throws {
@@ -207,8 +208,9 @@ final class LivestreamChat_Tests: XCTestCase {
         try await livestreamChat.watch()
 
         let expectedQuery = ChannelQuery(cid: channelQuery.cid!)
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_watch_tracksLivestreamChatInSyncRepository() async throws {
@@ -277,8 +279,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: nil)
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadOlderMessages_withMessageId_callsCorrectAPI() async throws {
@@ -290,8 +293,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 50, parameter: .lessThan("specific-message-id"))
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadOlderMessages_withoutMessages_throwsChannelEmptyMessages() async {
@@ -312,8 +316,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 40, parameter: .around("target"))
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadOlderMessages_withoutMessageId_usesOldestLoadedMessageId() async throws {
@@ -326,8 +331,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: .lessThan("older"))
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadNewerMessages_withMessageId_callsCorrectAPI() async throws {
@@ -340,8 +346,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 30, parameter: .greaterThan("newer-message-id"))
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_loadNewerMessages_withoutMessageId_usesNewestLoadedMessageId() async throws {
@@ -354,8 +361,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: .greaterThan("newer"))
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     // MARK: - Pause / Resume
@@ -384,8 +392,9 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertFalse(livestreamChat.state.isPaused)
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: nil)
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_resume_whenNotPaused_doesNothing() async throws {
@@ -437,8 +446,9 @@ final class LivestreamChat_Tests: XCTestCase {
 
         try await waitForRequest()
         let expectedQuery = ChannelQuery(cid: channelQuery.cid!)
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     // MARK: - State Forwarding via Mock Handler
@@ -674,25 +684,27 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Slow Mode
 
     func test_enableSlowMode_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.enableSlowMode(cooldownDuration: 7)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(
-            cid: channelQuery.cid!,
-            cooldownDuration: 7
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(7)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_disableSlowMode_callsAPIWithZeroCooldown() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.disableSlowMode()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(
-            cid: channelQuery.cid!,
-            cooldownDuration: 0
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(0)])
         )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -700,20 +712,28 @@ final class LivestreamChat_Tests: XCTestCase {
     // MARK: - Channel Freezing
 
     func test_freeze_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.freeze()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(true, cid: channelQuery.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(true)])
+        )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_unfreeze_callsCorrectAPI() async throws {
-        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        client.mockAPIClient.test_mockResponseResult(Result<UpdateChannelPartialResponse, Error>.success(.dummy()))
 
         try await livestreamChat.unfreeze()
 
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: channelQuery.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: channelQuery.cid!.type.rawValue,
+            id: channelQuery.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(false)])
+        )
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -766,8 +786,9 @@ final class LivestreamChat_Tests: XCTestCase {
         try await waitForRequest()
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: nil)
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 
     func test_applicationDidMoveToForeground_whenDisconnected_triggersLoadFirstPage() async throws {
@@ -780,8 +801,9 @@ final class LivestreamChat_Tests: XCTestCase {
         try await waitForRequest()
         var expectedQuery = channelQuery!
         expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: nil)
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = expectedQuery.endpoint
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(client.mockAPIClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(expectedQuery.type.rawValue)/\(try XCTUnwrap(expectedQuery.id))/query")
     }
 }
 

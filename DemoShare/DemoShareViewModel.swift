@@ -113,37 +113,45 @@ class DemoShareViewModel: ObservableObject {
 
     private func loadImages() {
         Task {
-            let inputItems = extensionContext?.inputItems
-            var urls = [URL]()
-            for inputItem in (inputItems ?? []) {
-                if let extensionItem = inputItem as? NSExtensionItem {
-                    for itemProvider in (extensionItem.attachments ?? []) {
-                        if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
-                            let item = try await loadItem(from: itemProvider, type: kUTTypeImage as String)
-                            if let item = item as? URL {
-                                urls.append(item)
+            do {
+                let inputItems = extensionContext?.inputItems
+                var urls = [URL]()
+                for inputItem in (inputItems ?? []) {
+                    if let extensionItem = inputItem as? NSExtensionItem {
+                        for itemProvider in (extensionItem.attachments ?? []) {
+                            if itemProvider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
+                                let item = try await loadItem(from: itemProvider, type: kUTTypeImage as String)
+                                if let item = item as? URL {
+                                    urls.append(item)
+                                }
                             }
                         }
                     }
                 }
+                self.imageURLs = urls
+            } catch {
+                log.error("Failed to load shared images: \(error)")
             }
-            self.imageURLs = urls
         }
     }
 
     private func loadChannels() {
         Task {
-            try await chatClient.connectUser(
-                userInfo: userCredentials.userInfo,
-                token: userCredentials.token
-            )
-            let query = ChannelListQuery(
-                filter: .containMembers(userIds: [chatClient.currentUserId ?? ""])
-            )
-            let list = chatClient.makeChannelList(with: query)
-            self.channelList = list
-            try await list.get()
-            channels = list.state.channels
+            do {
+                try await chatClient.connectUser(
+                    userInfo: userCredentials.userInfo,
+                    token: userCredentials.token
+                )
+                let query = ChannelListQuery(
+                    filter: .containMembers(userIds: [chatClient.currentUserId ?? ""])
+                )
+                let list = chatClient.makeChannelList(with: query)
+                self.channelList = list
+                try await list.get()
+                channels = list.state.channels
+            } catch {
+                log.error("Failed to load channels: \(error)")
+            }
         }
     }
 }

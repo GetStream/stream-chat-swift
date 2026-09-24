@@ -263,9 +263,7 @@ public class Chat: @unchecked Sendable {
         hideHistory: Bool = false,
         hideHistoryBefore: Date? = nil
     ) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(
-            currentUserId: currentUserId,
             cid: cid,
             members: members,
             systemMessage: systemMessage,
@@ -343,9 +341,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func removeMembers(_ members: [UserId], systemMessage: SystemMessage?) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(
-            currentUserId: currentUserId,
             cid: cid,
             userIds: Set(members),
             systemMessage: systemMessage
@@ -600,7 +596,7 @@ public class Chat: @unchecked Sendable {
         messageId: MessageId? = nil,
         restrictedVisibility: [UserId] = []
     ) async throws -> ChatMessage {
-        Task { try await stopTyping() } // errors explicitly ignored
+        Task { try? await stopTyping() }
         let cid = try await self.cid
         let newMessageId = messageId ?? .newUniqueId
         async let sentMessage = waitForMessageSender(messageId: newMessageId)
@@ -699,7 +695,7 @@ public class Chat: @unchecked Sendable {
         skipEnrichURL: Bool = false,
         skipPush: Bool = false
     ) async throws -> ChatMessage {
-        Task { try await stopTyping() } // errors explicitly ignored
+        Task { try? await stopTyping() }
         async let updatedMessage = waitForMessageEditor(messageId: messageId)
         _ = try await messageUpdater.editMessage(
             messageId: messageId,
@@ -1108,7 +1104,7 @@ public class Chat: @unchecked Sendable {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
-        Task { try await stopTyping() } // errors explicitly ignored
+        Task { try? await stopTyping() }
         let cid = try await self.cid
         let newMessageId = messageId ?? .newUniqueId
         async let sentMessage = waitForMessageSender(messageId: newMessageId)

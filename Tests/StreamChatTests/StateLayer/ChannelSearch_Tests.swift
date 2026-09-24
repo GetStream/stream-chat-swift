@@ -178,7 +178,7 @@ final class ChannelSearch_Tests: XCTestCase {
         try await waitForChannels { $0.map(\.cid) == [cid] }
 
         // The channel is updated without being re-linked to the query.
-        try writeChannel(cid: cid, name: "general channel", query: nil)
+        try writeChannel(cid: cid, name: "general channel", query: nil, updatedAt: XCTestCase.channelLaterUpdateDate)
 
         try await waitForChannels { $0.first?.name == "general channel" }
     }
@@ -241,13 +241,19 @@ final class ChannelSearch_Tests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func writeChannel(cid: ChannelId, name: String, query: ChannelListQuery?) throws {
+    private func writeChannel(
+        cid: ChannelId,
+        name: String,
+        query: ChannelListQuery?,
+        updatedAt: Date = .unique
+    ) throws {
         try env.client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
                     name: name,
-                    members: [.dummy(user: .dummy(userId: self.currentUserId))]
+                    members: [.dummy(user: .dummy(userId: self.currentUserId))],
+                    updatedAt: updatedAt
                 ),
                 query: query,
                 cache: nil

@@ -12,6 +12,11 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public weak var toImageView: UIImageView?
     /// `UIImageView` to be animated between the view controllers.
     public weak var transitionImageView: UIImageView?
+    /// The area of the view being transitioned to that displays the content.
+    ///
+    /// When it is not set, the zoom lands on the whole view. A view controller that displays its
+    /// content in a smaller area sets it so that the zoom lands where the content ends up.
+    public weak var toContentView: UIView?
     /// Indicates whether the current animation is for presenting or dismissing.
     public var isPresenting: Bool = true
 
@@ -39,6 +44,11 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
         toVC.view.alpha = 0
         containerView.addSubview(toVC.view)
+        // The presented view fills the container. Without this it keeps the size its view was
+        // created with, which comes from the main screen — a different display than the one the
+        // app runs on when a device has more than one, like the iPhone Duo.
+        toVC.view.frame = containerView.bounds
+        toVC.view.layoutIfNeeded()
 
         let backgroundColorView = UIView().withoutAutoresizingMaskConstraints
         containerView.addSubview(backgroundColorView)
@@ -48,7 +58,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
         if transitionImageView == nil {
             let transitionImageView = UIImageView(image: fromImageView.image)
-            transitionImageView.frame = fromImageView.convert(fromImageView.frame, to: fromVC.view)
+            transitionImageView.frame = fromImageView.convert(fromImageView.bounds, to: fromVC.view)
             transitionImageView.contentMode = .scaleAspectFill
             transitionImageView.clipsToBounds = true
             self.transitionImageView = transitionImageView
@@ -59,10 +69,13 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
         let duration = transitionDuration(using: transitionContext)
 
-        UIView.animateKeyframes(withDuration: duration, delay: 0, animations: {
+        UIView.animateKeyframes(withDuration: duration, delay: 0, animations: { [self] in
             UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 1.0, animations: { [weak self] in
                 if let image = fromImageView.image {
-                    self?.transitionImageView?.frame = self?.calculateZoomInImageFrame(image: image, forView: toVC.view) ?? .zero
+                    self?.transitionImageView?.frame = self?.calculateZoomInImageFrame(
+                        image: image,
+                        forView: self?.toContentView ?? toVC.view
+                    ) ?? .zero
                     backgroundColorView.alpha = 1
                 }
             })
@@ -132,7 +145,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             withDuration: duration,
             animations: { [self] in
                 fromVC.view.alpha = 0
-                self.transitionImageView?.frame = toImageView.convert(toImageView.frame, to: toVC.view)
+                self.transitionImageView?.frame = toImageView.convert(toImageView.bounds, to: toVC.view)
             },
             completion: { [self] _ in
                 self.transitionImageView?.removeFromSuperview()
@@ -153,11 +166,11 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         if touchesSides {
             let height = view.frame.width / imageRatio
             let yPoint = view.frame.minY + (view.frame.height - height) / 2
-            return CGRect(x: 0, y: yPoint, width: view.frame.width, height: height)
+            return CGRect(x: view.frame.minX, y: yPoint, width: view.frame.width, height: height)
         } else {
             let width = view.frame.height * imageRatio
             let xPoint = view.frame.minX + (view.frame.width - width) / 2
-            return CGRect(x: xPoint, y: 0, width: width, height: view.frame.height)
+            return CGRect(x: xPoint, y: view.frame.minY, width: width, height: view.frame.height)
         }
     }
 

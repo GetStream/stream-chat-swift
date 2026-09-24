@@ -5,6 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [5.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.0)
+_September 24, 2026_
+
+### ✅ Added
+- Add `AudioSessionConfiguring` variants with a completion handler for reporting audio session activation errors [#4286](https://github.com/GetStream/stream-chat-swift/pull/4286)
+
+### 🐞 Fixed
+- Fix channel data being overridden by events with stale channel data [#4278](https://github.com/GetStream/stream-chat-swift/pull/4278)
+- Fix UI hang caused by activating or deactivating the audio session on the main thread [#4286](https://github.com/GetStream/stream-chat-swift/pull/4286)
+
+### 🔄 Changed
+
+## StreamChatUI
+### ✅ Added
+- Improved support for the iPhone Duo [#4287](https://github.com/GetStream/stream-chat-swift/pull/4287)
+### 🐞 Fixed
+- Fix incorrect rounded corner on image attachments shown below other attachments [#4277](https://github.com/GetStream/stream-chat-swift/pull/4277)
+- Fix empty voice recording preview when quoting a message with multiple attachments [#4276](https://github.com/GetStream/stream-chat-swift/pull/4276)
+
 # [5.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.11.0)
 _September 09, 2026_
 

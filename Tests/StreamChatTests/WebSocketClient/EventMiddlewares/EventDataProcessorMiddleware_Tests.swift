@@ -51,6 +51,66 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         XCTAssertEqual(outputEvent?.asEquatable, testEvent.asEquatable)
     }
 
+    func test_channelUpdated_thenMemberUpdatedWithOlderChannel_doesNotRewindChannelState() throws {
+        let cid: ChannelId = .unique
+        let memberId: UserId = .unique
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
+        let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
+        let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
+        let updatedMemberExtraData: [String: RawJSON] = ["status": .string("updated")]
+
+        nonisolated(unsafe) let middlewares: [EventMiddleware] = [
+            EventDataProcessorMiddleware(),
+            MemberEventMiddleware()
+        ]
+
+        let channelUpdatedEvent = try ChannelUpdatedEventDTO(from: EventPayload(
+            eventType: .channelUpdated,
+            cid: cid,
+            channel: .dummy(
+                cid: cid,
+                name: "Conversation",
+                extraData: newerExtraData,
+                updatedAt: newerUpdatedAt,
+                isFrozen: true,
+                memberCount: 1
+            ),
+            createdAt: newerUpdatedAt
+        ))
+
+        let memberUpdatedEvent = try MemberUpdatedEventDTO(from: EventPayload(
+            eventType: .memberUpdated,
+            cid: cid,
+            user: .dummy(userId: memberId),
+            memberContainer: .dummy(userId: memberId, extraData: updatedMemberExtraData),
+            channel: .dummy(
+                cid: cid,
+                name: "Initiated",
+                extraData: olderExtraData,
+                updatedAt: olderUpdatedAt,
+                isFrozen: false,
+                memberCount: 2
+            ),
+            createdAt: newerUpdatedAt.addingTimeInterval(0.03)
+        ))
+
+        try database.writeSynchronously { session in
+            _ = middlewares.process(event: channelUpdatedEvent, session: session)
+            _ = middlewares.process(event: memberUpdatedEvent, session: session)
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        XCTAssertEqual(channel.name, "Conversation")
+        XCTAssertEqual(channel.extraData, newerExtraData)
+        XCTAssertEqual(channel.updatedAt, newerUpdatedAt)
+        XCTAssertEqual(channel.memberCount, 1)
+        XCTAssertTrue(channel.isFrozen)
+
+        let member = try XCTUnwrap(database.viewContext.member(userId: memberId, cid: cid)?.asModel())
+        XCTAssertEqual(member.memberExtraData, updatedMemberExtraData)
+    }
+
     func test_middleware_handlesReactionDeletedEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique

@@ -55,6 +55,8 @@ open class ChatMentionSuggestionView: _View, ThemeProvider {
     }
 
     override open func setUpLayout() {
+        directionalLayoutMargins = .streamDefaultLayoutMargins
+
         addSubview(avatarView)
         addSubview(textContainer)
         addSubview(mentionSymbolImageView)
