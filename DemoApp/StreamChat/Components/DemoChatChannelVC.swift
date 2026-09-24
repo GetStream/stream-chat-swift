@@ -41,11 +41,21 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
 
         // Custom back button to make sure swipe back gesture is not overridden.
         let customBackButton = UIBarButtonItem(
-            title: "Back",
+            image: UIImage(systemName: "chevron.backward"),
             style: .plain,
             target: self,
             action: #selector(goBack)
         )
+        customBackButton.accessibilityLabel = "Back"
+        // Devices that place a bar on a vertical edge, like a foldable, host navigation items
+        // there rather than in the navigation bar. The axis behavior ships with the iOS 27.1
+        // SDK, so the check on the underlying UIKit module keeps the app compiling with Xcode
+        // versions that do not know about it yet.
+        #if canImport(UIKit, _underlyingVersion: 9127.0.85)
+        if #available(iOS 27.1, *) {
+            customBackButton.axisBehavior = .verticalPreferred
+        }
+        #endif
         navigationItem.leftBarButtonItems = [customBackButton]
         navigationController?.interactivePopGestureRecognizer?.delegate = self
 
