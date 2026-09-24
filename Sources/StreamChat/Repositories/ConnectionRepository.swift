@@ -158,7 +158,10 @@ class ConnectionRepository: @unchecked Sendable {
         guard let webSocketClient, let webSocketEncoder, let webSocketConnectEndpoint = webSocketConnectEndpoint.value else { return }
         let request: URLRequest? = {
             do {
-                return try webSocketEncoder.encodeRequest(for: webSocketConnectEndpoint)
+                var encodedRequest = try webSocketEncoder.encodeRequest(for: webSocketConnectEndpoint)
+                // The server prefers this header over the auth frame token, and the header goes stale after token refreshes.
+                encodedRequest.setValue(nil, forHTTPHeaderField: HTTPHeader.Key.authorization.rawValue)
+                return encodedRequest
             } catch {
                 log.error(error.localizedDescription, error: error)
                 return nil

@@ -153,6 +153,20 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.connectionId, connectionId)
     }
 
+    func test_connect_connectRequestHasStreamAuthTypeWithoutAuthorization() throws {
+        let token = Token.unique(userId: "luke")
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository.updateWebSocketEndpoint(with: token, userInfo: nil)
+
+        repository.connect()
+
+        let request = try XCTUnwrap(webSocketClient.connectRequest)
+        XCTAssertNil(request.value(forHTTPHeaderField: "Authorization"))
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Stream-Auth-Type"), "jwt")
+    }
+
     // MARK: Disconnect
 
     func test_disconnect_withConnectionId_notInActiveMode_shouldReturnError() {
