@@ -804,48 +804,59 @@ extension DatabaseSession {
     // MARK: - Event
 
     func saveEvent(event: WSEvent) throws {
-        let commonData = event.commonData
-        if let user = commonData.user {
-            try saveUser(payload: user)
+        let payload = event.commonData
+        // Save a user data.
+        if let userPayload = payload.user {
+            try saveUser(payload: userPayload)
         }
-        if let channel = commonData.channel {
-            try saveChannel(payload: channel, query: nil, cache: nil)
+
+        // Save a channel detail data.
+        if let channelDetailPayload = payload.channel {
+            try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
         }
-        if let currentUser = commonData.currentUser {
-            try saveCurrentUser(payload: currentUser)
+
+        if let currentUserPayload = payload.currentUser {
+            try saveCurrentUser(payload: currentUserPayload)
         }
-        let unreadCount = commonData.unreadCount
+
+        let unreadCount = payload.unreadCount
         if let unreadCount, (unreadCount.channels != nil && unreadCount.messages != nil) || unreadCount.threads != nil {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
-        if let byGroup = commonData.groupedUnreadChannels {
-            try mergeCurrentUserUnreadChannelCountsByGroup(byGroup)
+
+        if let unreadChannelCountsByGroup = payload.groupedUnreadChannels {
+            try mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         }
-        if let thread = commonData.thread {
-            try saveThread(partialPayload: thread)
+
+        if let threadPayload = payload.thread {
+            try saveThread(partialPayload: threadPayload)
         }
+
         try saveMessageIfNeeded(from: event)
-        if let currentUser = self.currentUser, currentUser.user.id == commonData.user?.id {
+
+        // handle reaction events for messages that already exist in the database and for this user
+        // this is needed because WS events do not contain message.own_reactions
+        if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
             do {
                 switch event {
-                case let .typeReactionNewEvent(reactionEvent):
-                    guard let reaction = reactionEvent.reaction else { break }
-                    let reactionDTO = try saveReaction(payload: reaction, query: nil, cache: nil)
-                    if !reactionDTO.message.ownReactions.contains(reactionDTO.id) {
-                        reactionDTO.message.ownReactions.append(reactionDTO.id)
+                case let .typeReactionNewEvent(event):
+                    guard let reactionPayload = event.reaction else { break }
+                    let reaction = try saveReaction(payload: reactionPayload, query: nil, cache: nil)
+                    if !reaction.message.ownReactions.contains(reaction.id) {
+                        reaction.message.ownReactions.append(reaction.id)
                     }
-                case let .typeReactionUpdatedEvent(reactionEvent):
-                    guard let reaction = reactionEvent.reaction else { break }
-                    try saveReaction(payload: reaction, query: nil, cache: nil)
-                case let .typeReactionDeletedEvent(reactionEvent):
+                case let .typeReactionUpdatedEvent(event):
+                    guard let reactionPayload = event.reaction else { break }
+                    try saveReaction(payload: reactionPayload, query: nil, cache: nil)
+                case let .typeReactionDeletedEvent(event):
                     guard
-                        let user = reactionEvent.user,
-                        let message = reactionEvent.message,
-                        let reactionPayload = reactionEvent.reaction,
-                        let reactionDTO = reaction(messageId: message.id, userId: user.id, type: reactionPayload.type)
+                        let user = event.user,
+                        let message = event.message,
+                        let reactionPayload = event.reaction,
+                        let dto = reaction(messageId: message.id, userId: user.id, type: reactionPayload.type)
                     else { break }
-                    reactionDTO.message.ownReactions.removeAll(where: { $0 == reactionDTO.id })
-                    delete(reaction: reactionDTO)
+                    dto.message.ownReactions.removeAll(where: { $0 == dto.id })
+                    delete(reaction: dto)
                 default:
                     break
                 }
@@ -853,32 +864,33 @@ extension DatabaseSession {
                 log.warning("Failed to update message reaction in the database, error: \(error)")
             }
         }
-
+        
         switch event {
         case let .typePollVoteCastedEvent(pollEvent):
             try handlePollVoteCastedEvent(vote: pollEvent.pollVote)
         case let .typePollVoteChangedEvent(pollEvent):
             try handlePollVoteChangedEvent(vote: pollEvent.pollVote)
         case let .typePollVoteRemovedEvent(pollEvent):
-            if let voteDTO = try? pollVote(id: pollEvent.pollVote.id, pollId: pollEvent.pollVote.pollId) {
-                delete(pollVote: voteDTO)
+            if let dto = try? pollVote(id: pollEvent.pollVote.id, pollId: pollEvent.pollVote.pollId) {
+                delete(pollVote: dto)
             }
         default:
             break
         }
-        if let poll = commonData.poll {
+        
+        if let poll = payload.poll {
             try savePoll(payload: poll, cache: nil, fromEvent: true)
         }
     }
 
     func saveMessageIfNeeded(from event: WSEvent) throws {
-        let commonData = event.commonData
-        guard let messagePayload = commonData.message else {
+        let payload = event.commonData
+        guard let messagePayload = payload.message else {
             // Event does not contain message
             return
         }
 
-        guard let cid = commonData.cid, let channelDTO = channel(cid: cid) else {
+        guard let cid = payload.cid, let channelDTO = channel(cid: cid) else {
             // Channel does not exist locally
             return
         }
@@ -935,7 +947,7 @@ extension DatabaseSession {
             savedMessage.markMessageAsSent()
         }
         
-        if let messageCount = commonData.channelMessageCount {
+        if let messageCount = payload.channelMessageCount {
             channelDTO.messageCount = NSNumber(value: messageCount)
         }
     }
