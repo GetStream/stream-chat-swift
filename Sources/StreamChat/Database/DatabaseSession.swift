@@ -804,28 +804,28 @@ extension DatabaseSession {
     // MARK: - Event
 
     func saveEvent(event: WSEvent) throws {
-        let dto = event.rawValue
-        if let user = dto.eventUser {
+        let commonData = event.commonData
+        if let user = commonData.user {
             try saveUser(payload: user)
         }
-        if let channel = dto.eventChannel {
+        if let channel = commonData.channel {
             try saveChannel(payload: channel, query: nil, cache: nil)
         }
-        if let currentUser = dto.eventCurrentUser {
+        if let currentUser = commonData.currentUser {
             try saveCurrentUser(payload: currentUser)
         }
-        let unreadCount = dto.eventUnreadCount
+        let unreadCount = commonData.unreadCount
         if let unreadCount, (unreadCount.channels != nil && unreadCount.messages != nil) || unreadCount.threads != nil {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
-        if let byGroup = dto.eventGroupedUnreadChannels {
+        if let byGroup = commonData.groupedUnreadChannels {
             try mergeCurrentUserUnreadChannelCountsByGroup(byGroup)
         }
-        if let thread = dto.eventThread {
+        if let thread = commonData.thread {
             try saveThread(partialPayload: thread)
         }
         try saveMessageIfNeeded(from: event)
-        if let currentUser = self.currentUser, currentUser.user.id == dto.eventUser?.id {
+        if let currentUser = self.currentUser, currentUser.user.id == commonData.user?.id {
             do {
                 switch event {
                 case let .typeReactionNewEvent(reactionEvent):
@@ -866,19 +866,19 @@ extension DatabaseSession {
         default:
             break
         }
-        if let poll = dto.eventPoll {
+        if let poll = commonData.poll {
             try savePoll(payload: poll, cache: nil, fromEvent: true)
         }
     }
 
     func saveMessageIfNeeded(from event: WSEvent) throws {
-        let dto = event.rawValue
-        guard let messagePayload = dto.eventMessage else {
+        let commonData = event.commonData
+        guard let messagePayload = commonData.message else {
             // Event does not contain message
             return
         }
 
-        guard let cid = dto.eventCID, let channelDTO = channel(cid: cid) else {
+        guard let cid = commonData.cid, let channelDTO = channel(cid: cid) else {
             // Channel does not exist locally
             return
         }
@@ -935,7 +935,7 @@ extension DatabaseSession {
             savedMessage.markMessageAsSent()
         }
         
-        if let messageCount = dto.eventChannelMessageCount {
+        if let messageCount = commonData.channelMessageCount {
             channelDTO.messageCount = NSNumber(value: messageCount)
         }
     }
