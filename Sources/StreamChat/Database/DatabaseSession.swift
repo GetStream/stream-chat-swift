@@ -819,8 +819,7 @@ extension DatabaseSession {
             try saveCurrentUser(payload: currentUserPayload)
         }
 
-        let unreadCount = payload.unreadCount
-        if let unreadCount, (unreadCount.channels != nil && unreadCount.messages != nil) || unreadCount.threads != nil {
+        if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
 

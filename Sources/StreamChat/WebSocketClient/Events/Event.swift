@@ -56,7 +56,9 @@ final class WSEventCommonData {
         self.message = message
         self.poll = poll
         self.thread = thread
-        self.unreadCount = unreadCount
+        self.unreadCount = unreadCount.flatMap {
+            ($0.channels != nil && $0.messages != nil) || $0.threads != nil ? $0 : nil
+        }
         self.user = user
     }
 }
