@@ -48,34 +48,42 @@ class ManualEventHandler: @unchecked Sendable {
 
     /// Converts a manual event to its domain representation.
     func handle(_ event: Event) -> Event? {
-        switch event {
-        case let dto as MessageNewEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createMessageNewEvent(from: dto, cid: dto.cid)
+        guard let wsEvent = event as? WSEvent else {
+            return nil
+        }
 
-        case let dto as MessageUpdatedEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createMessageUpdatedEvent(from: dto, cid: dto.cid)
+        guard let cid = wsEvent.commonData.cid else {
+            return nil
+        }
 
-        case let dto as MessageDeletedEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createMessageDeletedEvent(from: dto, cid: dto.cid)
+        guard isRegistered(channelId: cid) else {
+            return nil
+        }
 
-        case let dto as ReactionNewEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createReactionNewEvent(from: dto, cid: dto.cid)
+        switch wsEvent {
+        case let .typeMessageNewEvent(eventPayload):
+            return createMessageNewEvent(from: eventPayload, cid: cid)
 
-        case let dto as ReactionUpdatedEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createReactionUpdatedEvent(from: dto, cid: dto.cid)
+        case let .typeMessageUpdatedEvent(eventPayload):
+            return createMessageUpdatedEvent(from: eventPayload, cid: cid)
 
-        case let dto as ReactionDeletedEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createReactionDeletedEvent(from: dto, cid: dto.cid)
+        case let .typeMessageDeletedEvent(eventPayload):
+            return createMessageDeletedEvent(from: eventPayload, cid: cid)
 
-        case let dto as TypingEventDTO:
-            guard isRegistered(channelId: dto.cid) else { return nil }
-            return createTypingEvent(from: dto, cid: dto.cid)
+        case let .typeReactionNewEvent(eventPayload):
+            return createReactionNewEvent(from: eventPayload, cid: cid)
+
+        case let .typeReactionUpdatedEvent(eventPayload):
+            return createReactionUpdatedEvent(from: eventPayload, cid: cid)
+
+        case let .typeReactionDeletedEvent(eventPayload):
+            return createReactionDeletedEvent(from: eventPayload, cid: cid)
+
+        case let .typeTypingStartEvent(eventPayload):
+            return createTypingEvent(from: eventPayload, cid: cid)
+
+        case let .typeTypingStopEvent(eventPayload):
+            return createTypingEvent(from: eventPayload, cid: cid)
 
         default:
             return nil

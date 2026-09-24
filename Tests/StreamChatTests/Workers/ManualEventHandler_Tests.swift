@@ -65,7 +65,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeUserPresenceChangedEvent(eventDTO))
         }
         
         XCTAssertNil(result, "Events without cid should return nil")
@@ -85,7 +85,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageNewEvent(eventDTO))
         }
         XCTAssertNil(result)
     }
@@ -103,7 +103,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeUserWatchingStartEvent(eventDTO))
         }
         XCTAssertNil(result, "Unsupported event types should return nil")
     }
@@ -122,7 +122,7 @@ final class ManualEventHandler_Tests: XCTestCase {
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMemberUpdatedEvent(eventDTO))
         }
 
         XCTAssertNil(result)
@@ -147,7 +147,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageNewEvent(eventDTO))
         }
         
         let messageNewEvent = try XCTUnwrap(result as? MessageNewEvent)
@@ -175,7 +175,7 @@ final class ManualEventHandler_Tests: XCTestCase {
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageUpdatedEvent(eventDTO))
         }
         
         let messageUpdatedEvent = try XCTUnwrap(result as? MessageUpdatedEvent)
@@ -202,7 +202,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageDeletedEvent(eventDTO))
         }
         
         let messageDeletedEvent = try XCTUnwrap(result as? MessageDeletedEvent)
@@ -227,7 +227,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageDeletedEvent(eventDTO))
         }
         
         let messageDeletedEvent = try XCTUnwrap(result as? MessageDeletedEvent)
@@ -257,7 +257,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeReactionNewEvent(eventDTO))
         }
         
         let reactionNewEvent = try XCTUnwrap(result as? ReactionNewEvent)
@@ -287,7 +287,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeReactionUpdatedEvent(eventDTO))
         }
         
         let reactionUpdatedEvent = try XCTUnwrap(result as? ReactionUpdatedEvent)
@@ -317,7 +317,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeReactionDeletedEvent(eventDTO))
         }
         
         let reactionDeletedEvent = try XCTUnwrap(result as? ReactionDeletedEvent)
@@ -342,7 +342,7 @@ final class ManualEventHandler_Tests: XCTestCase {
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStartEvent(eventDTO))
         }
 
         let typingEvent = try XCTUnwrap(result as? TypingEvent)
@@ -366,7 +366,7 @@ final class ManualEventHandler_Tests: XCTestCase {
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStopEvent(eventDTO))
         }
 
         let typingEvent = try XCTUnwrap(result as? TypingEvent)
@@ -386,7 +386,7 @@ final class ManualEventHandler_Tests: XCTestCase {
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStartEvent(eventDTO))
         }
 
         let typingEvent = try XCTUnwrap(result as? TypingEvent)
@@ -404,7 +404,7 @@ final class ManualEventHandler_Tests: XCTestCase {
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStartEvent(eventDTO))
         }
 
         XCTAssertNil(result)
