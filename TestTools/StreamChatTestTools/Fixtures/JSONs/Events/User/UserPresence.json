@@ -1,6 +1,7 @@
 {
     "type" : "user.presence.changed",
     "user" : {
+        "custom" : {},
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,

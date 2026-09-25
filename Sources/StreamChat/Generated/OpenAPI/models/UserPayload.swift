@@ -94,39 +94,4 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         case teamsRole = "teams_role"
         case updatedAt = "updated_at"
     }
-
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-            .union(UserPayloadsCodingKeys.allCases.map(\.rawValue))
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
-        banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
-        deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
-        id = try container.decode(String.self, forKey: .id)
-        image = try container.decodeIfPresent(String.self, forKey: .image)
-        language = try container.decodeIfPresent(String.self, forKey: .language)
-        lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        online = try container.decode(Bool.self, forKey: .online)
-        revokeTokensIssuedBefore = try container.decodeIfPresent(
-            Date.self,
-            forKey: .revokeTokensIssuedBefore
-        )
-        role = try container.decode(String.self, forKey: .role)
-        teams = try container.decodeIfPresent([String].self, forKey: .teams)
-        teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-    }
 }

@@ -1,5 +1,8 @@
 {
     "channel": {
+      "custom": {
+          "name": "Yo"
+      },
       "auto_translation_language": "",
       "cid": "messaging:26D82FB1-5",
       "config": {
@@ -31,6 +34,7 @@
       },
       "created_at": "2025-02-25T10:29:54.133746Z",
       "created_by": {
+        "custom": {},
         "banned": false,
         "birthland": "Corellia",
         "created_at": "2024-07-09T10:25:12.255599Z",
@@ -48,13 +52,13 @@
       "id": "26D82FB1-5",
       "last_message_at": "2025-03-07T14:54:03.383299Z",
       "member_count": 3,
-      "name": "Yo",
       "type": "messaging",
       "updated_at": "2025-02-25T10:29:54.133746Z"
     },
     "channel_cid": "messaging:26D82FB1-5",
     "created_at": "2025-03-19T00:38:38.697482729Z",
     "message": {
+      "custom": {},
       "mentioned_channel": false,
       "mentioned_here": false,
       "attachments": [],
@@ -81,6 +85,7 @@
       "type": "regular",
       "updated_at": "2025-03-04T14:33:10.628163Z",
       "user": {
+        "custom": {},
         "banned": false,
         "birthland": "Socorro",
         "created_at": "2025-02-07T16:49:34.490544Z",

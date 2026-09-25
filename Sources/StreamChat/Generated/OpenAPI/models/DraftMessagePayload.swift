@@ -75,34 +75,4 @@ final class DraftMessagePayload: Sendable, Decodable {
         case text
         case type
     }
-
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        attachments = try container.decodeIfPresent(
-            [MessageAttachmentPayload].self,
-            forKey: .attachments
-        )
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
-        html = try container.decodeIfPresent(String.self, forKey: .html)
-        id = try container.decode(String.self, forKey: .id)
-        mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)
-        mml = try container.decodeIfPresent(String.self, forKey: .mml)
-        parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
-        pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
-        quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
-        showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
-        silent = try container.decodeIfPresent(Bool.self, forKey: .silent)
-        text = try container.decode(String.self, forKey: .text)
-        type = try container.decodeIfPresent(String.self, forKey: .type)
-    }
 }

@@ -23,21 +23,4 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
         case custom
         case notificationsMuted = "notifications_muted"
     }
-
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        channelRole = try container.decode(String.self, forKey: .channelRole)
-        if let decoded = try container.decodeIfPresent([String: RawJSON]?.self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
-        notificationsMuted = try container.decode(Bool.self, forKey: .notificationsMuted)
-    }
 }

@@ -1,17 +1,22 @@
 {
     "user" : {
+        "custom" : {
+            "value" : "cilvia"
+        },
         "banned" : false,
         "online" : true,
         "id" : "broken-waterfall-5",
         "role" : "user",
         "created_at" : "2019-10-24T08:34:11.155375Z",
         "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
-        "value" : "cilvia",
         "updated_at" : "2021-03-04T10:09:51.834025Z",
         "last_active" : "2021-03-04T10:02:01.668566Z",
         "name" : "Neil Hannah"
     },
     "channel" : {
+        "custom" : {
+            "name" : ""
+        },
         "created_by" : null,
         "truncated_at" : "2022-02-16T08:20:13.862494Z",
         "disabled" : false,
@@ -81,31 +86,36 @@
         "created_at" : "2020-11-13T08:55:55.464959Z",
         "members" : [
             {
+                "custom" : {},
                 "created_at" : "2020-11-13T08:55:55.473851Z",
                 "banned" : false,
                 "shadow_banned" : false,
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-11-13T08:55:55.473851Z",
                 "user" : {
+                    "custom" : {
+                        "value" : "cilvia"
+                    },
                     "banned" : false,
                     "online" : true,
                     "id" : "cilvia",
                     "role" : "user",
                     "created_at" : "2019-10-24T08:34:11.155375Z",
                     "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
-                    "value" : "cilvia",
                     "updated_at" : "2021-03-04T10:09:51.834025Z",
                     "last_active" : "2021-03-04T10:02:01.668566Z",
                     "name" : "Neil Hannah"
                 }
             },
             {
+                "custom" : {},
                 "created_at" : "2020-11-13T08:55:55.473852Z",
                 "banned" : false,
                 "shadow_banned" : false,
                 "user_id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",
                 "updated_at" : "2020-11-13T08:55:55.473852Z",
                 "user" : {
+                    "custom" : {},
                     "banned" : false,
                     "online" : false,
                     "id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",
@@ -120,7 +130,6 @@
         "member_count" : 2,
         "type" : "messaging",
         "updated_at" : "2020-11-13T08:55:55.464959Z",
-        "name" : "",
         "cid" : "messaging:new_channel_7011"
     },
     "channel_type" : "messaging",

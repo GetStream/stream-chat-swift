@@ -20,9 +20,11 @@ extension MessageAttachmentPayload {
             "image_url" : "\(imageURL.absoluteString)",
             "title" : "\(title)",
             "thumb_url" : "\(imageThumbnailURL.absoluteString)",
-            "url" : "\(url.absoluteString)",
-            "file_size": \(file.size),
-            "mime_type": "\(file.mimeType!)"
+            "custom": {
+                "url" : "\(url.absoluteString)",
+                "file_size": \(file.size),
+                "mime_type": "\(file.mimeType!)"
+            }
         }
         """.data(using: .utf8)!
 

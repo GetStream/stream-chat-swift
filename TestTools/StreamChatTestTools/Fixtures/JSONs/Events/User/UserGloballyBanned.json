@@ -1,6 +1,9 @@
 {
   "type": "user.banned",
   "user": {
+    "custom": {
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png"
+    },
     "id": "c-3po",
     "role": "user",
     "created_at": "2020-12-07T11:37:35.550588Z",
@@ -9,12 +12,12 @@
     "online": true,
     "birthland": "Affa",
     "extraData": {},
-    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
     "dashboard_ban_channel_cid": "messaging:55DE2AA9-4",
     "name": "C-3PO",
     "image": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png"
   },
   "created_by": {
+    "custom": {},
     "id": "stream-pol",
     "role": "admin",
     "created_at": "2022-02-11T14:43:41.668064Z",

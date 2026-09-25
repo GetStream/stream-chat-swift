@@ -348,7 +348,7 @@ allowed_events=(
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
-# Hashable extension stripped in step 4d. Uses the post-rename names (step 4b),
+# Hashable extension stripped in step 4e. Uses the post-rename names (step 4b),
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
@@ -1374,33 +1374,10 @@ strip_streamcore_imports
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
-#    body, where a `required` initializer is allowed.
-splice_generated_decoders() {
-  local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
-  python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
-import pathlib
-import re
-import sys
+# 6. SyncResponse decodes in SyncResponse+Extensions.swift, which skips undecodable events.
+sed -i '' -E 's/^(final class SyncResponse: Sendable), Decodable \{$/\1 {/' "$OUTPUT_DIR_CHAT/models/SyncResponse.swift"
 
-generated = pathlib.Path(sys.argv[1])
-models_dir = pathlib.Path(sys.argv[2])
-blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=re.M)
-
-for name, body in zip(blocks[1::2], blocks[2::2]):
-    path = models_dir / f"{name}.swift"
-    lines = path.read_text().splitlines(keepends=True)
-    closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
-    lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
-    path.write_text("".join(lines))
-
-generated.unlink()
-PY
-}
-sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
-splice_generated_decoders
-
-# 8. Wrap generated OpenAPI function declarations that exceed the maximum width.
+# 7. Wrap generated OpenAPI function declarations that exceed the maximum width.
 swiftformat "$OUTPUT_DIR_CHAT" \
   --rules wrapArguments \
   --wrapparameters before-first \

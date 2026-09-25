@@ -105,7 +105,7 @@ extension Dictionary {
                 "total_unread_count": 0,
                 "online": true,
                 "name": "Steep Moon",
-                "test": 1
+                "custom": ["test": 1]
             ] as [String: Any],
             "type": "health.check",
             "connection_id": connectionId,

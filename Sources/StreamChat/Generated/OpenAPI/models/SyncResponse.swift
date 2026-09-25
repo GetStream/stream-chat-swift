@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SyncResponse: Sendable, Decodable {
+final class SyncResponse: Sendable {
     /// List of events
     let events: [WSEvent]
     /// List of CIDs that user can't access
@@ -18,11 +18,5 @@ final class SyncResponse: Sendable, Decodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case events
         case inaccessibleCids = "inaccessible_cids"
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        events = try container.decodeArrayIgnoringFailures([WSEvent].self, forKey: .events)
-        inaccessibleCids = try container.decodeIfPresent([String].self, forKey: .inaccessibleCids)
     }
 }

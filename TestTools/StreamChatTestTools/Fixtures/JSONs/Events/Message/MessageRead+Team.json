@@ -2,6 +2,7 @@
     "channel_id" : "general",
     "channel_type" : "messaging",
     "user" : {
+        "custom" : {},
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
