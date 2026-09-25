@@ -521,8 +521,8 @@ rename_generated() {
 
 # 1. Clean + generate.
 rm -rf "$OUTPUT_DIR_CHAT"
-( cd "$CHAT_DIR" ; make openapi ; \
-  ./build/chat-manager openapi generate-client --language swift \
+( cd "$CHAT_DIR" ; make openapi ; make -C tools/openapi build ; \
+  ./build/openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
     --opt raw_representable_over_enum=true \
