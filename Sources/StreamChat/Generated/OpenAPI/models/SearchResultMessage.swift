@@ -44,7 +44,7 @@ final class SearchResultMessage: Sendable, Decodable {
     /// Represents any chat message
     let quotedMessage: MessageResponse?
     let quotedMessageId: String?
-    let reactionCounts: [String: Int]?
+    let reactionCounts: [String: Int]
     let reactionGroups: [String: MessageReactionGroupPayload?]?
     let reactionScores: [String: Int]
     let reminder: ReminderPayload?
@@ -98,7 +98,7 @@ final class SearchResultMessage: Sendable, Decodable {
         pollId: String? = nil,
         quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
-        reactionCounts: [String: Int]? = nil,
+        reactionCounts: [String: Int],
         reactionGroups: [String: MessageReactionGroupPayload?]? = nil,
         reactionScores: [String: Int],
         reminder: ReminderPayload? = nil,

@@ -7,7 +7,7 @@ import Foundation
 final class UserPayload: Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?
     /// Whether a user is banned or not
-    let banned: Bool?
+    let banned: Bool
     /// Date/time of creation
     let createdAt: Date
     /// Custom data for this object
@@ -20,7 +20,7 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     let id: String
     let image: String?
     /// Preferred language of a user
-    let language: String?
+    let language: String
     /// Date of last activity
     let lastActive: Date?
     /// Optional name of user
@@ -32,27 +32,27 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     /// Determines the set of user permissions
     let role: String
     /// List of teams user is a part of
-    let teams: [String]?
+    let teams: [String]
     let teamsRole: [String: String]?
     /// Date/time of the last update
     let updatedAt: Date
 
     init(
         avgResponseTime: Int? = nil,
-        banned: Bool? = nil,
+        banned: Bool,
         createdAt: Date,
         custom: [String: RawJSON],
         deactivatedAt: Date? = nil,
         deletedAt: Date? = nil,
         id: String,
         image: String? = nil,
-        language: String? = nil,
+        language: String,
         lastActive: Date? = nil,
         name: String? = nil,
         online: Bool,
         revokeTokensIssuedBefore: Date? = nil,
         role: String,
-        teams: [String]? = nil,
+        teams: [String],
         teamsRole: [String: String]? = nil,
         updatedAt: Date
     ) {

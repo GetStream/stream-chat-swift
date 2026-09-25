@@ -16,9 +16,13 @@
     "frozen": false,
     "members": [
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "luke_skywalker",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "luke_skywalker",
           "role": "admin",
@@ -37,9 +41,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "han_solo",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "han_solo",
           "role": "user",
@@ -58,9 +66,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "lando_calrissian",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "lando_calrissian",
           "role": "user",
@@ -79,9 +91,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "leia_organa",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "leia_organa",
           "role": "user",
@@ -100,9 +116,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "anakin_skywalker",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "anakin_skywalker",
           "role": "user",
@@ -121,9 +141,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "c-3po",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "c-3po",
           "role": "user",
@@ -142,9 +166,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "r2-d2",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "r2-d2",
           "role": "user",
@@ -163,9 +191,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "mace_windu",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "mace_windu",
           "role": "user",
@@ -184,9 +216,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "obi-wan_kenobi",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "obi-wan_kenobi",
           "role": "user",
@@ -205,9 +241,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "qui-gon_jinn",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "qui-gon_jinn",
           "role": "user",
@@ -226,9 +266,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "count_dooku",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "count_dooku",
           "role": "user",
@@ -247,9 +291,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "darth_maul",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "darth_maul",
           "role": "user",
@@ -268,9 +316,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "general_grievous",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "general_grievous",
           "role": "user",
@@ -289,9 +341,13 @@
         "shadow_banned": false
       },
       {
+        "channel_role": "channel_member",
+        "notifications_muted": false,
         "custom": {},
         "user_id": "jar_jar_binks",
         "user": {
+          "language": "",
+          "teams": [],
           "custom": {},
           "id": "jar_jar_binks",
           "role": "user",

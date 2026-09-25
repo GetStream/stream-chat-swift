@@ -9,12 +9,18 @@
          "cid": "1:123",
          "members": [
            {
+             "banned": false,
+             "channel_role": "channel_member",
+             "notifications_muted": false,
+             "shadow_banned": false,
              "custom": {},
              "user_id": "1234"
            }
          ]
        },
        "user": {
+         "language": "",
+         "teams": [],
          "custom": {},
          "id": "broken-waterfall-5",
          "role": "user",
@@ -40,6 +46,10 @@
          "cid": "1:123",
          "members": [
            {
+             "banned": false,
+             "channel_role": "channel_member",
+             "notifications_muted": false,
+             "shadow_banned": false,
              "custom": {},
              "user_id": "1234"
            }
@@ -72,12 +82,18 @@
          "config": {},
          "members": [
            {
+             "banned": false,
+             "channel_role": "channel_member",
+             "notifications_muted": false,
+             "shadow_banned": false,
              "custom": {},
              "user_id": "1234"
            }
          ]
        },
        "user": {
+         "language": "",
+         "teams": [],
          "custom": {},
          "id": "broken-waterfall-5",
          "role": "user",
@@ -107,6 +123,10 @@
          },
          "members": [
            {
+             "banned": false,
+             "channel_role": "channel_member",
+             "notifications_muted": false,
+             "shadow_banned": false,
              "custom": {},
              "user_id": "1234"
            }

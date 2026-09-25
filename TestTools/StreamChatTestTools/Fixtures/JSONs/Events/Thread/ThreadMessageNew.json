@@ -13,6 +13,7 @@
         "html": "<p>@Han Solo Ahahah</p>\n",
         "type": "reply",
         "user": {
+            "teams": [],
             "custom": {},
             "id": "leia_organa",
             "role": "admin",
@@ -49,6 +50,8 @@
         "shadowed": false,
         "mentioned_users": [
             {
+                "language": "",
+                "teams": [],
                 "custom": {},
                 "id": "han_solo",
                 "role": "user",
@@ -86,6 +89,7 @@
         "created_at": "2024-04-05T19:56:23.169549Z",
         "updated_at": "2024-05-31T13:26:04.005786Z",
         "created_by": {
+            "teams": [],
             "custom": {},
             "id": "r2-d2",
             "role": "user",
@@ -106,6 +110,8 @@
                 "custom": {},
                 "user_id": "han_solo",
                 "user": {
+                    "language": "",
+                    "teams": [],
                     "custom": {},
                     "id": "han_solo",
                     "role": "user",
@@ -131,6 +137,8 @@
                 "custom": {},
                 "user_id": "lando_calrissian",
                 "user": {
+                    "language": "",
+                    "teams": [],
                     "custom": {},
                     "id": "lando_calrissian",
                     "role": "user",

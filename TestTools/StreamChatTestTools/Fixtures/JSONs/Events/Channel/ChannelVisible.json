@@ -27,6 +27,8 @@
   "channel_id" : "default-channel-6",
   "channel_type" : "messaging",
   "user" : {
+    "language" : "",
+    "teams" : [],
     "custom" : {},
     "banned" : false,
     "online" : true,

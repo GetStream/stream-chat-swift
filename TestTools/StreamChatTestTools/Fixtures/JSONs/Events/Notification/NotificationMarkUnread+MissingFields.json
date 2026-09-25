@@ -6,6 +6,8 @@
   "channel_type": "messaging",
   "channel": null,
   "user": {
+    "language": "",
+    "teams": [],
     "custom": {},
     "id": "luke_skywalker",
     "role": "user",

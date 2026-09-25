@@ -18,6 +18,8 @@ final class UnknownUserEvent_Tests: XCTestCase {
         {
             "user" : {
                 "custom" : {},
+                "language" : "",
+                "teams" : [],
                 "id" : "\(userId)",
                 "banned" : false,
                 "unread_channels" : 0,

@@ -152,23 +152,21 @@ extension NSManagedObjectContext {
         }
 
         // Save member specific data
-        if let channelRole = payload.channelRole {
-            dto.channelRoleRaw = channelRole
-        }
+        dto.channelRoleRaw = payload.channelRole
 
         dto.statusRaw = payload.status
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
         dto.memberDeletedAt = payload.deletedAt?.bridgeDate
-        dto.isBanned = payload.banned ?? false
-        dto.isShadowBanned = payload.shadowBanned ?? false
+        dto.isBanned = payload.banned
+        dto.isShadowBanned = payload.shadowBanned
         dto.banExpiresAt = payload.banExpires?.bridgeDate
         dto.isInvited = payload.invited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         dto.archivedAt = payload.archivedAt?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
-        dto.notificationsMuted = payload.notificationsMuted ?? false
+        dto.notificationsMuted = payload.notificationsMuted
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.custom)

@@ -43,6 +43,8 @@ final class ChannelReadPayload_Tests: XCTestCase {
             "unread_messages": 15,
             "user": [
                 "custom": [:] as [String: Any],
+                "language": "",
+                "teams": [String](),
                 "id": "broken-waterfall-5",
                 "banned": false,
                 "unread_channels": 0,

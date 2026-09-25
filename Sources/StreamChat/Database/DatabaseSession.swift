@@ -954,9 +954,9 @@ extension DatabaseSession {
     func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
         var voteUpdated = false
         let userId = vote.userId ?? "anon"
-        if let optionId = vote.optionId, !optionId.isEmpty {
+        if !vote.optionId.isEmpty {
             let id = PollVoteDTO.localVoteId(
-                optionId: optionId,
+                optionId: vote.optionId,
                 pollId: vote.pollId,
                 userId: vote.userId
             )
@@ -995,9 +995,9 @@ extension DatabaseSession {
                 }
             }
         } else {
-            if let optionId = vote.optionId, !optionId.isEmpty {
+            if !vote.optionId.isEmpty {
                 let id = PollVoteDTO.localVoteId(
-                    optionId: optionId,
+                    optionId: vote.optionId,
                     pollId: vote.pollId,
                     userId: vote.userId
                 )

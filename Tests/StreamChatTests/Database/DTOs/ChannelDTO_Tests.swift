@@ -613,7 +613,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Members
             Assert.willBeEqual(
-                payload.members[0].channelRole.map(MemberRole.init(rawChannelValue:)),
+                MemberRole(rawChannelValue: payload.members[0].channelRole),
                 loadedChannel.lastActiveMembers.first?.memberRole
             )
             Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)
@@ -1821,6 +1821,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let channelDetail: ChannelDetailPayload = .dummy(cid: cid)
         let parentMessageId: MessageId = .unique
         let threadPayload = ThreadPayload(
+            activeParticipantCount: 0,
             channelCid: cid.rawValue,
             createdAt: .unique,
             createdByUserId: .unique,

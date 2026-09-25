@@ -1024,7 +1024,6 @@ final class DatabaseSession_Tests: XCTestCase {
         let voteId = String.unique
         let votePayload = XCTestCase().dummyPollVotePayload(
             id: voteId,
-            optionId: nil,
             pollId: pollId,
             answerText: firstAnswer,
             isAnswer: true,
@@ -1051,7 +1050,6 @@ final class DatabaseSession_Tests: XCTestCase {
         // WHEN
         let updatedVotePayload = XCTestCase().dummyPollVotePayload(
             id: voteId,
-            optionId: nil,
             pollId: pollId,
             answerText: secondAnswer,
             isAnswer: true,
@@ -1100,6 +1098,7 @@ final class DatabaseSession_Tests: XCTestCase {
                 cid: channelId,
                 createdAt: .unique,
                 thread: ThreadResponse(
+                    activeParticipantCount: 0,
                     channelCid: channelId.rawValue,
                     createdAt: .unique,
                     custom: [:],
@@ -1178,6 +1177,7 @@ final class DatabaseSession_Tests: XCTestCase {
             ThreadUpdatedEventDTO(
                 createdAt: .unique,
                 thread: ThreadResponse(
+                    activeParticipantCount: 0,
                     channelCid: channelId.rawValue,
                     createdAt: .unique,
                     custom: [:],

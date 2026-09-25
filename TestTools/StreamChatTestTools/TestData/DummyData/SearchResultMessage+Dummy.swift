@@ -33,6 +33,7 @@ extension SearchResultMessage {
             mentionedUsers: [],
             ownReactions: [],
             pinned: false,
+            reactionCounts: [:],
             reactionScores: [:],
             replyCount: 0,
             restrictedVisibility: [],

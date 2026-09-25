@@ -113,6 +113,8 @@ final class TypingEvent_Tests: XCTestCase {
           "cid": "messaging:general",
           "user": {
             "custom": {},
+            "language": "",
+            "teams": [],
             "id": "luke_skywalker",
             "role": "user",
             "created_at": "2020-12-07T11:36:47.059906Z",

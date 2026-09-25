@@ -69,7 +69,7 @@ final class MemberEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.member.user!.id)
         XCTAssertEqual(
             event.member.memberRole,
-            eventPayload.member.channelRole.map(MemberRole.init(rawChannelValue:))
+            MemberRole(rawChannelValue: eventPayload.member.channelRole)
         )
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
@@ -101,7 +101,7 @@ final class MemberEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.member.user!.id)
         XCTAssertEqual(
             event.member.memberRole,
-            eventPayload.member.channelRole.map(MemberRole.init(rawChannelValue:))
+            MemberRole(rawChannelValue: eventPayload.member.channelRole)
         )
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }

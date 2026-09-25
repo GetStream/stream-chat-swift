@@ -1,5 +1,7 @@
 {
   "user" : {
+    "language" : "",
+    "teams" : [],
     "custom" : {
       "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg"
     },
@@ -31,6 +33,7 @@
     "truncated_at" : "2022-02-16T08:20:13.862494Z",
     "members" : [
       {
+        "notifications_muted" : false,
         "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
@@ -40,6 +43,8 @@
         "user_id" : "leia_organa",
         "updated_at" : "2022-02-16T00:16:47.561336Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : true,
@@ -56,6 +61,7 @@
         }
       },
       {
+        "notifications_muted" : false,
         "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
@@ -65,6 +71,8 @@
         "user_id" : "luke_skywalker",
         "updated_at" : "2022-02-16T00:16:47.561336Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {
             "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg"
           },
@@ -92,6 +100,8 @@
     ],
     "created_at" : "2022-02-16T00:16:47.556896Z",
     "created_by" : {
+      "language" : "",
+      "teams" : [],
       "custom" : {
         "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg"
       },
@@ -189,6 +199,8 @@
     "cid" : "messaging:8372DE11-E",
     "id" : "4870413A-FF30-426B-B192-30A682486E96",
     "user" : {
+      "language" : "",
+      "teams" : [],
       "custom" : {
         "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg"
       },

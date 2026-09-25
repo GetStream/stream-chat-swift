@@ -394,15 +394,15 @@ extension XCTestCase {
         name: String = "Test Poll",
         updatedAt: Date = Date(),
         voteCount: Int = 0,
-        latestAnswers: [PollVotePayload?]? = nil,
-        options: [PollOptionPayload?] = [],
-        ownVotes: [PollVotePayload?] = [],
+        latestAnswers: [PollVotePayload] = [],
+        options: [PollOptionPayload] = [],
+        ownVotes: [PollVotePayload] = [],
         custom: [String: RawJSON] = [:],
         latestVotesByOption: [String: [PollVotePayload]] = [:],
         voteCountsByOption: [String: Int] = [:],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
-        votingVisibility: PollResponseDataVotingVisibility? = nil,
+        votingVisibility: PollResponseDataVotingVisibility = .public,
         user: UserPayload? = .dummy(userId: .unique)
     ) -> PollPayload {
         .init(
@@ -445,7 +445,7 @@ extension XCTestCase {
     func dummyPollVotePayload(
         createdAt: Date = Date(),
         id: String = .unique,
-        optionId: String? = nil,
+        optionId: String = "",
         pollId: String = .unique,
         updatedAt: Date = Date(),
         answerText: String? = nil,

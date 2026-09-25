@@ -1,5 +1,7 @@
 {
     "user" : {
+        "language" : "",
+        "teams" : [],
         "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
@@ -34,7 +36,7 @@
         "restricted_visibility" : [],
         "shadowed" : false,
         "id" : "1ff9f6d0-df70-4703-aef0-379f95ad7366",
-        "reaction_counts" : null,
+        "reaction_counts" : {},
         "silent" : false,
         "created_at" : "2020-07-17T13:42:21.531523Z",
         "reaction_scores" : {
@@ -54,6 +56,8 @@
         "updated_at" : "2020-07-17T13:42:21.531523Z",
         "reply_count" : 0,
         "user" : {
+            "language" : "",
+            "teams" : [],
             "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
