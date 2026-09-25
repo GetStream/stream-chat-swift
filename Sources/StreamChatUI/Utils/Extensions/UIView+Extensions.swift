@@ -157,3 +157,12 @@ extension UIView {
         traitCollection.layoutDirection == .rightToLeft
     }
 }
+
+extension NSDirectionalEdgeInsets {
+    /// The layout margins UIKit applies to a view by default.
+    ///
+    /// Not every device applies them implicitly. An unfolded iPhone Duo reports none, which leaves
+    /// the content of every view that lays out relative to its `layoutMarginsGuide` flush against
+    /// the view's edges, so those views state the default explicitly.
+    static let streamDefaultLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)
+}

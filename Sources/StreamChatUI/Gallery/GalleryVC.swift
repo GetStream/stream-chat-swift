@@ -145,6 +145,9 @@ open class GalleryVC: _ViewController,
     /// A constaint between `bottomBarView.bottomAnchor` and `view.bottomAnchor`.
     open private(set) var bottomBarBottomConstraint: NSLayoutConstraint?
 
+    private var attachmentsBottomToBottomBarConstraint: NSLayoutConstraint?
+    private var attachmentsBottomToVideoPlaybackBarConstraint: NSLayoutConstraint?
+
     override open func setUpAppearance() {
         super.setUpAppearance()
 
@@ -211,15 +214,19 @@ open class GalleryVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.embed(attachmentsCollectionView)
-
         view.addSubview(topBarView)
         topBarView.pin(anchors: [.leading, .trailing], to: view)
         topBarTopConstraint = topBarView.topAnchor.pin(equalTo: view.topAnchor)
         topBarTopConstraint?.isActive = true
 
-        topBarView.embed(topBarContainerStackView)
-        topBarContainerStackView.preservesSuperviewLayoutMargins = true
+        // The bar's background stays edge to edge while its content is laid out inside the safe
+        // area. Keeping the safe area out of the container's own margins matters: UIKit adds the
+        // two together, and where that sum also drives the bar's height it has two answers to
+        // choose from, which it resolves by looping until it throws a degenerate layout.
+        topBarView.addSubview(topBarContainerStackView)
+        topBarContainerStackView.pin(to: topBarView.safeAreaLayoutGuide)
+        topBarContainerStackView.insetsLayoutMarginsFromSafeArea = false
+        topBarContainerStackView.directionalLayoutMargins = .streamDefaultLayoutMargins
         topBarContainerStackView.isLayoutMarginsRelativeArrangement = true
 
         closeButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
@@ -250,9 +257,11 @@ open class GalleryVC: _ViewController,
         bottomBarBottomConstraint = bottomBarView.bottomAnchor.pin(equalTo: view.bottomAnchor)
         bottomBarBottomConstraint?.isActive = true
 
-        bottomBarContainerStackView.preservesSuperviewLayoutMargins = true
+        bottomBarView.addSubview(bottomBarContainerStackView)
+        bottomBarContainerStackView.pin(to: bottomBarView.safeAreaLayoutGuide)
+        bottomBarContainerStackView.insetsLayoutMarginsFromSafeArea = false
+        bottomBarContainerStackView.directionalLayoutMargins = .streamDefaultLayoutMargins
         bottomBarContainerStackView.isLayoutMarginsRelativeArrangement = true
-        bottomBarView.embed(bottomBarContainerStackView)
 
         shareButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
         shareButton.contentEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
@@ -269,10 +278,45 @@ open class GalleryVC: _ViewController,
         view.addSubview(videoPlaybackBar)
         videoPlaybackBar.pin(anchors: [.leading, .trailing], to: view)
         videoPlaybackBar.bottomAnchor.pin(equalTo: bottomBarView.topAnchor).isActive = true
+
+        // The attachments are laid out in the area between the bars, and inside the safe area
+        // horizontally, so that they are never covered by a bar or by whatever the system draws
+        // along an edge. They keep the default margin from both horizontal edges on top of that,
+        // so they never sit flush against the screen. The guides stay where the bars rest, which
+        // keeps the content in place while the bars slide out of the view and back in.
+        let topBarLayoutGuide = UILayoutGuide()
+        let bottomBarLayoutGuide = UILayoutGuide()
+        view.addLayoutGuide(topBarLayoutGuide)
+        view.addLayoutGuide(bottomBarLayoutGuide)
+        view.insertSubview(attachmentsCollectionView, at: 0)
+        attachmentsBottomToBottomBarConstraint = attachmentsCollectionView.bottomAnchor
+            .pin(equalTo: bottomBarLayoutGuide.topAnchor)
+        attachmentsBottomToVideoPlaybackBarConstraint = attachmentsCollectionView.bottomAnchor
+            .pin(equalTo: videoPlaybackBar.topAnchor)
+        NSLayoutConstraint.activate([
+            topBarLayoutGuide.topAnchor.pin(equalTo: view.topAnchor),
+            topBarLayoutGuide.heightAnchor.pin(equalTo: topBarView.heightAnchor),
+            bottomBarLayoutGuide.bottomAnchor.pin(equalTo: view.bottomAnchor),
+            bottomBarLayoutGuide.heightAnchor.pin(equalTo: bottomBarView.heightAnchor),
+            attachmentsCollectionView.leadingAnchor.pin(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: NSDirectionalEdgeInsets.streamDefaultLayoutMargins.leading
+            ),
+            attachmentsCollectionView.trailingAnchor.pin(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -NSDirectionalEdgeInsets.streamDefaultLayoutMargins.trailing
+            ),
+            attachmentsCollectionView.topAnchor.pin(equalTo: topBarLayoutGuide.bottomAnchor)
+        ])
+        updateAttachmentsBottomConstraint()
     }
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+
+        // The zoom lands on the area the attachments are laid out in rather than on the whole view,
+        // which the bars overlap.
+        transitionController?.zoomAnimator.toContentView = attachmentsCollectionView
 
         attachmentsCollectionView.reloadData()
     }
@@ -323,6 +367,7 @@ open class GalleryVC: _ViewController,
 
         videoPlaybackBar.player = videoCell?.player
         videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
+        updateAttachmentsBottomConstraint()
     }
 
     /// Lets the video timeline and other controls keep their own gestures.
@@ -471,6 +516,14 @@ open class GalleryVC: _ViewController,
     override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         attachmentsFlowLayout.invalidateLayout()
         super.viewWillTransition(to: size, with: coordinator)
+    }
+
+    override open func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+
+        // The area the attachments are laid out in is derived from the safe area, and an item
+        // fills that area, so it is measured again whenever the safe area changes.
+        attachmentsFlowLayout.invalidateLayout()
     }
 
     /// An index path for the currently visible cell.
@@ -638,6 +691,25 @@ open class GalleryVC: _ViewController,
             return components.videoAttachmentGalleryCell.reuseId
         default:
             return nil
+        }
+    }
+
+    /// The playback bar is shown for videos only, and it sits inside the area the attachments are
+    /// laid out in, so the content ends above it while it is shown.
+    private func updateAttachmentsBottomConstraint() {
+        let endsAboveVideoPlaybackBar = !videoPlaybackBar.isHidden
+        let changed = attachmentsBottomToVideoPlaybackBarConstraint?.isActive != endsAboveVideoPlaybackBar
+
+        attachmentsBottomToBottomBarConstraint?.isActive = false
+        attachmentsBottomToVideoPlaybackBarConstraint?.isActive = false
+        if endsAboveVideoPlaybackBar {
+            attachmentsBottomToVideoPlaybackBarConstraint?.isActive = true
+        } else {
+            attachmentsBottomToBottomBarConstraint?.isActive = true
+        }
+
+        if changed {
+            attachmentsFlowLayout.invalidateLayout()
         }
     }
 

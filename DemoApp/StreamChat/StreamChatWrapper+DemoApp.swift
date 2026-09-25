@@ -53,6 +53,7 @@ extension StreamChatWrapper {
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
         Components.default.reactionsSorting = ReactionSorting.byFirstReactionAt
         Components.default.channelListErrorView = DemoChatChannelListErrorView.self
+        Components.default.currentUserAvatarView = DemoCurrentChatUserAvatarView.self
 
         // Example of how to customize Markdown
         /*
