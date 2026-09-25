@@ -28,16 +28,12 @@ final class MessageRequest: Sendable, Encodable, JSONEncodable {
     let mentionedRoles: [String]?
     /// Array of user IDs to mention
     let mentionedUsers: [String]?
-    /// Should be empty if `text` is provided. Can only be set when using server-side API
-    let mml: String?
     /// ID of parent message (thread)
     let parentId: String?
     /// Date when pinned message expires
     let pinExpires: Date?
     /// Whether message is pinned or not
     let pinned: Bool?
-    /// Date when message got pinned
-    let pinnedAt: Date?
     /// Identifier of the poll to include in the message
     let pollId: String?
     let quotedMessageId: String?
@@ -62,11 +58,9 @@ final class MessageRequest: Sendable, Encodable, JSONEncodable {
         mentionedHere: Bool? = nil,
         mentionedRoles: [String]? = nil,
         mentionedUsers: [String]? = nil,
-        mml: String? = nil,
         parentId: String? = nil,
         pinExpires: Date? = nil,
         pinned: Bool? = nil,
-        pinnedAt: Date? = nil,
         pollId: String? = nil,
         quotedMessageId: String? = nil,
         restrictedVisibility: [String]? = nil,
@@ -84,11 +78,9 @@ final class MessageRequest: Sendable, Encodable, JSONEncodable {
         self.mentionedHere = mentionedHere
         self.mentionedRoles = mentionedRoles
         self.mentionedUsers = mentionedUsers
-        self.mml = mml
         self.parentId = parentId
         self.pinExpires = pinExpires
         self.pinned = pinned
-        self.pinnedAt = pinnedAt
         self.pollId = pollId
         self.quotedMessageId = quotedMessageId
         self.restrictedVisibility = restrictedVisibility
@@ -108,11 +100,9 @@ final class MessageRequest: Sendable, Encodable, JSONEncodable {
         case mentionedHere = "mentioned_here"
         case mentionedRoles = "mentioned_roles"
         case mentionedUsers = "mentioned_users"
-        case mml
         case parentId = "parent_id"
         case pinExpires = "pin_expires"
         case pinned
-        case pinnedAt = "pinned_at"
         case pollId = "poll_id"
         case quotedMessageId = "quoted_message_id"
         case restrictedVisibility = "restricted_visibility"

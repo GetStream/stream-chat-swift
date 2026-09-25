@@ -29,23 +29,7 @@ public final class ThreadMessageNewEvent: Event {
     }
 }
 
-final class ThreadMessageNewEventDTO: EventDTO {
-    let cid: ChannelId
-    let message: MessageResponse
-    let channel: ChannelDetailPayload
-    let unreadCount: UnreadCountPayload?
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        channel = try response.value(at: \.channel)
-        unreadCount = try? response.value(at: \.unreadCount)
-        payload = response
-    }
-
+extension NotificationThreadMessageNewEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let messageDTO = session.message(id: message.id),
@@ -76,19 +60,9 @@ public final class ThreadUpdatedEvent: Event {
     }
 }
 
-final class ThreadUpdatedEventDTO: EventDTO {
-    let thread: ThreadResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        thread = try response.value(at: \.thread)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension ThreadUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let threadDTO = session.thread(parentMessageId: thread.parentMessageId, cache: nil) else { return nil }
+        guard let thread, let threadDTO = session.thread(parentMessageId: thread.parentMessageId, cache: nil) else { return nil }
 
         return try? ThreadUpdatedEvent(
             thread: threadDTO.asModel(),

@@ -67,7 +67,8 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     ///
     /// - Parameter event: The notification mark read event.
     private func handleNotificationMarkReadEvent(_ event: NotificationMarkReadEventDTO) {
-        deliveryTracker.cancel(channelId: event.cid)
+        guard !event.isMarkAllRead, let cid = event.cid else { return }
+        deliveryTracker.cancel(channelId: cid)
     }
     
     /// Handles a message delivered event by updating the local channel read data.
@@ -76,17 +77,23 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     ///   - event: The message delivered event.
     ///   - session: The database session.
     private func handleMessageDeliveredEvent(_ event: MessageDeliveredEventDTO, session: DatabaseSession) {
+        guard
+            let userId = event.user?.id,
+            let lastDeliveredAt = event.lastDeliveredAt,
+            let lastDeliveredMessageId = event.lastDeliveredMessageId
+        else { return }
+
         // Update the delivered message information
         if let channelRead = session.loadOrCreateChannelRead(
             cid: event.cid,
-            userId: event.user.id
+            userId: userId
         ) {
-            channelRead.lastDeliveredAt = event.lastDeliveredAt.bridgeDate
-            channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
+            channelRead.lastDeliveredAt = lastDeliveredAt.bridgeDate
+            channelRead.lastDeliveredMessageId = lastDeliveredMessageId
         }
 
         // Remove pending for delivery if marked delivered from another device
-        if let message = session.message(id: event.lastDeliveredMessageId),
+        if let message = session.message(id: lastDeliveredMessageId),
            message.user.id == session.currentUser?.user.id {
             deliveryTracker.cancel(channelId: event.cid)
         }

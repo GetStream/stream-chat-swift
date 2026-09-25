@@ -18,7 +18,7 @@ final class CustomDataHashMap_Tests: XCTestCase {
             language: .english,
             extraData: extraData
         )
-        let payload = UserWebSocketPayload(userInfo: userInfo)
+        let payload = ConnectUserDetailsRequest(userInfo: userInfo)
         let encoded = try! JSONEncoder.default.encode(payload)
         AssertJSONEqual(encoded, [
             "language": "en",
@@ -26,7 +26,7 @@ final class CustomDataHashMap_Tests: XCTestCase {
             "invisible": false,
             "name": "tommaso",
             "image": imageURL.absoluteString,
-            "how-many-roads": 42
+            "custom": ["how-many-roads": 42]
         ])
     }
 

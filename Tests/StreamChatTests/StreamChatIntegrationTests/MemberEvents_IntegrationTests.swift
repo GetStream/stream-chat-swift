@@ -31,13 +31,14 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberAddedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
-        let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        let memberAddedEvent = try XCTUnwrap(event?.rawValue as? MemberAddedEventDTO)
 
         let unwrappedEvent = try XCTUnwrap(event)
 
         // Add a channel so member will be saved
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: unwrappedEvent.cid))
+            try session.saveChannel(payload: self.dummyPayload(with: memberAddedEvent.cid))
         }
 
         let completionCalled = expectation(description: "completion called")
@@ -57,7 +58,8 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
-        let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is MemberUpdatedEventDTO)
 
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
@@ -77,7 +79,8 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberRemovedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
-        let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is MemberRemovedEventDTO)
 
         let channelId = ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
 

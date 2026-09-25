@@ -233,32 +233,27 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let message = MessagePayload.dummy(messageId: messageId, authorUserId: user.id)
         let channel = ChannelDetailPayload.dummy(cid: channelId)
         
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            cid: channelId,
-            user: user,
+        return MessageNewEventDTO(
             channel: channel,
+            cid: channelId,
+            createdAt: message.createdAt,
             message: message,
-            createdAt: message.createdAt
+            user: user
         )
-        
-        return try MessageNewEventDTO(from: eventPayload)
     }
 
     private func createNotificationMarkReadEvent(channelId: ChannelId) throws -> NotificationMarkReadEventDTO {
         let user = UserPayload.dummy(userId: .unique)
         let channel = ChannelDetailPayload.dummy(cid: channelId)
         
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: channelId,
-            user: user,
+        return NotificationMarkReadEventDTO(
             channel: channel,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: .unique(after: Date())
+            cid: channelId,
+            createdAt: .unique(after: Date()),
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            user: user
         )
-        
-        return try NotificationMarkReadEventDTO(from: eventPayload)
     }
     
     private func createMessageDeliveredEvent(
@@ -270,16 +265,13 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let user = UserPayload.dummy(userId: userId)
         let channel = ChannelDetailPayload.dummy(cid: channelId)
         
-        let eventPayload = EventPayload(
-            eventType: .messageDelivered,
-            cid: channelId,
-            user: user,
+        return MessageDeliveredEventDTO(
             channel: channel,
+            cid: channelId,
             createdAt: .unique(after: Date()),
             lastDeliveredAt: deliveredAt,
-            lastDeliveredMessageId: messageId
+            lastDeliveredMessageId: messageId,
+            user: user
         )
-        
-        return try MessageDeliveredEventDTO(from: eventPayload)
     }
 }

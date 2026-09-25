@@ -217,12 +217,14 @@ final class ChannelEventsController_Tests: XCTestCase {
         controller.delegate = delegate
 
         // Simulate incoming events.
-        let eventPayload = EventPayload(eventType: .channelUpdated, channel: .dummy(cid: cid), createdAt: .unique)
+        let eventPayload = ChannelUpdatedEventDTO(
+            channel: .dummy(cid: cid),
+            createdAt: .unique
+        )
         try database.writeSynchronously {
-            try $0.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+            try $0.saveChannel(payload: eventPayload.channel, query: nil, cache: nil)
         }
-        let currentChannelEvent = try ChannelUpdatedEventDTO(from: eventPayload)
-            .toDomainEvent(session: database.viewContext) as! ChannelUpdatedEvent
+        let currentChannelEvent = eventPayload.toDomainEvent(session: database.viewContext) as! ChannelUpdatedEvent
 
         let currentChannelCustomEvent = UnknownChannelEvent(
             type: .init(rawValue: .unique),

@@ -16,15 +16,4 @@ extension String.StringInterpolation {
         }
         appendLiteral(prettyPrintedString)
     }
-
-    mutating func appendInterpolation(_ value: EventPayload) {
-        var description = "\n-----\(type(of: value))-----\n"
-        let mirror = Mirror(reflecting: value)
-        for child in mirror.children {
-            if let propertyName = child.label {
-                description += "     \(propertyName): \(child.value)\n"
-            }
-        }
-        appendLiteral(description)
-    }
 }

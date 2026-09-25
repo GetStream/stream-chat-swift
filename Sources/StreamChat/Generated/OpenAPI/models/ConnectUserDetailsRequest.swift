@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class MemberUserRequest: Sendable, Codable, JSONEncodable {
+final class ConnectUserDetailsRequest: Sendable, Codable, JSONEncodable {
     let custom: [String: RawJSON]?
     let id: String
     let image: String?

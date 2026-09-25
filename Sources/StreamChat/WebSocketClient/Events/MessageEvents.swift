@@ -49,27 +49,10 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasUnr
     }
 }
 
-final class MessageNewEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let message: MessageResponse
-    let createdAt: Date
-    let watcherCount: Int?
-    let unreadCount: UnreadCountPayload?
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        watcherCount = try? response.value(at: \.watcherCount)
-        unreadCount = try? response.value(at: \.unreadCount)
-        payload = response
-    }
-
+extension MessageNewEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
+            let user,
             let userDTO = session.user(id: user.id),
             let messageDTO = session.message(id: message.id),
             let channelDTO = session.channel(cid: cid),
@@ -118,23 +101,10 @@ public final class MessageUpdatedEvent: ChannelSpecificEvent {
     }
 }
 
-final class MessageUpdatedEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let message: MessageResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension MessageUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
+            let user,
             let userDTO = session.user(id: user.id),
             let messageDTO = session.message(id: message.id),
             let channelDTO = session.channel(cid: cid)
@@ -189,25 +159,7 @@ public final class MessageDeletedEvent: ChannelSpecificEvent {
     }
 }
 
-final class MessageDeletedEventDTO: EventDTO {
-    let user: UserPayload?
-    let cid: ChannelId
-    let message: MessageResponse
-    let createdAt: Date
-    let payload: EventPayload
-    let hardDelete: Bool
-    let deletedForMe: Bool?
-
-    init(from response: EventPayload) throws {
-        user = try? response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-        hardDelete = response.hardDelete
-        deletedForMe = response.deletedForMe
-    }
-
+extension MessageDeletedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let channelDTO = session.channel(cid: cid) else {
             return nil
@@ -229,7 +181,7 @@ final class MessageDeletedEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             message: message,
             createdAt: createdAt,
-            isHardDelete: hardDelete,
+            isHardDelete: hardDelete ?? false,
             deletedForMe: deletedForMe ?? false
         )
     }
@@ -278,32 +230,17 @@ public final class MessageReadEvent: ChannelSpecificEvent {
     }
 }
 
-final class MessageReadEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let createdAt: Date
-    let unreadCount: UnreadCountPayload?
-    let team: TeamId?
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        unreadCount = try? response.value(at: \.unreadCount)
-        team = response.team
-        payload = response
-    }
-
+extension MessageReadEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
+            let user,
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: cid),
             let currentUser = session.currentUser
         else { return nil }
 
         var threadDTO: ThreadDTO?
-        if let threadId = payload.thread?.value?.parentMessageId {
+        if let threadId = thread?.parentMessageId {
             threadDTO = session.thread(parentMessageId: threadId, cache: nil)
         }
 
@@ -377,25 +314,12 @@ public final class MessageDeliveredEvent: ChannelSpecificEvent {
     }
 }
 
-final class MessageDeliveredEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let createdAt: Date
-    let lastDeliveredMessageId: MessageId
-    let lastDeliveredAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        lastDeliveredMessageId = try response.value(at: \.lastDeliveredMessageId)
-        lastDeliveredAt = try response.value(at: \.lastDeliveredAt)
-        payload = response
-    }
-
+extension MessageDeliveredEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
+            let user,
+            let lastDeliveredMessageId,
+            let lastDeliveredAt,
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: cid)
         else { return nil }

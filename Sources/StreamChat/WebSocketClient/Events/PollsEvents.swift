@@ -5,44 +5,43 @@
 import Foundation
 
 protocol PollEventDTO: EventDTO {
-    var poll: PollPayload? { get }
-    var payload: EventPayload { get }
-    static func createModel(poll: Poll, payload: EventPayload) -> Event?
+    var createdAt: Date { get }
+    var poll: PollPayload { get }
+    static func createModel(poll: Poll, createdAt: Date) -> Event
 }
 
 protocol PollVoteEventDTO: EventDTO {
-    var poll: PollPayload? { get }
-    var vote: PollVotePayload? { get }
-    var payload: EventPayload { get }
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event?
+    var createdAt: Date { get }
+    var poll: PollPayload { get }
+    var pollVote: PollVotePayload { get }
+    static func createModel(vote: PollVote, poll: Poll, createdAt: Date) -> Event
 }
 
 extension PollVoteEventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let vote,
-              let voteDto = try? session.pollVote(id: vote.id, pollId: vote.pollId),
+        guard let voteDto = try? session.pollVote(id: pollVote.id, pollId: pollVote.pollId),
               let voteModel = try? voteDto.asModel(),
-              let pollDto = try? session.poll(id: vote.pollId),
+              let pollDto = try? session.poll(id: pollVote.pollId),
               let pollModel = try? pollDto.asModel() else {
             return nil
         }
         return Self.createModel(
             vote: voteModel,
             poll: pollModel,
-            payload: payload
+            createdAt: createdAt
         )
     }
 }
 
 extension PollEventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let poll, let pollDto = try? session.poll(id: poll.id),
+        guard let pollDto = try? session.poll(id: poll.id),
               let pollModel = try? pollDto.asModel() else {
             return nil
         }
         return Self.createModel(
             poll: pollModel,
-            payload: payload
+            createdAt: createdAt
         )
     }
 }
@@ -62,21 +61,15 @@ public final class PollClosedEvent: Event {
     }
 }
 
-struct PollClosedEventDTO: PollEventDTO {
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollClosedEvent(poll: poll, createdAt: payload.createdAt)
+extension PollClosedEventDTO: PollEventDTO {
+    static func createModel(poll: Poll, createdAt: Date) -> Event {
+        PollClosedEvent(poll: poll, createdAt: createdAt)
     }
 }
 
 /// A model representing an event where a poll was created.
+///
+/// - Note: The backend does not emit `poll.created`; a created poll arrives with its message in `MessageNewEvent`.
 public final class PollCreatedEvent: Event {
     /// The poll that was created.
     public let poll: Poll
@@ -88,20 +81,6 @@ public final class PollCreatedEvent: Event {
     init(poll: Poll, createdAt: Date?) {
         self.poll = poll
         self.createdAt = createdAt
-    }
-}
-
-struct PollCreatedEventDTO: PollEventDTO {
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollCreatedEvent(poll: poll, createdAt: payload.createdAt)
     }
 }
 
@@ -120,17 +99,9 @@ public final class PollDeletedEvent: Event {
     }
 }
 
-struct PollDeletedEventDTO: PollEventDTO {
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollDeletedEvent(poll: poll, createdAt: payload.createdAt)
+extension PollDeletedEventDTO: PollEventDTO {
+    static func createModel(poll: Poll, createdAt: Date) -> Event {
+        PollDeletedEvent(poll: poll, createdAt: createdAt)
     }
 }
 
@@ -149,17 +120,9 @@ public final class PollUpdatedEvent: Event {
     }
 }
 
-struct PollUpdatedEventDTO: PollEventDTO {
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollUpdatedEvent(poll: poll, createdAt: payload.createdAt)
+extension PollUpdatedEventDTO: PollEventDTO {
+    static func createModel(poll: Poll, createdAt: Date) -> Event {
+        PollUpdatedEvent(poll: poll, createdAt: createdAt)
     }
 }
 
@@ -182,19 +145,9 @@ public final class PollVoteCastedEvent: Event {
     }
 }
 
-struct PollVoteCastedEventDTO: PollVoteEventDTO {
-    var vote: PollVotePayload?
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        vote = response.vote
-        poll = response.poll
-    }
-    
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event? {
-        PollVoteCastedEvent(vote: vote, poll: poll, createdAt: payload.createdAt)
+extension PollVoteCastedEventDTO: PollVoteEventDTO {
+    static func createModel(vote: PollVote, poll: Poll, createdAt: Date) -> Event {
+        PollVoteCastedEvent(vote: vote, poll: poll, createdAt: createdAt)
     }
 }
 
@@ -217,19 +170,9 @@ public final class PollVoteChangedEvent: Event {
     }
 }
 
-struct PollVoteChangedEventDTO: PollVoteEventDTO {
-    var vote: PollVotePayload?
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        vote = response.vote
-        poll = response.poll
-    }
-    
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event? {
-        PollVoteChangedEvent(vote: vote, poll: poll, createdAt: payload.createdAt)
+extension PollVoteChangedEventDTO: PollVoteEventDTO {
+    static func createModel(vote: PollVote, poll: Poll, createdAt: Date) -> Event {
+        PollVoteChangedEvent(vote: vote, poll: poll, createdAt: createdAt)
     }
 }
 
@@ -252,18 +195,8 @@ public final class PollVoteRemovedEvent: Event {
     }
 }
 
-struct PollVoteRemovedEventDTO: PollVoteEventDTO {
-    var vote: PollVotePayload?
-    var poll: PollPayload?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        vote = response.vote
-        poll = response.poll
-    }
-    
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event? {
-        PollVoteRemovedEvent(vote: vote, poll: poll, createdAt: payload.createdAt)
+extension PollVoteRemovedEventDTO: PollVoteEventDTO {
+    static func createModel(vote: PollVote, poll: Poll, createdAt: Date) -> Event {
+        PollVoteRemovedEvent(vote: vote, poll: poll, createdAt: createdAt)
     }
 }

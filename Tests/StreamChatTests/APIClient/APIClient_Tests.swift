@@ -89,7 +89,7 @@ final class APIClient_Tests: XCTestCase {
         encoder.encodeRequest = .success(request)
 
         // Create a test endpoint
-        let testEndpoint = Endpoint<Data>(path: .guest, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
+        let testEndpoint = Endpoint<Data>(path: .createGuest, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
 
         // Create a request
         waitUntil(timeout: defaultTimeout) { done in

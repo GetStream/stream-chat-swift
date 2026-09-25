@@ -34,14 +34,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             updatedAt: Date()
         )
         
-        let eventPayload = EventPayload(
-            eventType: .messageReminderCreated,
+        let event = ReminderCreatedEventDTO(
             createdAt: Date(),
             messageId: messageId,
             reminder: reminderPayload
         )
-        
-        let event = try ReminderCreatedEventDTO(from: eventPayload)
 
         // Save required data for reminder to reference
         try database.writeSynchronously { session in
@@ -99,14 +96,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             updatedAt: updatedDate
         )
         
-        let eventPayload = EventPayload(
-            eventType: .messageReminderUpdated,
+        let event = ReminderUpdatedEventDTO(
             createdAt: Date(),
             messageId: messageId,
             reminder: updatedReminderPayload
         )
-        
-        let event = try ReminderUpdatedEventDTO(from: eventPayload)
 
         // Execute
         _ = middleware.handle(event: event, session: database.viewContext)
@@ -144,14 +138,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Create due notification payload (same as the original in this case)
-        let eventPayload = EventPayload(
-            eventType: .messageReminderDue,
+        let event = ReminderNotificationEventDTO(
             createdAt: Date(),
             messageId: messageId,
             reminder: initialReminderPayload
         )
-        
-        let event = try ReminderDueNotificationEventDTO(from: eventPayload)
 
         // Execute
         _ = middleware.handle(event: event, session: database.viewContext)
@@ -190,14 +181,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertNotNil(database.viewContext.message(id: messageId)?.reminder, "Reminder should exist before deletion")
 
         // Create delete event payload
-        let eventPayload = EventPayload(
-            eventType: .messageReminderDeleted,
+        let event = ReminderDeletedEventDTO(
             createdAt: Date(),
             messageId: messageId,
             reminder: reminderPayload
         )
-        
-        let event = try ReminderDeletedEventDTO(from: eventPayload)
         
         // Execute
         _ = middleware.handle(event: event, session: database.viewContext)

@@ -23,21 +23,14 @@ public final class AIIndicatorUpdateEvent: Event {
     }
 }
 
-final class AIIndicatorUpdateEventDTO: EventDTO {
-    let payload: EventPayload
-    
-    init(from response: EventPayload) throws {
-        payload = response
-    }
-
+extension AIIndicatorUpdateEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        if let typingState = payload.aiState,
-           let aiTypingState = AITypingState(rawValue: typingState) {
+        if let aiTypingState = AITypingState(rawValue: aiState) {
             return AIIndicatorUpdateEvent(
                 state: aiTypingState,
-                cid: payload.cid,
-                messageId: payload.messageId,
-                aiMessage: payload.aiMessage
+                cid: cid,
+                messageId: messageId,
+                aiMessage: aiMessage
             )
         } else {
             return nil
@@ -55,15 +48,9 @@ public final class AIIndicatorClearEvent: Event {
     }
 }
 
-final class AIIndicatorClearEventDTO: EventDTO {
-    let payload: EventPayload
-        
-    init(from response: EventPayload) throws {
-        payload = response
-    }
-    
+extension AIIndicatorClearEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
-        AIIndicatorClearEvent(cid: payload.cid)
+        AIIndicatorClearEvent(cid: cid)
     }
 }
 
@@ -87,15 +74,9 @@ public final class AIIndicatorStopEvent: CustomEventPayload, Event {
     }
 }
 
-final class AIIndicatorStopEventDTO: EventDTO {
-    let payload: EventPayload
-        
-    init(from response: EventPayload) throws {
-        payload = response
-    }
-    
+extension AIIndicatorStopEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
-        AIIndicatorStopEvent(cid: payload.cid)
+        AIIndicatorStopEvent(cid: cid)
     }
 }
 

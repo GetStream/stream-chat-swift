@@ -8,7 +8,7 @@ struct ReminderUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as ReminderCreatedEventDTO:
-            guard let reminder = event.payload.reminder else { break }
+            let reminder = event.reminder
             do {
                 try session.saveReminder(payload: reminder, cache: nil)
             } catch {
@@ -16,15 +16,15 @@ struct ReminderUpdaterMiddleware: EventMiddleware {
             }
             
         case let event as ReminderUpdatedEventDTO:
-            guard let reminder = event.payload.reminder else { break }
+            let reminder = event.reminder
             do {
                 try session.saveReminder(payload: reminder, cache: nil)
             } catch {
                 log.error("Failed to update reminder: \(error)")
             }
             
-        case let event as ReminderDueNotificationEventDTO:
-            guard let reminder = event.payload.reminder else { break }
+        case let event as ReminderNotificationEventDTO:
+            let reminder = event.reminder
             do {
                 try session.saveReminder(payload: reminder, cache: nil)
             } catch {

@@ -25,16 +25,15 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
 
-        let eventPayload = EventPayload(
-            eventType: .notificationAddedToChannel,
-            connectionId: .unique,
-            cid: channelPayload.channel.cid,
-            channel: channelPayload.channel
+        let eventPayload = NotificationAddedToChannelEventDTO(
+            channel: channelPayload.channel,
+            createdAt: .unique,
+            member: .dummy()
         )
 
         // Save the event payload to DB
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeNotificationAddedToChannelEvent(eventPayload))
         }
 
         // Try to load the saved channel from DB
@@ -90,29 +89,18 @@ final class DatabaseSession_Tests: XCTestCase {
             attachments: []
         )
 
-        let eventPayload: EventPayload = .init(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: channelId,
-            currentUser: nil,
-            user: nil,
-            createdBy: nil,
-            memberContainer: nil,
+        let eventPayload = MessageNewEventDTO(
             channel: channelPayload,
+            channelMessageCount: 5,
+            cid: channelId,
+            createdAt: .unique,
             message: messagePayload,
-            reaction: nil,
-            watcherCount: nil,
-            unreadCount: nil,
-            createdAt: nil,
-            isChannelHistoryCleared: false,
-            banReason: nil,
-            banExpiredAt: nil,
-            channelMessageCount: 5
+            watcherCount: 0
         )
 
         // Save the event payload to DB
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageNewEvent(eventPayload))
         }
 
         // Try to load the saved message from DB
@@ -137,14 +125,14 @@ final class DatabaseSession_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUserPayload)
-            try session.saveEvent(payload: EventPayload(
-                eventType: .messageNew,
+            try session.saveEvent(event: .typeMessageNewEvent(MessageNewEventDTO(
                 cid: .unique,
-                user: .dummy(userId: .unique),
+                createdAt: .unique,
+                groupedUnreadChannels: unreadChannelCountsByGroup,
                 message: .dummy(messageId: .unique, authorUserId: .unique),
-                unreadChannelCountsByGroup: unreadChannelCountsByGroup,
-                createdAt: .unique
-            ))
+                user: .dummy(userId: .unique),
+                watcherCount: 0
+            )))
         }
 
         XCTAssertEqual(database.viewContext.currentUser?.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
@@ -251,29 +239,37 @@ final class DatabaseSession_Tests: XCTestCase {
     }
 
     func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: .unique,
-            currentUser: .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: nil
-            ),
-            unreadCount: .dummy
+        let currentUserPayload = CurrentUserPayload.dummy(
+            userId: .unique,
+            role: .user,
+            unreadCount: nil
+        )
+        let unreadMessages = Int.random(in: 0...Int.max)
+        let unreadChannels = Int.random(in: 0...Int.max)
+        let unreadThreads = Int.random(in: 0...Int.max)
+        let eventPayload = NotificationMarkReadEventDTO(
+            createdAt: .unique,
+            totalUnreadCount: unreadMessages,
+            unreadChannels: unreadChannels,
+            unreadThreads: unreadThreads
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeHealthCheckEvent(HealthCheckEventDTO(
+                connectionId: .unique,
+                createdAt: .unique,
+                me: currentUserPayload
+            )))
+            try session.saveEvent(event: .typeNotificationMarkReadEvent(eventPayload))
         }
 
         // Load current user
         let currentUser = database.viewContext.currentUser
 
         // Assert unread count is taken from event payload
-        XCTAssertEqual(Int64(eventPayload.unreadCount!.messages!), currentUser?.unreadMessagesCount)
-        XCTAssertEqual(Int64(eventPayload.unreadCount!.channels!), currentUser?.unreadChannelsCount)
-        XCTAssertEqual(Int64(eventPayload.unreadCount!.threads!), currentUser?.unreadThreadsCount)
+        XCTAssertEqual(Int64(unreadMessages), currentUser?.unreadMessagesCount)
+        XCTAssertEqual(Int64(unreadChannels), currentUser?.unreadChannelsCount)
+        XCTAssertEqual(Int64(unreadThreads), currentUser?.unreadThreadsCount)
     }
 
     func test_saveEvent_mergesUnreadChannelCountsByGroupIntoExistingValues() throws {
@@ -283,14 +279,15 @@ final class DatabaseSession_Tests: XCTestCase {
             try session.mergeCurrentUserUnreadChannelCountsByGroup(["all": 5, "old": 1])
         }
 
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
+        let eventPayload = MessageNewEventDTO(
             cid: .unique,
-            unreadChannelCountsByGroup: ["all": 7, "new": 2]
+            createdAt: .unique,
+            groupedUnreadChannels: ["all": 7, "new": 2],
+            message: .dummy(messageId: .unique, authorUserId: .unique)
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageNewEvent(eventPayload))
         }
 
         let counters = try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup ?? [:] }
@@ -307,33 +304,6 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertThrowsError(try saveUnreadCountWithoutUser()) { error in
             XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
         }
-    }
-
-    func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
-        // Create event payload with missing `createdAt`
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: .unique,
-            currentUser: .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: nil
-            ),
-            unreadCount: .dummy,
-            createdAt: nil
-        )
-
-        // Save event to the database
-        try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
-        }
-
-        // Load current user
-        let currentUser = database.viewContext.currentUser
-
-        // Assert `lastReceivedEventDate` is nil
-        XCTAssertNil(currentUser?.lastSynchedEventDate)
     }
 
     func test_saveEvent_whenMessageUpdated_shouldUpdateMessagesQuotingTheUpdatedMessage() throws {
@@ -354,22 +324,14 @@ final class DatabaseSession_Tests: XCTestCase {
         // Save the message that is quoting the other message
         try database.createMessage(id: quotingMessageId, authorId: userId, cid: channelId, quotedMessageId: messageId)
 
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
-            connectionId: .unique,
+        let eventPayload = MessageUpdatedEventDTO(
             cid: channelId,
-            currentUser: .dummy(
-                userId: userId,
-                role: .user,
-                unreadCount: nil
-            ),
-            message: .dummy(messageId: messageId, authorUserId: userId),
-            unreadCount: .dummy,
-            createdAt: nil
+            createdAt: .unique,
+            message: .dummy(messageId: messageId, authorUserId: userId)
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageUpdatedEvent(eventPayload))
         }
 
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
@@ -386,20 +348,19 @@ final class DatabaseSession_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: cid, withMessages: false)
         
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
+        let eventDTO = MessageUpdatedEventDTO(
             cid: cid,
-            user: .dummy(userId: currentUserId),
+            createdAt: .distantFuture,
             message: .dummy(
                 messageId: messageId,
                 restrictedVisibility: [currentUserId],
                 cid: cid,
                 pinned: true
             ),
-            createdAt: .distantFuture
+            user: .dummy(userId: currentUserId)
         )
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageUpdatedEvent(eventDTO))
         }
         try database.readSynchronously { session in
             let channelDTO = try XCTUnwrap(session.channel(cid: cid))
@@ -409,7 +370,6 @@ final class DatabaseSession_Tests: XCTestCase {
             let messageDTO = session.message(id: messageId)
             XCTAssertEqual(Set(arrayLiteral: currentUserId), messageDTO?.restrictedVisibility)
             // Ensure that we can create the local event message
-            let eventDTO = try MessageUpdatedEventDTO(from: eventPayload)
             let event = eventDTO.toDomainEvent(session: session)
             XCTAssertNotNil(event, "Updated event must be created for restricted visibility messages")
             XCTAssertTrue(event is MessageUpdatedEvent)
@@ -423,20 +383,19 @@ final class DatabaseSession_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: cid, withMessages: false)
         
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
+        let eventPayload = MessageUpdatedEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
+            createdAt: .distantFuture,
             message: .dummy(
                 messageId: messageId,
                 restrictedVisibility: [.unique],
                 cid: cid,
                 pinned: true
             ),
-            createdAt: .distantFuture
+            user: .dummy(userId: .unique)
         )
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageUpdatedEvent(eventPayload))
         }
         try database.readSynchronously { session in
             let channelDTO = try XCTUnwrap(session.channel(cid: cid))
@@ -459,19 +418,11 @@ final class DatabaseSession_Tests: XCTestCase {
         // Save the message to the DB
         try database.createMessage(id: messageId, authorId: userId, cid: channelId)
 
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
-            connectionId: .unique,
+        let eventPayload = MessageDeletedEventDTO(
             cid: channelId,
-            currentUser: .dummy(
-                userId: userId,
-                role: .user,
-                unreadCount: nil
-            ),
-            message: .dummy(messageId: messageId, authorUserId: userId),
-            unreadCount: .dummy,
-            createdAt: nil,
-            hardDelete: true
+            createdAt: .unique,
+            hardDelete: true,
+            message: .dummy(messageId: messageId, authorUserId: userId)
         )
 
         let messageBeforeEvent = database.viewContext.message(id: messageId)
@@ -479,7 +430,7 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertNotNil(messageBeforeEvent)
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageDeletedEvent(eventPayload))
         }
 
         let messageAfterEvent = database.viewContext.message(id: messageId)
@@ -502,19 +453,11 @@ final class DatabaseSession_Tests: XCTestCase {
         // Save the message to the DB
         try database.createMessage(id: messageId, authorId: userId, cid: channelId)
 
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
-            connectionId: .unique,
+        let eventPayload = MessageDeletedEventDTO(
             cid: channelId,
-            currentUser: .dummy(
-                userId: userId,
-                role: .user,
-                unreadCount: nil
-            ),
-            message: .dummy(messageId: messageId, authorUserId: userId),
-            unreadCount: .dummy,
-            createdAt: nil,
-            hardDelete: false
+            createdAt: .unique,
+            hardDelete: false,
+            message: .dummy(messageId: messageId, authorUserId: userId)
         )
 
         let messageBeforeEvent = database.viewContext.message(id: messageId)
@@ -522,7 +465,7 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertNotNil(messageBeforeEvent)
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: .typeMessageDeletedEvent(eventPayload))
         }
 
         let messageAfterEvent = database.viewContext.message(id: messageId)
@@ -548,14 +491,14 @@ final class DatabaseSession_Tests: XCTestCase {
             cid: channel.channel.cid
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
+        let messageNewEvent = MessageNewEventDTO(
             cid: channel.channel.cid,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeMessageNewEvent(messageNewEvent))
         }
 
         // THEN
@@ -581,14 +524,14 @@ final class DatabaseSession_Tests: XCTestCase {
             cid: channel.channel.cid
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
+        let messageNewEvent = NotificationNewMessageEventDTO(
+            channel: channel.channel,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeNotificationNewMessageEvent(messageNewEvent))
         }
 
         // THEN
@@ -624,14 +567,14 @@ final class DatabaseSession_Tests: XCTestCase {
             dto.localMessageState = .sending
         }
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
+        let messageNewEvent = MessageNewEventDTO(
             cid: channel.channel.cid,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeMessageNewEvent(messageNewEvent))
         }
 
         // THEN
@@ -663,15 +606,15 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 2000)
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
+        let messageNewEvent = MessageNewEventDTO(
             channel: channel.channel,
+            cid: channel.channel.cid,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeMessageNewEvent(messageNewEvent))
         }
 
         // THEN
@@ -701,15 +644,15 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: existingMessage.createdAt.addingTimeInterval(10)
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
+        let messageNewEvent = MessageNewEventDTO(
             channel: channel.channel,
+            cid: channel.channel.cid,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeMessageNewEvent(messageNewEvent))
         }
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
@@ -736,15 +679,14 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: existingMessage.createdAt.addingTimeInterval(10)
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
+        let messageNewEvent = NotificationNewMessageEventDTO(
             channel: channel.channel,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeNotificationNewMessageEvent(messageNewEvent))
         }
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
@@ -766,15 +708,15 @@ final class DatabaseSession_Tests: XCTestCase {
             authorUserId: .unique
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
+        let messageNewEvent = MessageNewEventDTO(
             channel: channel.channel,
+            cid: channel.channel.cid,
+            createdAt: .unique,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: .typeMessageNewEvent(messageNewEvent))
         }
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
@@ -810,16 +752,15 @@ final class DatabaseSession_Tests: XCTestCase {
             deletedAt: Date(timeIntervalSince1970: 3000)
         )
 
-        let messageDeletedEvent = EventPayload(
-            eventType: .messageDeleted,
+        let messageDeletedEvent = MessageDeletedEventDTO(
             cid: channel.channel.cid,
-            channel: channel.channel,
-            message: hardDeletedMessage,
-            hardDelete: true
+            createdAt: .unique,
+            hardDelete: true,
+            message: hardDeletedMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageDeletedEvent)
+            try session.saveEvent(event: .typeMessageDeletedEvent(messageDeletedEvent))
         }
 
         // THEN
@@ -854,15 +795,14 @@ final class DatabaseSession_Tests: XCTestCase {
             deletedAt: Date(timeIntervalSince1970: 2000)
         )
 
-        let messageDeletedEvent = EventPayload(
-            eventType: .messageDeleted,
+        let messageDeletedEvent = MessageDeletedEventDTO(
             cid: channel.channel.cid,
-            channel: channel.channel,
+            createdAt: .unique,
             message: deletedMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageDeletedEvent)
+            try session.saveEvent(event: .typeMessageDeletedEvent(messageDeletedEvent))
         }
 
         // THEN
@@ -897,15 +837,14 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: Date(timeIntervalSince1970: 2000)
         )
 
-        let channelTruncatedEvent = EventPayload(
-            eventType: .channelTruncated,
-            cid: channel.channel.cid,
+        let channelTruncatedEvent = ChannelTruncatedEventDTO(
             channel: .dummy(cid: channel.channel.cid, truncatedAt: systemMessage.createdAt),
+            createdAt: .unique,
             message: systemMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: channelTruncatedEvent)
+            try session.saveEvent(event: .typeChannelTruncatedEvent(channelTruncatedEvent))
         }
 
         // THEN
@@ -926,8 +865,9 @@ final class DatabaseSession_Tests: XCTestCase {
         
         try database.createCurrentUser(id: currentUserId)
         
+        let poll = XCTestCase().dummyPollPayload(id: pollId, user: .dummy(userId: currentUserId))
+
         try database.writeSynchronously { session in
-            let poll = XCTestCase().dummyPollPayload(id: pollId, user: .dummy(userId: currentUserId))
             try session.savePoll(payload: poll, cache: nil)
         }
         
@@ -941,10 +881,16 @@ final class DatabaseSession_Tests: XCTestCase {
         
         // WHEN
         let votePayload = XCTestCase().dummyPollVotePayload(id: voteId, optionId: pollOptionId, pollId: pollId)
-        let event = EventPayload(eventType: .pollVoteRemoved, vote: votePayload)
+        let event = WSEvent.typePollVoteRemovedEvent(
+            PollVoteRemovedEventDTO(
+                createdAt: .unique,
+                poll: poll,
+                pollVote: votePayload
+            )
+        )
         
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: event)
+            try session.saveEvent(event: event)
         }
         
         // THEN
@@ -965,12 +911,13 @@ final class DatabaseSession_Tests: XCTestCase {
         
         try database.createCurrentUser(id: currentUserId)
         
+        let poll = XCTestCase().dummyPollPayload(
+            id: pollId,
+            options: [firstOption, secondOption],
+            user: .dummy(userId: currentUserId)
+        )
+
         try database.writeSynchronously { session in
-            let poll = XCTestCase().dummyPollPayload(
-                id: pollId,
-                options: [firstOption, secondOption],
-                user: .dummy(userId: currentUserId)
-            )
             try session.savePoll(payload: poll, cache: nil)
         }
         
@@ -991,10 +938,16 @@ final class DatabaseSession_Tests: XCTestCase {
             pollId: pollId,
             userId: currentUserId
         )
-        let event = EventPayload(eventType: .pollVoteChanged, vote: votePayload)
+        let event = WSEvent.typePollVoteChangedEvent(
+            PollVoteChangedEventDTO(
+                createdAt: .unique,
+                poll: poll,
+                pollVote: votePayload
+            )
+        )
         
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: event)
+            try session.saveEvent(event: event)
         }
         
         // THEN
@@ -1012,12 +965,13 @@ final class DatabaseSession_Tests: XCTestCase {
                 
         try database.createCurrentUser(id: currentUserId)
         
+        let poll = XCTestCase().dummyPollPayload(
+            id: pollId,
+            options: [firstOption],
+            user: .dummy(userId: currentUserId)
+        )
+
         try database.writeSynchronously { session in
-            let poll = XCTestCase().dummyPollPayload(
-                id: pollId,
-                options: [firstOption],
-                user: .dummy(userId: currentUserId)
-            )
             try session.savePoll(payload: poll, cache: nil)
         }
         
@@ -1029,10 +983,16 @@ final class DatabaseSession_Tests: XCTestCase {
             pollId: pollId,
             userId: currentUserId
         )
-        let event = EventPayload(eventType: .pollVoteCasted, vote: votePayload)
+        let event = WSEvent.typePollVoteCastedEvent(
+            PollVoteCastedEventDTO(
+                createdAt: .unique,
+                poll: poll,
+                pollVote: votePayload
+            )
+        )
         
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: event)
+            try session.saveEvent(event: event)
         }
         
         // THEN
@@ -1051,11 +1011,12 @@ final class DatabaseSession_Tests: XCTestCase {
                 
         try database.createCurrentUser(id: currentUserId)
         
+        let poll = XCTestCase().dummyPollPayload(
+            id: pollId,
+            user: .dummy(userId: currentUserId)
+        )
+
         try database.writeSynchronously { session in
-            let poll = XCTestCase().dummyPollPayload(
-                id: pollId,
-                user: .dummy(userId: currentUserId)
-            )
             try session.savePoll(payload: poll, cache: nil)
         }
         
@@ -1069,10 +1030,16 @@ final class DatabaseSession_Tests: XCTestCase {
             isAnswer: true,
             userId: currentUserId
         )
-        let event = EventPayload(eventType: .pollVoteCasted, vote: votePayload)
+        let event = WSEvent.typePollVoteCastedEvent(
+            PollVoteCastedEventDTO(
+                createdAt: .unique,
+                poll: poll,
+                pollVote: votePayload
+            )
+        )
         
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: event)
+            try session.saveEvent(event: event)
         }
         
         // THEN
@@ -1090,10 +1057,16 @@ final class DatabaseSession_Tests: XCTestCase {
             isAnswer: true,
             userId: currentUserId
         )
-        let updatedEvent = EventPayload(eventType: .pollVoteCasted, vote: updatedVotePayload)
+        let updatedEvent = WSEvent.typePollVoteCastedEvent(
+            PollVoteCastedEventDTO(
+                createdAt: .unique,
+                poll: poll,
+                pollVote: updatedVotePayload
+            )
+        )
         
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: updatedEvent)
+            try session.saveEvent(event: updatedEvent)
         }
         
         // THEN
@@ -1102,28 +1075,179 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(vote?.id, voteId)
         XCTAssertEqual(vote?.answerText, secondAnswer)
     }
-    
-    func test_saveEvent_whenPollCreated_addThePoll() throws {
-        // GIVEN
-        let pollId = "123"
-        let currentUserId = String.unique
-                
-        try database.createCurrentUser(id: currentUserId)
-        
-        // WHEN
-        let poll = XCTestCase().dummyPollPayload(
-            id: pollId,
-            user: .dummy(userId: currentUserId)
-        )
-        let event = EventPayload(eventType: .pollCreated, poll: poll)
-        
+
+    func test_saveEvent_whenMessageRead_savesUserChannelAndThread() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload = dummyPayload(with: channelId).channel
+        let userPayload: UserPayload = .dummy(userId: .unique)
+        let parentMessageId: MessageId = .unique
+
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: event)
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: channelPayload,
+                    replyCount: 1,
+                    title: "Old Title"
+                ),
+                cache: nil
+            )
         }
-        
-        // THEN
-        let pollDto = try database.viewContext.poll(id: pollId)
-        XCTAssertNotNil(pollDto)
-        XCTAssertEqual(pollDto?.id, pollId)
+
+        let event = WSEvent.typeMessageReadEvent(
+            MessageReadEventDTO(
+                channel: channelPayload,
+                cid: channelId,
+                createdAt: .unique,
+                thread: ThreadResponse(
+                    channelCid: channelId.rawValue,
+                    createdAt: .unique,
+                    custom: [:],
+                    parentMessageId: parentMessageId,
+                    participantCount: 3,
+                    replyCount: 10,
+                    title: "New Title",
+                    updatedAt: .unique
+                ),
+                user: userPayload
+            )
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        try database.readSynchronously { session in
+            XCTAssertNotNil(session.user(id: userPayload.id))
+            XCTAssertNotNil(session.channel(cid: channelId))
+            let thread = try XCTUnwrap(session.thread(parentMessageId: parentMessageId, cache: nil))
+            XCTAssertEqual(thread.title, "New Title")
+            XCTAssertEqual(thread.replyCount, 10)
+        }
+    }
+
+    func test_saveEvent_whenNotificationThreadMessageNew_savesUnreadThreadsAndSkipsMissingMessage() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload = dummyPayload(with: channelId).channel
+        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique, cid: channelId)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique)))
+        }
+
+        let event = WSEvent.typeNotificationThreadMessageNewEvent(
+            NotificationThreadMessageNewEventDTO(
+                channel: channelPayload,
+                cid: channelId,
+                createdAt: .unique,
+                message: message,
+                unreadThreads: 7
+            )
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        try database.readSynchronously { session in
+            XCTAssertEqual(session.currentUser?.unreadThreadsCount, 7)
+            XCTAssertNotNil(session.channel(cid: channelId))
+            // The message is not stored locally, and this event must not create it.
+            XCTAssertNil(session.message(id: message.id))
+        }
+    }
+
+    func test_saveEvent_whenThreadUpdated_updatesExistingThread() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload = dummyPayload(with: channelId).channel
+        let parentMessageId: MessageId = .unique
+
+        try database.writeSynchronously { session in
+            try session.saveThread(
+                payload: .dummy(
+                    parentMessageId: parentMessageId,
+                    channel: channelPayload,
+                    replyCount: 1,
+                    title: "Old Title"
+                ),
+                cache: nil
+            )
+        }
+
+        let event = WSEvent.typeThreadUpdatedEvent(
+            ThreadUpdatedEventDTO(
+                createdAt: .unique,
+                thread: ThreadResponse(
+                    channelCid: channelId.rawValue,
+                    createdAt: .unique,
+                    custom: [:],
+                    parentMessageId: parentMessageId,
+                    participantCount: 5,
+                    replyCount: 12,
+                    title: "New Title",
+                    updatedAt: .unique
+                )
+            )
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        try database.readSynchronously { session in
+            let thread = try XCTUnwrap(session.thread(parentMessageId: parentMessageId, cache: nil))
+            XCTAssertEqual(thread.title, "New Title")
+            XCTAssertEqual(thread.replyCount, 12)
+            XCTAssertEqual(thread.participantCount, 5)
+        }
+    }
+
+    func test_saveEvent_whenPollClosed_savesThePoll() throws {
+        let pollId: String = .unique
+        let poll = XCTestCase().dummyPollPayload(id: pollId, name: "Closed Poll", isClosed: true)
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: .typePollClosedEvent(
+                PollClosedEventDTO(createdAt: .unique, poll: poll)
+            ))
+        }
+
+        try database.readSynchronously { session in
+            let pollDTO = try XCTUnwrap(session.poll(id: pollId))
+            XCTAssertEqual(pollDTO.name, "Closed Poll")
+            XCTAssertTrue(pollDTO.isClosed)
+        }
+    }
+
+    func test_saveEvent_whenPollDeleted_savesThePoll() throws {
+        let pollId: String = .unique
+        let poll = XCTestCase().dummyPollPayload(id: pollId, name: "Deleted Poll")
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: .typePollDeletedEvent(
+                PollDeletedEventDTO(createdAt: .unique, poll: poll)
+            ))
+        }
+
+        try database.readSynchronously { session in
+            let pollDTO = try XCTUnwrap(session.poll(id: pollId))
+            XCTAssertEqual(pollDTO.name, "Deleted Poll")
+        }
+    }
+
+    func test_saveEvent_whenPollUpdated_savesThePoll() throws {
+        let pollId: String = .unique
+        let poll = XCTestCase().dummyPollPayload(id: pollId, name: "Updated Poll")
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: .typePollUpdatedEvent(
+                PollUpdatedEventDTO(createdAt: .unique, poll: poll)
+            ))
+        }
+
+        try database.readSynchronously { session in
+            let pollDTO = try XCTUnwrap(session.poll(id: pollId))
+            XCTAssertEqual(pollDTO.name, "Updated Poll")
+        }
     }
 }

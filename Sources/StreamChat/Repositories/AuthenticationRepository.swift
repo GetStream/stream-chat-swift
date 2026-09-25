@@ -403,11 +403,15 @@ class AuthenticationRepository: @unchecked Sendable {
         userInfo: UserInfo,
         completion: @escaping @Sendable (Result<Token, Error>) -> Void
     ) {
-        let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: userInfo.id,
-            name: userInfo.name,
-            imageURL: userInfo.imageURL,
-            extraData: userInfo.extraData
+        let endpoint: Endpoint<CreateGuestResponse> = .createGuest(
+            createGuestRequest: CreateGuestRequest(
+                user: UserRequest(
+                    custom: userInfo.extraData.isEmpty ? nil : userInfo.extraData,
+                    id: userInfo.id,
+                    image: userInfo.imageURL?.absoluteString,
+                    name: userInfo.name
+                )
+            )
         )
 
         /// We need to ensure that the request to fetch the userToken will be executed. As APIClient's
@@ -415,9 +419,13 @@ class AuthenticationRepository: @unchecked Sendable {
         /// unmanagedRequest/Operation that will be added on the `OperationQueue.main`
         apiClient.unmanagedRequest(endpoint: endpoint) {
             switch $0 {
-            case let .success(payload):
-                let token = payload.token
-                completion(.success(token))
+            case let .success(response):
+                do {
+                    completion(.success(try response.validatedToken()))
+                } catch {
+                    log.error(error)
+                    completion(.failure(error))
+                }
             case let .failure(error):
                 log.error(error)
                 completion(.failure(error))

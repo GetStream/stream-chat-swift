@@ -10,7 +10,6 @@ final class ChannelStateResponse: Sendable, Decodable {
     let channel: ChannelDetailPayload
     let draft: DraftPayload?
     let hidden: Bool?
-    let hideMessagesBefore: Date?
     let members: [MemberPayload]
     let membership: MemberPayload?
     let messages: [MessageResponse]
@@ -27,7 +26,6 @@ final class ChannelStateResponse: Sendable, Decodable {
         channel: ChannelDetailPayload,
         draft: DraftPayload? = nil,
         hidden: Bool? = nil,
-        hideMessagesBefore: Date? = nil,
         members: [MemberPayload],
         membership: MemberPayload? = nil,
         messages: [MessageResponse],
@@ -43,7 +41,6 @@ final class ChannelStateResponse: Sendable, Decodable {
         self.channel = channel
         self.draft = draft
         self.hidden = hidden
-        self.hideMessagesBefore = hideMessagesBefore
         self.members = members
         self.membership = membership
         self.messages = messages
@@ -61,7 +58,6 @@ final class ChannelStateResponse: Sendable, Decodable {
         case channel
         case draft
         case hidden
-        case hideMessagesBefore = "hide_messages_before"
         case members
         case membership
         case messages

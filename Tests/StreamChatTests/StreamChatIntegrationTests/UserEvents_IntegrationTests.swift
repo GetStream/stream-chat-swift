@@ -31,7 +31,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserWatchingStartEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is UserWatchingEventDTO)
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
@@ -55,7 +56,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserWatchingStoppedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is UserWatchingEventDTO)
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
@@ -79,7 +81,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserPresenceChangedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserPresence")
-        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is UserPresenceChangedEventDTO)
 
         try! client.databaseContainer.createUser(id: "steep-moon-9")
 
@@ -96,7 +99,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
     // TODO: Find JSON:
     func test_UserUpdatedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserUpdated")
-        let event = try eventDecoder.decode(from: json) as? UserUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is UserUpdatedEventDTO)
 
         let previousUpdateDate = Date.unique
 
@@ -119,7 +123,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserBannedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserBanned")
-        let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is UserBannedEventDTO)
 
         try! client.databaseContainer.createMember(
             userId: "broken-waterfall-5",
@@ -148,7 +153,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserUnbannedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
+        let event = try eventDecoder.decode(from: json) as? WSEvent
+        XCTAssertTrue(event?.rawValue is UserUnbannedEventDTO)
 
         try! client.databaseContainer.createMember(
             userId: "broken-waterfall-5",

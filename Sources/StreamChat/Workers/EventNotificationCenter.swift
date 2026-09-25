@@ -50,23 +50,29 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
     }
 
     func process(_ events: [Event], postNotifications: Bool = true, completion: (@Sendable () -> Void)? = nil) {
+        // `WSEvent` wraps the generated event model; middlewares and observers work with the unwrapped event.
+        let events: [(event: Event, wsEvent: WSEvent?)] = events.map { event in
+            guard let wsEvent = event as? WSEvent else { return (event, nil) }
+            return (wsEvent.rawValue, wsEvent)
+        }
+
         let processingEventsDebugMessage: () -> String = {
-            let eventNames = events.map(\.name)
+            let eventNames = events.map { $0.event.name }
             return "Processing Events: \(eventNames)"
         }
         log.debug(processingEventsDebugMessage(), subsystems: .webSocket)
 
         let messageIds: [MessageId] = events.compactMap {
-            ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationMessageNewEventDTO)?.message.id
+            ($0.event as? MessageNewEventDTO)?.message.id ?? ($0.event as? NotificationNewMessageEventDTO)?.message.id
         }
 
         nonisolated(unsafe) var eventsToPost = [Event]()
-        nonisolated(unsafe) var middlewareEvents = [Event]()
+        nonisolated(unsafe) var middlewareEvents = [(event: Event, wsEvent: WSEvent?)]()
         nonisolated(unsafe) var manualHandlingEvents = [Event]()
 
         database.write({ session in
             events.forEach { event in
-                if let manualEvent = self.manualEventHandler.handle(event) {
+                if let manualEvent = self.manualEventHandler.handle(event.wsEvent ?? event.event) {
                     manualHandlingEvents.append(manualEvent)
                 } else {
                     middlewareEvents.append(event)
@@ -79,7 +85,7 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
 
             eventsToPost.append(contentsOf: manualHandlingEvents)
             eventsToPost.append(contentsOf: middlewareEvents.compactMap {
-                self.middlewares.process(event: $0, session: session)
+                self.middlewares.process(event: $0.event, wsEvent: $0.wsEvent, session: session)
             })
 
             self.newMessageIds = []

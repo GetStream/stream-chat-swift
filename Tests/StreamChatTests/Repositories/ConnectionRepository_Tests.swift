@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+@testable import StreamCore
 import XCTest
 
 final class ConnectionRepository_Tests: XCTestCase {
@@ -152,6 +153,20 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.connectionId, connectionId)
     }
 
+    func test_connect_connectRequestHasStreamAuthTypeWithoutAuthorization() throws {
+        let token = Token.unique(userId: "luke")
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository.updateWebSocketEndpoint(with: token, userInfo: nil)
+
+        repository.connect()
+
+        let request = try XCTUnwrap(webSocketClient.connectRequest)
+        XCTAssertNil(request.value(forHTTPHeaderField: "Authorization"))
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Stream-Auth-Type"), "jwt")
+    }
+
     // MARK: Disconnect
 
     func test_disconnect_withConnectionId_notInActiveMode_shouldReturnError() {
@@ -205,13 +220,10 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository.updateWebSocketEndpoint(with: token, userInfo: nil)
 
         // UserInfo should take priority
+        XCTAssertEqual(repository.connectUserInfo.value?.id, tokenUserId)
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: tokenUserId)
-                )
-            )
+            AnyEndpoint(.webSocketConnect())
         )
     }
 
@@ -225,13 +237,10 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
 
         // UserInfo should take priority
+        XCTAssertEqual(repository.connectUserInfo.value?.id, userInfoUserId)
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: userInfoUserId)
-                )
-            )
+            AnyEndpoint(.webSocketConnect())
         )
     }
 
@@ -240,13 +249,91 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertNil(repository.webSocketConnectEndpoint.value)
         repository.updateWebSocketEndpoint(with: userId)
 
+        XCTAssertEqual(repository.connectUserInfo.value?.id, userId)
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: userId)
-                )
-            )
+            AnyEndpoint(.webSocketConnect())
+        )
+    }
+
+    // MARK: Auth frame
+
+    func test_webSocketConnectionEstablished_sendsAuthFrame() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = makeWebSocketClient(engine: engine)
+        let token = Token.unique(userId: "luke")
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository = makeRepository(webSocketClient: webSocketClient)
+        repository.updateWebSocketEndpoint(with: token, userInfo: UserInfo(id: "luke", name: "Luke"))
+
+        webSocketClient.connect()
+        engine.simulateConnectionSuccess()
+
+        let frame = try XCTUnwrap(engine.send_jsonMessages.last)
+        AssertJSONEqual(frame, [
+            "token": token.rawValue,
+            "products": ["chat"] as NSArray,
+            "user_details": ["id": "luke", "name": "Luke"] as [String: Any]
+        ])
+    }
+
+    func test_webSocketConnectionEstablished_whenNoUserInfo_usesTokenUserId() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = makeWebSocketClient(engine: engine)
+        let token = Token.unique(userId: "luke")
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository = makeRepository(webSocketClient: webSocketClient)
+
+        webSocketClient.connect()
+        engine.simulateConnectionSuccess()
+
+        let frame = try XCTUnwrap(engine.send_jsonMessages.last)
+        AssertJSONEqual(frame, [
+            "token": token.rawValue,
+            "products": ["chat"] as NSArray,
+            "user_details": ["id": "luke"] as [String: Any]
+        ])
+    }
+
+    func test_webSocketConnectionEstablished_whenTokenIsMissing_doesNotSendAuthFrame() {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = makeWebSocketClient(engine: engine)
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .failure(TestError())
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository = makeRepository(webSocketClient: webSocketClient)
+
+        webSocketClient.connect()
+        engine.simulateConnectionSuccess()
+
+        XCTAssertTrue(engine.send_jsonMessages.isEmpty)
+    }
+
+    private func makeWebSocketClient(engine: WebSocketEngine_Mock) -> WebSocketClient {
+        var environment = WebSocketClient.Environment.mock
+        environment.createEngine = { _, _, _ in engine }
+        return WebSocketClient(
+            sessionConfiguration: .ephemeral,
+            eventDecoder: EventDecoder(),
+            eventNotificationCenter: EventNotificationCenter_Mock(database: DatabaseContainer_Spy()),
+            webSocketClientType: .coordinator,
+            environment: environment,
+            connectRequest: URLRequest(url: .unique())
+        )
+    }
+
+    private func makeRepository(webSocketClient: WebSocketClient) -> ConnectionRepository {
+        ConnectionRepository(
+            isClientInActiveMode: true,
+            syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
+            webSocketClient: webSocketClient,
+            apiClient: apiClient,
+            timerType: DefaultTimer.self
         )
     }
 

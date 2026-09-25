@@ -14,8 +14,6 @@ final class ReminderPayload: Sendable, Decodable {
     let messageId: String
     let remindAt: Date?
     let updatedAt: Date
-    /// User response object
-    let user: UserPayload?
     let userId: String
 
     init(
@@ -26,7 +24,6 @@ final class ReminderPayload: Sendable, Decodable {
         messageId: String,
         remindAt: Date? = nil,
         updatedAt: Date,
-        user: UserPayload? = nil,
         userId: String
     ) {
         self.channel = channel
@@ -36,7 +33,6 @@ final class ReminderPayload: Sendable, Decodable {
         self.messageId = messageId
         self.remindAt = remindAt
         self.updatedAt = updatedAt
-        self.user = user
         self.userId = userId
     }
 
@@ -48,7 +44,6 @@ final class ReminderPayload: Sendable, Decodable {
         case messageId = "message_id"
         case remindAt = "remind_at"
         case updatedAt = "updated_at"
-        case user
         case userId = "user_id"
     }
 }

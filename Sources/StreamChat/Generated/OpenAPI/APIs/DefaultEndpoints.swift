@@ -5,17 +5,13 @@
 import Foundation
 
 enum EndpointPath: Codable {
-    case custom(String)
-    case connect
-    case sync
-    case guest
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
     case castPollVote(messageId: String, pollId: String)
     case createDevice
     case createDraft(type: String, id: String)
+    case createGuest
     case createPoll
     case createPollOption(pollId: String)
     case createReminder(messageId: String)
@@ -76,6 +72,7 @@ enum EndpointPath: Codable {
     case sendReaction(id: String)
     case showChannel(type: String, id: String)
     case stopWatchingChannel(type: String, id: String)
+    case sync
     case translateMessage(id: String)
     case truncateChannel(type: String, id: String)
     case unban
@@ -99,14 +96,11 @@ enum EndpointPath: Codable {
     case uploadChannelImage(type: String, id: String)
     case uploadFile
     case uploadImage
+    /// An arbitrary path, used verbatim without escaping. Intended for debugging, tests, and experimentation.
+    case custom(String)
 
     var value: String {
         switch self {
-        case let .custom(path): return path
-        case .connect: return "connect"
-        case .sync: return "sync"
-        case .guest: return "guest"
-
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
         case .ban:
@@ -119,6 +113,8 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case let .createDraft(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
+        case .createGuest:
+            return "/api/v2/guest"
         case .createPoll:
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
@@ -239,6 +235,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
         case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
+        case .sync:
+            return "/api/v2/chat/sync"
         case let .translateMessage(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
         case let .truncateChannel(type: type, id: id):
@@ -285,6 +283,8 @@ enum EndpointPath: Codable {
             return "/api/v2/uploads/file"
         case .uploadImage:
             return "/api/v2/uploads/image"
+        case let .custom(path):
+            return path
         }
     }
 }
@@ -439,6 +439,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createDraftRequest
+        )
+    }
+
+    static func createGuest(
+        createGuestRequest: CreateGuestRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateGuestResponse> {
+        return .init(
+            path: .createGuest,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            requiresToken: false,
+            body: createGuestRequest
         )
     }
 
@@ -1330,6 +1344,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func sync(
+        syncRequest: SyncRequest,
+        withInaccessibleCids: Bool?,
+        watch: Bool?,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<SyncResponse> {
+        return .init(
+            path: .sync,
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "with_inaccessible_cids": withInaccessibleCids,
+                "watch": watch
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: syncRequest
         )
     }
 
