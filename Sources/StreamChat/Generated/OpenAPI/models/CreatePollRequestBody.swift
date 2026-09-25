@@ -25,9 +25,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     let description: String?
     /// Indicates whether users can cast multiple votes
     let enforceUniqueVote: Bool?
-    let id: String?
-    /// Indicates whether the poll is open for voting
-    let isClosed: Bool?
     /// Indicates the maximum amount of votes a user can cast
     let maxVotesAllowed: Int?
     /// The name of the poll
@@ -41,8 +38,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         custom: [String: RawJSON]? = nil,
         description: String? = nil,
         enforceUniqueVote: Bool? = nil,
-        id: String? = nil,
-        isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         name: String,
         options: [PollOptionRequestBody]? = nil,
@@ -53,8 +48,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         self.custom = custom
         self.description = description
         self.enforceUniqueVote = enforceUniqueVote
-        self.id = id
-        self.isClosed = isClosed
         self.maxVotesAllowed = maxVotesAllowed
         self.name = name
         self.options = options
@@ -67,8 +60,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         case custom
         case description
         case enforceUniqueVote = "enforce_unique_vote"
-        case id
-        case isClosed = "is_closed"
         case maxVotesAllowed = "max_votes_allowed"
         case name
         case options

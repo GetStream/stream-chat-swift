@@ -31,8 +31,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
     let frozen: Bool
     /// Whether this channel is hidden by current user or not
     let hidden: Bool?
-    /// Date since when the message history is accessible
-    let hideMessagesBefore: Date?
     /// Channel unique ID
     let id: String
     /// Date of the last message sent
@@ -43,10 +41,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
     let members: [MemberPayload]?
     /// Number of messages in the channel
     let messageCount: Int?
-    /// Date of mute expiration
-    let muteExpiresAt: Date?
-    /// Whether this channel is muted or not
-    let muted: Bool?
     /// List of channel capabilities of authenticated user
     let ownCapabilities: [ChannelCapability]?
     /// Team the channel belongs to (multi-tenant only)
@@ -75,14 +69,11 @@ final class ChannelDetailPayload: Sendable, Decodable {
         filterTags: [String]? = nil,
         frozen: Bool,
         hidden: Bool? = nil,
-        hideMessagesBefore: Date? = nil,
         id: String,
         lastMessageAt: Date? = nil,
         memberCount: Int? = nil,
         members: [MemberPayload]? = nil,
         messageCount: Int? = nil,
-        muteExpiresAt: Date? = nil,
-        muted: Bool? = nil,
         ownCapabilities: [ChannelCapability]? = nil,
         team: String? = nil,
         truncatedAt: Date? = nil,
@@ -104,14 +95,11 @@ final class ChannelDetailPayload: Sendable, Decodable {
         self.filterTags = filterTags
         self.frozen = frozen
         self.hidden = hidden
-        self.hideMessagesBefore = hideMessagesBefore
         self.id = id
         self.lastMessageAt = lastMessageAt
         self.memberCount = memberCount
         self.members = members
         self.messageCount = messageCount
-        self.muteExpiresAt = muteExpiresAt
-        self.muted = muted
         self.ownCapabilities = ownCapabilities
         self.team = team
         self.truncatedAt = truncatedAt
@@ -135,14 +123,11 @@ final class ChannelDetailPayload: Sendable, Decodable {
         case filterTags = "filter_tags"
         case frozen
         case hidden
-        case hideMessagesBefore = "hide_messages_before"
         case id
         case lastMessageAt = "last_message_at"
         case memberCount = "member_count"
         case members
         case messageCount = "message_count"
-        case muteExpiresAt = "mute_expires_at"
-        case muted
         case ownCapabilities = "own_capabilities"
         case team
         case truncatedAt = "truncated_at"

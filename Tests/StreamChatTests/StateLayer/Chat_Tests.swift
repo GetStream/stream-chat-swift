@@ -2170,7 +2170,7 @@ final class Chat_Tests: XCTestCase {
         )
     }
     
-    private func makeMemberListPayload(count: Int, offset: Int) -> ChannelMemberListPayload {
+    private func makeMemberListPayload(count: Int, offset: Int) -> MembersResponse {
         let members = (0..<count)
             .map { $0 + offset }
             .map {
@@ -2182,7 +2182,7 @@ final class Chat_Tests: XCTestCase {
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0))
                 )
             }
-        return ChannelMemberListPayload(members: members)
+        return MembersResponse(members: members)
     }
     
     private func makeReactionsPayload(messageId: MessageId, count: Int, offset: Int) -> MessageReactionsPayload {

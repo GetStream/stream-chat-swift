@@ -281,7 +281,6 @@ final class MessagePayload_Tests: XCTestCase {
 
         let fields = [
             "cid",
-            "deleted_reply_count",
             "mentioned_channel",
             "mentioned_here",
             "pinned",

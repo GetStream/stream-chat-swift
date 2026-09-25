@@ -6,8 +6,7 @@ import Foundation
 
 // Generated properties are slightly different from the previously hand-written ones.
 extension ChannelDetailPayload {
-    // v1 returns `name` and `image` as top-level fields, v2 nests them in `custom`.
-    // Either way they are channel fields, not user extra data.
+    // `name` and `image` arrive in `custom`, but they are channel fields, not user extra data.
     private static let nameAndImageKeys = [
         ChannelCodingKeys.name.rawValue,
         ChannelCodingKeys.imageURL.rawValue

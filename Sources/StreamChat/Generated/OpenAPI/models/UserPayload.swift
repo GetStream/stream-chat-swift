@@ -14,8 +14,6 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     let custom: [String: RawJSON]
     /// Date of deactivation
     let deactivatedAt: Date?
-    /// Date/time of deletion
-    let deletedAt: Date?
     /// Unique user identifier
     let id: String
     let image: String?
@@ -27,8 +25,6 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     let name: String?
     /// Whether a user online or not
     let online: Bool
-    /// Revocation date for tokens
-    let revokeTokensIssuedBefore: Date?
     /// Determines the set of user permissions
     let role: String
     /// List of teams user is a part of
@@ -43,14 +39,12 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         createdAt: Date,
         custom: [String: RawJSON],
         deactivatedAt: Date? = nil,
-        deletedAt: Date? = nil,
         id: String,
         image: String? = nil,
         language: String,
         lastActive: Date? = nil,
         name: String? = nil,
         online: Bool,
-        revokeTokensIssuedBefore: Date? = nil,
         role: String,
         teams: [String],
         teamsRole: [String: String]? = nil,
@@ -61,14 +55,12 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         self.createdAt = createdAt
         self.custom = custom
         self.deactivatedAt = deactivatedAt
-        self.deletedAt = deletedAt
         self.id = id
         self.image = image
         self.language = language
         self.lastActive = lastActive
         self.name = name
         self.online = online
-        self.revokeTokensIssuedBefore = revokeTokensIssuedBefore
         self.role = role
         self.teams = teams
         self.teamsRole = teamsRole
@@ -81,14 +73,12 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         case createdAt = "created_at"
         case custom
         case deactivatedAt = "deactivated_at"
-        case deletedAt = "deleted_at"
         case id
         case image
         case language
         case lastActive = "last_active"
         case name
         case online
-        case revokeTokensIssuedBefore = "revoke_tokens_issued_before"
         case role
         case teams
         case teamsRole = "teams_role"

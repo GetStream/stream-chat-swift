@@ -127,18 +127,6 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertNil(MessageReactionsPayload.modelClass)
     }
 
-    func test_MessagePayloadBoxed_isIdentifiablePayload() {
-        let payload = MessagePayload.Boxed(message: .dummy(messageId: "1", authorUserId: ""))
-        XCTAssertNil(payload.databaseId)
-        XCTAssertNil(MessagePayload.Boxed.modelClass)
-    }
-
-    func test_ChannelMemberListPayload_isIdentifiablePayload() {
-        let payload = ChannelMemberListPayload(members: [])
-        XCTAssertNil(payload.databaseId)
-        XCTAssertNil(ChannelMemberListPayload.modelClass)
-    }
-
     func test_ChannelListPayload_isIdentifiablePayload() {
         let payload = ChannelListPayload(channels: [])
         XCTAssertNil(payload.databaseId)

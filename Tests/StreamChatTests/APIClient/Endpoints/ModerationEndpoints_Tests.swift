@@ -10,7 +10,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
     func test_blockUsers_buildsCorrectly() {
         let userId: UserId = .unique
 
-        let expectedEndpoint = Endpoint<BlockUsersResponse>(
+        let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .blockUsers,
             method: .post,
             queryItems: nil,
@@ -19,7 +19,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint = Endpoint<BlockUsersResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId))
+        let endpoint = Endpoint<EmptyResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId))
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -29,7 +29,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
     func test_unblockUsers_buildsCorrectly() {
         let userId: UserId = .unique
 
-        let expectedEndpoint = Endpoint<UnblockUsersResponse>(
+        let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .unblockUsers,
             method: .post,
             queryItems: nil,
@@ -38,7 +38,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint = Endpoint<UnblockUsersResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId))
+        let endpoint = Endpoint<EmptyResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId))
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

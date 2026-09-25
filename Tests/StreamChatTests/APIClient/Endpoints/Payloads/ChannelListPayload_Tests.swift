@@ -139,7 +139,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
     }
 
-    func test_groupedQueryChannelsPayload_decodesNextAndPrevCursors() throws {
+    func test_groupedQueryChannelsPayload_decodesNextCursor() throws {
         let json = """
         {
           "groups": {
@@ -157,7 +157,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: json)
 
         XCTAssertEqual("current-next-cursor", payload.groups["current"]?.next)
-        XCTAssertEqual("current-prev-cursor", payload.groups["current"]?.prev)
     }
 
     func test_groupedQueryChannelsPayload_cursorsAreNilWhenMissing() throws {
@@ -173,7 +172,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: json)
 
         XCTAssertNil(payload.groups["all"]?.next)
-        XCTAssertNil(payload.groups["all"]?.prev)
     }
 
     func test_groupedQueryChannelsRequestBody_allGroups_encodesWithoutGroupsKey() throws {

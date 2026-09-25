@@ -20,8 +20,6 @@ final class PollsEndpoints_Tests: XCTestCase {
             allowUserSuggestedOptions: true,
             description: "Desc",
             enforceUniqueVote: false,
-            id: "test",
-            isClosed: false,
             maxVotesAllowed: 1,
             name: "test"
         )
@@ -33,8 +31,6 @@ final class PollsEndpoints_Tests: XCTestCase {
             "allow_user_suggested_options": true,
             "description": "Desc",
             "enforce_unique_vote": false,
-            "id": "test",
-            "is_closed": false,
             "max_votes_allowed": 1
         ]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
@@ -81,7 +77,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     
     func test_createPollOption() throws {
         let request = CreatePollOptionRequestBody(text: "sample")
-        let endpoint = Endpoint<PollOptionResponse>.createPollOption(
+        let endpoint = Endpoint<EmptyResponse>.createPollOption(
             pollId: "test",
             createPollOptionRequest: request
         )
@@ -98,13 +94,13 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_queryPollVotes() throws {
-        let request = QueryPollVotesRequestBody(limit: 30, prev: "10")
+        let request = QueryPollVotesRequestBody(limit: 30, next: "10")
         let endpoint = Endpoint<PollVoteListResponse>.queryPollVotes(
             pollId: "test",
             queryPollVotesRequest: request
         )
         
-        let expectedBody: [String: Any] = ["limit": 30, "prev": "10"]
+        let expectedBody: [String: Any] = ["limit": 30, "next": "10"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
@@ -119,7 +115,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let request = CastPollVoteRequestBody(
             vote: .init(answerText: "test", optionId: "option")
         )
-        let endpoint = Endpoint<PollVotePayloadResponse>.castPollVote(
+        let endpoint = Endpoint<EmptyResponse>.castPollVote(
             messageId: "message_id",
             pollId: "test",
             castPollVoteRequest: request
@@ -139,7 +135,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_removePollVote() {
-        let endpoint = Endpoint<PollVotePayloadResponse>.deletePollVote(
+        let endpoint = Endpoint<EmptyResponse>.deletePollVote(
             messageId: "message_id",
             pollId: "test",
             voteId: "vote"
