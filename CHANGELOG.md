@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.0)
+_September 24, 2026_
+
 ### ✅ Added
 - Add `AudioSessionConfiguring` variants with a completion handler for reporting audio session activation errors [#4286](https://github.com/GetStream/stream-chat-swift/pull/4286)
 
