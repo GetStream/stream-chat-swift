@@ -11,11 +11,11 @@ final class ReactionEvents_Tests: XCTestCase {
     let cid = ChannelId(type: .messaging, id: "general")
     let messageId = "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
 
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
 
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
 
     override func tearDown() {
@@ -25,7 +25,7 @@ final class ReactionEvents_Tests: XCTestCase {
 
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let event = try eventDecoder.decodeDTO(from: json) as? ReactionNewEventDTO
+        let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
         let reactionPayload = event?.reaction
         XCTAssertEqual(event?.user?.id, userId)
         XCTAssertEqual(event?.cid, cid)
@@ -39,7 +39,7 @@ final class ReactionEvents_Tests: XCTestCase {
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
-        let event = try eventDecoder.decodeDTO(from: json) as? ReactionUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
         let reactionPayload = event?.reaction
         XCTAssertEqual(event?.user?.id, userId)
         XCTAssertEqual(event?.cid, cid)
@@ -53,7 +53,7 @@ final class ReactionEvents_Tests: XCTestCase {
 
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionDeleted")
-        let event = try eventDecoder.decodeDTO(from: json) as? ReactionDeletedEventDTO
+        let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
         let reactionPayload = event?.reaction
         XCTAssertEqual(event?.user?.id, userId)
         XCTAssertEqual(event?.cid, cid)
