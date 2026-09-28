@@ -7,7 +7,6 @@ import Foundation
 enum EndpointPath: Codable {
     case custom(String)
     case sync
-    case guest
 
     case addUserGroupMembers(id: String)
     case ban
@@ -15,6 +14,7 @@ enum EndpointPath: Codable {
     case castPollVote(messageId: String, pollId: String)
     case createDevice
     case createDraft(type: String, id: String)
+    case createGuest
     case createPoll
     case createPollOption(pollId: String)
     case createReminder(messageId: String)
@@ -103,7 +103,6 @@ enum EndpointPath: Codable {
         switch self {
         case let .custom(path): return path
         case .sync: return "sync"
-        case .guest: return "guest"
 
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
@@ -117,6 +116,8 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case let .createDraft(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
+        case .createGuest:
+            return "/api/v2/guest"
         case .createPoll:
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
@@ -437,6 +438,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createDraftRequest
+        )
+    }
+
+    static func createGuest(
+        createGuestRequest: CreateGuestRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateGuestResponse> {
+        return .init(
+            path: .createGuest,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            requiresToken: false,
+            body: createGuestRequest
         )
     }
 

@@ -17,6 +17,7 @@ allowed_endpoints=(
     castPollVote
     createDevice
     createDraft
+    createGuest
     createPoll
     createPollOption
     createReminder
@@ -126,6 +127,8 @@ allowed_models=(
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
+  CreateGuestRequest
+  CreateGuestResponse
   CreatePollOptionRequest
   CreatePollRequest
   CreateReminderRequest
@@ -277,6 +280,7 @@ allowed_models=(
   UserGroupMember
   UserGroupResponse
   UserMuteResponse
+  UserRequest
   UserResponse
   VoteData
   WrappedUnreadCountsResponse
@@ -317,6 +321,7 @@ encodable_only_models=(
   ChannelMemberRequest
   CreateDeviceRequest
   CreateDraftRequest
+  CreateGuestRequest
   CreatePollOptionRequestBody
   CreatePollRequestBody
   CreateReminderRequest
@@ -372,6 +377,7 @@ encodable_only_models=(
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
   UpsertPushPreferencesRequest
+  UserRequest
   VoteDataRequestBody
 )
 
@@ -383,6 +389,7 @@ decodable_only_models=(
   ChannelDetailPayload
   ChannelStateResponse
   CreateDraftResponse
+  CreateGuestResponse
   CreateReminderResponse
   CurrentUserUnreads
   DeleteChannelResponse
@@ -839,6 +846,9 @@ remove_property PushPreference feedsPreferences
 remove_property UpdateUsersResponse membershipDeletionTaskId
 remove_property UserGroupMember appPk
 remove_property UserPayload blockedUserIds
+remove_property UserRequest invisible
+remove_property UserRequest language
+remove_property UserRequest privacySettings
 remove_property SharedLocation channel
 remove_property SharedLocation message
 remove_property MutedChannelPayloadResponse channelMutes
@@ -1148,14 +1158,12 @@ inject_v1_endpoint_paths() {
   cat > "$cases_file" <<'EOF'
     case custom(String)
     case sync
-    case guest
 
 EOF
 
   cat > "$values_file" <<'EOF'
         case let .custom(path): return path
         case .sync: return "sync"
-        case .guest: return "guest"
 
 EOF
 
