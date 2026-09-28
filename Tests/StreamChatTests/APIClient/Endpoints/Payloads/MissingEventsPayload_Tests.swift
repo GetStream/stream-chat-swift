@@ -9,8 +9,8 @@ import XCTest
 final class MissingEventsPayload_Tests: XCTestCase {
     func test_missingEventsPayload_isDeserialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        XCTAssertEqual(payload.eventPayloads.count, 1)
+        let payload = try JSONDecoder.default.decode(SyncResponse.self, from: json)
+        XCTAssertEqual(payload.events.count, 1)
 
         let expectedUser = UserPayload.dummy(
             userId: "broken-waterfall-5",
@@ -23,7 +23,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             lastActiveAt: "2020-09-07T12:25:41.501574Z".toDate()
         )
 
-        let event = try XCTUnwrap(payload.eventPayloads.first)
+        let event = try XCTUnwrap(payload.events.first)
         XCTAssertEqual(event.eventType, .messageNew)
         XCTAssertEqual(event.cid?.rawValue, "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
         XCTAssertEqual(event.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
@@ -67,8 +67,8 @@ final class MissingEventsPayload_Tests: XCTestCase {
 
     func test_missingEventsPayload_incompleteChannels_isDeserialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload-IncompleteChannel")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        XCTAssertEqual(payload.eventPayloads.count, 4)
+        let payload = try JSONDecoder.default.decode(SyncResponse.self, from: json)
+        XCTAssertEqual(payload.events.count, 4)
 
         let expectedTypes: [EventType] = [
             .notificationRemovedFromChannel,
@@ -78,7 +78,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
         ]
 
         // Channel is not decoded because it is incomplete, but rest is decoded.
-        for (event, type) in zip(payload.eventPayloads, expectedTypes) {
+        for (event, type) in zip(payload.events, expectedTypes) {
             XCTAssertNil(event.channel)
             XCTAssertEqual(event.user?.id, "broken-waterfall-5")
             XCTAssertEqual(event.createdAt, "2020-09-07T12:25:50.702323Z".toDate())

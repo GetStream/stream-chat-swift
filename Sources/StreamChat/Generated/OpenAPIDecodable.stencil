@@ -18,6 +18,8 @@
             flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
             custom = flattened
         }
+{% elif argument.tolerantArrays[type.name] and not variable.isOptional and variable.typeName.isArray %}
+        {{ variable.name }} = try container.decodeArrayIgnoringFailures({{ variable.typeName.name }}.self, forKey: .{{ variable.name }})
 {% elif variable.isOptional %}
         {{ variable.name }} = try container.decodeIfPresent({{ variable.typeName.unwrappedTypeName }}.self, forKey: .{{ variable.name }})
 {% else %}
