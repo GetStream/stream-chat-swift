@@ -94,6 +94,34 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         view.addGestureRecognizer(tapRecognizer)
     }
 
+    /// The size the content was laid out in.
+    private var laidOutSize: CGSize?
+
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        // Everything here is laid out around where the message sits in the view this was opened
+        // from, which a size change invalidates and which cannot be measured again from here, so it
+        // closes rather than leaving the reactions somewhere they do not belong.
+        dismiss(animated: false)
+    }
+
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // Not every change of size arrives as a transition. A device with more than one screen, like
+        // an iPhone Duo, moves the app from one to the other as it is folded, and the content is
+        // laid out again at the new size without one.
+        guard let laidOutSize else {
+            laidOutSize = view.bounds.size
+            return
+        }
+        guard laidOutSize != view.bounds.size else { return }
+
+        self.laidOutSize = view.bounds.size
+        dismiss(animated: false)
+    }
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         view.backgroundColor = .clear
@@ -143,7 +171,10 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
         scrollView.addSubview(contentView)
 
         NSLayoutConstraint.activate([
-            contentView.widthAnchor.pin(equalTo: scrollView.widthAnchor),
+            // The scroll view insets its content by the safe area, so the content is as wide as
+            // what the safe area leaves rather than as wide as the whole view, which would hang off
+            // the screen by the inset on a device that has one, like an unfolded iPhone Duo.
+            contentView.widthAnchor.pin(equalTo: view.safeAreaLayoutGuide.widthAnchor),
             contentView.topAnchor.pin(equalTo: scrollView.topAnchor),
             contentView.bottomAnchor.pin(equalTo: scrollView.bottomAnchor)
         ])
@@ -191,13 +222,16 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             messageContainerStackView.bottomAnchor.pin(lessThanOrEqualTo: contentView.bottomAnchor)
         ]
 
+        // The message opens where it sits in the message list, but only as far as it fits. The
+        // constraints above keep it inside the content, which they can only do if they outrank the
+        // one placing it.
         if message.isSentByCurrentUser {
             messageContainerStackView.alignment = .trailing
             constraints += [
                 messageContainerStackView.trailingAnchor.pin(
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.maxX
-                )
+                ).with(priority: .streamLow)
             ]
         } else {
             messageContainerStackView.alignment = .leading
@@ -205,7 +239,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
                 messageContainerStackView.leadingAnchor.pin(
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.minX
-                )
+                ).with(priority: .streamLow)
             ]
         }
 
@@ -216,7 +250,12 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// The position of the message is calculated in ` layoutPositionOfMessageView()`.
     open func layoutMessageView() {
         NSLayoutConstraint.activate([
-            messageContentContainerView.widthAnchor.pin(equalToConstant: messageViewFrame.width),
+            // The message keeps the size it has in the message list, unless that is wider than the
+            // space there is for it.
+            messageContentContainerView.widthAnchor
+                .pin(equalToConstant: messageViewFrame.width)
+                .with(priority: .streamAlmostRequire),
+            messageContentContainerView.widthAnchor.pin(lessThanOrEqualTo: contentView.widthAnchor),
             messageContentContainerView.heightAnchor.pin(equalToConstant: messageViewFrame.height)
         ])
     }

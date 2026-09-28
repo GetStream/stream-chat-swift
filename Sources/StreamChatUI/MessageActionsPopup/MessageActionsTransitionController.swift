@@ -91,6 +91,10 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         messageView.frame = messageViewFrame
 
         transitionContext.containerView.addSubview(toVC.view)
+        // The pop-up fills the container it is presented in. Without this it keeps the size its
+        // view was created with, which comes from the main screen — a different display than the
+        // one the app runs on when a device has more than one, like the iPhone Duo.
+        toVC.view.frame = transitionContext.containerView.bounds
         toVC.view.isHidden = true
         toVC.messageContentView = messageView
         toVC.messageViewFrame = messageViewFrame
@@ -98,7 +102,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         toVC.view.layoutIfNeeded()
 
         let blurView = UIVisualEffectView()
-        blurView.frame = transitionContext.finalFrame(for: toVC)
+        blurView.frame = transitionContext.containerView.bounds
 
         let makeSnapshot: (UIViewController?) -> UIView? = { viewController in
             guard let view = viewController?.view else { return nil }
@@ -183,7 +187,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
 
         let blurView = UIVisualEffectView()
         blurView.effect = (fromVC.blurView as? UIVisualEffectView)?.effect
-        blurView.frame = transitionContext.finalFrame(for: toVC)
+        blurView.frame = transitionContext.containerView.bounds
 
         let makeSnapshot: (UIViewController?) -> UIView? = { viewController in
             guard let view = viewController?.view else { return nil }

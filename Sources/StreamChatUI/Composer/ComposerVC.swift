@@ -2189,8 +2189,8 @@ open class ComposerVC: _ViewController,
             floatingView.translatesAutoresizingMaskIntoConstraints = false
             parent.view.addSubview(floatingView)
             NSLayoutConstraint.activate([
-                floatingView.leadingAnchor.pin(equalTo: parent.view.leadingAnchor),
-                floatingView.trailingAnchor.pin(equalTo: parent.view.trailingAnchor),
+                floatingView.leadingAnchor.pin(equalTo: parent.view.safeAreaLayoutGuide.leadingAnchor),
+                floatingView.trailingAnchor.pin(equalTo: parent.view.safeAreaLayoutGuide.trailingAnchor),
                 composerView.topAnchor.pin(equalTo: floatingView.bottomAnchor),
                 floatingView.topAnchor.pin(greaterThanOrEqualTo: parent.view.safeAreaLayoutGuide.topAnchor)
             ])
