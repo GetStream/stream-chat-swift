@@ -19,6 +19,7 @@ public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStrin
 
 public extension EventType {
     static let healthCheck: Self = "health.check"
+    static let connectionOk: Self = "connection.ok"
     static let connectionError: Self = "connection.error"
 
     // MARK: User Events
@@ -181,8 +182,4 @@ public extension EventType {
     
     /// When a reminder is due.
     static let messageReminderDue: Self = "notification.reminder_due"
-}
-
-extension EventType {
-    static let connectionOk: Self = "connection.ok"
 }
