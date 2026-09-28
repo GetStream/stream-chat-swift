@@ -1,5 +1,6 @@
 {
     "user" : {
+        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -22,6 +23,7 @@
     "channel_type" : "messaging",
     "channel_id" : "new_channel_7070",
     "created_by" : {
+        "custom" : {},
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,

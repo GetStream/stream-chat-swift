@@ -52,26 +52,4 @@ final class MessageReactionPayload: Sendable, Decodable {
         case user
         case userId = "user_id"
     }
-
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
-        messageId = try container.decode(String.self, forKey: .messageId)
-        score = try container.decode(Int.self, forKey: .score)
-        type = try container.decode(MessageReactionType.self, forKey: .type)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        user = try container.decode(UserPayload.self, forKey: .user)
-        userId = try container.decode(String.self, forKey: .userId)
-    }
 }

@@ -1,6 +1,7 @@
 {
   "draft": {
     "channel": {
+      "custom": {},
       "cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
       "config": {
         "automod": "disabled",
@@ -37,6 +38,7 @@
       },
       "created_at": "2024-07-10T11:47:43.591964Z",
       "created_by": {
+        "custom": {},
         "banned": false,
         "birthland": "Corellia",
         "blocked_user_ids": [],
@@ -62,9 +64,11 @@
     "channel_cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
     "created_at": "2025-02-11T12:27:04.780633395Z",
     "message": {
+      "custom": {},
       "id": "eb8ab3c9-5ade-4b4d-b32d-3d7f037682c0",
       "mentioned_users": [
         {
+            "custom": {},
             "id": "leia_organa",
             "role": "user",
             "created_at": "2023-09-27T13:21:25.781323Z",

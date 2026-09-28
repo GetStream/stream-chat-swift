@@ -18,6 +18,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         let json = """
         {
             "user" : {
+                "custom" : {},
                 "id" : "\(userId)",
                 "banned" : false,
                 "unread_channels" : 0,

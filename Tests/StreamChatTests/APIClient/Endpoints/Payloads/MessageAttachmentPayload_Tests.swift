@@ -11,8 +11,7 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadLink")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
-        let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+        let expectedRawJSON = try flattenedPayload(json)
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.attachmentType, .linkPreview)
@@ -23,8 +22,7 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadLinkWithoutImagePreview")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
-        let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+        let expectedRawJSON = try flattenedPayload(json)
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.attachmentType, .linkPreview)
@@ -35,9 +33,7 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadImage")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
-        let expectedRawJSON = try JSONDecoder.default
-            .decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+        let expectedRawJSON = try flattenedPayload(json)
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.attachmentType, .image)
@@ -48,9 +44,7 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadCustom")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
-        let expectedRawJSON = try JSONDecoder.default
-            .decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+        let expectedRawJSON = try flattenedPayload(json)
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.attachmentType, "party_invite")
@@ -120,17 +114,17 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
     func test_payload_includesNestedGeneratedFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadGiphyWithActions")
         let attachment = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
-        let expected = try JSONDecoder.default.decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+        let expected = try flattenedPayload(json)
 
         XCTAssertEqual(attachment.payload, expected)
     }
-}
 
-extension RawJSON {
-    func dictionary(with value: RawJSON?, forKey key: String) -> RawJSON? {
-        guard case var .dictionary(content) = self else { return nil }
-        content[key] = value
-        return .dictionary(content)
+    // Builds the flattened local-storage shape `payload` returns: `type` dropped and `custom` merged into the top level.
+    // IOS-1987
+    private func flattenedPayload(_ json: Data) throws -> RawJSON {
+        var content = try XCTUnwrap(JSONDecoder.default.decode(RawJSON.self, from: json).dictionaryValue)
+        content.removeValue(forKey: "type")
+        let custom = content.removeValue(forKey: "custom")?.dictionaryValue ?? [:]
+        return .dictionary(content.merging(custom) { existing, _ in existing })
     }
 }

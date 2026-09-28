@@ -1,5 +1,6 @@
 {
   "member" : {
+    "custom" : {},
     "banned" : false,
     "shadow_banned" : false,
     "created_at" : "2021-04-23T10:42:21.146483Z",
@@ -7,6 +8,7 @@
     "user_id" : "count_dooku",
     "updated_at" : "2021-04-23T12:16:24.832297Z",
     "user" : {
+      "custom" : {},
       "banned" : false,
       "online" : false,
       "id" : "count_dooku",
@@ -19,6 +21,7 @@
     }
   },
   "user" : {
+    "custom" : {},
     "banned" : false,
     "online" : false,
     "id" : "count_dooku",

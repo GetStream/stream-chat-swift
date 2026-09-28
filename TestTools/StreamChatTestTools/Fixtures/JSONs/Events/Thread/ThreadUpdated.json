@@ -24,8 +24,13 @@
         "birthland": "Polis Massa"
     },
     "thread": {
+        "custom": {},
         "channel_cid": "messaging:456F834D-1",
         "channel": {
+            "custom": {
+                "name": "Cult meetup",
+                "is_cool": true
+            },
             "id": "456F834D-1",
             "type": "messaging",
             "cid": "messaging:456F834D-1",
@@ -33,6 +38,7 @@
             "created_at": "2024-04-05T19:56:23.169549Z",
             "updated_at": "2024-05-31T13:26:04.005786Z",
             "created_by": {
+                "custom": {},
                 "id": "r2-d2",
                 "role": "user",
                 "created_at": "2024-04-04T09:44:54.206412Z",
@@ -95,12 +101,11 @@
                         "set": "fun_set"
                     }
                 ]
-            },
-            "name": "Cult meetup",
-            "is_cool": true
+            }
         },
         "parent_message_id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
         "parent_message": {
+            "custom": {},
             "mentioned_channel": false,
             "mentioned_here": false,
             "restricted_visibility": [],
@@ -109,6 +114,7 @@
             "html": "<p>Test</p>\n",
             "type": "regular",
             "user": {
+                "custom": {},
                 "id": "han_solo",
                 "role": "user",
                 "created_at": "2024-04-04T09:18:11.060737Z",
@@ -130,6 +136,7 @@
             "deleted_reply_count": 0,
             "thread_participants": [
                 {
+                    "custom": {},
                     "id": "leia_organa",
                     "role": "admin",
                     "created_at": "2024-04-04T09:42:00.68335Z",
@@ -151,6 +158,7 @@
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
                 },
                 {
+                    "custom": {},
                     "id": "han_solo",
                     "role": "user",
                     "created_at": "2024-04-04T09:18:11.060737Z",
@@ -181,6 +189,7 @@
         },
         "created_by_user_id": "leia_organa",
         "created_by": {
+            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2024-04-04T09:42:00.68335Z",
@@ -213,7 +222,7 @@
                 "user_id": "leia_organa",
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:31:51.209329Z",
-                "custom": null
+                "custom": {}
             },
             {
                 "app_pk": 0,
@@ -223,7 +232,7 @@
                 "user_id": "han_solo",
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:32:08.799903Z",
-                "custom": null
+                "custom": {}
             }
         ],
         "last_message_at": "2024-07-03T17:34:14.600702Z",
