@@ -23,3 +23,10 @@ final class EventDecoder_Mock: AnyEventDecoder {
         }
     }
 }
+
+struct EventDTODecoder {
+    func decode(from data: Data) throws -> Event {
+        let event = try EventDecoder().decode(from: data)
+        return (event as? WSEvent)?.rawValue ?? event
+    }
+}
