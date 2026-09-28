@@ -1,0 +1,16 @@
+{# Remove when fixed: IOS-2065 #}
+{% for type in types.classes %}
+// sourcery:decoder:{{ type.name }}
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+{% for variable in type.storedVariables %}
+{% if not variable.isOptional and variable.typeName.isArray %}
+        {{ variable.name }} = try container.decodeArrayIgnoringFailures({{ variable.typeName.name }}.self, forKey: .{{ variable.name }})
+{% elif variable.isOptional %}
+        {{ variable.name }} = try container.decodeIfPresent({{ variable.typeName.unwrappedTypeName }}.self, forKey: .{{ variable.name }})
+{% else %}
+        {{ variable.name }} = try container.decode({{ variable.typeName.name }}.self, forKey: .{{ variable.name }})
+{% endif %}
+{% endfor %}
+    }
+{% endfor %}

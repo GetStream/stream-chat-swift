@@ -1374,8 +1374,32 @@ strip_streamcore_imports
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 6. SyncResponse decodes in SyncResponse+Extensions.swift, which skips undecodable events.
-sed -i '' -E 's/^(final class SyncResponse: Sendable), Decodable \{$/\1 {/' "$OUTPUT_DIR_CHAT/models/SyncResponse.swift"
+# 6. Generate SyncResponse's `init(from:)`, which skips undecodable events, and splice it into the
+#    class body.
+#    Remove when fixed: IOS-2065
+splice_generated_decoders() {
+  local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
+  python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
+import pathlib
+import re
+import sys
+
+generated = pathlib.Path(sys.argv[1])
+models_dir = pathlib.Path(sys.argv[2])
+blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=re.M)
+
+for name, body in zip(blocks[1::2], blocks[2::2]):
+    path = models_dir / f"{name}.swift"
+    lines = path.read_text().splitlines(keepends=True)
+    closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
+    lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
+    path.write_text("".join(lines))
+
+generated.unlink()
+PY
+}
+sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
+splice_generated_decoders
 
 # 7. Wrap generated OpenAPI function declarations that exceed the maximum width.
 swiftformat "$OUTPUT_DIR_CHAT" \

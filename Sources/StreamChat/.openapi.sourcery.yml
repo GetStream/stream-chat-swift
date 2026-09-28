@@ -1,0 +1,6 @@
+sources:
+  - ./Generated/OpenAPI/models/SyncResponse.swift
+templates:
+  - ./Generated/OpenAPIDecodable.stencil
+output:
+  ./Generated/OpenAPI/OpenAPIDecoders.generated.swift
