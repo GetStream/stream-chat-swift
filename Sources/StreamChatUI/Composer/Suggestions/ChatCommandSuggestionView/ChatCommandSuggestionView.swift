@@ -47,6 +47,8 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
     }
 
     override open func setUpLayout() {
+        directionalLayoutMargins = .streamDefaultLayoutMargins
+
         addSubview(commandImageView)
         setupLeftImageViewConstraints()
 

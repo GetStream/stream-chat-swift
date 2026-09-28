@@ -137,6 +137,8 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             [fileNameLabel, bottomContainerStackView]
                 .forEach { centerContainerStackView.addArrangedSubview($0) }
 
+            directionalLayoutMargins = .streamDefaultLayoutMargins
+
             addSubview(mainContainerStackView)
             mainContainerStackView.axis = .horizontal
             mainContainerStackView.spacing = 8

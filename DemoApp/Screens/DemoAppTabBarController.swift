@@ -72,7 +72,8 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
             updateRemindersBadge()
         }
 
-        tabBar.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
+        // Note: setting `tabBar.backgroundColor` makes the tab bar render empty once the system
+        // lays it out as a vertical bar, which is what an unfolded iPhone Duo does.
         tabBar.isTranslucent = true
 
         channelListVC.tabBarItem.title = "Channels"
