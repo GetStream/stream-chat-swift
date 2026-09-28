@@ -68,7 +68,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         XCTAssertTrue(event?.rawValue is ReactionUpdatedEventDTO)
 
         let newReactionJSON = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let newReactionEvent = try eventDecoder.decodeDTO(from: newReactionJSON) as? ReactionNewEventDTO
+        let newReactionEvent = (try eventDecoder.decode(from: newReactionJSON) as? WSEvent)?.rawValue as? ReactionNewEventDTO
         let newReactionPayload = try XCTUnwrap(newReactionEvent?.reaction)
 
         // For message to be received, we need to have channel:
