@@ -7,13 +7,13 @@
 import XCTest
 
 final class TypingEvent_Tests: XCTestCase {
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
     var cid: ChannelId = ChannelId(type: .messaging, id: "general")
     var userId = "luke_skywalker"
 
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
 
     override func tearDown() {
@@ -23,7 +23,7 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_parseTypingStartEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartTyping")
-        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
@@ -35,7 +35,7 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_parseTypingStoptEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTyping")
-        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
@@ -48,7 +48,7 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_parseTypingStartEventInThread() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartTypingThread")
-        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
@@ -59,7 +59,7 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_parseTypingStoptEventInThread() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTypingThread")
-        guard let event = try eventDecoder.decodeDTO(from: json) as? TypingEventDTO else {
+        guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
             XCTFail()
             return
         }
@@ -136,7 +136,7 @@ final class TypingEvent_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        let event = try XCTUnwrap(try eventDecoder.decodeDTO(from: json) as? TypingEventDTO)
+        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? TypingEventDTO)
 
         XCTAssertEqual(event.user?.id, userId)
         XCTAssertEqual(event.member?.channelRole, "channel_member")

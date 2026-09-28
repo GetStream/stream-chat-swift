@@ -7,11 +7,11 @@
 import XCTest
 
 final class MemberEvents_Tests: XCTestCase {
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
 
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
 
     override func tearDown() {
@@ -21,21 +21,21 @@ final class MemberEvents_Tests: XCTestCase {
 
     func test_added() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
-        let event = try eventDecoder.decodeDTO(from: json) as? MemberAddedEventDTO
+        let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
         XCTAssertEqual(event?.member.userId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_9125"))
     }
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
-        let event = try eventDecoder.decodeDTO(from: json) as? MemberUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
         XCTAssertEqual(event?.member.userId, "count_dooku")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
 
     func test_removed() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
-        let event = try eventDecoder.decodeDTO(from: json) as? MemberRemovedEventDTO
+        let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
         XCTAssertEqual(event?.user?.id, "r2-d2")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
