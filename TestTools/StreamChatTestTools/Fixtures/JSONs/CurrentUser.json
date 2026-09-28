@@ -41,6 +41,8 @@
           },
           "user" : {
               "custom" : {},
+              "language" : "",
+              "teams" : [],
               "id" : "broken-waterfall-5",
               "banned" : false,
               "extraData" : {
