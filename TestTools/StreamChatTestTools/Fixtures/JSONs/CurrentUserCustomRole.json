@@ -1,4 +1,7 @@
 {
+  "invisible" : false,
+  "language" : "",
+  "unread_threads" : 0,
   "custom" : {
     "secret_note" : "Anaking is Vader!"
   },
@@ -24,6 +27,8 @@
           "created_at" : "2020-07-08T15:22:32.558759Z",
           "updated_at" : "2020-07-08T15:22:38.532404Z",
           "target" : {
+              "language" : "",
+              "teams" : [],
               "custom" : {},
               "banned" : false,
               "online" : false,
@@ -36,6 +41,8 @@
           },
           "user" : {
               "custom" : {},
+              "language" : "",
+              "teams" : [],
               "id" : "broken-waterfall-5",
               "banned" : false,
               "extraData" : {
@@ -73,6 +80,8 @@
   "channel_mutes": [
       {
           "user": {
+              "language": "",
+              "teams": [],
               "custom": {
                 "secret_note" : "Anaking is Vader!"
               },

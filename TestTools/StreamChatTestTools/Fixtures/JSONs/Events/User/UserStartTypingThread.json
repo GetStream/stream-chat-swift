@@ -4,6 +4,8 @@
    "channel_id":"default-channel-5",
    "channel_type":"messaging",
    "user":{
+      "language":"",
+      "teams":[],
       "custom":{},
       "id":"han_solo",
       "role":"user",

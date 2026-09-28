@@ -1,6 +1,7 @@
 {
   "threads": [
     {
+      "active_participant_count": 0,
       "custom": {},
       "channel_cid": "messaging:4AB11F2F-4",
       "channel": {
@@ -14,6 +15,7 @@
         "created_at": "2024-03-26T11:13:35.148035Z",
         "updated_at": "2024-03-26T12:02:37.748782Z",
         "created_by": {
+          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
           },
@@ -37,6 +39,7 @@
             "custom": {},
             "user_id": "han_solo",
             "user": {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
               },
@@ -66,6 +69,7 @@
             "custom": {},
             "user_id": "r2-d2",
             "user": {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
               },
@@ -95,6 +99,8 @@
             "custom": {},
             "user_id": "tommaso-0",
             "user": {
+              "language": "",
+              "teams": [],
               "custom": {},
               "id": "tommaso-0",
               "role": "user",
@@ -164,6 +170,7 @@
         },
         "truncated_at": "2024-03-26T12:02:37.66035Z",
         "truncated_by": {
+          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
           },
@@ -184,6 +191,7 @@
       "parent_message_id": "eafa39f5-9ace-457c-ad4a-f5142647a9e6",
       "created_by_user_id": "han_solo",
       "created_by": {
+        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
         },
@@ -212,6 +220,7 @@
           "thread_id": "eafa39f5-9ace-457c-ad4a-f5142647a9e6",
           "user_id": "r2-d2",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
             },
@@ -240,6 +249,7 @@
           "thread_id": "eafa39f5-9ace-457c-ad4a-f5142647a9e6",
           "user_id": "han_solo",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -268,6 +278,7 @@
       "read": [
         {
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
             },
@@ -290,6 +301,7 @@
       ]
     },
     {
+      "active_participant_count": 0,
       "custom": {},
       "channel_cid": "messaging:06E2B480-F",
       "channel": {
@@ -304,6 +316,7 @@
         "created_at": "2024-03-01T16:44:07.248211Z",
         "updated_at": "2024-03-13T04:10:02.010914Z",
         "created_by": {
+          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
@@ -327,6 +340,7 @@
             "custom": {},
             "user_id": "han_solo",
             "user": {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
               },
@@ -356,6 +370,7 @@
             "custom": {},
             "user_id": "luke_skywalker",
             "user": {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
               },
@@ -385,6 +400,8 @@
             "custom": {},
             "user_id": "luke_skywalker2",
             "user": {
+              "language": "",
+              "teams": [],
               "custom": {},
               "id": "luke_skywalker2",
               "role": "anonymous",
@@ -465,6 +482,7 @@
         "html": "<p>Hhh</p>\n",
         "type": "regular",
         "user": {
+          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
@@ -490,6 +508,7 @@
         "deleted_reply_count": 0,
         "thread_participants": [
           {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
             },
@@ -507,6 +526,7 @@
             "name": "Luke Skywalker"
           },
           {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -541,6 +561,7 @@
       },
       "created_by_user_id": "luke_skywalker",
       "created_by": {
+        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
         },
@@ -569,6 +590,7 @@
           "thread_id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
           "user_id": "luke_skywalker",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
             },
@@ -597,6 +619,7 @@
           "thread_id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
           "user_id": "han_solo",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -632,6 +655,7 @@
           "html": "<p>Testing.</p>\n",
           "type": "reply",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
             },
@@ -677,6 +701,7 @@
           "html": "<p>@Luke Skywalker test</p>\n",
           "type": "reply",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -707,6 +732,7 @@
           "shadowed": false,
           "mentioned_users": [
             {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
               },
@@ -738,6 +764,7 @@
       "read": [
         {
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
             },
@@ -759,6 +786,7 @@
         },
         {
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -781,6 +809,7 @@
       ]
     },
     {
+      "active_participant_count": 0,
       "custom": {},
       "channel_cid": "messaging:C272E452-0",
       "channel": {
@@ -795,6 +824,7 @@
         "created_at": "2023-12-21T14:09:34.848955Z",
         "updated_at": "2024-03-26T11:42:45.977177Z",
         "created_by": {
+          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
@@ -818,6 +848,7 @@
             "custom": {},
             "user_id": "han_solo",
             "user": {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
               },
@@ -847,6 +878,7 @@
             "custom": {},
             "user_id": "leia_organa",
             "user": {
+              "teams": [],
               "custom": {},
               "id": "leia_organa",
               "role": "admin",
@@ -873,6 +905,8 @@
             "custom": {},
             "user_id": "leia_orgz",
             "user": {
+              "language": "",
+              "teams": [],
               "custom": {},
               "id": "leia_orgz",
               "role": "user",
@@ -942,6 +976,7 @@
         },
         "truncated_at": "2024-01-09T16:25:28.881745Z",
         "truncated_by": {
+          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
@@ -971,6 +1006,7 @@
         "html": "<p>@Leia Organa hi @Leia Organa</p>\n",
         "type": "regular",
         "user": {
+          "teams": [],
           "custom": {},
           "id": "leia_organa",
           "role": "admin",
@@ -993,6 +1029,7 @@
         "deleted_reply_count": 0,
         "thread_participants": [
           {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -1010,6 +1047,7 @@
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
           {
+            "teams": [],
             "custom": {},
             "id": "leia_organa",
             "role": "admin",
@@ -1030,6 +1068,7 @@
         "shadowed": false,
         "mentioned_users": [
           {
+            "teams": [],
             "custom": {},
             "id": "leia_organa",
             "role": "admin",
@@ -1052,6 +1091,7 @@
       },
       "created_by_user_id": "han_solo",
       "created_by": {
+        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
         },
@@ -1080,6 +1120,7 @@
           "thread_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
           "user_id": "leia_organa",
           "user": {
+            "teams": [],
             "custom": {},
             "id": "leia_organa",
             "role": "admin",
@@ -1105,6 +1146,7 @@
           "thread_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
           "user_id": "han_solo",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -1140,6 +1182,7 @@
           "html": "<p>B</p>\n",
           "type": "regular",
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },
@@ -1176,6 +1219,7 @@
             "html": "<p>Bb</p>\n",
             "type": "reply",
             "user": {
+              "teams": [],
               "custom": {
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
               },
@@ -1241,6 +1285,7 @@
           "html": "<p>H</p>\n",
           "type": "reply",
           "user": {
+            "teams": [],
             "custom": {},
             "id": "leia_organa",
             "role": "admin",
@@ -1277,6 +1322,7 @@
       "read": [
         {
           "user": {
+            "teams": [],
             "custom": {},
             "id": "leia_organa",
             "role": "admin",
@@ -1295,6 +1341,7 @@
         },
         {
           "user": {
+            "teams": [],
             "custom": {
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
             },

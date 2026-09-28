@@ -1,6 +1,8 @@
 {
   "access_token" : "some random value",
   "user" : {
+    "language" : "",
+    "teams" : [],
     "custom" : {},
     "id" : "broken-waterfall-5",
     "role" : "guest",

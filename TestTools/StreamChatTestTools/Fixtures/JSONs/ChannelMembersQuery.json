@@ -1,11 +1,17 @@
 {
   "members": [
       {
+        "banned" : false,
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "shadow_banned" : false,
         "custom" : {},
         "created_at" : "2020-06-05T12:53:09.862721Z",
         "updated_at" : "2020-06-05T12:53:09.862721Z",
         "role" : "owner",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,

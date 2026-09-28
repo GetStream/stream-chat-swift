@@ -292,7 +292,7 @@ final class PollsRepository_Tests: XCTestCase {
         
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
-        let payload = XCTestCase().dummyPollVotePayload(optionId: nil, pollId: pollId, answerText: answer)
+        let payload = XCTestCase().dummyPollVotePayload(pollId: pollId, answerText: answer)
         let response = PollVotePayloadResponse.dummy(vote: payload)
         apiClient.test_simulateResponse(.success(response))
         
@@ -303,7 +303,7 @@ final class PollsRepository_Tests: XCTestCase {
             castPollVoteRequest: .init(vote: .init(answerText: answer))
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        XCTAssertEqual(payload.optionId, nil)
+        XCTAssertEqual(payload.optionId, "")
         XCTAssertEqual(payload.answerText, answer)
     }
     

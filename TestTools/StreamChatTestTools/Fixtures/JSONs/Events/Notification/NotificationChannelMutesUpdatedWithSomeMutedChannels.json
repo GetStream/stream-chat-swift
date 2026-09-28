@@ -1,6 +1,8 @@
 {
     "type": "notification.channel_mutes_updated",
     "me": {
+        "teams": [],
+        "unread_threads": 0,
         "custom": {
             "roles": []
         },
@@ -34,6 +36,8 @@
         "channel_mutes": [
             {
                 "user": {
+                    "language": "",
+                    "teams": [],
                     "custom": {},
                     "id": "luke_skywalker",
                     "role": "admin",
@@ -51,6 +55,8 @@
                     "type": "messaging",
                     "cid": "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
                     "created_by": {
+                        "language": "",
+                        "teams": [],
                         "custom": {},
                         "id": "steep-moon-9",
                         "banned": false,
@@ -122,6 +128,8 @@
             },
             {
                 "user": {
+                    "language": "",
+                    "teams": [],
                     "custom": {},
                     "id": "luke_skywalker",
                     "role": "admin",
@@ -139,6 +147,8 @@
                     "type": "messaging",
                     "cid": "messaging:!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
                     "created_by": {
+                        "language": "",
+                        "teams": [],
                         "custom": {},
                         "id": "steep-moon-9",
                         "banned": false,

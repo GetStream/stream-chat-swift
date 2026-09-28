@@ -1,5 +1,7 @@
 {
     "user" : {
+        "language" : "",
+        "teams" : [],
         "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
@@ -23,6 +25,8 @@
     "channel_type" : "messaging",
     "channel_id" : "new_channel_7070",
     "created_by" : {
+        "language" : "",
+        "teams" : [],
         "custom" : {},
         "id" : "steep-moon-9",
         "banned" : false,

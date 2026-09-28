@@ -6,64 +6,64 @@ import Foundation
 
 final class OwnUserResponse: Sendable, Decodable {
     let avgResponseTime: Int?
-    let banned: Bool?
+    let banned: Bool
     let blockedUserIds: [String]?
-    let channelMutes: [MutedChannelPayload]?
+    let channelMutes: [MutedChannelPayload]
     let createdAt: Date
     let custom: [String: RawJSON]
     let deactivatedAt: Date?
     let deletedAt: Date?
-    let devices: [Device]?
+    let devices: [Device]
     let id: String
     let image: String?
-    let invisible: Bool?
-    let language: String?
+    let invisible: Bool
+    let language: String
     let lastActive: Date?
     let latestHiddenChannels: [String]?
-    let mutes: [MutedUserPayload]?
+    let mutes: [MutedUserPayload]
     let name: String?
     let online: Bool
     let privacySettings: UserPrivacySettings?
     let pushPreferences: PushPreference?
     let revokeTokensIssuedBefore: Date?
     let role: String
-    let teams: [String]?
+    let teams: [String]
     let teamsRole: [String: String]?
-    let totalUnreadCount: Int?
+    let totalUnreadCount: Int
     let totalUnreadCountByTeam: [String: Int]?
-    let unreadChannels: Int?
-    let unreadThreads: Int?
+    let unreadChannels: Int
+    let unreadThreads: Int
     let updatedAt: Date
 
     init(
         avgResponseTime: Int? = nil,
-        banned: Bool? = nil,
+        banned: Bool,
         blockedUserIds: [String]? = nil,
-        channelMutes: [MutedChannelPayload]? = nil,
+        channelMutes: [MutedChannelPayload],
         createdAt: Date,
         custom: [String: RawJSON],
         deactivatedAt: Date? = nil,
         deletedAt: Date? = nil,
-        devices: [Device]? = nil,
+        devices: [Device],
         id: String,
         image: String? = nil,
-        invisible: Bool? = nil,
-        language: String? = nil,
+        invisible: Bool,
+        language: String,
         lastActive: Date? = nil,
         latestHiddenChannels: [String]? = nil,
-        mutes: [MutedUserPayload]? = nil,
+        mutes: [MutedUserPayload],
         name: String? = nil,
         online: Bool,
         privacySettings: UserPrivacySettings? = nil,
         pushPreferences: PushPreference? = nil,
         revokeTokensIssuedBefore: Date? = nil,
         role: String,
-        teams: [String]? = nil,
+        teams: [String],
         teamsRole: [String: String]? = nil,
-        totalUnreadCount: Int? = nil,
+        totalUnreadCount: Int,
         totalUnreadCountByTeam: [String: Int]? = nil,
-        unreadChannels: Int? = nil,
-        unreadThreads: Int? = nil,
+        unreadChannels: Int,
+        unreadThreads: Int,
         updatedAt: Date
     ) {
         self.avgResponseTime = avgResponseTime

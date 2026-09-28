@@ -2,6 +2,8 @@
     "channel_id" : "general",
     "channel_type" : "messaging",
     "user" : {
+        "language" : "",
+        "teams" : [],
         "custom" : {},
         "id" : "steep-moon-9",
         "banned" : false,

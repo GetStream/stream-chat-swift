@@ -11,9 +11,9 @@ final class MemberPayload: Sendable, Decodable {
     /// Whether the member's ban also applies to channels the channel's creator will create in the future (an active future channel ban by the creator targets this member)
     let banFromFutureChannels: Bool?
     /// Whether member is banned this channel or not
-    let banned: Bool?
+    let banned: Bool
     /// Role of the member in the channel
-    let channelRole: String?
+    let channelRole: String
     /// Date/time of creation
     let createdAt: Date
     let custom: [String: RawJSON]
@@ -29,12 +29,12 @@ final class MemberPayload: Sendable, Decodable {
     let invited: Bool?
     /// Whether member is channel moderator or not
     let isModerator: Bool?
-    let notificationsMuted: Bool?
+    let notificationsMuted: Bool
     let pinnedAt: Date?
     /// Permission level of the member in the channel (DEPRECATED: use channel_role instead). One of: member, moderator, admin, owner
     let role: String?
     /// Whether member is shadow banned in this channel or not
-    let shadowBanned: Bool?
+    let shadowBanned: Bool
     let status: String?
     /// Date/time of the last update
     let updatedAt: Date
@@ -46,8 +46,8 @@ final class MemberPayload: Sendable, Decodable {
         archivedAt: Date? = nil,
         banExpires: Date? = nil,
         banFromFutureChannels: Bool? = nil,
-        banned: Bool? = nil,
-        channelRole: String? = nil,
+        banned: Bool,
+        channelRole: String,
         createdAt: Date,
         custom: [String: RawJSON],
         deletedAt: Date? = nil,
@@ -57,10 +57,10 @@ final class MemberPayload: Sendable, Decodable {
         inviteRejectedAt: Date? = nil,
         invited: Bool? = nil,
         isModerator: Bool? = nil,
-        notificationsMuted: Bool? = nil,
+        notificationsMuted: Bool,
         pinnedAt: Date? = nil,
         role: String? = nil,
-        shadowBanned: Bool? = nil,
+        shadowBanned: Bool,
         status: String? = nil,
         updatedAt: Date,
         user: UserPayload? = nil,

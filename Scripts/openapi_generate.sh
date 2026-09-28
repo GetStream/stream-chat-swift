@@ -751,7 +751,6 @@ done
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration). The memberwise init
 #     parameter is relaxed too.
-# Remove in the next major.
 optionalize_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   P="$2" perl -0777 -pi -e '
@@ -760,15 +759,8 @@ optionalize_property() {
     s/([(,]\s*)\Q$p\E: ([^,)\n]+)(?=[,)])/${1}$p: $2? = nil/;
   ' "$file"
 }
+# Remove in the next major.
 optionalize_property DeviceResponse createdAt
-optionalize_property PollOptionResponseData custom
-optionalize_property PollResponseData custom
-optionalize_property PollResponseData latestAnswers
-optionalize_property PollResponseData latestVotesByOption
-optionalize_property PollResponseData ownVotes
-optionalize_property PollResponseData voteCountsByOption
-optionalize_property PollResponseData votingVisibility
-optionalize_property PollVoteResponseData optionId
 optionalize_property Role createdAt
 optionalize_property Role updatedAt
 optionalize_property UnreadCountsChannel lastRead
@@ -791,10 +783,6 @@ retype_property() {
     s/(?<!\w)\Q$p\E: \Q$o\E(?!\w)/$p: $n/g;
   ' "$file"
 }
-retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVoteResponseData?]"
-retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
-retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
-retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property ReactionRequest type String MessageReactionType
 retype_property ReactionResponse type String MessageReactionType
 retype_property UnreadCountsChannel channelId String ChannelId
@@ -941,26 +929,6 @@ rename_property PushPreference chatLevel level
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
 
-optionalize_property UserPayload banned
-optionalize_property UserPayload language
-optionalize_property UserPayload teams
-
-optionalize_property MemberPayload banned
-optionalize_property MemberPayload channelRole
-optionalize_property MemberPayload notificationsMuted
-optionalize_property MemberPayload shadowBanned
-
-optionalize_property OwnUserResponse banned
-optionalize_property OwnUserResponse channelMutes
-optionalize_property OwnUserResponse devices
-optionalize_property OwnUserResponse invisible
-optionalize_property OwnUserResponse language
-optionalize_property OwnUserResponse mutes
-optionalize_property OwnUserResponse teams
-optionalize_property OwnUserResponse totalUnreadCount
-optionalize_property OwnUserResponse unreadChannels
-optionalize_property OwnUserResponse unreadThreads
-
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
 remove_property PushPreferenceInput feedsLevel
@@ -1030,15 +998,6 @@ require_property ChannelStateResponse channel
 # CHA-5105
 require_property SearchResult message
 
-# TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
-optionalize_property MessageResponse reactionCounts
-optionalize_property SearchResultMessage reactionCounts
-
-# v1 payloads may omit the count when it is zero.
-optionalize_property ThreadResponse activeParticipantCount
-optionalize_property ThreadStateResponse activeParticipantCount
-
-# v1 read events may omit it.
 optionalize_property ThreadResponse createdByUserId
 
 for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do

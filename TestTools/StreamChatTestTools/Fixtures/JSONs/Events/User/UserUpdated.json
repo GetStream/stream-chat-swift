@@ -1,6 +1,8 @@
 {
   "type" : "user.updated",
   "user" : {
+    "language" : "",
+    "teams" : [],
     "custom" : {},
     "banned" : false,
     "online" : true,

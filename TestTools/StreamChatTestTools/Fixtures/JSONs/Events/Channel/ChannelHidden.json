@@ -1,5 +1,7 @@
 {
   "user" : {
+    "language" : "",
+    "teams" : [],
     "custom" : {},
     "banned" : false,
     "online" : true,
@@ -19,6 +21,8 @@
     "id" : "default-channel-6",
     "members" : [
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188158Z",
         "banned" : false,
@@ -26,6 +30,8 @@
         "user_id" : "leia_organa",
         "updated_at" : "2021-04-15T11:26:37.188158Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : true,
@@ -39,6 +45,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188158Z",
         "banned" : false,
@@ -46,6 +54,8 @@
         "user_id" : "luke_skywalker",
         "updated_at" : "2021-04-15T11:26:37.188158Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : true,
@@ -59,6 +69,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188159Z",
         "banned" : false,
@@ -66,6 +78,8 @@
         "user_id" : "han_solo",
         "updated_at" : "2021-04-15T11:26:37.188159Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -79,6 +93,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188159Z",
         "banned" : false,
@@ -86,6 +102,8 @@
         "user_id" : "lando_calrissian",
         "updated_at" : "2021-04-15T11:26:37.188159Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -99,6 +117,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -106,6 +126,8 @@
         "user_id" : "anakin_skywalker",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -119,6 +141,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -126,6 +150,8 @@
         "user_id" : "c-3po",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -139,6 +165,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -146,6 +174,8 @@
         "user_id" : "chewbacca",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -159,6 +189,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -166,6 +198,8 @@
         "user_id" : "r2-d2",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -179,6 +213,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -186,6 +222,8 @@
         "user_id" : "mace_windu",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -199,6 +237,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -206,6 +246,8 @@
         "user_id" : "obi-wan_kenobi",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -219,6 +261,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -226,6 +270,8 @@
         "user_id" : "padme_amidala",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -239,6 +285,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -246,6 +294,8 @@
         "user_id" : "qui-gon_jinn",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -259,6 +309,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -266,6 +318,8 @@
         "user_id" : "count_dooku",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -279,6 +333,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -286,6 +342,8 @@
         "user_id" : "darth_maul",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -299,6 +357,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -306,6 +366,8 @@
         "user_id" : "general_grievous",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,
@@ -319,6 +381,8 @@
         }
       },
       {
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "custom" : {},
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -326,6 +390,8 @@
         "user_id" : "jar_jar_binks",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
         "user" : {
+          "language" : "",
+          "teams" : [],
           "custom" : {},
           "banned" : false,
           "online" : false,

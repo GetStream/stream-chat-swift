@@ -26,7 +26,7 @@ final class UserPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
     }
 
@@ -40,7 +40,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
 
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
@@ -61,7 +61,7 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.role, "guest")
         XCTAssertEqual(payload.isOnline, true)
@@ -83,7 +83,7 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=deactivated-waterfall-5&amp;name=Deactivated+waterfall")!
         )
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
     }

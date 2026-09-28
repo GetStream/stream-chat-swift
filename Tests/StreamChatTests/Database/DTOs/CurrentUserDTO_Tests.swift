@@ -77,8 +77,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             )
         )
 
-        let mutedUserIDs = Set(payload.mutes?.compactMap(\.target?.id) ?? [])
-        let mutedChannelIDs = Set(payload.channelMutes?.compactMap(\.channel?.cid) ?? [])
+        let mutedUserIDs = Set(payload.mutes.compactMap(\.target?.id))
+        let mutedChannelIDs = Set(payload.channelMutes.compactMap(\.channel?.cid))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -103,9 +103,9 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedCurrentUser.unreadCount.threads, payload.unreadThreads)
         XCTAssertEqual(payload.extraData, loadedCurrentUser.extraData)
         XCTAssertEqual(mutedUserIDs, Set(loadedCurrentUser.mutedUsers.map(\.id)))
-        XCTAssertEqual(payload.devices?.count, loadedCurrentUser.devices.count)
-        XCTAssertEqual(payload.devices?.first?.id, loadedCurrentUser.devices.first?.id)
-        XCTAssertEqual(Set(payload.teams ?? []), loadedCurrentUser.teams)
+        XCTAssertEqual(payload.devices.count, loadedCurrentUser.devices.count)
+        XCTAssertEqual(payload.devices.first?.id, loadedCurrentUser.devices.first?.id)
+        XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
@@ -208,40 +208,6 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertNotEqual(currentUser?.devices.first?.id, initialDevice.id)
         // ..and is not set to currentDevice
         XCTAssertEqual(currentUser?.currentDevice, nil)
-    }
-
-    func test_savingCurrentUser_whenUnreadThreadsCountNil_doesNotOverrideThreadsCount() throws {
-        let userId = UserId.unique
-        let previousUserPayload = CurrentUserPayload.dummy(userId: userId, role: .admin, unreadCount: .init(
-            channels: 3,
-            messages: 2,
-            threads: 3
-        ))
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: previousUserPayload)
-        }
-
-        var currentUser: CurrentChatUser? {
-            try? database.viewContext.currentUser?.asModel()
-        }
-
-        XCTAssertEqual(currentUser?.unreadCount.channels, 3)
-        XCTAssertEqual(currentUser?.unreadCount.messages, 2)
-        XCTAssertEqual(currentUser?.unreadCount.threads, 3)
-
-        let newUserPayload = CurrentUserPayload.dummy(userId: userId, role: .admin, unreadCount: .init(
-            channels: 3,
-            messages: 2,
-            threads: nil
-        ))
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: newUserPayload)
-        }
-
-        // Values remain the same even tho threads was nil
-        XCTAssertEqual(currentUser?.unreadCount.channels, 3)
-        XCTAssertEqual(currentUser?.unreadCount.messages, 2)
-        XCTAssertEqual(currentUser?.unreadCount.threads, 3)
     }
 
     func test_mergeCurrentUserUnreadChannelCountsByGroup_storesAndLoadsFromDB() throws {
@@ -384,7 +350,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
         XCTAssertEqual(
             Set(database.viewContext.currentUser?.channelMutes.map(\.channel.cid) ?? []),
-            Set(payloadWithUpdatedMutes.channelMutes?.compactMap(\.channel?.cid.rawValue) ?? [])
+            Set(payloadWithUpdatedMutes.channelMutes.compactMap(\.channel?.cid.rawValue))
         )
     }
 

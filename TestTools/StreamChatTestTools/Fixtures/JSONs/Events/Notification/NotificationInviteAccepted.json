@@ -1,5 +1,9 @@
 {
     "member" : {
+        "banned" : false,
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "shadow_banned" : false,
         "custom" : {},
         "created_at" : "2020-07-21T15:51:47.118059Z",
         "invite_accepted_at" : "2020-07-21T15:51:53.47382Z",
@@ -12,6 +16,8 @@
             "name" : "Channel 6293"
         },
         "created_by" : {
+            "language" : "",
+            "teams" : [],
             "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
@@ -62,11 +68,17 @@
         "created_at" : "2020-07-21T15:51:36.162939Z",
         "members" : [
             {
+                "banned" : false,
+                "channel_role" : "channel_member",
+                "notifications_muted" : false,
+                "shadow_banned" : false,
                 "custom" : {},
                 "created_at" : "2020-07-21T15:51:36.166131Z",
                 "user_id" : "steep-moon-9",
                 "updated_at" : "2020-07-21T15:51:36.166131Z",
                 "user" : {
+                    "language" : "",
+                    "teams" : [],
                     "custom" : {},
                     "id" : "steep-moon-9",
                     "banned" : false,
@@ -86,6 +98,10 @@
                 }
             },
             {
+                "banned" : false,
+                "channel_role" : "channel_member",
+                "notifications_muted" : false,
+                "shadow_banned" : false,
                 "custom" : {},
                 "created_at" : "2020-07-21T15:51:47.118059Z",
                 "invite_accepted_at" : "2020-07-21T15:51:53.47382Z",
@@ -93,6 +109,8 @@
                 "updated_at" : "2020-07-21T15:51:53.474505Z",
                 "invited" : true,
                 "user" : {
+                    "language" : "",
+                    "teams" : [],
                     "custom" : {},
                     "id" : "broken-waterfall-5",
                     "banned" : false,
@@ -123,6 +141,8 @@
     "channel_type" : "messaging",
     "channel_id" : "new_channel_6293",
     "user" : {
+        "language" : "",
+        "teams" : [],
         "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,

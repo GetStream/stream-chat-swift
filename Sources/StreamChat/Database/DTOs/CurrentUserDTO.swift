@@ -105,11 +105,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         try saveCurrentUserCommonFields(
             blockedUserIds: payload.blockedUserIds ?? [],
-            channelMutes: payload.channelMutes ?? [],
-            devices: payload.devices ?? [],
+            channelMutes: payload.channelMutes,
+            devices: payload.devices,
             dto: dto,
-            isInvisible: payload.invisible ?? false,
-            mutes: payload.mutes ?? [],
+            isInvisible: payload.invisible,
+            mutes: payload.mutes,
             privacySettings: payload.privacySettings,
             totalUnreadCount: payload.totalUnreadCount,
             unreadChannels: payload.unreadChannels,
