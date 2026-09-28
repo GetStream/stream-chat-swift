@@ -12,7 +12,6 @@ final class QueryThreadsRequest: Sendable, Encodable, JSONEncodable {
     let next: String?
     /// Limit the number of participants returned per each thread
     let participantLimit: Int?
-    let prev: String?
     /// Limit the number of replies returned per each thread
     let replyLimit: Int?
     /// Array of sort parameters
@@ -26,7 +25,6 @@ final class QueryThreadsRequest: Sendable, Encodable, JSONEncodable {
         memberLimit: Int? = nil,
         next: String? = nil,
         participantLimit: Int? = nil,
-        prev: String? = nil,
         replyLimit: Int? = nil,
         sort: [SortParamRequest]? = nil,
         watch: Bool? = nil
@@ -36,7 +34,6 @@ final class QueryThreadsRequest: Sendable, Encodable, JSONEncodable {
         self.memberLimit = memberLimit
         self.next = next
         self.participantLimit = participantLimit
-        self.prev = prev
         self.replyLimit = replyLimit
         self.sort = sort
         self.watch = watch
@@ -48,7 +45,6 @@ final class QueryThreadsRequest: Sendable, Encodable, JSONEncodable {
         case memberLimit = "member_limit"
         case next
         case participantLimit = "participant_limit"
-        case prev
         case replyLimit = "reply_limit"
         case sort
         case watch
@@ -63,7 +59,6 @@ final class QueryThreadsRequest: Sendable, Encodable, JSONEncodable {
         try container.encodeIfPresent(memberLimit, forKey: .memberLimit)
         try container.encodeIfPresent(next, forKey: .next)
         try container.encodeIfPresent(participantLimit, forKey: .participantLimit)
-        try container.encodeIfPresent(prev, forKey: .prev)
         try container.encodeIfPresent(replyLimit, forKey: .replyLimit)
         try container.encodeIfPresent(sort, forKey: .sort)
         try container.encodeIfPresent(watch, forKey: .watch)

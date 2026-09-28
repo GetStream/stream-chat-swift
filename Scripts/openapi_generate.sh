@@ -6,8 +6,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
 CHAT_DIR="$REPO_ROOT/../chat"
 
-# Incremental OpenAPI adoption: keep ONLY the endpoints/models being migrated right
-# now; everything else the generator emits is pruned below.
+# Keep ONLY the endpoints/models the SDK uses; everything else the generator emits is
+# pruned below.
 # allowed_models must hold the FULL transitive model closure of every endpoint in
 # allowed_endpoints or the kept code won't compile — the build is the safety net.
 allowed_endpoints=(
@@ -113,7 +113,6 @@ allowed_models=(
   BanResponse
   BlockedUserResponse
   BlockUsersRequest
-  BlockUsersResponse
   CastPollVoteRequest
   ChannelGetOrCreateRequest
   ChannelInput
@@ -167,7 +166,6 @@ allowed_models=(
   HideChannelRequest
   ImageData
   Images
-  ImageSize
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
@@ -175,7 +173,6 @@ allowed_models=(
   MarkDeliveredRequest
   MarkReadRequest
   MarkUnreadRequest
-  MemberUserRequest
   MembersResponse
   MessageActionRequest
   MessageActionResponse
@@ -192,11 +189,9 @@ allowed_models=(
   ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionInput
-  PollOptionResponse
   PollOptionResponseData
   PollResponse
   PollResponseData
-  PollVoteResponse
   PollVoteResponseData
   PollVotesResponse
   PrivacySettingsResponse
@@ -250,7 +245,6 @@ allowed_models=(
   TruncateChannelResponse
   TypingIndicatorsResponse
   UnblockUsersRequest
-  UnblockUsersResponse
   UnmuteChannelRequest
   UnmuteRequest
   UnmuteResponse
@@ -446,7 +440,6 @@ encodable_only_models=(
 decodable_only_models=(
   AppSettings
   BanResponse
-  BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
   ChannelStateResponse
@@ -471,7 +464,6 @@ decodable_only_models=(
   GetThreadResponse
   GroupedChannelsBucket
   GroupedQueryChannelsResponse
-  ImageSize
   ImageUploadResponse
   ListDevicesResponse
   ListUserGroupsResponse
@@ -491,12 +483,10 @@ decodable_only_models=(
   ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionPayload
-  PollOptionResponse
   PollPayload
   PollPayloadResponse
   PollVoteListResponse
   PollVotePayload
-  PollVotePayloadResponse
   PushPreference
   QueryBannedUsersResponse
   QueryChannelsResponse
@@ -520,7 +510,6 @@ decodable_only_models=(
   ThreadStateResponse
   TranslateMessageResponse
   TruncateChannelResponse
-  UnblockUsersResponse
   UnmuteUsersResponse
   UnreadChannel
   UnreadChannelByType
@@ -553,7 +542,6 @@ codable_models=(
   GiphyImageData
   GiphyImages
   MemberInfoPayload
-  MemberUserRequest
   MessageAttachmentPayload
   ReadReceiptsPrivacySettings
   Role
@@ -877,7 +865,6 @@ rename_generated PollOptionInput PollOptionRequestBody
 rename_generated PollOptionResponseData PollOptionPayload
 rename_generated PollResponse PollPayloadResponse
 rename_generated PollResponseData PollPayload
-rename_generated PollVoteResponse PollVotePayloadResponse
 rename_generated PollVoteResponseData PollVotePayload
 rename_generated PollVotesResponse PollVoteListResponse
 rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
@@ -913,6 +900,7 @@ rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
+rename_generated_type BlockUsersResponse EmptyResponse
 rename_generated_type DeleteReminderResponse EmptyResponse
 rename_generated_type EventResponse EmptyResponse
 rename_generated_type FlagItemResponse EmptyResponse
@@ -920,61 +908,17 @@ rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type MarkReadResponse EmptyResponse
 rename_generated_type ModerationBanResponse EmptyResponse
+rename_generated_type PollOptionResponse EmptyResponse
+rename_generated_type PollVoteResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
 rename_generated_type UnbanResponse EmptyResponse
+rename_generated_type UnblockUsersResponse EmptyResponse
 
 retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
-
-remove_property PushPreferenceInput callLevel
-remove_property PushPreferenceInput chatPreferences
-remove_property PushPreferenceInput feedsLevel
-remove_property PushPreferenceInput feedsPreferences
-remove_property PushPreference callLevel
-remove_property PushPreference chatPreferences
-remove_property PushPreference feedsLevel
-remove_property PushPreference feedsPreferences
-remove_property UpdateUsersResponse membershipDeletionTaskId
-remove_property UserGroupMember appPk
-remove_property UserPayload blockedUserIds
-remove_property SharedLocation channel
-remove_property SharedLocation message
-remove_property MutedChannelPayloadResponse channelMutes
-remove_property MutedChannelPayloadResponse ownUser
-remove_property OwnUserResponse unreadCount
-# CHA-5096
-remove_property ChannelGetOrCreateRequest hideForCreator
-# CHA-5096
-remove_property ChannelInput configOverrides
-# CHA-5096
-remove_property ChannelInput createdBy
-# CHA-5096
-remove_property ChannelInputRequest configOverrides
-# CHA-5096
-remove_property ChannelInputRequest createdBy
-# CHA-5068
-remove_property BanRequest ipBan
-remove_property FlagRequest entityCreatorId
-remove_property FlagRequest moderationPayload
-
-# Unused channel context (cid, createdBy, id, type)
-remove_property SendMessageRequest includeChannelContext
-remove_property SendMessageResponsePayload channelContext
-
-# TODO: reaction group reactors need CoreData and public API design first
-remove_property MessageReactionGroupPayload latestReactionsBy
-
-# CHA-5106
-remove_property SearchPayload forceDefaultSearch
-remove_property SearchPayload forceSqlV2Backend
-
-# Unused
-remove_property SearchPayload messageOptions
-# Unused
-remove_property SearchResponse resultsWarning
 
 # /sync replays events without fields the spec marks required.
 # Remove when fixed: CHA-3482
@@ -997,8 +941,6 @@ require_property ChannelDetailPayload config
 require_property ChannelStateResponse channel
 # CHA-5105
 require_property SearchResult message
-
-optionalize_property ThreadResponse createdByUserId
 
 for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
   [ -e "$f" ] || continue
@@ -1038,22 +980,49 @@ retype_property MessageDeliveredEventDTO lastDeliveredAt String Date
 remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt
 remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt
 remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt
+remove_property BanRequest deleteMessages ipBan
+remove_property BlockedUserResponse blockedUser user userId
 remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
+remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
+remove_property ChannelInputRequest autoTranslationEnabled autoTranslationLanguage configOverrides createdBy disabled frozen
+remove_property ChannelMemberRequest channelRole user
+remove_property ChannelStateResponse hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property CreateDeviceRequest hardwareId voipToken
+remove_property CreatePollRequestBody id isClosed team
 remove_property DraftDeletedEventDTO custom parentId receivedAt
+remove_property DraftMessagePayload html mml
 remove_property DraftUpdatedEventDTO custom parentId receivedAt
+remove_property FlagRequest entityCreatorId moderationPayload
+remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore shadowBanned
+remove_property GetOGResponse actions authorIcon authorLink color custom fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
+remove_property GroupedChannelsBucket prev
+remove_property GroupedChannelsGroupRequest prev
 remove_property HealthCheckEventDTO cid custom receivedAt
+remove_property ImageUploadResponse uploadSizes
+remove_property MarkChannelsReadRequest readByChannel
+remove_property MarkReadRequest messageId
 remove_property MemberAddedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MemberPayload banFromFutureChannels deletedMessages futureChannelBanExpires isModerator role
 remove_property MemberRemovedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom member receivedAt team
 remove_property MemberUpdatedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property MessageDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team
 remove_property MessageDeliveredEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MessageModerationDetailsPayload blocklistMatched
 remove_property MessageNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId parentAuthor receivedAt team threadParticipants unreadCount
+remove_property MessagePaginationParams createdAtAfter createdAtAfterOrEqual createdAtAround createdAtBefore createdAtBeforeOrEqual
+remove_property MessageReactionGroupPayload latestReactionsBy
 remove_property MessageReadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom lastReadMessageId receivedAt
+remove_property MessageRequest mml pinnedAt
+remove_property MessageResponse deletedReplyCount html imageLabels mml
 remove_property MessageUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId messageUpdate receivedAt team
+remove_property MutedChannelPayloadResponse channelMutes ownUser
+remove_property MutedUserPayload user
 remove_property NotificationAddedToChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property NotificationChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team unreadCount
 remove_property NotificationChannelMutesUpdatedEventDTO custom receivedAt
@@ -1066,30 +1035,73 @@ remove_property NotificationMutesUpdatedEventDTO custom receivedAt
 remove_property NotificationNewMessageEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId parentAuthor receivedAt team threadParticipants unreadCount watcherCount
 remove_property NotificationRemovedFromChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property NotificationThreadMessageNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId parentAuthor receivedAt team threadId threadParticipants unreadThreadMessages watcherCount
+remove_property OwnUserResponse deletedAt latestHiddenChannels revokeTokensIssuedBefore unreadCount
+remove_property PaginationParams idGt idGte idLt idLte
+remove_property PendingMessageResponse channel user
 remove_property PollClosedEventDTO activityId cid custom messageId receivedAt
 remove_property PollDeletedEventDTO activityId cid custom messageId receivedAt
+remove_property PollOptionPayload textI18n
+remove_property PollPayload descriptionI18n nameI18n
 remove_property PollUpdatedEventDTO activityId cid custom messageId receivedAt
 remove_property PollVoteCastedEventDTO activityId cid custom messageId receivedAt
 remove_property PollVoteChangedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVoteListResponse prev
+remove_property PollVotePayload answerTextI18n
 remove_property PollVoteRemovedEventDTO activityId cid custom messageId receivedAt
+remove_property PushPreference callLevel chatPreferences feedsLevel feedsPreferences
+remove_property PushPreferenceInput callLevel chatPreferences feedsLevel feedsPreferences userId
+remove_property QueryBannedUsersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual
+remove_property QueryChannelsRequest memberCustomInclude
+remove_property QueryDraftsRequest prev
+remove_property QueryDraftsResponse prev
+remove_property QueryMembersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual members userIdGt userIdGte userIdLt userIdLte
+remove_property QueryPollVotesRequestBody prev
+remove_property QueryReactionsRequest next prev sort
+remove_property QueryRemindersRequest prev
+remove_property QueryRemindersResponse prev
+remove_property QueryThreadsRequest prev
+remove_property QueryThreadsResponse prev
+remove_property QueryUsersPayload idGt idGte idLt idLte includeDeactivatedUsers
 remove_property ReactionDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
 remove_property ReactionNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
+remove_property ReactionRequest createdAt updatedAt
 remove_property ReactionUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team
 remove_property ReminderCreatedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
+remove_property ReminderPayload user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
+remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
+remove_property SearchResponse previous resultsWarning
+remove_property SearchResultMessage deletedReplyCount html imageLabels mml
+remove_property SendMessageRequest includeChannelContext includeMentionedMembers keepChannelHidden
+remove_property SendMessageResponsePayload channelContext mentionedMembers
+remove_property SharedLocation channel message
+remove_property SyncResponse inaccessibleCids
+remove_property ThreadParticipantPayload channelCid custom lastThreadMessageAt leftThreadAt threadId userId
+remove_property ThreadResponse channelCid createdByUserId deletedAt threadParticipants
+remove_property ThreadStateResponse channelCid createdByUserId deletedAt
 remove_property ThreadUpdatedEventDTO channelId channelType cid custom receivedAt
+remove_property TruncateChannelRequest memberIds truncatedAt
 remove_property TypingStartEventDTO channelId channelType custom receivedAt
 remove_property TypingStopEventDTO channelId channelType custom receivedAt
+remove_property UnmuteChannelRequest expiration
+remove_property UpdateChannelRequest cooldown removeFilterTags skipPush
+remove_property UpdateMessagePartialRequest skipEnrichUrl skipPush
+remove_property UpdateUsersResponse membershipDeletionTaskId
+remove_property UploadChannelFileResponse moderationAction
+remove_property UploadChannelResponse moderationAction uploadSizes
 remove_property UserBannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt reviewQueueItemId team totalBans
+remove_property UserGroupMember appPk
 remove_property UserMessagesDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property UserPayload blockedUserIds deletedAt revokeTokensIssuedBefore
 remove_property UserPresenceChangedEventDTO custom receivedAt
 remove_property UserRequest invisible language privacySettings
 remove_property UserUnbannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType createdBy custom receivedAt shadow team
 remove_property UserUpdatedEventDTO custom receivedAt
 remove_property UserWatchingStartEventDTO channelId channelType custom receivedAt
 remove_property UserWatchingStopEventDTO channelId channelType custom receivedAt
+remove_property WSAuthMessage memberCustomInclude
 
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -1100,6 +1112,7 @@ remove_type() {
     { print }
   ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
+remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 

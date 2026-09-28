@@ -40,25 +40,10 @@ final class QueryBannedUsersPayload: Sendable, Encodable, JSONEncodable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(
-            excludeExpiredBans,
-            forKey: .excludeExpiredBans
-        )
-        try container.encode(
-            filterConditions,
-            forKey: .filterConditions
-        )
-        try container.encodeIfPresent(
-            limit,
-            forKey: .limit
-        )
-        try container.encodeIfPresent(
-            offset,
-            forKey: .offset
-        )
-        try container.encodeIfPresent(
-            sort,
-            forKey: .sort
-        )
+        try container.encodeIfPresent(excludeExpiredBans, forKey: .excludeExpiredBans)
+        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(offset, forKey: .offset)
+        try container.encodeIfPresent(sort, forKey: .sort)
     }
 }

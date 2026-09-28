@@ -13,6 +13,17 @@ typealias MessageRepliesPayload = GetRepliesResponse
 typealias MessageSearchResultsPayload = SearchResponse
 
 extension MessagePayload {
+    /// The `{ "message": <message payload> }` envelope of the message fixtures.
+    final class Boxed: Sendable, Decodable {
+        let message: MessageResponse
+
+        init(message: MessageResponse) {
+            self.message = message
+        }
+    }
+}
+
+extension MessagePayload {
     convenience init(
         id: String,
         cid: ChannelId = .unique,
@@ -78,9 +89,7 @@ extension MessagePayload {
             custom: custom,
             deletedAt: deletedAt,
             deletedForMe: deletedForMe,
-            deletedReplyCount: 0,
             draft: draft,
-            html: "",
             i18n: i18n.isEmpty ? nil : i18n,
             id: id,
             latestReactions: latestReactions,

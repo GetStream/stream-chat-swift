@@ -49,7 +49,6 @@ final class ThreadDTO_Tests: XCTestCase {
         let dto = try database.viewContext.saveThread(
             partialPayload: ThreadResponse(
                 activeParticipantCount: 0,
-                channelCid: channel.cid,
                 createdAt: .unique,
                 custom: [:],
                 parentMessageId: parentMessageId,
@@ -73,7 +72,6 @@ final class ThreadDTO_Tests: XCTestCase {
         let dto = try database.viewContext.saveThread(
             partialPayload: ThreadResponse(
                 activeParticipantCount: 0,
-                channelCid: ChannelId.unique.rawValue,
                 createdAt: .unique,
                 custom: [:],
                 parentMessageId: parentMessageId,

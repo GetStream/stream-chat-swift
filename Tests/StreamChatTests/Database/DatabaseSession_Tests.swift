@@ -1099,7 +1099,6 @@ final class DatabaseSession_Tests: XCTestCase {
                 createdAt: .unique,
                 thread: ThreadResponse(
                     activeParticipantCount: 0,
-                    channelCid: channelId.rawValue,
                     createdAt: .unique,
                     custom: [:],
                     parentMessageId: parentMessageId,
@@ -1178,7 +1177,6 @@ final class DatabaseSession_Tests: XCTestCase {
                 createdAt: .unique,
                 thread: ThreadResponse(
                     activeParticipantCount: 0,
-                    channelCid: channelId.rawValue,
                     createdAt: .unique,
                     custom: [:],
                     parentMessageId: parentMessageId,

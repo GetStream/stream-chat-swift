@@ -29,21 +29,17 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
     let disabledUntil: Date?
     /// Remove the disabled until time. (IE stop snoozing notifications)
     let removeDisable: Bool?
-    /// The user id for which to set the push preferences. Required when using server side auths, defaults to current user with client side auth.
-    let userId: String?
 
     init(
         channelCid: String? = nil,
         chatLevel: PushPreferenceLevel? = nil,
         disabledUntil: Date? = nil,
-        removeDisable: Bool? = nil,
-        userId: String? = nil
+        removeDisable: Bool? = nil
     ) {
         self.channelCid = channelCid
         self.chatLevel = chatLevel
         self.disabledUntil = disabledUntil
         self.removeDisable = removeDisable
-        self.userId = userId
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
@@ -51,7 +47,6 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
         case chatLevel = "chat_level"
         case disabledUntil = "disabled_until"
         case removeDisable = "remove_disable"
-        case userId = "user_id"
     }
 }
 
@@ -60,8 +55,7 @@ extension PushPreferenceInput: Hashable {
         lhs.channelCid == rhs.channelCid &&
             lhs.chatLevel == rhs.chatLevel &&
             lhs.disabledUntil == rhs.disabledUntil &&
-            lhs.removeDisable == rhs.removeDisable &&
-            lhs.userId == rhs.userId
+            lhs.removeDisable == rhs.removeDisable
     }
 
     func hash(into hasher: inout Hasher) {
@@ -69,6 +63,5 @@ extension PushPreferenceInput: Hashable {
         hasher.combine(chatLevel)
         hasher.combine(disabledUntil)
         hasher.combine(removeDisable)
-        hasher.combine(userId)
     }
 }
