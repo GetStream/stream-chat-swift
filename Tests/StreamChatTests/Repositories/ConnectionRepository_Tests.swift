@@ -279,6 +279,52 @@ final class ConnectionRepository_Tests: XCTestCase {
         ])
     }
 
+    func test_webSocketConnectionEstablished_sendsAuthFrameWithAllUserDetails() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = makeWebSocketClient(engine: engine)
+        let token = Token.unique(userId: "luke")
+        let delegate = ConnectionDetailsProviderDelegate_Spy()
+        delegate.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = delegate
+        repository = makeRepository(webSocketClient: webSocketClient)
+        let userInfo = UserInfo(
+            id: "luke",
+            name: "Luke",
+            imageURL: URL(string: "https://path/to/image"),
+            isInvisible: true,
+            language: .english,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true),
+                deliveryReceipts: .init(enabled: false)
+            ),
+            extraData: ["color": .string("blue")]
+        )
+        repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
+
+        webSocketClient.connect()
+        engine.simulateConnectionSuccess()
+
+        let frame = try XCTUnwrap(engine.send_jsonMessages.last)
+        AssertJSONEqual(frame, [
+            "token": token.rawValue,
+            "products": ["chat"] as NSArray,
+            "user_details": [
+                "id": "luke",
+                "name": "Luke",
+                "image": "https://path/to/image",
+                "invisible": true,
+                "language": "en",
+                "privacy_settings": [
+                    "typing_indicators": ["enabled": true],
+                    "read_receipts": ["enabled": true],
+                    "delivery_receipts": ["enabled": false]
+                ],
+                "custom": ["color": "blue"]
+            ] as [String: Any]
+        ])
+    }
+
     func test_webSocketConnectionEstablished_whenNoUserInfo_usesTokenUserId() throws {
         let engine = WebSocketEngine_Mock()
         let webSocketClient = makeWebSocketClient(engine: engine)

@@ -146,7 +146,20 @@ class ConnectionRepository: @unchecked Sendable {
         delegate.provideToken(timeout: 10) { [weak webSocketClient] result in
             switch result {
             case let .success(token):
-                let payload = WSAuthMessage(token: token, userInfo: userInfo ?? UserInfo(id: token.userId))
+                let user = userInfo ?? UserInfo(id: token.userId)
+                let payload = WSAuthMessage(
+                    products: ["chat"],
+                    token: token.rawValue,
+                    userDetails: ConnectUserDetailsRequest(
+                        custom: user.extraData.isEmpty ? nil : user.extraData,
+                        id: user.id,
+                        image: user.imageURL?.absoluteString,
+                        invisible: user.isInvisible,
+                        language: user.language?.languageCode,
+                        name: user.name,
+                        privacySettings: user.privacySettings
+                    )
+                )
                 webSocketClient?.engine?.send(jsonMessage: payload)
             case let .failure(error):
                 log.error("Failed to send the WebSocket auth frame because of a missing token", subsystems: .webSocket, error: error)

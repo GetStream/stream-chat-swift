@@ -7,29 +7,6 @@
 import XCTest
 
 final class CustomDataHashMap_Tests: XCTestCase {
-    func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
-        let extraData: [String: RawJSON] = ["how-many-roads": .number(42)]
-        let imageURL = URL.unique()
-        let userInfo = UserInfo(
-            id: "44",
-            name: "tommaso",
-            imageURL: imageURL,
-            isInvisible: false,
-            language: .english,
-            extraData: extraData
-        )
-        let payload = ConnectUserDetailsRequest(userInfo: userInfo)
-        let encoded = try! JSONEncoder.default.encode(payload)
-        AssertJSONEqual(encoded, [
-            "language": "en",
-            "id": "44",
-            "invisible": false,
-            "name": "tommaso",
-            "image": imageURL.absoluteString,
-            "custom": ["how-many-roads": 42]
-        ])
-    }
-
     func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(ChannelDetailPayload.self, "ChannelPayload")
     }
