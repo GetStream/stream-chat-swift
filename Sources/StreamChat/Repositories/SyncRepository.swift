@@ -510,7 +510,7 @@ class SyncRepository: @unchecked Sendable {
     }
 
     private func processMissingEventsPayload(_ payload: SyncResponse, completion: @escaping @Sendable () -> Void) {
-        eventNotificationCenter.process(payload.events.asEvents(), postNotifications: false) {
+        eventNotificationCenter.process(payload.events, postNotifications: false) {
             log.info(
                 "Successfully processed pending events. Count \(payload.events.count)",
                 subsystems: .offlineSupport

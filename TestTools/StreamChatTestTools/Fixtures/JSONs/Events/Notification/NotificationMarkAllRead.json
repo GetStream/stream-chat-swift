@@ -1,4 +1,7 @@
 {
+    "total_unread_count" : 21,
+    "unread_channels" : 3,
+    "unread_threads" : 10,
     "user" : {
         "id" : "steep-moon-9",
         "banned" : false,

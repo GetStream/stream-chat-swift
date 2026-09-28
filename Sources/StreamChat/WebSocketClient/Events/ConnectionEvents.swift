@@ -8,29 +8,11 @@ public protocol ConnectionEvent: Event {
     var connectionId: String { get }
 }
 
-public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
+public final class HealthCheckEvent: ConnectionEvent, Sendable {
     public let connectionId: String
-
-    let payload: EventPayload
-
-    init(from eventResponse: EventPayload) throws {
-        guard let connectionId = eventResponse.connectionId else {
-            throw ClientError.EventDecoding(missingValue: "connectionId", for: Self.self)
-        }
-
-        self.connectionId = connectionId
-        payload = eventResponse
-    }
 
     init(connectionId: String) {
         self.connectionId = connectionId
-        payload = EventPayload(
-            eventType: .healthCheck,
-            connectionId: connectionId,
-            cid: nil,
-            currentUser: nil,
-            channel: nil
-        )
     }
     
     public func healthcheck() -> HealthCheckInfo? {
@@ -38,15 +20,73 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
     }
 }
 
-final class ConnectionErrorEvent: Event {
-    let apiError: APIError
-    
-    init(from eventResponse: EventPayload) throws {
-        guard let apiError = eventResponse.connectionError else {
-            throw ClientError.EventDecoding(missingValue: "error", for: Self.self)
-        }
+extension HealthCheckEventDTO: EventDTO {
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        HealthCheckEvent(connectionId: connectionId)
+    }
+}
 
+/// The `connection.ok` hello event sent by the v2 connect endpoint after the auth frame is accepted.
+/// The `me` payload creates the current user in the database (`EventDataProcessorMiddleware`).
+// CHA-5606
+final class ConnectedEvent: Event, Decodable {
+    let connectionId: String
+    let me: OwnUserResponse?
+
+    init(connectionId: String, me: OwnUserResponse?) {
+        self.connectionId = connectionId
+        self.me = me
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case connectionId = "connection_id"
+        case me
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(EventType.self, forKey: .type)
+        guard type == .connectionOk else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "Expected the \(EventType.connectionOk.rawValue) event type"
+            )
+        }
+        connectionId = try container.decode(String.self, forKey: .connectionId)
+        me = try container.decodeIfPresent(OwnUserResponse.self, forKey: .me)
+    }
+
+    func healthcheck() -> HealthCheckInfo? {
+        HealthCheckInfo(connectionId: connectionId)
+    }
+}
+
+// CHA-5606
+final class ConnectionErrorEvent: Event, Decodable {
+    let apiError: APIError
+
+    init(apiError: APIError) {
         self.apiError = apiError
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case error
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(EventType.self, forKey: .type)
+        guard type == .connectionError else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "Expected the \(EventType.connectionError.rawValue) event type"
+            )
+        }
+        apiError = try container.decode(APIError.self, forKey: .error)
     }
     
     func error() -> (any Error)? {

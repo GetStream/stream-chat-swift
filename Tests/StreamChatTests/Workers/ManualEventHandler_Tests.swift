@@ -59,17 +59,13 @@ final class ManualEventHandler_Tests: XCTestCase {
     
     func test_handle_eventWithoutCid_returnsNil() throws {
         // Create a simple event DTO that has no cid
-        struct TestEventDTO: EventDTO {
-            let payload: EventPayload = EventPayload(
-                eventType: .healthCheck,
-                connectionId: .unique
-            )
-        }
-        
-        let eventDTO = TestEventDTO()
+        let eventDTO = UserPresenceChangedEventDTO(
+            createdAt: .unique,
+            user: .dummy(userId: .unique)
+        )
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeUserPresenceChangedEvent(eventDTO))
         }
         
         XCTAssertNil(result, "Events without cid should return nil")
@@ -79,18 +75,17 @@ final class ManualEventHandler_Tests: XCTestCase {
     
     func test_handle_unregisteredChannel_returnsNil() throws {
         let unregisteredCid: ChannelId = .unique
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
+        let eventDTO = MessageNewEventDTO(
             cid: unregisteredCid,
-            user: .dummy(userId: .unique),
+            createdAt: .unique,
             message: .dummy(messageId: .unique, authorUserId: .unique),
-            createdAt: .unique
+            user: .dummy(userId: .unique),
+            watcherCount: 0
         )
-        let eventDTO = try! MessageNewEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageNewEvent(eventDTO))
         }
         XCTAssertNil(result)
     }
@@ -99,18 +94,16 @@ final class ManualEventHandler_Tests: XCTestCase {
     
     func test_handle_unsupportedEventType_returnsNil() throws {
         // Use a user watching event which is not handled by ManualEventHandler.
-        let eventPayload = EventPayload(
-            eventType: .userStartWatching,
+        let eventDTO = UserWatchingStartEventDTO(
             cid: cid,
+            createdAt: .unique,
             user: .dummy(userId: .unique),
-            watcherCount: 1,
-            createdAt: .unique
+            watcherCount: 1
         )
-        let eventDTO = try! UserWatchingEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeUserWatchingStartEvent(eventDTO))
         }
         XCTAssertNil(result, "Unsupported event types should return nil")
     }
@@ -119,18 +112,17 @@ final class ManualEventHandler_Tests: XCTestCase {
         // Member events are intentionally not manually handled: they are comparatively
         // low-volume compared to messages/reactions/typing, and channel/member state is
         // expected to stay database-backed even for livestream channels.
-        let eventPayload = EventPayload(
-            eventType: .memberUpdated,
+        let eventDTO = MemberUpdatedEventDTO(
+            channel: .dummy(cid: cid),
             cid: cid,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(),
-            createdAt: .unique
+            createdAt: .unique,
+            member: .dummy(),
+            user: .dummy(userId: .unique)
         )
-        let eventDTO = try! MemberUpdatedEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMemberUpdatedEvent(eventDTO))
         }
 
         XCTAssertNil(result)
@@ -143,20 +135,19 @@ final class ManualEventHandler_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
+        let eventDTO = MessageNewEventDTO(
             cid: cid,
-            user: .dummy(userId: userId),
+            createdAt: createdAt,
             message: .dummy(messageId: messageId, authorUserId: userId),
-            watcherCount: 10,
-            unreadCount: .init(channels: 1, messages: 2, threads: 0),
-            createdAt: createdAt
+            totalUnreadCount: 2,
+            unreadChannels: 1,
+            user: .dummy(userId: userId),
+            watcherCount: 10
         )
-        let eventDTO = try! MessageNewEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageNewEvent(eventDTO))
         }
         
         let messageNewEvent = try XCTUnwrap(result as? MessageNewEvent)
@@ -175,18 +166,16 @@ final class ManualEventHandler_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
+        let eventDTO = MessageUpdatedEventDTO(
             cid: cid,
-            user: .dummy(userId: userId),
+            createdAt: createdAt,
             message: .dummy(messageId: messageId, authorUserId: userId),
-            createdAt: createdAt
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! MessageUpdatedEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageUpdatedEvent(eventDTO))
         }
         
         let messageUpdatedEvent = try XCTUnwrap(result as? MessageUpdatedEvent)
@@ -203,19 +192,17 @@ final class ManualEventHandler_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
+        let eventDTO = MessageDeletedEventDTO(
             cid: cid,
-            user: .dummy(userId: userId),
-            message: .dummy(messageId: messageId, authorUserId: userId),
             createdAt: createdAt,
-            hardDelete: true
+            hardDelete: true,
+            message: .dummy(messageId: messageId, authorUserId: userId),
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! MessageDeletedEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageDeletedEvent(eventDTO))
         }
         
         let messageDeletedEvent = try XCTUnwrap(result as? MessageDeletedEvent)
@@ -230,19 +217,17 @@ final class ManualEventHandler_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
+        let eventDTO = MessageDeletedEventDTO(
             cid: cid,
-            user: nil,
-            message: .dummy(messageId: messageId, authorUserId: .unique),
             createdAt: createdAt,
-            hardDelete: false
+            hardDelete: false,
+            message: .dummy(messageId: messageId, authorUserId: .unique),
+            user: nil
         )
-        let eventDTO = try! MessageDeletedEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeMessageDeletedEvent(eventDTO))
         }
         
         let messageDeletedEvent = try XCTUnwrap(result as? MessageDeletedEvent)
@@ -261,19 +246,18 @@ final class ManualEventHandler_Tests: XCTestCase {
         let reactionType: MessageReactionType = "like"
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .reactionNew,
+        let eventDTO = ReactionNewEventDTO(
+            channel: .dummy(cid: cid),
             cid: cid,
-            user: .dummy(userId: userId),
+            createdAt: createdAt,
             message: .dummy(messageId: messageId, authorUserId: userId),
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            createdAt: createdAt
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! ReactionNewEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeReactionNewEvent(eventDTO))
         }
         
         let reactionNewEvent = try XCTUnwrap(result as? ReactionNewEvent)
@@ -292,19 +276,18 @@ final class ManualEventHandler_Tests: XCTestCase {
         let reactionType: MessageReactionType = "love"
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .reactionUpdated,
+        let eventDTO = ReactionUpdatedEventDTO(
+            channel: .dummy(cid: cid),
             cid: cid,
-            user: .dummy(userId: userId),
+            createdAt: createdAt,
             message: .dummy(messageId: messageId, authorUserId: userId),
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            createdAt: createdAt
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! ReactionUpdatedEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeReactionUpdatedEvent(eventDTO))
         }
         
         let reactionUpdatedEvent = try XCTUnwrap(result as? ReactionUpdatedEvent)
@@ -323,19 +306,18 @@ final class ManualEventHandler_Tests: XCTestCase {
         let reactionType: MessageReactionType = "angry"
         let createdAt = Date.unique
         
-        let eventPayload = EventPayload(
-            eventType: .reactionDeleted,
+        let eventDTO = ReactionDeletedEventDTO(
+            channel: .dummy(cid: cid),
             cid: cid,
-            user: .dummy(userId: userId),
+            createdAt: createdAt,
             message: .dummy(messageId: messageId, authorUserId: userId),
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            createdAt: createdAt
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! ReactionDeletedEventDTO(from: eventPayload)
         
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeReactionDeletedEvent(eventDTO))
         }
         
         let reactionDeletedEvent = try XCTUnwrap(result as? ReactionDeletedEvent)
@@ -352,17 +334,15 @@ final class ManualEventHandler_Tests: XCTestCase {
         let userId: UserId = .unique
         let createdAt = Date.unique
 
-        let eventPayload = EventPayload(
-            eventType: .userStartTyping,
+        let eventDTO = TypingStartEventDTO(
             cid: cid,
-            user: .dummy(userId: userId),
-            createdAt: createdAt
+            createdAt: createdAt,
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! TypingEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStartEvent(eventDTO))
         }
 
         let typingEvent = try XCTUnwrap(result as? TypingEvent)
@@ -378,17 +358,15 @@ final class ManualEventHandler_Tests: XCTestCase {
         let userId: UserId = .unique
         let createdAt = Date.unique
 
-        let eventPayload = EventPayload(
-            eventType: .userStopTyping,
+        let eventDTO = TypingStopEventDTO(
             cid: cid,
-            user: .dummy(userId: userId),
-            createdAt: createdAt
+            createdAt: createdAt,
+            user: .dummy(userId: userId)
         )
-        let eventDTO = try! TypingEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStopEvent(eventDTO))
         }
 
         let typingEvent = try XCTUnwrap(result as? TypingEvent)
@@ -399,18 +377,16 @@ final class ManualEventHandler_Tests: XCTestCase {
 
     func test_handle_typingEvent_inThread_returnsEventWithParentId() throws {
         let parentMessageId: MessageId = .unique
-        let eventPayload = EventPayload(
-            eventType: .userStartTyping,
+        let eventDTO = TypingStartEventDTO(
             cid: cid,
-            user: .dummy(userId: .unique),
             createdAt: .unique,
-            parentId: parentMessageId
+            parentId: parentMessageId,
+            user: .dummy(userId: .unique)
         )
-        let eventDTO = try! TypingEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStartEvent(eventDTO))
         }
 
         let typingEvent = try XCTUnwrap(result as? TypingEvent)
@@ -420,17 +396,15 @@ final class ManualEventHandler_Tests: XCTestCase {
 
     func test_handle_typingEvent_onUnregisteredChannel_returnsNil() throws {
         let unregisteredCid: ChannelId = .unique
-        let eventPayload = EventPayload(
-            eventType: .userStartTyping,
+        let eventDTO = TypingStartEventDTO(
             cid: unregisteredCid,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            user: .dummy(userId: .unique)
         )
-        let eventDTO = try! TypingEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
-            result = self.handler.handle(eventDTO)
+            result = self.handler.handle(WSEvent.typeTypingStartEvent(eventDTO))
         }
 
         XCTAssertNil(result)

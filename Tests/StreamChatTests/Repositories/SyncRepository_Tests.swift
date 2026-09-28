@@ -975,12 +975,13 @@ class SyncRepository_Tests: XCTestCase {
 extension SyncRepository_Tests {
     func messageEventPayload(cid: ChannelId = .unique, with dates: [Date]) -> SyncResponse {
         SyncResponse(events: dates.map {
-            EventPayload(
-                eventType: .messageNew,
-                cid: cid,
-                user: .dummy(userId: ""),
-                message: .dummy(messageId: "\($0)", authorUserId: .unique, latestReactions: [], cid: cid),
-                createdAt: $0
+            .typeMessageNewEvent(
+                MessageNewEventDTO(
+                    cid: cid,
+                    createdAt: $0,
+                    message: .dummy(messageId: "\($0)", authorUserId: .unique, latestReactions: [], cid: cid),
+                    user: .dummy(userId: "")
+                )
             )
         })
     }
