@@ -34,6 +34,7 @@
               "name" : "Dawn grass"
           },
           "user" : {
+              "custom" : {},
               "id" : "broken-waterfall-5",
               "banned" : false,
               "extraData" : {
