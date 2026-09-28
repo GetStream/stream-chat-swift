@@ -10,12 +10,21 @@ final class MutedUserPayload: Sendable, Decodable {
     /// User response object
     let target: UserPayload?
     let updatedAt: Date
+    /// User response object
+    let user: UserPayload?
 
-    init(createdAt: Date, expires: Date? = nil, target: UserPayload? = nil, updatedAt: Date) {
+    init(
+        createdAt: Date,
+        expires: Date? = nil,
+        target: UserPayload? = nil,
+        updatedAt: Date,
+        user: UserPayload? = nil
+    ) {
         self.createdAt = createdAt
         self.expires = expires
         self.target = target
         self.updatedAt = updatedAt
+        self.user = user
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
@@ -23,5 +32,6 @@ final class MutedUserPayload: Sendable, Decodable {
         case expires
         case target
         case updatedAt = "updated_at"
+        case user
     }
 }
