@@ -20,7 +20,6 @@ extension EndpointPath {
              .ban,
              .blockUsers,
              .castPollVote,
-             .connect,
              .custom,
              .createDevice,
              .createPoll,

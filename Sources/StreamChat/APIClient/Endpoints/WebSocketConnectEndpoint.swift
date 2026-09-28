@@ -5,17 +5,13 @@
 import Foundation
 
 extension Endpoint {
-    static func webSocketConnect(
-        userInfo: UserInfo
-    ) -> Endpoint<EmptyResponse> {
+    static func webSocketConnect() -> Endpoint<EmptyResponse> {
         .init(
-            path: .connect,
+            path: .custom("/api/v2/connect"),
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "json": WebSocketConnectPayload(userInfo: userInfo)
-            ]
+            body: nil
         )
     }
 }

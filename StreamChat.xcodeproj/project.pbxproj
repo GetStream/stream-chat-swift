@@ -1027,7 +1027,6 @@
 				StreamChatTests/WebSocketClient/Events/ThreadEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/TypingEvent_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/UserEvents_Tests.swift,
-				StreamChatTests/WebSocketClient/WebSocketConnectPayload_Tests.swift,
 				StreamChatTests/Workers/Background/ActiveLiveLocationsEndTimeTracker_Tests.swift,
 				StreamChatTests/Workers/Background/AttachmentQueueUploader_Tests.swift,
 				StreamChatTests/Workers/Background/MessageEditor_Tests.swift,

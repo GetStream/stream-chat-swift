@@ -122,6 +122,7 @@ allowed_models=(
   ChannelOwnCapability
   ChannelResponse
   ChannelStateResponse
+  ConnectUserDetailsRequest
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
@@ -279,6 +280,7 @@ allowed_models=(
   UserResponse
   VoteData
   WrappedUnreadCountsResponse
+  WSAuthMessage
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
@@ -474,6 +476,7 @@ codable_models=(
   AttachmentActionPayload
   AttachmentFieldPayload
   ChannelCapability
+  ConnectUserDetailsRequest
   DeliveryReceiptsPrivacySettings
   Device
   GiphyImageData
@@ -487,6 +490,7 @@ codable_models=(
   TypingIndicatorPrivacySettings
   UserPayload
   UserPrivacySettings
+  WSAuthMessage
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -1143,7 +1147,6 @@ inject_v1_endpoint_paths() {
 
   cat > "$cases_file" <<'EOF'
     case custom(String)
-    case connect
     case sync
     case guest
 
@@ -1151,7 +1154,6 @@ EOF
 
   cat > "$values_file" <<'EOF'
         case let .custom(path): return path
-        case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
 
