@@ -98,7 +98,7 @@ enum EndpointPath: Codable {
     case uploadChannelImage(type: String, id: String)
     case uploadFile
     case uploadImage
-    /// The websocket connect path. Websocket endpoints are not part of the OpenAPI spec.
+    /// The websocket connect path.
     case connect
 
     var value: String {
