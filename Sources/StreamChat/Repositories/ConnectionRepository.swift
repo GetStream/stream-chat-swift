@@ -147,7 +147,7 @@ class ConnectionRepository: @unchecked Sendable {
             switch result {
             case let .success(token):
                 let user = userInfo ?? UserInfo(id: token.userId)
-                let payload = WSAuthMessage(
+                let payload = WSAuthMessageRequest(
                     products: ["chat"],
                     token: token.rawValue,
                     userDetails: ConnectUserDetailsRequest(

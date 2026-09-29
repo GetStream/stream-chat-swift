@@ -5343,8 +5343,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.10.1;
+				branch = "add/ws-auth-message-latest-fields";
+				kind = branch;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
