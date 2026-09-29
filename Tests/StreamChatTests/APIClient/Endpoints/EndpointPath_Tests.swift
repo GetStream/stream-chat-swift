@@ -217,6 +217,7 @@ final class EndpointPathTests: XCTestCase {
 
     func test_isProperlyEncodedAndDecoded() throws {
         assertResultEncodingAndDecoding(.custom("/custom-path"))
+        assertResultEncodingAndDecoding(.connect)
         assertResultEncodingAndDecoding(.sync)
         assertResultEncodingAndDecoding(.queryUsers)
         assertResultEncodingAndDecoding(.updateUsersPartial)

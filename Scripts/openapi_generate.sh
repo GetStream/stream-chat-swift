@@ -15,6 +15,7 @@ allowed_endpoints=(
     ban
     blockUsers
     castPollVote
+    connect
     createDevice
     createDraft
     createPoll

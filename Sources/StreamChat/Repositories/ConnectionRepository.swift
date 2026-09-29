@@ -127,13 +127,13 @@ class ConnectionRepository: @unchecked Sendable {
     /// Updates the WebSocket endpoint to use the passed token and user information for the connection
     func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
         connectUserInfo.value = userInfo ?? .init(id: token.userId)
-        webSocketConnectEndpoint.value = .webSocketConnect()
+        webSocketConnectEndpoint.value = .connect()
     }
     
     /// Updates the WebSocket endpoint to use the passed user id
     func updateWebSocketEndpoint(with currentUserId: UserId) {
         connectUserInfo.value = UserInfo(id: currentUserId)
-        webSocketConnectEndpoint.value = .webSocketConnect()
+        webSocketConnectEndpoint.value = .connect()
     }
 
     private func sendWebSocketAuthFrame() {
