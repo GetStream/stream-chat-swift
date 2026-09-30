@@ -223,7 +223,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.connectUserInfo.value?.id, tokenUserId)
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(.webSocketConnect())
+            AnyEndpoint(.connect())
         )
     }
 
@@ -240,7 +240,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.connectUserInfo.value?.id, userInfoUserId)
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(.webSocketConnect())
+            AnyEndpoint(.connect())
         )
     }
 
@@ -252,7 +252,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.connectUserInfo.value?.id, userId)
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(.webSocketConnect())
+            AnyEndpoint(.connect())
         )
     }
 

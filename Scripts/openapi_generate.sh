@@ -15,6 +15,7 @@ allowed_endpoints=(
     ban
     blockUsers
     castPollVote
+    connect
     createDevice
     createDraft
     createGuest
@@ -123,7 +124,6 @@ allowed_models=(
   ChannelOwnCapability
   ChannelResponse
   ChannelStateResponse
-  ConnectUserDetailsRequest
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
@@ -138,7 +138,6 @@ allowed_models=(
   DeleteMessageResponse
   DeleteReactionResponse
   DeliveredMessagePayload
-  DeliveryReceiptsResponse
   DeviceResponse
   DraftPayloadResponse
   DraftResponse
@@ -197,7 +196,6 @@ allowed_models=(
   PollVoteResponse
   PollVoteResponseData
   PollVotesResponse
-  PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
   QueryBannedUsersPayload
@@ -218,7 +216,6 @@ allowed_models=(
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
-  ReadReceiptsResponse
   ReadStateResponse
   ReminderResponseData
   RemoveUserGroupMembersRequest
@@ -244,7 +241,6 @@ allowed_models=(
   TranslateMessageResponse
   TruncateChannelRequest
   TruncateChannelResponse
-  TypingIndicatorsResponse
   UnblockUsersRequest
   UnblockUsersResponse
   UnmuteChannelRequest
@@ -284,7 +280,6 @@ allowed_models=(
   UserResponse
   VoteData
   WrappedUnreadCountsResponse
-  WSAuthMessage
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
@@ -483,21 +478,15 @@ codable_models=(
   AttachmentActionPayload
   AttachmentFieldPayload
   ChannelCapability
-  ConnectUserDetailsRequest
-  DeliveryReceiptsPrivacySettings
   Device
   GiphyImageData
   GiphyImages
   MemberInfoPayload
   MemberUserRequest
   MessageAttachmentPayload
-  ReadReceiptsPrivacySettings
   Role
   SortParamRequest
-  TypingIndicatorPrivacySettings
   UserPayload
-  UserPrivacySettings
-  WSAuthMessage
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -788,10 +777,7 @@ rename_generated ReminderResponseData ReminderPayload
 rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated UnmuteResponse UnmuteUsersResponse
 rename_generated UserMuteResponse MutedUserPayload
-rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
-rename_generated PrivacySettingsResponse UserPrivacySettings
-rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
-rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
+rename_generated_type PrivacySettingsResponse UserPrivacySettings
 rename_generated ThreadParticipant ThreadParticipantPayload
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
@@ -929,10 +915,6 @@ make_model_mutable() {
     -e 's/^    let /    var /' \
     "$file"
 }
-make_model_mutable DeliveryReceiptsPrivacySettings
-make_model_mutable ReadReceiptsPrivacySettings
-make_model_mutable TypingIndicatorPrivacySettings
-make_model_mutable UserPrivacySettings
 
 # 4c. Expose selected generated models as public API. The type and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -949,13 +931,10 @@ publicize_model() {
 }
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
-publicize_model DeliveryReceiptsPrivacySettings
 publicize_model Device
 publicize_model PushPreference
-publicize_model ReadReceiptsPrivacySettings
 publicize_model Role
 publicize_model SharedLocation
-publicize_model TypingIndicatorPrivacySettings
 publicize_model UnmuteUsersResponse
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType
@@ -963,7 +942,6 @@ publicize_model UnreadThread
 publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
-publicize_model UserPrivacySettings
 
 # Expose a generated RawRepresentable class as public API. Unlike publicize_model, the
 #     init must be public too — it is the RawRepresentable requirement — along with every
@@ -1023,9 +1001,6 @@ publicize_init() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   sed -i '' -E 's/^    init\(/    public init(/' "$file"
 }
-publicize_init DeliveryReceiptsPrivacySettings
-publicize_init ReadReceiptsPrivacySettings
-publicize_init TypingIndicatorPrivacySettings
 
 # Give a generated memberwise init parameter a default value, restoring one the
 #     hand-written public init had.
@@ -1036,9 +1011,6 @@ default_init_parameter() {
     s/([(,]\s*)\Q$p\E: ([^,)\n=]+)(?=[,)])/${1}$p: $2 = $d/;
   ' "$file"
 }
-default_init_parameter DeliveryReceiptsPrivacySettings enabled true
-default_init_parameter ReadReceiptsPrivacySettings enabled true
-default_init_parameter TypingIndicatorPrivacySettings enabled true
 
 # 4d. Keep only the coding direction each internal model needs.
 # Required because OpenAPI generator emits all models with Codable conformance

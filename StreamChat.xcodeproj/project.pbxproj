@@ -777,7 +777,6 @@
 				StreamChatTests/APIClient/Endpoints/RoleEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/SyncEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/UserGroupEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/WebSocketConnectEndpoint_Tests.swift,
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
 				StreamChatTests/APIClient/RequestDecoder_Tests.swift,
 				StreamChatTests/APIClient/RequestEncoder_Tests.swift,
@@ -5343,7 +5342,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.10.1;
+				minimumVersion = 0.11.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
