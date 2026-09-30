@@ -17,6 +17,8 @@ enum WSEvent: Decodable {
     case typeChannelTruncatedEvent(ChannelTruncatedEventDTO)
     case typeChannelUpdatedEvent(ChannelUpdatedEventDTO)
     case typeChannelVisibleEvent(ChannelVisibleEventDTO)
+    case typeConnectionErrorEvent(ConnectionErrorEventDTO)
+    case typeConnectedEvent(ConnectedEventDTO)
     case typeDraftDeletedEvent(DraftDeletedEventDTO)
     case typeDraftUpdatedEvent(DraftUpdatedEventDTO)
     case typeHealthCheckEvent(HealthCheckEventDTO)
@@ -81,6 +83,10 @@ enum WSEvent: Decodable {
         case .typeChannelUpdatedEvent(let value):
             return value.type
         case .typeChannelVisibleEvent(let value):
+            return value.type
+        case .typeConnectionErrorEvent(let value):
+            return value.type
+        case .typeConnectedEvent(let value):
             return value.type
         case .typeDraftDeletedEvent(let value):
             return value.type
@@ -194,6 +200,10 @@ enum WSEvent: Decodable {
         case .typeChannelUpdatedEvent(let value):
             return value
         case .typeChannelVisibleEvent(let value):
+            return value
+        case .typeConnectionErrorEvent(let value):
+            return value
+        case .typeConnectedEvent(let value):
             return value
         case .typeDraftDeletedEvent(let value):
             return value
@@ -317,6 +327,12 @@ enum WSEvent: Decodable {
         } else if dto.type == "channel.visible" {
             let value = try container.decode(ChannelVisibleEventDTO.self)
             self = .typeChannelVisibleEvent(value)
+        } else if dto.type == "connection.error" {
+            let value = try container.decode(ConnectionErrorEventDTO.self)
+            self = .typeConnectionErrorEvent(value)
+        } else if dto.type == "connection.ok" {
+            let value = try container.decode(ConnectedEventDTO.self)
+            self = .typeConnectedEvent(value)
         } else if dto.type == "draft.deleted" {
             let value = try container.decode(DraftDeletedEventDTO.self)
             self = .typeDraftDeletedEvent(value)

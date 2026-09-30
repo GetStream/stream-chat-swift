@@ -65,12 +65,19 @@ final class WSEventCommonData {
 
 extension WSEvent: @unchecked Sendable, Event {
     func healthcheck() -> HealthCheckInfo? {
-        guard case .typeHealthCheckEvent(let event) = self else { return nil }
-        return HealthCheckInfo(connectionId: event.connectionId)
+        switch self {
+        case .typeConnectedEvent(let event):
+            return HealthCheckInfo(connectionId: event.connectionId)
+        case .typeHealthCheckEvent(let event):
+            return HealthCheckInfo(connectionId: event.connectionId)
+        default:
+            return nil
+        }
     }
 
     func error() -> (any Error)? {
-        nil
+        guard case .typeConnectionErrorEvent(let event) = self else { return nil }
+        return event.error
     }
 
     var createdAt: Date { commonData.createdAt }
@@ -93,6 +100,10 @@ extension WSEvent: @unchecked Sendable, Event {
             return .init(createdAt: event.createdAt, channel: event.channel, channelMessageCount: event.channelMessageCount, message: event.message, user: event.user)
         case .typeChannelVisibleEvent(let event):
             return .init(createdAt: event.createdAt, channel: event.channel, cid: event.cid, user: event.user)
+        case .typeConnectionErrorEvent(let event):
+            return .init(createdAt: event.createdAt)
+        case .typeConnectedEvent(let event):
+            return .init(createdAt: event.createdAt, currentUser: event.me)
         case .typeDraftDeletedEvent(let event):
             return .init(createdAt: event.createdAt, cid: event.cid)
         case .typeDraftUpdatedEvent(let event):
