@@ -110,28 +110,27 @@ final class EventDecoder_Tests: XCTestCase {
         let data = try JSONSerialization.data(withJSONObject: json)
 
         // Decode an event.
-        let event = try XCTUnwrap(try eventDecoder.decode(from: data) as? ConnectedEvent)
+        let event = try XCTUnwrap(try eventDecoder.decode(from: data) as? WSEvent)
+        guard case .typeConnectedEvent(let connectedEvent) = event else {
+            return XCTFail("Expected a connection.ok event, got \(event.type)")
+        }
 
         // Assert event has correct fields.
-        XCTAssertEqual(event.connectionId, connectionId)
+        XCTAssertEqual(connectedEvent.connectionId, connectionId)
         XCTAssertEqual(event.healthcheck()?.connectionId, connectionId)
-        XCTAssertNotNil(event.me)
+        XCTAssertNotNil(event.commonData.currentUser)
     }
 
-    func test_decode_whenConnectionOkComesWithoutMe_returnsConnectedEvent() throws {
-        // Create connection.ok event JSON without the current user.
+    func test_connectedEvent_toDomainEvent_returnsHealthCheckEvent() throws {
         let connectionId: String = .unique
-        var json = [String: Any].healthCheckEvent(userId: .unique, connectionId: connectionId)
-        json["type"] = EventType.connectionOk.rawValue
-        json.removeValue(forKey: "me")
-        let data = try JSONSerialization.data(withJSONObject: json)
+        let connectedEvent = ConnectedEventDTO(connectionId: connectionId, createdAt: .unique, me: .dummy(userId: .unique))
+        let database = DatabaseContainer_Spy()
 
-        // Decode an event.
-        let event = try XCTUnwrap(try eventDecoder.decode(from: data) as? ConnectedEvent)
+        let domainConnectionId = try database.readSynchronously { session in
+            (connectedEvent.toDomainEvent(session: session) as? HealthCheckEvent)?.connectionId
+        }
 
-        // Assert event has correct fields.
-        XCTAssertEqual(event.healthcheck()?.connectionId, connectionId)
-        XCTAssertNil(event.me)
+        XCTAssertEqual(domainConnectionId, connectionId)
     }
 
     func test_decode_whenConnectionErrorComes_returnsConnectionErrorEvent() throws {
@@ -153,10 +152,15 @@ final class EventDecoder_Tests: XCTestCase {
         """.data(using: .utf8)!
 
         // Decode an event.
-        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ConnectionErrorEvent)
+        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? WSEvent)
+        guard case .typeConnectionErrorEvent = event else {
+            return XCTFail("Expected a connection.error event, got \(event.type)")
+        }
 
         // Assert the error is available.
-        XCTAssertNotNil(event.error())
+        let error = try XCTUnwrap(event.error() as? APIError)
+        XCTAssertEqual(error.code, 40)
+        XCTAssertEqual(error.message, "token expired")
     }
 
     // MARK: Custom events

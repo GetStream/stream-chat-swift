@@ -300,6 +300,8 @@ allowed_events=(
   ChannelTruncatedEvent
   ChannelUpdatedEvent
   ChannelVisibleEvent
+  ConnectedEvent
+  ConnectionErrorEvent
   DraftDeletedEvent
   DraftUpdatedEvent
   HealthCheckEvent
