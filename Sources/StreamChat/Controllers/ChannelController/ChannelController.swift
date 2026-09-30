@@ -2074,6 +2074,13 @@ private extension ChatChannelController {
             channelQuery: channelQuery,
             isInRecoveryMode: isInRecoveryMode,
             onChannelCreated: channelCreatedCallback,
+            onLocalCacheReady: { [weak self] in
+                // Observers must start only after stale mid-page messages are dropped,
+                // and on the main thread — `update` no longer blocks there itself.
+                guard let self, let cid = self.cid else { return }
+                self.setupEventObservers(for: cid)
+                self.setLocalStateBasedOnError(self.startDatabaseObservers())
+            },
             completion: { result in
                 switch result {
                 case .success:
@@ -2085,13 +2092,6 @@ private extension ChatChannelController {
                 }
             }
         )
-
-        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
-        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
-        if let cid = cid {
-            setupEventObservers(for: cid)
-            setLocalStateBasedOnError(startDatabaseObservers())
-        }
     }
 
     /// Sets new cid of the query if necessary, and resets event and database observers.

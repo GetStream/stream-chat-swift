@@ -343,14 +343,18 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     override func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
-        onChannelCreated: ((ChannelId) -> Void)? = nil,
+        onChannelCreated: (@Sendable (ChannelId) -> Void)? = nil,
+        onLocalCacheReady: (@Sendable () -> Void)? = nil,
         actions: ChannelUpdateActions? = nil,
-        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
         update_onChannelCreated = onChannelCreated
         update_completion = completion
         update_callCount += 1
+        // The real updater calls this after cache cleanup and before the request.
+        // The mock skips both, so observers still start for controller tests.
+        onLocalCacheReady?()
     }
 
     override func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
