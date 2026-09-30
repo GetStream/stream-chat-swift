@@ -702,17 +702,22 @@ prune_wsevent_cases
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   local p
+  local had_deprecated=false
+  grep -q '^ *private let _' "$file" && had_deprecated=true
   for p in "${@:2}"; do
     awk -v p="$p" '
       function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
       { s = $0; sub(/^[[:space:]]+/, "", s) }
       s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
       s ~ "^let " p ": "                 { n = 0; next }
-      s ~ "^self\\." p " = " p "$"       { next }
+      s ~ "^var " p ": .*\\{ _" p " \\}$" { n = 0; next }
+      s ~ "^private let _" p ": "        { next }
+      s ~ "^self\\._?" p " = " p "$"     { next }
+      s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
       s ~ "^case " p "( =|$)"            { next }
-      s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
-      s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
-      s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
+      s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
+      s ~ "^hasher\\.combine\\(_?" p "\\)$"      { next }
+      s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
       s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
       { flush(); print }
     ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
@@ -720,6 +725,9 @@ remove_property() {
     perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
     perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
   done
+  if $had_deprecated && ! grep -q '^ *private let _' "$file"; then
+    perl -0777 -pi -e 's/\n*\h*init\(from decoder: Decoder\) throws \{\n.*?\n\h*\}\n\n\h*func encode\(to encoder: Encoder\) throws \{\n.*?\n\h*\}\n/\n/s' "$file"
+  fi
 }
 
 for model in "${allowed_models[@]}"; do
@@ -983,6 +991,7 @@ remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCoun
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property CreateDeviceRequest hardwareId voipToken
 remove_property CreatePollRequestBody id isClosed team
+remove_property CreateReminderRequest expiresAt
 remove_property DraftDeletedEventDTO custom parentId receivedAt
 remove_property DraftMessagePayload html mml
 remove_property DraftUpdatedEventDTO custom parentId receivedAt
@@ -1057,7 +1066,7 @@ remove_property ReactionUpdatedEventDTO channelCustom channelId channelMemberCou
 remove_property ReminderCreatedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
-remove_property ReminderPayload user
+remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
@@ -1076,6 +1085,7 @@ remove_property TypingStopEventDTO channelId channelType custom receivedAt
 remove_property UnmuteChannelRequest expiration
 remove_property UpdateChannelRequest cooldown removeFilterTags skipPush
 remove_property UpdateMessagePartialRequest skipEnrichUrl skipPush
+remove_property UpdateReminderRequest expiresAt
 remove_property UpdateUsersResponse membershipDeletionTaskId
 remove_property UploadChannelFileResponse moderationAction
 remove_property UploadChannelResponse moderationAction uploadSizes
@@ -1102,18 +1112,6 @@ remove_type() {
 remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
-
-# Give a generated model mutable stored properties, so it can replace a hand-written
-#     public type whose properties were var. Mutable state rules out checked Sendable,
-#     hence the relaxed conformance. Runs before publicize_model, which anchors on the
-#     resulting var lines.
-make_model_mutable() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E \
-    -e 's/^(final class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
-    -e 's/^    let /    var /' \
-    "$file"
-}
 
 # 4c. Expose selected generated models as public API. The type and its stored
 #     properties become public, along with the generated Hashable conformance
@@ -1163,53 +1161,6 @@ publicize_raw_representable ChannelCapability
 publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
 publicize_raw_representable TranslateMessageRequest TranslationLanguage
-
-# Mark a generated RawRepresentable value as deprecated while keeping its legacy
-# raw value available. Fail if the generated declaration changes so the annotation
-# cannot silently disappear from the public API.
-deprecate_raw_representable_value() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  local type="$2"
-  local value="$3"
-  local renamed="$4"
-  if ! awk -v t="$type" -v v="$value" -v r="$renamed" '
-    $0 ~ "^public final class " t ":" { inside = 1 }
-    inside && $0 ~ "^    public static let " v " = " {
-      print "    @available(*, deprecated, renamed: \"" r "\")"
-      matches++
-    }
-    { print }
-    inside && /^}$/ { inside = 0 }
-    END {
-      if (matches != 1) {
-        print "Expected exactly one " t "." v " declaration, found " matches > "/dev/stderr"
-        exit 1
-      }
-    }
-  ' "$file" > "$file.tmp"; then
-    rm -f "$file.tmp"
-    return 1
-  fi
-  mv "$file.tmp" "$file"
-}
-deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
-
-# Expose a generated model's memberwise init, for models whose hand-written public
-#     counterpart had a public init.
-publicize_init() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E 's/^    init\(/    public init(/' "$file"
-}
-
-# Give a generated memberwise init parameter a default value, restoring one the
-#     hand-written public init had.
-default_init_parameter() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  P="$2" D="$3" perl -0777 -pi -e '
-    my ($p, $d) = ($ENV{P}, $ENV{D});
-    s/([(,]\s*)\Q$p\E: ([^,)\n=]+)(?=[,)])/${1}$p: $2 = $d/;
-  ' "$file"
-}
 
 # 4d. Keep only the coding direction each internal model needs.
 # Required because OpenAPI generator emits all models with Codable conformance

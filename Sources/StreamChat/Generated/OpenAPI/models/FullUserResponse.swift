@@ -27,7 +27,15 @@ final class FullUserResponse: Sendable, Decodable {
     let teamsRole: [String: String]?
     let totalUnreadCount: Int
     let unreadChannels: Int
-    let unreadCount: Int
+    /// Deprecated: Use total_unread_count instead.
+    @available(
+        *,
+        deprecated,
+        message: "Use total_unread_count instead.",
+        renamed: "totalUnreadCount"
+    )
+    var unreadCount: Int { _unreadCount }
+    private let _unreadCount: Int
     let unreadThreads: Int
     let updatedAt: Date
 
@@ -80,7 +88,7 @@ final class FullUserResponse: Sendable, Decodable {
         self.teamsRole = teamsRole
         self.totalUnreadCount = totalUnreadCount
         self.unreadChannels = unreadChannels
-        self.unreadCount = unreadCount
+        self._unreadCount = unreadCount
         self.unreadThreads = unreadThreads
         self.updatedAt = updatedAt
     }
@@ -111,5 +119,66 @@ final class FullUserResponse: Sendable, Decodable {
         case unreadCount = "unread_count"
         case unreadThreads = "unread_threads"
         case updatedAt = "updated_at"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        self.banned = try container.decode(Bool.self, forKey: .banned)
+        self.blockedUserIds = try container.decode([String].self, forKey: .blockedUserIds)
+        self.channelMutes = try container.decode([MutedChannelPayload].self, forKey: .channelMutes)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
+        self.devices = try container.decode([Device].self, forKey: .devices)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.image = try container.decodeIfPresent(String.self, forKey: .image)
+        self.invisible = try container.decode(Bool.self, forKey: .invisible)
+        self.language = try container.decode(String.self, forKey: .language)
+        self.lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
+        self.mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.online = try container.decode(Bool.self, forKey: .online)
+        self.privacySettings = try container.decodeIfPresent(
+            UserPrivacySettings.self,
+            forKey: .privacySettings
+        )
+        self.role = try container.decode(String.self, forKey: .role)
+        self.teams = try container.decode([String].self, forKey: .teams)
+        self.teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
+        self.totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+        self.unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+        self._unreadCount = try container.decode(Int.self, forKey: .unreadCount)
+        self.unreadThreads = try container.decode(Int.self, forKey: .unreadThreads)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(avgResponseTime, forKey: .avgResponseTime)
+        try container.encode(banned, forKey: .banned)
+        try container.encode(blockedUserIds, forKey: .blockedUserIds)
+        try container.encode(channelMutes, forKey: .channelMutes)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(custom, forKey: .custom)
+        try container.encodeIfPresent(deactivatedAt, forKey: .deactivatedAt)
+        try container.encode(devices, forKey: .devices)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(image, forKey: .image)
+        try container.encode(invisible, forKey: .invisible)
+        try container.encode(language, forKey: .language)
+        try container.encodeIfPresent(lastActive, forKey: .lastActive)
+        try container.encode(mutes, forKey: .mutes)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encode(online, forKey: .online)
+        try container.encodeIfPresent(privacySettings, forKey: .privacySettings)
+        try container.encode(role, forKey: .role)
+        try container.encode(teams, forKey: .teams)
+        try container.encodeIfPresent(teamsRole, forKey: .teamsRole)
+        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
+        try container.encode(unreadChannels, forKey: .unreadChannels)
+        try container.encode(_unreadCount, forKey: .unreadCount)
+        try container.encode(unreadThreads, forKey: .unreadThreads)
+        try container.encode(updatedAt, forKey: .updatedAt)
     }
 }
