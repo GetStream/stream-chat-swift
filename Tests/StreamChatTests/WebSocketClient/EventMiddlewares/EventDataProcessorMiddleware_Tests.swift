@@ -281,13 +281,20 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
 
     func test_connectedEvent_savesCurrentUser() throws {
         let currentUserId = UserId.unique
-        let connectedEvent = ConnectedEvent(connectionId: .unique, me: .dummy(userId: currentUserId))
+        let connectedEvent = ConnectedEventDTO(connectionId: .unique, createdAt: .unique, me: .dummy(userId: currentUserId))
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: connectedEvent, session: database.viewContext)
+        let middleware = self.middleware!
+        nonisolated(unsafe) var outputEvent: Event?
+        try database.writeSynchronously { session in
+            outputEvent = middleware.handle(event: connectedEvent, wsEvent: .typeConnectedEvent(connectedEvent), session: session)
+        }
 
         // Assert the current user is saved and the event is forwarded
-        XCTAssertEqual(database.viewContext.currentUser?.user.id, currentUserId)
-        XCTAssertTrue(outputEvent is ConnectedEvent)
+        let savedUserId = try database.readSynchronously { session in
+            session.currentUser?.user.id
+        }
+        XCTAssertEqual(savedUserId, currentUserId)
+        XCTAssertTrue(outputEvent is ConnectedEventDTO)
     }
 }
