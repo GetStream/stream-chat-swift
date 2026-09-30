@@ -136,7 +136,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                 )
             ],
             unreadCount: .dummy,
-            privacySettings: .init(readReceipts: .init(enabled: false), typingIndicators: .init(enabled: false)),
+            privacySettings: .init(typingIndicators: .init(enabled: false), readReceipts: .init(enabled: false)),
             blockedUserIds: [.unique]
         )
 

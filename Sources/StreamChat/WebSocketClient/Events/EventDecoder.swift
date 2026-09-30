@@ -15,11 +15,8 @@ struct EventDecoder {
         do {
             return try decoder.decode(WSEvent.self, from: data)
         } catch {
-            // `connection.ok` and `connection.error` are not part of the generated `WSEvent`, and custom
-            // event types are surfaced through the public unknown event types. Known event types which
+            // Custom event types are surfaced through the public unknown event types. Known event types which
             // failed to decode must not be reported as unknown events, otherwise the failure goes unnoticed.
-            if let event = try? decoder.decode(ConnectedEvent.self, from: data) { return event }
-            if let event = try? decoder.decode(ConnectionErrorEvent.self, from: data) { return event }
             let type = (try? decoder.decode(EventTypeEnvelope.self, from: data))?.type ?? "unknown"
             if type == EventType.channelCreated.rawValue { throw ClientError.IgnoredEventType() }
             if isUnknownEventType(error), let event = try? decodeUnknownEvent(from: data) { return event }

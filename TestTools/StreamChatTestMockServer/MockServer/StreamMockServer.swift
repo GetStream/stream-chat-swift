@@ -16,7 +16,7 @@ public final class StreamMockServer {
 
     public init(driverPort: String, testName: String) {
         let driverUrl = "http://localhost:\(driverPort)"
-        let response = getRequest(baseUrl: driverUrl, endpoint: "start/\(testName)")
+        let response = getRequest(baseUrl: driverUrl, endpoint: "start/\(testName)?api_version=v2")
         XCTAssertEqual(200, response.statusCode, "Failed connecting to mock server.")
 
         let mockServerPort = response.body
