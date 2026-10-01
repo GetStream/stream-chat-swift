@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
+- Fix the main thread freezing when opening a channel while stale mid-page messages are cleared [#4144](https://github.com/GetStream/stream-chat-swift/issues/4144)
 - Fix quote replies to quote replies and messages with new reactions sometimes disappearing from the message list [#4302](https://github.com/GetStream/stream-chat-swift/pull/4302)
 
 ### 🔄 Changed
