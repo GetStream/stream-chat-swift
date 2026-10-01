@@ -1,12 +1,16 @@
 sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
+  - ./Generated/OpenAPI/models/ChannelStateResponse.swift
   - ./Generated/OpenAPI/models/DraftMessagePayload.swift
+  - ./Generated/OpenAPI/models/GroupedChannelsBucket.swift
   - ./Generated/OpenAPI/models/MemberInfoPayload.swift
   - ./Generated/OpenAPI/models/MemberPayload.swift
   - ./Generated/OpenAPI/models/MessageAttachmentPayload.swift
   - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/MessageResponse.swift
   - ./Generated/OpenAPI/models/OwnUserResponse.swift
+  - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
+  - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
   - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
@@ -17,6 +21,41 @@ templates:
 output:
   ./Generated/OpenAPI/OpenAPIDecoders.generated.swift
 args:
+  # Non-optional properties which fall back to a default when the key is missing or null.
+  defaultValues:
+    ChannelStateResponse:
+      threads: "[]"
+    MemberInfoPayload:
+      notificationsMuted: "false"
+    MessageResponse:
+      mentionedChannel: "false"
+      mentionedHere: "false"
+      pinned: "false"
+      reactionScores: "[:]"
+      restrictedVisibility: "[]"
+      shadowed: "false"
+      silent: "false"
+    SearchResultMessage:
+      mentionedChannel: "false"
+      mentionedHere: "false"
+      pinned: "false"
+      reactionScores: "[:]"
+      restrictedVisibility: "[]"
+      shadowed: "false"
+      silent: "false"
+    ThreadStateResponse:
+      latestReplies: "[]"
+  # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
+  lossyArrays:
+    ChannelDetailPayload: [members]
+    ChannelStateResponse: [activeLiveLocations, members, messages, pendingMessages, pinnedMessages, read, threads, watchers]
+    GroupedChannelsBucket: [channels]
+    MessageResponse: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    OwnUserResponse: [channelMutes, devices]
+    QueryChannelsResponse: [channels]
+    QueryThreadsResponse: [threads]
+    SearchResultMessage: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    ThreadStateResponse: [latestReplies, read, threadParticipants]
   # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
   # declares, so those have to be excluded too when rebuilding the extra data.
   v1CodingKeys:

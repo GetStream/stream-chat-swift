@@ -1,3 +1,4 @@
+{# A stored `_x` is the generator's backing property for a deprecated `x`: it decodes from the `.x` CodingKeys case and lossyArrays/defaultValues refer to it as `x`. restore_nonoptional_property keeps a `._x` case instead, so align its models before adding them to sources. #}
 {% for type in types.classes %}
 // sourcery:decoder:{{ type.name }}
 {% for variable in type.storedVariables where variable.name == "custom" %}
@@ -10,6 +11,7 @@
     {% if not type.isFinal %}required {% endif %}init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 {% for variable in type.storedVariables %}
+{% set key %}{{ variable.name|replace:"_","" }}{% endset %}
 {% if variable.name == "custom" %}
         if let decoded = try container.decodeIfPresent({{ variable.typeName.name }}.self, forKey: .custom) {
             custom = decoded
@@ -18,10 +20,20 @@
             flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
             custom = flattened
         }
+{% elif key in argument.lossyArrays[type.name] %}
+{% if argument.defaultValues[type.name][key] %}
+        {{ variable.name }} = try container.decodeArrayIfPresentIgnoringFailures({{ variable.typeName.name }}.self, forKey: .{{ key }}) ?? {{ argument.defaultValues[type.name][key] }}
 {% elif variable.isOptional %}
-        {{ variable.name }} = try container.decodeIfPresent({{ variable.typeName.unwrappedTypeName }}.self, forKey: .{{ variable.name }})
+        {{ variable.name }} = try container.decodeArrayIfPresentIgnoringFailures({{ variable.typeName.unwrappedTypeName }}.self, forKey: .{{ key }})
 {% else %}
-        {{ variable.name }} = try container.decode({{ variable.typeName.name }}.self, forKey: .{{ variable.name }})
+        {{ variable.name }} = try container.decodeArrayIgnoringFailures({{ variable.typeName.name }}.self, forKey: .{{ key }})
+{% endif %}
+{% elif argument.defaultValues[type.name][key] %}
+        {{ variable.name }} = try container.decodeIfPresent({{ variable.typeName.name }}.self, forKey: .{{ key }}) ?? {{ argument.defaultValues[type.name][key] }}
+{% elif variable.isOptional %}
+        {{ variable.name }} = try container.decodeIfPresent({{ variable.typeName.unwrappedTypeName }}.self, forKey: .{{ key }})
+{% else %}
+        {{ variable.name }} = try container.decode({{ variable.typeName.name }}.self, forKey: .{{ key }})
 {% endif %}
 {% endfor %}
     }
