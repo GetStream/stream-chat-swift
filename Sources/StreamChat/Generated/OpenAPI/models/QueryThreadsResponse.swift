@@ -21,4 +21,14 @@ final class QueryThreadsResponse: Sendable, Decodable {
         case prev
         case threads
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        next = try container.decodeIfPresent(String.self, forKey: .next)
+        prev = try container.decodeIfPresent(String.self, forKey: .prev)
+        threads = try container.decodeArrayIgnoringFailures(
+            [ThreadStateResponse].self,
+            forKey: .threads
+        )
+    }
 }

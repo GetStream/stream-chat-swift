@@ -23,4 +23,11 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
         case custom
         case notificationsMuted = "notifications_muted"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        channelRole = try container.decode(String.self, forKey: .channelRole)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
+    }
 }
