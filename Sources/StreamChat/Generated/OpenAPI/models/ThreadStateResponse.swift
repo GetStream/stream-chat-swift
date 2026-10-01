@@ -130,13 +130,19 @@ final class ThreadStateResponse: Sendable, Decodable {
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
-        latestReplies = try container.decode([MessageResponse].self, forKey: .latestReplies)
+        latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
+            [MessageResponse].self,
+            forKey: .latestReplies
+        ) ?? []
         parentMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .parentMessage)
         parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
         participantCount = try container.decode(Int.self, forKey: .participantCount)
-        read = try container.decodeIfPresent([ReadStateResponse].self, forKey: .read)
+        read = try container.decodeArrayIfPresentIgnoringFailures(
+            [ReadStateResponse].self,
+            forKey: .read
+        )
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        threadParticipants = try container.decodeIfPresent(
+        threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadParticipantPayload].self,
             forKey: .threadParticipants
         )
