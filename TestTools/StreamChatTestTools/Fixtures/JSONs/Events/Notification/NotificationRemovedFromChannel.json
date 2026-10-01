@@ -4,7 +4,6 @@
   "channel_id": "91DC91CC-0",
   "channel_type": "messaging",
   "channel": {
-    "custom": {},
     "id": "91DC91CC-0",
     "type": "messaging",
     "cid": "messaging:91DC91CC-0",
@@ -17,12 +16,10 @@
     "members": [
       {
         "notifications_muted": false,
-        "custom": {},
         "user_id": "leia_organa",
         "user": {
           "language": "",
           "teams": [],
-          "custom": {},
           "id": "leia_organa",
           "role": "user",
           "created_at": "2020-12-07T11:37:33.78879Z",
@@ -60,7 +57,6 @@
   },
   "member": {
     "notifications_muted": false,
-    "custom": {},
     "user_id": "leia_organa",
     "created_at": "0001-01-01T00:00:00Z",
     "updated_at": "0001-01-01T00:00:00Z",
@@ -71,7 +67,6 @@
   "user": {
     "language": "",
     "teams": [],
-    "custom": {},
     "id": "leia_organa",
     "role": "user",
     "created_at": "2020-12-07T11:37:33.78879Z",

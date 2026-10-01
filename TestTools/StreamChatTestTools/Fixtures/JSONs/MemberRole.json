@@ -1,6 +1,5 @@
 {
   "notifications_muted" : false,
-  "custom" : {},
   "created_at" : "2020-06-05T12:53:09.862721Z",
   "updated_at" : "2020-06-05T12:53:09.862721Z",
   "banned" : true,
@@ -11,7 +10,6 @@
   "user" : {
     "language" : "",
     "teams" : [],
-    "custom" : {},
     "id" : "broken-waterfall-5",
     "banned" : false,
     "unread_channels" : 1,

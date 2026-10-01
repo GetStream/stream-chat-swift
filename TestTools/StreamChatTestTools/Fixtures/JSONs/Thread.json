@@ -35,7 +35,6 @@
     "disabled": false,
     "members": [
       {
-        "custom": {},
         "user_id": "han_solo",
         "user": {
           "teams": [],
@@ -65,7 +64,6 @@
         "notifications_muted": false
       },
       {
-        "custom": {},
         "user_id": "r2-d2",
         "user": {
           "teams": [],
@@ -165,7 +163,6 @@
   },
   "parent_message_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
   "parent_message": {
-    "custom": {},
     "mentioned_channel": false,
     "mentioned_here": false,
     "restricted_visibility": [],
@@ -176,7 +173,6 @@
     "user": {
       "language": "",
       "teams": [],
-      "custom": {},
       "id": "tommaso-98",
       "role": "user",
       "created_at": "2023-09-27T13:21:25.781323Z",
@@ -309,7 +305,6 @@
       "user": {
         "language": "",
         "teams": [],
-        "custom": {},
         "id": "tommaso-98",
         "role": "user",
         "created_at": "2023-09-27T13:21:25.781323Z",
@@ -357,7 +352,6 @@
   "title": "msg: 24",
   "latest_replies": [
     {
-      "custom": {},
       "mentioned_channel": false,
       "mentioned_here": false,
       "restricted_visibility": [],
@@ -403,7 +397,6 @@
       "pin_expires": null
     },
     {
-      "custom": {},
       "mentioned_channel": false,
       "mentioned_here": false,
       "restricted_visibility": [],
@@ -476,7 +469,6 @@
       "user": {
         "language": "",
         "teams": [],
-        "custom": {},
         "id": "tommaso-98",
         "role": "user",
         "created_at": "2023-09-27T13:21:25.781323Z",

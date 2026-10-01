@@ -23,7 +23,6 @@
     "type" : "regular",
     "latest_reactions" : [
         {
-            "custom" : {},
             "score" : 1,
             "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
             "created_at" : "2020-08-17T13:15:39.892884Z",
@@ -33,7 +32,6 @@
             "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -60,7 +58,6 @@
     "parent_id": "3294-4c0c-9a62-c9d0928bf733",
     "attachments" : [
         {
-            "custom" : {},
             "type" : "image",
             "fallback" : "IMG_0007.JPG",
             "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8493ab56-a02e-49fb-becf-1a6bbed2ac62.IMG_0007.JPG?ro=0&s=09ace099e749ea6f8902aa4b9a6957eb"
@@ -68,7 +65,6 @@
     ],
     "own_reactions" : [
         {
-            "custom" : {},
             "score" : 1,
             "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
             "created_at" : "2020-08-17T13:15:39.892884Z",
@@ -78,7 +74,6 @@
             "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -105,7 +100,6 @@
     "user" : {
         "language" : "",
         "teams" : [],
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -157,7 +151,6 @@
     "type" : "regular",
     "latest_reactions" : [
         {
-            "custom" : {},
             "score" : 1,
             "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
             "created_at" : "2020-08-17T13:15:39.892884Z",
@@ -167,7 +160,6 @@
             "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -194,7 +186,6 @@
     "parent_id": "3294-4c0c-9a62-c9d0928bf733",
     "attachments" : [
         {
-            "custom" : {},
             "type" : "image",
             "fallback" : "IMG_0007.JPG",
             "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8493ab56-a02e-49fb-becf-1a6bbed2ac62.IMG_0007.JPG?ro=0&s=09ace099e749ea6f8902aa4b9a6957eb"
@@ -202,7 +193,6 @@
     ],
     "own_reactions" : [
         {
-            "custom" : {},
             "score" : 1,
             "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
             "created_at" : "2020-08-17T13:15:39.892884Z",
@@ -212,7 +202,6 @@
             "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -239,7 +228,6 @@
     "user" : {
         "language" : "",
         "teams" : [],
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -269,7 +257,6 @@
     "pinned_by": {
         "language" : "",
         "teams" : [],
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {

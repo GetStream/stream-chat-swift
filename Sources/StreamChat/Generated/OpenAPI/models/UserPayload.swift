@@ -94,4 +94,28 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         case teamsRole = "teams_role"
         case updatedAt = "updated_at"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        banned = try container.decode(Bool.self, forKey: .banned)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        id = try container.decode(String.self, forKey: .id)
+        image = try container.decodeIfPresent(String.self, forKey: .image)
+        language = try container.decode(String.self, forKey: .language)
+        lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        online = try container.decode(Bool.self, forKey: .online)
+        revokeTokensIssuedBefore = try container.decodeIfPresent(
+            Date.self,
+            forKey: .revokeTokensIssuedBefore
+        )
+        role = try container.decode(String.self, forKey: .role)
+        teams = try container.decode([String].self, forKey: .teams)
+        teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+    }
 }

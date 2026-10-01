@@ -4,7 +4,6 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-07-21T15:51:47.118059Z",
         "invite_rejected_at" : "2020-07-21T15:51:53.47382Z",
         "updated_at" : "2020-07-21T15:51:53.474505Z",
@@ -18,7 +17,6 @@
         "created_by" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -72,14 +70,12 @@
                 "channel_role" : "channel_member",
                 "notifications_muted" : false,
                 "shadow_banned" : false,
-                "custom" : {},
                 "created_at" : "2020-07-21T15:51:36.166131Z",
                 "user_id" : "steep-moon-9",
                 "updated_at" : "2020-07-21T15:51:36.166131Z",
                 "user" : {
                     "language" : "",
                     "teams" : [],
-                    "custom" : {},
                     "id" : "steep-moon-9",
                     "banned" : false,
                     "unread_channels" : 3,
@@ -102,7 +98,6 @@
                 "channel_role" : "channel_member",
                 "notifications_muted" : false,
                 "shadow_banned" : false,
-                "custom" : {},
                 "created_at" : "2020-07-21T15:51:47.118059Z",
                 "invite_rejected_at" : "2020-07-21T15:51:53.47382Z",
                 "user_id" : "broken-waterfall-5",
@@ -111,7 +106,6 @@
                 "user" : {
                     "language" : "",
                     "teams" : [],
-                    "custom" : {},
                     "id" : "broken-waterfall-5",
                     "banned" : false,
                     "extraData" : {
@@ -143,7 +137,6 @@
     "user" : {
         "language" : "",
         "teams" : [],
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,

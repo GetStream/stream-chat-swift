@@ -3,7 +3,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -35,7 +34,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -64,7 +62,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -96,7 +93,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "jolly-base-0",
@@ -117,7 +113,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -149,7 +144,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "jolly-base-0",
@@ -170,7 +164,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -202,7 +195,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "jolly-base-0",
@@ -223,7 +215,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -253,7 +244,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "wow",
               "title_link" : "https:\/\/giphy.com\/gifs\/nicki-minaj-1Zt3z4uEBPZQY",
               "type" : "giphy",
@@ -268,7 +258,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "jolly-base-0",
@@ -287,7 +276,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -319,7 +307,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "example-user",
@@ -340,7 +327,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -363,7 +349,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "maria.jpg",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8dcd6243-03a0-4aec-8080-0a2e4b6cd5c7.maria.jpg?ro=0&s=a10d6725ce17c84d3127329c514939c2"
@@ -377,7 +362,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "hidden-lake-6",
@@ -398,7 +382,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -430,7 +413,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -456,7 +438,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -488,7 +469,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -514,7 +494,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -547,7 +526,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -576,7 +554,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -599,7 +576,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "IMG_0007.JPG",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/2ed6f367-7400-497b-89fb-7163518be86a.IMG_0007.JPG?ro=0&s=2fe0397ea94fcf2f1b024cf93add3887"
@@ -613,7 +589,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -642,7 +617,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -665,7 +639,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "IMG_0007.JPG",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/459a6431-45ee-4cae-b24e-7fd934dfef0f.IMG_0007.JPG?ro=0&s=60e8d7d236f84fd5e42cd184dcd867f2"
@@ -679,7 +652,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -708,7 +680,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -731,13 +702,11 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "IMG_0004.JPG",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/929adc2b-3adb-44e8-a05d-44db6cc7202b.IMG_0004.JPG?ro=0&s=c7e60f2a93816470e142a6f8dee6bec5"
             },
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "IMG_0007.JPG",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/5c9f3e98-f779-456e-9bd6-8678c2e81fa0.IMG_0007.JPG?ro=0&s=62c3c370051b4c2d6175c6f342d1efc1"
@@ -751,7 +720,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -780,7 +748,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -812,7 +779,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "bitter-cloud-0",
@@ -833,7 +799,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -856,7 +821,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "hd-wallpaper-4.jpg",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/561615f6-4d0f-4768-b41f-ae3c7a057633.hd-wallpaper-4.jpg?ro=0&s=3f89f4e177ee3e1713c126f3905e5c56"
@@ -870,7 +834,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "bitter-cloud-0",
@@ -891,7 +854,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -924,7 +886,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -953,7 +914,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -976,7 +936,6 @@
           "text" : "http:\/\/getstream.io",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "Build Scalable Feeds & Chat apps with powerful APIs and front end components",
               "text" : "Scalable & Fast API for building social networks, activity feeds,activity streams and chat apps.",
               "og_scrape_url" : "http:\/\/getstream.io"
@@ -990,7 +949,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -1019,7 +977,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1051,7 +1008,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "wispy-bird-9",
@@ -1072,7 +1028,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1104,7 +1059,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "wispy-bird-9",
@@ -1125,7 +1079,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1157,7 +1110,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "wispy-bird-9",
@@ -1178,7 +1130,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1210,7 +1161,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "throbbing-salad-6",
@@ -1231,7 +1181,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1254,7 +1203,6 @@
           "text" : "🤐🤐🤐",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "2 Existing user_Pre.jpg",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/102ba84d-82de-4bd3-98d0-841581f34f40.2%20Existing%20user_Pre.jpg?ro=0&s=70840c93f8e733b33c8c5b162288cdba"
@@ -1268,7 +1216,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "throbbing-salad-6",
@@ -1289,7 +1236,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1321,7 +1267,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "aged-moon-3",
@@ -1342,7 +1287,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1365,7 +1309,6 @@
           "text" : "it's a great day in the neighborhood!",
           "attachments" : [
             {
-              "custom" : {},
               "type" : "image",
               "fallback" : "20200606_224446.jpg",
               "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/14cbb3ad-bffa-4bbb-898a-e260b1424162.20200606_224446.jpg?ro=0&s=34035399b918c6a8f6e843efa7477f78"
@@ -1379,7 +1322,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "bitter-cloud-4",
@@ -1400,7 +1342,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:general",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1432,7 +1373,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "white-boat-1",
@@ -1456,7 +1396,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:general",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -1488,7 +1427,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -1521,7 +1459,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "abcusenameinsteadplz",
@@ -1573,7 +1510,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -1599,7 +1535,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "test-user-1",
@@ -1616,7 +1551,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "test-user-2",
@@ -1633,7 +1567,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -1658,14 +1591,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-01-20T19:15:03.911517Z",
           "updated_at" : "2020-01-20T19:15:03.911517Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -1690,14 +1621,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-04T13:36:37.96589Z",
           "updated_at" : "2020-06-04T13:36:37.96589Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "test-user-1",
@@ -1713,14 +1642,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-04T13:36:44.793348Z",
           "updated_at" : "2020-06-04T13:36:44.793348Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "test-user-2",
@@ -1736,14 +1663,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-05T12:55:48.581959Z",
           "updated_at" : "2020-06-05T12:55:48.581959Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -1766,14 +1691,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-01-20T19:15:03.911517Z",
         "updated_at" : "2020-01-20T19:15:03.911517Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -1794,7 +1717,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1826,7 +1748,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "extraData" : {
@@ -1960,7 +1881,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -1992,7 +1912,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "unread_channels" : 4,
@@ -2126,7 +2045,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2151,7 +2069,6 @@
           "type" : "deleted",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7e6ab8dc-18d6-4532-b314-df48af2ef55f",
               "created_at" : "2020-05-12T15:50:07.345385Z",
@@ -2161,7 +2078,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -2174,7 +2090,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7e6ab8dc-18d6-4532-b314-df48af2ef55f",
               "created_at" : "2020-05-12T15:50:06.599483Z",
@@ -2184,7 +2099,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -2197,7 +2111,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7e6ab8dc-18d6-4532-b314-df48af2ef55f",
               "created_at" : "2020-05-12T15:50:05.502106Z",
@@ -2207,7 +2120,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -2220,7 +2132,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7e6ab8dc-18d6-4532-b314-df48af2ef55f",
               "created_at" : "2020-05-12T15:50:04.293748Z",
@@ -2230,7 +2141,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -2256,7 +2166,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "Steveusenameinsteadplz",
@@ -2277,7 +2186,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2310,7 +2218,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -2327,7 +2234,6 @@
           "html" : "<p>hey there<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2357,7 +2263,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "dogs",
               "title_link" : "https:\/\/giphy.com\/gifs\/cool-yeah-drive-KEh5kliRTSVJm",
               "type" : "giphy",
@@ -2372,7 +2277,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -2391,7 +2295,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2415,7 +2318,6 @@
           "text" : "https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU",
           "attachments" : [
             {
-              "custom" : {},
               "og_scrape_url" : "https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU",
               "image_url" : "https:\/\/i.ytimg.com\/vi\/ZXBcwyMUrcU\/maxresdefault.jpg",
               "title" : "The Weeknd - King Of The Fall (Official Video)",
@@ -2435,7 +2337,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -2452,7 +2353,6 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU<\/a><\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2482,7 +2382,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "porn",
               "title_link" : "https:\/\/giphy.com\/gifs\/avenue-q-the-internet-is-for-porn-ddnqQXZ2Gaa08",
               "type" : "giphy",
@@ -2497,7 +2396,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "betausenameinsteadplz",
@@ -2516,7 +2414,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2548,7 +2445,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "foousenameinsteadplz",
@@ -2568,7 +2464,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2600,7 +2495,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "betausenameinsteadplz",
@@ -2621,7 +2515,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2651,7 +2544,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "porn",
               "title_link" : "https:\/\/giphy.com\/gifs\/TJ7hXERD1NmrS",
               "type" : "giphy",
@@ -2666,7 +2558,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "betausenameinsteadplz",
@@ -2685,7 +2576,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_8884",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2717,7 +2607,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -2749,7 +2638,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_8884",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -2781,7 +2669,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -2811,7 +2698,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -2869,7 +2755,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -2897,14 +2782,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2019-12-12T15:41:05.025286Z",
           "updated_at" : "2019-12-12T15:41:05.025286Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -2930,14 +2813,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2019-12-12T15:41:05.025286Z",
         "updated_at" : "2019-12-12T15:41:05.025286Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -2958,7 +2839,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -2990,7 +2870,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3016,7 +2895,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3048,7 +2926,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3074,7 +2951,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3106,7 +2982,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3132,7 +3007,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3164,7 +3038,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3190,7 +3063,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3222,7 +3094,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3248,7 +3119,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3280,7 +3150,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3306,7 +3175,6 @@
           "pinned_by": null
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3339,7 +3207,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3361,7 +3228,6 @@
           "html" : "<p>6<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3394,7 +3260,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3416,7 +3281,6 @@
           "html" : "<p>7<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3449,7 +3313,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3471,7 +3334,6 @@
           "html" : "<p>8<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3504,7 +3366,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3526,7 +3387,6 @@
           "html" : "<p>9<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3559,7 +3419,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3581,7 +3440,6 @@
           "html" : "<p>10<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3614,7 +3472,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3636,7 +3493,6 @@
           "html" : "<p>11<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3669,7 +3525,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3691,7 +3546,6 @@
           "html" : "<p>12<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3724,7 +3578,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3746,7 +3599,6 @@
           "html" : "<p>13<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3779,7 +3631,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3801,7 +3652,6 @@
           "html" : "<p>14<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7487",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -3834,7 +3684,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -3859,7 +3708,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_7487",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -3891,7 +3739,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -3921,7 +3768,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -3979,7 +3825,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4002,7 +3847,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -4030,14 +3874,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-05T12:53:09.862721Z",
           "updated_at" : "2020-06-05T12:53:09.862721Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -4062,14 +3904,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-05T12:56:15.379938Z",
           "updated_at" : "2020-06-05T12:56:15.379938Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4092,14 +3932,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-05T12:53:09.862721Z",
         "updated_at" : "2020-06-05T12:53:09.862721Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -4120,7 +3958,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4153,7 +3990,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4175,7 +4011,6 @@
           "html" : "<p>Hi there!<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4208,7 +4043,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4230,7 +4064,6 @@
           "html" : "<p>Wait what?<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4263,7 +4096,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4285,7 +4117,6 @@
           "html" : "<p>Hi I am<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4318,7 +4149,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4340,7 +4170,6 @@
           "html" : "<p>Hi I am on the road I<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4373,7 +4202,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4395,7 +4223,6 @@
           "html" : "<p>Hi there I’m just leaving work right after work<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4428,7 +4255,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4450,7 +4276,6 @@
           "html" : "<p>The new update has a great<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4483,7 +4308,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4505,7 +4329,6 @@
           "html" : "<p>The first thing that you did<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4538,7 +4361,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4560,7 +4382,6 @@
           "html" : "<p>Hi there I’m just leaving<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4593,7 +4414,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4615,7 +4435,6 @@
           "html" : "<p>The new update has a great update but<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4648,7 +4467,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4670,7 +4488,6 @@
           "html" : "<p>Hi there I’m just wondering how much I<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4703,7 +4520,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4725,7 +4541,6 @@
           "html" : "<p>Hi there I’m just leaving work right after work I’ll text him and see what you <br\/><br\/><br\/>Hi I just wanted<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4758,7 +4573,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4780,7 +4594,6 @@
           "html" : "<p>The first thing you<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4813,7 +4626,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4835,7 +4647,6 @@
           "html" : "<p>Hi there I just finished watching<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4868,7 +4679,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4890,7 +4700,6 @@
           "html" : "<p>The only way I could ever find<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4923,7 +4732,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -4945,7 +4753,6 @@
           "html" : "<p>The new version of this is<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -4978,7 +4785,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5000,7 +4806,6 @@
           "html" : "<p>Hi there I am at home now<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5033,7 +4838,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5055,7 +4859,6 @@
           "html" : "<p>Y<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1751",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5088,7 +4891,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5113,7 +4915,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_1751",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -5145,7 +4946,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -5175,7 +4975,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -5233,7 +5032,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -5259,7 +5057,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5284,14 +5081,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:57:36.664052Z",
           "updated_at" : "2020-06-08T11:57:36.664052Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -5316,14 +5111,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:57:51.276778Z",
           "updated_at" : "2020-06-08T11:57:51.276778Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5346,14 +5139,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-08T11:57:36.664052Z",
         "updated_at" : "2020-06-08T11:57:36.664052Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -5374,7 +5165,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5407,7 +5197,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5429,7 +5218,6 @@
           "html" : "<p>Hi!<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5462,7 +5250,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5484,7 +5271,6 @@
           "html" : "<p>The new version<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5517,7 +5303,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5539,7 +5324,6 @@
           "html" : "<p>The new version of this<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5572,7 +5356,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5594,7 +5377,6 @@
           "html" : "<p>Hi I’m just wondering<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5627,7 +5409,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5649,7 +5430,6 @@
           "html" : "<p>I don’t want you<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5682,7 +5462,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5704,7 +5483,6 @@
           "html" : "<p>1<br\/>2<br\/>3<br\/>4<br\/>5<br\/>6<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5737,7 +5515,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5759,7 +5536,6 @@
           "html" : "<p>The only reason why we are <br\/>Hi there I’m sorry to miss you<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5792,7 +5568,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5814,7 +5589,6 @@
           "html" : "<p>7<br\/>6<br\/>5<br\/>4<br\/>3<br\/>2<br\/>1<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5847,7 +5621,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5869,7 +5642,6 @@
           "html" : "<p>Hi there I’m going home<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5902,7 +5674,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5924,7 +5695,6 @@
           "html" : "<p>The only way I<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -5957,7 +5727,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -5979,7 +5748,6 @@
           "html" : "<p>I don’t think you have<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_5000",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -6012,7 +5780,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6037,7 +5804,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_5000",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -6069,7 +5835,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -6099,7 +5864,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -6157,7 +5921,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -6183,7 +5946,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6208,14 +5970,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:52:39.734117Z",
           "updated_at" : "2020-06-08T11:52:39.734117Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -6240,14 +6000,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:52:55.086408Z",
           "updated_at" : "2020-06-08T11:52:55.086408Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6270,14 +6028,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-08T11:52:39.734117Z",
         "updated_at" : "2020-06-08T11:52:39.734117Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -6298,7 +6054,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_3124",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -6331,7 +6086,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6353,7 +6107,6 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_3124",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -6386,7 +6139,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6408,7 +6160,6 @@
           "html" : "<p>How are you?<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_3124",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -6441,7 +6192,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6466,7 +6216,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_3124",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -6498,7 +6247,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -6527,7 +6275,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -6585,7 +6332,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6608,7 +6354,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -6636,14 +6381,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:51:12.274612Z",
           "updated_at" : "2020-06-08T11:51:12.274612Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -6668,14 +6411,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:51:51.933155Z",
           "updated_at" : "2020-06-08T11:51:51.933155Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -6698,14 +6439,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-08T11:51:12.274612Z",
         "updated_at" : "2020-06-08T11:51:12.274612Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -6726,7 +6465,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_6264",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -6759,7 +6497,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -6784,7 +6521,6 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_6264",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -6817,7 +6553,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -6845,7 +6580,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_6264",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -6877,7 +6611,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -6907,7 +6640,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -6965,7 +6697,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -6993,14 +6724,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:50:51.392009Z",
           "updated_at" : "2020-06-08T11:50:51.392009Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7026,14 +6755,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-08T11:50:51.392009Z",
         "updated_at" : "2020-06-08T11:50:51.392009Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -7054,7 +6781,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7940",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7087,7 +6813,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7112,7 +6837,6 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7940",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7145,7 +6869,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7170,7 +6893,6 @@
           "html" : "<p>How are you?<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_7940",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7203,7 +6925,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7231,7 +6952,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_7940",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -7263,7 +6983,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -7293,7 +7012,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -7351,7 +7069,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7379,14 +7096,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-08T11:49:28.889886Z",
           "updated_at" : "2020-06-08T11:49:28.889886Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7412,14 +7127,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-08T11:49:28.889886Z",
         "updated_at" : "2020-06-08T11:49:28.889886Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -7440,7 +7153,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7473,7 +7185,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7498,7 +7209,6 @@
           "html" : "<p>Message1 68400DEC-113B-45B0-9B95-14ADDC4371D2<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7531,7 +7241,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7556,7 +7265,6 @@
           "html" : "<p>Message2 92386C0B-D27F-40A9-A5F0-F9FE81EA6A71<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7589,7 +7297,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7617,7 +7324,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -7649,7 +7355,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -7672,12 +7377,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-06-06T02:32:07.270298Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -7735,7 +7438,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7761,7 +7463,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -7780,14 +7481,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-06T02:32:06.864569Z",
           "updated_at" : "2020-06-06T02:32:06.864569Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -7812,14 +7511,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-06T02:32:06.86457Z",
           "updated_at" : "2020-06-06T02:32:07.090203Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -7836,14 +7533,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-06T02:32:06.864569Z",
         "updated_at" : "2020-06-06T02:32:06.864569Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -7864,7 +7559,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7897,7 +7591,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -7919,7 +7612,6 @@
           "html" : "<p>Hh<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -7952,7 +7644,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -7974,7 +7665,6 @@
           "html" : "<p>Gyt<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8007,7 +7697,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8029,7 +7718,6 @@
           "html" : "<p>Gg<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8062,7 +7750,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8084,7 +7771,6 @@
           "html" : "<p>Hh<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8117,7 +7803,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8139,7 +7824,6 @@
           "html" : "<p>55<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8172,7 +7856,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8194,7 +7877,6 @@
           "html" : "<p>44<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8227,7 +7909,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8249,7 +7930,6 @@
           "html" : "<p>Rr<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8282,7 +7962,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8304,7 +7983,6 @@
           "html" : "<p>11<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8337,7 +8015,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8359,7 +8036,6 @@
           "html" : "<p>22<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8392,7 +8068,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -8417,7 +8092,6 @@
           "html" : "<p>Hi<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8450,7 +8124,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -8475,7 +8148,6 @@
           "html" : "<p>I just got a new phone<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8508,7 +8180,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -8533,7 +8204,6 @@
           "html" : "<p>I just want you guys want me just to come home<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8566,7 +8236,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -8591,7 +8260,6 @@
           "html" : "<p>I don’t know<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8624,7 +8292,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -8649,7 +8316,6 @@
           "html" : "<p>I just want you guys want me just to come home to the car I want you guys want me just let him go<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8682,7 +8348,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8704,7 +8369,6 @@
           "html" : "<p>The new version of this is the first app that I’ve ever used<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8737,7 +8401,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8759,7 +8422,6 @@
           "html" : "<p>I’m just trying out a couple things and I’m just wondering how to get them done<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8792,7 +8454,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8814,7 +8475,6 @@
           "html" : "<p>I just got to work<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8847,7 +8507,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8869,7 +8528,6 @@
           "html" : "<p>The new version of this game has a great game<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8902,7 +8560,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8924,7 +8581,6 @@
           "html" : "<p>I just got to the point where I was talking<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -8957,7 +8613,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -8979,7 +8634,6 @@
           "html" : "<p>I’m going home and I’m just leaving<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9012,7 +8666,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9034,7 +8687,6 @@
           "html" : "<p>I’m not going anywhere I want you in the morning<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9067,7 +8719,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9089,7 +8740,6 @@
           "html" : "<p>The game has to do a great and great way for my iPhone game<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9122,7 +8772,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9144,7 +8793,6 @@
           "html" : "<p>I’m going back<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9177,7 +8825,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9199,7 +8846,6 @@
           "html" : "<p>The only reason I’m a fan is that I have to say this game has a great time<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_1877",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9232,7 +8878,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9257,7 +8902,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_1877",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -9289,7 +8933,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -9319,7 +8962,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -9377,7 +9019,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9400,7 +9041,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -9428,14 +9068,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2019-12-13T14:29:33.360061Z",
           "updated_at" : "2019-12-13T14:29:33.360061Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -9460,14 +9098,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2019-12-13T14:29:56.013272Z",
           "updated_at" : "2019-12-13T14:29:56.013272Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,
@@ -9490,14 +9126,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2019-12-13T14:29:33.360061Z",
         "updated_at" : "2019-12-13T14:29:33.360061Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -9518,7 +9152,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9551,7 +9184,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -9576,7 +9208,6 @@
           "html" : "<p>Message1 394EB294-2EB0-40B8-A429-4EE9E2DFCC32<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9609,7 +9240,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -9634,7 +9264,6 @@
           "html" : "<p>Message2 8B5B331C-CCB8-43BC-9C23-68C00966F91C<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9667,7 +9296,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -9690,7 +9318,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "noisy-mountain-3",
@@ -9704,7 +9331,6 @@
           "html" : "<p>Message3 @Noisy mountain C5FC1C5E-DA84-4768-B0D0-176E41AB48CA<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -9737,7 +9363,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -9765,7 +9390,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -9797,7 +9421,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -9820,12 +9443,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-06-05T10:05:25.317128Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -9883,7 +9504,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -9900,7 +9520,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -9928,14 +9547,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-04T14:53:35.139416Z",
           "updated_at" : "2020-06-04T14:53:35.139416Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -9960,14 +9577,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-06-04T14:53:35.139416Z",
           "updated_at" : "2020-06-04T14:53:35.817145Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -9984,14 +9599,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-06-04T14:53:35.139416Z",
         "updated_at" : "2020-06-04T14:53:35.139416Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -10012,7 +9625,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10045,7 +9657,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "unread_channels" : 4,
@@ -10175,7 +9786,6 @@
           "html" : "<p>Hd<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10208,7 +9818,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -10233,7 +9842,6 @@
           "html" : "<p>Left<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10266,7 +9874,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -10291,7 +9898,6 @@
           "html" : "<p>Nfhdhd<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10324,7 +9930,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -10349,7 +9954,6 @@
           "html" : "<p>Vzdjdshs<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10382,7 +9986,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -10407,7 +10010,6 @@
           "html" : "<p>Jfjfud<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10440,7 +10042,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "extraData" : {
@@ -10570,7 +10171,6 @@
           "html" : "<p>Bbb<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10603,7 +10203,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -10628,7 +10227,6 @@
           "html" : "<p>Dhddu<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10661,7 +10259,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "unread_channels" : 4,
@@ -10791,7 +10388,6 @@
           "html" : "<p>Gggg<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10824,7 +10420,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -10849,7 +10444,6 @@
           "html" : "<p>Dsfgffgfgggdfgdfgdf<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10882,7 +10476,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -10907,7 +10500,6 @@
           "html" : "<p>Fgdfgdfgdfg<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10940,7 +10532,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -10965,7 +10556,6 @@
           "html" : "<p>Rrrrr<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -10998,7 +10588,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -11023,7 +10612,6 @@
           "html" : "<p>Cd sddsssssssgggg<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11056,7 +10644,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "unread_channels" : 4,
@@ -11186,7 +10773,6 @@
           "html" : "<p>Hhh<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11219,7 +10805,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -11244,7 +10829,6 @@
           "html" : "<p>Fffnkjjhkfffff<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:new_channel_4371",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11278,7 +10862,6 @@
           "text" : "http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333",
           "attachments" : [
             {
-              "custom" : {},
               "og_scrape_url" : "http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333",
               "image_url" : "http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333",
               "type" : "image",
@@ -11293,7 +10876,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "betausenameinsteadplz",
@@ -11313,7 +10895,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:new_channel_4371",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -11345,7 +10926,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -11375,7 +10955,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -11433,7 +11012,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -11462,14 +11040,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2019-12-16T15:19:47.270346Z",
           "updated_at" : "2019-12-16T15:19:47.270346Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -11495,14 +11071,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2019-12-16T15:19:47.270346Z",
         "updated_at" : "2019-12-16T15:19:47.270346Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -11523,7 +11097,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11556,7 +11129,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -11573,7 +11145,6 @@
           "html" : "<p>hey<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11599,7 +11170,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7441779b-f8ad-4ed4-a533-22480910d85e",
               "created_at" : "2020-05-19T19:42:38.434942Z",
@@ -11609,7 +11179,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -11622,7 +11191,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7441779b-f8ad-4ed4-a533-22480910d85e",
               "created_at" : "2020-05-19T19:42:37.88239Z",
@@ -11632,7 +11200,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -11645,7 +11212,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7441779b-f8ad-4ed4-a533-22480910d85e",
               "created_at" : "2020-05-19T19:42:36.906711Z",
@@ -11655,7 +11221,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -11668,7 +11233,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-7441779b-f8ad-4ed4-a533-22480910d85e",
               "created_at" : "2020-05-19T19:42:35.838748Z",
@@ -11678,7 +11242,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -11703,7 +11266,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "Steveusenameinsteadplz",
@@ -11720,7 +11282,6 @@
           "html" : "<p>Hey Dani! I’m here<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11751,7 +11312,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "dogs ",
               "title_link" : "https:\/\/giphy.com\/gifs\/barkpost-barkpost-happy-wednesday-working-like-a-dog-eYilisUwipOEM",
               "type" : "giphy",
@@ -11766,7 +11326,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -11781,7 +11340,6 @@
           "html" : ""
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11814,7 +11372,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -11831,7 +11388,6 @@
           "html" : "<p>Hi there<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11864,7 +11420,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -11881,7 +11436,6 @@
           "html" : "<p>testing<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11901,7 +11455,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "YoungShatnerusenameinsteadplz-c3e0e02f-a257-4ed6-bb9e-cc3a18b4c1a0",
               "created_at" : "2020-05-19T21:33:05.479265Z",
@@ -11911,7 +11464,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "TheBestBritusenameinsteadplz",
@@ -11936,7 +11488,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -11953,7 +11504,6 @@
           "html" : "<p>testing<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -11973,7 +11523,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "TheBestBritusenameinsteadplz-aa6a7160-6d7b-4e79-a56a-ac08d7161140",
               "created_at" : "2020-05-19T21:32:55.98353Z",
@@ -11983,7 +11532,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "YoungShatnerusenameinsteadplz",
@@ -12008,7 +11556,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "TheBestBritusenameinsteadplz",
@@ -12025,7 +11572,6 @@
           "html" : "<p>hellooo<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12056,7 +11602,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "cats",
               "title_link" : "https:\/\/giphy.com\/gifs\/cats-gl8ymnpv4Sqha",
               "type" : "giphy",
@@ -12071,7 +11616,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -12086,7 +11630,6 @@
           "html" : ""
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12112,7 +11655,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "TheBestBritusenameinsteadplz-d1cc401e-73a5-499b-a384-72a60d17f06e",
               "created_at" : "2020-05-19T21:35:12.676797Z",
@@ -12122,7 +11664,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "thierry",
@@ -12137,7 +11678,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "this is awesome",
               "title_link" : "https:\/\/giphy.com\/gifs\/paul-rudd-joe-lo-truglio-this-is-awesome-WrUreFR7tR2dpUSx9K",
               "type" : "giphy",
@@ -12152,7 +11692,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "TheBestBritusenameinsteadplz",
@@ -12167,7 +11706,6 @@
           "html" : ""
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12191,7 +11729,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "thierry-f23ee25d-2ca8-4e35-aa89-28e1bfa2d055",
               "created_at" : "2020-05-19T21:35:04.289629Z",
@@ -12201,7 +11738,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "YoungShatnerusenameinsteadplz",
@@ -12214,7 +11750,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "thierry-f23ee25d-2ca8-4e35-aa89-28e1bfa2d055",
               "created_at" : "2020-05-19T21:34:43.407768Z",
@@ -12224,7 +11759,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "TheBestBritusenameinsteadplz",
@@ -12237,7 +11771,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "thierry-f23ee25d-2ca8-4e35-aa89-28e1bfa2d055",
               "created_at" : "2020-05-19T21:34:26.802322Z",
@@ -12247,7 +11780,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "YoungShatnerusenameinsteadplz",
@@ -12272,7 +11804,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "thierry",
@@ -12287,7 +11818,6 @@
           "html" : "<p>Hi!<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12311,7 +11841,6 @@
           "text" : "https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU",
           "attachments" : [
             {
-              "custom" : {},
               "og_scrape_url" : "https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU",
               "image_url" : "https:\/\/i.ytimg.com\/vi\/ZXBcwyMUrcU\/maxresdefault.jpg",
               "title" : "The Weeknd - King Of The Fall (Official Video)",
@@ -12331,7 +11860,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -12348,7 +11876,6 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ZXBcwyMUrcU<\/a><\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12381,7 +11908,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "Thierryusenameinsteadplz",
@@ -12398,7 +11924,6 @@
           "html" : "<p>hello scott<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12431,7 +11956,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -12448,7 +11972,6 @@
           "html" : "<p>hi Thierry<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12474,7 +11997,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Thierryusenameinsteadplz-b6e3d374-d598-4384-a7c7-58b7327b139a",
               "created_at" : "2020-05-20T23:13:52.142774Z",
@@ -12484,7 +12006,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "YoungShatnerusenameinsteadplz",
@@ -12497,7 +12018,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Thierryusenameinsteadplz-b6e3d374-d598-4384-a7c7-58b7327b139a",
               "created_at" : "2020-05-20T23:13:41.559984Z",
@@ -12507,7 +12027,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "Thierryusenameinsteadplz",
@@ -12520,7 +12039,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Thierryusenameinsteadplz-b6e3d374-d598-4384-a7c7-58b7327b139a",
               "created_at" : "2020-05-20T23:13:41.11683Z",
@@ -12530,7 +12048,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "Thierryusenameinsteadplz",
@@ -12543,7 +12060,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Thierryusenameinsteadplz-b6e3d374-d598-4384-a7c7-58b7327b139a",
               "created_at" : "2020-05-20T23:13:40.47466Z",
@@ -12553,7 +12069,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "Thierryusenameinsteadplz",
@@ -12569,7 +12084,6 @@
           "text" : "check out this video: https:\/\/www.youtube.com\/watch?v=qC5KtatMcUw",
           "attachments" : [
             {
-              "custom" : {},
               "og_scrape_url" : "https:\/\/www.youtube.com\/watch?v=qC5KtatMcUw",
               "image_url" : "https:\/\/i.ytimg.com\/vi\/qC5KtatMcUw\/maxresdefault.jpg",
               "title" : "Unreal Engine 5 Revealed! | Next-Gen Real-Time Demo Running on PlayStation 5",
@@ -12589,7 +12103,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "Thierryusenameinsteadplz",
@@ -12606,7 +12119,6 @@
           "html" : "<p>check out this video: <a href=\"https:\/\/www.youtube.com\/watch?v=qC5KtatMcUw\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=qC5KtatMcUw<\/a><\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12639,7 +12151,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -12656,7 +12167,6 @@
           "html" : "<p>😜<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12687,7 +12197,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "cats",
               "title_link" : "https:\/\/giphy.com\/gifs\/cats-transport-13borq7Zo2kulO",
               "type" : "giphy",
@@ -12702,7 +12211,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "YoungShatnerusenameinsteadplz",
@@ -12717,7 +12225,6 @@
           "html" : ""
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12750,7 +12257,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -12767,7 +12273,6 @@
           "html" : "<p>hey<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -12797,7 +12302,6 @@
           "type" : "regular",
           "latest_reactions" : [
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T20:16:42.412174Z",
@@ -12807,7 +12311,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -12820,7 +12323,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T20:16:38.812983Z",
@@ -12830,7 +12332,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -12843,7 +12344,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T20:16:38.170329Z",
@@ -12853,7 +12353,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -12866,7 +12365,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T15:10:59.870789Z",
@@ -12876,7 +12374,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -12889,7 +12386,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T15:10:56.028129Z",
@@ -12899,7 +12395,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -12912,7 +12407,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T15:10:54.705815Z",
@@ -12922,7 +12416,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "usenameinsteadplz",
@@ -12935,7 +12428,6 @@
               }
             },
             {
-              "custom" : {},
               "score" : 1,
               "message_id" : "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
               "created_at" : "2020-05-21T15:10:52.420242Z",
@@ -12945,7 +12437,6 @@
               "user" : {
                 "language" : "",
                 "teams" : [],
-                "custom" : {},
                 "banned" : false,
                 "online" : false,
                 "id" : "Steveusenameinsteadplz",
@@ -12970,7 +12461,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "Steveusenameinsteadplz",
@@ -12987,7 +12477,6 @@
           "html" : "<p>Yeah hey Dani! I’m here<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13020,7 +12509,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -13037,7 +12525,6 @@
           "html" : "<p>hey<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13068,7 +12555,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "dogs ",
               "title_link" : "https:\/\/giphy.com\/gifs\/natgeowild-funny-nat-geo-wild-barkfest-d3Fym9OQ08o6agYE",
               "type" : "giphy",
@@ -13083,7 +12569,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -13098,7 +12583,6 @@
           "html" : ""
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13122,7 +12606,6 @@
           "text" : "https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM",
           "attachments" : [
             {
-              "custom" : {},
               "og_scrape_url" : "https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM",
               "image_url" : "https:\/\/i.ytimg.com\/vi\/ozMBCFd7fFM\/maxresdefault.jpg",
               "title" : "The Weeknd - In Your Eyes Remix feat. Doja Cat (Audio)",
@@ -13142,7 +12625,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -13159,7 +12641,6 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM<\/a><\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13192,7 +12673,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -13209,7 +12689,6 @@
           "html" : "<p>hey there<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13240,7 +12719,6 @@
           "text" : "",
           "attachments" : [
             {
-              "custom" : {},
               "title" : "dogs ",
               "title_link" : "https:\/\/giphy.com\/gifs\/TFxnSHo3UGesnHGMI0",
               "type" : "giphy",
@@ -13255,7 +12733,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -13270,7 +12747,6 @@
           "html" : ""
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13294,7 +12770,6 @@
           "text" : "https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM",
           "attachments" : [
             {
-              "custom" : {},
               "og_scrape_url" : "https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM",
               "image_url" : "https:\/\/i.ytimg.com\/vi\/ozMBCFd7fFM\/maxresdefault.jpg",
               "title" : "The Weeknd - In Your Eyes Remix feat. Doja Cat (Audio)",
@@ -13314,7 +12789,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "usenameinsteadplz",
@@ -13331,7 +12805,6 @@
           "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ozMBCFd7fFM<\/a><\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "messaging:test-channel-3011",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13364,7 +12837,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "betausenameinsteadplz",
@@ -13384,7 +12856,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "messaging:test-channel-3011",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -13416,7 +12887,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -13448,7 +12918,6 @@
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "bender",
           "banned" : false,
           "unread_channels" : 4,
@@ -13613,7 +13082,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -13641,14 +13109,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2019-12-12T20:41:06.191606Z",
           "updated_at" : "2019-12-12T20:41:06.191606Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "bender",
             "banned" : false,
             "unread_channels" : 4,
@@ -13778,14 +13244,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2019-12-13T03:23:37.900562Z",
           "updated_at" : "2019-12-13T03:23:37.900562Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -13811,14 +13275,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2019-12-13T03:23:37.900562Z",
         "updated_at" : "2019-12-13T03:23:37.900562Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -13839,7 +13301,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13872,7 +13333,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -13897,7 +13357,6 @@
           "html" : "<p>Message1 F41CEA3D-D4FC-4FF2-8D2E-D28578201E29<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13930,7 +13389,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -13955,7 +13413,6 @@
           "html" : "<p>Message2 49A45ACD-609F-450F-A248-0EBC10990561<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -13988,7 +13445,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -14011,7 +13467,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "noisy-mountain-3",
@@ -14028,7 +13483,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -14060,7 +13514,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -14083,12 +13536,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-18T02:33:46.04912Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -14145,14 +13596,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-18T02:33:45.574394Z",
         "updated_at" : "2020-05-18T02:33:45.574394Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -14175,14 +13624,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-18T02:33:45.574394Z",
           "updated_at" : "2020-05-18T02:33:45.574394Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -14207,14 +13654,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-18T02:33:45.574394Z",
           "updated_at" : "2020-05-18T02:33:45.824164Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -14230,7 +13675,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -14263,7 +13707,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -14288,7 +13731,6 @@
           "html" : "<p>Message1 C5009B3E-44B9-40C0-B85D-374A31813D35<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -14321,7 +13763,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -14346,7 +13787,6 @@
           "html" : "<p>Message2 ED07A7B4-4BB6-40A1-98EB-CD4A74D2589B<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -14379,7 +13819,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -14402,7 +13841,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "noisy-mountain-3",
@@ -14419,7 +13857,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -14451,7 +13888,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -14474,12 +13910,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-17T02:33:45.965608Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -14536,14 +13970,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-17T02:33:45.586276Z",
         "updated_at" : "2020-05-17T02:33:45.586276Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -14566,14 +13998,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:33:45.586276Z",
           "updated_at" : "2020-05-17T02:33:45.586276Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -14598,14 +14028,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:33:45.586276Z",
           "updated_at" : "2020-05-17T02:33:45.79185Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -14621,7 +14049,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -14654,7 +14081,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -14682,7 +14108,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -14714,7 +14139,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -14737,12 +14161,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-17T02:33:12.420197Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -14799,14 +14221,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-17T02:33:12.373057Z",
         "updated_at" : "2020-05-17T02:33:12.373057Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -14829,14 +14249,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:33:12.373057Z",
           "updated_at" : "2020-05-17T02:33:12.373057Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -14861,14 +14279,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:33:12.373057Z",
           "updated_at" : "2020-05-17T02:33:12.373057Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -14884,7 +14300,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:9E38A3E7-315C-441E-87CE-D65DEE26D390",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -14917,7 +14332,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -14945,7 +14359,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:9E38A3E7-315C-441E-87CE-D65DEE26D390",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -14977,7 +14390,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -15000,12 +14412,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-17T02:32:07.009891Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -15062,14 +14472,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-17T02:32:06.96436Z",
         "updated_at" : "2020-05-17T02:32:06.96436Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -15092,14 +14500,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:32:06.96436Z",
           "updated_at" : "2020-05-17T02:32:06.96436Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -15124,14 +14530,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:32:06.96436Z",
           "updated_at" : "2020-05-17T02:32:06.96436Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -15147,7 +14551,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -15180,7 +14583,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -15205,7 +14607,6 @@
           "html" : "<p>Message1 3BBB47F1-8FB0-4EB3-BA0D-54ACB01F4C79<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -15238,7 +14639,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -15263,7 +14663,6 @@
           "html" : "<p>Message2 88443C9B-2C68-4807-B585-27325931888C<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -15296,7 +14695,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -15319,7 +14717,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "noisy-mountain-3",
@@ -15336,7 +14733,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -15368,7 +14764,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -15391,12 +14786,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-17T02:30:58.516328Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -15453,14 +14846,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-17T02:30:58.05297Z",
         "updated_at" : "2020-05-17T02:30:58.05297Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "totalUnreadCount" : 0,
@@ -15483,14 +14874,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:30:58.05297Z",
           "updated_at" : "2020-05-17T02:30:58.05297Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -15515,14 +14904,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-17T02:30:58.05297Z",
           "updated_at" : "2020-05-17T02:30:58.338672Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -15538,7 +14925,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -15571,7 +14957,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -15596,7 +14981,6 @@
           "html" : "<p>Message1 6862A33F-8609-40E8-B4A2-99583997A9CC<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -15629,7 +15013,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -15654,7 +15037,6 @@
           "html" : "<p>Message2 89F1F6D0-0B32-4B0E-A18D-9D831C69FE99<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -15687,7 +15069,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -15710,7 +15091,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "id" : "broken-waterfall-5",
               "banned" : false,
               "unread_channels" : 0,
@@ -15732,7 +15112,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "noisy-mountain-3",
@@ -15749,7 +15128,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -15781,7 +15159,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -15804,12 +15181,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-15T12:15:29.746289Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -15867,7 +15242,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -15895,14 +15269,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-15T12:15:28.681126Z",
           "updated_at" : "2020-05-15T12:15:28.681126Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -15927,14 +15299,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-15T12:15:28.681127Z",
           "updated_at" : "2020-05-15T12:15:29.37786Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",
@@ -15951,14 +15321,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-15T12:15:28.681126Z",
         "updated_at" : "2020-05-15T12:15:28.681126Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -15979,7 +15347,6 @@
     {
       "messages" : [
         {
-          "custom" : {},
           "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -16012,7 +15379,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -16037,7 +15403,6 @@
           "html" : "<p>Message1 FCDB0DAD-C781-427F-9AE3-AA82ACE4B835<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -16070,7 +15435,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -16095,7 +15459,6 @@
           "html" : "<p>Message2 46D81157-E66F-4A66-81CF-C77EA0EF9C6E<\/p>\n"
         },
         {
-          "custom" : {},
           "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
           "deleted_reply_count" : 0,
           "mentioned_channel" : false,
@@ -16128,7 +15491,6 @@
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -16151,7 +15513,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "id" : "broken-waterfall-5",
               "banned" : false,
               "unread_channels" : 0,
@@ -16173,7 +15534,6 @@
             {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "noisy-mountain-3",
@@ -16190,7 +15550,6 @@
       "threads": [],
       "pinned_messages": [
           {
-            "custom" : {},
             "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
             "deleted_reply_count" : 0,
             "mentioned_channel" : false,
@@ -16222,7 +15581,6 @@
             "user" : {
               "language" : "",
               "teams" : [],
-              "custom" : {},
               "banned" : false,
               "online" : false,
               "id" : "jolly-base-0",
@@ -16245,12 +15603,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
-        "custom" : {},
         "last_message_at" : "2020-05-15T02:42:18.687952Z",
         "created_by" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -16307,14 +15663,12 @@
         "channel_role" : "channel_member",
         "notifications_muted" : false,
         "shadow_banned" : false,
-        "custom" : {},
         "created_at" : "2020-05-15T02:42:18.263412Z",
         "updated_at" : "2020-05-15T02:42:18.263412Z",
         "role" : "channel_member",
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -16337,14 +15691,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-15T02:42:18.263412Z",
           "updated_at" : "2020-05-15T02:42:18.263412Z",
           "role" : "owner",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -16369,14 +15721,12 @@
           "channel_role" : "channel_member",
           "notifications_muted" : false,
           "shadow_banned" : false,
-          "custom" : {},
           "created_at" : "2020-05-15T02:42:18.263412Z",
           "updated_at" : "2020-05-15T02:42:18.497583Z",
           "role" : "member",
           "user" : {
             "language" : "",
             "teams" : [],
-            "custom" : {},
             "banned" : false,
             "online" : false,
             "id" : "noisy-mountain-3",

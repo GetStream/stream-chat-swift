@@ -150,4 +150,48 @@ final class ChannelDetailPayload: Sendable, Decodable {
         case type
         case updatedAt = "updated_at"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        autoTranslationEnabled = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .autoTranslationEnabled
+        )
+        autoTranslationLanguage = try container.decodeIfPresent(
+            String.self,
+            forKey: .autoTranslationLanguage
+        )
+        blocked = try container.decodeIfPresent(Bool.self, forKey: .blocked)
+        cid = try container.decode(ChannelId.self, forKey: .cid)
+        config = try container.decode(ChannelConfig.self, forKey: .config)
+        cooldown = try container.decodeIfPresent(Int.self, forKey: .cooldown)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        disabled = try container.decode(Bool.self, forKey: .disabled)
+        filterTags = try container.decodeIfPresent([String].self, forKey: .filterTags)
+        frozen = try container.decode(Bool.self, forKey: .frozen)
+        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        hideMessagesBefore = try container.decodeIfPresent(Date.self, forKey: .hideMessagesBefore)
+        id = try container.decode(String.self, forKey: .id)
+        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
+        memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount)
+        members = try container.decodeArrayIfPresentIgnoringFailures(
+            [MemberPayload].self,
+            forKey: .members
+        )
+        messageCount = try container.decodeIfPresent(Int.self, forKey: .messageCount)
+        muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
+        muted = try container.decodeIfPresent(Bool.self, forKey: .muted)
+        ownCapabilities = try container.decodeIfPresent(
+            [ChannelCapability].self,
+            forKey: .ownCapabilities
+        )
+        team = try container.decodeIfPresent(String.self, forKey: .team)
+        truncatedAt = try container.decodeIfPresent(Date.self, forKey: .truncatedAt)
+        truncatedBy = try container.decodeIfPresent(UserPayload.self, forKey: .truncatedBy)
+        type = try container.decode(String.self, forKey: .type)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+    }
 }

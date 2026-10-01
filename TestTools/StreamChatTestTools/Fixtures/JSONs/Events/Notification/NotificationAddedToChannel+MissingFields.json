@@ -1,7 +1,6 @@
 {
   "member" : {
       "notifications_muted" : false,
-      "custom" : {},
       "banned" : false,
       "shadow_banned" : false,
       "created_at" : "2021-12-21T15:51:42.125776Z",
@@ -28,11 +27,9 @@
       }
   },
   "channel" : {
-    "custom" : {},
     "created_by" : {
       "language" : "",
       "teams" : [],
-      "custom" : {},
       "banned" : false,
       "online" : true,
       "id" : "luke_skywalker",
@@ -95,7 +92,6 @@
       {
         "channel_role" : "channel_member",
         "notifications_muted" : false,
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "member",
@@ -105,7 +101,6 @@
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "count_dooku",
@@ -120,7 +115,6 @@
       {
         "channel_role" : "channel_member",
         "notifications_muted" : false,
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "member",
@@ -130,7 +124,6 @@
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "darth_maul",
@@ -145,7 +138,6 @@
       {
         "channel_role" : "channel_member",
         "notifications_muted" : false,
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "member",
@@ -155,7 +147,6 @@
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "r2-d2",
@@ -170,7 +161,6 @@
       {
         "channel_role" : "channel_member",
         "notifications_muted" : false,
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "owner",
@@ -180,7 +170,6 @@
         "user" : {
           "language" : "",
           "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : true,
           "id" : "luke_skywalker",

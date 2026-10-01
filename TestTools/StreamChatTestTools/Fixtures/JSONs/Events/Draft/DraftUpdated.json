@@ -6,7 +6,6 @@
     "draft": {
         "channel_cid": "messaging:general",
         "channel": {
-          "custom": {},
           "cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
           "config": {
             "automod": "disabled",
@@ -43,7 +42,6 @@
           },
           "created_at": "2024-07-10T11:47:43.591964Z",
           "created_by": {
-            "custom": {},
             "banned": false,
             "birthland": "Corellia",
             "blocked_user_ids": [],
@@ -68,7 +66,6 @@
         },
         "created_at": "2024-02-11T15:42:21.123Z",
         "message": {
-            "custom": {},
             "id": "draft-123",
             "text": "Test draft message",
             "show_reply_in_channel": false,

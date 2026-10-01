@@ -24,7 +24,6 @@
         "birthland": "Polis Massa"
     },
     "thread": {
-        "custom": {},
         "channel_cid": "messaging:456F834D-1",
         "channel": {
             "custom": {
@@ -39,7 +38,6 @@
             "updated_at": "2024-05-31T13:26:04.005786Z",
             "created_by": {
                 "teams": [],
-                "custom": {},
                 "id": "r2-d2",
                 "role": "user",
                 "created_at": "2024-04-04T09:44:54.206412Z",
@@ -106,7 +104,6 @@
         },
         "parent_message_id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
         "parent_message": {
-            "custom": {},
             "mentioned_channel": false,
             "mentioned_here": false,
             "restricted_visibility": [],
@@ -117,7 +114,6 @@
             "user": {
                 "language": "",
                 "teams": [],
-                "custom": {},
                 "id": "han_solo",
                 "role": "user",
                 "created_at": "2024-04-04T09:18:11.060737Z",
@@ -140,7 +136,6 @@
             "thread_participants": [
                 {
                     "teams": [],
-                    "custom": {},
                     "id": "leia_organa",
                     "role": "admin",
                     "created_at": "2024-04-04T09:42:00.68335Z",
@@ -164,7 +159,6 @@
                 {
                     "language": "",
                     "teams": [],
-                    "custom": {},
                     "id": "han_solo",
                     "role": "user",
                     "created_at": "2024-04-04T09:18:11.060737Z",
@@ -196,7 +190,6 @@
         "created_by_user_id": "leia_organa",
         "created_by": {
             "teams": [],
-            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2024-04-04T09:42:00.68335Z",

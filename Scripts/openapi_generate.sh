@@ -709,8 +709,10 @@ PY
 prune_wsevent_cases
 
 # Remove generated properties (declaration, doc comment, init param, assignment,
-#     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+#     CodingKeys case, init(from:)/encode(to:) lines). A deprecated property is emitted as a
+#     private `_name` backing property plus a deprecated `name` accessor; both are removed.
+#     Runs before publicize, so there are no access modifiers to handle. Assumes the
+#     single-line init the generator emits (step 7 re-wraps).
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   local p
@@ -720,11 +722,14 @@ remove_property() {
       { s = $0; sub(/^[[:space:]]+/, "", s) }
       s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
       s ~ "^let " p ": "                 { n = 0; next }
-      s ~ "^self\\." p " = " p "$"       { next }
+      s ~ "^private let _" p ": "        { n = 0; next }
+      s ~ "^var " p ": .* \\{ _" p " \\}$" { n = 0; next }
+      s ~ "^self\\._?" p " = " p "$"     { next }
+      s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
       s ~ "^case " p "( =|$)"            { next }
-      s ~ "^lhs\\." p " == rhs\\." p "( &&)?$" { next }
-      s ~ "^hasher\\.combine\\(" p "\\)$"      { next }
-      s ~ "^try container\\.encode(IfPresent)?\\(" p ", forKey: \\." p "\\)$" { next }
+      s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
+      s ~ "^hasher\\.combine\\(_?" p "\\)$"    { next }
+      s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
       s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
       { flush(); print }
     ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
@@ -894,12 +899,17 @@ rename_generated ReminderResponseData ReminderPayload
 rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated UnmuteResponse UnmuteUsersResponse
 rename_generated UserMuteResponse MutedUserPayload
-rename_generated_type PrivacySettingsResponse UserPrivacySettings
 rename_generated ThreadParticipant ThreadParticipantPayload
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
+
+# StreamCore provides the privacy settings models; only point the references at its names.
+rename_generated_type DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
+rename_generated_type PrivacySettingsResponse UserPrivacySettings
+rename_generated_type ReadReceiptsResponse ReadReceiptsPrivacySettings
+rename_generated_type TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type DeleteReminderResponse EmptyResponse
 rename_generated_type EventResponse EmptyResponse
@@ -1091,18 +1101,6 @@ remove_type() {
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
-# Give a generated model mutable stored properties, so it can replace a hand-written
-#     public type whose properties were var. Mutable state rules out checked Sendable,
-#     hence the relaxed conformance. Runs before publicize_model, which anchors on the
-#     resulting var lines.
-make_model_mutable() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E \
-    -e 's/^(final class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
-    -e 's/^    let /    var /' \
-    "$file"
-}
-
 # 4c. Expose selected generated models as public API. The type and its stored
 #     properties become public, along with the generated Hashable conformance
 #     (== and hash(into:)); the memberwise init and CodingKeys stay internal.
@@ -1182,23 +1180,6 @@ deprecate_raw_representable_value() {
 }
 deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
 
-# Expose a generated model's memberwise init, for models whose hand-written public
-#     counterpart had a public init.
-publicize_init() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E 's/^    init\(/    public init(/' "$file"
-}
-
-# Give a generated memberwise init parameter a default value, restoring one the
-#     hand-written public init had.
-default_init_parameter() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  P="$2" D="$3" perl -0777 -pi -e '
-    my ($p, $d) = ($ENV{P}, $ENV{D});
-    s/([(,]\s*)\Q$p\E: ([^,)\n=]+)(?=[,)])/${1}$p: $2 = $d/;
-  ' "$file"
-}
-
 # 4d. Keep only the coding direction each internal model needs.
 # Required because OpenAPI generator emits all models with Codable conformance
 # even when it is used for decoding or encoding only. This helps to save
@@ -1241,6 +1222,14 @@ if unclassified:
 if missing:
     raise SystemExit(f"Classified models missing from generated output: {sorted(missing)}")
 
+# Models with deprecated fields get an explicit init(from:) and encode(to:) from the
+# generator; the one for the dropped coding direction no longer compiles. Keyed by the
+# direction that doesn't need the coder.
+unused_coder = {
+    "Decodable": r"func encode\(to encoder: Encoder\) throws",
+    "Encodable": r"init\(from decoder: Decoder\) throws",
+}
+
 declaration = re.compile(
     r"^(\s*(?:public )?(?:final )?(?:class|struct|enum)\s+([A-Za-z0-9_]+)[^:\n]*:\s*)(.*)$"
 )
@@ -1276,7 +1265,20 @@ for direction, names in groups.items():
         ):
             raise SystemExit(f"{name} retains an encoding conformance")
 
-        path.write_text("".join(output))
+        text = "".join(output)
+        # Without deprecated accessors left (e.g. after remove_property), synthesis works again,
+        # except for WSEvent, which decodes by its `type` discriminator.
+        has_deprecated = re.search(r"^\s*var \w+: .* \{ _\w+ \}$", text, flags=re.M)
+        for coder_direction, coder in unused_coder.items():
+            if coder_direction == direction or not (has_deprecated or name == "WSEvent"):
+                text = re.sub(
+                    rf"\n?^    (?:public )?{coder} \{{\n.*?^    \}}\n",
+                    "",
+                    text,
+                    count=1,
+                    flags=re.M | re.S,
+                )
+        path.write_text(text)
 PY
 }
 apply_directional_coding_conformances
@@ -1304,9 +1306,9 @@ strip_streamcore_imports
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 6. Generate SyncResponse's `init(from:)`, which skips undecodable events, and splice it into the
-#    class body.
-#    Remove when fixed: IOS-2065
+# 6. Generate a lenient `init(from:)` and splice it into the model's class
+#    body, where a `required` initializer is allowed. It replaces any `init(from:)` the
+#    generator emitted itself (e.g. for models with deprecated fields).
 splice_generated_decoders() {
   local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
   python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
@@ -1320,7 +1322,14 @@ blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=r
 
 for name, body in zip(blocks[1::2], blocks[2::2]):
     path = models_dir / f"{name}.swift"
-    lines = path.read_text().splitlines(keepends=True)
+    text = re.sub(
+        r"\n?^    (?:public )?(?:required )?init\(from decoder: Decoder\) throws \{\n.*?^    \}\n",
+        "",
+        path.read_text(),
+        count=1,
+        flags=re.M | re.S,
+    )
+    lines = text.splitlines(keepends=True)
     closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
     lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
     path.write_text("".join(lines))
