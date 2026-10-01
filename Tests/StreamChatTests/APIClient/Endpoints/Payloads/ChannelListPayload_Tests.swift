@@ -51,6 +51,9 @@ final class ChannelListPayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
         XCTAssertEqual(payload.channels.count, 3)
+        XCTAssertEqual(payload.channels[0].members.count, 1)
+        XCTAssertEqual(payload.channels[0].pinnedMessages.count, 0)
+        XCTAssertEqual(payload.channels[0].read?.count, 1)
     }
 
     func test_decode_shouldReturnChannelsIfOneChannelCompletelyFailsParsing() throws {
