@@ -25,6 +25,7 @@ enum DemoAppLogging {
         ]
 
         let settings = LogSettings.shared
+        settings.availableLevels = [.debug, .info, .warning, .error]
         settings.availableSubsystems = subsystems.map(\.description)
         settings.setDefaults(
             level: LogEntry.Level(StreamRuntimeCheck.logLevel ?? .warning),
@@ -35,7 +36,7 @@ enum DemoAppLogging {
             )
         )
         settings.apply { settings in
-            LogConfig.level = LogLevel(rawValue: settings.level.rawValue) ?? .warning
+            LogConfig.level = LogLevel(settings.level)
             LogConfig.subsystems = LogSubsystem(subsystems.filter { settings.enabledSubsystems.contains($0.description) })
             LogConfig.destinationTypes = settings.isEnabled ? [OSLogDestination.self, InMemoryLogDestination.self] : []
         }
@@ -66,6 +67,22 @@ final class InMemoryLogDestination: BaseLogDestination, @unchecked Sendable {
 
 private extension LogEntry.Level {
     init(_ level: LogLevel) {
-        self = LogEntry.Level(rawValue: level.rawValue) ?? .debug
+        switch level {
+        case .debug: self = .debug
+        case .info: self = .info
+        case .warning: self = .warning
+        case .error: self = .error
+        }
+    }
+}
+
+private extension LogLevel {
+    init(_ level: LogEntry.Level) {
+        switch level {
+        case ..<LogEntry.Level.info: self = .debug
+        case ..<LogEntry.Level.warning: self = .info
+        case ..<LogEntry.Level.error: self = .warning
+        default: self = .error
+        }
     }
 }
