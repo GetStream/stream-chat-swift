@@ -95,7 +95,10 @@ final class ThreadResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        activeParticipantCount = try container.decode(Int.self, forKey: .activeParticipantCount)
+        activeParticipantCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .activeParticipantCount
+        ) ?? 0
         channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         channelCid = try container.decode(String.self, forKey: .channelCid)
         createdAt = try container.decode(Date.self, forKey: .createdAt)

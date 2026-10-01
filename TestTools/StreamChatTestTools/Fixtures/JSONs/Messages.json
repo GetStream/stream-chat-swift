@@ -30,8 +30,6 @@
             "type" : "love",
             "updated_at" : "2020-08-17T13:15:39.892884Z",
             "user" : {
-                "language" : "",
-                "teams" : [],
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -72,8 +70,6 @@
             "type" : "love",
             "updated_at" : "2020-08-17T13:15:39.892884Z",
             "user" : {
-                "language" : "",
-                "teams" : [],
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -98,8 +94,6 @@
     "updated_at" : "2020-08-17T13:15:39.895109Z",
     "reply_count" : 0,
     "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -158,8 +152,6 @@
             "type" : "love",
             "updated_at" : "2020-08-17T13:15:39.892884Z",
             "user" : {
-                "language" : "",
-                "teams" : [],
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -200,8 +192,6 @@
             "type" : "love",
             "updated_at" : "2020-08-17T13:15:39.892884Z",
             "user" : {
-                "language" : "",
-                "teams" : [],
                 "id" : "broken-waterfall-5",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -226,8 +216,6 @@
     "updated_at" : "2020-08-17T13:15:39.895109Z",
     "reply_count" : 0,
     "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -255,8 +243,6 @@
     "pinned_at": "2021-04-15T06:43:08.776911Z",
     "pin_expires": "2021-05-15T06:43:08.776911Z",
     "pinned_by": {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {

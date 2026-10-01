@@ -15,12 +15,8 @@
     "frozen": false,
     "members": [
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "luke_skywalker",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "luke_skywalker",
           "role": "admin",
           "created_at": "2020-12-07T11:36:47.059906Z",
@@ -38,12 +34,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "han_solo",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "han_solo",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.230369Z",
@@ -61,12 +53,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "lando_calrissian",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "lando_calrissian",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.684838Z",
@@ -84,12 +72,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "leia_organa",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "leia_organa",
           "role": "user",
           "created_at": "2020-12-07T11:37:33.78879Z",
@@ -107,12 +91,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "anakin_skywalker",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "anakin_skywalker",
           "role": "user",
           "created_at": "2020-12-07T11:37:36.43453Z",
@@ -130,12 +110,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "c-3po",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "c-3po",
           "role": "user",
           "created_at": "2020-12-07T11:37:35.550588Z",
@@ -153,12 +129,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "r2-d2",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "r2-d2",
           "role": "user",
           "created_at": "2020-12-07T11:37:35.98087Z",
@@ -176,12 +148,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "mace_windu",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "mace_windu",
           "role": "user",
           "created_at": "2020-12-07T11:37:38.179372Z",
@@ -199,12 +167,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "obi-wan_kenobi",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "obi-wan_kenobi",
           "role": "user",
           "created_at": "2020-12-07T11:37:36.857282Z",
@@ -222,12 +186,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "qui-gon_jinn",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "qui-gon_jinn",
           "role": "user",
           "created_at": "2020-12-07T11:37:37.755463Z",
@@ -245,12 +205,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "count_dooku",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "count_dooku",
           "role": "user",
           "created_at": "2020-12-07T11:37:39.487938Z",
@@ -268,12 +224,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "darth_maul",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "darth_maul",
           "role": "user",
           "created_at": "2020-12-07T11:37:39.060945Z",
@@ -291,12 +243,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "general_grievous",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "general_grievous",
           "role": "user",
           "created_at": "2020-12-07T11:37:39.918436Z",
@@ -314,12 +262,8 @@
         "shadow_banned": false
       },
       {
-        "channel_role": "channel_member",
-        "notifications_muted": false,
         "user_id": "jar_jar_binks",
         "user": {
-          "language": "",
-          "teams": [],
           "id": "jar_jar_binks",
           "role": "user",
           "created_at": "2020-12-07T11:37:38.619196Z",

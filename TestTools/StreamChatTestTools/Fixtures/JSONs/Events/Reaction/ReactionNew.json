@@ -24,8 +24,6 @@
         }
     },
     "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -55,8 +53,6 @@
         "type" : "like",
         "updated_at" : "2020-06-20T17:09:56.702079Z",
         "user" : {
-            "language" : "",
-            "teams" : [],
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,
@@ -112,8 +108,6 @@
                 "type" : "like",
                 "updated_at" : "2020-06-20T17:09:56.702079Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
                     "id" : "broken-waterfall-5",
                     "banned" : false,
                     "unread_channels" : 0,
@@ -145,8 +139,6 @@
         "updated_at" : "2020-07-20T17:09:56.704362Z",
         "reply_count" : 0,
         "user" : {
-            "language" : "",
-            "teams" : [],
             "id" : "broken-waterfall-5",
             "banned" : false,
             "unread_channels" : 0,

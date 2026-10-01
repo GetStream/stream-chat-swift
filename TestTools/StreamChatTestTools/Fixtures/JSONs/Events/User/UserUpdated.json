@@ -1,8 +1,6 @@
 {
   "type" : "user.updated",
   "user" : {
-    "language" : "",
-    "teams" : [],
     "banned" : false,
     "online" : true,
     "id" : "luke_skywalker",

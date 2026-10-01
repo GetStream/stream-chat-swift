@@ -132,7 +132,7 @@ final class OwnUserResponse: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
-        banned = try container.decode(Bool.self, forKey: .banned)
+        banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
         blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
         channelMutes = try container.decodeArrayIgnoringFailures(
             [MutedChannelPayload].self,
@@ -145,8 +145,8 @@ final class OwnUserResponse: Sendable, Decodable {
         devices = try container.decodeArrayIgnoringFailures([Device].self, forKey: .devices)
         id = try container.decode(String.self, forKey: .id)
         image = try container.decodeIfPresent(String.self, forKey: .image)
-        invisible = try container.decode(Bool.self, forKey: .invisible)
-        language = try container.decode(String.self, forKey: .language)
+        invisible = try container.decodeIfPresent(Bool.self, forKey: .invisible) ?? false
+        language = try container.decodeIfPresent(String.self, forKey: .language) ?? ""
         lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
         latestHiddenChannels = try container.decodeIfPresent(
             [String].self,
@@ -168,7 +168,7 @@ final class OwnUserResponse: Sendable, Decodable {
             forKey: .revokeTokensIssuedBefore
         )
         role = try container.decode(String.self, forKey: .role)
-        teams = try container.decode([String].self, forKey: .teams)
+        teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
         totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
         totalUnreadCountByTeam = try container.decodeIfPresent(
@@ -176,7 +176,7 @@ final class OwnUserResponse: Sendable, Decodable {
             forKey: .totalUnreadCountByTeam
         )
         unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
-        unreadThreads = try container.decode(Int.self, forKey: .unreadThreads)
+        unreadThreads = try container.decodeIfPresent(Int.self, forKey: .unreadThreads) ?? 0
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }

@@ -2,8 +2,6 @@
     "channel_id" : "general",
     "channel_type" : "messaging",
     "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
@@ -22,7 +20,6 @@
         "name" : "steep-moon-9"
     },
     "thread": {
-        "active_participant_count": 0,
         "channel_cid": "messaging:general",
         "parent_message_id": "5b444e0d-a132-41a0-bf99-72dfdba0a053",
         "reply_count": 4,

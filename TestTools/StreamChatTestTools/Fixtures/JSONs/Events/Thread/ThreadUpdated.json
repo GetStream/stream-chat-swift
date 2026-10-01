@@ -37,7 +37,6 @@
             "created_at": "2024-04-05T19:56:23.169549Z",
             "updated_at": "2024-05-31T13:26:04.005786Z",
             "created_by": {
-                "teams": [],
                 "id": "r2-d2",
                 "role": "user",
                 "created_at": "2024-04-04T09:44:54.206412Z",
@@ -112,8 +111,6 @@
             "html": "<p>Test</p>\n",
             "type": "regular",
             "user": {
-                "language": "",
-                "teams": [],
                 "id": "han_solo",
                 "role": "user",
                 "created_at": "2024-04-04T09:18:11.060737Z",
@@ -135,7 +132,6 @@
             "deleted_reply_count": 0,
             "thread_participants": [
                 {
-                    "teams": [],
                     "id": "leia_organa",
                     "role": "admin",
                     "created_at": "2024-04-04T09:42:00.68335Z",
@@ -157,8 +153,6 @@
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
                 },
                 {
-                    "language": "",
-                    "teams": [],
                     "id": "han_solo",
                     "role": "user",
                     "created_at": "2024-04-04T09:18:11.060737Z",
@@ -189,7 +183,6 @@
         },
         "created_by_user_id": "leia_organa",
         "created_by": {
-            "teams": [],
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2024-04-04T09:42:00.68335Z",

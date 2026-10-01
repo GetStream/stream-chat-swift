@@ -26,8 +26,6 @@
   "channel_id" : "default-channel-6",
   "channel_type" : "messaging",
   "user" : {
-    "language" : "",
-    "teams" : [],
     "banned" : false,
     "online" : true,
     "id" : "luke_skywalker",

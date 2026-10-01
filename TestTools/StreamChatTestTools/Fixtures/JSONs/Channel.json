@@ -30,8 +30,6 @@
       "updated_at" : "2020-06-09T08:10:40.800912Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -89,8 +87,6 @@
       "updated_at" : "2020-06-09T08:12:25.453306Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "jolly-base-0",
@@ -140,8 +136,6 @@
       "updated_at" : "2020-06-09T08:13:33.541584Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "jolly-base-0",
@@ -191,8 +185,6 @@
       "updated_at" : "2020-06-09T08:14:26.7032Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "jolly-base-0",
@@ -254,8 +246,6 @@
       ],
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "jolly-base-0",
@@ -303,8 +293,6 @@
       "updated_at" : "2020-06-09T08:48:31.740934Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "example-user",
@@ -358,8 +346,6 @@
       "updated_at" : "2020-06-09T15:33:32.337316Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "hidden-lake-6",
@@ -409,8 +395,6 @@
       "updated_at" : "2020-06-09T15:44:59.393442Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
@@ -465,8 +449,6 @@
       "updated_at" : "2020-06-09T15:45:50.566301Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
@@ -522,8 +504,6 @@
       "updated_at" : "2020-06-09T18:26:18.095045Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -585,8 +565,6 @@
       "updated_at" : "2020-06-09T18:28:16.332143Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -648,8 +626,6 @@
       "updated_at" : "2020-06-09T18:28:43.040341Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -716,8 +692,6 @@
       "updated_at" : "2020-06-09T18:29:22.393858Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -775,8 +749,6 @@
       "updated_at" : "2020-06-09T18:35:11.649151Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "bitter-cloud-0",
@@ -830,8 +802,6 @@
       "updated_at" : "2020-06-09T18:35:32.476399Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "bitter-cloud-0",
@@ -882,8 +852,6 @@
       "updated_at" : "2020-06-09T18:37:17.923259Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -945,8 +913,6 @@
       "updated_at" : "2020-06-09T18:37:40.550024Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -1004,8 +970,6 @@
       "updated_at" : "2020-06-09T20:44:29.065852Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "wispy-bird-9",
@@ -1055,8 +1019,6 @@
       "updated_at" : "2020-06-09T20:44:33.223951Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "wispy-bird-9",
@@ -1106,8 +1068,6 @@
       "updated_at" : "2020-06-09T20:44:36.681316Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "wispy-bird-9",
@@ -1157,8 +1117,6 @@
       "updated_at" : "2020-06-09T22:29:15.591082Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "throbbing-salad-6",
@@ -1212,8 +1170,6 @@
       "updated_at" : "2020-06-09T22:29:47.078324Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "throbbing-salad-6",
@@ -1263,8 +1219,6 @@
       "updated_at" : "2020-06-09T23:02:00.304629Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "aged-moon-3",
@@ -1318,8 +1272,6 @@
       "updated_at" : "2020-06-10T00:27:03.27432Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "bitter-cloud-4",
@@ -1369,8 +1321,6 @@
       "updated_at" : "2020-06-10T05:59:48.054692Z",
       "reply_count" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "white-boat-1",
@@ -1404,8 +1354,6 @@
         "html": "\\u003cp\\u003eS\\u003c/p\\u003e\\n",
         "type": "regular",
         "user": {
-          "language" : "",
-          "teams" : [],
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -1474,8 +1422,6 @@
         "updated_at" : "2020-06-09T08:10:40.800912Z",
         "reply_count" : 0,
         "user" : {
-          "language" : "",
-          "teams" : [],
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
@@ -1512,8 +1458,6 @@
     "id" : "general",
     "created_at" : "2019-05-10T14:03:49.505006Z",
     "created_by" : {
-      "language" : "",
-      "teams" : [],
       "banned" : false,
       "online" : false,
       "id" : "abcusenameinsteadplz",
@@ -1606,8 +1550,6 @@
     {
       "unread_messages" : 0,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -1631,8 +1573,6 @@
     {
       "unread_messages" : 123,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "test-user-1",
@@ -1647,8 +1587,6 @@
     {
       "unread_messages" : 122,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "test-user-2",
@@ -1663,8 +1601,6 @@
     {
       "unread_messages" : 16,
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
@@ -1685,16 +1621,10 @@
   ],
   "members" : [
     {
-      "banned" : false,
-      "channel_role" : "channel_member",
-      "notifications_muted" : false,
-      "shadow_banned" : false,
       "created_at" : "2020-01-20T19:15:03.911517Z",
       "updated_at" : "2020-01-20T19:15:03.911517Z",
       "role" : "member",
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,
@@ -1715,16 +1645,10 @@
       }
     },
     {
-      "banned" : false,
-      "channel_role" : "channel_member",
-      "notifications_muted" : false,
-      "shadow_banned" : false,
       "created_at" : "2020-06-04T13:36:37.96589Z",
       "updated_at" : "2020-06-04T13:36:37.96589Z",
       "role" : "member",
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "test-user-1",
@@ -1736,16 +1660,10 @@
       }
     },
     {
-      "banned" : false,
-      "channel_role" : "channel_member",
-      "notifications_muted" : false,
-      "shadow_banned" : false,
       "created_at" : "2020-06-04T13:36:44.793348Z",
       "updated_at" : "2020-06-04T13:36:44.793348Z",
       "role" : "member",
       "user" : {
-        "language" : "",
-        "teams" : [],
         "banned" : false,
         "online" : false,
         "id" : "test-user-2",
@@ -1757,16 +1675,10 @@
       }
     },
     {
-      "banned" : false,
-      "channel_role" : "channel_member",
-      "notifications_muted" : false,
-      "shadow_banned" : false,
       "created_at" : "2020-06-05T12:55:48.581959Z",
       "updated_at" : "2020-06-05T12:55:48.581959Z",
       "role" : "member",
       "user" : {
-        "language" : "",
-        "teams" : [],
         "id" : "steep-moon-9",
         "banned" : false,
         "unread_channels" : 3,
@@ -1785,16 +1697,10 @@
     }
   ],
   "membership" : {
-    "banned" : false,
-    "channel_role" : "channel_member",
-    "notifications_muted" : false,
-    "shadow_banned" : false,
     "created_at" : "2020-01-20T19:15:03.911517Z",
     "updated_at" : "2020-01-20T19:15:03.911517Z",
     "role" : "channel_member",
     "user" : {
-      "language" : "",
-      "teams" : [],
       "id" : "broken-waterfall-5",
       "banned" : false,
       "unread_channels" : 0,
@@ -1816,8 +1722,6 @@
   },
   "watchers" : [
       {
-          "language" : "",
-          "teams" : [],
           "custom" : {
             "value" : "cilvia"
           },
@@ -1832,8 +1736,6 @@
           "name" : "Neil Hannah"
       },
       {
-          "language" : "",
-          "teams" : [],
           "custom" : {
             "value" : "josh"
           },
@@ -1848,8 +1750,6 @@
           "name" : "Joshua"
       },
       {
-          "language" : "",
-          "teams" : [],
           "custom" : {
             "value" : "vishal"
           },

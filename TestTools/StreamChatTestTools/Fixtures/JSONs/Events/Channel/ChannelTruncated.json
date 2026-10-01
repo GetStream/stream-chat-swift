@@ -1,7 +1,5 @@
 {
     "user" : {
-        "language" : "",
-        "teams" : [],
         "custom" : {
             "value" : "cilvia"
         },
@@ -88,16 +86,12 @@
         "created_at" : "2020-11-13T08:55:55.464959Z",
         "members" : [
             {
-                "channel_role" : "channel_member",
-                "notifications_muted" : false,
                 "created_at" : "2020-11-13T08:55:55.473851Z",
                 "banned" : false,
                 "shadow_banned" : false,
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-11-13T08:55:55.473851Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
                     "custom" : {
                         "value" : "cilvia"
                     },
@@ -113,16 +107,12 @@
                 }
             },
             {
-                "channel_role" : "channel_member",
-                "notifications_muted" : false,
                 "created_at" : "2020-11-13T08:55:55.473852Z",
                 "banned" : false,
                 "shadow_banned" : false,
                 "user_id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",
                 "updated_at" : "2020-11-13T08:55:55.473852Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
                     "banned" : false,
                     "online" : false,
                     "id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",

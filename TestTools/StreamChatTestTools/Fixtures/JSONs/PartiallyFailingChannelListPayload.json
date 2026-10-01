@@ -9,8 +9,6 @@
         "created_at": "2023-03-20T15:59:06.807677Z",
         "updated_at": "2023-03-22T11:16:32.969002Z",
         "created_by": {
-          "language": "",
-          "teams": [],
           "id": "han_solo",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.230369Z",
@@ -102,8 +100,6 @@
         "hidden": false,
         "truncated_at": "2023-03-22T11:16:32.910236Z",
         "truncated_by": {
-          "language": "",
-          "teams": [],
           "id": "han_solo",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.230369Z",
@@ -130,8 +126,6 @@
           "html": "<p>Kk</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -171,8 +165,6 @@
           "html": "<p>Jj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -213,8 +205,6 @@
           "html": "<p>Vbb</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -255,8 +245,6 @@
           "html": "<p>Hj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -297,8 +285,6 @@
           "html": "<p>Hb</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -339,8 +325,6 @@
           "html": "<p>Bb</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -381,8 +365,6 @@
           "html": "<p>Bbn</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -423,8 +405,6 @@
           "html": "<p>Bb</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -465,8 +445,6 @@
           "html": "<p>Hj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -507,8 +485,6 @@
           "html": "<p>Jj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -549,8 +525,6 @@
           "html": "<p>Gjj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -591,8 +565,6 @@
           "html": "<p>Jj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -633,8 +605,6 @@
           "html": "<p>Hh</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -675,8 +645,6 @@
           "html": "<p>Khh</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -717,8 +685,6 @@
           "html": "<p>Hhj</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -761,8 +727,6 @@
             "html": "<p>Kk</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "han_solo",
               "role": "user",
               "created_at": "2020-12-07T11:37:34.230369Z",
@@ -797,8 +761,6 @@
       "read": [
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "count_dooku",
             "role": "user",
             "created_at": "2020-12-07T11:37:39.487938Z",
@@ -817,8 +779,6 @@
         },
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -838,11 +798,8 @@
       ],
       "members": [
         {
-          "notifications_muted": false,
           "user_id": "count_dooku",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "count_dooku",
             "role": "user",
             "last_active": "2023-03-20T17:36:16.278413Z",
@@ -863,11 +820,8 @@
           "channel_role": "channel_member"
         },
         {
-          "notifications_muted": false,
           "user_id": "han_solo",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -890,10 +844,7 @@
         }
       ],
       "membership": {
-        "notifications_muted": false,
         "user": {
-          "language": "",
-          "teams": [],
           "id": "han_solo",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.230369Z",
@@ -923,8 +874,6 @@
         "created_at": "2021-04-15T11:43:04.444796Z",
         "updated_at": "2021-04-15T11:43:04.444796Z",
         "created_by": {
-          "language": "",
-          "teams": [],
           "id": "luke_skywalker",
           "role": "user",
           "created_at": "2020-12-07T11:36:47.059906Z",
@@ -1023,8 +972,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1102,8 +1049,6 @@
               "message_id": "d00cd103-7776-46cf-9626-0ed5245f2ce4",
               "user_id": "han_solo",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "han_solo",
                 "role": "user",
                 "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1128,8 +1073,6 @@
               "message_id": "d00cd103-7776-46cf-9626-0ed5245f2ce4",
               "user_id": "han_solo",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "han_solo",
                 "role": "user",
                 "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1181,8 +1124,6 @@
           "html": "<p>Hey</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1223,8 +1164,6 @@
           "html": "<p>Test</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1265,8 +1204,6 @@
           "html": "<p>Test</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1308,8 +1245,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1413,8 +1348,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1517,8 +1450,6 @@
           "html": "<p>Yo</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1549,8 +1480,6 @@
             "html": "<p>Surrounded to me occasional pianoforte alteration unaffected impossible ye</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "han_solo",
               "role": "user",
               "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1579,8 +1508,6 @@
             "pinned": true,
             "pinned_at": "2023-03-08T18:22:50.37193Z",
             "pinned_by": {
-              "language": "",
-              "teams": [],
               "id": "han_solo",
               "role": "user",
               "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1617,8 +1544,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1659,8 +1584,6 @@
           "html": "<p>Hey</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1701,8 +1624,6 @@
           "html": "<p>Hey</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1743,8 +1664,6 @@
           "html": "<p>Coool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1785,8 +1704,6 @@
           "html": "<p>DddGreat</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1827,8 +1744,6 @@
           "html": "<p>Ahah</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1859,8 +1774,6 @@
             "html": "<p>Am wound worth water he linen at vexed</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "leia_organa",
               "role": "user",
               "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1880,8 +1793,6 @@
                 "message_id": "9eb88551-0a71-4154-a124-5ec579861b6d",
                 "user_id": "leia_organa",
                 "user": {
-                  "language": "",
-                  "teams": [],
                   "id": "leia_organa",
                   "role": "user",
                   "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1904,8 +1815,6 @@
                 "message_id": "9eb88551-0a71-4154-a124-5ec579861b6d",
                 "user_id": "han_solo",
                 "user": {
-                  "language": "",
-                  "teams": [],
                   "id": "han_solo",
                   "role": "user",
                   "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1928,8 +1837,6 @@
                 "message_id": "9eb88551-0a71-4154-a124-5ec579861b6d",
                 "user_id": "han_solo",
                 "user": {
-                  "language": "",
-                  "teams": [],
                   "id": "han_solo",
                   "role": "user",
                   "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1954,8 +1861,6 @@
                 "message_id": "9eb88551-0a71-4154-a124-5ec579861b6d",
                 "user_id": "han_solo",
                 "user": {
-                  "language": "",
-                  "teams": [],
                   "id": "han_solo",
                   "role": "user",
                   "created_at": "2020-12-07T11:37:34.230369Z",
@@ -1978,8 +1883,6 @@
                 "message_id": "9eb88551-0a71-4154-a124-5ec579861b6d",
                 "user_id": "han_solo",
                 "user": {
-                  "language": "",
-                  "teams": [],
                   "id": "han_solo",
                   "role": "user",
                   "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2042,8 +1945,6 @@
           "html": "<p>Ahahahah</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2074,8 +1975,6 @@
             "html": "<p>DddGreat</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "han_solo",
               "role": "user",
               "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2127,8 +2026,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2169,8 +2066,6 @@
           "html": "<p>Lol</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2211,8 +2106,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2253,8 +2146,6 @@
           "html": "<p>Great</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2276,8 +2167,6 @@
           "reply_count": 12,
           "thread_participants": [
             {
-              "language": "",
-              "teams": [],
               "id": "han_solo",
               "role": "user",
               "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2313,8 +2202,6 @@
           "html": "<p>😉😉</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -2355,8 +2242,6 @@
           "html": "<p>This message was deleted.</p>\n",
           "type": "deleted",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -2387,8 +2272,6 @@
             "html": "<p>😉😉</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "leia_organa",
               "role": "user",
               "created_at": "2020-12-07T11:37:33.78879Z",
@@ -2441,8 +2324,6 @@
           "html": "<p>123</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2464,8 +2345,6 @@
           "reply_count": 21,
           "thread_participants": [
             {
-              "language": "",
-              "teams": [],
               "id": "han_solo",
               "role": "user",
               "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2501,8 +2380,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -2543,8 +2420,6 @@
           "html": "<p>Great</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -2585,8 +2460,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2635,8 +2508,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2687,8 +2558,6 @@
           "html": "<p>Hi</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -2717,8 +2586,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:16:22.065886Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2744,8 +2611,6 @@
           "html": "<p>Four</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2774,8 +2639,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:16:50.489677Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2801,8 +2664,6 @@
           "html": "<p>Hi</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2831,8 +2692,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:16:59.198887Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2858,8 +2717,6 @@
           "html": "<p>Qwerty</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2888,8 +2745,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:06.37481Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2915,8 +2770,6 @@
           "html": "<p>Asdfasdfasdfsdf</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2945,8 +2798,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:14.362713Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -2972,8 +2823,6 @@
           "html": "<p>Qwerty</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3002,8 +2851,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:21.916529Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3029,8 +2876,6 @@
           "html": "<p>Lkasjdfklasdfjlkasdfjsadf</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -3059,8 +2904,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:29.917797Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3086,8 +2929,6 @@
           "html": "<p>Hey</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -3116,8 +2957,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:35.715684Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3143,8 +2982,6 @@
           "html": "<p>Hey</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -3173,8 +3010,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:40.803175Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3200,8 +3035,6 @@
           "html": "<p>Hey</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3230,8 +3063,6 @@
           "pinned": true,
           "pinned_at": "2022-06-18T08:17:46.232125Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3252,8 +3083,6 @@
       "read": [
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3272,8 +3101,6 @@
         },
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -3293,11 +3120,8 @@
       ],
       "members": [
         {
-          "notifications_muted": false,
           "user_id": "han_solo",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3319,11 +3143,8 @@
           "channel_role": "channel_member"
         },
         {
-          "notifications_muted": false,
           "user_id": "leia_organa",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -3346,10 +3167,7 @@
         }
       ],
       "membership": {
-        "notifications_muted": false,
         "user": {
-          "language": "",
-          "teams": [],
           "id": "han_solo",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3379,8 +3197,6 @@
         "created_at": "2023-02-10T15:36:37.57265Z",
         "updated_at": "2023-02-10T15:42:02.82044Z",
         "created_by": {
-          "language": "",
-          "teams": [],
           "id": "luke_skywalker",
           "role": "user",
           "created_at": "2020-12-07T11:36:47.059906Z",
@@ -3466,8 +3282,6 @@
         "hidden": false,
         "truncated_at": "2023-02-10T15:42:02.814528Z",
         "truncated_by": {
-          "language": "",
-          "teams": [],
           "id": "luke_skywalker",
           "role": "user",
           "created_at": "2020-12-07T11:36:47.059906Z",
@@ -3492,8 +3306,6 @@
           "html": "<p>Asd</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3534,8 +3346,6 @@
           "html": "<p>Asd</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3576,8 +3386,6 @@
           "html": "<p>123</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3618,8 +3426,6 @@
           "html": "<p>41</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3660,8 +3466,6 @@
           "html": "<p>4</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -3703,8 +3507,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -3782,8 +3584,6 @@
               "message_id": "5b15c9c4-5704-415d-9007-8ef4d2068ce0",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -3837,8 +3637,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -3916,8 +3714,6 @@
               "message_id": "1303e847-46f3-4a00-9f80-c9cee09f548a",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -3971,8 +3767,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -4050,8 +3844,6 @@
               "message_id": "734ae3e0-0ced-48ab-87ef-8540f583ad63",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4104,8 +3896,6 @@
           "html": "<p>Test</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4125,8 +3915,6 @@
               "message_id": "6f2edc5b-3ff6-4d8c-b7f5-73819f07333f",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4175,8 +3963,6 @@
           "html": "<p>Lol</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4217,8 +4003,6 @@
           "html": "<p>Test</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4238,8 +4022,6 @@
               "message_id": "ef4a75c8-284c-4164-b120-c98e1c4e5354",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4288,8 +4070,6 @@
           "html": "<p>Tedt</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4309,8 +4089,6 @@
               "message_id": "b951f49f-cff8-442a-b18b-066d05177812",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4359,8 +4137,6 @@
           "html": "<p>Ok</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4401,8 +4177,6 @@
           "html": "<p>Heyy</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4443,8 +4217,6 @@
           "html": "<p>🐳</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4500,8 +4272,6 @@
           "html": "",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4550,8 +4320,6 @@
           "html": "<p>🐳</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4592,8 +4360,6 @@
           "html": "<p>Hi</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4634,8 +4400,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4666,8 +4430,6 @@
             "html": "<p>1</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "luke_skywalker",
               "role": "user",
               "created_at": "2020-12-07T11:36:47.059906Z",
@@ -4717,8 +4479,6 @@
           "html": "<p>Already in list</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4738,8 +4498,6 @@
               "message_id": "774fff64-6536-44ba-ad46-f6bc3c5b4db8",
               "user_id": "lando_calrissian",
               "user": {
-                "language": "",
-                "teams": [],
                 "id": "lando_calrissian",
                 "role": "moderator",
                 "created_at": "2020-12-07T11:37:34.684838Z",
@@ -4778,8 +4536,6 @@
             "html": "<p>Heyy</p>\n",
             "type": "regular",
             "user": {
-              "language": "",
-              "teams": [],
               "id": "leia_organa",
               "role": "user",
               "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4831,8 +4587,6 @@
           "html": "<p>Hola</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4873,8 +4627,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -4915,8 +4667,6 @@
           "html": "<p>Cool</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -4959,8 +4709,6 @@
           "html": "<p>Hi</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -5001,8 +4749,6 @@
           "html": "<p>Hi</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5045,8 +4791,6 @@
           "html": "<p>Frfg</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5075,8 +4819,6 @@
           "pinned": true,
           "pinned_at": "2023-03-13T15:05:11.713386Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5102,8 +4844,6 @@
           "html": "<p>Ll</p>\n",
           "type": "regular",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5132,8 +4872,6 @@
           "pinned": true,
           "pinned_at": "2023-03-13T15:07:30.536131Z",
           "pinned_by": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5154,8 +4892,6 @@
       "read": [
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5174,8 +4910,6 @@
         },
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -5194,8 +4928,6 @@
         },
         {
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -5215,11 +4947,8 @@
       ],
       "members": [
         {
-          "notifications_muted": false,
           "user_id": "han_solo",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "han_solo",
             "role": "user",
             "created_at": "2020-12-07T11:37:34.230369Z",
@@ -5241,11 +4970,8 @@
           "channel_role": "channel_member"
         },
         {
-          "notifications_muted": false,
           "user_id": "lando_calrissian",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "lando_calrissian",
             "role": "moderator",
             "created_at": "2020-12-07T11:37:34.684838Z",
@@ -5267,11 +4993,8 @@
           "channel_role": "channel_member"
         },
         {
-          "notifications_muted": false,
           "user_id": "leia_organa",
           "user": {
-            "language": "",
-            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -5294,10 +5017,7 @@
         }
       ],
       "membership": {
-        "notifications_muted": false,
         "user": {
-          "language": "",
-          "teams": [],
           "id": "han_solo",
           "role": "user",
           "created_at": "2020-12-07T11:37:34.230369Z",

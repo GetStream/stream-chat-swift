@@ -33,7 +33,11 @@ args:
     MemberInfoPayload:
       notificationsMuted: "false"
     MemberPayload:
+      banned: "false"
+      channelRole: "\"channel_member\""
       custom: "[:]"
+      notificationsMuted: "false"
+      shadowBanned: "false"
     MessageAttachmentPayload:
       custom: "[:]"
     MessageReactionPayload:
@@ -43,17 +47,24 @@ args:
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
+      reactionCounts: "[:]"
       reactionScores: "[:]"
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
     OwnUserResponse:
+      banned: "false"
       custom: "[:]"
+      invisible: "false"
+      language: "\"\""
+      teams: "[]"
+      unreadThreads: "0"
     SearchResultMessage:
       custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
+      reactionCounts: "[:]"
       reactionScores: "[:]"
       restrictedVisibility: "[]"
       shadowed: "false"
@@ -61,12 +72,17 @@ args:
     ThreadParticipantPayload:
       custom: "[:]"
     ThreadResponse:
+      activeParticipantCount: "0"
       custom: "[:]"
     ThreadStateResponse:
+      activeParticipantCount: "0"
       custom: "[:]"
       latestReplies: "[]"
     UserPayload:
+      banned: "false"
       custom: "[:]"
+      language: "\"\""
+      teams: "[]"
   # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
   lossyArrays:
     ChannelDetailPayload: [members]

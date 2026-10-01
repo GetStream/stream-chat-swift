@@ -315,7 +315,7 @@ final class MessageResponse: Sendable, Decodable {
         pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
         quotedMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .quotedMessage)
         quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
-        reactionCounts = try container.decode([String: Int].self, forKey: .reactionCounts)
+        reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts) ?? [:]
         reactionGroups = try container.decodeIfPresent(
             [String: MessageReactionGroupPayload?].self,
             forKey: .reactionGroups
