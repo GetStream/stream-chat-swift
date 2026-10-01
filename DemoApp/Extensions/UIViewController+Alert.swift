@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamLogsUI
 import UIKit
 
 extension UIViewController {
@@ -88,19 +89,27 @@ extension UIViewController {
         onDisconnect: (() -> Void)?,
         client: ChatClient
     ) {
-        presentAlert(title: nil, actions: [
+        var actions: [UIAlertAction] = [
             .init(title: "Show Profile", style: .default, handler: { [weak self] _ in
                 let viewController = UserProfileViewController(
                     currentUserController: client.currentUserController()
                 )
                 self?.navigationController?.pushViewController(viewController, animated: true)
-            }),
+            })
+        ]
+        if #available(iOS 16.0, *) {
+            actions.append(.init(title: "Show Logs", style: .default, handler: { _ in
+                LogViewer.present()
+            }))
+        }
+        actions += [
             .init(title: "Logout", style: .destructive, handler: { _ in
                 onLogout?()
             }),
             .init(title: "Disconnect", style: .destructive, handler: { _ in
                 onDisconnect?()
             })
-        ])
+        ]
+        presentAlert(title: nil, actions: actions)
     }
 }
