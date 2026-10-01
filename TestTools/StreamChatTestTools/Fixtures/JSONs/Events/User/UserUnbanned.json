@@ -2,7 +2,6 @@
     "channel_id" : "new_channel_7070",
     "channel_type" : "messaging",
     "user" : {
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "unread_channels" : 0,

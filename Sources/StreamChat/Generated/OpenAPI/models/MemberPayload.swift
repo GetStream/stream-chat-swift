@@ -114,4 +114,36 @@ final class MemberPayload: Sendable, Decodable {
         case user
         case userId = "user_id"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
+        banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
+        banFromFutureChannels = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .banFromFutureChannels
+        )
+        banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
+        channelRole = try container.decodeIfPresent(String.self, forKey: .channelRole)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        deletedMessages = try container.decodeIfPresent([String].self, forKey: .deletedMessages)
+        futureChannelBanExpires = try container.decodeIfPresent(
+            Date.self,
+            forKey: .futureChannelBanExpires
+        )
+        inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
+        inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
+        invited = try container.decodeIfPresent(Bool.self, forKey: .invited)
+        isModerator = try container.decodeIfPresent(Bool.self, forKey: .isModerator)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted)
+        pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
+        role = try container.decodeIfPresent(String.self, forKey: .role)
+        shadowBanned = try container.decodeIfPresent(Bool.self, forKey: .shadowBanned)
+        status = try container.decodeIfPresent(String.self, forKey: .status)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        userId = try container.decodeIfPresent(String.self, forKey: .userId)
+    }
 }

@@ -1,15 +1,22 @@
 sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
   - ./Generated/OpenAPI/models/ChannelStateResponse.swift
+  - ./Generated/OpenAPI/models/DraftMessagePayload.swift
   - ./Generated/OpenAPI/models/GroupedChannelsBucket.swift
   - ./Generated/OpenAPI/models/MemberInfoPayload.swift
+  - ./Generated/OpenAPI/models/MemberPayload.swift
+  - ./Generated/OpenAPI/models/MessageAttachmentPayload.swift
+  - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/MessageResponse.swift
   - ./Generated/OpenAPI/models/OwnUserResponse.swift
   - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
   - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
   - ./Generated/OpenAPI/models/SyncResponse.swift
+  - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
+  - ./Generated/OpenAPI/models/ThreadResponse.swift
   - ./Generated/OpenAPI/models/ThreadStateResponse.swift
+  - ./Generated/OpenAPI/models/UserPayload.swift
 templates:
   - ./Generated/OpenAPIDecodable.stencil
 output:
@@ -17,11 +24,22 @@ output:
 args:
   # Non-optional properties which fall back to a default when the key is missing or null.
   defaultValues:
+    ChannelDetailPayload:
+      custom: "[:]"
     ChannelStateResponse:
       threads: "[]"
+    DraftMessagePayload:
+      custom: "[:]"
     MemberInfoPayload:
       notificationsMuted: "false"
+    MemberPayload:
+      custom: "[:]"
+    MessageAttachmentPayload:
+      custom: "[:]"
+    MessageReactionPayload:
+      custom: "[:]"
     MessageResponse:
+      custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
@@ -29,7 +47,10 @@ args:
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    OwnUserResponse:
+      custom: "[:]"
     SearchResultMessage:
+      custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
@@ -37,8 +58,15 @@ args:
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    ThreadParticipantPayload:
+      custom: "[:]"
+    ThreadResponse:
+      custom: "[:]"
     ThreadStateResponse:
+      custom: "[:]"
       latestReplies: "[]"
+    UserPayload:
+      custom: "[:]"
   # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
   lossyArrays:
     ChannelDetailPayload: [members]

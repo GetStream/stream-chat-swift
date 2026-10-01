@@ -1,7 +1,6 @@
 {
   "threads": [
     {
-      "custom": {},
       "channel_cid": "messaging:4AB11F2F-4",
       "channel": {
         "custom": {
@@ -34,7 +33,6 @@
         "disabled": false,
         "members": [
           {
-            "custom": {},
             "user_id": "han_solo",
             "user": {
               "custom": {
@@ -63,7 +61,6 @@
             "notifications_muted": false
           },
           {
-            "custom": {},
             "user_id": "r2-d2",
             "user": {
               "custom": {
@@ -92,10 +89,8 @@
             "notifications_muted": false
           },
           {
-            "custom": {},
             "user_id": "tommaso-0",
             "user": {
-              "custom": {},
               "id": "tommaso-0",
               "role": "user",
               "created_at": "2023-09-27T13:09:36.590043Z",
@@ -290,7 +285,6 @@
       ]
     },
     {
-      "custom": {},
       "channel_cid": "messaging:06E2B480-F",
       "channel": {
         "custom": {
@@ -324,7 +318,6 @@
         "disabled": false,
         "members": [
           {
-            "custom": {},
             "user_id": "han_solo",
             "user": {
               "custom": {
@@ -353,7 +346,6 @@
             "notifications_muted": false
           },
           {
-            "custom": {},
             "user_id": "luke_skywalker",
             "user": {
               "custom": {
@@ -382,10 +374,8 @@
             "notifications_muted": false
           },
           {
-            "custom": {},
             "user_id": "luke_skywalker2",
             "user": {
-              "custom": {},
               "id": "luke_skywalker2",
               "role": "anonymous",
               "created_at": "2023-01-25T15:46:02.391012Z",
@@ -456,7 +446,6 @@
       },
       "parent_message_id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
       "parent_message": {
-        "custom": {},
         "mentioned_channel": false,
         "mentioned_here": false,
         "restricted_visibility": [],
@@ -623,7 +612,6 @@
       "title": "Hhh",
       "latest_replies": [
         {
-          "custom": {},
           "mentioned_channel": false,
           "mentioned_here": false,
           "restricted_visibility": [],
@@ -668,7 +656,6 @@
           "pin_expires": null
         },
         {
-          "custom": {},
           "mentioned_channel": false,
           "mentioned_here": false,
           "restricted_visibility": [],
@@ -781,7 +768,6 @@
       ]
     },
     {
-      "custom": {},
       "channel_cid": "messaging:C272E452-0",
       "channel": {
         "custom": {
@@ -815,7 +801,6 @@
         "disabled": false,
         "members": [
           {
-            "custom": {},
             "user_id": "han_solo",
             "user": {
               "custom": {
@@ -844,10 +829,8 @@
             "notifications_muted": false
           },
           {
-            "custom": {},
             "user_id": "leia_organa",
             "user": {
-              "custom": {},
               "id": "leia_organa",
               "role": "admin",
               "created_at": "2020-12-07T11:37:33.78879Z",
@@ -870,10 +853,8 @@
             "notifications_muted": true
           },
           {
-            "custom": {},
             "user_id": "leia_orgz",
             "user": {
-              "custom": {},
               "id": "leia_orgz",
               "role": "user",
               "created_at": "2023-12-07T18:17:14.310699Z",
@@ -962,7 +943,6 @@
       },
       "parent_message_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
       "parent_message": {
-        "custom": {},
         "mentioned_channel": false,
         "mentioned_here": false,
         "restricted_visibility": [],
@@ -971,7 +951,6 @@
         "html": "<p>@Leia Organa hi @Leia Organa</p>\n",
         "type": "regular",
         "user": {
-          "custom": {},
           "id": "leia_organa",
           "role": "admin",
           "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1010,7 +989,6 @@
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
           {
-            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1030,7 +1008,6 @@
         "shadowed": false,
         "mentioned_users": [
           {
-            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1080,7 +1057,6 @@
           "thread_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
           "user_id": "leia_organa",
           "user": {
-            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1131,7 +1107,6 @@
       "title": "@Leia Organa hi @Leia Organa",
       "latest_replies": [
         {
-          "custom": {},
           "mentioned_channel": false,
           "mentioned_here": false,
           "restricted_visibility": [],
@@ -1167,7 +1142,6 @@
           "deleted_reply_count": 0,
           "quoted_message_id": "29f84334-aa27-4e8c-8ea3-d89303a588be",
           "quoted_message": {
-            "custom": {},
             "mentioned_channel": false,
             "mentioned_here": false,
             "restricted_visibility": [],
@@ -1232,7 +1206,6 @@
           "pin_expires": null
         },
         {
-          "custom": {},
           "mentioned_channel": false,
           "mentioned_here": false,
           "restricted_visibility": [],
@@ -1241,7 +1214,6 @@
           "html": "<p>H</p>\n",
           "type": "reply",
           "user": {
-            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2020-12-07T11:37:33.78879Z",
@@ -1277,7 +1249,6 @@
       "read": [
         {
           "user": {
-            "custom": {},
             "id": "leia_organa",
             "role": "admin",
             "created_at": "2020-12-07T11:37:33.78879Z",

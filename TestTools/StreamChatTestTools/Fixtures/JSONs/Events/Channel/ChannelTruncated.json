@@ -86,7 +86,6 @@
         "created_at" : "2020-11-13T08:55:55.464959Z",
         "members" : [
             {
-                "custom" : {},
                 "created_at" : "2020-11-13T08:55:55.473851Z",
                 "banned" : false,
                 "shadow_banned" : false,
@@ -108,14 +107,12 @@
                 }
             },
             {
-                "custom" : {},
                 "created_at" : "2020-11-13T08:55:55.473852Z",
                 "banned" : false,
                 "shadow_banned" : false,
                 "user_id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",
                 "updated_at" : "2020-11-13T08:55:55.473852Z",
                 "user" : {
-                    "custom" : {},
                     "banned" : false,
                     "online" : false,
                     "id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",

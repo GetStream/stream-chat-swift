@@ -1,6 +1,5 @@
 {
     "user" : {
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -26,7 +25,6 @@
     "created_at" : "2020-07-17T13:42:21.539429604Z",
     "total_unread_count" : 1,
     "message" : {
-        "custom" : {},
         "cid" : "messaging:general",
         "deleted_reply_count" : 0,
         "mentioned_channel" : false,
@@ -54,7 +52,6 @@
         "updated_at" : "2020-07-17T13:42:21.531523Z",
         "reply_count" : 0,
         "user" : {
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {

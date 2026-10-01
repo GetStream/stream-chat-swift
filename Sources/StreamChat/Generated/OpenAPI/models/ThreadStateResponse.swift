@@ -116,7 +116,7 @@ final class ThreadStateResponse: Sendable, Decodable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
-        custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)

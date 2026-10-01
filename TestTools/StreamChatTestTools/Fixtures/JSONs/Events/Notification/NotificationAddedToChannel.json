@@ -1,6 +1,5 @@
 {
   "member" : {
-      "custom" : {},
       "banned" : false,
       "shadow_banned" : false,
       "created_at" : "2021-12-21T15:51:42.125776Z",
@@ -25,9 +24,7 @@
       }
   },
   "channel" : {
-    "custom" : {},
     "created_by" : {
-      "custom" : {},
       "banned" : false,
       "online" : true,
       "id" : "luke_skywalker",
@@ -88,7 +85,6 @@
     "created_at" : "2021-04-22T19:24:43.833363Z",
     "members" : [
       {
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "member",
@@ -96,7 +92,6 @@
         "user_id" : "count_dooku",
         "updated_at" : "2021-04-22T19:24:43.835671Z",
         "user" : {
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "count_dooku",
@@ -109,7 +104,6 @@
         }
       },
       {
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "member",
@@ -117,7 +111,6 @@
         "user_id" : "darth_maul",
         "updated_at" : "2021-04-22T19:24:43.835671Z",
         "user" : {
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "darth_maul",
@@ -130,7 +123,6 @@
         }
       },
       {
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "member",
@@ -138,7 +130,6 @@
         "user_id" : "r2-d2",
         "updated_at" : "2021-04-22T19:24:43.835671Z",
         "user" : {
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "r2-d2",
@@ -151,7 +142,6 @@
         }
       },
       {
-        "custom" : {},
         "banned" : false,
         "shadow_banned" : false,
         "role" : "owner",
@@ -159,7 +149,6 @@
         "user_id" : "luke_skywalker",
         "updated_at" : "2021-04-22T19:24:43.835672Z",
         "user" : {
-          "custom" : {},
           "banned" : false,
           "online" : true,
           "id" : "luke_skywalker",

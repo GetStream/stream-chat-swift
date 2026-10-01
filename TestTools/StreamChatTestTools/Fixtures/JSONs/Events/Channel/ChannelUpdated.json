@@ -1,6 +1,5 @@
 {
     "user" : {
-        "custom" : {},
         "id" : "broken-waterfall-5",
         "banned" : false,
         "extraData" : {
@@ -27,12 +26,10 @@
         "id" : "new_channel_7070",
         "members" : [
             {
-                "custom" : {},
                 "created_at" : "2020-07-16T12:50:34.79057Z",
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-07-16T12:50:34.79057Z",
                 "user" : {
-                    "custom" : {},
                     "id" : "broken-waterfall-5",
                     "banned" : false,
                     "extraData" : {
@@ -54,12 +51,10 @@
                 }
             },
             {
-                "custom" : {},
                 "created_at" : "2020-07-16T15:38:56.905657Z",
                 "user_id" : "steep-moon-9",
                 "updated_at" : "2020-07-16T15:38:56.905657Z",
                 "user" : {
-                    "custom" : {},
                     "id" : "steep-moon-9",
                     "banned" : false,
                     "unread_channels" : 3,
@@ -80,7 +75,6 @@
         ],
         "created_at" : "2020-07-16T12:50:34.786899Z",
         "created_by" : {
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {

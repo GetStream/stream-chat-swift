@@ -139,7 +139,7 @@ final class OwnUserResponse: Sendable, Decodable {
             forKey: .channelMutes
         )
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         devices = try container.decodeArrayIfPresentIgnoringFailures([Device].self, forKey: .devices)

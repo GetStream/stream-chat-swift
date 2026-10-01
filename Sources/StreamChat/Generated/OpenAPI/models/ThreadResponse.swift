@@ -92,4 +92,30 @@ final class ThreadResponse: Sendable, Decodable {
         case title
         case updatedAt = "updated_at"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        activeParticipantCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .activeParticipantCount
+        )
+        channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        channelCid = try container.decode(String.self, forKey: .channelCid)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        createdByUserId = try container.decodeIfPresent(String.self, forKey: .createdByUserId)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
+        parentMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .parentMessage)
+        parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
+        participantCount = try container.decode(Int.self, forKey: .participantCount)
+        replyCount = try container.decode(Int.self, forKey: .replyCount)
+        threadParticipants = try container.decodeIfPresent(
+            [ThreadParticipantPayload].self,
+            forKey: .threadParticipants
+        )
+        title = try container.decode(String.self, forKey: .title)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+    }
 }

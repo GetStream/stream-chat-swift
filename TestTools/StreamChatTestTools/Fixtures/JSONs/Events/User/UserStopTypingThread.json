@@ -4,7 +4,6 @@
    "channel_id":"default-channel-5",
    "channel_type":"messaging",
    "user":{
-      "custom":{},
       "id":"han_solo",
       "role":"user",
       "created_at":"2020-12-07T11:37:34.230369Z",

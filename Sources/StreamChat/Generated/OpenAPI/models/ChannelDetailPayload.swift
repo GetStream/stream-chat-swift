@@ -167,7 +167,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         cooldown = try container.decodeIfPresent(Int.self, forKey: .cooldown)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         disabled = try container.decode(Bool.self, forKey: .disabled)
         filterTags = try container.decodeIfPresent([String].self, forKey: .filterTags)

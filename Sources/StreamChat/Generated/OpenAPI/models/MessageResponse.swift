@@ -260,7 +260,7 @@ final class MessageResponse: Sendable, Decodable {
         cid = try container.decode(String.self, forKey: .cid)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
         deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)
