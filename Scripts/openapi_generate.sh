@@ -134,7 +134,6 @@ allowed_models=(
   DeleteMessageResponse
   DeleteReactionResponse
   DeliveredMessagePayload
-  DeliveryReceiptsResponse
   DeviceResponse
   DraftPayloadResponse
   DraftResponse
@@ -193,7 +192,6 @@ allowed_models=(
   PollVoteResponse
   PollVoteResponseData
   PollVotesResponse
-  PrivacySettingsResponse
   PushPreferenceInput
   PushPreferencesResponse
   QueryBannedUsersPayload
@@ -214,7 +212,6 @@ allowed_models=(
   ReactionGroupResponse
   ReactionRequest
   ReactionResponse
-  ReadReceiptsResponse
   ReadStateResponse
   ReminderResponseData
   RemoveUserGroupMembersRequest
@@ -240,7 +237,6 @@ allowed_models=(
   TranslateMessageResponse
   TruncateChannelRequest
   TruncateChannelResponse
-  TypingIndicatorsResponse
   UnblockUsersRequest
   UnblockUsersResponse
   UnmuteChannelRequest
@@ -474,19 +470,15 @@ codable_models=(
   AttachmentActionPayload
   AttachmentFieldPayload
   ChannelCapability
-  DeliveryReceiptsPrivacySettings
   Device
   GiphyImageData
   GiphyImages
   MemberInfoPayload
   MemberUserRequest
   MessageAttachmentPayload
-  ReadReceiptsPrivacySettings
   Role
   SortParamRequest
-  TypingIndicatorPrivacySettings
   UserPayload
-  UserPrivacySettings
 )
 
 # Exact membership test (macOS bash 3.2 — no associative arrays).
@@ -777,15 +769,17 @@ rename_generated ReminderResponseData ReminderPayload
 rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated UnmuteResponse UnmuteUsersResponse
 rename_generated UserMuteResponse MutedUserPayload
-rename_generated DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
-rename_generated PrivacySettingsResponse UserPrivacySettings
-rename_generated ReadReceiptsResponse ReadReceiptsPrivacySettings
-rename_generated TypingIndicatorsResponse TypingIndicatorPrivacySettings
 rename_generated ThreadParticipant ThreadParticipantPayload
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
+
+# StreamCore provides the privacy settings models; only point the references at its names.
+rename_generated_type DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
+rename_generated_type PrivacySettingsResponse UserPrivacySettings
+rename_generated_type ReadReceiptsResponse ReadReceiptsPrivacySettings
+rename_generated_type TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type DeleteReminderResponse EmptyResponse
 # TODO: EventResponse is not used and would bring in WSEvent
@@ -904,22 +898,6 @@ remove_type() {
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
-# Give a generated model mutable stored properties, so it can replace a hand-written
-#     public type whose properties were var. Mutable state rules out checked Sendable,
-#     hence the relaxed conformance. Runs before publicize_model, which anchors on the
-#     resulting var lines.
-make_model_mutable() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E \
-    -e 's/^(final class [A-Za-z0-9_]+): Sendable,/\1: @unchecked Sendable,/' \
-    -e 's/^    let /    var /' \
-    "$file"
-}
-make_model_mutable DeliveryReceiptsPrivacySettings
-make_model_mutable ReadReceiptsPrivacySettings
-make_model_mutable TypingIndicatorPrivacySettings
-make_model_mutable UserPrivacySettings
-
 # 4c. Expose selected generated models as public API. The type and its stored
 #     properties become public, along with the generated Hashable conformance
 #     (== and hash(into:)); the memberwise init and CodingKeys stay internal.
@@ -935,13 +913,10 @@ publicize_model() {
 }
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
-publicize_model DeliveryReceiptsPrivacySettings
 publicize_model Device
 publicize_model PushPreference
-publicize_model ReadReceiptsPrivacySettings
 publicize_model Role
 publicize_model SharedLocation
-publicize_model TypingIndicatorPrivacySettings
 publicize_model UnmuteUsersResponse
 publicize_model UnreadChannel
 publicize_model UnreadChannelByType
@@ -949,7 +924,6 @@ publicize_model UnreadThread
 publicize_model UploadConfig
 publicize_model UserGroup
 publicize_model UserGroupMember
-publicize_model UserPrivacySettings
 
 # Expose a generated RawRepresentable class as public API. Unlike publicize_model, the
 #     init must be public too — it is the RawRepresentable requirement — along with every
@@ -1002,29 +976,6 @@ deprecate_raw_representable_value() {
   mv "$file.tmp" "$file"
 }
 deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentions directMentions
-
-# Expose a generated model's memberwise init, for models whose hand-written public
-#     counterpart had a public init.
-publicize_init() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  sed -i '' -E 's/^    init\(/    public init(/' "$file"
-}
-publicize_init DeliveryReceiptsPrivacySettings
-publicize_init ReadReceiptsPrivacySettings
-publicize_init TypingIndicatorPrivacySettings
-
-# Give a generated memberwise init parameter a default value, restoring one the
-#     hand-written public init had.
-default_init_parameter() {
-  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  P="$2" D="$3" perl -0777 -pi -e '
-    my ($p, $d) = ($ENV{P}, $ENV{D});
-    s/([(,]\s*)\Q$p\E: ([^,)\n=]+)(?=[,)])/${1}$p: $2 = $d/;
-  ' "$file"
-}
-default_init_parameter DeliveryReceiptsPrivacySettings enabled true
-default_init_parameter ReadReceiptsPrivacySettings enabled true
-default_init_parameter TypingIndicatorPrivacySettings enabled true
 
 # 4d. Keep only the coding direction each internal model needs.
 # Required because OpenAPI generator emits all models with Codable conformance
