@@ -28,26 +28,33 @@ enum DemoAppLogging {
         settings.availableLevels = [.debug, .info, .warning, .error]
         settings.availableSubsystems = subsystems.map(\.description)
         settings.setDefaults(
-            level: LogEntry.Level(StreamRuntimeCheck.logLevel ?? .warning),
+            level: LogEntry.Level(StreamRuntimeCheck.logLevel ?? .error),
             disabledSubsystems: Set(
                 subsystems
                     .filter { subsystem in StreamRuntimeCheck.subsystems.map { !$0.contains(subsystem) } ?? false }
                     .map(\.description)
             )
         )
+        // The level and subsystems only apply to the console. The log viewer records every log.
         settings.apply { settings in
             LogConfig.level = LogLevel(settings.level)
-            LogConfig.subsystems = LogSubsystem(subsystems.filter { settings.enabledSubsystems.contains($0.description) })
+            LogConfig.subsystems = settings.disabledSubsystems.isEmpty
+                ? .all
+                : LogSubsystem(subsystems.filter { settings.enabledSubsystems.contains($0.description) })
             LogConfig.destinationTypes = settings.isEnabled ? [OSLogDestination.self, InMemoryLogDestination.self] : []
         }
 
+        LogViewer.defaultFilter = LogFilter(
+            minimumLevel: .debug,
+            subsystems: Set([LogSubsystem.webSocket, .httpRequests].map(\.description))
+        )
         LogViewer.presentsOnShake = true
     }
 }
 
 final class InMemoryLogDestination: BaseLogDestination, @unchecked Sendable {
     override func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
-        InMemoryLogStore.shared.isRecording && super.isEnabled(level: level, subsystems: subsystems)
+        InMemoryLogStore.shared.isRecording
     }
 
     override func process(logDetails: LogDetails) {
