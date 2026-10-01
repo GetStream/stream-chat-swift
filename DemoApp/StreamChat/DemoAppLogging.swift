@@ -54,7 +54,7 @@ enum DemoAppLogging {
         }
 
         LogViewer.defaultFilter = LogFilter(
-            minimumLevel: .debug,
+            levels: [.debug],
             subsystems: Set([LogSubsystem.webSocket, .httpRequests].map(\.description))
         )
         LogViewer.presentsOnShake = true
