@@ -191,9 +191,11 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
                 return
             }
 
-            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
+            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder, session = self.session] (data, response, error) in
                 do {
                     let response: FileUploadResponse = try decoder.decodeRequestResponse(
+                        request: urlRequest,
+                        session: session,
                         data: data,
                         response: response,
                         error: error

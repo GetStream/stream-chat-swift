@@ -27,7 +27,7 @@ final class RequestDecoder_Tests: XCTestCase {
         let data = try JSONEncoder.stream.encode(testUser)
 
         // Decode it and check the results is `testUser`
-        let decoded: TestUser = try decoder.decodeRequestResponse(data: data, response: response, error: nil)
+        let decoded: TestUser = try decode(data: data, response: response, error: nil)
         XCTAssertEqual(decoded, testUser)
     }
 
@@ -38,7 +38,7 @@ final class RequestDecoder_Tests: XCTestCase {
         let data = try JSONEncoder.stream.encode(testUser)
 
         // Decode it and check the results is `testUser`
-        let decoded: Data = try decoder.decodeRequestResponse(data: data, response: response, error: nil)
+        let decoded: Data = try decode(data: data, response: response, error: nil)
         XCTAssertEqual(decoded, data)
     }
 
@@ -47,7 +47,7 @@ final class RequestDecoder_Tests: XCTestCase {
 
         // Check decoding with an incoming error "throws" the same error
         XCTAssertThrowsError(try {
-            let _: Data = try self.decoder.decodeRequestResponse(data: nil, response: nil, error: testError)
+            let _: Data = try self.decode(data: nil, response: nil, error: testError)
         }()) { (error) in
             XCTAssertEqual(error as? TestError, testError)
         }
@@ -61,7 +61,7 @@ final class RequestDecoder_Tests: XCTestCase {
 
         // Decode and check the thrown error is created from the server error payload
         XCTAssertThrowsError(try {
-            let _: Data = try self.decoder.decodeRequestResponse(data: data, response: response, error: nil)
+            let _: Data = try self.decode(data: data, response: response, error: nil)
         }()) { (error) in
             XCTAssertNotNil((error as? ClientError)?.apiError)
         }
@@ -75,7 +75,7 @@ final class RequestDecoder_Tests: XCTestCase {
 
         // Decode and check the error type is correct
         XCTAssertThrowsError(try {
-            let _: Data = try self.decoder.decodeRequestResponse(data: data, response: response, error: nil)
+            let _: Data = try self.decode(data: data, response: response, error: nil)
         }()) { (error) in
             XCTAssert(error is ClientError.ExpiredToken)
         }
@@ -93,6 +93,20 @@ final class RequestDecoder_Tests: XCTestCase {
                 }
             }
         }
+    }
+
+    private func decode<ResponseType: Decodable>(
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType {
+        try decoder.decodeRequestResponse(
+            request: URLRequest(url: .unique()),
+            session: .shared,
+            data: data,
+            response: response,
+            error: error
+        )
     }
 }
 

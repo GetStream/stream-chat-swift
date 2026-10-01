@@ -9,17 +9,31 @@ protocol RequestDecoder: Sendable {
     /// Decodes an incoming URL request response.
     ///
     /// - Parameters:
+    ///   - request: The request that produced the response.
+    ///   - session: The session that performed the request.
     ///   - data: The incoming data.
     ///   - response: The response object from the network.
     ///   - error: An error object returned by the data task.
     ///
     /// - Throws: An error if the decoding fails.
-    func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
+    func decodeRequestResponse<ResponseType: Decodable>(
+        request: URLRequest,
+        session: URLSession,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType
 }
 
 /// The default implementation of `RequestDecoder`.
 struct DefaultRequestDecoder: RequestDecoder {
-    func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType {
+    func decodeRequestResponse<ResponseType: Decodable>(
+        request: URLRequest,
+        session: URLSession,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType {
         // Handle the error case
         guard error == nil else {
             let error = error!
@@ -43,7 +57,15 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.ResponseBodyEmpty()
         }
 
-        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
+        log.debug(
+            """
+            \(httpResponse.statusCode) \(request.httpMethod ?? "") \(request.url?.path ?? "")
+            \(data.debugPrettyPrintedJSON)
+
+            \(request.cURLRepresentation(for: session))
+            """,
+            subsystems: .httpRequests
+        )
 
         guard httpResponse.statusCode < 300 else {
             let serverError: APIError
