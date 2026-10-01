@@ -42,6 +42,58 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
+    func test_decode_shouldReturnChannelsIfOneChannelFailsParsing() throws {
+        var root = try channelsQueryJSONObject()
+        var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])
+        channels[0].removeValue(forKey: "channel")
+        root["channels"] = channels
+        let data = try JSONSerialization.data(withJSONObject: root)
+
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: data)
+
+        XCTAssertEqual(payload.channels.count, 19)
+    }
+
+    func test_decode_shouldReturnChannelIfOneMessageFailsParsing() throws {
+        var root = try channelsQueryJSONObject()
+        var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])
+        var messages = try XCTUnwrap(channels[0]["messages"] as? [[String: Any]])
+        messages[0].removeValue(forKey: "id")
+        channels[0]["messages"] = messages
+        root["channels"] = channels
+        let data = try JSONSerialization.data(withJSONObject: root)
+
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: data)
+
+        XCTAssertEqual(payload.channels.count, 20)
+        XCTAssertEqual(payload.channels[0].messages.count, 24)
+    }
+
+    func test_decode_threadsDefaultToEmptyWhenMissing() throws {
+        var root = try channelsQueryJSONObject()
+        var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])
+        channels[0].removeValue(forKey: "threads")
+        root["channels"] = channels
+        let data = try JSONSerialization.data(withJSONObject: root)
+
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: data)
+
+        XCTAssertEqual(payload.channels.count, 20)
+        XCTAssertEqual(payload.channels[0].threads.count, 0)
+    }
+
+    func test_groupedQueryChannelsPayload_shouldReturnChannelsIfOneChannelFailsParsing() throws {
+        let root = try channelsQueryJSONObject()
+        var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])
+        channels[0].removeValue(forKey: "channel")
+        let groupedRoot: [String: Any] = ["groups": ["all": ["channels": channels]]]
+        let data = try JSONSerialization.data(withJSONObject: groupedRoot)
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsResponse.self, from: data)
+
+        XCTAssertEqual(payload.groups["all"]?.channels.count, 19)
+    }
+
     func test_channelListPayload_decodesPredefinedFilter() throws {
         let json = """
         {
@@ -461,6 +513,11 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
 
         return ChannelListPayload(channels: channels)
+    }
+
+    private func channelsQueryJSONObject() throws -> [String: Any] {
+        let data = XCTestCase.mockData(fromJSONFile: "ChannelsQuery")
+        return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
     }
 }
 

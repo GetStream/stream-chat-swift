@@ -47,4 +47,22 @@ final class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.pushPreferences?.level, "mentions")
         XCTAssertEqual(payload.pushPreferences?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
+
+    func test_currentUserJSON_dropsArrayElementsThatFailDecoding() throws {
+        var user = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: currentUserJSON, options: .json5Allowed) as? [String: Any]
+        )
+        var devices = try XCTUnwrap(user["devices"] as? [[String: Any]])
+        var channelMutes = try XCTUnwrap(user["channel_mutes"] as? [[String: Any]])
+        devices[0].removeValue(forKey: "push_provider")
+        channelMutes[0].removeValue(forKey: "updated_at")
+        user["devices"] = devices
+        user["channel_mutes"] = channelMutes
+        let data = try JSONSerialization.data(withJSONObject: user)
+
+        let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: data)
+
+        XCTAssertEqual(payload.devices?.map(\.id), ["e25wfsxcnyA:APA91bFgZR_hfd6GvR42OqCUgIhvpBajjxw7"])
+        XCTAssertEqual(payload.channelMutes?.count, 0)
+    }
 }

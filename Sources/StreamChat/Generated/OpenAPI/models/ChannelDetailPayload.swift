@@ -187,7 +187,10 @@ final class ChannelDetailPayload: Sendable, Decodable {
         id = try container.decode(String.self, forKey: .id)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount)
-        members = try container.decodeIfPresent([MemberPayload].self, forKey: .members)
+        members = try container.decodeArrayIfPresentIgnoringFailures(
+            [MemberPayload].self,
+            forKey: .members
+        )
         messageCount = try container.decodeIfPresent(Int.self, forKey: .messageCount)
         muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
         muted = try container.decodeIfPresent(Bool.self, forKey: .muted)

@@ -73,4 +73,47 @@ final class ChannelStateResponse: Sendable, Decodable {
         case watcherCount = "watcher_count"
         case watchers
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        activeLiveLocations = try container.decodeArrayIfPresentIgnoringFailures(
+            [SharedLocation].self,
+            forKey: .activeLiveLocations
+        )
+        channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        hideMessagesBefore = try container.decodeIfPresent(Date.self, forKey: .hideMessagesBefore)
+        members = try container.decodeArrayIgnoringFailures([MemberPayload].self, forKey: .members)
+        membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
+        messages = try container.decodeArrayIgnoringFailures(
+            [MessageResponse].self,
+            forKey: .messages
+        )
+        pendingMessages = try container.decodeArrayIfPresentIgnoringFailures(
+            [PendingMessageResponse].self,
+            forKey: .pendingMessages
+        )
+        pinnedMessages = try container.decodeArrayIgnoringFailures(
+            [MessageResponse].self,
+            forKey: .pinnedMessages
+        )
+        pushPreferences = try container.decodeIfPresent(
+            PushPreference.self,
+            forKey: .pushPreferences
+        )
+        read = try container.decodeArrayIfPresentIgnoringFailures(
+            [ReadStateResponse].self,
+            forKey: .read
+        )
+        threads = try container.decodeArrayIfPresentIgnoringFailures(
+            [ThreadStateResponse].self,
+            forKey: .threads
+        ) ?? []
+        watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
+        watchers = try container.decodeArrayIfPresentIgnoringFailures(
+            [UserPayload].self,
+            forKey: .watchers
+        )
+    }
 }
