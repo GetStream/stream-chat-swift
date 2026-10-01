@@ -10,6 +10,7 @@
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		4A4E184728D06F260062378D /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4A4E184528D06CA30062378D /* Documentation.docc */; };
+		4F1C0DE12F7E00AA00C0FFEE /* StreamLogsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4F1C0DE22F7E00AA00C0FFEE /* StreamLogsUI */; };
 		4FFD1FD52EB9FB65009099C5 /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFD1FD42EB9FB65009099C5 /* StreamCore */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		793060EF25778897005CF846 /* StreamChatTestTools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793060E625778896005CF846 /* StreamChatTestTools.framework */; };
@@ -2062,6 +2063,7 @@
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
 				ADCB576628A425D500B81AE8 /* Sentry in Frameworks */,
 				AD4C2CA62EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
+				4F1C0DE12F7E00AA00C0FFEE /* StreamLogsUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2397,6 +2399,7 @@
 				ADDFDE2A2779EC8A003B3B07 /* Atlantis */,
 				C1B49B3A282283C100F4E89E /* GDPerformanceView-Swift */,
 				ADCB576528A425D500B81AE8 /* Sentry */,
+				4F1C0DE22F7E00AA00C0FFEE /* StreamLogsUI */,
 			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
@@ -5391,6 +5394,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4F1C0DE22F7E00AA00C0FFEE /* StreamLogsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
+			productName = StreamLogsUI;
+		};
 		4FFD1FD42EB9FB65009099C5 /* StreamCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;

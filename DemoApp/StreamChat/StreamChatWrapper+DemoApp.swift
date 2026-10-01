@@ -6,6 +6,7 @@ import Foundation
 import StreamChat
 import StreamChatCommonUI
 import StreamChatUI
+import StreamLogsUI
 
 extension StreamChatWrapper {
     // Instantiates chat client
@@ -18,6 +19,10 @@ extension StreamChatWrapper {
         if let subsystems = StreamRuntimeCheck.subsystems {
             LogConfig.subsystems = subsystems
         }
+        if !LogConfig.destinationTypes.contains(where: { $0 == InMemoryLogDestination.self }) {
+            LogConfig.destinationTypes.append(InMemoryLogDestination.self)
+        }
+        LogViewer.presentsOnShake = true
 
         // Create Client
         if client == nil {
