@@ -269,17 +269,24 @@ final class MessagePayload_Tests: XCTestCase {
     }
 
     func test_memberInfoPayload_requiredFieldsThrowWhenMissing() throws {
-        let fields: [(key: String, json: String)] = [
-            ("channel_role", #"{"notifications_muted":false}"#),
-            ("notifications_muted", #"{"channel_role":"channel_member"}"#)
-        ]
+        XCTAssertThrowsError(
+            try JSONDecoder.stream.decode(MemberInfoPayload.self, from: Data(#"{"notifications_muted":false}"#.utf8)),
+            "Expected decoding to fail when channel_role is missing"
+        )
+    }
 
-        for field in fields {
-            XCTAssertThrowsError(
-                try JSONDecoder.stream.decode(MemberInfoPayload.self, from: Data(field.json.utf8)),
-                "Expected decoding to fail when \(field.key) is missing"
-            )
-        }
+    func test_memberInfoPayload_notificationsMutedDefaultsToFalse() throws {
+        let missing = try JSONDecoder.stream.decode(
+            MemberInfoPayload.self,
+            from: Data(#"{"channel_role":"channel_member"}"#.utf8)
+        )
+        let null = try JSONDecoder.stream.decode(
+            MemberInfoPayload.self,
+            from: Data(#"{"channel_role":"channel_member","notifications_muted":null}"#.utf8)
+        )
+
+        XCTAssertEqual(missing.notificationsMuted, false)
+        XCTAssertEqual(null.notificationsMuted, false)
     }
 
     func test_messagePayload_requiredFieldsThrowWhenMissing() throws {
@@ -288,14 +295,7 @@ final class MessagePayload_Tests: XCTestCase {
 
         let fields = [
             "cid",
-            "deleted_reply_count",
-            "mentioned_channel",
-            "mentioned_here",
-            "pinned",
-            "reaction_scores",
-            "restricted_visibility",
-            "shadowed",
-            "silent"
+            "deleted_reply_count"
         ]
         for field in fields {
             var candidateRoot = root
@@ -309,6 +309,72 @@ final class MessagePayload_Tests: XCTestCase {
                 "Expected decoding to fail when \(field) is missing"
             )
         }
+    }
+
+    func test_messagePayload_reactionScoresDefaultToEmptyWhenNull() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        var message = try XCTUnwrap(root["message"] as? [String: Any])
+        var quotedMessage = try XCTUnwrap(message["quoted_message"] as? [String: Any])
+        quotedMessage["reaction_scores"] = NSNull()
+        message["quoted_message"] = quotedMessage
+        message["reaction_scores"] = NSNull()
+        let data = try JSONSerialization.data(withJSONObject: ["message": message])
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
+
+        XCTAssertEqual(payload.reactionScores, [:])
+        XCTAssertEqual(payload.quotedMessage?.reactionScores, [:])
+    }
+
+    func test_messagePayload_defaultedFieldsWhenMissingOrNull() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        let message = try XCTUnwrap(root["message"] as? [String: Any])
+        let fields = [
+            "mentioned_channel",
+            "mentioned_here",
+            "pinned",
+            "reaction_scores",
+            "restricted_visibility",
+            "shadowed",
+            "silent"
+        ]
+        for value in [nil, NSNull()] as [NSNull?] {
+            var candidateMessage = message
+            for field in fields {
+                candidateMessage[field] = value
+            }
+            let data = try JSONSerialization.data(withJSONObject: ["message": candidateMessage])
+
+            let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
+
+            XCTAssertEqual(payload.mentionedChannel, false)
+            XCTAssertEqual(payload.mentionedHere, false)
+            XCTAssertEqual(payload.pinned, false)
+            XCTAssertEqual(payload.reactionScores, [:])
+            XCTAssertEqual(payload.restrictedVisibility, [])
+            XCTAssertEqual(payload.shadowed, false)
+            XCTAssertEqual(payload.silent, false)
+        }
+    }
+
+    func test_messagePayload_dropsArrayElementsThatFailDecoding() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        var message = try XCTUnwrap(root["message"] as? [String: Any])
+        let attachments = try XCTUnwrap(message["attachments"] as? [Any])
+        let latestReactions = try XCTUnwrap(message["latest_reactions"] as? [Any])
+        let ownReactions = try XCTUnwrap(message["own_reactions"] as? [Any])
+        message["attachments"] = attachments + [["original_height": "tall"]]
+        message["latest_reactions"] = latestReactions + [["type": "like"]]
+        message["mentioned_users"] = [["role": "user"]]
+        message["own_reactions"] = ownReactions + [["type": "like"]]
+        let data = try JSONSerialization.data(withJSONObject: ["message": message])
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
+
+        XCTAssertEqual(payload.attachments.count, attachments.count)
+        XCTAssertEqual(payload.latestReactions.count, latestReactions.count)
+        XCTAssertEqual(payload.mentionedUsers.count, 0)
+        XCTAssertEqual(payload.ownReactions.count, ownReactions.count)
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {

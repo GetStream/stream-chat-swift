@@ -258,7 +258,10 @@ final class MessageResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        attachments = try container.decode([MessageAttachmentPayload].self, forKey: .attachments)
+        attachments = try container.decodeArrayIgnoringFailures(
+            [MessageAttachmentPayload].self,
+            forKey: .attachments
+        )
         cid = try container.decode(String.self, forKey: .cid)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
@@ -277,21 +280,30 @@ final class MessageResponse: Sendable, Decodable {
         i18n = try container.decodeIfPresent([String: String].self, forKey: .i18n)
         id = try container.decode(String.self, forKey: .id)
         imageLabels = try container.decodeIfPresent([String: [String]].self, forKey: .imageLabels)
-        latestReactions = try container.decode(
+        latestReactions = try container.decodeArrayIgnoringFailures(
             [MessageReactionPayload].self,
             forKey: .latestReactions
         )
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
-        mentionedChannel = try container.decode(Bool.self, forKey: .mentionedChannel)
+        mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel) ?? false
         mentionedChannelMembers = try container.decodeIfPresent(
             [String: MemberInfoPayload].self,
             forKey: .mentionedChannelMembers
         )
         mentionedGroupIds = try container.decodeIfPresent([String].self, forKey: .mentionedGroupIds)
-        mentionedGroups = try container.decodeIfPresent([UserGroup].self, forKey: .mentionedGroups)
-        mentionedHere = try container.decode(Bool.self, forKey: .mentionedHere)
-        mentionedRoles = try container.decodeIfPresent([String].self, forKey: .mentionedRoles)
-        mentionedUsers = try container.decode([UserPayload].self, forKey: .mentionedUsers)
+        mentionedGroups = try container.decodeArrayIfPresentIgnoringFailures(
+            [UserGroup].self,
+            forKey: .mentionedGroups
+        )
+        mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere) ?? false
+        mentionedRoles = try container.decodeArrayIfPresentIgnoringFailures(
+            [String].self,
+            forKey: .mentionedRoles
+        )
+        mentionedUsers = try container.decodeArrayIgnoringFailures(
+            [UserPayload].self,
+            forKey: .mentionedUsers
+        )
         messageTextUpdatedAt = try container.decodeIfPresent(
             Date.self,
             forKey: .messageTextUpdatedAt
@@ -301,10 +313,13 @@ final class MessageResponse: Sendable, Decodable {
             MessageModerationDetailsPayload.self,
             forKey: .moderation
         )
-        ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
+        ownReactions = try container.decodeArrayIgnoringFailures(
+            [MessageReactionPayload].self,
+            forKey: .ownReactions
+        )
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
-        pinned = try container.decode(Bool.self, forKey: .pinned)
+        pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned) ?? false
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinnedBy = try container.decodeIfPresent(UserPayload.self, forKey: .pinnedBy)
         poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
@@ -316,14 +331,17 @@ final class MessageResponse: Sendable, Decodable {
             [String: MessageReactionGroupPayload?].self,
             forKey: .reactionGroups
         )
-        reactionScores = try container.decode([String: Int].self, forKey: .reactionScores)
+        reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        restrictedVisibility = try container.decode([String].self, forKey: .restrictedVisibility)
-        shadowed = try container.decode(Bool.self, forKey: .shadowed)
+        restrictedVisibility = try container.decodeArrayIfPresentIgnoringFailures(
+            [String].self,
+            forKey: .restrictedVisibility
+        ) ?? []
+        shadowed = try container.decodeIfPresent(Bool.self, forKey: .shadowed) ?? false
         sharedLocation = try container.decodeIfPresent(SharedLocation.self, forKey: .sharedLocation)
         showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
-        silent = try container.decode(Bool.self, forKey: .silent)
+        silent = try container.decodeIfPresent(Bool.self, forKey: .silent) ?? false
         text = try container.decode(String.self, forKey: .text)
         threadParticipants = try container.decodeIfPresent(
             [UserPayload].self,
