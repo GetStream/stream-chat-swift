@@ -139,7 +139,7 @@ final class OwnUserResponse: Sendable, Decodable {
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
         blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
-        channelMutes = try container.decodeIfPresent(
+        channelMutes = try container.decodeArrayIfPresentIgnoringFailures(
             [MutedChannelPayload].self,
             forKey: .channelMutes
         )
@@ -153,7 +153,7 @@ final class OwnUserResponse: Sendable, Decodable {
         }
         deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
-        devices = try container.decodeIfPresent([Device].self, forKey: .devices)
+        devices = try container.decodeArrayIfPresentIgnoringFailures([Device].self, forKey: .devices)
         id = try container.decode(String.self, forKey: .id)
         image = try container.decodeIfPresent(String.self, forKey: .image)
         invisible = try container.decodeIfPresent(Bool.self, forKey: .invisible)

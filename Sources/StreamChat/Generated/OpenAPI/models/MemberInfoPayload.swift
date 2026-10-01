@@ -38,6 +38,6 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
             flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
             custom = flattened
         }
-        notificationsMuted = try container.decode(Bool.self, forKey: .notificationsMuted)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
     }
 }

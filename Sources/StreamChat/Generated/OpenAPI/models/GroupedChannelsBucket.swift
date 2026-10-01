@@ -32,4 +32,15 @@ final class GroupedChannelsBucket: Sendable, Decodable {
         case prev
         case unreadChannels = "unread_channels"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        channels = try container.decodeArrayIgnoringFailures(
+            [ChannelStateResponse].self,
+            forKey: .channels
+        )
+        next = try container.decodeIfPresent(String.self, forKey: .next)
+        prev = try container.decodeIfPresent(String.self, forKey: .prev)
+        unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
+    }
 }
