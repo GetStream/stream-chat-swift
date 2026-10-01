@@ -8,18 +8,10 @@
         "id" : "general",
         "members" : [
             {
-                "banned" : false,
-                "channel_role" : "channel_member",
-                "notifications_muted" : false,
-                "shadow_banned" : false,
-                "custom" : {},
                 "created_at" : "2020-01-20T19:15:03.911517Z",
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-01-20T19:15:03.911517Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
-                    "custom" : {},
                     "id" : "broken-waterfall-5",
                     "banned" : false,
                     "extraData" : {
@@ -41,18 +33,10 @@
                 }
             },
             {
-                "banned" : false,
-                "channel_role" : "channel_member",
-                "notifications_muted" : false,
-                "shadow_banned" : false,
-                "custom" : {},
                 "created_at" : "2020-06-04T13:36:44.793348Z",
                 "user_id" : "test-user-2",
                 "updated_at" : "2020-06-04T13:36:44.793348Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
-                    "custom" : {},
                     "banned" : false,
                     "online" : false,
                     "id" : "test-user-2",
@@ -64,18 +48,10 @@
                 }
             },
             {
-                "banned" : false,
-                "channel_role" : "channel_member",
-                "notifications_muted" : false,
-                "shadow_banned" : false,
-                "custom" : {},
                 "created_at" : "2020-06-05T12:55:48.581959Z",
                 "user_id" : "steep-moon-9",
                 "updated_at" : "2020-06-05T12:55:48.581959Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
-                    "custom" : {},
                     "id" : "steep-moon-9",
                     "banned" : false,
                     "unread_channels" : 3,
@@ -135,7 +111,6 @@
     "channel_id" : "general",
     "created_at" : "2020-07-21T14:47:57.138121907Z",
     "message" : {
-        "custom" : {},
         "cid" : "messaging:general",
         "deleted_reply_count" : 0,
         "mentioned_channel" : false,
@@ -143,7 +118,7 @@
         "restricted_visibility" : [],
         "shadowed" : false,
         "id" : "042772db-4af2-460d-beaa-1e49d1b8e3b9",
-        "reaction_counts" : {},
+        "reaction_counts" : null,
         "silent" : false,
         "created_at" : "2020-07-21T14:47:57.127921Z",
         "reaction_scores" : {
@@ -163,9 +138,6 @@
         "updated_at" : "2020-07-21T14:47:57.127922Z",
         "reply_count" : 0,
         "user" : {
-            "language" : "",
-            "teams" : [],
-            "custom" : {},
             "id" : "steep-moon-9",
             "banned" : false,
             "unread_channels" : 3,

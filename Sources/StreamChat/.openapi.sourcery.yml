@@ -1,6 +1,95 @@
 sources:
+  - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
+  - ./Generated/OpenAPI/models/ChannelStateResponse.swift
+  - ./Generated/OpenAPI/models/DraftMessagePayload.swift
+  - ./Generated/OpenAPI/models/GroupedChannelsBucket.swift
+  - ./Generated/OpenAPI/models/MemberInfoPayload.swift
+  - ./Generated/OpenAPI/models/MemberPayload.swift
+  - ./Generated/OpenAPI/models/MessageAttachmentPayload.swift
+  - ./Generated/OpenAPI/models/MessageReactionPayload.swift
+  - ./Generated/OpenAPI/models/MessageResponse.swift
+  - ./Generated/OpenAPI/models/OwnUserResponse.swift
+  - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
+  - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
+  - ./Generated/OpenAPI/models/SearchResultMessage.swift
   - ./Generated/OpenAPI/models/SyncResponse.swift
+  - ./Generated/OpenAPI/models/ThreadResponse.swift
+  - ./Generated/OpenAPI/models/ThreadStateResponse.swift
+  - ./Generated/OpenAPI/models/UserPayload.swift
 templates:
   - ./Generated/OpenAPIDecodable.stencil
 output:
   ./Generated/OpenAPI/OpenAPIDecoders.generated.swift
+args:
+  # Non-optional properties which fall back to a default when the key is missing or null.
+  defaultValues:
+    ChannelDetailPayload:
+      custom: "[:]"
+    ChannelStateResponse:
+      threads: "[]"
+    DraftMessagePayload:
+      custom: "[:]"
+    MemberInfoPayload:
+      notificationsMuted: "false"
+    MemberPayload:
+      banned: "false"
+      channelRole: "\"channel_member\""
+      custom: "[:]"
+      notificationsMuted: "false"
+      shadowBanned: "false"
+    MessageAttachmentPayload:
+      custom: "[:]"
+    MessageReactionPayload:
+      custom: "[:]"
+    MessageResponse:
+      custom: "[:]"
+      mentionedChannel: "false"
+      mentionedHere: "false"
+      pinned: "false"
+      reactionCounts: "[:]"
+      reactionScores: "[:]"
+      restrictedVisibility: "[]"
+      shadowed: "false"
+      silent: "false"
+    OwnUserResponse:
+      banned: "false"
+      custom: "[:]"
+      invisible: "false"
+      language: "\"\""
+      teams: "[]"
+      unreadThreads: "0"
+    SearchResultMessage:
+      custom: "[:]"
+      mentionedChannel: "false"
+      mentionedHere: "false"
+      pinned: "false"
+      reactionCounts: "[:]"
+      reactionScores: "[:]"
+      restrictedVisibility: "[]"
+      shadowed: "false"
+      silent: "false"
+    ThreadResponse:
+      activeParticipantCount: "0"
+      custom: "[:]"
+    ThreadStateResponse:
+      activeParticipantCount: "0"
+      custom: "[:]"
+      latestReplies: "[]"
+    UserPayload:
+      banned: "false"
+      custom: "[:]"
+      language: "\"\""
+      teams: "[]"
+  # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
+  lossyArrays:
+    ChannelDetailPayload: [members]
+    ChannelStateResponse: [activeLiveLocations, members, messages, pendingMessages, pinnedMessages, read, threads, watchers]
+    GroupedChannelsBucket: [channels]
+    MessageResponse: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    OwnUserResponse: [channelMutes, devices]
+    QueryChannelsResponse: [channels]
+    QueryThreadsResponse: [threads]
+    SearchResultMessage: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    # Remove when fixed: IOS-2065
+    SyncResponse: [events]
+    ThreadStateResponse: [latestReplies, read, threadParticipants]

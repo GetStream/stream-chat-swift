@@ -1,8 +1,6 @@
 {
   "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg",
   "user" : {
-    "language" : "",
-    "teams" : [],
     "custom" : {
       "company" : "getstream.io"
     },

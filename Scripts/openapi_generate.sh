@@ -697,26 +697,26 @@ PY
 prune_wsevent_cases
 
 # Remove generated properties (declaration, doc comment, init param, assignment,
-#     CodingKeys case, encode(to:) line). Runs before publicize, so there are no access modifiers to
-#     handle. Assumes the single-line init the generator emits (step 7 re-wraps).
+#     CodingKeys case, init(from:)/encode(to:) lines). A deprecated property is emitted as a
+#     private `_name` backing property plus a deprecated `name` accessor; both are removed.
+#     Runs before publicize, so there are no access modifiers to handle. Assumes the
+#     single-line init the generator emits (step 7 re-wraps).
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   local p
-  local had_deprecated=false
-  grep -q '^ *private let _' "$file" && had_deprecated=true
   for p in "${@:2}"; do
     awk -v p="$p" '
       function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
       { s = $0; sub(/^[[:space:]]+/, "", s) }
       s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
       s ~ "^let " p ": "                 { n = 0; next }
-      s ~ "^var " p ": .*\\{ _" p " \\}$" { n = 0; next }
-      s ~ "^private let _" p ": "        { next }
+      s ~ "^private let _" p ": "        { n = 0; next }
+      s ~ "^var " p ": .* \\{ _" p " \\}$" { n = 0; next }
       s ~ "^self\\._?" p " = " p "$"     { next }
       s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
       s ~ "^case " p "( =|$)"            { next }
       s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
-      s ~ "^hasher\\.combine\\(_?" p "\\)$"      { next }
+      s ~ "^hasher\\.combine\\(_?" p "\\)$"    { next }
       s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
       s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
       { flush(); print }
@@ -725,9 +725,6 @@ remove_property() {
     perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
     perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
   done
-  if $had_deprecated && ! grep -q '^ *private let _' "$file"; then
-    perl -0777 -pi -e 's/\n*\h*init\(from decoder: Decoder\) throws \{\n.*?\n\h*\}\n\n\h*func encode\(to encoder: Encoder\) throws \{\n.*?\n\h*\}\n/\n/s' "$file"
-  fi
 }
 
 for model in "${allowed_models[@]}"; do
@@ -889,12 +886,17 @@ rename_generated ReminderResponseData ReminderPayload
 rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated UnmuteResponse UnmuteUsersResponse
 rename_generated UserMuteResponse MutedUserPayload
-rename_generated_type PrivacySettingsResponse UserPrivacySettings
 rename_generated ThreadParticipant ThreadParticipantPayload
 
 rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
+
+# StreamCore provides the privacy settings models; only point the references at its names.
+rename_generated_type DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
+rename_generated_type PrivacySettingsResponse UserPrivacySettings
+rename_generated_type ReadReceiptsResponse ReadReceiptsPrivacySettings
+rename_generated_type TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type BlockUsersResponse EmptyResponse
 rename_generated_type DeleteReminderResponse EmptyResponse
@@ -1204,6 +1206,14 @@ if unclassified:
 if missing:
     raise SystemExit(f"Classified models missing from generated output: {sorted(missing)}")
 
+# Models with deprecated fields get an explicit init(from:) and encode(to:) from the
+# generator; the one for the dropped coding direction no longer compiles. Keyed by the
+# direction that doesn't need the coder.
+unused_coder = {
+    "Decodable": r"func encode\(to encoder: Encoder\) throws",
+    "Encodable": r"init\(from decoder: Decoder\) throws",
+}
+
 declaration = re.compile(
     r"^(\s*(?:public )?(?:final )?(?:class|struct|enum)\s+([A-Za-z0-9_]+)[^:\n]*:\s*)(.*)$"
 )
@@ -1239,7 +1249,20 @@ for direction, names in groups.items():
         ):
             raise SystemExit(f"{name} retains an encoding conformance")
 
-        path.write_text("".join(output))
+        text = "".join(output)
+        # Without deprecated accessors left (e.g. after remove_property), synthesis works again,
+        # except for WSEvent, which decodes by its `type` discriminator.
+        has_deprecated = re.search(r"^\s*var \w+: .* \{ _\w+ \}$", text, flags=re.M)
+        for coder_direction, coder in unused_coder.items():
+            if coder_direction == direction or not (has_deprecated or name == "WSEvent"):
+                text = re.sub(
+                    rf"\n?^    (?:public )?{coder} \{{\n.*?^    \}}\n",
+                    "",
+                    text,
+                    count=1,
+                    flags=re.M | re.S,
+                )
+        path.write_text(text)
 PY
 }
 apply_directional_coding_conformances
@@ -1267,9 +1290,9 @@ strip_streamcore_imports
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 6. Generate SyncResponse's `init(from:)`, which skips undecodable events, and splice it into the
-#    class body.
-#    Remove when fixed: IOS-2065
+# 6. Generate a lenient `init(from:)` and splice it into the model's class
+#    body, where a `required` initializer is allowed. It replaces any `init(from:)` the
+#    generator emitted itself (e.g. for models with deprecated fields).
 splice_generated_decoders() {
   local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
   python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
@@ -1283,7 +1306,14 @@ blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=r
 
 for name, body in zip(blocks[1::2], blocks[2::2]):
     path = models_dir / f"{name}.swift"
-    lines = path.read_text().splitlines(keepends=True)
+    text = re.sub(
+        r"\n?^    (?:public )?(?:required )?init\(from decoder: Decoder\) throws \{\n.*?^    \}\n",
+        "",
+        path.read_text(),
+        count=1,
+        flags=re.M | re.S,
+    )
+    lines = text.splitlines(keepends=True)
     closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
     lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
     path.write_text("".join(lines))

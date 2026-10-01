@@ -14,7 +14,6 @@
     "created_at": "2024-03-26T11:13:35.148035Z",
     "updated_at": "2024-03-26T12:02:37.748782Z",
     "created_by": {
-      "teams": [],
       "custom": {
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
       },
@@ -35,10 +34,8 @@
     "disabled": false,
     "members": [
       {
-        "custom": {},
         "user_id": "han_solo",
         "user": {
-          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
           },
@@ -65,10 +62,8 @@
         "notifications_muted": false
       },
       {
-        "custom": {},
         "user_id": "r2-d2",
         "user": {
-          "teams": [],
           "custom": {
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
           },
@@ -145,7 +140,6 @@
     },
     "truncated_at": "2024-03-26T12:02:37.66035Z",
     "truncated_by": {
-      "teams": [],
       "custom": {
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
       },
@@ -165,7 +159,6 @@
   },
   "parent_message_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
   "parent_message": {
-    "custom": {},
     "mentioned_channel": false,
     "mentioned_here": false,
     "restricted_visibility": [],
@@ -174,9 +167,6 @@
     "html": "<p>msg: 24</p>\n",
     "type": "regular",
     "user": {
-      "language": "",
-      "teams": [],
-      "custom": {},
       "id": "tommaso-98",
       "role": "user",
       "created_at": "2023-09-27T13:21:25.781323Z",
@@ -194,7 +184,6 @@
     "deleted_reply_count": 1,
     "thread_participants": [
       {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
         },
@@ -212,7 +201,6 @@
         "name": "R2-D2"
       },
       {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
         },
@@ -248,7 +236,6 @@
   },
   "created_by_user_id": "han_solo",
   "created_by": {
-    "teams": [],
     "custom": {
       "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
     },
@@ -278,7 +265,6 @@
       "thread_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
       "user_id": "r2-d2",
       "user": {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
         },
@@ -307,9 +293,6 @@
       "thread_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
       "user_id": "tommaso-98",
       "user": {
-        "language": "",
-        "teams": [],
-        "custom": {},
         "id": "tommaso-98",
         "role": "user",
         "created_at": "2023-09-27T13:21:25.781323Z",
@@ -330,7 +313,6 @@
       "thread_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
       "user_id": "han_solo",
       "user": {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
         },
@@ -357,7 +339,6 @@
   "title": "msg: 24",
   "latest_replies": [
     {
-      "custom": {},
       "mentioned_channel": false,
       "mentioned_here": false,
       "restricted_visibility": [],
@@ -366,7 +347,6 @@
       "html": "<p>Click here to win iphones</p>\n",
       "type": "reply",
       "user": {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
         },
@@ -403,7 +383,6 @@
       "pin_expires": null
     },
     {
-      "custom": {},
       "mentioned_channel": false,
       "mentioned_here": false,
       "restricted_visibility": [],
@@ -412,7 +391,6 @@
       "html": "<p>Ggg</p>\n",
       "type": "reply",
       "user": {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
         },
@@ -452,7 +430,6 @@
   "read": [
     {
       "user": {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
         },
@@ -474,9 +451,6 @@
     },
     {
       "user": {
-        "language": "",
-        "teams": [],
-        "custom": {},
         "id": "tommaso-98",
         "role": "user",
         "created_at": "2023-09-27T13:21:25.781323Z",
@@ -490,7 +464,6 @@
     },
     {
       "user": {
-        "teams": [],
         "custom": {
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
         },

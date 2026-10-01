@@ -36,7 +36,6 @@
         },
         "latest_reactions" : [
             {
-                "custom" : {},
                 "score" : 1,
                 "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
                 "created_at" : "2020-08-17T13:15:39.892884Z",
@@ -44,9 +43,6 @@
                 "type" : "love",
                 "updated_at" : "2020-08-17T13:15:39.892884Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
-                    "custom" : {},
                     "id" : "broken-waterfall-5",
                     "banned" : false,
                     "unread_channels" : 0,
@@ -142,7 +138,6 @@
         },
         "attachments" : [
             {
-                "custom" : {},
                 "type" : "image",
                 "fallback" : "IMG_0007.JPG",
                 "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8493ab56-a02e-49fb-becf-1a6bbed2ac62.IMG_0007.JPG?ro=0&s=09ace099e749ea6f8902aa4b9a6957eb"
@@ -150,7 +145,6 @@
         ],
         "own_reactions" : [
             {
-                "custom" : {},
                 "score" : 1,
                 "message_id" : "7baa1533-3294-4c0c-9a62-c9d0928bf733",
                 "created_at" : "2020-08-17T13:15:39.892884Z",
@@ -158,9 +152,6 @@
                 "type" : "love",
                 "updated_at" : "2020-08-17T13:15:39.892884Z",
                 "user" : {
-                    "language" : "",
-                    "teams" : [],
-                    "custom" : {},
                     "id" : "broken-waterfall-5",
                     "banned" : false,
                     "unread_channels" : 0,
@@ -186,9 +177,6 @@
         "message_text_updated_at": "2023-08-17T13:15:39.895109Z",
         "reply_count" : 0,
         "user" : {
-            "language" : "",
-            "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {
@@ -230,8 +218,6 @@
             "pinned_at" : null,
             "id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
             "user" : {
-                "language" : "",
-                "teams" : [],
                 "custom" : {
                     "value" : "cilvia"
                 },
@@ -271,8 +257,6 @@
         "quoted_message_id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
         "thread_participants" : [
             {
-                "language" : "",
-                "teams" : [],
                 "custom" : {
                     "value" : "josh"
                 },
@@ -287,8 +271,6 @@
                 "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
             },
             {
-                "language" : "",
-                "teams" : [],
                 "custom" : {
                     "value" : "vader"
                 },
@@ -308,9 +290,6 @@
         "pinned_at": "2021-04-15T06:43:08.776911Z",
         "pin_expires": "2021-05-15T06:43:08.776911Z",
         "pinned_by": {
-            "language" : "",
-            "teams" : [],
-            "custom" : {},
             "id" : "broken-waterfall-5",
             "banned" : false,
             "extraData" : {

@@ -65,4 +65,22 @@ final class DraftMessagePayload: Sendable, Decodable {
         case text
         case type
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        attachments = try container.decodeIfPresent(
+            [MessageAttachmentPayload].self,
+            forKey: .attachments
+        )
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        id = try container.decode(String.self, forKey: .id)
+        mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)
+        parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
+        pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
+        quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
+        showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
+        silent = try container.decodeIfPresent(Bool.self, forKey: .silent)
+        text = try container.decode(String.self, forKey: .text)
+        type = try container.decodeIfPresent(String.self, forKey: .type)
+    }
 }

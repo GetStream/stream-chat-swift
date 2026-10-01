@@ -1,8 +1,6 @@
 {
   "type": "user.unbanned",
   "user": {
-    "language": "",
-    "teams": [],
     "custom": {
       "image_url": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png"
     },

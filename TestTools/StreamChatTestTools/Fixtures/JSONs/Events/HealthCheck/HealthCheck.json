@@ -1,8 +1,6 @@
 {
   "created_at" : "2021-04-23T06:05:31.659292606Z",
   "me" : {
-    "teams" : [],
-    "unread_threads" : 0,
     "custom" : {
       "roles" : []
     },
@@ -14,9 +12,6 @@
         "created_at" : "2021-04-22T19:14:04.911739Z",
         "updated_at" : "2021-04-22T19:14:04.911739Z",
         "target" : {
-          "language" : "",
-          "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : false,
           "id" : "leia_organa",
@@ -64,7 +59,6 @@
       {
         "created_at" : "2021-04-22T10:23:52.516225Z",
         "channel" : {
-          "custom" : {},
           "id" : "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
           "created_by" : null,
           "disabled" : false,
@@ -120,9 +114,6 @@
         },
         "updated_at" : "2021-04-22T10:23:52.516225Z",
         "user" : {
-          "language" : "",
-          "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : true,
           "id" : "luke_skywalker",
@@ -137,7 +128,6 @@
       {
         "created_at" : "2021-04-22T10:23:52.277819Z",
         "channel" : {
-          "custom" : {},
           "id" : "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
           "created_by" : null,
           "disabled" : false,
@@ -193,9 +183,6 @@
         },
         "updated_at" : "2021-04-22T16:16:46.085715Z",
         "user" : {
-          "language" : "",
-          "teams" : [],
-          "custom" : {},
           "banned" : false,
           "online" : true,
           "id" : "luke_skywalker",

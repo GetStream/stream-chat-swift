@@ -1,8 +1,6 @@
 {
   "type": "user.banned",
   "user": {
-    "language": "",
-    "teams": [],
     "custom": {
       "image_url": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png"
     },
@@ -19,8 +17,6 @@
     "image": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png"
   },
   "created_by": {
-    "teams": [],
-    "custom": {},
     "id": "stream-pol",
     "role": "admin",
     "created_at": "2022-02-11T14:43:41.668064Z",

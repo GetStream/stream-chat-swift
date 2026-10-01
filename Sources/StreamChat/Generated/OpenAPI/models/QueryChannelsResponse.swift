@@ -18,4 +18,16 @@ final class QueryChannelsResponse: Sendable, Decodable {
         case channels
         case predefinedFilter = "predefined_filter"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        channels = try container.decodeArrayIgnoringFailures(
+            [ChannelStateResponse].self,
+            forKey: .channels
+        )
+        predefinedFilter = try container.decodeIfPresent(
+            ParsedPredefinedFilterResponse.self,
+            forKey: .predefinedFilter
+        )
+    }
 }

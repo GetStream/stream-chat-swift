@@ -3,25 +3,16 @@
      {
        "type": "notification.removed_from_channel",
        "channel": {
-         "custom": {},
          "type": "1",
          "id": "123",
          "cid": "1:123",
          "members": [
            {
-             "banned": false,
-             "channel_role": "channel_member",
-             "notifications_muted": false,
-             "shadow_banned": false,
-             "custom": {},
              "user_id": "1234"
            }
          ]
        },
        "user": {
-         "language": "",
-         "teams": [],
-         "custom": {},
          "id": "broken-waterfall-5",
          "role": "user",
          "created_at": "2019-12-12T15:33:46.488935Z",
@@ -40,17 +31,11 @@
      {
        "type": "notification.added_to_channel",
        "channel": {
-         "custom": {},
          "type": "1",
          "id": "123",
          "cid": "1:123",
          "members": [
            {
-             "banned": false,
-             "channel_role": "channel_member",
-             "notifications_muted": false,
-             "shadow_banned": false,
-             "custom": {},
              "user_id": "1234"
            }
          ]
@@ -75,26 +60,17 @@
        "type": "notification.removed_from_channel",
        "cid": "1:123",
        "channel": {
-         "custom": {},
          "type": "1",
          "id": "123",
          "cid": "1:123",
          "config": {},
          "members": [
            {
-             "banned": false,
-             "channel_role": "channel_member",
-             "notifications_muted": false,
-             "shadow_banned": false,
-             "custom": {},
              "user_id": "1234"
            }
          ]
        },
        "user": {
-         "language": "",
-         "teams": [],
-         "custom": {},
          "id": "broken-waterfall-5",
          "role": "user",
          "created_at": "2019-12-12T15:33:46.488935Z",
@@ -114,7 +90,6 @@
        "type": "notification.added_to_channel",
        "cid": "1:123",
        "channel": {
-         "custom": {},
          "type": "1",
          "id": "123",
          "cid": "1:123",
@@ -123,11 +98,6 @@
          },
          "members": [
            {
-             "banned": false,
-             "channel_role": "channel_member",
-             "notifications_muted": false,
-             "shadow_banned": false,
-             "custom": {},
              "user_id": "1234"
            }
          ]

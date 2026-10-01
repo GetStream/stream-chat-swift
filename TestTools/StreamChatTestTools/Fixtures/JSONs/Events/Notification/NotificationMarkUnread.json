@@ -6,9 +6,6 @@
   "channel_type": "messaging",
   "channel": null,
   "user": {
-    "language": "",
-    "teams": [],
-    "custom": {},
     "id": "luke_skywalker",
     "role": "user",
     "created_at": "2020-12-07T11:36:47.059906Z",

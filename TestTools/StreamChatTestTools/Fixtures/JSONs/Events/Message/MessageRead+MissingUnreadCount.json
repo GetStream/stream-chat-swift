@@ -2,9 +2,6 @@
     "channel_id" : "general",
     "channel_type" : "messaging",
     "user" : {
-        "language" : "",
-        "teams" : [],
-        "custom" : {},
         "id" : "steep-moon-9",
         "banned" : false,
         "last_active" : "2020-07-17T13:49:51.603704Z",

@@ -90,4 +90,25 @@ final class MemberPayload: Sendable, Decodable {
         case user
         case userId = "user_id"
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
+        banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
+        banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
+        channelRole = try container.decodeIfPresent(String.self, forKey: .channelRole) ?? "channel_member"
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
+        inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
+        invited = try container.decodeIfPresent(Bool.self, forKey: .invited)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
+        pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
+        shadowBanned = try container.decodeIfPresent(Bool.self, forKey: .shadowBanned) ?? false
+        status = try container.decodeIfPresent(String.self, forKey: .status)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        userId = try container.decodeIfPresent(String.self, forKey: .userId)
+    }
 }
