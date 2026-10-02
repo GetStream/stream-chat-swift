@@ -95,6 +95,47 @@ final class RequestDecoder_Tests: XCTestCase {
         }
     }
 
+    func test_logMessage_containsStatusResponseAndRequest() throws {
+        var request = URLRequest(url: try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/channels/query")))
+        request.httpMethod = "POST"
+        let data = Data(#"{"duration":"1ms"}"#.utf8)
+
+        let message = request.logMessage(for: .shared, status: "201", responseData: data)
+
+        XCTAssertEqual(
+            message,
+            """
+            201 POST /channels/query
+
+            Response:
+            \(data.debugPrettyPrintedJSON)
+
+            Request:
+            \(request.cURLRepresentation(for: .shared))
+            """
+        )
+    }
+
+    func test_logMessage_withError_withoutResponse() throws {
+        let request = URLRequest(url: try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/channels")))
+        let error = TestError()
+
+        let message = request.logMessage(for: .shared, status: "FAILED", error: error)
+
+        XCTAssertEqual(
+            message,
+            """
+            FAILED GET /channels
+
+            Error:
+            \(error)
+
+            Request:
+            \(request.cURLRepresentation(for: .shared))
+            """
+        )
+    }
+
     private func decode<ResponseType: Decodable>(
         data: Data?,
         response: URLResponse?,

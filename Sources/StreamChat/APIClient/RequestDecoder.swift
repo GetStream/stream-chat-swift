@@ -37,13 +37,12 @@ struct DefaultRequestDecoder: RequestDecoder {
         // Handle the error case
         guard error == nil else {
             let error = error!
+            let message = request.logMessage(for: session, status: "FAILED", error: error)
             switch (error as NSError).code {
-            case NSURLErrorCancelled:
-                log.info("The request was cancelled.", subsystems: .httpRequests)
-            case NSURLErrorNetworkConnectionLost:
-                log.info("The network connection was lost.", subsystems: .httpRequests)
+            case NSURLErrorCancelled, NSURLErrorNetworkConnectionLost:
+                log.info(message, subsystems: .httpRequests)
             default:
-                log.error(error, subsystems: .httpRequests)
+                log.error(message, subsystems: .httpRequests)
             }
 
             throw error
@@ -53,45 +52,37 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.Unexpected("Expecting `HTTPURLResponse` but received: \(response?.description ?? "nil").")
         }
 
+        let status = "\(httpResponse.statusCode)"
         guard let data = data, !data.isEmpty else {
+            let message = request.logMessage(for: session, status: status)
+            if httpResponse.statusCode < 300 {
+                log.debug(message, subsystems: .httpRequests)
+            } else {
+                log.error(message, subsystems: .httpRequests)
+            }
             throw ClientError.ResponseBodyEmpty()
         }
-
-        log.debug(
-            """
-            \(httpResponse.statusCode) \(request.httpMethod ?? "") \(request.url?.path ?? "")
-            \(data.debugPrettyPrintedJSON)
-
-            \(request.cURLRepresentation(for: session))
-            """,
-            subsystems: .httpRequests
-        )
 
         guard httpResponse.statusCode < 300 else {
             let serverError: APIError
             do {
                 serverError = try JSONDecoder.default.decode(APIError.self, from: data)
             } catch {
-                log
-                    .error(
-                        "Failed to decode API request error with status code: \(httpResponse.statusCode), \nerror:\n\(error) \nresponse:\n\(data.debugPrettyPrintedJSON))",
-                        subsystems: .httpRequests
-                    )
+                log.error(request.logMessage(for: session, status: status, responseData: data, error: error), subsystems: .httpRequests)
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
 
+            let message = request.logMessage(for: session, status: status, responseData: data)
             if serverError.isTokenExpiredError {
-                log.info("Request failed because of an expired token.", subsystems: .httpRequests)
+                log.info(message, subsystems: .httpRequests)
                 throw ClientError.ExpiredToken()
             }
 
-            log
-                .error(
-                    "API request failed with status code: \(httpResponse.statusCode), code: \(serverError.code) response:\n\(data.debugPrettyPrintedJSON))",
-                    subsystems: .httpRequests
-                )
+            log.error(message, subsystems: .httpRequests)
             throw ClientError(with: serverError)
         }
+
+        log.debug(request.logMessage(for: session, status: status, responseData: data), subsystems: .httpRequests)
 
         if let responseAsData = data as? ResponseType {
             return responseAsData
@@ -104,6 +95,21 @@ struct DefaultRequestDecoder: RequestDecoder {
             log.error(error, subsystems: .httpRequests)
             throw error
         }
+    }
+}
+
+extension URLRequest {
+    // The `Response:` and `Request:` sections let log viewers extract the response body and the cURL command.
+    func logMessage(for session: URLSession, status: String, responseData: Data? = nil, error: Error? = nil) -> String {
+        var sections = ["\(status) \(httpMethod ?? "") \(url?.path ?? "")"]
+        if let error {
+            sections.append("Error:\n\(error)")
+        }
+        if let responseData, !responseData.isEmpty {
+            sections.append("Response:\n\(responseData.debugPrettyPrintedJSON)")
+        }
+        sections.append("Request:\n\(cURLRepresentation(for: session))")
+        return sections.joined(separator: "\n\n")
     }
 }
 
