@@ -58,7 +58,6 @@ enum DemoAppLogging {
             subsystems: Set([LogSubsystem.webSocket, .httpRequests].map(\.description))
         )
         LogViewer.presentsOnShake = true
-        LogViewer.showsFloatingButton = true
     }
 
     private static func makeDestination(_ destination: LogDestinationSettings, settings: LogSettings) -> LogDestination {
