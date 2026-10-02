@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// An attachment is a message object that represents a file uploaded by a user.
 final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
     let actions: [AttachmentActionPayload]?
     let assetUrl: String?

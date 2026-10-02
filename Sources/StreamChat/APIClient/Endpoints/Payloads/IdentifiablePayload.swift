@@ -122,21 +122,9 @@ extension SearchResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageResponse.Boxed: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        message.fillIds(cache: &cache)
-    }
-}
-
 extension SearchResult: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message.fillIds(cache: &cache)
-    }
-}
-
-extension ChannelMemberListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        members.fillIds(cache: &cache)
     }
 }
 

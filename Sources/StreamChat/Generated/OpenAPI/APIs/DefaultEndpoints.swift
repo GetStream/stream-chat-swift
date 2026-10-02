@@ -393,7 +393,7 @@ extension Endpoint {
         )
     }
 
-    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
+    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .blockUsers,
             method: .post,
@@ -408,7 +408,7 @@ extension Endpoint {
         pollId: String,
         castPollVoteRequest: CastPollVoteRequestBody,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<PollVotePayloadResponse> {
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .castPollVote(messageId: messageId, pollId: pollId),
             method: .post,
@@ -477,7 +477,7 @@ extension Endpoint {
         pollId: String,
         createPollOptionRequest: CreatePollOptionRequestBody,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<PollOptionResponse> {
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .createPollOption(pollId: pollId),
             method: .post,
@@ -651,7 +651,7 @@ extension Endpoint {
         pollId: String,
         voteId: String,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<PollVotePayloadResponse> {
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId),
             method: .delete,
@@ -1414,7 +1414,7 @@ extension Endpoint {
     static func unblockUsers(
         unblockUsersRequest: UnblockUsersRequest,
         requiresConnectionId: Bool = false
-    ) -> Endpoint<UnblockUsersResponse> {
+    ) -> Endpoint<EmptyResponse> {
         return .init(
             path: .unblockUsers,
             method: .post,

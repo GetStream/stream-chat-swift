@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a vote on a poll is changed.
 final class PollVoteChangedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

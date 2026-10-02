@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a Draft is deleted.
 final class DraftDeletedEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the draft was created
     let cid: ChannelId

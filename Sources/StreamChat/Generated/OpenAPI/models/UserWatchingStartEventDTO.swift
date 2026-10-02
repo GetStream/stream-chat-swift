@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user starts watching a channel. The event contains information about the user that started watching the channel.
 final class UserWatchingStartEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel which the user started watching
     let cid: ChannelId

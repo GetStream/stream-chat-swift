@@ -463,14 +463,6 @@ protocol MemberDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> MemberDTO
 
-    /// Creates new `MemberDTO` objects in the database with the given `payload` in the channel with `channelId`.
-    @discardableResult
-    func saveMembers(
-        payload: ChannelMemberListPayload,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?
-    ) -> [MemberDTO]
-
     /// Creates new `MemberDTO` objects in the database with the given `response` in the channel with `channelId`.
     @discardableResult
     func saveMembers(

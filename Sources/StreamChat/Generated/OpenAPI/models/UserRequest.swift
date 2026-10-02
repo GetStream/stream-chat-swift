@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// User request object
 final class UserRequest: Sendable, Encodable, JSONEncodable {
     /// Custom user data
     let custom: [String: RawJSON]?

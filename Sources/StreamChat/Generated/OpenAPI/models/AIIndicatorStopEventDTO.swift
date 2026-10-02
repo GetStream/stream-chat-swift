@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when the AI indicator is stopped.
 final class AIIndicatorStopEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel
     let cid: ChannelId?

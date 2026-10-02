@@ -16,7 +16,7 @@ typealias ThreadReadPayload = ReadStateResponse
 
 extension ThreadListPayload {
     convenience init(threads: [ThreadPayload], next: String?) {
-        self.init(next: next, prev: nil, threads: threads)
+        self.init(next: next, threads: threads)
     }
 }
 
@@ -49,10 +49,8 @@ extension ThreadPayload {
         .init(
             activeParticipantCount: activeParticipantCount,
             channel: channel,
-            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
             createdBy: createdBy,
-            createdByUserId: createdBy.id,
             custom: extraData,
             draft: draft,
             lastMessageAt: lastMessageAt,
@@ -87,10 +85,8 @@ extension ThreadPartialPayload {
         .init(
             activeParticipantCount: activeParticipantCount,
             channel: channel,
-            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
             createdBy: createdBy,
-            createdByUserId: createdBy.id,
             custom: extraData,
             lastMessageAt: lastMessageAt,
             parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),

@@ -9,18 +9,12 @@ final class ThreadStateResponse: Sendable, Decodable {
     let activeParticipantCount: Int
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
-    /// Channel CID
-    let channelCid: String
     /// Date/time of creation
     let createdAt: Date
     /// User response object
     let createdBy: UserPayload?
-    /// Created By User ID
-    let createdByUserId: String
     /// Custom data for this object
     let custom: [String: RawJSON]
-    /// Deleted At
-    let deletedAt: Date?
     let draft: DraftPayload?
     /// Last Message At
     let lastMessageAt: Date?
@@ -44,12 +38,9 @@ final class ThreadStateResponse: Sendable, Decodable {
     init(
         activeParticipantCount: Int,
         channel: ChannelDetailPayload? = nil,
-        channelCid: String,
         createdAt: Date,
         createdBy: UserPayload? = nil,
-        createdByUserId: String,
         custom: [String: RawJSON],
-        deletedAt: Date? = nil,
         draft: DraftPayload? = nil,
         lastMessageAt: Date? = nil,
         latestReplies: [MessageResponse],
@@ -64,12 +55,9 @@ final class ThreadStateResponse: Sendable, Decodable {
     ) {
         self.activeParticipantCount = activeParticipantCount
         self.channel = channel
-        self.channelCid = channelCid
         self.createdAt = createdAt
         self.createdBy = createdBy
-        self.createdByUserId = createdByUserId
         self.custom = custom
-        self.deletedAt = deletedAt
         self.draft = draft
         self.lastMessageAt = lastMessageAt
         self.latestReplies = latestReplies
@@ -86,12 +74,9 @@ final class ThreadStateResponse: Sendable, Decodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case activeParticipantCount = "active_participant_count"
         case channel
-        case channelCid = "channel_cid"
         case createdAt = "created_at"
         case createdBy = "created_by"
-        case createdByUserId = "created_by_user_id"
         case custom
-        case deletedAt = "deleted_at"
         case draft
         case lastMessageAt = "last_message_at"
         case latestReplies = "latest_replies"
@@ -112,12 +97,9 @@ final class ThreadStateResponse: Sendable, Decodable {
             forKey: .activeParticipantCount
         ) ?? 0
         channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        channelCid = try container.decode(String.self, forKey: .channelCid)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(

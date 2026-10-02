@@ -148,11 +148,11 @@ final class PollsRepository_Tests: XCTestCase {
             completionCalled.fulfill()
         }
         
-        let response = PollOptionResponse(pollOption: payload)
+        let response = EmptyResponse()
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollOptionResponse> = .createPollOption(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .createPollOption(
             pollId: pollId,
             createPollOptionRequest: .init(text: pollOption)
         )
@@ -171,10 +171,10 @@ final class PollsRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PollOptionResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollOptionResponse> = .createPollOption(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .createPollOption(
             pollId: pollId,
             createPollOptionRequest: .init(text: pollOption)
         )
@@ -215,11 +215,11 @@ final class PollsRepository_Tests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
         let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
-        let response = PollVotePayloadResponse.dummy(vote: payload)
+        let response = EmptyResponse()
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .castPollVote(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .castPollVote(
             messageId: messageId,
             pollId: pollId,
             castPollVoteRequest: .init(vote: .init(optionId: pollOptionId))
@@ -260,10 +260,10 @@ final class PollsRepository_Tests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PollVotePayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .castPollVote(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .castPollVote(
             messageId: messageId,
             pollId: pollId,
             castPollVoteRequest: .init(vote: .init(optionId: pollOptionId))
@@ -293,11 +293,11 @@ final class PollsRepository_Tests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
         let payload = XCTestCase().dummyPollVotePayload(pollId: pollId, answerText: answer)
-        let response = PollVotePayloadResponse.dummy(vote: payload)
+        let response = EmptyResponse()
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .castPollVote(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .castPollVote(
             messageId: messageId,
             pollId: pollId,
             castPollVoteRequest: .init(vote: .init(answerText: answer))
@@ -329,10 +329,10 @@ final class PollsRepository_Tests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PollVotePayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .castPollVote(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .castPollVote(
             messageId: messageId,
             pollId: pollId,
             castPollVoteRequest: .init(vote: .init(answerText: answer))
@@ -371,11 +371,11 @@ final class PollsRepository_Tests: XCTestCase {
         
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
-        let response = PollVotePayloadResponse.dummy()
+        let response = EmptyResponse()
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .deletePollVote(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .deletePollVote(
             messageId: messageId,
             pollId: pollId,
             voteId: voteId
@@ -414,10 +414,10 @@ final class PollsRepository_Tests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PollVotePayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVotePayloadResponse> = .deletePollVote(
+        let referenceEndpoint: Endpoint<EmptyResponse> = .deletePollVote(
             messageId: messageId,
             pollId: pollId,
             voteId: voteId
@@ -469,60 +469,6 @@ final class PollsRepository_Tests: XCTestCase {
         let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
             pollId: pollId,
             queryPollVotesRequest: query.toRequest()
-        )
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-    }
-    
-    func test_queryPollVotesById_whenSuccess() {
-        let completionCalled = expectation(description: "completion called")
-        let pollId = String.unique
-        
-        repository.queryPollVotes(
-            pollId: pollId,
-            limit: nil,
-            next: nil,
-            prev: nil,
-            sort: [nil],
-            filter: nil
-        ) { result in
-            XCTAssertNil(result.error)
-            completionCalled.fulfill()
-        }
-        
-        let vote = XCTestCase().dummyPollVotePayload()
-        let response = PollVoteListResponse.dummy(votes: [vote])
-        apiClient.test_simulateResponse(.success(response))
-        
-        wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
-            pollId: pollId, queryPollVotesRequest: .init()
-        )
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        XCTAssertEqual(response.votes.count, 1)
-    }
-    
-    func test_queryPollVotesById_whenFailure() {
-        let completionCalled = expectation(description: "completion called")
-        let pollId = String.unique
-        
-        repository.queryPollVotes(
-            pollId: pollId,
-            limit: nil,
-            next: nil,
-            prev: nil,
-            sort: [nil],
-            filter: nil
-        ) { result in
-            XCTAssertNotNil(result.error)
-            completionCalled.fulfill()
-        }
-        
-        let error = TestError()
-        apiClient.test_simulateResponse(Result<PollVoteListResponse, Error>.failure(error))
-        
-        wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
-            pollId: pollId, queryPollVotesRequest: .init()
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

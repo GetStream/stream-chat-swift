@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when the AI indicator is updated.
 final class AIIndicatorUpdateEventDTO: Sendable, Event, Decodable {
     /// Optional message from the AI
     let aiMessage: String?

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a channel is successfully updated.
 final class ChannelUpdatedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

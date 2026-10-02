@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a reminder is deleted.
 final class ReminderDeletedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

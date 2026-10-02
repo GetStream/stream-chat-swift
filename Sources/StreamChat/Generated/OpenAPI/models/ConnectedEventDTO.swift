@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when the WS connection is established and authenticated, this event contains the full user object as it is stored on the server
 final class ConnectedEventDTO: Sendable, Event, Decodable {
     /// The connection_id for this client
     let connectionId: String

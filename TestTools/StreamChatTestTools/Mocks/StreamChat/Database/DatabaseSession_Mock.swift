@@ -454,10 +454,6 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query, cache: cache)
     }
 
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
-    }
-
     func saveMembers(response: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         underlyingSession.saveMembers(response: response, channelId: channelId, query: query)
     }

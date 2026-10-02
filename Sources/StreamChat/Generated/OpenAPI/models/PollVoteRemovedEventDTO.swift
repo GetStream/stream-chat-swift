@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a vote is removed from a poll.
 final class PollVoteRemovedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

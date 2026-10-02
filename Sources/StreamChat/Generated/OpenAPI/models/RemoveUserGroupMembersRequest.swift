@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Request body for removing members from a user group
 final class RemoveUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// List of user IDs to remove
     let memberIds: [String]

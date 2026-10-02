@@ -24,18 +24,19 @@ final class ThreadParticipantDTO_Tests: XCTestCase {
 
     func test_saveThreadParticipantPayload() throws {
         let payload = dummyThreadParticipantPayload()
+        let threadId: MessageId = .unique
 
         let dto = try database.viewContext.saveThreadParticipant(
             payload: payload,
-            threadId: try XCTUnwrap(payload.threadId),
+            threadId: threadId,
             cache: nil
         )
 
         XCTAssertEqual(dto.createdAt, payload.createdAt.bridgeDate)
         XCTAssertEqual(dto.user.id, payload.user?.id)
         XCTAssertEqual(dto.lastReadAt, payload.lastReadAt.bridgeDate)
-        XCTAssertEqual(dto.threadId, payload.threadId)
-        XCTAssertEqual(dto.thread.parentMessageId, payload.threadId)
+        XCTAssertEqual(dto.threadId, threadId)
+        XCTAssertEqual(dto.thread.parentMessageId, threadId)
     }
 
     func test_asModel() throws {

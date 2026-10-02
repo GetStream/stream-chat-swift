@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Represents any chat message
 final class MessageResponse: Sendable, Decodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]
@@ -17,16 +18,11 @@ final class MessageResponse: Sendable, Decodable {
     /// Date/time of deletion
     let deletedAt: Date?
     let deletedForMe: Bool?
-    let deletedReplyCount: Int
     let draft: DraftPayload?
-    /// Contains HTML markup of the message. Can only be set when using server-side API
-    let html: String
     /// Object with translations. Key `language` contains the original language key. Other keys contain translations
     let i18n: [String: String]?
     /// Message ID is unique string identifier of the message
     let id: String
-    /// Contains image moderation information
-    let imageLabels: [String: [String]]?
     /// List of 10 latest reactions to this message
     let latestReactions: [MessageReactionPayload]
     let member: MemberInfoPayload?
@@ -45,8 +41,6 @@ final class MessageResponse: Sendable, Decodable {
     /// List of mentioned users
     let mentionedUsers: [UserPayload]
     let messageTextUpdatedAt: Date?
-    /// Should be empty if `text` is provided. Can only be set when using server-side API
-    let mml: String?
     let moderation: MessageModerationDetailsPayload?
     /// List of 10 latest reactions of authenticated user to this message
     let ownReactions: [MessageReactionPayload]
@@ -102,12 +96,9 @@ final class MessageResponse: Sendable, Decodable {
         custom: [String: RawJSON],
         deletedAt: Date? = nil,
         deletedForMe: Bool? = nil,
-        deletedReplyCount: Int,
         draft: DraftPayload? = nil,
-        html: String,
         i18n: [String: String]? = nil,
         id: String,
-        imageLabels: [String: [String]]? = nil,
         latestReactions: [MessageReactionPayload],
         member: MemberInfoPayload? = nil,
         mentionedChannel: Bool,
@@ -118,7 +109,6 @@ final class MessageResponse: Sendable, Decodable {
         mentionedRoles: [String]? = nil,
         mentionedUsers: [UserPayload],
         messageTextUpdatedAt: Date? = nil,
-        mml: String? = nil,
         moderation: MessageModerationDetailsPayload? = nil,
         ownReactions: [MessageReactionPayload],
         parentId: String? = nil,
@@ -153,12 +143,9 @@ final class MessageResponse: Sendable, Decodable {
         self.custom = custom
         self.deletedAt = deletedAt
         self.deletedForMe = deletedForMe
-        self.deletedReplyCount = deletedReplyCount
         self.draft = draft
-        self.html = html
         self.i18n = i18n
         self.id = id
-        self.imageLabels = imageLabels
         self.latestReactions = latestReactions
         self.member = member
         self.mentionedChannel = mentionedChannel
@@ -169,7 +156,6 @@ final class MessageResponse: Sendable, Decodable {
         self.mentionedRoles = mentionedRoles
         self.mentionedUsers = mentionedUsers
         self.messageTextUpdatedAt = messageTextUpdatedAt
-        self.mml = mml
         self.moderation = moderation
         self.ownReactions = ownReactions
         self.parentId = parentId
@@ -206,12 +192,9 @@ final class MessageResponse: Sendable, Decodable {
         case custom
         case deletedAt = "deleted_at"
         case deletedForMe = "deleted_for_me"
-        case deletedReplyCount = "deleted_reply_count"
         case draft
-        case html
         case i18n
         case id
-        case imageLabels = "image_labels"
         case latestReactions = "latest_reactions"
         case member
         case mentionedChannel = "mentioned_channel"
@@ -222,7 +205,6 @@ final class MessageResponse: Sendable, Decodable {
         case mentionedRoles = "mentioned_roles"
         case mentionedUsers = "mentioned_users"
         case messageTextUpdatedAt = "message_text_updated_at"
-        case mml
         case moderation
         case ownReactions = "own_reactions"
         case parentId = "parent_id"
@@ -263,12 +245,9 @@ final class MessageResponse: Sendable, Decodable {
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
-        deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        html = try container.decode(String.self, forKey: .html)
         i18n = try container.decodeIfPresent([String: String].self, forKey: .i18n)
         id = try container.decode(String.self, forKey: .id)
-        imageLabels = try container.decodeIfPresent([String: [String]].self, forKey: .imageLabels)
         latestReactions = try container.decodeArrayIgnoringFailures(
             [MessageReactionPayload].self,
             forKey: .latestReactions
@@ -297,7 +276,6 @@ final class MessageResponse: Sendable, Decodable {
             Date.self,
             forKey: .messageTextUpdatedAt
         )
-        mml = try container.decodeIfPresent(String.self, forKey: .mml)
         moderation = try container.decodeIfPresent(
             MessageModerationDetailsPayload.self,
             forKey: .moderation

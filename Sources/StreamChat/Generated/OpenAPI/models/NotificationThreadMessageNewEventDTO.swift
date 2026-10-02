@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a new message was sent to a thread.
 final class NotificationThreadMessageNewEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

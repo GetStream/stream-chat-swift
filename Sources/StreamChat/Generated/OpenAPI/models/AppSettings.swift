@@ -4,12 +4,16 @@
 
 import Foundation
 
+/// A type representing the app settings.
 public final class AppSettings: Sendable, Decodable {
+    /// A boolean value determining if async url enrichment is enabled.
     public let asyncUrlEnrichEnabled: Bool
+    /// A boolean value determining if auto translation is enabled.
     public let autoTranslationEnabled: Bool
     public let fileUploadConfig: UploadConfig
     public let id: Int
     public let imageUploadConfig: UploadConfig
+    /// The name of the app.
     public let name: String
     public let placement: String
 
