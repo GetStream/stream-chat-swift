@@ -38,7 +38,7 @@ struct DefaultRequestDecoder: RequestDecoder {
         guard error == nil else {
             let error = error!
             let message = request.logMessage(status: "FAILED")
-            let metadata = { request.logMetadata(for: session, error: error) }
+            let metadata = { [LogMetadataKey: String].http(request: request, error: error, session: session) }
             switch (error as NSError).code {
             case NSURLErrorCancelled, NSURLErrorNetworkConnectionLost:
                 log.info(message, subsystems: .httpRequests, metadata: metadata())
@@ -56,7 +56,7 @@ struct DefaultRequestDecoder: RequestDecoder {
         let statusCode = httpResponse.statusCode
         let message = request.logMessage(status: "\(statusCode)")
         guard let data = data, !data.isEmpty else {
-            let metadata = { request.logMetadata(for: session, statusCode: statusCode) }
+            let metadata = { [LogMetadataKey: String].http(request: request, response: httpResponse, session: session) }
             if statusCode < 300 {
                 log.debug(message, subsystems: .httpRequests, metadata: metadata())
             } else {
@@ -65,7 +65,9 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.ResponseBodyEmpty()
         }
 
-        let metadata = { request.logMetadata(for: session, statusCode: statusCode, responseData: data) }
+        let metadata = {
+            [LogMetadataKey: String].http(request: request, response: httpResponse, responseBody: data, session: session)
+        }
         guard statusCode < 300 else {
             let serverError: APIError
             do {
@@ -74,7 +76,7 @@ struct DefaultRequestDecoder: RequestDecoder {
                 log.error(
                     message,
                     subsystems: .httpRequests,
-                    metadata: request.logMetadata(for: session, statusCode: statusCode, responseData: data, error: error)
+                    metadata: .http(request: request, response: httpResponse, responseBody: data, error: error, session: session)
                 )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
@@ -107,37 +109,6 @@ struct DefaultRequestDecoder: RequestDecoder {
 extension URLRequest {
     func logMessage(status: String) -> String {
         "\(status) \(httpMethod ?? "GET") \(url?.path ?? "")"
-    }
-
-    func logMetadata(
-        for session: URLSession,
-        statusCode: Int? = nil,
-        responseData: Data? = nil,
-        error: Error? = nil
-    ) -> [LogMetadataKey: String] {
-        var metadata: [LogMetadataKey: String] = [
-            .httpMethod: httpMethod ?? "GET",
-            .httpURL: url?.absoluteString ?? "",
-            .httpCURL: cURLRepresentation(for: session)
-        ]
-        metadata[.httpStatusCode] = statusCode.map(String.init)
-        metadata[.httpError] = error.map { "\($0)" }
-        metadata[.httpRequestBody] = httpBody.flatMap(Self.logDescription(of:))
-        metadata[.httpResponseBody] = responseData.flatMap(Self.logDescription(of:))
-        return metadata
-    }
-
-    // Bodies that are neither JSON nor text, like uploaded files, are left out.
-    private static func logDescription(of body: Data) -> String? {
-        guard !body.isEmpty else { return nil }
-        guard let object = try? JSONSerialization.jsonObject(with: body, options: .fragmentsAllowed),
-              let json = try? JSONSerialization.data(
-                  withJSONObject: object,
-                  options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed]
-              ) else {
-            return String(data: body, encoding: .utf8)
-        }
-        return String(decoding: json, as: UTF8.self)
     }
 }
 
