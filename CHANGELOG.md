@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
+_October 01, 2026_
+
 ### 🐞 Fixed
 - Fix quote replies to quote replies and messages with new reactions sometimes disappearing from the message list [#4302](https://github.com/GetStream/stream-chat-swift/pull/4302)
 
