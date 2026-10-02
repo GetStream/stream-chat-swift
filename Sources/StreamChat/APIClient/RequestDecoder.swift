@@ -9,27 +9,41 @@ protocol RequestDecoder: Sendable {
     /// Decodes an incoming URL request response.
     ///
     /// - Parameters:
+    ///   - request: The request that produced the response.
+    ///   - session: The session that performed the request.
     ///   - data: The incoming data.
     ///   - response: The response object from the network.
     ///   - error: An error object returned by the data task.
     ///
     /// - Throws: An error if the decoding fails.
-    func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
+    func decodeRequestResponse<ResponseType: Decodable>(
+        request: URLRequest,
+        session: URLSession,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType
 }
 
 /// The default implementation of `RequestDecoder`.
 struct DefaultRequestDecoder: RequestDecoder {
-    func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType {
+    func decodeRequestResponse<ResponseType: Decodable>(
+        request: URLRequest,
+        session: URLSession,
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType {
         // Handle the error case
         guard error == nil else {
             let error = error!
+            let message = request.logMessage(status: "FAILED")
+            let metadata = { [LogMetadataKey: String].http(request: request, error: error, session: session) }
             switch (error as NSError).code {
-            case NSURLErrorCancelled:
-                log.info("The request was cancelled.", subsystems: .httpRequests)
-            case NSURLErrorNetworkConnectionLost:
-                log.info("The network connection was lost.", subsystems: .httpRequests)
+            case NSURLErrorCancelled, NSURLErrorNetworkConnectionLost:
+                log.info(message, subsystems: .httpRequests, metadata: metadata())
             default:
-                log.error(error, subsystems: .httpRequests)
+                log.error(message, subsystems: .httpRequests, metadata: metadata())
             }
 
             throw error
@@ -39,37 +53,44 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.Unexpected("Expecting `HTTPURLResponse` but received: \(response?.description ?? "nil").")
         }
 
+        let statusCode = httpResponse.statusCode
+        let message = request.logMessage(status: "\(statusCode)")
         guard let data = data, !data.isEmpty else {
+            let metadata = { [LogMetadataKey: String].http(request: request, response: httpResponse, session: session) }
+            if statusCode < 300 {
+                log.debug(message, subsystems: .httpRequests, metadata: metadata())
+            } else {
+                log.error(message, subsystems: .httpRequests, metadata: metadata())
+            }
             throw ClientError.ResponseBodyEmpty()
         }
 
-        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
-
-        guard httpResponse.statusCode < 300 else {
+        let metadata = {
+            [LogMetadataKey: String].http(request: request, response: httpResponse, responseBody: data, session: session)
+        }
+        guard statusCode < 300 else {
             let serverError: APIError
             do {
                 serverError = try JSONDecoder.default.decode(APIError.self, from: data)
             } catch {
-                log
-                    .error(
-                        "Failed to decode API request error with status code: \(httpResponse.statusCode), \nerror:\n\(error) \nresponse:\n\(data.debugPrettyPrintedJSON))",
-                        subsystems: .httpRequests
-                    )
+                log.error(
+                    message,
+                    subsystems: .httpRequests,
+                    metadata: .http(request: request, response: httpResponse, responseBody: data, error: error, session: session)
+                )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
 
             if serverError.isTokenExpiredError {
-                log.info("Request failed because of an expired token.", subsystems: .httpRequests)
+                log.info(message, subsystems: .httpRequests, metadata: metadata())
                 throw ClientError.ExpiredToken()
             }
 
-            log
-                .error(
-                    "API request failed with status code: \(httpResponse.statusCode), code: \(serverError.code) response:\n\(data.debugPrettyPrintedJSON))",
-                    subsystems: .httpRequests
-                )
+            log.error(message, subsystems: .httpRequests, metadata: metadata())
             throw ClientError(with: serverError)
         }
+
+        log.debug(message, subsystems: .httpRequests, metadata: metadata())
 
         if let responseAsData = data as? ResponseType {
             return responseAsData
@@ -82,6 +103,12 @@ struct DefaultRequestDecoder: RequestDecoder {
             log.error(error, subsystems: .httpRequests)
             throw error
         }
+    }
+}
+
+extension URLRequest {
+    func logMessage(status: String) -> String {
+        "\(status) \(httpMethod ?? "GET") \(url?.path ?? "")"
     }
 }
 
