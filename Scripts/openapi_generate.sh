@@ -772,7 +772,7 @@ remove_property DraftDeletedEventDTO custom parentId receivedAt
 remove_property DraftMessagePayload html mml
 remove_property DraftUpdatedEventDTO custom parentId receivedAt
 remove_property FlagRequest entityCreatorId moderationPayload
-remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore shadowBanned
+remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore shadowBanned unreadCount
 remove_property GetOGResponse actions authorIcon authorLink color custom fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
 remove_property GroupedChannelsBucket prev
 remove_property GroupedChannelsGroupRequest prev
