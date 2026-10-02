@@ -44,7 +44,7 @@ final class SearchResultMessage: Sendable, Decodable {
     /// Represents any chat message
     let quotedMessage: MessageResponse?
     let quotedMessageId: String?
-    let reactionCounts: [String: Int]?
+    let reactionCounts: [String: Int]
     let reactionGroups: [String: MessageReactionGroupPayload?]?
     let reactionScores: [String: Int]
     let reminder: ReminderPayload?
@@ -98,7 +98,7 @@ final class SearchResultMessage: Sendable, Decodable {
         pollId: String? = nil,
         quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
-        reactionCounts: [String: Int]? = nil,
+        reactionCounts: [String: Int],
         reactionGroups: [String: MessageReactionGroupPayload?]? = nil,
         reactionScores: [String: Int],
         reminder: ReminderPayload? = nil,
@@ -286,7 +286,7 @@ final class SearchResultMessage: Sendable, Decodable {
         pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
         quotedMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .quotedMessage)
         quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
-        reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts)
+        reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts) ?? [:]
         reactionGroups = try container.decodeIfPresent(
             [String: MessageReactionGroupPayload?].self,
             forKey: .reactionGroups

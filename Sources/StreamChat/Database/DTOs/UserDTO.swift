@@ -148,7 +148,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
         saveUserCommonFields(
             avgResponseTime: payload.avgResponseTime,
-            banned: payload.banned ?? false,
+            banned: payload.banned,
             createdAt: payload.createdAt,
             custom: payload.custom,
             deactivatedAt: payload.deactivatedAt,
@@ -160,7 +160,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
             name: payload.name,
             online: payload.online,
             role: payload.role,
-            teams: payload.teams ?? [],
+            teams: payload.teams,
             teamsRole: payload.teamsRole,
             updatedAt: payload.updatedAt
         )
@@ -208,7 +208,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         let dto = UserDTO.loadOrCreate(id: ownResponse.id, context: self, cache: nil)
         saveUserCommonFields(
             avgResponseTime: ownResponse.avgResponseTime,
-            banned: ownResponse.banned ?? false,
+            banned: ownResponse.banned,
             createdAt: ownResponse.createdAt,
             custom: ownResponse.custom,
             deactivatedAt: ownResponse.deactivatedAt,
@@ -220,7 +220,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
             name: ownResponse.name,
             online: ownResponse.online,
             role: ownResponse.role,
-            teams: ownResponse.teams ?? [],
+            teams: ownResponse.teams,
             teamsRole: ownResponse.teamsRole,
             updatedAt: ownResponse.updatedAt
         )

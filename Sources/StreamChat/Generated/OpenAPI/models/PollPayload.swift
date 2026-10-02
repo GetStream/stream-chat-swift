@@ -23,22 +23,22 @@ final class PollPayload: Sendable, Decodable {
     /// User response object
     let createdBy: UserPayload?
     let createdById: String
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     let description: String
     let enforceUniqueVote: Bool
     let id: String
     let isClosed: Bool?
-    let latestAnswers: [PollVotePayload?]?
-    let latestVotesByOption: [String: [PollVotePayload]]?
+    let latestAnswers: [PollVotePayload]
+    let latestVotesByOption: [String: [PollVotePayload]]
     let maxVotesAllowed: Int?
     let name: String
-    let options: [PollOptionPayload?]
-    let ownVotes: [PollVotePayload?]?
+    let options: [PollOptionPayload]
+    let ownVotes: [PollVotePayload]
     let updatedAt: Date
     let voteCount: Int
-    let voteCountsByOption: [String: Int]?
+    let voteCountsByOption: [String: Int]
     /// Voting visibility of the poll
-    let votingVisibility: PollResponseDataVotingVisibility?
+    let votingVisibility: PollResponseDataVotingVisibility
 
     init(
         allowAnswers: Bool,
@@ -47,21 +47,21 @@ final class PollPayload: Sendable, Decodable {
         createdAt: Date,
         createdBy: UserPayload? = nil,
         createdById: String,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         description: String,
         enforceUniqueVote: Bool,
         id: String,
         isClosed: Bool? = nil,
-        latestAnswers: [PollVotePayload?]? = nil,
-        latestVotesByOption: [String: [PollVotePayload]]? = nil,
+        latestAnswers: [PollVotePayload],
+        latestVotesByOption: [String: [PollVotePayload]],
         maxVotesAllowed: Int? = nil,
         name: String,
-        options: [PollOptionPayload?],
-        ownVotes: [PollVotePayload?]? = nil,
+        options: [PollOptionPayload],
+        ownVotes: [PollVotePayload],
         updatedAt: Date,
         voteCount: Int,
-        voteCountsByOption: [String: Int]? = nil,
-        votingVisibility: PollResponseDataVotingVisibility? = nil
+        voteCountsByOption: [String: Int],
+        votingVisibility: PollResponseDataVotingVisibility
     ) {
         self.allowAnswers = allowAnswers
         self.allowUserSuggestedOptions = allowUserSuggestedOptions

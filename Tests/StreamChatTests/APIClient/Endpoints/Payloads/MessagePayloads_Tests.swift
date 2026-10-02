@@ -15,10 +15,14 @@ final class MessagePayload_Tests: XCTestCase {
         let json = """
         {
             "custom": {},
+            "reaction_counts": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
                 "custom": {},
+                "language": "",
+                "teams": [],
+                "banned": false,
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -61,10 +65,14 @@ final class MessagePayload_Tests: XCTestCase {
         let json = """
         {
             "custom": {},
+            "reaction_counts": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
                 "custom": {},
+                "language": "",
+                "teams": [],
+                "banned": false,
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -109,10 +117,14 @@ final class MessagePayload_Tests: XCTestCase {
         let json = """
         {
             "custom": {},
+            "reaction_counts": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
                 "custom": {},
+                "language": "",
+                "teams": [],
+                "banned": false,
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -139,6 +151,9 @@ final class MessagePayload_Tests: XCTestCase {
             "mentioned_users": [
                 {
                     "custom": {},
+                    "language": "",
+                    "teams": [],
+                    "banned": false,
                     "id": "u2",
                     "role": "user",
                     "online": false,

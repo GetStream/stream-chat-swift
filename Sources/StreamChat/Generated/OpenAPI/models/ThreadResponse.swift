@@ -6,7 +6,7 @@ import Foundation
 
 final class ThreadResponse: Sendable, Decodable {
     /// Active Participant Count
-    let activeParticipantCount: Int?
+    let activeParticipantCount: Int
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
     /// Channel CID
@@ -39,7 +39,7 @@ final class ThreadResponse: Sendable, Decodable {
     let updatedAt: Date
 
     init(
-        activeParticipantCount: Int? = nil,
+        activeParticipantCount: Int,
         channel: ChannelDetailPayload? = nil,
         channelCid: String,
         createdAt: Date,
@@ -98,7 +98,7 @@ final class ThreadResponse: Sendable, Decodable {
         activeParticipantCount = try container.decodeIfPresent(
             Int.self,
             forKey: .activeParticipantCount
-        )
+        ) ?? 0
         channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         channelCid = try container.decode(String.self, forKey: .channelCid)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
