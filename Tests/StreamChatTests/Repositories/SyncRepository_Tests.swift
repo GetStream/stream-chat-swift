@@ -695,7 +695,7 @@ class SyncRepository_Tests: XCTestCase {
         }
 
         apiClient.waitForRequest()
-        let callback = try XCTUnwrap(apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void)
+        let callback = try XCTUnwrap(apiClient.request_completion as? (Result<SyncResponse, Error>) -> Void)
         callback(.success(messageEventPayload(cid: cid, with: [Date.unique, Date.unique])))
 
         let refreshCompletion = try XCTUnwrap(channelListUpdater.startWatchingChannels_completion)
@@ -973,8 +973,8 @@ class SyncRepository_Tests: XCTestCase {
 }
 
 extension SyncRepository_Tests {
-    func messageEventPayload(cid: ChannelId = .unique, with dates: [Date]) -> MissingEventsPayload {
-        MissingEventsPayload(eventPayloads: dates.map {
+    func messageEventPayload(cid: ChannelId = .unique, with dates: [Date]) -> SyncResponse {
+        SyncResponse(events: dates.map {
             EventPayload(
                 eventType: .messageNew,
                 cid: cid,
@@ -1007,7 +1007,7 @@ extension SyncRepository_Tests {
         database.writeSessionCounter = 0
     }
 
-    func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
+    func waitForSyncLocalStateRun(requestResult: Result<SyncResponse, Error>? = nil) {
         database.writeSessionCounter = 0
         apiClient.clear()
 
@@ -1018,7 +1018,7 @@ extension SyncRepository_Tests {
 
         if let result = requestResult {
             apiClient.waitForRequest()
-            guard let callback = apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+            guard let callback = apiClient.request_completion as? (Result<SyncResponse, Error>) -> Void else {
                 XCTFail("A request for /sync should have been executed")
                 return
             }
@@ -1034,7 +1034,7 @@ extension SyncRepository_Tests {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         alreadySyncedChannelIds: Set<ChannelId> = [],
-        requestResult: Result<MissingEventsPayload, Error>
+        requestResult: Result<SyncResponse, Error>
     ) -> Result<[ChannelId], SyncError> {
         apiClient.clear()
 
@@ -1051,7 +1051,7 @@ extension SyncRepository_Tests {
         }
 
         apiClient.waitForRequest()
-        guard let callback = apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+        guard let callback = apiClient.request_completion as? (Result<SyncResponse, Error>) -> Void else {
             XCTFail("A request for /sync should have been executed")
             return .failure(.failedFetchingChannels)
         }
