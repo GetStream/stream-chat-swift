@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Represents user reaction to a message
 final class ReactionRequest: Sendable, Encodable, JSONEncodable {
     let custom: [String: RawJSON]?
     /// Reaction score. If not specified reaction has score of 1

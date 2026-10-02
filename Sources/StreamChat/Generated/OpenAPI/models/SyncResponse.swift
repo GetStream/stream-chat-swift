@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Sync response
 final class SyncResponse: Sendable, Decodable {
     /// List of events
     let events: [WSEvent]

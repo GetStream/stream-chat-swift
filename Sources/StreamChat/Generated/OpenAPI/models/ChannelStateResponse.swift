@@ -15,6 +15,7 @@ final class ChannelStateResponse: Sendable, Decodable {
     let messages: [MessageResponse]
     let pendingMessages: [PendingMessageResponse]?
     let pinnedMessages: [MessageResponse]
+    /// The push preference details.
     let pushPreferences: PushPreference?
     let read: [ReadStateResponse]?
     let threads: [ThreadStateResponse]

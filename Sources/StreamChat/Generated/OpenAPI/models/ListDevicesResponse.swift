@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// List devices response
 final class ListDevicesResponse: Sendable, Decodable {
     /// List of devices
     let devices: [Device]

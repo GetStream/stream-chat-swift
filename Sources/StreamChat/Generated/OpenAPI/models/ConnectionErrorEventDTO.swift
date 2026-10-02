@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when the WS connection fails
 final class ConnectionErrorEventDTO: Sendable, Event, Decodable {
     let connectionId: String
     let createdAt: Date

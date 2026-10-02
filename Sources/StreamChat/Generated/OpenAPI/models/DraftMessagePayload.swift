@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Contains the draft message content
 final class DraftMessagePayload: Sendable, Decodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]?

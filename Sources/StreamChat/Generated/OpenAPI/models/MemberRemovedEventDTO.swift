@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a member is removed from a channel.
 final class MemberRemovedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?

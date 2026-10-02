@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a reminder is updated.
 final class ReminderUpdatedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

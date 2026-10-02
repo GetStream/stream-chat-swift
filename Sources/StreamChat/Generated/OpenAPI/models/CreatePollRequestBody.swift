@@ -11,10 +11,13 @@ public final class VotingVisibility: RawRepresentable, Codable, Hashable, Sendab
         self.rawValue = rawValue
     }
 
+    /// Votes are public and can be seen by everyone.
     public static let `public` = VotingVisibility(rawValue: "public")
+    /// Votes are anonymous and cannot be attributed to individual users.
     public static let anonymous = VotingVisibility(rawValue: "anonymous")
 }
 
+/// Contains all information needed to create a new poll
 final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     /// Indicates whether users can suggest user defined answers
     let allowAnswers: Bool?
@@ -30,6 +33,7 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     /// The name of the poll
     let name: String
     let options: [PollOptionRequestBody]?
+    /// Represents the visibility of votes in a poll.
     let votingVisibility: VotingVisibility?
 
     init(

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Sent to a user when they are removed from a channel (as a personal notification to update their channel list).
 final class NotificationRemovedFromChannelEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

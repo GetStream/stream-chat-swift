@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when the presence of a user changes. The event contains information about the user whose presence changed.
 final class UserPresenceChangedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

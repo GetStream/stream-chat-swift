@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Represents any chat message
 final class MessageResponse: Sendable, Decodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]

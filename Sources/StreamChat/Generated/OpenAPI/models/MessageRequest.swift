@@ -15,6 +15,7 @@ final class MessageRequestType: RawRepresentable, Codable, Hashable, Sendable {
     static let system = MessageRequestType(rawValue: "system")
 }
 
+/// Message data for creating or updating a message
 final class MessageRequest: Sendable, Encodable, JSONEncodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]?

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Request body for updating a user group
 final class UpdateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// The new description for the group
     let description: String?

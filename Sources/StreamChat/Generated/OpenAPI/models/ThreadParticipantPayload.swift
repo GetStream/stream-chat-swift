@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Represents a user that is participating in a thread.
 final class ThreadParticipantPayload: Sendable, Decodable {
     /// Date/time of creation
     let createdAt: Date

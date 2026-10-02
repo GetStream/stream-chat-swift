@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a poll is closed.
 final class PollClosedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

@@ -17,6 +17,7 @@ final class CreateDeviceRequestPushProvider: RawRepresentable, Codable, Hashable
     static let xiaomi = CreateDeviceRequestPushProvider(rawValue: "xiaomi")
 }
 
+/// Create device request
 final class CreateDeviceRequest: Sendable, Encodable, JSONEncodable {
     /// Device ID
     let id: String

@@ -4,9 +4,12 @@
 
 import Foundation
 
+/// The push preference details.
 public final class PushPreference: Sendable, Decodable {
+    /// The scope level of the push notifications.
     private let _level: PushPreferenceLevel?
     public var level: PushPreferenceLevel { _level ?? .all }
+    /// If provided the notifications will be disabled until the set date.
     public let disabledUntil: Date?
 
     init(level: PushPreferenceLevel? = nil, disabledUntil: Date? = nil) {

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a BaseEvent is updated with translation data or when a message is updated.
 final class MessageUpdatedEventDTO: Sendable, Event, Decodable {
     /// The number of messages in the channel
     let channelMessageCount: Int?

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// User response object
 final class UserPayload: Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?
     /// Whether a user is banned or not

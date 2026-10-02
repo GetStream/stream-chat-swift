@@ -11,12 +11,18 @@ public final class PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sen
         self.rawValue = rawValue
     }
 
+    /// Behaves as all.
     public static let `default` = PushPreferenceLevel(rawValue: "default")
+    /// All push notifications will be delivered.
     public static let all = PushPreferenceLevel(rawValue: "all")
+    /// Push notifications will only be delivered when the user is mentioned directly or via @channel, @here, a role or a user group.
     public static let allMentions = PushPreferenceLevel(rawValue: "all_mentions")
+    /// Push notifications will only be delivered when the user is directly @mentioned by username.
     public static let directMentions = PushPreferenceLevel(rawValue: "direct_mentions")
+    /// Deprecated: behaves as direct_mentions.
     @available(*, deprecated, renamed: "directMentions")
     public static let mentions = PushPreferenceLevel(rawValue: "mentions")
+    /// No push notifications will be delivered.
     public static let none = PushPreferenceLevel(rawValue: "none")
 }
 

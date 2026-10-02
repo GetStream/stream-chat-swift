@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user gets updated. The event contains information about the updated user.
 final class UserUpdatedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

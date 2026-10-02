@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a channel is successfully hidden.
 final class ChannelHiddenEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

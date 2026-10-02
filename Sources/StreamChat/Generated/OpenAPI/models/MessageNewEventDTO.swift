@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a message was successfully sent or when a message became visible after command execution.
 final class MessageNewEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?

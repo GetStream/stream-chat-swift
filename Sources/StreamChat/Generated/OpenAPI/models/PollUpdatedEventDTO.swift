@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a poll is updated.
 final class PollUpdatedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

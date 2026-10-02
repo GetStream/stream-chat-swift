@@ -21,7 +21,9 @@ final class OwnUserResponse: Sendable, Decodable {
     let mutes: [MutedUserPayload]
     let name: String?
     let online: Bool
+    /// The privacy settings of the user.
     let privacySettings: UserPrivacySettings?
+    /// The push preference details.
     let pushPreferences: PushPreference?
     let role: String
     let teams: [String]

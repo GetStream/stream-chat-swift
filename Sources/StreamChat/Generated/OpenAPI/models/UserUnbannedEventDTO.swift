@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user gets unbanned. The event contains information about the user that was unbanned.
 final class UserUnbannedEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the target user was unbanned
     let cid: ChannelId?

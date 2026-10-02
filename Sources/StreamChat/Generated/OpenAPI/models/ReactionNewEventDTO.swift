@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a new reaction is added to a message.
 final class ReactionNewEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

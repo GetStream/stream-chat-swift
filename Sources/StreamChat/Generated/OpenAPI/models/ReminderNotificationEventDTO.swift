@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a reminder becomes due, triggering a notification for the user.
 final class ReminderNotificationEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

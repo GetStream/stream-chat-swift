@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a reaction is deleted from a message.
 final class ReactionDeletedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

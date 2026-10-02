@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// EmptyResponse for listing user groups
 final class ListUserGroupsResponse: Sendable, Decodable {
     /// List of user groups
     let userGroups: [UserGroup]

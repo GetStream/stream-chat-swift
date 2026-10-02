@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Represents channel in chat
 final class ChannelDetailPayload: Sendable, Decodable {
     /// Whether auto translation is enabled or not
     let autoTranslationEnabled: Bool?
