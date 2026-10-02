@@ -95,45 +95,51 @@ final class RequestDecoder_Tests: XCTestCase {
         }
     }
 
-    func test_logMessage_containsStatusResponseAndRequest() throws {
-        var request = URLRequest(url: try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/channels/query")))
+    func test_logMessage_containsStatusMethodAndPath() throws {
+        var request = URLRequest(url: try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/channels/query?api_key=key")))
         request.httpMethod = "POST"
-        let data = Data(#"{"duration":"1ms"}"#.utf8)
 
-        let message = request.logMessage(for: .shared, status: "201", responseData: data)
-
-        XCTAssertEqual(
-            message,
-            """
-            201 POST /channels/query
-
-            Response:
-            \(data.debugPrettyPrintedJSON)
-
-            Request:
-            \(request.cURLRepresentation(for: .shared))
-            """
-        )
+        XCTAssertEqual(request.logMessage(status: "201"), "201 POST /channels/query")
     }
 
-    func test_logMessage_withError_withoutResponse() throws {
+    func test_logMetadata_containsRequestAndPrettyPrintedJSONBodies() throws {
+        let url = try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/channels/query?api_key=key"))
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = Data(#"{"limit":10}"#.utf8)
+
+        let metadata = request.logMetadata(for: .shared, statusCode: 201, responseData: Data(#"{"url":"https://a.b/c"}"#.utf8))
+
+        XCTAssertEqual(metadata, [
+            .httpMethod: "POST",
+            .httpURL: url.absoluteString,
+            .httpStatusCode: "201",
+            .httpRequestBody: "{\n  \"limit\" : 10\n}",
+            .httpResponseBody: "{\n  \"url\" : \"https://a.b/c\"\n}",
+            .httpCURL: request.cURLRepresentation(for: .shared)
+        ])
+    }
+
+    func test_logMetadata_withError_withoutResponse() throws {
         let request = URLRequest(url: try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/channels")))
         let error = TestError()
 
-        let message = request.logMessage(for: .shared, status: "FAILED", error: error)
+        let metadata = request.logMetadata(for: .shared, error: error)
 
-        XCTAssertEqual(
-            message,
-            """
-            FAILED GET /channels
+        XCTAssertEqual(metadata[.httpMethod], "GET")
+        XCTAssertEqual(metadata[.httpError], "\(error)")
+        XCTAssertNil(metadata[.httpStatusCode])
+        XCTAssertNil(metadata[.httpResponseBody])
+    }
 
-            Error:
-            \(error)
+    func test_logMetadata_keepsTextBodiesAndSkipsBinaryBodies() throws {
+        var request = URLRequest(url: try XCTUnwrap(URL(string: "https://chat.stream-io-api.com/uploads")))
+        request.httpBody = Data([0xff, 0xd8, 0xff, 0xe0])
 
-            Request:
-            \(request.cURLRepresentation(for: .shared))
-            """
-        )
+        let metadata = request.logMetadata(for: .shared, statusCode: 500, responseData: Data("<html>Error</html>".utf8))
+
+        XCTAssertNil(metadata[.httpRequestBody])
+        XCTAssertEqual(metadata[.httpResponseBody], "<html>Error</html>")
     }
 
     private func decode<ResponseType: Decodable>(

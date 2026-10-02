@@ -98,7 +98,10 @@ final class InMemoryLogDestination: BaseLogDestination, @unchecked Sendable {
             fileName: logDetails.fileName,
             lineNumber: logDetails.lineNumber,
             message: logDetails.message,
-            error: logDetails.error
+            error: logDetails.error,
+            metadata: Dictionary(uniqueKeysWithValues: logDetails.metadata.map { key, value in
+                (LogEntry.MetadataKey(rawValue: key.rawValue), value)
+            })
         ))
     }
 }

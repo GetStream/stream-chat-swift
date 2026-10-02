@@ -37,12 +37,13 @@ struct DefaultRequestDecoder: RequestDecoder {
         // Handle the error case
         guard error == nil else {
             let error = error!
-            let message = request.logMessage(for: session, status: "FAILED", error: error)
+            let message = request.logMessage(status: "FAILED")
+            let metadata = { request.logMetadata(for: session, error: error) }
             switch (error as NSError).code {
             case NSURLErrorCancelled, NSURLErrorNetworkConnectionLost:
-                log.info(message, subsystems: .httpRequests)
+                log.info(message, subsystems: .httpRequests, metadata: metadata())
             default:
-                log.error(message, subsystems: .httpRequests)
+                log.error(message, subsystems: .httpRequests, metadata: metadata())
             }
 
             throw error
@@ -52,37 +53,42 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.Unexpected("Expecting `HTTPURLResponse` but received: \(response?.description ?? "nil").")
         }
 
-        let status = "\(httpResponse.statusCode)"
+        let statusCode = httpResponse.statusCode
+        let message = request.logMessage(status: "\(statusCode)")
         guard let data = data, !data.isEmpty else {
-            let message = request.logMessage(for: session, status: status)
-            if httpResponse.statusCode < 300 {
-                log.debug(message, subsystems: .httpRequests)
+            let metadata = { request.logMetadata(for: session, statusCode: statusCode) }
+            if statusCode < 300 {
+                log.debug(message, subsystems: .httpRequests, metadata: metadata())
             } else {
-                log.error(message, subsystems: .httpRequests)
+                log.error(message, subsystems: .httpRequests, metadata: metadata())
             }
             throw ClientError.ResponseBodyEmpty()
         }
 
-        guard httpResponse.statusCode < 300 else {
+        let metadata = { request.logMetadata(for: session, statusCode: statusCode, responseData: data) }
+        guard statusCode < 300 else {
             let serverError: APIError
             do {
                 serverError = try JSONDecoder.default.decode(APIError.self, from: data)
             } catch {
-                log.error(request.logMessage(for: session, status: status, responseData: data, error: error), subsystems: .httpRequests)
+                log.error(
+                    message,
+                    subsystems: .httpRequests,
+                    metadata: request.logMetadata(for: session, statusCode: statusCode, responseData: data, error: error)
+                )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
 
-            let message = request.logMessage(for: session, status: status, responseData: data)
             if serverError.isTokenExpiredError {
-                log.info(message, subsystems: .httpRequests)
+                log.info(message, subsystems: .httpRequests, metadata: metadata())
                 throw ClientError.ExpiredToken()
             }
 
-            log.error(message, subsystems: .httpRequests)
+            log.error(message, subsystems: .httpRequests, metadata: metadata())
             throw ClientError(with: serverError)
         }
 
-        log.debug(request.logMessage(for: session, status: status, responseData: data), subsystems: .httpRequests)
+        log.debug(message, subsystems: .httpRequests, metadata: metadata())
 
         if let responseAsData = data as? ResponseType {
             return responseAsData
@@ -99,17 +105,39 @@ struct DefaultRequestDecoder: RequestDecoder {
 }
 
 extension URLRequest {
-    // The `Response:` and `Request:` sections let log viewers extract the response body and the cURL command.
-    func logMessage(for session: URLSession, status: String, responseData: Data? = nil, error: Error? = nil) -> String {
-        var sections = ["\(status) \(httpMethod ?? "") \(url?.path ?? "")"]
-        if let error {
-            sections.append("Error:\n\(error)")
+    func logMessage(status: String) -> String {
+        "\(status) \(httpMethod ?? "GET") \(url?.path ?? "")"
+    }
+
+    func logMetadata(
+        for session: URLSession,
+        statusCode: Int? = nil,
+        responseData: Data? = nil,
+        error: Error? = nil
+    ) -> [LogMetadataKey: String] {
+        var metadata: [LogMetadataKey: String] = [
+            .httpMethod: httpMethod ?? "GET",
+            .httpURL: url?.absoluteString ?? "",
+            .httpCURL: cURLRepresentation(for: session)
+        ]
+        metadata[.httpStatusCode] = statusCode.map(String.init)
+        metadata[.httpError] = error.map { "\($0)" }
+        metadata[.httpRequestBody] = httpBody.flatMap(Self.logDescription(of:))
+        metadata[.httpResponseBody] = responseData.flatMap(Self.logDescription(of:))
+        return metadata
+    }
+
+    // Bodies that are neither JSON nor text, like uploaded files, are left out.
+    private static func logDescription(of body: Data) -> String? {
+        guard !body.isEmpty else { return nil }
+        guard let object = try? JSONSerialization.jsonObject(with: body, options: .fragmentsAllowed),
+              let json = try? JSONSerialization.data(
+                  withJSONObject: object,
+                  options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes, .fragmentsAllowed]
+              ) else {
+            return String(data: body, encoding: .utf8)
         }
-        if let responseData, !responseData.isEmpty {
-            sections.append("Response:\n\(responseData.debugPrettyPrintedJSON)")
-        }
-        sections.append("Request:\n\(cURLRepresentation(for: session))")
-        return sections.joined(separator: "\n\n")
+        return String(decoding: json, as: UTF8.self)
     }
 }
 
