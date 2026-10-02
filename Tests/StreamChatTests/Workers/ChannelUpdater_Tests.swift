@@ -44,12 +44,19 @@ final class ChannelUpdater_Tests: XCTestCase {
         super.tearDown()
     }
 
+    /// First-page `update` clears a stale mid-page cache on the writer queue before it
+    /// sends the request, so the spy is not populated synchronously.
+    private func waitUntilChannelUpdateRequestIsSent() {
+        AssertAsync.willBeTrue(self.apiClient.request_endpoint != nil)
+    }
+
     // MARK: - UpdateChannelQuery
 
     func test_updateChannelQuery_makesCorrectAPICall() throws {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
+        waitUntilChannelUpdateRequestIsSent()
 
         let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -81,6 +88,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
         let query = ChannelQuery(channelPayload: payload)
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, onChannelCreated: { _ in })
+        waitUntilChannelUpdateRequestIsSent()
 
         let endpoint = try XCTUnwrap(apiClient.request_endpoint)
         XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/\(cid.type.rawValue)/\(cid.id)/query")
@@ -168,6 +176,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        waitUntilChannelUpdateRequestIsSent()
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -201,6 +210,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        waitUntilChannelUpdateRequestIsSent()
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -260,6 +270,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        waitUntilChannelUpdateRequestIsSent()
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -314,6 +325,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
+        waitUntilChannelUpdateRequestIsSent()
         apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
 
         // Assert the completion is called with the error
@@ -358,6 +370,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
+        waitUntilChannelUpdateRequestIsSent()
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -429,6 +442,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
+        waitUntilChannelUpdateRequestIsSent()
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
@@ -731,9 +745,8 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     // MARK: - Stale mid-page state cleanup
 
-    // Verified by driving the public `update(channelQuery:isInRecoveryMode:)` entry point: the
-    // cleanup runs synchronously at the top of `update` before the network request is dispatched
-    // to the API spy, so we can assert immediately after the call without simulating a response.
+    // The cleanup finishes on the writer queue before the request is sent. Wait for the spy
+    // to record that request, then assert the cache — the request itself is not synchronous.
 
     func test_updateChannelQuery_whenChannelHasStaleMidPageState_clearsCacheBeforeFetching() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
@@ -745,6 +758,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: false)
+        waitUntilChannelUpdateRequestIsSent()
 
         try database.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
@@ -763,6 +777,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: false)
+        waitUntilChannelUpdateRequestIsSent()
 
         try database.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
