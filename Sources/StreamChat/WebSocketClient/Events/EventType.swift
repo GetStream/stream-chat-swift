@@ -19,6 +19,7 @@ public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStrin
 
 public extension EventType {
     static let healthCheck: Self = "health.check"
+    static let connectionOk: Self = "connection.ok"
     static let connectionError: Self = "connection.error"
 
     // MARK: User Events
@@ -186,7 +187,7 @@ public extension EventType {
 extension EventType {
     func event(from response: EventPayload) throws -> Event {
         switch self {
-        case .healthCheck: return try HealthCheckEvent(from: response)
+        case .healthCheck, .connectionOk: return try HealthCheckEvent(from: response)
         case .connectionError: return try ConnectionErrorEvent(from: response)
 
         case .userPresenceChanged: return try UserPresenceChangedEventDTO(from: response)
