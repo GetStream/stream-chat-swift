@@ -39,7 +39,8 @@ final class Token_Tests: XCTestCase {
     func test_anonymousToken() {
         let token = Token.anonymous
         XCTAssertEqual(token.expiration, nil)
-        XCTAssertEqual(token.rawValue, "")
+        // CHA-3448: connect v2 currently requires some value
+        XCTAssertEqual(token.rawValue, "anon")
         XCTAssertTrue(!token.userId.isEmpty)
     }
 
