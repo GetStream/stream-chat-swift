@@ -62,7 +62,7 @@ enum DemoAppLogging {
     }
 
     private static func makeDestination(_ destination: LogDestinationSettings, settings: LogSettings) -> LogDestination {
-        let type: BaseLogDestination.Type = destination.id == logViewerID ? InMemoryLogDestination.self : OSLogDestination.self
+        let type: BaseLogDestination.Type = destination.id == logViewerID ? LogViewerDestination.self : OSLogDestination.self
         let enabledSubsystems = settings.enabledSubsystems(for: destination)
         return type.init(
             identifier: destination.id,
@@ -84,13 +84,13 @@ enum DemoAppLogging {
     }
 }
 
-final class InMemoryLogDestination: BaseLogDestination, @unchecked Sendable {
+final class LogViewerDestination: BaseLogDestination, @unchecked Sendable {
     override func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
-        InMemoryLogStore.shared.isRecording && super.isEnabled(level: level, subsystems: subsystems)
+        InMemoryLogRecorder.shared.isRecording && super.isEnabled(level: level, subsystems: subsystems)
     }
 
     override func process(logDetails: LogDetails) {
-        InMemoryLogStore.shared.append(LogEntry(
+        InMemoryLogRecorder.shared.record(LogEntry(
             date: logDetails.date,
             level: LogEntry.Level(logDetails.level),
             subsystems: DemoAppLogging.subsystems.filter { logDetails.subsystem.contains($0) }.map(\.description),
