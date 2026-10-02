@@ -11,7 +11,8 @@ enum DemoAppLogging {
     private static let consoleID = "console"
     private static let logViewerID = "logViewer"
 
-    private static let subsystems: [LogSubsystem] = [
+    // The subsystems used by Chat. The others are only used by Video.
+    fileprivate nonisolated static let subsystems: [LogSubsystem] = [
         .other,
         .database,
         .httpRequests,
@@ -92,7 +93,7 @@ final class InMemoryLogDestination: BaseLogDestination, @unchecked Sendable {
         InMemoryLogStore.shared.append(LogEntry(
             date: logDetails.date,
             level: LogEntry.Level(logDetails.level),
-            subsystems: LogSubsystem.allCases.filter { logDetails.subsystem.contains($0) }.map(\.description),
+            subsystems: DemoAppLogging.subsystems.filter { logDetails.subsystem.contains($0) }.map(\.description),
             threadName: logDetails.threadName,
             functionName: logDetails.functionName,
             fileName: logDetails.fileName,
