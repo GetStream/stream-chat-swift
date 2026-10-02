@@ -151,10 +151,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
         case updatedAt = "updated_at"
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         autoTranslationEnabled = try container.decodeIfPresent(
@@ -171,13 +167,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         cooldown = try container.decodeIfPresent(Int.self, forKey: .cooldown)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         disabled = try container.decode(Bool.self, forKey: .disabled)
         filterTags = try container.decodeIfPresent([String].self, forKey: .filterTags)

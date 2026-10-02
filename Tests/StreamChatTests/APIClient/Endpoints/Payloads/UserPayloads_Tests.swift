@@ -105,7 +105,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.threads[0].parentMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
     }
     
-    // MARK: - v1 / v2 extra data compatibility
+    // MARK: - Extra data
 
     private var expectedCustomExtraData: [String: RawJSON] {
         [
@@ -118,17 +118,6 @@ final class UserPayload_Tests: XCTestCase {
                 "colors": .array([.string("blue"), .string("yellow"), .number(42)])
             ])
         ]
-    }
-
-    func test_userPayload_whenExtraDataIsFlattened_isDecoded() throws {
-        let json = XCTestCase.mockData(fromJSONFile: "UserPayloadWithCustom")
-
-        let response = try JSONDecoder.default.decode(UserPayload.self, from: json)
-
-        XCTAssertEqual(response.id, "bitter-cloud-0")
-        XCTAssertEqual(response.role, "guest")
-        XCTAssertEqual(response.teams, ["RED", "GREEN", "BLUE"])
-        XCTAssertEqual(response.extraData, expectedCustomExtraData)
     }
 
     func test_userPayload_whenExtraDataIsNestedInCustom_isDecoded() throws {

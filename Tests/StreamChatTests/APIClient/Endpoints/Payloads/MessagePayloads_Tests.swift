@@ -14,9 +14,11 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_decodesEnhancedMentions() throws {
         let json = """
         {
+            "custom": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
+                "custom": {},
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -58,9 +60,11 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_optionalMentionsAreNilWhenMissing() throws {
         let json = """
         {
+            "custom": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
+                "custom": {},
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -104,9 +108,11 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_decodesMentionedChannelMembersMap() throws {
         let json = """
         {
+            "custom": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
+                "custom": {},
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -132,6 +138,7 @@ final class MessagePayload_Tests: XCTestCase {
             "own_reactions": [],
             "mentioned_users": [
                 {
+                    "custom": {},
                     "id": "u2",
                     "role": "user",
                     "online": false,
@@ -144,7 +151,9 @@ final class MessagePayload_Tests: XCTestCase {
                 "u2": {
                     "channel_role": "channel_member",
                     "notifications_muted": false,
-                    "nickname": "Marty"
+                    "custom": {
+                        "nickname": "Marty"
+                    }
                 }
             }
         }
@@ -234,38 +243,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.deletedForMe, true)
         XCTAssertEqual(payload.member?.channelRole, "moderator")
         XCTAssertEqual(payload.member?.notificationsMuted, false)
-        XCTAssertEqual(payload.member?.custom, [String: RawJSON]())
-    }
-
-    func test_memberInfoPayload_decodesInlineExtraData() throws {
-        let json = """
-        {
-            "channel_role": "channel_member",
-            "notifications_muted": false,
-            "badge": { "tier": "gold" }
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
-
-        XCTAssertEqual(payload.channelRole, "channel_member")
-        XCTAssertEqual(payload.notificationsMuted, false)
-        XCTAssertEqual(payload.custom, ["badge": .dictionary(["tier": .string("gold")])])
-    }
-
-    func test_memberInfoPayload_knownFieldsAreNotInExtraData() throws {
-        let json = """
-        {
-            "channel_role": "moderator",
-            "notifications_muted": true
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
-
-        XCTAssertEqual(payload.channelRole, "moderator")
-        XCTAssertEqual(payload.notificationsMuted, true)
-        XCTAssertEqual(payload.custom, [String: RawJSON]())
+        XCTAssertNil(payload.member?.custom)
     }
 
     func test_memberInfoPayload_requiredFieldsThrowWhenMissing() throws {

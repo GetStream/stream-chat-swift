@@ -24,11 +24,22 @@ output:
 args:
   # Non-optional properties which fall back to a default when the key is missing or null.
   defaultValues:
+    ChannelDetailPayload:
+      custom: "[:]"
     ChannelStateResponse:
       threads: "[]"
+    DraftMessagePayload:
+      custom: "[:]"
     MemberInfoPayload:
       notificationsMuted: "false"
+    MemberPayload:
+      custom: "[:]"
+    MessageAttachmentPayload:
+      custom: "[:]"
+    MessageReactionPayload:
+      custom: "[:]"
     MessageResponse:
+      custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
@@ -36,7 +47,10 @@ args:
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    OwnUserResponse:
+      custom: "[:]"
     SearchResultMessage:
+      custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
@@ -44,8 +58,15 @@ args:
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    ThreadParticipantPayload:
+      custom: "[:]"
+    ThreadResponse:
+      custom: "[:]"
     ThreadStateResponse:
+      custom: "[:]"
       latestReplies: "[]"
+    UserPayload:
+      custom: "[:]"
   # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
   lossyArrays:
     ChannelDetailPayload: [members]
@@ -56,12 +77,6 @@ args:
     QueryChannelsResponse: [channels]
     QueryThreadsResponse: [threads]
     SearchResultMessage: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    # Remove when fixed: IOS-2065
     SyncResponse: [events]
     ThreadStateResponse: [latestReplies, read, threadParticipants]
-  # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
-  # declares, so those have to be excluded too when rebuilding the extra data.
-  v1CodingKeys:
-    MessageResponse: MessagePayloadsCodingKeys
-    OwnUserResponse: UserPayloadsCodingKeys
-    SearchResultMessage: MessagePayloadsCodingKeys
-    UserPayload: UserPayloadsCodingKeys

@@ -112,6 +112,7 @@ final class TypingEvent_Tests: XCTestCase {
           "type": "typing.start",
           "cid": "messaging:general",
           "user": {
+            "custom": {},
             "id": "luke_skywalker",
             "role": "user",
             "created_at": "2020-12-07T11:36:47.059906Z",
@@ -123,8 +124,10 @@ final class TypingEvent_Tests: XCTestCase {
           "member": {
             "channel_role": "channel_member",
             "notifications_muted": false,
-            "is_premium": true,
-            "nickname": "Marty"
+            "custom": {
+              "is_premium": true,
+              "nickname": "Marty"
+            }
           },
           "created_at": "2021-04-22T22:05:51.726128615Z",
           "custom": {}

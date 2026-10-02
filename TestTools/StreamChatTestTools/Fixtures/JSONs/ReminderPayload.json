@@ -1,5 +1,8 @@
 {
     "channel": {
+      "custom": {
+          "name": "Yo"
+      },
       "auto_translation_language": "",
       "cid": "messaging:26D82FB1-5",
       "config": {
@@ -48,7 +51,6 @@
       "id": "26D82FB1-5",
       "last_message_at": "2025-03-07T14:54:03.383299Z",
       "member_count": 3,
-      "name": "Yo",
       "type": "messaging",
       "updated_at": "2025-02-25T10:29:54.133746Z"
     },

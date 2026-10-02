@@ -105,10 +105,6 @@ final class ThreadStateResponse: Sendable, Decodable {
         case updatedAt = "updated_at"
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         activeParticipantCount = try container.decodeIfPresent(
@@ -120,13 +116,7 @@ final class ThreadStateResponse: Sendable, Decodable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
