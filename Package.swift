@@ -22,6 +22,11 @@ let package = Package(
             name: "StreamChatCommonUI",
             targets: ["StreamChatCommonUI"]
         ),
+        // In-app log viewer, meant for demo apps and debug builds only
+        .library(
+            name: "StreamChatLogsUI",
+            targets: ["StreamChatLogsUI"]
+        ),
         .library(
             name: "StreamChatTestTools",
             targets: ["StreamChatTestTools"]
@@ -33,7 +38,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.11.0")
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.11.0"),
+        .package(url: "https://github.com/GetStream/stream-logs-ui-swift.git", revision: "2e869c89da055e8a6f082c5b05cc968f5501c816")
     ],
     targets: [
         .target(
@@ -54,6 +60,13 @@ let package = Package(
             dependencies: ["StreamChat"],
             exclude: ["Info.plist", "Generated/L10n_template.stencil"],
             resources: [.process("Resources")]
+        ),
+        .target(
+            name: "StreamChatLogsUI",
+            dependencies: [
+                "StreamChat",
+                .product(name: "StreamLogsUI", package: "stream-logs-ui-swift")
+            ]
         ),
         .target(
             name: "StreamChatTestTools",

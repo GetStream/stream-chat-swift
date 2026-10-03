@@ -3,8 +3,8 @@
 //
 
 import StreamChat
+import StreamChatLogsUI
 import StreamChatUI
-import StreamLogsUI
 import UIKit
 
 // MARK: - Navigation

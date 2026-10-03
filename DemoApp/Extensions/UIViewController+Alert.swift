@@ -4,7 +4,7 @@
 
 import Foundation
 import StreamChat
-import StreamLogsUI
+import StreamChatLogsUI
 import UIKit
 
 extension UIViewController {
