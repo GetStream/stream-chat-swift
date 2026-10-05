@@ -10,7 +10,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '26.2'
 xcode_project = 'StreamChat.xcodeproj'
-sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI']
+sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI', 'StreamChatAI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
@@ -575,6 +575,29 @@ lane :test_common_ui do |options|
   )
 end
 
+desc 'Runs AI tests in Debug config'
+lane :test_ai do |options|
+  next unless is_check_required(sources: sources_matrix[:ai], force_check: @force_check)
+
+  scheme = 'StreamChatAI'
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
+
+  scan(
+    project: xcode_project,
+    scheme: scheme,
+    testplan: scheme,
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    build_for_testing: options[:build_for_testing],
+    skip_build: options[:skip_build],
+    result_bundle: true,
+    devices: options[:device],
+    number_of_retries: options[:cron] ? 3 : 2,
+    xcodebuild_formatter: xcodebuild_formatter
+  )
+end
+
 private_lane :match_macos do
   %w[development appstore].each do |type|
     match(
@@ -719,6 +742,7 @@ lane :sources_matrix do
     llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
     common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
+    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
     integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
@@ -867,5 +891,6 @@ lane :size_analyze do
     xcodebuild_formatter: xcodebuild_formatter
   )
 
-  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
+  # StreamChatAI isn't linked by the Demo app, so there is no link map to measure it with
+  show_detailed_sdk_size(sdk_names: sdk_names - ['StreamChatAI'], threshold: 42)
 end

@@ -23,6 +23,10 @@ let package = Package(
             targets: ["StreamChatCommonUI"]
         ),
         .library(
+            name: "StreamChatAI",
+            targets: ["StreamChatAI"]
+        ),
+        .library(
             name: "StreamChatTestTools",
             targets: ["StreamChatTestTools"]
         ),
@@ -33,7 +37,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.11.0")
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.11.0"),
+        .package(url: "https://github.com/JohnSundell/Splash.git", exact: "0.16.0"),
+        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui.git", exact: "2.4.0")
     ],
     targets: [
         .target(
@@ -53,6 +59,15 @@ let package = Package(
             name: "StreamChatCommonUI",
             dependencies: ["StreamChat"],
             exclude: ["Info.plist", "Generated/L10n_template.stencil"],
+            resources: [.process("Resources")]
+        ),
+        .target(
+            name: "StreamChatAI",
+            dependencies: [
+                .product(name: "Splash", package: "Splash"),
+                .product(name: "MarkdownUI", package: "swift-markdown-ui")
+            ],
+            exclude: ["Info.plist"],
             resources: [.process("Resources")]
         ),
         .target(
