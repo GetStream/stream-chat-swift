@@ -24,6 +24,7 @@ final class FullUserResponse: Sendable, Decodable {
     /// The privacy settings of the user.
     let privacySettings: UserPrivacySettings?
     let role: String
+    let shadowBanned: Bool
     let teams: [String]
     let teamsRole: [String: String]?
     let totalUnreadCount: Int
@@ -50,6 +51,7 @@ final class FullUserResponse: Sendable, Decodable {
         online: Bool,
         privacySettings: UserPrivacySettings? = nil,
         role: String,
+        shadowBanned: Bool,
         teams: [String],
         teamsRole: [String: String]? = nil,
         totalUnreadCount: Int,
@@ -75,6 +77,7 @@ final class FullUserResponse: Sendable, Decodable {
         self.online = online
         self.privacySettings = privacySettings
         self.role = role
+        self.shadowBanned = shadowBanned
         self.teams = teams
         self.teamsRole = teamsRole
         self.totalUnreadCount = totalUnreadCount
@@ -102,6 +105,7 @@ final class FullUserResponse: Sendable, Decodable {
         case online
         case privacySettings = "privacy_settings"
         case role
+        case shadowBanned = "shadow_banned"
         case teams
         case teamsRole = "teams_role"
         case totalUnreadCount = "total_unread_count"

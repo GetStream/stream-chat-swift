@@ -24,6 +24,7 @@ extension SearchResultMessage {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: extraData,
+            deletedReplyCount: 0,
             id: messageId,
             latestReactions: [],
             mentionedChannel: false,

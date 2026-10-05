@@ -335,8 +335,10 @@ extension XCTestCase {
         .init(
             activeParticipantCount: activeParticipantCount,
             channel: channel,
+            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
             createdBy: createdBy,
+            createdByUserId: createdBy.id,
             custom: extraData,
             draft: draft,
             lastMessageAt: lastMessageAt,
@@ -366,12 +368,16 @@ extension XCTestCase {
 
     func dummyThreadParticipantPayload(
         user: UserPayload = .dummy(userId: .unique),
+        threadId: String = .unique,
         createdAt: Date = .unique,
         lastReadAt: Date = .unique
     ) -> ThreadParticipantPayload {
         .init(
+            channelCid: .unique,
             createdAt: createdAt,
+            custom: [:],
             lastReadAt: lastReadAt,
+            threadId: threadId,
             user: user
         )
     }

@@ -18,6 +18,7 @@ final class MessageResponse: Sendable, Decodable {
     /// Date/time of deletion
     let deletedAt: Date?
     let deletedForMe: Bool?
+    let deletedReplyCount: Int
     let draft: DraftPayload?
     /// Object with translations. Key `language` contains the original language key. Other keys contain translations
     let i18n: [String: String]?
@@ -96,6 +97,7 @@ final class MessageResponse: Sendable, Decodable {
         custom: [String: RawJSON],
         deletedAt: Date? = nil,
         deletedForMe: Bool? = nil,
+        deletedReplyCount: Int,
         draft: DraftPayload? = nil,
         i18n: [String: String]? = nil,
         id: String,
@@ -143,6 +145,7 @@ final class MessageResponse: Sendable, Decodable {
         self.custom = custom
         self.deletedAt = deletedAt
         self.deletedForMe = deletedForMe
+        self.deletedReplyCount = deletedReplyCount
         self.draft = draft
         self.i18n = i18n
         self.id = id
@@ -192,6 +195,7 @@ final class MessageResponse: Sendable, Decodable {
         case custom
         case deletedAt = "deleted_at"
         case deletedForMe = "deleted_for_me"
+        case deletedReplyCount = "deleted_reply_count"
         case draft
         case i18n
         case id
@@ -245,6 +249,7 @@ final class MessageResponse: Sendable, Decodable {
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
+        deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         i18n = try container.decodeIfPresent([String: String].self, forKey: .i18n)
         id = try container.decode(String.self, forKey: .id)

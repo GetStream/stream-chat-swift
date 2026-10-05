@@ -718,6 +718,8 @@ optionalize_property MemberAddedEventDTO channel
 optionalize_property MemberRemovedEventDTO channel
 optionalize_property MemberUpdatedEventDTO channel
 
+optionalize_property ThreadResponse createdByUserId
+
 # Will be changed on the generation side later
 # CHA-4621
 require_property ChannelDetailPayload config
@@ -756,7 +758,6 @@ remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt
 remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt
 remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt
 remove_property BanRequest deleteMessages ipBan
-remove_property BlockedUserResponse blockedUser user userId
 remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
 remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
@@ -774,8 +775,8 @@ remove_property DraftDeletedEventDTO custom parentId receivedAt
 remove_property DraftMessagePayload html mml
 remove_property DraftUpdatedEventDTO custom parentId receivedAt
 remove_property FlagRequest entityCreatorId moderationPayload
-remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore shadowBanned unreadCount
-remove_property GetOGResponse actions authorIcon authorLink color custom fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
+remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore unreadCount
+remove_property GetOGResponse actions authorIcon authorLink color fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
 remove_property HealthCheckEventDTO cid custom receivedAt
 remove_property ImageUploadResponse uploadSizes
 remove_property MarkChannelsReadRequest readByChannel
@@ -792,7 +793,7 @@ remove_property MessagePaginationParams createdAtAfter createdAtAfterOrEqual cre
 remove_property MessageReactionGroupPayload latestReactionsBy
 remove_property MessageReadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom lastReadMessageId receivedAt
 remove_property MessageRequest mml pinnedAt
-remove_property MessageResponse deletedReplyCount html imageLabels mml
+remove_property MessageResponse html imageLabels mml
 remove_property MessageUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId messageUpdate receivedAt team
 remove_property MutedChannelPayloadResponse channelMutes ownUser
 remove_property MutedUserPayload user
@@ -837,14 +838,14 @@ remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
-remove_property SearchResultMessage deletedReplyCount html imageLabels mml
+remove_property SearchResultMessage html imageLabels mml
 remove_property SendMessageRequest includeChannelContext includeMentionedMembers keepChannelHidden
 remove_property SendMessageResponsePayload channelContext mentionedMembers
 remove_property SharedLocation channel message
 remove_property SyncResponse inaccessibleCids
-remove_property ThreadParticipantPayload channelCid custom lastThreadMessageAt leftThreadAt threadId userId
-remove_property ThreadResponse channelCid createdByUserId deletedAt threadParticipants
-remove_property ThreadStateResponse channelCid createdByUserId deletedAt
+remove_property ThreadParticipantPayload lastThreadMessageAt leftThreadAt userId
+remove_property ThreadResponse deletedAt threadParticipants
+remove_property ThreadStateResponse deletedAt
 remove_property ThreadUpdatedEventDTO channelId channelType cid custom receivedAt
 remove_property TruncateChannelRequest memberIds truncatedAt
 remove_property TypingStartEventDTO channelId channelType custom receivedAt

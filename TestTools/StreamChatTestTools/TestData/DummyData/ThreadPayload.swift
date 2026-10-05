@@ -49,8 +49,10 @@ extension ThreadPayload {
         .init(
             activeParticipantCount: activeParticipantCount,
             channel: channel,
+            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
             createdBy: createdBy,
+            createdByUserId: createdBy.id,
             custom: extraData,
             draft: draft,
             lastMessageAt: lastMessageAt,
@@ -85,8 +87,10 @@ extension ThreadPartialPayload {
         .init(
             activeParticipantCount: activeParticipantCount,
             channel: channel,
+            channelCid: channel.cid.rawValue,
             createdAt: createdAt,
             createdBy: createdBy,
+            createdByUserId: createdBy.id,
             custom: extraData,
             lastMessageAt: lastMessageAt,
             parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),

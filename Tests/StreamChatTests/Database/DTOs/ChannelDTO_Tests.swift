@@ -1822,7 +1822,9 @@ final class ChannelDTO_Tests: XCTestCase {
         let parentMessageId: MessageId = .unique
         let threadPayload = ThreadPayload(
             activeParticipantCount: 0,
+            channelCid: cid.rawValue,
             createdAt: .unique,
+            createdByUserId: .unique,
             custom: [:],
             latestReplies: [],
             parentMessageId: parentMessageId,

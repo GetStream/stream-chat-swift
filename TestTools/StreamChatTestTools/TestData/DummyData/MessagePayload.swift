@@ -89,6 +89,7 @@ extension MessagePayload {
             custom: custom,
             deletedAt: deletedAt,
             deletedForMe: deletedForMe,
+            deletedReplyCount: 0,
             draft: draft,
             i18n: i18n.isEmpty ? nil : i18n,
             id: id,

@@ -9,6 +9,7 @@ extension GetOGResponse {
     static func dummy(
         assetUrl: String? = nil,
         authorName: String? = nil,
+        custom: [String: RawJSON] = [:],
         imageUrl: String? = nil,
         ogScrapeUrl: String? = "https://getstream.io",
         text: String? = nil,
@@ -19,6 +20,7 @@ extension GetOGResponse {
         GetOGResponse(
             assetUrl: assetUrl,
             authorName: authorName,
+            custom: custom,
             imageUrl: imageUrl,
             ogScrapeUrl: ogScrapeUrl,
             text: text,

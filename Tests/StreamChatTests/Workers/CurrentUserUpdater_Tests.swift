@@ -1127,8 +1127,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let payload = GetBlockedUsersResponse(
             blocks: [
                 BlockedUserResponse(
+                    blockedUser: .dummy(userId: blockedUserId),
                     blockedUserId: blockedUserId,
-                    createdAt: createdAt
+                    createdAt: createdAt,
+                    user: .dummy(userId: currentUserId),
+                    userId: currentUserId
                 )
             ]
         )

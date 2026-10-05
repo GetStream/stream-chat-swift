@@ -9,6 +9,7 @@ final class GetOGResponse: Sendable, Decodable {
     let assetUrl: String?
     /// og:site_name
     let authorName: String?
+    let custom: [String: RawJSON]
     /// URL of detected image
     let imageUrl: String?
     /// extracted url from the text
@@ -25,6 +26,7 @@ final class GetOGResponse: Sendable, Decodable {
     init(
         assetUrl: String? = nil,
         authorName: String? = nil,
+        custom: [String: RawJSON],
         imageUrl: String? = nil,
         ogScrapeUrl: String? = nil,
         text: String? = nil,
@@ -34,6 +36,7 @@ final class GetOGResponse: Sendable, Decodable {
     ) {
         self.assetUrl = assetUrl
         self.authorName = authorName
+        self.custom = custom
         self.imageUrl = imageUrl
         self.ogScrapeUrl = ogScrapeUrl
         self.text = text
@@ -45,6 +48,7 @@ final class GetOGResponse: Sendable, Decodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case assetUrl = "asset_url"
         case authorName = "author_name"
+        case custom
         case imageUrl = "image_url"
         case ogScrapeUrl = "og_scrape_url"
         case text

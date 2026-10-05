@@ -13,6 +13,7 @@ sources:
   - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
   - ./Generated/OpenAPI/models/SyncResponse.swift
+  - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
   - ./Generated/OpenAPI/models/ThreadStateResponse.swift
   - ./Generated/OpenAPI/models/UserPayload.swift
@@ -68,6 +69,8 @@ args:
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    ThreadParticipantPayload:
+      custom: "[:]"
     ThreadResponse:
       activeParticipantCount: "0"
       custom: "[:]"

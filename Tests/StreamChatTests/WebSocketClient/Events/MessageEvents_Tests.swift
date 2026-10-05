@@ -159,6 +159,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertEqual(event?.thread?.channelCid, "messaging:general")
         XCTAssertEqual(event?.thread?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
         XCTAssertEqual(event?.thread?.replyCount, 4)
         XCTAssertEqual(event?.thread?.participantCount, 2)

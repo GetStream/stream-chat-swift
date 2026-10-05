@@ -22,6 +22,7 @@ extension SearchResultMessage {
             custom: custom,
             deletedAt: deletedAt,
             deletedForMe: deletedForMe,
+            deletedReplyCount: deletedReplyCount,
             draft: draft,
             i18n: i18n,
             id: id,
