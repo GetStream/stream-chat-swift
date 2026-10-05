@@ -1304,7 +1304,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         do {
             dto.extraData = try JSONEncoder.default.encode(
                 draftDetailsPayload.custom.removingValues(
-                    forKeys: ["args", MessageResponse.CodingKeys.command.rawValue]
+                    forKeys: [MessageResponse.argsKey, MessageResponse.CodingKeys.command.rawValue]
                 )
             )
         } catch {
@@ -1670,7 +1670,7 @@ extension MessageDTO {
         // Messages have no dedicated args field, it is stored as custom data.
         var custom = extraData
         if let args {
-            custom["args"] = .string(args)
+            custom[MessageResponse.argsKey] = .string(args)
         }
 
         return MessageRequest(
@@ -1718,7 +1718,7 @@ extension MessageDTO {
             custom[MessageResponse.CodingKeys.command.rawValue] = .string(command)
         }
         if let args {
-            custom["args"] = .string(args)
+            custom[MessageResponse.argsKey] = .string(args)
         }
 
         return MessageRequest(
