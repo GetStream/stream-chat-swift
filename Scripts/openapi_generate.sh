@@ -116,6 +116,7 @@ allowed_models=(
   BanResponse
   BlockedUserResponse
   BlockUsersRequest
+  BlockUsersResponse
   CastPollVoteRequest
   ChannelGetOrCreateRequest
   ChannelInput
@@ -189,9 +190,11 @@ allowed_models=(
   ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionInput
+  PollOptionResponse
   PollOptionResponseData
   PollResponse
   PollResponseData
+  PollVoteResponse
   PollVoteResponseData
   PollVotesResponse
   PushPreferenceInput
@@ -242,6 +245,7 @@ allowed_models=(
   TruncateChannelRequest
   TruncateChannelResponse
   UnblockUsersRequest
+  UnblockUsersResponse
   UnmuteChannelRequest
   UnmuteRequest
   UnmuteResponse
@@ -437,6 +441,7 @@ encodable_only_models=(
 decodable_only_models=(
   AppSettings
   BanResponse
+  BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
   ChannelStateResponse
@@ -480,10 +485,12 @@ decodable_only_models=(
   ParsedPredefinedFilterResponse
   PendingMessageResponse
   PollOptionPayload
+  PollOptionResponse
   PollPayload
   PollPayloadResponse
   PollVoteListResponse
   PollVotePayload
+  PollVotePayloadResponse
   PushPreference
   QueryBannedUsersResponse
   QueryChannelsResponse
@@ -507,6 +514,7 @@ decodable_only_models=(
   ThreadStateResponse
   TranslateMessageResponse
   TruncateChannelResponse
+  UnblockUsersResponse
   UnmuteUsersResponse
   UnreadChannel
   UnreadChannelByType
@@ -623,6 +631,7 @@ rename_generated PollOptionInput PollOptionRequestBody
 rename_generated PollOptionResponseData PollOptionPayload
 rename_generated PollResponse PollPayloadResponse
 rename_generated PollResponseData PollPayload
+rename_generated PollVoteResponse PollVotePayloadResponse
 rename_generated PollVoteResponseData PollVotePayload
 rename_generated PollVotesResponse PollVoteListResponse
 rename_generated PushPreferencesResponse PushPreference
@@ -668,7 +677,6 @@ rename_generated_type PrivacySettingsResponse UserPrivacySettings
 rename_generated_type ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated_type TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
-rename_generated_type BlockUsersResponse EmptyResponse
 rename_generated_type DeleteReminderResponse EmptyResponse
 rename_generated_type EventResponse EmptyResponse
 rename_generated_type FlagItemResponse EmptyResponse
@@ -676,12 +684,9 @@ rename_generated_type HideChannelResponse EmptyResponse
 rename_generated_type MarkDeliveredResponse EmptyResponse
 rename_generated_type MarkReadResponse EmptyResponse
 rename_generated_type ModerationBanResponse EmptyResponse
-rename_generated_type PollOptionResponse EmptyResponse
-rename_generated_type PollVoteResponse EmptyResponse
 rename_generated_type Response EmptyResponse
 rename_generated_type ShowChannelResponse EmptyResponse
 rename_generated_type UnbanResponse EmptyResponse
-rename_generated_type UnblockUsersResponse EmptyResponse
 
 # 5. Property fixes on the renamed models.
 retype_property ChannelDetailPayload cid String ChannelId

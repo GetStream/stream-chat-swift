@@ -461,6 +461,15 @@ extension XCTestCase {
     }
 }
 
+extension PollVotePayloadResponse {
+    static func dummy(
+        poll: PollPayload? = nil,
+        vote: PollVotePayload? = nil
+    ) -> PollVotePayloadResponse {
+        .init(poll: poll, vote: vote)
+    }
+}
+
 extension PollVoteListResponse {
     static func dummy(
         next: String? = nil,

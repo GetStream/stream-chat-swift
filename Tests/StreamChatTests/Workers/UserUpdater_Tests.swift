@@ -434,7 +434,7 @@ final class UserUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called
         XCTAssertEqual(
             apiClient.request_endpoint,
-            AnyEndpoint(Endpoint<EmptyResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId)))
+            AnyEndpoint(Endpoint<BlockUsersResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId)))
         )
     }
 
@@ -450,8 +450,8 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate API response with success
-        let payload = EmptyResponse()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(payload))
+        let payload = BlockUsersResponse(blockedByUserId: .unique, blockedUserId: .unique, createdAt: .unique)
+        apiClient.test_simulateResponse(Result<BlockUsersResponse, Error>.success(payload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -466,7 +466,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<BlockUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -483,7 +483,7 @@ final class UserUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called
         XCTAssertEqual(
             apiClient.request_endpoint,
-            AnyEndpoint(Endpoint<EmptyResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId)))
+            AnyEndpoint(Endpoint<UnblockUsersResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId)))
         )
     }
 
@@ -499,7 +499,7 @@ final class UserUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.success(.init()))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -514,7 +514,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UnblockUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

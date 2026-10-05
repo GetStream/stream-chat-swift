@@ -77,7 +77,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     
     func test_createPollOption() throws {
         let request = CreatePollOptionRequestBody(text: "sample")
-        let endpoint = Endpoint<EmptyResponse>.createPollOption(
+        let endpoint = Endpoint<PollOptionResponse>.createPollOption(
             pollId: "test",
             createPollOptionRequest: request
         )
@@ -115,7 +115,7 @@ final class PollsEndpoints_Tests: XCTestCase {
         let request = CastPollVoteRequestBody(
             vote: .init(answerText: "test", optionId: "option")
         )
-        let endpoint = Endpoint<EmptyResponse>.castPollVote(
+        let endpoint = Endpoint<PollVotePayloadResponse>.castPollVote(
             messageId: "message_id",
             pollId: "test",
             castPollVoteRequest: request
@@ -135,7 +135,7 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_removePollVote() {
-        let endpoint = Endpoint<EmptyResponse>.deletePollVote(
+        let endpoint = Endpoint<PollVotePayloadResponse>.deletePollVote(
             messageId: "message_id",
             pollId: "test",
             voteId: "vote"
