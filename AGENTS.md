@@ -233,7 +233,7 @@ Adding an endpoint:
 4. Classify every retained model, under its post-rename name, into exactly one of `encodable_only_models`, `decodable_only_models`, or `codable_models`. The script fails on any model that is unclassified or classified twice. Add the model to `allowed_hashable_models` only if it needs `Hashable`.
 5. Add any new WebSocket events to `allowed_events`.
 6. Drop properties the SDK never reads with `remove_property`, in the "Unread by the SDK" block.
-7. To expose a model publicly, use `publicize_model` or `publicize_raw_representable`. Put compatibility shims in `Sources/StreamChat/Models/<Name>+Extensions.swift`.
+7. To expose a model publicly, use `publicize_model` or `publicize_raw_representable`.
 
 Rules:
 - Keep every list and every block of calls alphabetical. The only exception is the commented order-sensitive renames.
