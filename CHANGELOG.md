@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)
+
 ### 🔄 Changed
 
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
