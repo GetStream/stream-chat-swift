@@ -103,11 +103,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         sut.state.hasLoadedAllNextMessages = false
         sut.state.oldestFetchedMessage = nil
         let pagination = MessagesPagination(pageSize: 2, parameter: nil)
-        let messages: [MessagePayload] = [
-            .dummy(messageId: "111"),
-            .dummy(messageId: "112"),
-            .dummy(messageId: "113")
-        ]
+        let messages = messagesOrdered(ids: ["111", "112", "113"])
 
         // When
         sut.end(pagination: pagination, with: .success(messages))
@@ -115,6 +111,18 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Then
         XCTAssertEqual(sut.state.oldestFetchedMessage?.id, "111")
         XCTAssertTrue(sut.state.hasLoadedAllNextMessages)
+    }
+
+    func test_end_whenLoadingNewestPageAndMessagesAreNewestFirst_thenOldestFetchedMessageIsTheEarliest() {
+        sut.state.hasLoadedAllNextMessages = false
+        let pagination = MessagesPagination(pageSize: 25, parameter: nil)
+        let messages = messagesOrdered(ids: ["oldest", "middle", "newest"]).reversed()
+
+        sut.end(pagination: pagination, with: .success(Array(messages)))
+
+        XCTAssertEqual(sut.state.oldestFetchedMessage?.id, "oldest")
+        XCTAssertTrue(sut.state.hasLoadedAllNextMessages)
+        XCTAssertNil(sut.state.newestFetchedMessage)
     }
 
     func test_end_whenLoadingNewestPageAndResultIsLowerThanPageSize_thenHasLoadedAllPreviousMessages() {
@@ -137,17 +145,22 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenLoadingPreviousMessages_thenSetsOldestFetchedMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 10, parameter: .lessThan("123"))
-        let messages: [MessagePayload] = [
-            .dummy(messageId: "111"),
-            .dummy(messageId: "112"),
-            .dummy(messageId: "113")
-        ]
+        let messages = messagesOrdered(ids: ["111", "112", "113"])
 
         // When
         sut.end(pagination: pagination, with: .success(messages))
 
         // Then
         XCTAssertEqual(sut.state.oldestFetchedMessage?.id, "111")
+    }
+
+    func test_end_whenLoadingPreviousMessagesAndMessagesAreNewestFirst_thenOldestFetchedMessageIsTheEarliest() {
+        let pagination = MessagesPagination(pageSize: 10, parameter: .lessThan("123"))
+        let messages = Array(messagesOrdered(ids: ["oldest", "middle", "newest"]).reversed())
+
+        sut.end(pagination: pagination, with: .success(messages))
+
+        XCTAssertEqual(sut.state.oldestFetchedMessage?.id, "oldest")
     }
 
     func test_end_whenLoadingPreviousMessagesAndResultIsLowerThanPageSize_thenSetsHasLoadedAllPreviousMessagesToTrue() {
@@ -165,13 +178,22 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenLoadingNextMessages_thenSetsNewestFetchedMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 2, parameter: .greaterThan("123"))
-        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(messageId: "126")]
+        let messages = messagesOrdered(ids: ["124", "125", "126"])
 
         // When
         sut.end(pagination: pagination, with: .success(messages))
 
         // Then
         XCTAssertEqual(sut.state.newestFetchedMessage?.id, "126")
+    }
+
+    func test_end_whenLoadingNextMessagesAndMessagesAreNewestFirst_thenNewestFetchedMessageIsTheLatest() {
+        let pagination = MessagesPagination(pageSize: 2, parameter: .greaterThan("123"))
+        let messages = Array(messagesOrdered(ids: ["oldest", "middle", "newest"]).reversed())
+
+        sut.end(pagination: pagination, with: .success(messages))
+
+        XCTAssertEqual(sut.state.newestFetchedMessage?.id, "newest")
     }
 
     func test_end_whenLoadingNextMessagesAndResultIsLowerThanPageSize_thenResetsNewestFetchedMessageAndSetsHasLoadedAllNextMessagesToTrue() {
@@ -191,13 +213,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenJumpingToMessage_thenSetsOldestFetchedMessageToFirstMessageAndNewestFetchedMessageToLastMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 5, parameter: .around("123"))
-        let messages: [MessagePayload] = [
-            .dummy(messageId: "121"),
-            .dummy(messageId: "122"),
-            .dummy(messageId: "123"),
-            .dummy(messageId: "124"),
-            .dummy(messageId: "125")
-        ]
+        let messages = messagesOrdered(ids: ["121", "122", "123", "124", "125"])
 
         // When
         sut.end(pagination: pagination, with: .success(messages))
@@ -391,6 +407,14 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         XCTAssertFalse(sut.state.isLoadingNextMessages)
         XCTAssertFalse(sut.state.isLoadingMiddleMessages)
         XCTAssertFalse(sut.state.isLoadingPreviousMessages)
+    }
+
+    /// Oldest-first by `createdAt`, so array position matches message age.
+    private func messagesOrdered(ids: [MessageId]) -> [MessagePayload] {
+        let base = Date(timeIntervalSince1970: 1_700_000_000)
+        return ids.enumerated().map { offset, id in
+            .dummy(messageId: id, createdAt: base.addingTimeInterval(TimeInterval(offset)))
+        }
     }
 }
 

@@ -1278,8 +1278,8 @@ extension ChannelUpdater {
     func loadMessages(with channelQuery: ChannelQuery, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let payload = try await update(channelQuery: channelQuery.withPagination(pagination))
         guard let cid = channelQuery.cid else { return [] }
-        guard let fromDate = payload.messages.first?.createdAt else { return [] }
-        guard let toDate = payload.messages.last?.createdAt else { return [] }
+        guard let fromDate = payload.messages.map(\.createdAt).min() else { return [] }
+        guard let toDate = payload.messages.map(\.createdAt).max() else { return [] }
         return try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
     }
 

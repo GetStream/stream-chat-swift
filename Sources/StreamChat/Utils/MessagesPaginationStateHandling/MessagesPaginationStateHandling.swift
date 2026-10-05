@@ -77,8 +77,12 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling, @unchecke
             return
         }
 
-        let oldestFetchedMessage = messages.first
-        let newestFetchedMessage = messages.last
+        // The response is not guaranteed to be oldest-first. `ChannelStateResponse.newestMessage`
+        // already compares both ends. Treating `messages.first` as the oldest message sets
+        // `oldestMessageAt` to the latest message when the array is newest-first, and the
+        // message list then hides every older row.
+        let oldestFetchedMessage = messages.min(by: { $0.createdAt < $1.createdAt })
+        let newestFetchedMessage = messages.max(by: { $0.createdAt < $1.createdAt })
 
         switch pagination.parameter {
         case .lessThan, .lessThanOrEqual:
