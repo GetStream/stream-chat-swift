@@ -1068,7 +1068,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.user = user
 
         dto.reactionScores = payload.reactionScores
-        dto.reactionCounts = payload.reactionCounts ?? [:]
+        dto.reactionCounts = payload.reactionCounts
         dto.reactionGroups = Set((payload.reactionGroups ?? [:]).compactMap { (type, groupPayload) in
             groupPayload.map {
                 MessageReactionGroupDTO(

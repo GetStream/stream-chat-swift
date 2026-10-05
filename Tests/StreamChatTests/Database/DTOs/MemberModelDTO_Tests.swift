@@ -59,7 +59,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         }
 
         AssertAsync {
-            Assert.willBeEqual(payload.channelRole.map(MemberRole.init(rawChannelValue:)), loadedMember?.memberRole)
+            Assert.willBeEqual(MemberRole(rawChannelValue: payload.channelRole), loadedMember?.memberRole)
             Assert.willBeEqual(MemberStatus.pending, loadedMember?.memberStatus)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
@@ -77,7 +77,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user!.updatedAt, loadedMember?.userUpdatedAt)
             Assert.willBeEqual(payload.user!.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payload.user!.teams ?? []), loadedMember?.teams)
+            Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
             Assert.willBeEqual(payload.user!.language, loadedMember?.language?.languageCode)
             Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)
             Assert.willBeEqual(payload.user!.teamsRole, loadedMember?.teamsRole?.mapValues(\.rawValue))

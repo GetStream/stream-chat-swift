@@ -103,6 +103,9 @@ extension Dictionary {
                 "updated_at": "2020-05-02T13:21:03.855468Z",
                 "role": "user",
                 "total_unread_count": 0,
+                "unread_threads": 0,
+                "language": "",
+                "teams": [String](),
                 "online": true,
                 "name": "Steep Moon",
                 "custom": ["test": 1]
