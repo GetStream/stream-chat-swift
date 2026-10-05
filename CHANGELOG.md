@@ -3,15 +3,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatCommonUI
+### ✅ Added
+- Add `MediaLoader.loadImageTask(url:options:completion:)` for loading images with cancellation support [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
+- Add `ImageDownloading.downloadImageTask(url:options:completion:)` for downloading images with cancellation support [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
+- Add `ImageLoadingTask.addCancellationHandler(_:)` for reacting to cancellation in custom loaders and downloaders [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
+## StreamChatUI
 ### 🔄 Changed
+- Cancel image downloads that are no longer needed when image views are reused [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
 
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
 _October 01, 2026_
 
 ### 🐞 Fixed
 - Fix quote replies to quote replies and messages with new reactions sometimes disappearing from the message list [#4302](https://github.com/GetStream/stream-chat-swift/pull/4302)
-
-### 🔄 Changed
 
 # [5.12.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.0)
 _September 24, 2026_
@@ -22,8 +27,6 @@ _September 24, 2026_
 ### 🐞 Fixed
 - Fix channel data being overridden by events with stale channel data [#4278](https://github.com/GetStream/stream-chat-swift/pull/4278)
 - Fix UI hang caused by activating or deactivating the audio session on the main thread [#4286](https://github.com/GetStream/stream-chat-swift/pull/4286)
-
-### 🔄 Changed
 
 ## StreamChatUI
 ### ✅ Added
