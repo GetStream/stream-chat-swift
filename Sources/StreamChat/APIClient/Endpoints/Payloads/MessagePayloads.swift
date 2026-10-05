@@ -4,14 +4,6 @@
 
 import Foundation
 
-/// Coding keys for message-related JSON payloads
-enum MessagePayloadsCodingKeys: String, CodingKey {
-    case createdAt = "created_at"
-    case command
-    case args
-    case pinnedAt = "pinned_at"
-}
-
 struct MessageListPayload: Decodable {
     let messages: [MessageResponse]
 }

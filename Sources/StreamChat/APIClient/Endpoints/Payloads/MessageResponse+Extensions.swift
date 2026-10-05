@@ -8,7 +8,7 @@ import Foundation
 extension MessageResponse {
     var campaignId: String? { custom["created_by_campaign_id"]?.stringValue }
     // Messages have no dedicated args field, it is stored as custom data.
-    var args: String? { custom[MessagePayloadsCodingKeys.args.rawValue]?.stringValue }
+    var args: String? { custom["args"]?.stringValue }
 
     var translations: [TranslationLanguage: String]? {
         guard let i18n, !i18n.isEmpty else { return nil }
