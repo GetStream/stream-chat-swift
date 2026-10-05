@@ -56,10 +56,12 @@ final class ViewController: UIViewController {
         let switchControl = createIsConnectedSwitchIfNeeded()
 
         router?.onChannelListViewWillAppear = { channelListVC in
+            var rightBarButtonItems = [self.createThreadListButton()]
             // show connection switch if needed
             if let sw = switchControl {
-                channelListVC.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: sw)
+                rightBarButtonItems.append(UIBarButtonItem(customView: sw))
             }
+            channelListVC.navigationItem.rightBarButtonItems = rightBarButtonItems
         }
         router?.onChannelViewWillAppear = { [weak self] channelVC in
             guard let self = self else { return }
@@ -85,6 +87,7 @@ final class ViewController: UIViewController {
 
         // pops when tapped on user icon
         router?.onLeave = { [weak self] in
+            self?.streamChat.client?.logout {}
             self?.navigationController?.popViewController(animated: true)
         }
     }
@@ -115,6 +118,15 @@ final class ViewController: UIViewController {
     @objc func valueChanged(_ sw: UISwitch) {
         settings.isConnected.isOn = sw.isOn
         streamChat.mockConnection(isConnected: settings.isConnected.isOn)
+    }
+
+    @objc func showThreadList() {
+        guard let client = streamChat.client else { return }
+        let threadListVC = ChatThreadListVC(
+            threadListController: client.threadListController(query: ThreadListQuery(watch: true)),
+            eventsController: client.eventsController()
+        )
+        navigationController?.pushViewController(threadListVC, animated: true)
     }
 
     @objc func showDebugMenu() {
@@ -175,6 +187,18 @@ extension ViewController {
         startButton.accessibilityIdentifier = "TestApp.ConnectGuest"
         startButton.addTarget(self, action: #selector(didTapConnectGuest), for: .touchUpInside)
         return startButton
+    }
+
+    func createThreadListButton() -> UIBarButtonItem {
+        let item = UIBarButtonItem(
+            image: UIImage(systemName: "text.bubble"),
+            style: .plain,
+            target: self,
+            action: #selector(showThreadList)
+        )
+        item.accessibilityIdentifier = "ThreadListButton"
+        item.accessibilityLabel = "Threads"
+        return item
     }
 
     func createDebugButton() -> UIBarButtonItem {

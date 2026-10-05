@@ -5,7 +5,7 @@
 import Foundation
 
 public class ParticipantRobot {
-    private let mockServer: StreamMockServer
+    let mockServer: StreamMockServer
 
     public let name: String = "Count Dooku"
     public let id: String = "count_dooku"
