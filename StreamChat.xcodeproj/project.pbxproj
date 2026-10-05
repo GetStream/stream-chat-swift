@@ -5577,8 +5577,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-logs-ui-swift";
 			requirement = {
-				kind = revision;
-				revision = 2e869c89da055e8a6f082c5b05cc968f5501c816;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
