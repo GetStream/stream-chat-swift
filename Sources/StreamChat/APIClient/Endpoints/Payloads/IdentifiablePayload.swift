@@ -87,7 +87,7 @@ extension IdentifiablePayloadProxy {
     static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 }
 
-extension Array where Element: IdentifiablePayload {
+extension Array: IdentifiablePayload where Element: IdentifiablePayload {
     var databaseId: DatabaseId? { nil }
     static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 
@@ -101,12 +101,6 @@ extension Array where Element: IdentifiablePayload {
 extension QueryUsersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         users.fillIds(cache: &cache)
-    }
-}
-
-extension MessageListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        messages.fillIds(cache: &cache)
     }
 }
 

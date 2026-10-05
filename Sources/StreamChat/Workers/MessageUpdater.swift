@@ -486,7 +486,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
-                    let replies = session.saveMessages(messagesPayload: MessageListPayload(messages: payload.messages), syncOwnReactions: true)
+                    let replies = session.saveMessages(payload.messages, syncOwnReactions: true)
                     replies.forEach {
                         $0.showInsideThread = true
                     }

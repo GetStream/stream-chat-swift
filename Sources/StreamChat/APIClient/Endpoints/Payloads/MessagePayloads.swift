@@ -4,10 +4,6 @@
 
 import Foundation
 
-struct MessageListPayload: Decodable {
-    let messages: [MessageResponse]
-}
-
 /// A command in a message, e.g. /giphy.
 public struct Command: Codable, Hashable, Sendable {
     /// A command name.

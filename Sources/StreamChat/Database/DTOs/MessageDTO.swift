@@ -1177,11 +1177,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     // swiftlint:enable function_body_length
 
     func saveMessages(
-        messagesPayload: MessageListPayload,
+        _ messages: [MessageResponse],
         syncOwnReactions: Bool = true
     ) -> [MessageDTO] {
-        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
-        return messagesPayload.messages.compactMapLoggingError {
+        let cache = messages.getPayloadToModelIdMappings(context: self)
+        return messages.compactMapLoggingError {
             try saveMessage(
                 payload: $0,
                 syncOwnReactions: syncOwnReactions,

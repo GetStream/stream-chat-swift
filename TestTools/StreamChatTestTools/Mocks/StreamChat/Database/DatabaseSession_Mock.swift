@@ -311,8 +311,8 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO] {
-        underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
+    func saveMessages(_ messages: [MessageResponse], syncOwnReactions: Bool) -> [MessageDTO] {
+        underlyingSession.saveMessages(messages, syncOwnReactions: syncOwnReactions)
     }
 
     func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
