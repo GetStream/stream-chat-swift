@@ -865,14 +865,30 @@ private_lane :frameworks_sizes do
   stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
   stream_chat_common_ui_size = File.size("#{frameworks_path}/StreamChatCommonUI.framework/StreamChatCommonUI")
 
+  # StreamChatAI isn't linked by the Demo app and has no asset catalog, so its own unsigned archive is enough
+  ai_archive_dir = "#{root_dir}/StreamChatAI.xcarchive"
+  gym(
+    scheme: 'StreamChatAI',
+    configuration: 'Release',
+    archive_path: ai_archive_dir,
+    skip_package_ipa: true,
+    skip_codesigning: true,
+    xcargs: 'SKIP_INSTALL=NO',
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path
+  )
+  stream_chat_ai_size = File.size("../#{ai_archive_dir}/Products/Library/Frameworks/StreamChatAI.framework/StreamChatAI")
+
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
   stream_chat_common_ui_size_kb = (stream_chat_common_ui_size + assets_thinned_size) / 1024.0
+  stream_chat_ai_size_kb = stream_chat_ai_size / 1024.0
 
   {
     StreamChat: stream_chat_size_kb.round(0),
     StreamChatUI: stream_chat_ui_size_kb.round(0),
-    StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0)
+    StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0),
+    StreamChatAI: stream_chat_ai_size_kb.round(0)
   }
 end
 
