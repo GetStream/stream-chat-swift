@@ -6,6 +6,8 @@ import XCTest
 
 extension MessageList_Tests {
     func test_editedLabelShown_whenUserEditsMessage() {
+        linkToScenario(withId: 11922)
+
         let message = "message"
         let editedMessage = "edited message"
 
@@ -26,6 +28,8 @@ extension MessageList_Tests {
     }
 
     func test_editedLabelShown_whenParticipantEditsMessage() {
+        linkToScenario(withId: 11923)
+
         let message = "message"
         let editedMessage = "edited message"
 
@@ -47,6 +51,8 @@ extension MessageList_Tests {
     }
 
     func test_userEditsThreadReply() {
+        linkToScenario(withId: 11924)
+
         let message = "message"
         let threadReply = "thread reply"
         let editedThreadReply = "edited thread reply"
@@ -72,6 +78,8 @@ extension MessageList_Tests {
     }
 
     func test_participantEditsThreadReply() {
+        linkToScenario(withId: 11925)
+
         let message = "message"
         let threadReply = "thread reply"
         let editedThreadReply = "edited thread reply"
@@ -101,6 +109,8 @@ extension MessageList_Tests {
     }
 
     func test_threadReplyIsEditedEverywhere_whenParticipantEditsThreadReplySentAlsoToChannel() {
+        linkToScenario(withId: 11926)
+
         let message = "message"
         let threadReply = "thread reply"
         let editedThreadReply = "edited thread reply"

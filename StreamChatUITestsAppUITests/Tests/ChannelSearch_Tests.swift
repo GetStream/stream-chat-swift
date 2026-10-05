@@ -14,6 +14,8 @@ final class ChannelSearch_Tests: StreamTestCase {
     }
 
     func test_userSearchesForChannel() {
+        linkToScenario(withId: 11905)
+
         GIVEN("channels exist, one with a searchable name") {
             backendRobot.generateChannels(channelsCount: 3, channelNames: [channelName])
         }

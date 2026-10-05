@@ -15,18 +15,26 @@ final class HyperLinks_Tests: StreamTestCase {
     }
 
     func test_unsplashLinkWithoutPreview() {
+        linkToScenario(withId: 11912)
+
         assertLinkWithoutPreview(unsplashImageLink)
     }
 
     func test_youtubeLinkWithoutPreview() {
+        linkToScenario(withId: 11913)
+
         assertLinkWithoutPreview(youtubeVideoLink)
     }
 
     func test_giphyLinkWithoutPreview() {
+        linkToScenario(withId: 11914)
+
         assertLinkWithoutPreview(giphyGifLink)
     }
 
     func test_giphyLinkPreview() {
+        linkToScenario(withId: 11915)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -47,6 +55,8 @@ final class HyperLinks_Tests: StreamTestCase {
     }
 
     func test_participantSendsLinkToGiphy() {
+        linkToScenario(withId: 11916)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }

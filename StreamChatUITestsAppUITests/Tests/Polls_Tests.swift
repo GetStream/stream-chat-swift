@@ -11,6 +11,8 @@ final class Polls_Tests: StreamTestCase {
     private var options: [String] { [firstOption, secondOption] }
 
     func test_pollMessageIsShown_whenUserCreatesPoll() throws {
+        linkToScenario(withId: 11936)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -26,6 +28,8 @@ final class Polls_Tests: StreamTestCase {
     }
 
     func test_optionIsChecked_whenUserVotesInPoll() throws {
+        linkToScenario(withId: 11937)
+
         GIVEN("user creates a poll") {
             userRobot
                 .login()
@@ -42,6 +46,8 @@ final class Polls_Tests: StreamTestCase {
     }
 
     func test_optionIsUnchecked_whenUserRemovesPollVote() throws {
+        linkToScenario(withId: 11938)
+
         GIVEN("user creates a poll and votes") {
             userRobot
                 .login()
@@ -59,6 +65,8 @@ final class Polls_Tests: StreamTestCase {
     }
 
     func test_participantVoteIsShownInPollResults_whenParticipantVotesInPoll() throws {
+        linkToScenario(withId: 11939)
+
         GIVEN("user creates a poll") {
             userRobot
                 .login()
@@ -80,6 +88,8 @@ final class Polls_Tests: StreamTestCase {
     }
 
     func test_pollIsClosed_whenUserEndsPoll() throws {
+        linkToScenario(withId: 11940)
+
         GIVEN("user creates a poll") {
             userRobot
                 .login()
@@ -98,6 +108,8 @@ final class Polls_Tests: StreamTestCase {
     // MARK: - iOS only
 
     func test_userVotesForSeveralOptions_whenPollAllowsMultipleVotes() throws {
+        linkToScenario(withId: 11941)
+
         GIVEN("user creates a poll that allows multiple votes") {
             userRobot
                 .login()
@@ -119,6 +131,8 @@ final class Polls_Tests: StreamTestCase {
     }
 
     func test_participantOptionIsShown_whenParticipantSuggestsPollOption() throws {
+        linkToScenario(withId: 11942)
+
         let suggestedOption = "Green"
 
         GIVEN("user creates a poll") {
@@ -139,6 +153,8 @@ final class Polls_Tests: StreamTestCase {
     }
 
     func test_participantCommentIsShown_whenParticipantAddsPollAnswer() throws {
+        linkToScenario(withId: 11943)
+
         GIVEN("user creates a poll") {
             userRobot
                 .login()

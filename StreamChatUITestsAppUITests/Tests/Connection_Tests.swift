@@ -6,6 +6,8 @@ import XCTest
 
 final class Connection_Tests: StreamTestCase {
     func test_channelListIsShown_whenUserLogsOutAndLogsBackIn() {
+        linkToScenario(withId: 11906)
+
         GIVEN("user logs in") {
             userRobot
                 .login()
@@ -28,6 +30,8 @@ final class Connection_Tests: StreamTestCase {
     }
 
     func test_messageIsShown_whenParticipantSendsItWhileAppIsInBackground() {
+        linkToScenario(withId: 11907)
+
         let message = "message sent while the app was in background"
 
         GIVEN("user opens the channel") {
