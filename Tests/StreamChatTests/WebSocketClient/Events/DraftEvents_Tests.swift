@@ -11,11 +11,11 @@ final class DraftEvents_Tests: XCTestCase {
     let cid = ChannelId(type: .messaging, id: "general")
     let threadId: MessageId = "thread-123"
     
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
     
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
     
     override func tearDown() {
@@ -29,8 +29,8 @@ final class DraftEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "DraftUpdated")
         let event = try eventDecoder.decode(from: json) as? DraftUpdatedEventDTO
         XCTAssertEqual(event?.cid, cid)
-        XCTAssertEqual(event?.draft.message.id, draftId)
-        XCTAssertEqual(event?.draft.message.text, "Test draft message")
+        XCTAssertEqual(event?.draft?.message.id, draftId)
+        XCTAssertEqual(event?.draft?.message.text, "Test draft message")
         XCTAssertEqual(event?.createdAt.description, "2024-02-11 15:42:21 +0000")
     }
     
@@ -63,7 +63,7 @@ final class DraftEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "DraftDeleted")
         let event = try eventDecoder.decode(from: json) as? DraftDeletedEventDTO
         XCTAssertEqual(event?.cid, cid)
-        XCTAssertEqual(event?.draft.parentId, threadId)
+        XCTAssertEqual(event?.draft?.parentId, threadId)
         XCTAssertEqual(event?.createdAt.description, "2024-02-11 15:42:21 +0000")
     }
     

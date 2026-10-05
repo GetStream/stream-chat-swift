@@ -21,11 +21,17 @@ public struct UnknownUserEvent: Event, Hashable {
 }
 
 extension UnknownUserEvent: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case user
+        case createdAt = "created_at"
+    }
+
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
-            type: try container.decode(EventType.self, forKey: .eventType),
+            type: try container.decode(EventType.self, forKey: .type),
             userId: try container.decode(UserPayload.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder
@@ -43,14 +49,9 @@ public extension UnknownUserEvent {
     /// - Parameter ofType: The type of payload the custom fields should be treated as.
     /// - Returns: A payload of the given type if decoding succeeds and if event type matches the one declared in custom payload type. Otherwise `nil` is returned.
     func payload<T: CustomEventPayload>(ofType: T.Type) -> T? {
-        let custom: [String: RawJSON]
-        if case let .dictionary(nested)? = payload["custom"] {
-            custom = nested
-        } else {
-            custom = payload
-        }
         guard
             T.eventType == type,
+            case let .dictionary(custom)? = payload["custom"],
             let payloadData = try? JSONEncoder.default.encode(custom),
             let payload = try? JSONDecoder.default.decode(T.self, from: payloadData)
         else { return nil }

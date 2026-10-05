@@ -6,11 +6,11 @@ import Foundation
 
 final class SyncResponse: Sendable, Decodable {
     /// List of events
-    let events: [EventPayload]
+    let events: [WSEvent]
     /// List of CIDs that user can't access
     let inaccessibleCids: [String]?
 
-    init(events: [EventPayload], inaccessibleCids: [String]? = nil) {
+    init(events: [WSEvent], inaccessibleCids: [String]? = nil) {
         self.events = events
         self.inaccessibleCids = inaccessibleCids
     }
@@ -22,7 +22,7 @@ final class SyncResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        events = try container.decodeArrayIgnoringFailures([EventPayload].self, forKey: .events)
+        events = try container.decodeArrayIgnoringFailures([WSEvent].self, forKey: .events)
         inaccessibleCids = try container.decodeIfPresent([String].self, forKey: .inaccessibleCids)
     }
 }

@@ -108,7 +108,8 @@ extension Dictionary {
                 "test": 1
             ] as [String: Any],
             "type": "health.check",
-            "connection_id": connectionId
+            "connection_id": connectionId,
+            "custom": [String: Any]()
         ]
     }
 }
