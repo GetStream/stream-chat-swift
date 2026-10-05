@@ -35,10 +35,30 @@ extension LogEntry {
             lineNumber: logDetails.lineNumber,
             message: logDetails.message,
             error: logDetails.error,
-            metadata: Dictionary(uniqueKeysWithValues: logDetails.metadata.map { key, value in
-                (MetadataKey(rawValue: key.rawValue), value)
-            })
+            metadata: logDetails.attachment.map { [MetadataKey: String]($0) } ?? [:]
         )
+    }
+}
+
+extension Dictionary where Key == LogEntry.MetadataKey, Value == String {
+    init(_ attachment: any LogAttachment) {
+        switch attachment {
+        case let http as HTTPLogAttachment:
+            self = .http(
+                request: http.request,
+                response: http.response,
+                responseBody: http.responseBody,
+                error: http.error,
+                session: http.session
+            )
+        case let webSocket as WebSocketLogAttachment:
+            let payloadKey: Key = webSocket.direction == .sent ? .webSocketSentPayload : .webSocketReceivedPayload
+            self = [payloadKey: webSocket.logDescription]
+            let object = try? JSONSerialization.jsonObject(with: webSocket.payload) as? [String: Any]
+            self[.webSocketEventType] = object?["type"] as? String
+        default:
+            self = ["Details": attachment.logDescription]
+        }
     }
 }
 

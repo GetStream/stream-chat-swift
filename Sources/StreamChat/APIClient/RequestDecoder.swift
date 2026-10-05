@@ -38,12 +38,12 @@ struct DefaultRequestDecoder: RequestDecoder {
         guard error == nil else {
             let error = error!
             let message = request.logMessage(status: "FAILED")
-            let metadata = { [LogMetadataKey: String].http(request: request, error: error, session: session) }
+            let attachment = HTTPLogAttachment(request: request, error: error, session: session)
             switch (error as NSError).code {
             case NSURLErrorCancelled, NSURLErrorNetworkConnectionLost:
-                log.info(message, subsystems: .httpRequests, metadata: metadata())
+                log.info(message, subsystems: .httpRequests, attachment: attachment)
             default:
-                log.error(message, subsystems: .httpRequests, metadata: metadata())
+                log.error(message, subsystems: .httpRequests, attachment: attachment)
             }
 
             throw error
@@ -56,18 +56,16 @@ struct DefaultRequestDecoder: RequestDecoder {
         let statusCode = httpResponse.statusCode
         let message = request.logMessage(status: "\(statusCode)")
         guard let data = data, !data.isEmpty else {
-            let metadata = { [LogMetadataKey: String].http(request: request, response: httpResponse, session: session) }
+            let attachment = HTTPLogAttachment(request: request, response: httpResponse, session: session)
             if statusCode < 300 {
-                log.debug(message, subsystems: .httpRequests, metadata: metadata())
+                log.debug(message, subsystems: .httpRequests, attachment: attachment)
             } else {
-                log.error(message, subsystems: .httpRequests, metadata: metadata())
+                log.error(message, subsystems: .httpRequests, attachment: attachment)
             }
             throw ClientError.ResponseBodyEmpty()
         }
 
-        let metadata = {
-            [LogMetadataKey: String].http(request: request, response: httpResponse, responseBody: data, session: session)
-        }
+        let attachment = HTTPLogAttachment(request: request, response: httpResponse, responseBody: data, session: session)
         guard statusCode < 300 else {
             let serverError: APIError
             do {
@@ -76,21 +74,27 @@ struct DefaultRequestDecoder: RequestDecoder {
                 log.error(
                     message,
                     subsystems: .httpRequests,
-                    metadata: .http(request: request, response: httpResponse, responseBody: data, error: error, session: session)
+                    attachment: HTTPLogAttachment(
+                        request: request,
+                        response: httpResponse,
+                        responseBody: data,
+                        error: error,
+                        session: session
+                    )
                 )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
 
             if serverError.isTokenExpiredError {
-                log.info(message, subsystems: .httpRequests, metadata: metadata())
+                log.info(message, subsystems: .httpRequests, attachment: attachment)
                 throw ClientError.ExpiredToken()
             }
 
-            log.error(message, subsystems: .httpRequests, metadata: metadata())
+            log.error(message, subsystems: .httpRequests, attachment: attachment)
             throw ClientError(with: serverError)
         }
 
-        log.debug(message, subsystems: .httpRequests, metadata: metadata())
+        log.debug(message, subsystems: .httpRequests, attachment: attachment)
 
         if let responseAsData = data as? ResponseType {
             return responseAsData
