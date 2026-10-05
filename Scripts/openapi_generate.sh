@@ -23,6 +23,7 @@ allowed_endpoints=(
     createPollOption
     createReminder
     createUserGroup
+    custom
     deleteChannel
     deleteChannelFile
     deleteChannelImage
@@ -79,6 +80,7 @@ allowed_endpoints=(
     sendReaction
     showChannel
     stopWatchingChannel
+    sync
     translateMessage
     truncateChannel
     unban
@@ -234,6 +236,8 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  SyncRequest
+  SyncResponse
   ThreadParticipant
   ThreadResponse
   ThreadStateResponse
@@ -354,6 +358,7 @@ encodable_only_models=(
   SendEventRequest
   SendMessageRequest
   SendReactionRequest
+  SyncRequest
   TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
@@ -447,6 +452,7 @@ decodable_only_models=(
   SendReactionResponse
   SharedLocation
   SharedLocationsResponse
+  SyncResponse
   ThreadParticipantPayload
   ThreadResponse
   ThreadStateResponse
@@ -543,9 +549,7 @@ prune_endpoint_factories() {
 }
 prune_endpoint_factories
 
-# Keep generated v2 EndpointPath cases aligned with allowed_endpoints before v1
-# cases are injected. Future migrations should remove matching v1 cases when
-# adding a generated v2 path with the same case name.
+# Keep generated v2 EndpointPath cases aligned with allowed_endpoints.
 prune_generated_endpoint_paths() {
   local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
   local allowed_endpoints_csv
@@ -695,6 +699,7 @@ retype_property SharedLocationResponseData latitude Float Double
 retype_property SharedLocationResponseData longitude Float Double
 retype_property SharedLocationResponseData messageId String MessageId
 retype_property SharedLocationResponseData userId String UserId
+retype_property SyncResponse events "[WSEvent]" "[EventPayload]"
 
 # Workaround for non-optional public property being backed with optional property
 # Remove in the next major.
@@ -1117,47 +1122,6 @@ strip_streamcore_imports
 
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
-
-# 6. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
-#    The OpenAPI generator owns v2 paths; these v1 cases keep the hand-written
-#    endpoint factories compiling while each endpoint migrates incrementally.
-inject_v1_endpoint_paths() {
-  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
-  local cases_file values_file
-  cases_file="$(mktemp)"
-  values_file="$(mktemp)"
-  trap 'rm -f "$cases_file" "$values_file"' RETURN
-
-  cat > "$cases_file" <<'EOF'
-    case custom(String)
-    case sync
-
-EOF
-
-  cat > "$values_file" <<'EOF'
-        case let .custom(path): return path
-        case .sync: return "sync"
-
-EOF
-
-  python3 - "$file" "$cases_file" "$values_file" <<'PY'
-import pathlib
-import sys
-
-file_path = pathlib.Path(sys.argv[1])
-cases = pathlib.Path(sys.argv[2]).read_text()
-values = pathlib.Path(sys.argv[3]).read_text()
-text = file_path.read_text()
-
-enum_marker = "enum EndpointPath: Codable {\n"
-switch_marker = "        switch self {\n"
-
-text = text.replace(enum_marker, enum_marker + cases, 1)
-text = text.replace(switch_marker, switch_marker + values, 1)
-file_path.write_text(text)
-PY
-}
-inject_v1_endpoint_paths
 
 # 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
 #    body, where a `required` initializer is allowed. It replaces any `init(from:)` the

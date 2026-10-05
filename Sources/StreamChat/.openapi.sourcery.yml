@@ -12,6 +12,7 @@ sources:
   - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
   - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
+  - ./Generated/OpenAPI/models/SyncResponse.swift
   - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
   - ./Generated/OpenAPI/models/ThreadStateResponse.swift
@@ -55,6 +56,7 @@ args:
     QueryChannelsResponse: [channels]
     QueryThreadsResponse: [threads]
     SearchResultMessage: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    SyncResponse: [events]
     ThreadStateResponse: [latestReplies, read, threadParticipants]
   # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
   # declares, so those have to be excluded too when rebuilding the extra data.

@@ -5,9 +5,6 @@
 import Foundation
 
 enum EndpointPath: Codable {
-    case custom(String)
-    case sync
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
@@ -75,6 +72,7 @@ enum EndpointPath: Codable {
     case sendReaction(id: String)
     case showChannel(type: String, id: String)
     case stopWatchingChannel(type: String, id: String)
+    case sync
     case translateMessage(id: String)
     case truncateChannel(type: String, id: String)
     case unban
@@ -100,12 +98,11 @@ enum EndpointPath: Codable {
     case uploadImage
     /// The websocket connect path.
     case connect
+    /// An arbitrary path, used verbatim without escaping. Intended for debugging, tests, and experimentation.
+    case custom(String)
 
     var value: String {
         switch self {
-        case let .custom(path): return path
-        case .sync: return "sync"
-
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
         case .ban:
@@ -240,6 +237,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
         case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
+        case .sync:
+            return "/api/v2/chat/sync"
         case let .translateMessage(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
         case let .truncateChannel(type: type, id: id):
@@ -288,6 +287,8 @@ enum EndpointPath: Codable {
             return "/api/v2/uploads/image"
         case .connect:
             return "/api/v2/connect"
+        case let .custom(path):
+            return path
         }
     }
 }
@@ -1347,6 +1348,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func sync(
+        syncRequest: SyncRequest,
+        withInaccessibleCids: Bool?,
+        watch: Bool?,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<SyncResponse> {
+        return .init(
+            path: .sync,
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "with_inaccessible_cids": withInaccessibleCids,
+                "watch": watch
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: syncRequest
         )
     }
 
