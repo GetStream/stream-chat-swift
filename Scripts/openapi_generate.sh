@@ -127,7 +127,6 @@ allowed_models=(
   ChannelOwnCapability
   ChannelResponse
   ChannelStateResponse
-  CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
   CreateGuestRequest
@@ -373,7 +372,6 @@ encodable_only_models=(
   ChannelInput
   ChannelInputRequest
   ChannelMemberRequest
-  CreateDeviceRequest
   CreateDraftRequest
   CreateGuestRequest
   CreatePollOptionRequestBody
@@ -765,7 +763,6 @@ remove_property ChannelStateResponse hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
-remove_property CreateDeviceRequest hardwareId voipToken
 remove_property CreatePollRequestBody id isClosed team
 remove_property CreateReminderRequest expiresAt
 remove_property DraftDeletedEventDTO custom parentId receivedAt
