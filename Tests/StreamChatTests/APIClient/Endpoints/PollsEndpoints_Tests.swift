@@ -94,13 +94,13 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_queryPollVotes() throws {
-        let request = QueryPollVotesRequestBody(limit: 30, next: "10")
+        let request = QueryPollVotesRequestBody(limit: 30, prev: "10")
         let endpoint = Endpoint<PollVoteListResponse>.queryPollVotes(
             pollId: "test",
             queryPollVotesRequest: request
         )
         
-        let expectedBody: [String: Any] = ["limit": 30, "next": "10"]
+        let expectedBody: [String: Any] = ["limit": 30, "prev": "10"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)

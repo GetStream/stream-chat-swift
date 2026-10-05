@@ -109,6 +109,7 @@ extension PollVoteListQuery {
             filter: filter,
             limit: pagination.pageSize,
             next: pagination.cursor,
+            prev: nil,
             sort: sorting.map { SortParamRequest(direction: $0.direction, field: $0.key.rawValue) }
         )
     }

@@ -473,9 +473,10 @@ extension PollVotePayloadResponse {
 extension PollVoteListResponse {
     static func dummy(
         next: String? = nil,
+        prev: String? = nil,
         votes: [PollVotePayload] = []
     ) -> PollVoteListResponse {
-        .init(next: next, votes: votes)
+        .init(next: next, prev: prev, votes: votes)
     }
 }
 

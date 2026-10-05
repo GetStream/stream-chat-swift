@@ -16,7 +16,7 @@ typealias ThreadReadPayload = ReadStateResponse
 
 extension ThreadListPayload {
     convenience init(threads: [ThreadPayload], next: String?) {
-        self.init(next: next, threads: threads)
+        self.init(next: next, prev: nil, threads: threads)
     }
 }
 

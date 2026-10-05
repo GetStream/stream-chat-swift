@@ -692,8 +692,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
         let payload = GroupedQueryChannelsResponse(
             groups: [
-                "all": .init(channels: [], next: "all-next", unreadChannels: 0),
-                "exhausted": .init(channels: [], next: nil, unreadChannels: 0)
+                "all": .init(channels: [], next: "all-next", prev: nil, unreadChannels: 0),
+                "exhausted": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)
             ]
         )
         apiClient.test_simulateResponse(.success(payload))
@@ -713,8 +713,8 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: true, presence: true) { _ in exp.fulfill() }
         let payload = GroupedQueryChannelsResponse(
             groups: [
-                "all": .init(channels: [], next: nil, unreadChannels: 0),
-                "current": .init(channels: [], next: nil, unreadChannels: 0)
+                "all": .init(channels: [], next: nil, prev: nil, unreadChannels: 0),
+                "current": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)
             ]
         )
         apiClient.test_simulateResponse(.success(payload))
@@ -736,7 +736,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let firstExp = expectation(description: "first completion called")
         listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: true, presence: true) { _ in firstExp.fulfill() }
         let firstPayload = GroupedQueryChannelsResponse(
-            groups: ["all": .init(channels: [], next: nil, unreadChannels: 0)]
+            groups: ["all": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)]
         )
         apiClient.test_simulateResponse(.success(firstPayload))
         wait(for: [firstExp], timeout: defaultTimeout)
