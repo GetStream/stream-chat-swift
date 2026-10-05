@@ -10,6 +10,8 @@ final class ThreadList_Tests: StreamTestCase {
     let participantReplyText = "Participant reply"
 
     func test_threadListIsEmpty_whenChannelHasNoThreads() {
+        linkToScenario(withId: 11949)
+
         GIVEN("user logs in") {
             userRobot.login().waitForChannelListToLoad()
         }
@@ -22,6 +24,8 @@ final class ThreadList_Tests: StreamTestCase {
     }
 
     func test_threadIsShownOnTheThreadList() {
+        linkToScenario(withId: 11950)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -45,6 +49,8 @@ final class ThreadList_Tests: StreamTestCase {
     }
 
     func test_userOpensThreadFromTheThreadList() {
+        linkToScenario(withId: 11951)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -72,6 +78,8 @@ final class ThreadList_Tests: StreamTestCase {
     }
 
     func test_threadIsUpdatedOnTheThreadList_whenParticipantRepliesInThread() {
+        linkToScenario(withId: 11952)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }

@@ -12,6 +12,8 @@ final class Moderation_Tests: StreamTestCase {
     let groupChannelName = "1"
 
     func test_userFlagsMessage() {
+        linkToScenario(withId: 11927)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -35,6 +37,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_userMutesMessageAuthor() {
+        linkToScenario(withId: 11928)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -50,6 +54,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_userUnmutesMessageAuthor() {
+        linkToScenario(withId: 11929)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -68,6 +74,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_userBlocksMessageAuthor() {
+        linkToScenario(withId: 11930)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -83,6 +91,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_userUnblocksMessageAuthor() {
+        linkToScenario(withId: 11931)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -101,6 +111,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_userBlocksUserInDirectMessageChannel() {
+        linkToScenario(withId: 11932)
+
         GIVEN("a direct message channel with the participant exists") {
             backendRobot.generateChannels(channelsCount: 1, messagesCount: 2, withDirectMessageChannel: true)
         }
@@ -116,6 +128,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_directMessageChannelDisappears_whenUserBlocksParticipant() {
+        linkToScenario(withId: 11933)
+
         GIVEN("a direct message channel with the participant exists") {
             backendRobot.generateChannels(channelsCount: 1, messagesCount: 2, withDirectMessageChannel: true)
         }
@@ -151,6 +165,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_mutedAuthorStaysMuted_whenUserReopensChannel() {
+        linkToScenario(withId: 11934)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -173,6 +189,8 @@ final class Moderation_Tests: StreamTestCase {
     }
 
     func test_blockedAuthorStaysBlocked_whenUserReopensChannel() {
+        linkToScenario(withId: 11935)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }

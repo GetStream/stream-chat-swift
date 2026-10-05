@@ -6,6 +6,8 @@ import XCTest
 
 extension MessageList_Tests {
     func test_threadIsNotLocked_afterParentMessageDeletedByUser() {
+        linkToScenario(withId: 11919)
+
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
@@ -29,6 +31,8 @@ extension MessageList_Tests {
     }
 
     func test_threadIsNotLocked_afterParentMessageDeletedByParticipant() {
+        linkToScenario(withId: 11920)
+
         let message = "message"
         let threadReply = "thread reply"
 
@@ -57,6 +61,8 @@ extension MessageList_Tests {
     }
 
     func test_messageRendersTimestampAgain_whenMessageLastInGroupIsSoftDeleted() {
+        linkToScenario(withId: 11921)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }

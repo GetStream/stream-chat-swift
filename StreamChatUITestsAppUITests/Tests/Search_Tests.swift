@@ -13,6 +13,8 @@ final class Search_Tests: StreamTestCase {
     }
 
     func test_userSearchesForMessage() {
+        linkToScenario(withId: 11947)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -31,6 +33,8 @@ final class Search_Tests: StreamTestCase {
     }
 
     func test_userOpensMessageFromSearchResults() {
+        linkToScenario(withId: 11948)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }

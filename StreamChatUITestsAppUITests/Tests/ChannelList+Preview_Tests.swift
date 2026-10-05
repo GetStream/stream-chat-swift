@@ -6,6 +6,8 @@ import XCTest
 
 extension ChannelList_Tests {
     func test_channelPreviewIsUpdated_whenThreadReplyIsSentAlsoInTheChannel() {
+        linkToScenario(withId: 11901)
+
         let channelMessage = "Channel message"
         let threadReply = "Thread reply"
 
@@ -32,6 +34,8 @@ extension ChannelList_Tests {
     }
 
     func test_channelPreviewShowsMessageDeleted_whenTheOnlyMessageInChannelIsDeleted() {
+        linkToScenario(withId: 11902)
+
         GIVEN("user opens the channel") {
             userRobot
                 .login()
@@ -56,6 +60,8 @@ extension ChannelList_Tests {
     }
 
     func test_channelPreviewIsUpdated_whenParticipantEditsPreviewMessage() {
+        linkToScenario(withId: 11903)
+
         let editedMessage = "edited message"
 
         GIVEN("user opens the channel") {
@@ -84,6 +90,8 @@ extension ChannelList_Tests {
 
 extension ChannelList_Tests {
     func test_typingIndicatorShownInChannelPreview_whenParticipantTypes() {
+        linkToScenario(withId: 11904)
+
         GIVEN("user opens the channel list") {
             userRobot.login().waitForChannelListToLoad()
         }

@@ -86,6 +86,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_uploadMultipleImages() {
+        linkToScenario(withId: 11893)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -104,6 +106,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_deleteImage() {
+        linkToScenario(withId: 11894)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -126,6 +130,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_uploadFile() {
+        linkToScenario(withId: 11895)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -144,6 +150,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_uploadMultipleFiles() {
+        linkToScenario(withId: 11896)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -162,6 +170,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_deleteFile() {
+        linkToScenario(withId: 11897)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -184,6 +194,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_imageUploadRecovers_whenUserComesBackOnline() throws {
+        linkToScenario(withId: 11898)
+
         try XCTSkipIf(true, "Image upload that failed offline is not retried when the connection is back (no upload request is sent)")
 
         GIVEN("user opens the channel") {
@@ -206,6 +218,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_participantUploadsMultipleImages() {
+        linkToScenario(withId: 11899)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -218,6 +232,8 @@ final class Attachments_Tests: StreamTestCase {
     }
 
     func test_userSwipesBetweenImagesInGallery() {
+        linkToScenario(withId: 11900)
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
