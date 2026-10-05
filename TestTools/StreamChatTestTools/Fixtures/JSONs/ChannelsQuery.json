@@ -1397,6 +1397,11 @@
       ],
       "watcher_count" : 7,
       "channel" : {
+        "custom" : {
+          "image" : "",
+          "example" : 1,
+          "name" : "The water cooler"
+        },
         "id" : "general",
         "created_at" : "2019-05-10T14:03:49.505006Z",
         "created_by" : {
@@ -1443,9 +1448,6 @@
           "uploads" : true,
           "name" : "messaging"
         },
-        "image" : "",
-        "example" : 1,
-        "name" : "The water cooler",
         "last_message_at" : "2020-06-10T05:59:48.054692Z"
       },
       "read" : [
@@ -2565,6 +2567,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 8884"
+        },
         "last_message_at" : "2020-06-09T18:45:13.582199Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -2616,7 +2621,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2019-12-12T15:41:05.022206Z",
-        "name" : "Channel 8884",
         "cid" : "messaging:new_channel_8884"
       },
       "read" : [
@@ -3583,6 +3587,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 7487"
+        },
         "last_message_at" : "2020-06-09T15:45:16.569846Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -3634,7 +3641,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-05T12:53:09.857739Z",
-        "name" : "Channel 7487",
         "cid" : "messaging:new_channel_7487"
       },
       "read" : [
@@ -4726,6 +4732,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 1751"
+        },
         "last_message_at" : "2020-06-09T15:44:22.45894Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -4777,7 +4786,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:57:36.660819Z",
-        "name" : "Channel 1751",
         "cid" : "messaging:new_channel_1751"
       },
       "read" : [
@@ -5563,6 +5571,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 5000"
+        },
         "last_message_at" : "2020-06-08T11:54:33.028082Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -5614,7 +5625,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:52:39.731147Z",
-        "name" : "Channel 5000",
         "cid" : "messaging:new_channel_5000"
       },
       "read" : [
@@ -5940,6 +5950,9 @@
           }
       ],
       "channel" : {
+        "custom" : {
+          "name" : "Channel 3124"
+        },
         "last_message_at" : "2020-06-08T11:52:36.594465Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -5991,7 +6004,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:51:12.271858Z",
-        "name" : "Channel 3124",
         "cid" : "messaging:new_channel_3124"
       },
       "read" : [
@@ -6273,6 +6285,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 6264"
+        },
         "last_message_at" : "2020-06-08T11:51:00.102246Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -6324,7 +6339,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:50:51.389239Z",
-        "name" : "Channel 6264",
         "cid" : "messaging:new_channel_6264"
       },
       "read" : [
@@ -6619,6 +6633,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 7940"
+        },
         "last_message_at" : "2020-06-08T11:50:42.902008Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -6670,7 +6687,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:49:28.886904Z",
-        "name" : "Channel 7940",
         "cid" : "messaging:new_channel_7940"
       },
       "read" : [
@@ -8467,6 +8483,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 1877"
+        },
         "last_message_at" : "2020-06-05T13:01:29.915281Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -8518,7 +8537,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2019-12-13T14:29:33.347005Z",
-        "name" : "Channel 1877",
         "cid" : "messaging:new_channel_1877"
       },
       "read" : [
@@ -10366,6 +10384,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 4371"
+        },
         "last_message_at" : "2020-05-22T17:59:19.387787Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -10417,7 +10438,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2019-12-16T15:19:47.266902Z",
-        "name" : "Channel 4371",
         "cid" : "messaging:new_channel_4371"
       },
       "read" : [
@@ -12215,6 +12235,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "image" : "https:\/\/i.imgur.com\/1Oe1TDf.jpg",
+          "name" : "Updated - Test Channel 3011"
+        },
         "id" : "test-channel-3011",
         "created_at" : "2019-12-12T20:41:06.189202Z",
         "created_by" : {
@@ -12374,8 +12398,6 @@
           "uploads" : true,
           "name" : "messaging"
         },
-        "image" : "https:\/\/i.imgur.com\/1Oe1TDf.jpg",
-        "name" : "Updated - Test Channel 3011",
         "last_message_at" : "2020-05-22T13:00:27.858999Z"
       },
       "read" : [

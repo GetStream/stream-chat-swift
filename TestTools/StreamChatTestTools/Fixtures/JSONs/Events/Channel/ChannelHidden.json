@@ -11,6 +11,10 @@
     "name" : "luke_skywalker"
   },
   "channel" : {
+    "custom" : {
+      "image" : "https:\/\/picsum.photos\/seed\/58\/100\/100",
+      "name" : "Knobby Significance"
+    },
     "id" : "default-channel-6",
     "members" : [
       {
@@ -354,8 +358,6 @@
       "read_events" : true,
       "search" : true
     },
-    "image" : "https:\/\/picsum.photos\/seed\/58\/100\/100",
-    "name" : "Knobby Significance",
     "last_message_at" : "2021-04-22T06:46:34.967202Z"
   },
   "channel_type" : "messaging",

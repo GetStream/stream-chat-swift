@@ -346,7 +346,7 @@ allowed_events=(
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
-# Hashable extension stripped in step 4d. Uses the post-rename names (step 4b),
+# Hashable extension stripped in step 4e. Uses the post-rename names (step 4b),
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
@@ -1347,7 +1347,7 @@ strip_streamcore_imports
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
+# 6. Generate a lenient `init(from:)` and splice it into the model's class
 #    body, where a `required` initializer is allowed. It replaces any `init(from:)` the
 #    generator emitted itself (e.g. for models with deprecated fields).
 splice_generated_decoders() {
@@ -1381,7 +1381,7 @@ PY
 sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 splice_generated_decoders
 
-# 8. Wrap generated OpenAPI function declarations that exceed the maximum width.
+# 7. Wrap generated OpenAPI function declarations that exceed the maximum width.
 swiftformat "$OUTPUT_DIR_CHAT" \
   --rules wrapArguments \
   --wrapparameters before-first \

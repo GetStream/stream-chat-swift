@@ -76,23 +76,13 @@ final class DraftMessagePayload: Sendable, Decodable {
         case type
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         attachments = try container.decodeIfPresent(
             [MessageAttachmentPayload].self,
             forKey: .attachments
         )
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         html = try container.decodeIfPresent(String.self, forKey: .html)
         id = try container.decode(String.self, forKey: .id)
         mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)

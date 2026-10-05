@@ -251,11 +251,6 @@ final class MessageResponse: Sendable, Decodable {
         case user
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-            .union(MessagePayloadsCodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         attachments = try container.decodeArrayIgnoringFailures(
@@ -265,13 +260,7 @@ final class MessageResponse: Sendable, Decodable {
         cid = try container.decode(String.self, forKey: .cid)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
         deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)

@@ -72,6 +72,10 @@
         "pin_expires": null
     },
     "channel": {
+        "custom": {
+            "name": "Cult meetup",
+            "is_cool": true
+        },
         "id": "456F834D-1",
         "type": "messaging",
         "cid": "messaging:456F834D-1",
@@ -189,9 +193,7 @@
                     "set": "fun_set"
                 }
             ]
-        },
-        "name": "Cult meetup",
-        "is_cool": true
+        }
     },
     "created_at": "2024-07-08T16:59:43.294921432Z",
     "unread_threads": 7,

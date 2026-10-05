@@ -6,6 +6,9 @@
         "role" : "member"
     },
     "channel" : {
+        "custom" : {
+            "name" : "Channel 1394"
+        },
         "created_by" : {
             "id" : "steep-moon-9",
             "banned" : false,
@@ -107,7 +110,6 @@
         "member_count" : 2,
         "type" : "messaging",
         "updated_at" : "2020-07-21T15:35:30.806518Z",
-        "name" : "Channel 1394",
         "cid" : "messaging:new_channel_1394"
     },
     "channel_type" : "messaging",

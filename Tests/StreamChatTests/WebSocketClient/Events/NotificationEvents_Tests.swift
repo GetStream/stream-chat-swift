@@ -68,6 +68,7 @@ final class NotificationsEvents_Tests: XCTestCase {
           "channel_type": "messaging",
           "channel_id": "general",
           "channel": {
+            "custom": {},
             "id": "general",
             "type": "messaging",
             "cid": "messaging:general",
@@ -94,6 +95,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             }
           },
           "user": {
+            "custom": {},
             "id": "steep-moon-9",
             "role": "user",
             "created_at": "2020-07-21T14:47:57Z",

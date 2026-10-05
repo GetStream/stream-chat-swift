@@ -176,6 +176,7 @@ final class EventDecoder_Tests: XCTestCase {
         let json = """
         {
             "user" : {
+                "custom" : {},
                 "id" : "\(userId)",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -224,6 +225,7 @@ final class EventDecoder_Tests: XCTestCase {
         let json = """
         {
             "user" : {
+                "custom" : {},
                 "id" : "\(userId)",
                 "banned" : false,
                 "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -267,6 +269,7 @@ final class EventDecoder_Tests: XCTestCase {
         let json = """
         {
             "user" : {
+                "custom" : {},
                 "id" : "\(userId)",
                 "banned" : false,
                 "created_at" : "2019-12-12T15:33:46.488935Z",

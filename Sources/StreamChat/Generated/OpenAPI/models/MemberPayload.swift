@@ -115,10 +115,6 @@ final class MemberPayload: Sendable, Decodable {
         case userId = "user_id"
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
@@ -130,13 +126,7 @@ final class MemberPayload: Sendable, Decodable {
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
         channelRole = try container.decodeIfPresent(String.self, forKey: .channelRole)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedMessages = try container.decodeIfPresent([String].self, forKey: .deletedMessages)
         futureChannelBanExpires = try container.decodeIfPresent(
