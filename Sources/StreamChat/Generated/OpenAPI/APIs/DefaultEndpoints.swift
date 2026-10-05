@@ -6,7 +6,6 @@ import Foundation
 
 enum EndpointPath: Codable {
     case custom(String)
-    case connect
     case sync
     case guest
 
@@ -99,11 +98,12 @@ enum EndpointPath: Codable {
     case uploadChannelImage(type: String, id: String)
     case uploadFile
     case uploadImage
+    /// The websocket connect path.
+    case connect
 
     var value: String {
         switch self {
         case let .custom(path): return path
-        case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
 
@@ -285,6 +285,8 @@ enum EndpointPath: Codable {
             return "/api/v2/uploads/file"
         case .uploadImage:
             return "/api/v2/uploads/image"
+        case .connect:
+            return "/api/v2/connect"
         }
     }
 }
@@ -1636,6 +1638,17 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: multipartFormData
+        )
+    }
+
+    /// The websocket connect endpoint. The auth message is sent as the first websocket frame, not as the request body.
+    static func connect(requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .connect,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 }

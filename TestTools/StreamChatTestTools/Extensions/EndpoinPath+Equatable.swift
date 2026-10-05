@@ -9,6 +9,7 @@ extension EndpointPath: Equatable {
     public static func == (_ lhs: EndpointPath, _ rhs: EndpointPath) -> Bool {
         switch (lhs, rhs) {
         case (.connect, .connect): return true
+        case let (.custom(path1), .custom(path2)): return path1 == path2
         case (.sync, .sync): return true
         case (.queryUsers, .queryUsers): return true
         case (.updateUsersPartial, .updateUsersPartial): return true

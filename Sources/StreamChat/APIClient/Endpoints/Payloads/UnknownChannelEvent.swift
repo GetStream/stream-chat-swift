@@ -49,9 +49,15 @@ public extension UnknownChannelEvent {
     /// - Parameter ofType: The type of payload the custom fields should be treated as.
     /// - Returns: A payload of the given type if decoding succeeds and if event type matches the one declared in custom payload type. Otherwise `nil` is returned.
     func payload<T: CustomEventPayload>(ofType: T.Type) -> T? {
+        let custom: [String: RawJSON]
+        if case let .dictionary(nested)? = payload["custom"] {
+            custom = nested
+        } else {
+            custom = payload
+        }
         guard
             T.eventType == type,
-            let payloadData = try? JSONEncoder.default.encode(payload),
+            let payloadData = try? JSONEncoder.default.encode(custom),
             let payload = try? JSONDecoder.default.decode(T.self, from: payloadData)
         else { return nil }
 

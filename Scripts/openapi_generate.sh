@@ -15,6 +15,7 @@ allowed_endpoints=(
     ban
     blockUsers
     castPollVote
+    connect
     createDevice
     createDraft
     createPoll
@@ -1119,7 +1120,6 @@ inject_v1_endpoint_paths() {
 
   cat > "$cases_file" <<'EOF'
     case custom(String)
-    case connect
     case sync
     case guest
 
@@ -1127,7 +1127,6 @@ EOF
 
   cat > "$values_file" <<'EOF'
         case let .custom(path): return path
-        case .connect: return "connect"
         case .sync: return "sync"
         case .guest: return "guest"
 
