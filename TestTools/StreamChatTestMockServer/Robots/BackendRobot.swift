@@ -6,7 +6,7 @@ import Foundation
 import XCTest
 
 public class BackendRobot {
-    private let mockServer: StreamMockServer
+    let mockServer: StreamMockServer
 
     public init(_ mockServer: StreamMockServer) {
         self.mockServer = mockServer
@@ -99,7 +99,7 @@ public class BackendRobot {
         _ = mockServer.postRequest(endpoint: "config/cooldown?enabled=\(enabled)&duration=\(duration)")
     }
 
-    private func waitForMockServerToStart() {
+    func waitForMockServerToStart() {
         let startTime = Date().timeIntervalSince1970
         while Date().timeIntervalSince1970 - startTime < 5.0 {
             var request = URLRequest(url: URL(string: "\(StreamMockServer.url!)/ping")!)

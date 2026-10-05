@@ -40,5 +40,20 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = MessageActionsVC.self
         Components.default.messageSwipeToReplyEnabled = true
         Components.default.isDraftMessagesEnabled = true
+        Components.default.isBlockingUsersEnabled = true
+        Components.default.isMessageEditedLabelEnabled = true
+
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("JUMP_TO_UNREAD_ENABLED") {
+            Components.default.isJumpToUnreadEnabled = true
+        }
+        if arguments.contains("COMPOSER_LINK_PREVIEW") {
+            Components.default.isComposerLinkPreviewEnabled = true
+        }
+        if arguments.contains("USE_CHANNEL_SEARCH") {
+            Components.default.channelListSearchStrategy = .channels
+        } else if arguments.contains("USE_MESSAGE_SEARCH") {
+            Components.default.channelListSearchStrategy = .messages
+        }
     }
 }

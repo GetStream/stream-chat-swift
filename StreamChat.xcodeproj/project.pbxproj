@@ -685,6 +685,12 @@
 				StreamChatTestMockServer/MockServer/LaunchArgument.swift,
 				StreamChatTestMockServer/MockServer/StreamMockServer.swift,
 				StreamChatTestMockServer/Robots/BackendRobot.swift,
+				"StreamChatTestMockServer/Robots/BackendRobot+Channels.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+DirectMessages.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+Reminders.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Polls.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+ThreadReplies.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Threads.swift",
 				StreamChatTestMockServer/Robots/ParticipantRobot.swift,
 				StreamChatTestMockServer/StreamChatTestMockServer.h,
 				StreamChatTestMockServer/StreamChatTestMockServer.swift,
@@ -711,7 +717,10 @@
 				StreamChatTestMockServer/MockServer/DataTypes.swift,
 				StreamChatTestMockServer/MockServer/LaunchArgument.swift,
 				StreamChatTestMockServer/MockServer/StreamMockServer.swift,
+				"StreamChatTestMockServer/Robots/ParticipantRobot+ThreadReplies.swift",
 				StreamChatTestMockServer/Robots/ParticipantRobot.swift,
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Polls.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Threads.swift",
 				StreamChatTestMockServer/StreamChatTestMockServer.h,
 				StreamChatTestMockServer/StreamChatTestMockServer.swift,
 			);
@@ -724,6 +733,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				StreamChatTestMockServer/Robots/BackendRobot.swift,
+				"StreamChatTestMockServer/Robots/BackendRobot+Channels.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+DirectMessages.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+Reminders.swift",
 				StreamChatTestTools/Mocks/StreamChat/MockNetwork/RequestRecorderURLProtocol_Mock.swift,
 				StreamChatTestTools/Mocks/StreamChat/MockNetwork/URLProtocol_Mock.swift,
 			);

@@ -275,7 +275,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
             participantRobot.sendMessageInThread(threadReply)
         }
         WHEN("user retuns to the channel list") {
-            userRobot.moveToChannelListFromThreadReplies()
+            userRobot.moveToChannelListFromMessageList()
         }
         THEN("delivery status is hidden") {
             userRobot
