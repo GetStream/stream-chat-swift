@@ -160,10 +160,10 @@ extension NSManagedObjectContext {
         if let maxVotesAllowed = payload.maxVotesAllowed {
             pollDto.maxVotesAllowed = NSNumber(value: maxVotesAllowed)
         }
-        pollDto.votingVisibility = payload.votingVisibility?.rawValue
+        pollDto.votingVisibility = payload.votingVisibility.rawValue
         
-        if let custom = payload.custom, !custom.isEmpty {
-            pollDto.custom = try JSONEncoder.default.encode(custom)
+        if !payload.custom.isEmpty {
+            pollDto.custom = try JSONEncoder.default.encode(payload.custom)
         } else {
             pollDto.custom = nil
         }
@@ -174,22 +174,18 @@ extension NSManagedObjectContext {
             pollDto.createdBy = UserDTO.loadOrCreate(id: payload.createdById, context: self, cache: cache)
         }
         pollDto.options = try NSOrderedSet(
-            array: payload.options.compactMap { payload in
-                if let payload {
-                    let optionDto = try savePollOption(
-                        payload: payload,
-                        pollId: payload.id,
-                        cache: cache
-                    )
-                    optionDto.poll = pollDto
-                    return optionDto
-                } else {
-                    return nil
-                }
+            array: payload.options.map { payload in
+                let optionDto = try savePollOption(
+                    payload: payload,
+                    pollId: payload.id,
+                    cache: cache
+                )
+                optionDto.poll = pollDto
+                return optionDto
             }
         )
         pollDto.latestVotesByOption = try Set(
-            payload.latestVotesByOption?.compactMap { optionId, votesByOption in
+            payload.latestVotesByOption.compactMap { optionId, votesByOption in
                 let optionDto = PollOptionDTO.loadOrCreate(
                     pollId: payload.id,
                     optionId: optionId,
@@ -207,36 +203,30 @@ extension NSManagedObjectContext {
                 )
                 
                 return optionDto
-            } ?? []
+            }
         )
 
-        if let latestAnswers = payload.latestAnswers {
-            pollDto.latestVotes
-                .filter { $0.isAnswer }
-                .forEach {
-                    pollDto.latestVotes.remove($0)
-                }
-
-            try latestAnswers.forEach { payload in
-                if let payload {
-                    let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                    answerDto.poll = pollDto
-                }
+        pollDto.latestVotes
+            .filter { $0.isAnswer }
+            .forEach {
+                pollDto.latestVotes.remove($0)
             }
+
+        try payload.latestAnswers.forEach { payload in
+            let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
+            answerDto.poll = pollDto
         }
 
-        if let payloadOwnVotes = payload.ownVotes, !fromEvent {
+        if !fromEvent {
             pollDto.latestVotes
                 .filter { !$0.isAnswer }
                 .forEach {
                     pollDto.latestVotes.remove($0)
                 }
 
-            try payloadOwnVotes.forEach { payload in
-                if let payload {
-                    let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                    voteDto.poll = pollDto
-                }
+            try payload.ownVotes.forEach { payload in
+                let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                voteDto.poll = pollDto
             }
         }
 

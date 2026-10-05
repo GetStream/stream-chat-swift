@@ -67,7 +67,7 @@ final class MessageResponse: Sendable, Decodable {
     let quotedMessage: MessageResponse?
     let quotedMessageId: String?
     /// An object containing number of reactions of each type. Key: reaction type (string), value: number of reactions (int)
-    let reactionCounts: [String: Int]?
+    let reactionCounts: [String: Int]
     let reactionGroups: [String: MessageReactionGroupPayload?]?
     /// An object containing scores of reactions of each type. Key: reaction type (string), value: total score of reactions (int)
     let reactionScores: [String: Int]
@@ -130,7 +130,7 @@ final class MessageResponse: Sendable, Decodable {
         pollId: String? = nil,
         quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
-        reactionCounts: [String: Int]? = nil,
+        reactionCounts: [String: Int],
         reactionGroups: [String: MessageReactionGroupPayload?]? = nil,
         reactionScores: [String: Int],
         reminder: ReminderPayload? = nil,
@@ -251,11 +251,6 @@ final class MessageResponse: Sendable, Decodable {
         case user
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-            .union(MessagePayloadsCodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         attachments = try container.decodeArrayIgnoringFailures(
@@ -265,13 +260,7 @@ final class MessageResponse: Sendable, Decodable {
         cid = try container.decode(String.self, forKey: .cid)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
         deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)
@@ -326,7 +315,7 @@ final class MessageResponse: Sendable, Decodable {
         pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
         quotedMessage = try container.decodeIfPresent(MessageResponse.self, forKey: .quotedMessage)
         quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
-        reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts)
+        reactionCounts = try container.decodeIfPresent([String: Int].self, forKey: .reactionCounts) ?? [:]
         reactionGroups = try container.decodeIfPresent(
             [String: MessageReactionGroupPayload?].self,
             forKey: .reactionGroups

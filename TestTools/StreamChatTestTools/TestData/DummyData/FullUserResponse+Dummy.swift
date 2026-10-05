@@ -61,7 +61,7 @@ extension FullUserResponse {
     /// Returns a dummy full user response carrying the same data as the given user payload.
     static func dummy(userPayload: UserPayload) -> FullUserResponse {
         .init(
-            banned: userPayload.banned ?? false,
+            banned: userPayload.banned,
             blockedUserIds: [],
             channelMutes: [],
             createdAt: userPayload.createdAt,
@@ -71,14 +71,14 @@ extension FullUserResponse {
             id: userPayload.id,
             image: userPayload.image,
             invisible: false,
-            language: userPayload.language ?? "",
+            language: userPayload.language,
             lastActive: userPayload.lastActive,
             mutes: [],
             name: userPayload.name,
             online: userPayload.online,
             role: userPayload.role,
             shadowBanned: false,
-            teams: userPayload.teams ?? [],
+            teams: userPayload.teams,
             teamsRole: userPayload.teamsRole,
             totalUnreadCount: 0,
             unreadChannels: 0,

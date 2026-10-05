@@ -54,21 +54,11 @@ final class ThreadParticipantPayload: Sendable, Decodable {
         case userId = "user_id"
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channelCid = try container.decode(String.self, forKey: .channelCid)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         lastReadAt = try container.decode(Date.self, forKey: .lastReadAt)
         lastThreadMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastThreadMessageAt)
         leftThreadAt = try container.decodeIfPresent(Date.self, forKey: .leftThreadAt)

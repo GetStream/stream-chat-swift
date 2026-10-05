@@ -49,28 +49,22 @@ public final class TypingEvent: ChannelSpecificEvent {
     }
 }
 
-final class TypingEventDTO: EventDTO {
-    let user: UserPayload
-    let member: MemberInfoPayload?
-    let cid: ChannelId
-    let isTyping: Bool
-    let parentId: MessageId?
-    var isThread: Bool { parentId != nil }
-    let createdAt: Date
-    let payload: EventPayload
+protocol TypingEventDTO: EventDTO {
+    var cid: ChannelId { get }
+    var createdAt: Date { get }
+    var user: UserPayload? { get }
+    var member: MemberInfoPayload? { get }
+    var parentId: String? { get }
+    var isTyping: Bool { get }
+}
 
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        member = response.memberInfo
-        createdAt = try response.value(at: \.createdAt)
-        isTyping = response.eventType == .userStartTyping
-        parentId = try? response.value(at: \.parentId)
-        payload = response
-    }
+extension TypingEventDTO {
+    var isThread: Bool { parentId != nil }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        TypingEvent(
+        guard let user else { return nil }
+
+        return TypingEvent(
             isTyping: isTyping,
             cid: cid,
             user: user.asModel(),
@@ -79,6 +73,14 @@ final class TypingEventDTO: EventDTO {
             createdAt: createdAt
         )
     }
+}
+
+extension TypingStartEventDTO: TypingEventDTO {
+    var isTyping: Bool { true }
+}
+
+extension TypingStopEventDTO: TypingEventDTO {
+    var isTyping: Bool { false }
 }
 
 /// A special event type which is only emitted by the SDK and never the backend.

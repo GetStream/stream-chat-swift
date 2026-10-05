@@ -26,7 +26,7 @@ final class UserPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
     }
 
@@ -40,7 +40,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
 
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
@@ -61,7 +61,7 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.role, "guest")
         XCTAssertEqual(payload.isOnline, true)
@@ -83,7 +83,7 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=deactivated-waterfall-5&amp;name=Deactivated+waterfall")!
         )
-        XCTAssertEqual(payload.teams?.count, 3)
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.role, "user")
         XCTAssertEqual(payload.isOnline, true)
     }
@@ -105,7 +105,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.threads[0].parentMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
     }
     
-    // MARK: - v1 / v2 extra data compatibility
+    // MARK: - Extra data
 
     private var expectedCustomExtraData: [String: RawJSON] {
         [
@@ -118,17 +118,6 @@ final class UserPayload_Tests: XCTestCase {
                 "colors": .array([.string("blue"), .string("yellow"), .number(42)])
             ])
         ]
-    }
-
-    func test_userPayload_whenExtraDataIsFlattened_isDecoded() throws {
-        let json = XCTestCase.mockData(fromJSONFile: "UserPayloadWithCustom")
-
-        let response = try JSONDecoder.default.decode(UserPayload.self, from: json)
-
-        XCTAssertEqual(response.id, "bitter-cloud-0")
-        XCTAssertEqual(response.role, "guest")
-        XCTAssertEqual(response.teams, ["RED", "GREEN", "BLUE"])
-        XCTAssertEqual(response.extraData, expectedCustomExtraData)
     }
 
     func test_userPayload_whenExtraDataIsNestedInCustom_isDecoded() throws {

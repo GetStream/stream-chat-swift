@@ -7,13 +7,13 @@
 import XCTest
 
 final class TypingEvent_Tests: XCTestCase {
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
     var cid: ChannelId = ChannelId(type: .messaging, id: "general")
     var userId = "luke_skywalker"
 
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
 
     override func tearDown() {
@@ -30,7 +30,7 @@ final class TypingEvent_Tests: XCTestCase {
 
         XCTAssertTrue(event.isTyping)
         XCTAssertEqual(event.cid, cid)
-        XCTAssertEqual(event.user.id, userId)
+        XCTAssertEqual(event.user?.id, userId)
     }
 
     func test_parseTypingStoptEvent() throws {
@@ -42,7 +42,7 @@ final class TypingEvent_Tests: XCTestCase {
 
         XCTAssertFalse(event.isTyping)
         XCTAssertEqual(event.cid, cid)
-        XCTAssertEqual(event.user.id, userId)
+        XCTAssertEqual(event.user?.id, userId)
         XCTAssertFalse(event.isThread)
     }
 
@@ -72,16 +72,14 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_startTypingEventDTO_toDomainEvent() throws {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        let eventPayload = EventPayload(
-            eventType: .userStartTyping,
+        let eventPayload = TypingStartEventDTO(
             cid: .unique,
-            user: .dummy(userId: .unique),
             createdAt: .unique,
-            parentId: .unique
+            parentId: .unique,
+            user: .dummy(userId: .unique)
         )
-        let dto = try TypingEventDTO(from: eventPayload)
 
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? TypingEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? TypingEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.isTyping, true)
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
@@ -93,15 +91,13 @@ final class TypingEvent_Tests: XCTestCase {
 
     func test_stopTypingEventDTO_toDomainEvent() throws {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        let eventPayload = EventPayload(
-            eventType: .userStopTyping,
+        let eventPayload = TypingStopEventDTO(
             cid: .unique,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            user: .dummy(userId: .unique)
         )
-        let dto = try TypingEventDTO(from: eventPayload)
 
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? TypingEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? TypingEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.isTyping, false)
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
@@ -116,6 +112,9 @@ final class TypingEvent_Tests: XCTestCase {
           "type": "typing.start",
           "cid": "messaging:general",
           "user": {
+            "custom": {},
+            "language": "",
+            "teams": [],
             "id": "luke_skywalker",
             "role": "user",
             "created_at": "2020-12-07T11:36:47.059906Z",
@@ -127,16 +126,19 @@ final class TypingEvent_Tests: XCTestCase {
           "member": {
             "channel_role": "channel_member",
             "notifications_muted": false,
-            "is_premium": true,
-            "nickname": "Marty"
+            "custom": {
+              "is_premium": true,
+              "nickname": "Marty"
+            }
           },
-          "created_at": "2021-04-22T22:05:51.726128615Z"
+          "created_at": "2021-04-22T22:05:51.726128615Z",
+          "custom": {}
         }
         """.data(using: .utf8)!
 
         let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? TypingEventDTO)
 
-        XCTAssertEqual(event.user.id, userId)
+        XCTAssertEqual(event.user?.id, userId)
         XCTAssertEqual(event.member?.channelRole, "channel_member")
         XCTAssertEqual(event.member?.custom?["is_premium"], .bool(true))
         XCTAssertEqual(event.member?.custom?["nickname"], .string("Marty"))

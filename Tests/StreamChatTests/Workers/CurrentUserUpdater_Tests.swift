@@ -540,7 +540,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_removeDevice_successfulResponse_isSavedToDB() throws {
         let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy()])
-        let deviceId = userPayload.devices!.first!.id
+        let deviceId = userPayload.devices.first!.id
 
         // Save user to the db
         try database.writeSynchronously {

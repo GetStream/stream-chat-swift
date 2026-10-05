@@ -372,12 +372,17 @@ class SyncRepository: @unchecked Sendable {
             return
         }
 
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: @Sendable (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let endpoint: Endpoint<SyncResponse> = .sync(
+            syncRequest: SyncRequest(channelCids: channelIds.map(\.rawValue), lastSyncAt: date),
+            withInaccessibleCids: nil,
+            watch: nil,
+            requiresConnectionId: false
+        )
+        let requestCompletion: @Sendable (Result<SyncResponse, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 guard let self else { return }
-                let eventCount = payload.eventPayloads.count
+                let eventCount = payload.events.count
                 let maximumEventCount = self.eventReplayPolicy.maximumEventCount
                 log.info(
                     "Received `/sync` payload with \(eventCount) event(s). replayThreshold=\(maximumEventCount)",
@@ -389,7 +394,7 @@ class SyncRepository: @unchecked Sendable {
                         subsystems: .offlineSupport
                     )
                     self.handleSyncEventReplayFallback(
-                        lastSyncAt: payload.eventPayloads.last?.createdAt ?? date,
+                        lastSyncAt: payload.events.last?.createdAt ?? date,
                         alreadySyncedChannelIds: alreadySyncedChannelIds,
                         completion: completion
                     )
@@ -398,7 +403,7 @@ class SyncRepository: @unchecked Sendable {
 
                 log.info("Processing pending events. Count \(eventCount)", subsystems: .offlineSupport)
                 self.processMissingEventsPayload(payload) { [weak self] in
-                    self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
+                    self?.updateLastSyncAt(with: payload.events.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
@@ -504,10 +509,10 @@ class SyncRepository: @unchecked Sendable {
         }
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable () -> Void) {
-        eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
+    private func processMissingEventsPayload(_ payload: SyncResponse, completion: @escaping @Sendable () -> Void) {
+        eventNotificationCenter.process(payload.events, postNotifications: false) {
             log.info(
-                "Successfully processed pending events. Count \(payload.eventPayloads.count)",
+                "Successfully processed pending events. Count \(payload.events.count)",
                 subsystems: .offlineSupport
             )
             completion()

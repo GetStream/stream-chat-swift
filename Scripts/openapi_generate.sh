@@ -15,12 +15,15 @@ allowed_endpoints=(
     ban
     blockUsers
     castPollVote
+    connect
     createDevice
     createDraft
+    createGuest
     createPoll
     createPollOption
     createReminder
     createUserGroup
+    custom
     deleteChannel
     deleteChannelFile
     deleteChannelImage
@@ -77,6 +80,7 @@ allowed_endpoints=(
     sendReaction
     showChannel
     stopWatchingChannel
+    sync
     translateMessage
     truncateChannel
     unban
@@ -125,6 +129,8 @@ allowed_models=(
   CreateDeviceRequest
   CreateDraftRequest
   CreateDraftResponse
+  CreateGuestRequest
+  CreateGuestResponse
   CreatePollOptionRequest
   CreatePollRequest
   CreateReminderRequest
@@ -230,6 +236,8 @@ allowed_models=(
   SharedLocationResponseData
   SharedLocationsResponse
   SortParamRequest
+  SyncRequest
+  SyncResponse
   ThreadParticipant
   ThreadResponse
   ThreadStateResponse
@@ -272,13 +280,73 @@ allowed_models=(
   UserGroupMember
   UserGroupResponse
   UserMuteResponse
+  UserRequest
   UserResponse
   VoteData
   WrappedUnreadCountsResponse
+  WSEvent
+)
+allowed_events=(
+  AIIndicatorClearEvent
+  AIIndicatorStopEvent
+  AIIndicatorUpdateEvent
+  ChannelDeletedEvent
+  ChannelHiddenEvent
+  ChannelTruncatedEvent
+  ChannelUpdatedEvent
+  ChannelVisibleEvent
+  ConnectedEvent
+  ConnectionErrorEvent
+  DraftDeletedEvent
+  DraftUpdatedEvent
+  HealthCheckEvent
+  MemberAddedEvent
+  MemberRemovedEvent
+  MemberUpdatedEvent
+  MessageDeletedEvent
+  MessageDeliveredEvent
+  MessageNewEvent
+  MessageReadEvent
+  MessageUpdatedEvent
+  NotificationAddedToChannelEvent
+  NotificationChannelDeletedEvent
+  NotificationChannelMutesUpdatedEvent
+  NotificationInviteAcceptedEvent
+  NotificationInvitedEvent
+  NotificationInviteRejectedEvent
+  NotificationMarkReadEvent
+  NotificationMarkUnreadEvent
+  NotificationMutesUpdatedEvent
+  NotificationNewMessageEvent
+  NotificationRemovedFromChannelEvent
+  NotificationThreadMessageNewEvent
+  PollClosedEvent
+  PollDeletedEvent
+  PollUpdatedEvent
+  PollVoteCastedEvent
+  PollVoteChangedEvent
+  PollVoteRemovedEvent
+  ReactionDeletedEvent
+  ReactionNewEvent
+  ReactionUpdatedEvent
+  ReminderCreatedEvent
+  ReminderDeletedEvent
+  ReminderNotificationEvent
+  ReminderUpdatedEvent
+  ThreadUpdatedEvent
+  TypingStartEvent
+  TypingStopEvent
+  UserBannedEvent
+  UserMessagesDeletedEvent
+  UserPresenceChangedEvent
+  UserUnbannedEvent
+  UserUpdatedEvent
+  UserWatchingStartEvent
+  UserWatchingStopEvent
 )
 
 # Models that keep the generated Hashable conformance; every other model has its
-# Hashable extension stripped in step 4d. Uses the post-rename names (step 4b),
+# Hashable extension stripped in step 4e. Uses the post-rename names (step 4b),
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
@@ -311,6 +379,7 @@ encodable_only_models=(
   ChannelMemberRequest
   CreateDeviceRequest
   CreateDraftRequest
+  CreateGuestRequest
   CreatePollOptionRequestBody
   CreatePollRequestBody
   CreateReminderRequest
@@ -348,6 +417,7 @@ encodable_only_models=(
   SendEventRequest
   SendMessageRequest
   SendReactionRequest
+  SyncRequest
   TranslateMessageRequest
   TruncateChannelRequest
   UnblockUsersRequest
@@ -366,6 +436,7 @@ encodable_only_models=(
   UpdateUserPartialRequest
   UpdateUsersPartialRequest
   UpsertPushPreferencesRequest
+  UserRequest
   VoteDataRequestBody
 )
 
@@ -377,6 +448,7 @@ decodable_only_models=(
   ChannelDetailPayload
   ChannelStateResponse
   CreateDraftResponse
+  CreateGuestResponse
   CreateReminderResponse
   CurrentUserUnreads
   DeleteChannelResponse
@@ -439,6 +511,7 @@ decodable_only_models=(
   SendReactionResponse
   SharedLocation
   SharedLocationsResponse
+  SyncResponse
   ThreadParticipantPayload
   ThreadResponse
   ThreadStateResponse
@@ -464,6 +537,7 @@ decodable_only_models=(
   UserGroup
   UserGroupMember
   UserGroupResponse
+  WSEvent
 )
 
 codable_models=(
@@ -535,9 +609,7 @@ prune_endpoint_factories() {
 }
 prune_endpoint_factories
 
-# Keep generated v2 EndpointPath cases aligned with allowed_endpoints before v1
-# cases are injected. Future migrations should remove matching v1 cases when
-# adding a generated v2 path with the same case name.
+# Keep generated v2 EndpointPath cases aligned with allowed_endpoints.
 prune_generated_endpoint_paths() {
   local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
   local allowed_endpoints_csv
@@ -591,38 +663,80 @@ prune_models() {
   for f in "$OUTPUT_DIR_CHAT"/models/*.swift; do
     [ -e "$f" ] || continue
     base="$(basename "$f" .swift)"
-    contains "$base" "${allowed_models[@]}" && continue
+    contains "$base" "${allowed_models[@]}" "${allowed_events[@]}" && continue
     rm -f "$f"
   done
 }
 prune_models
 
-# Remove a generated property (declaration, doc comment, init param, assignment,
+prune_wsevent_cases() {
+  local file="$OUTPUT_DIR_CHAT/models/WSEvent.swift"
+  local allowed_events_csv
+  allowed_events_csv="$(IFS=,; echo "${allowed_events[*]}")"
+
+  python3 - "$file" "$allowed_events_csv" <<'PY'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+allowed = set(filter(None, sys.argv[2].split(",")))
+text = path.read_text()
+
+cases = dict(re.findall(r"^    case (\w+)\((\w+)\)$", text, flags=re.M))
+missing = allowed - set(cases.values())
+if missing:
+    raise SystemExit(f"Allowed events missing from WSEvent: {sorted(missing)}")
+
+for name, model in cases.items():
+    if model in allowed:
+        continue
+    text = re.sub(rf"^    case {name}\({model}\)\n", "", text, flags=re.M)
+    text = re.sub(rf"^        case \.{name}\(let value\):\n.*\n", "", text, flags=re.M)
+    text = re.sub(
+        rf"^        (\}} else )?if dto\.type == \"[^\"]*\" \{{\n"
+        rf"            let value = try container\.decode\({model}\.self\)\n"
+        rf"            self = \.{name}\(value\)\n",
+        "",
+        text,
+        flags=re.M,
+    )
+text = re.sub(r"(WSEventMapping\.self\)\n        )\} else if", r"\1if", text)
+
+path.write_text(text)
+PY
+}
+prune_wsevent_cases
+
+# Remove generated properties (declaration, doc comment, init param, assignment,
 #     CodingKeys case, init(from:)/encode(to:) lines). A deprecated property is emitted as a
 #     private `_name` backing property plus a deprecated `name` accessor; both are removed.
 #     Runs before publicize, so there are no access modifiers to handle. Assumes the
 #     single-line init the generator emits (step 7 re-wraps).
 remove_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  awk -v p="$2" '
-    function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
-    { s = $0; sub(/^[[:space:]]+/, "", s) }
-    s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
-    s ~ "^let " p ": "                 { n = 0; next }
-    s ~ "^private let _" p ": "        { n = 0; next }
-    s ~ "^var " p ": .* \\{ _" p " \\}$" { n = 0; next }
-    s ~ "^self\\._?" p " = " p "$"     { next }
-    s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
-    s ~ "^case " p "( =|$)"            { next }
-    s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
-    s ~ "^hasher\\.combine\\(_?" p "\\)$"    { next }
-    s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
-    s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
-    { flush(); print }
-  ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-  # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
-  perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
-  perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+  local p
+  for p in "${@:2}"; do
+    awk -v p="$p" '
+      function flush() { for (i = 1; i <= n; i++) print b[i]; n = 0 }
+      { s = $0; sub(/^[[:space:]]+/, "", s) }
+      s ~ /^(\/\/\/|@available)/         { b[++n] = $0; next }
+      s ~ "^let " p ": "                 { n = 0; next }
+      s ~ "^private let _" p ": "        { n = 0; next }
+      s ~ "^var " p ": .* \\{ _" p " \\}$" { n = 0; next }
+      s ~ "^self\\._?" p " = " p "$"     { next }
+      s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
+      s ~ "^case " p "( =|$)"            { next }
+      s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
+      s ~ "^hasher\\.combine\\(_?" p "\\)$"    { next }
+      s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
+      s ~ /^init\(/ { sub("\\(" p ": [^,)]*, ", "("); sub(", " p ": [^,)]*", ""); sub("\\(" p ": [^,)]*\\)", "()") }
+      { flush(); print }
+    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
+    perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
+    perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+  done
 }
 
 for model in "${allowed_models[@]}"; do
@@ -633,7 +747,6 @@ done
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration). The memberwise init
 #     parameter is relaxed too.
-# Remove in the next major.
 optionalize_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   P="$2" perl -0777 -pi -e '
@@ -642,15 +755,8 @@ optionalize_property() {
     s/([(,]\s*)\Q$p\E: ([^,)\n]+)(?=[,)])/${1}$p: $2? = nil/;
   ' "$file"
 }
+# Remove in the next major.
 optionalize_property DeviceResponse createdAt
-optionalize_property PollOptionResponseData custom
-optionalize_property PollResponseData custom
-optionalize_property PollResponseData latestAnswers
-optionalize_property PollResponseData latestVotesByOption
-optionalize_property PollResponseData ownVotes
-optionalize_property PollResponseData voteCountsByOption
-optionalize_property PollResponseData votingVisibility
-optionalize_property PollVoteResponseData optionId
 optionalize_property Role createdAt
 optionalize_property Role updatedAt
 optionalize_property UnreadCountsChannel lastRead
@@ -673,10 +779,6 @@ retype_property() {
     s/(?<!\w)\Q$p\E: \Q$o\E(?!\w)/$p: $n/g;
   ' "$file"
 }
-retype_property PollResponseData latestAnswers "[PollVoteResponseData]" "[PollVoteResponseData?]"
-retype_property PollResponseData options "[PollOptionResponseData]" "[PollOptionResponseData?]"
-retype_property PollResponseData ownVotes "[PollVoteResponseData]" "[PollVoteResponseData?]"
-retype_property PollVotesResponse votes "[PollVoteResponseData]" "[PollVoteResponseData?]"
 retype_property ReactionRequest type String MessageReactionType
 retype_property ReactionResponse type String MessageReactionType
 retype_property UnreadCountsChannel channelId String ChannelId
@@ -716,6 +818,25 @@ rename_property() {
 # 4b. Rename selected generated models for clarity and to avoid generic-name
 #     pollution / collisions with hand-written SDK types. Runs AFTER prune_models
 #     so allowed_models above still matches the generator's original names.
+rename_generated_events() {
+  local f base
+  for f in "$OUTPUT_DIR_CHAT"/models/*Event.swift; do
+    [ -e "$f" ] || continue
+    base="$(basename "$f" .swift)"
+    [[ "$base" == "WSEvent" ]] && continue
+    rename_generated "$base" "${base}DTO"
+  done
+}
+rename_generated_events
+
+shape_wsevent() {
+  local file="$OUTPUT_DIR_CHAT/models/WSEvent.swift"
+  sed -i '' -E 's/^enum WSEvent: Codable, Hashable \{[[:space:]]*$/enum WSEvent: Codable {/' "$file"
+  sed -i '' -E 's/^    var rawValue: Event \{[[:space:]]*$/    var rawValue: EventDTO {/' "$file"
+  perl -0777 -pi -e 's/\n    func encode\(to encoder: Encoder\) throws \{\n.*?\n    \}\n//s' "$file"
+}
+shape_wsevent
+
 rename_generated Action AttachmentActionPayload
 rename_generated AppResponseFields AppSettings
 rename_generated PushPreferencesResponse PushPreference
@@ -731,6 +852,10 @@ rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 rename_generated UserGroupResponse UserGroup
 rename_generated GetUserGroupResponse UserGroupResponse
 rename_generated UserResponse UserPayload
+# These are equal
+rename_generated_type UserResponseCommonFields UserPayload
+# Has isInvisible and privacySettings, but SDK never consumes these
+rename_generated_type UserResponsePrivacyFields UserPayload
 rename_generated_type ChannelPushPreferencesResponse PushPreference
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type CreateUserGroupResponse UserGroupResponse
@@ -787,7 +912,6 @@ rename_generated_type ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated_type TypingIndicatorsResponse TypingIndicatorPrivacySettings
 
 rename_generated_type DeleteReminderResponse EmptyResponse
-# TODO: EventResponse is not used and would bring in WSEvent
 rename_generated_type EventResponse EmptyResponse
 rename_generated_type FlagItemResponse EmptyResponse
 rename_generated_type HideChannelResponse EmptyResponse
@@ -802,26 +926,6 @@ retype_property PushPreference chatLevel String PushPreferenceLevel
 rename_property PushPreference chatLevel level
 restore_nonoptional_property PushPreference level PushPreferenceLevel .all
 restore_nonoptional_property UserGroup members "[UserGroupMember]" "[]"
-
-optionalize_property UserPayload banned
-optionalize_property UserPayload language
-optionalize_property UserPayload teams
-
-optionalize_property MemberPayload banned
-optionalize_property MemberPayload channelRole
-optionalize_property MemberPayload notificationsMuted
-optionalize_property MemberPayload shadowBanned
-
-optionalize_property OwnUserResponse banned
-optionalize_property OwnUserResponse channelMutes
-optionalize_property OwnUserResponse devices
-optionalize_property OwnUserResponse invisible
-optionalize_property OwnUserResponse language
-optionalize_property OwnUserResponse mutes
-optionalize_property OwnUserResponse teams
-optionalize_property OwnUserResponse totalUnreadCount
-optionalize_property OwnUserResponse unreadChannels
-optionalize_property OwnUserResponse unreadThreads
 
 remove_property PushPreferenceInput callLevel
 remove_property PushPreferenceInput chatPreferences
@@ -870,6 +974,18 @@ remove_property SearchPayload messageOptions
 # Unused
 remove_property SearchResponse resultsWarning
 
+# /sync replays events without fields the spec marks required.
+# Remove when fixed: CHA-3482
+optionalize_property ChannelHiddenEventDTO clearHistory
+optionalize_property MessageDeletedEventDTO hardDelete
+optionalize_property MessageNewEventDTO watcherCount
+
+# member.* events sent from UpdateMembers lack the channel the spec marks required.
+# Remove when fixed: CHA-5608
+optionalize_property MemberAddedEventDTO channel
+optionalize_property MemberRemovedEventDTO channel
+optionalize_property MemberUpdatedEventDTO channel
+
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
 # Will be changed on the generation side later
@@ -880,16 +996,98 @@ require_property ChannelStateResponse channel
 # CHA-5105
 require_property SearchResult message
 
-# TODO: Legacy v1 payloads may contain null; keep optional until legacy compatibility is removed.
-optionalize_property MessageResponse reactionCounts
-optionalize_property SearchResultMessage reactionCounts
-
-# v1 payloads may omit the count when it is zero.
-optionalize_property ThreadResponse activeParticipantCount
-optionalize_property ThreadStateResponse activeParticipantCount
-
-# v1 read events may omit it.
 optionalize_property ThreadResponse createdByUserId
+
+for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
+  [ -e "$f" ] || continue
+  base="$(basename "$f" .swift)"
+  [[ "$base" == "HealthCheckEventDTO" ]] && continue
+  retype_property "$base" cid String ChannelId
+done
+# CHA-5607
+require_property ChannelHiddenEventDTO cid
+require_property ChannelVisibleEventDTO cid
+require_property DraftDeletedEventDTO cid
+require_property DraftUpdatedEventDTO cid
+require_property MemberAddedEventDTO cid
+require_property MemberRemovedEventDTO cid
+require_property MemberUpdatedEventDTO cid
+require_property MessageDeletedEventDTO cid
+require_property MessageDeliveredEventDTO cid
+require_property MessageNewEventDTO cid
+require_property MessageReadEventDTO cid
+require_property MessageUpdatedEventDTO cid
+require_property NotificationChannelDeletedEventDTO cid
+require_property NotificationInvitedEventDTO cid
+require_property NotificationMarkUnreadEventDTO cid
+require_property NotificationRemovedFromChannelEventDTO cid
+require_property NotificationThreadMessageNewEventDTO cid
+require_property ReactionDeletedEventDTO cid
+require_property ReactionNewEventDTO cid
+require_property ReactionUpdatedEventDTO cid
+require_property TypingStartEventDTO cid
+require_property TypingStopEventDTO cid
+require_property UserWatchingStartEventDTO cid
+require_property UserWatchingStopEventDTO cid
+# CHA-5587
+retype_property MessageDeliveredEventDTO lastDeliveredAt String Date
+
+# Unread by the SDK
+remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt
+remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt
+remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt
+remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
+remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
+remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property DraftDeletedEventDTO custom parentId receivedAt
+remove_property DraftUpdatedEventDTO custom parentId receivedAt
+remove_property HealthCheckEventDTO cid custom receivedAt
+remove_property MemberAddedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MemberRemovedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom member receivedAt team
+remove_property MemberUpdatedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MessageDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team
+remove_property MessageDeliveredEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property MessageNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId parentAuthor receivedAt team threadParticipants unreadCount
+remove_property MessageReadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom lastReadMessageId receivedAt
+remove_property MessageUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId messageUpdate receivedAt team
+remove_property NotificationAddedToChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team unreadCount
+remove_property NotificationChannelMutesUpdatedEventDTO custom receivedAt
+remove_property NotificationInviteAcceptedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationInviteRejectedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property NotificationInvitedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property NotificationMarkReadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team threadId unreadCount unreadThreadMessages
+remove_property NotificationMarkUnreadEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team threadId unreadCount unreadThreadMessages
+remove_property NotificationMutesUpdatedEventDTO custom receivedAt
+remove_property NotificationNewMessageEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId parentAuthor receivedAt team threadParticipants unreadCount watcherCount
+remove_property NotificationRemovedFromChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property NotificationThreadMessageNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId parentAuthor receivedAt team threadId threadParticipants unreadThreadMessages watcherCount
+remove_property PollClosedEventDTO activityId cid custom messageId receivedAt
+remove_property PollDeletedEventDTO activityId cid custom messageId receivedAt
+remove_property PollUpdatedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVoteCastedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVoteChangedEventDTO activityId cid custom messageId receivedAt
+remove_property PollVoteRemovedEventDTO activityId cid custom messageId receivedAt
+remove_property ReactionDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
+remove_property ReactionNewEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
+remove_property ReactionUpdatedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team
+remove_property ReminderCreatedEventDTO cid custom parentId receivedAt userId
+remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
+remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
+remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
+remove_property ThreadUpdatedEventDTO channelId channelType cid custom receivedAt
+remove_property TypingStartEventDTO channelId channelType custom receivedAt
+remove_property TypingStopEventDTO channelId channelType custom receivedAt
+remove_property UserBannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt reviewQueueItemId team totalBans
+remove_property UserMessagesDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
+remove_property UserPresenceChangedEventDTO custom receivedAt
+remove_property UserRequest invisible language privacySettings
+remove_property UserUnbannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType createdBy custom receivedAt shadow team
+remove_property UserUpdatedEventDTO custom receivedAt
+remove_property UserWatchingStartEventDTO channelId channelType custom receivedAt
+remove_property UserWatchingStopEventDTO channelId channelType custom receivedAt
 
 remove_type() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
@@ -990,7 +1188,7 @@ deprecate_raw_representable_value PushPreferenceInput PushPreferenceLevel mentio
 apply_directional_coding_conformances() {
   local encodable_csv decodable_csv codable_csv
   encodable_csv="$(IFS=,; echo "${encodable_only_models[*]}")"
-  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]}")"
+  decodable_csv="$(IFS=,; echo "${decodable_only_models[*]},${allowed_events[*]/%/DTO}")"
   codable_csv="$(IFS=,; echo "${codable_models[*]}")"
 
   python3 - \
@@ -1068,10 +1266,11 @@ for direction, names in groups.items():
             raise SystemExit(f"{name} retains an encoding conformance")
 
         text = "".join(output)
-        # Without deprecated accessors left (e.g. after remove_property), synthesis works again.
+        # Without deprecated accessors left (e.g. after remove_property), synthesis works again,
+        # except for WSEvent, which decodes by its `type` discriminator.
         has_deprecated = re.search(r"^\s*var \w+: .* \{ _\w+ \}$", text, flags=re.M)
         for coder_direction, coder in unused_coder.items():
-            if coder_direction == direction or not has_deprecated:
+            if coder_direction == direction or not (has_deprecated or name == "WSEvent"):
                 text = re.sub(
                     rf"\n?^    (?:public )?{coder} \{{\n.*?^    \}}\n",
                     "",
@@ -1107,52 +1306,7 @@ strip_streamcore_imports
 # 5. Format.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-# 6. Inject the existing v1 SDK endpoint paths into the generated EndpointPath enum.
-#    The OpenAPI generator owns v2 paths; these v1 cases keep the hand-written
-#    endpoint factories compiling while each endpoint migrates incrementally.
-inject_v1_endpoint_paths() {
-  local file="$OUTPUT_DIR_CHAT/APIs/DefaultEndpoints.swift"
-  local cases_file values_file
-  cases_file="$(mktemp)"
-  values_file="$(mktemp)"
-  trap 'rm -f "$cases_file" "$values_file"' RETURN
-
-  cat > "$cases_file" <<'EOF'
-    case custom(String)
-    case connect
-    case sync
-    case guest
-
-EOF
-
-  cat > "$values_file" <<'EOF'
-        case let .custom(path): return path
-        case .connect: return "connect"
-        case .sync: return "sync"
-        case .guest: return "guest"
-
-EOF
-
-  python3 - "$file" "$cases_file" "$values_file" <<'PY'
-import pathlib
-import sys
-
-file_path = pathlib.Path(sys.argv[1])
-cases = pathlib.Path(sys.argv[2]).read_text()
-values = pathlib.Path(sys.argv[3]).read_text()
-text = file_path.read_text()
-
-enum_marker = "enum EndpointPath: Codable {\n"
-switch_marker = "        switch self {\n"
-
-text = text.replace(enum_marker, enum_marker + cases, 1)
-text = text.replace(switch_marker, switch_marker + values, 1)
-file_path.write_text(text)
-PY
-}
-inject_v1_endpoint_paths
-
-# 7. Generate a v1/v2 compatible `init(from:)` and splice it into the model's class
+# 6. Generate a lenient `init(from:)` and splice it into the model's class
 #    body, where a `required` initializer is allowed. It replaces any `init(from:)` the
 #    generator emitted itself (e.g. for models with deprecated fields).
 splice_generated_decoders() {
@@ -1186,7 +1340,7 @@ PY
 sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 splice_generated_decoders
 
-# 8. Wrap generated OpenAPI function declarations that exceed the maximum width.
+# 7. Wrap generated OpenAPI function declarations that exceed the maximum width.
 swiftformat "$OUTPUT_DIR_CHAT" \
   --rules wrapArguments \
   --wrapparameters before-first \

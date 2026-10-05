@@ -21,11 +21,17 @@ public struct UnknownUserEvent: Event, Hashable {
 }
 
 extension UnknownUserEvent: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case user
+        case createdAt = "created_at"
+    }
+
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
-            type: try container.decode(EventType.self, forKey: .eventType),
+            type: try container.decode(EventType.self, forKey: .type),
             userId: try container.decode(UserPayload.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder
@@ -45,7 +51,8 @@ public extension UnknownUserEvent {
     func payload<T: CustomEventPayload>(ofType: T.Type) -> T? {
         guard
             T.eventType == type,
-            let payloadData = try? JSONEncoder.default.encode(payload),
+            case let .dictionary(custom)? = payload["custom"],
+            let payloadData = try? JSONEncoder.default.encode(custom),
             let payload = try? JSONDecoder.default.decode(T.self, from: payloadData)
         else { return nil }
 
