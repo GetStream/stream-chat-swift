@@ -5,7 +5,6 @@
 import Foundation
 
 enum DurationFormatting {
-    /// Whole minutes and seconds in their narrowest form, such as "1m 5s".
     static func minutesAndSeconds(_ seconds: Int, locale: Locale = .autoupdatingCurrent) -> String {
         if #available(iOS 16.0, *) {
             return Duration.seconds(seconds)

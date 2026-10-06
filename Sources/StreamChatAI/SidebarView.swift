@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 public struct SidebarView<Menu: View, Content: View>: View {
@@ -14,6 +15,8 @@ public struct SidebarView<Menu: View, Content: View>: View {
     
     @State private var dragOffset: CGFloat = 0
     @State private var isDragActive = false
+
+    @Injected(\.aiAppearance.colors) private var colors
     
     private let sidebarAnimation = Animation.spring(response: 0.28, dampingFraction: 0.85)
     
@@ -52,7 +55,7 @@ public struct SidebarView<Menu: View, Content: View>: View {
                 HStack(spacing: 0) {
                     menu()
                         .frame(width: splitWidth, height: geometry.size.height)
-                        .background(Color(.systemBackground))
+                        .background(Color(colors.sidebarBackground))
                         .shadow(color: .black.opacity(0.15), radius: 12, x: 4, y: 0)
                         .simultaneousGesture(contentGesture, including: .gesture)
                     
@@ -63,7 +66,7 @@ public struct SidebarView<Menu: View, Content: View>: View {
                 .offset(x: totalOffset)
                 
                 if openProgress > 0 {
-                    Color.black.opacity(0.25 * openProgress)
+                    Color(colors.sidebarScrim).opacity(openProgress)
                         .frame(width: overlayWidth)
                         .offset(x: overlayOrigin)
                         .ignoresSafeArea()

@@ -3,6 +3,7 @@
 //
 
 import Combine
+import StreamCore
 import SwiftUI
 internal import MarkdownUI
 internal import Splash
@@ -17,6 +18,10 @@ public struct StreamingMessageView: View {
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
     @State var queue = DispatchQueue(label: "com.streamai.textview")
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     private static let supportedChartLanguages = ["json", "chart", "chartjs", "echarts", "highcharts", "vega-lite", "vegalite"]
     
@@ -53,6 +58,7 @@ public struct StreamingMessageView: View {
             }
             .onDisappear {
                 typingTimer?.invalidate()
+                typingTimer = nil
             }
             .onChange(of: characterQueue, perform: { _ in
                 if characterQueue.isEmpty && !isGenerating {
@@ -109,6 +115,7 @@ public struct StreamingMessageView: View {
     }
     
     func startTypingTimer() {
+        typingTimer?.invalidate()
         typingTimer = Timer.scheduledTimer(withTimeInterval: letterInterval, repeats: true) { _ in
             // Scheduled on the main run loop.
             MainActor.assumeIsolated {
@@ -137,13 +144,13 @@ public struct StreamingMessageView: View {
                     .foregroundColor(Color(theme.plainTextColor))
                 Spacer()
 
-                Image(systemName: "clipboard")
+                images.codeBlockCopy
                     .onTapGesture {
                         copyToClipboard(configuration.content)
                     }
             }
             .padding(.horizontal)
-            .padding(.vertical, 8)
+            .padding(.vertical, layout.spacingXs)
             .background {
                 Color(theme.backgroundColor)
             }
@@ -160,8 +167,8 @@ public struct StreamingMessageView: View {
                     .padding()
             }
         }
-        .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(Color(colors.codeBlockBackground))
+        .clipShape(RoundedRectangle(cornerRadius: layout.radiusMd))
         .markdownMargin(top: .zero, bottom: .em(0.8))
     }
 

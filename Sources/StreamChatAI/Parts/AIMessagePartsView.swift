@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 /// The steps an AI agent took while replying, in order. Show it before the reply's text.
@@ -49,9 +50,9 @@ public struct AIMessagePartsView<Content: View>: View {
 public extension AIMessagePartsView where Content == AIMessagePartView {
     /// Shows every step with `AIMessagePartView`.
     /// - Parameter approver: Who answers calls' questions on this device, to ask them.
-    init(parts: [AIMessagePart], approver: AIToolApprover? = nil, font: Font = .subheadline, colors: Colors = Colors()) {
+    init(parts: [AIMessagePart], approver: AIToolApprover? = nil, font: Font? = nil) {
         self.init(parts: parts) { part in
-            AIMessagePartView(part: part, approver: approver, font: font, colors: colors)
+            AIMessagePartView(part: part, approver: approver, font: font)
         }
     }
 }
@@ -62,28 +63,30 @@ public extension AIMessagePartsView where Content == AIMessagePartView {
 public struct AIMessagePartView: View {
     var part: AIMessagePart
     var approver: AIToolApprover?
-    var font: Font
-    var colors: Colors
+    var font: Font?
 
-    public init(part: AIMessagePart, approver: AIToolApprover? = nil, font: Font = .subheadline, colors: Colors = Colors()) {
+    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
+
+    /// - Parameter font: The font of the step, the design tokens' `subheadline` by default.
+    public init(part: AIMessagePart, approver: AIToolApprover? = nil, font: Font? = nil) {
         self.part = part
         self.approver = approver
         self.font = font
-        self.colors = colors
     }
 
     public var body: some View {
         if let reasoning = part.reasoning {
-            StreamingReasoningView(part: reasoning, font: font, colors: colors)
+            StreamingReasoningView(part: reasoning, font: font)
         } else if let call = part.toolCall {
-            VStack(alignment: .leading, spacing: 8) {
-                AIToolCallView(part: call, font: font, colors: colors)
+            VStack(alignment: .leading, spacing: layout.spacingXs) {
+                AIToolCallView(part: call, font: font)
                 if let approver {
-                    AIToolApprovalView(call: call, approver: approver, font: font, colors: colors)
+                    AIToolApprovalView(call: call, approver: approver, font: font)
                 }
             }
         } else {
-            UnsupportedPartView(font: font, colors: colors.toolCalls)
+            UnsupportedPartView(font: font ?? fonts.subheadline)
         }
     }
 }
@@ -95,8 +98,7 @@ public extension StreamingReasoningView {
         part: AIReasoningPart,
         text: String? = nil,
         footnote: String? = nil,
-        font: Font = .subheadline,
-        colors: Colors = Colors()
+        font: Font? = nil
     ) {
         self.init(
             text: text ?? part.preview ?? part.summary ?? "",
@@ -104,8 +106,7 @@ public extension StreamingReasoningView {
             duration: part.duration,
             summary: part.summary,
             footnote: footnote,
-            font: font,
-            colors: colors
+            font: font
         )
     }
 }
@@ -113,37 +114,41 @@ public extension StreamingReasoningView {
 /// One tool call: what it is doing, where it runs, and how it went.
 public struct AIToolCallView: View {
     var part: AIToolCallPart
-    var font: Font
-    var colors: Colors.ToolCalls
+    var font: Font?
 
-    public init(part: AIToolCallPart, font: Font = .subheadline, colors: Colors = Colors()) {
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
+
+    /// - Parameter font: The font of the call, the design tokens' `subheadline` by default.
+    public init(part: AIToolCallPart, font: Font? = nil) {
         self.part = part
         self.font = font
-        self.colors = colors.toolCalls
     }
 
     public var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        HStack(alignment: .firstTextBaseline, spacing: layout.spacingXs) {
             icon
                 .frame(width: 16)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: layout.spacingXxxs) {
                 Text(title)
-                    .foregroundStyle(colors.title)
+                    .foregroundStyle(Color(colors.toolCallTitle))
                 if let detail {
                     Text(detail)
-                        .font(.caption)
-                        .foregroundStyle(colors.detail)
+                        .font(fonts.caption1)
+                        .foregroundStyle(Color(colors.toolCallDetail))
                         .lineLimit(2)
                 }
             }
-            Spacer(minLength: 8)
+            Spacer(minLength: layout.spacingXs)
             if let duration = part.duration, part.status.isFinished {
                 Text(Self.format(duration))
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(colors.detail)
+                    .font(fonts.caption1.monospacedDigit())
+                    .foregroundStyle(Color(colors.toolCallDetail))
             }
         }
-        .font(font)
+        .font(font ?? fonts.subheadline)
         .accessibilityElement(children: .combine)
     }
 
@@ -168,21 +173,21 @@ public struct AIToolCallView: View {
     @ViewBuilder private var icon: some View {
         switch part.status {
         case .awaitingApproval:
-            Image(systemName: "hand.raised")
-                .foregroundStyle(colors.accent)
-                .modifier(Shimmer(isActive: true, highlight: colors.title))
+            images.toolCallAwaitingApproval
+                .foregroundStyle(Color(colors.toolCallAccent))
+                .modifier(Shimmer(isActive: true, highlight: Color(colors.toolCallTitle)))
         case .awaitingClient:
-            Image(systemName: "iphone")
-                .foregroundStyle(colors.accent)
-                .modifier(Shimmer(isActive: true, highlight: colors.title))
+            images.toolCallAwaitingDevice
+                .foregroundStyle(Color(colors.toolCallAccent))
+                .modifier(Shimmer(isActive: true, highlight: Color(colors.toolCallTitle)))
         case .completed:
-            Image(systemName: "checkmark").font(.caption.weight(.bold)).foregroundStyle(colors.success)
+            images.toolCallCompleted.font(fonts.caption1.weight(.bold)).foregroundStyle(Color(colors.toolCallSuccess))
         case .failed:
-            Image(systemName: "exclamationmark").font(.caption.weight(.bold)).foregroundStyle(colors.failure)
+            images.toolCallFailed.font(fonts.caption1.weight(.bold)).foregroundStyle(Color(colors.toolCallFailure))
         case .cancelled:
-            Image(systemName: "xmark").font(.caption.weight(.bold)).foregroundStyle(colors.detail)
+            images.toolCallCancelled.font(fonts.caption1.weight(.bold)).foregroundStyle(Color(colors.toolCallDetail))
         default:
-            ProgressView().controlSize(.mini).tint(colors.accent)
+            ProgressView().controlSize(.mini).tint(Color(colors.toolCallAccent))
         }
     }
 
@@ -194,11 +199,17 @@ public struct AIToolCallView: View {
 /// A step from a newer SDK: say that something happened without guessing what.
 struct UnsupportedPartView: View {
     var font: Font
-    var colors: Colors.ToolCalls
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
 
     var body: some View {
-        Label(L10n.ToolCall.unsupported, systemImage: "sparkles")
-            .font(font)
-            .foregroundStyle(colors.detail)
+        Label {
+            Text(L10n.ToolCall.unsupported)
+        } icon: {
+            images.unsupportedPart
+        }
+        .font(font)
+        .foregroundStyle(Color(colors.toolCallDetail))
     }
 }

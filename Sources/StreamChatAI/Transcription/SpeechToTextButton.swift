@@ -2,6 +2,8 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import Combine
+import StreamCore
 import SwiftUI
 
 public struct SpeechToTextButton: View {
@@ -9,7 +11,10 @@ public struct SpeechToTextButton: View {
 
     private var locale: Locale
     private var silenceTimeout: Double
-    private let colors: Colors
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var onTranscriptChange: (String) -> Void
 
@@ -17,18 +22,16 @@ public struct SpeechToTextButton: View {
         speechHandler: SpeechHandler? = nil,
         locale: Locale? = nil,
         silenceTimeout: Double = 3.0,
-        colors: Colors = Colors(),
         onTranscriptChange: @escaping (String) -> Void = { _ in }
     ) {
         self.locale = locale ?? Locale.current
         self.silenceTimeout = silenceTimeout
-        self.colors = colors
         self.onTranscriptChange = onTranscriptChange
         _speech = StateObject(wrappedValue: speechHandler ?? .init())
     }
 
     public var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: layout.spacingXl) {
             Button {
                 if speech.isRecording {
                     speech.stop()
@@ -36,16 +39,25 @@ public struct SpeechToTextButton: View {
                     speech.start()
                 }
             } label: {
-                Image(systemName: speech.isRecording ? "stop.circle" : "mic")
-                    .foregroundStyle(colors.transcription.icon)
+                (speech.isRecording ? images.composerStopDictation : images.composerStartDictation)
+                    .foregroundStyle(Color(colors.composerIcon))
             }
         }
         .onAppear {
             speech.silenceTimeout = silenceTimeout
             speech.locale = locale
         }
-        .onReceive(speech.$transcript) { newValue in
+        .onReceive(Self.transcripts(speech.$transcript)) { newValue in
             onTranscriptChange(newValue)
         }
+    }
+
+    // The publisher starts with the empty transcript, and dictation clears it as it starts.
+    // Forwarding either would wipe what is already in the field.
+    static func transcripts(_ transcript: Published<String>.Publisher) -> AnyPublisher<String, Never> {
+        transcript
+            .dropFirst()
+            .filter { !$0.isEmpty }
+            .eraseToAnyPublisher()
     }
 }

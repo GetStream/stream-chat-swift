@@ -64,6 +64,8 @@ let package = Package(
         .target(
             name: "StreamChatAI",
             dependencies: [
+                .product(name: "StreamCore", package: "stream-core-swift"),
+                .product(name: "StreamCoreUI", package: "stream-core-swift"),
                 .product(name: "Splash", package: "Splash"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui")
             ],

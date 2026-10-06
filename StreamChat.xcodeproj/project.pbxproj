@@ -50,6 +50,8 @@
 		84114A913073E3E10035A01F /* Splash in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A8F3073E3E10035A01F /* Splash */; };
 		84114A923073E3E10035A01F /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A903073E3E10035A01F /* MarkdownUI */; };
 		84114A933073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
+		84114A983073E3E10035A01F /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A963073E3E10035A01F /* StreamCore */; };
+		84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A973073E3E10035A01F /* StreamCoreUI */; };
 		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		84790E9F2AC1D346003AFF1C /* DemoShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 84790E952AC1D346003AFF1C /* DemoShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1231,9 +1233,11 @@
 				"/Localized: StreamChatCommonUI/Resources/Localizable.stringsdict",
 				StreamChat/Info.plist,
 				StreamChatAI/AITypingIndicator.swift,
+				"StreamChatAI/Appearance/AIAppearance+Colors.swift",
+				"StreamChatAI/Appearance/AIAppearance+Images.swift",
+				StreamChatAI/Appearance/AIAppearance.swift,
 				StreamChatAI/Charts.swift,
 				StreamChatAI/CodeSyntaxHighlighter.swift,
-				StreamChatAI/Colors.swift,
 				StreamChatAI/Composer/ComposerView.swift,
 				StreamChatAI/Composer/ComposerViewFactory.swift,
 				StreamChatAI/Composer/ComposerViewModel.swift,
@@ -1257,6 +1261,7 @@
 				StreamChatAI/Transcription/SpeechHandler.swift,
 				StreamChatAI/Transcription/SpeechToTextButton.swift,
 				StreamChatAI/Utils/DurationFormatting.swift,
+				StreamChatAI/Utils/ExportedModules.swift,
 				StreamChatCommonUI/.swiftgen.yml,
 				StreamChatCommonUI/Appearance.swift,
 				"StreamChatCommonUI/Appearance+ColorPalette.swift",
@@ -1972,9 +1977,11 @@
 			membershipExceptions = (
 				"/Localized: StreamChatAI/Resources/Localizable.strings",
 				StreamChatAI/AITypingIndicator.swift,
+				"StreamChatAI/Appearance/AIAppearance+Colors.swift",
+				"StreamChatAI/Appearance/AIAppearance+Images.swift",
+				StreamChatAI/Appearance/AIAppearance.swift,
 				StreamChatAI/Charts.swift,
 				StreamChatAI/CodeSyntaxHighlighter.swift,
-				StreamChatAI/Colors.swift,
 				StreamChatAI/Composer/ComposerView.swift,
 				StreamChatAI/Composer/ComposerViewFactory.swift,
 				StreamChatAI/Composer/ComposerViewModel.swift,
@@ -1997,6 +2004,7 @@
 				StreamChatAI/Transcription/SpeechHandler.swift,
 				StreamChatAI/Transcription/SpeechToTextButton.swift,
 				StreamChatAI/Utils/DurationFormatting.swift,
+				StreamChatAI/Utils/ExportedModules.swift,
 			);
 			publicHeaders = (
 				StreamChatAI/StreamChatAI.h,
@@ -2006,11 +2014,13 @@
 		84114A8C3073E3E10035A01F /* Exceptions for "Tests" folder in "StreamChatAITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				StreamChatAITests/Appearance/AIAppearance_Tests.swift,
 				StreamChatAITests/ChartData_Tests.swift,
 				StreamChatAITests/ChartSpecParsing_Tests.swift,
 				StreamChatAITests/Composer/ChatOption_Tests.swift,
 				StreamChatAITests/Composer/ComposerViewFactory_Tests.swift,
 				StreamChatAITests/Composer/ComposerViewModel_Tests.swift,
+				StreamChatAITests/Composer/PhotoRequest_Tests.swift,
 				StreamChatAITests/Localization_Tests.swift,
 				StreamChatAITests/LocalModel/AILocalModel_Tests.swift,
 				StreamChatAITests/Parts/AIClientToolResult_Tests.swift,
@@ -2021,6 +2031,7 @@
 				StreamChatAITests/StreamingReasoningView_Tests.swift,
 				StreamChatAITests/Tools/AIJSONValue_Tests.swift,
 				StreamChatAITests/Tools/ClientToolRegistry_Tests.swift,
+				StreamChatAITests/Transcription/SpeechToTextButton_Tests.swift,
 				StreamChatAITests/Utils/DurationFormatting_Tests.swift,
 			);
 			target = 84114A7B3073E3E10035A01F /* StreamChatAITests */;
@@ -2198,6 +2209,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				84114A923073E3E10035A01F /* MarkdownUI in Frameworks */,
+				84114A983073E3E10035A01F /* StreamCore in Frameworks */,
+				84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */,
 				84114A913073E3E10035A01F /* Splash in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2630,6 +2643,8 @@
 			packageProductDependencies = (
 				84114A8F3073E3E10035A01F /* Splash */,
 				84114A903073E3E10035A01F /* MarkdownUI */,
+				84114A963073E3E10035A01F /* StreamCore */,
+				84114A973073E3E10035A01F /* StreamCoreUI */,
 			);
 			productName = StreamChatAI;
 			productReference = 84114A743073E3E10035A01F /* StreamChatAI.framework */;
@@ -5835,6 +5850,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 84114A8E3073E3E10035A01F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		84114A963073E3E10035A01F /* StreamCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
+			productName = StreamCore;
+		};
+		84114A973073E3E10035A01F /* StreamCoreUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
+			productName = StreamCoreUI;
 		};
 		A3BD486A281FD4500090D511 /* OHHTTPStubs */ = {
 			isa = XCSwiftPackageProductDependency;

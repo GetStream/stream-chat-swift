@@ -106,6 +106,8 @@ Bring your AI experience to life with Stream’s frontend components, available 
 
 Featuring natural streaming message animation, full markdown and code rendering, charts, tables, thinking indicators, text-to-speech, and a completely flexible composer. Designed to work seamlessly with Stream Chat’s frontend SDKs, it’s everything you need to ship a premium AI chat interface out of the box.
 
+The components are styled with `AIAppearance`, which builds on the design tokens shared by Stream's SDKs, so the AI components reskin together with Chat and Video.
+
 StreamChatAI requires iOS 15 or later. When you add it with Swift Package Manager, build with Xcode 27 or later.
 
 StreamChatAI doesn't depend on the Model Context Protocol SDK. Client tools are described with `ClientToolDefinition`, which reads the same JSON as an MCP tool, so a tool from the MCP SDK converts with `try ClientToolDefinition(encoding: tool)`.

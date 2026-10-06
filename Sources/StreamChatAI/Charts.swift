@@ -537,6 +537,7 @@ func pieData(from spec: USpec) -> [PieDatum] {
     return pts.map { PieDatum(label: $0.x, value: $0.y, pct: $0.y / total) }
 }
 
+@available(iOS 16.0, *)
 private struct PieChart: View {
     let spec: USpec
     var body: some View {
@@ -548,6 +549,16 @@ private struct PieChart: View {
                         .foregroundStyle(by: .value("Category", d.label))
                         .annotation(position: .overlay, alignment: .center) {
                             if d.pct >= 0.08 { Text("\(d.label) \(Int(round(d.pct * 100)))%").font(.caption2).bold() }
+                        }
+                }
+                .chartLegend(.visible)
+            } else {
+                // Swift Charts draws sectors from iOS 17, so iOS 16 shows each share as a bar.
+                Chart(data) { d in
+                    BarMark(x: .value("Category", d.label), y: .value("Value", d.value))
+                        .foregroundStyle(by: .value("Category", d.label))
+                        .annotation(position: .top) {
+                            Text("\(Int(round(d.pct * 100)))%").font(.caption2).bold()
                         }
                 }
                 .chartLegend(.visible)

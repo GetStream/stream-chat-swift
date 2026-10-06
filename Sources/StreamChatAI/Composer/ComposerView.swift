@@ -4,6 +4,7 @@
 
 import Photos
 import PhotosUI
+import StreamCore
 import SwiftUI
 import UIKit
 
@@ -49,7 +50,8 @@ public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
     @StateObject var viewModel: ComposerViewModel
     @StateObject var speechHandler: SpeechHandler = .init()
 
-    private let colors: Colors
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var isGenerating: Bool
 
@@ -59,14 +61,12 @@ public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
     public init(
         viewFactory: ComposerFactory = DefaultViewFactory.shared,
         viewModel: ComposerViewModel? = nil,
-        colors: Colors = Colors(),
         isGenerating: Bool = false,
         onMessageSend: @escaping (MessageData) -> Void,
         onStopGenerating: (() -> Void)? = nil
     ) {
         self.viewFactory = viewFactory
         _viewModel = StateObject(wrappedValue: viewModel ?? ComposerViewModel())
-        self.colors = colors
         self.onMessageSend = onMessageSend
         self.isGenerating = isGenerating
         self.onStopGenerating = onStopGenerating
@@ -75,18 +75,15 @@ public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
     public var body: some View {
         HStack {
             viewFactory.makeLeadingComposerView(
-                options: .init(
-                    colors: colors, onTap: {
-                        viewModel.sheetShown = true
-                    }
-                )
+                options: .init(onTap: {
+                    viewModel.sheetShown = true
+                })
             )
             
             viewFactory.makeComposerInputView(
                 options: .init(
                     viewModel: viewModel,
                     speechHandler: speechHandler,
-                    colors: colors,
                     isGenerating: isGenerating,
                     onMessageSend: onMessageSend,
                     onStopGenerating: onStopGenerating
@@ -95,8 +92,8 @@ public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
 
             viewFactory.makeTrailingComposerView(options: .init())
         }
-        .padding(.all, 8)
-        .foregroundStyle(colors.composer.containerForeground)
+        .padding(.all, layout.spacingXs)
+        .foregroundStyle(Color(colors.composerText))
         .sheet(isPresented: $viewModel.sheetShown) {
             viewFactory.makeComposerPickerView(options: .init(viewModel: viewModel))
                 .presentationDetents([.medium, .large])
@@ -111,11 +108,13 @@ public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
 /// returns this view. Supply your own factory method to replace it.
 @available(iOS 16, *)
 public struct AddAttachmentsButton: View {
-    var colors: Colors
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.layout) private var layout
+
     var onTap: () -> Void
     
-    public init(colors: Colors, onTap: @escaping () -> Void) {
-        self.colors = colors
+    public init(onTap: @escaping () -> Void) {
         self.onTap = onTap
     }
     
@@ -123,12 +122,12 @@ public struct AddAttachmentsButton: View {
         Button {
             onTap()
         } label: {
-            Image(systemName: "plus")
-                .foregroundStyle(colors.composer.attachmentButtonIcon)
+            images.composerAddAttachment
+                .foregroundStyle(Color(colors.composerAttachmentButtonIcon))
                 .fontWeight(.semibold)
         }
-        .padding(.all, 12)
-        .background(colors.composer.attachmentButtonBackground)
+        .padding(.all, layout.spacingSm)
+        .background(Color(colors.composerAttachmentButtonBackground))
         .clipShape(.circle)
     }
 }
@@ -150,7 +149,10 @@ public struct ComposerInputView<TrailingView: View>: View {
     @ObservedObject var viewModel: ComposerViewModel
     @ObservedObject var speechHandler: SpeechHandler
 
-    private let colors: Colors
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var isGenerating: Bool
 
@@ -165,7 +167,6 @@ public struct ComposerInputView<TrailingView: View>: View {
     public init(
         viewModel: ComposerViewModel,
         speechHandler: SpeechHandler,
-        colors: Colors,
         isGenerating: Bool,
         trailingView: TrailingView,
         onMessageSend: @escaping (MessageData) -> Void,
@@ -173,7 +174,6 @@ public struct ComposerInputView<TrailingView: View>: View {
     ) {
         self.viewModel = viewModel
         self.speechHandler = speechHandler
-        self.colors = colors
         self.isGenerating = isGenerating
         self.trailingView = trailingView
         self.onMessageSend = onMessageSend
@@ -181,10 +181,10 @@ public struct ComposerInputView<TrailingView: View>: View {
     }
     
     public var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: layout.spacingMd) {
             if !viewModel.attachments.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: layout.spacingSm) {
                         ForEach(viewModel.attachments, id: \.self) { url in
                             SelectedAttachmentThumbnail(url: url) {
                                 withAnimation {
@@ -201,19 +201,19 @@ public struct ComposerInputView<TrailingView: View>: View {
                     HStack {
                         Image(systemName: selectedChatOption.icon)
                         Text(selectedChatOption.shortTitle)
-                            .font(.headline)
+                            .font(fonts.headline)
                         Button {
                             withAnimation {
                                 viewModel.selectedChatOption = nil
                             }
                         } label: {
-                            Image(systemName: "xmark")
+                            images.composerRemove
                         }
                     }
-                    .foregroundStyle(colors.composer.selectedOptionForeground)
-                    .padding(.all, 8)
-                    .background(colors.composer.selectedOptionBackground)
-                    .cornerRadius(16)
+                    .foregroundStyle(Color(colors.composerChatOptionText))
+                    .padding(.all, layout.spacingXs)
+                    .background(Color(colors.composerChatOptionBackground))
+                    .cornerRadius(layout.radiusXl)
                     
                     Spacer()
                 }
@@ -237,7 +237,7 @@ public struct ComposerInputView<TrailingView: View>: View {
                             speechHandler.stop()
                         }
                     } label: {
-                        Image(systemName: "arrow.up.circle.fill")
+                        images.composerSend
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 22)
@@ -247,16 +247,16 @@ public struct ComposerInputView<TrailingView: View>: View {
                     Button {
                         onStopGenerating?()
                     } label: {
-                        Image(systemName: "stop.circle")
-                            .foregroundStyle(colors.transcription.icon)
+                        images.composerStopGenerating
+                            .foregroundStyle(Color(colors.composerIcon))
                     }
                     .opacity(isGenerating ? 1 : 0)
                 }
             }
         }
-        .padding(.all, 12)
-        .background(colors.composer.containerBackground)
-        .cornerRadius(24)
+        .padding(.all, layout.spacingSm)
+        .background(Color(colors.composerBackground))
+        .cornerRadius(layout.radius3xl)
         .onAppear {
             if viewModel.isTextFieldFocused {
                 isFocused = true
@@ -283,7 +283,6 @@ public extension ComposerInputView where TrailingView == SpeechToTextButton {
     init(
         viewModel: ComposerViewModel,
         speechHandler: SpeechHandler,
-        colors: Colors,
         isGenerating: Bool,
         onMessageSend: @escaping (MessageData) -> Void,
         onStopGenerating: (() -> Void)? = nil
@@ -291,9 +290,8 @@ public extension ComposerInputView where TrailingView == SpeechToTextButton {
         self.init(
             viewModel: viewModel,
             speechHandler: speechHandler,
-            colors: colors,
             isGenerating: isGenerating,
-            trailingView: SpeechToTextButton(speechHandler: speechHandler, colors: colors) { newText in
+            trailingView: SpeechToTextButton(speechHandler: speechHandler) { newText in
                 viewModel.text = newText
             },
             onMessageSend: onMessageSend,
@@ -341,9 +339,17 @@ struct ComposerPickerView: View {
     @StateObject private var photoLibrary = PhotoLibraryService()
     @State private var allPhotosSelection: [PhotosPickerItem] = []
     @State private var cameraPresented = false
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
         
     var body: some View {
-        VStack(spacing: 16) {
+        // Read here: the picker builds its label in a Sendable closure.
+        let buttonPadding = EdgeInsets(top: layout.spacingXs, leading: layout.spacingSm, bottom: layout.spacingXs, trailing: layout.spacingSm)
+        let buttonBackground = Color(colors.attachmentPickerButtonBackground)
+        VStack(spacing: layout.spacingMd) {
             HStack {
                 Spacer()
                 PhotosPicker(
@@ -352,25 +358,24 @@ struct ComposerPickerView: View {
                     matching: .images
                 ) {
                     Text(L10n.Composer.buttonAllPhotos)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(Color(UIColor.secondarySystemBackground))
+                        .padding(buttonPadding)
+                        .background(buttonBackground)
                         .clipShape(Capsule())
                 }
                 .padding()
             }
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
+                HStack(spacing: layout.spacingSm) {
                     Button {
                         cameraPresented = true
                     } label: {
                         AttachmentTile {
-                            Image(systemName: "camera")
+                            images.attachmentPickerCamera
                                 .fontWeight(.semibold)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color(colors.attachmentPickerTileIcon))
                         }
                     }
-                    .tint(.primary)
+                    .tint(Color(colors.attachmentPickerTileIcon))
                     .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
                     
                     ForEach(photoLibrary.recentAssets, id: \.localIdentifier) { asset in
@@ -397,28 +402,28 @@ struct ComposerPickerView: View {
                 Divider()
                 
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 16) {
+                    LazyVStack(alignment: .leading, spacing: layout.spacingMd) {
                         ForEach(viewModel.chatOptions) { option in
                             Button {
                                 withAnimation {
                                     option.action()
                                 }
                             } label: {
-                                HStack(spacing: 16) {
+                                HStack(spacing: layout.spacingMd) {
                                     Image(systemName: option.icon)
 
                                     VStack(alignment: .leading) {
                                         Text(option.title)
-                                            .font(.headline)
+                                            .font(fonts.headline)
 
                                         Text(option.description)
-                                            .font(.subheadline)
-                                            .foregroundStyle(.gray)
+                                            .font(fonts.subheadline)
+                                            .foregroundStyle(Color(colors.attachmentPickerOptionDescription))
                                     }
                                     Spacer()
                                 }
-                                .tint(.primary)
-                                .foregroundStyle(.primary)
+                                .tint(Color(colors.attachmentPickerOptionTitle))
+                                .foregroundStyle(Color(colors.attachmentPickerOptionTitle))
                             }
                         }
                     }
@@ -543,12 +548,15 @@ private struct SelectedAttachmentThumbnail: View {
     
     @State private var image: UIImage?
     @State private var didFail = false
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
     
     var body: some View {
         ThumbnailTile(image: image, didFail: didFail)
             .overlay(alignment: .topTrailing) {
                 Button(action: onRemove) {
-                    TileBadge(systemName: "xmark", fill: Color.black.opacity(0.7))
+                    TileBadge(image: images.composerRemove, fill: Color(colors.attachmentBadgeBackground))
                         .frame(width: 22, height: 22)
                 }
                 .buttonStyle(.plain)
@@ -583,16 +591,19 @@ private struct SelectedAttachmentThumbnail: View {
 @available(iOS 16, *)
 private struct AttachmentTile<Content: View>: View {
     @ViewBuilder var content: () -> Content
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.tokens.layout) private var layout
     
     var body: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(Color(UIColor.lightGray).opacity(0.3))
+        RoundedRectangle(cornerRadius: layout.radiusXl)
+            .fill(Color(colors.attachmentPickerTileBackground))
             .overlay {
                 content()
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: layout.radiusXl))
             }
             .frame(width: 100, height: 100)
-            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .contentShape(RoundedRectangle(cornerRadius: layout.radiusXl))
     }
 }
 
@@ -601,6 +612,9 @@ private struct AttachmentTile<Content: View>: View {
 private struct ThumbnailTile: View {
     let image: UIImage?
     let didFail: Bool
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
     
     var body: some View {
         AttachmentTile {
@@ -612,9 +626,9 @@ private struct ThumbnailTile: View {
                     .allowsHitTesting(false)
                     .clipped()
             } else if didFail {
-                Image(systemName: "exclamationmark.triangle")
+                images.attachmentFailed
                     .font(.title2.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color(colors.attachmentPickerTileFailureIcon))
             } else {
                 ProgressView()
             }
@@ -625,19 +639,21 @@ private struct ThumbnailTile: View {
 /// A round badge on a tile, such as its check mark or its remove button.
 @available(iOS 16, *)
 private struct TileBadge: View {
-    let systemName: String
+    let image: Image
     let fill: Color
+
+    @Injected(\.aiAppearance.colors) private var colors
     
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color.white.opacity(0.9))
+                .fill(Color(colors.attachmentBadgeForeground).opacity(0.9))
                 .shadow(radius: 1)
             Circle()
                 .fill(fill)
-            Image(systemName: systemName)
+            image
                 .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(colors.attachmentBadgeForeground))
         }
     }
 }
@@ -645,14 +661,17 @@ private struct TileBadge: View {
 @available(iOS 16, *)
 private struct SelectionBadge: View {
     let isSelected: Bool
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
     
     var body: some View {
         ZStack {
             if isSelected {
-                TileBadge(systemName: "checkmark", fill: .accentColor)
+                TileBadge(image: images.attachmentSelected, fill: Color(colors.attachmentBadgeSelectedBackground))
             } else {
                 Circle()
-                    .stroke(Color.white, lineWidth: 2)
+                    .stroke(Color(colors.attachmentBadgeForeground), lineWidth: 2)
                     .frame(width: 16, height: 16)
             }
         }

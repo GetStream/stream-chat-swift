@@ -25,7 +25,6 @@ final class ComposerViewFactory_Tests: XCTestCase {
         ComposerInputViewOptions(
             viewModel: ComposerViewModel(),
             speechHandler: SpeechHandler(),
-            colors: Colors(),
             isGenerating: false,
             onMessageSend: { _ in },
             onStopGenerating: nil

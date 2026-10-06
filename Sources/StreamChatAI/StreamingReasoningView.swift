@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 /// A model's reasoning (its "thinking"), shown alongside its reply.
@@ -28,8 +29,12 @@ public struct StreamingReasoningView: View {
     var initiallyExpanded: Bool
     var showsLiveReasoning: Bool
     var maxExpandedHeight: CGFloat
-    var font: Font
-    var colors: Colors.Reasoning
+    var font: Font?
+
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.images) private var images
+    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
 
     /// What the reader chose by tapping the header. Until they do, the reasoning is open
     /// while the model thinks and folded once it is done.
@@ -61,8 +66,8 @@ public struct StreamingReasoningView: View {
     ///   - initiallyExpanded: Whether the reasoning is open once the model is done.
     ///   - showsLiveReasoning: Whether the reasoning is open while the model thinks.
     ///   - maxExpandedHeight: How tall the reasoning grows before it scrolls.
-    ///   - font: The font of the reasoning. The header uses it in a medium weight.
-    ///   - colors: The palette. The view uses its `reasoning` colors.
+    ///   - font: The font of the reasoning, the design tokens' `subheadline` by default. The
+    ///     header uses it in a medium weight.
     public init(
         text: String,
         isThinking: Bool,
@@ -72,8 +77,7 @@ public struct StreamingReasoningView: View {
         initiallyExpanded: Bool = false,
         showsLiveReasoning: Bool = true,
         maxExpandedHeight: CGFloat = 260,
-        font: Font = .subheadline,
-        colors: Colors = Colors()
+        font: Font? = nil
     ) {
         self.text = text
         self.isThinking = isThinking
@@ -84,7 +88,6 @@ public struct StreamingReasoningView: View {
         self.showsLiveReasoning = showsLiveReasoning
         self.maxExpandedHeight = maxExpandedHeight
         self.font = font
-        self.colors = colors.reasoning
         let initial = Self.opens(isThinking: isThinking, showsLiveReasoning: showsLiveReasoning, initiallyExpanded: initiallyExpanded)
         // Live reasoning joins the layout at no height and unfolds once it appears, rather
         // than pushing everything below it aside in one frame.
@@ -104,17 +107,17 @@ public struct StreamingReasoningView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             if mounted && !text.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    ReasoningPanel(text: text, isLive: isThinking, maxHeight: maxExpandedHeight, color: colors.text)
+                VStack(alignment: .leading, spacing: layout.spacingXs) {
+                    ReasoningPanel(text: text, isLive: isThinking, maxHeight: maxExpandedHeight, color: Color(colors.reasoningText))
                     // Only once the reader opens it: appearing as the reasoning folds by itself
                     // would push the reply down just as it starts.
                     if let footnote, !isThinking, choice == true || initiallyExpanded {
                         Text(footnote)
                             .font(.caption2)
-                            .foregroundStyle(colors.footnote)
+                            .foregroundStyle(Color(colors.reasoningFootnote))
                     }
                 }
-                .padding(.top, 8)
+                .padding(.top, layout.spacingXs)
                 // Folding shrinks the panel in place rather than removing it, so what sits
                 // below glides up with it instead of jumping.
                 .frame(height: open ? nil : 0, alignment: .top)
@@ -123,10 +126,10 @@ public struct StreamingReasoningView: View {
                 .accessibilityHidden(!open)
             }
         }
-        .font(font)
-        .padding(.leading, 12)
+        .font(resolvedFont)
+        .padding(.leading, layout.spacingSm)
         .overlay(alignment: .leading) {
-            Capsule().fill(isThinking ? colors.shimmer : colors.rule).frame(width: 2)
+            Capsule().fill(Color(isThinking ? colors.reasoningShimmer : colors.reasoningRule)).frame(width: 2)
         }
         .onAppear {
             if mounted && !open && choice == nil { setOpen(true, unfolding: true) }
@@ -177,7 +180,7 @@ public struct StreamingReasoningView: View {
             setOpen(!open)
         } label: {
             HStack(spacing: 6) {
-                ThinkingIcon(isActive: isThinking)
+                ThinkingIcon(image: images.reasoning, isActive: isThinking)
                 Group {
                     if isThinking {
                         ThinkingTitle(duration: duration)
@@ -185,21 +188,21 @@ public struct StreamingReasoningView: View {
                         Text(title)
                     }
                 }
-                .modifier(Shimmer(isActive: isThinking, highlight: colors.shimmer))
+                .modifier(Shimmer(isActive: isThinking, highlight: Color(colors.reasoningShimmer)))
                 .layoutPriority(1)
                 if let summary, !isThinking, !isOpen {
                     Text(summary)
                         .fontWeight(.regular)
-                        .foregroundStyle(colors.text.opacity(0.8))
+                        .foregroundStyle(Color(colors.reasoningText).opacity(0.8))
                         .lineLimit(1)
                         .truncationMode(.tail)
                 }
-                Image(systemName: "chevron.right")
+                images.reasoningDisclosure
                     .font(.caption2.weight(.semibold))
                     .rotationEffect(.degrees(isOpen ? 90 : 0))
             }
-            .font(font.weight(.medium))
-            .foregroundStyle(colors.title)
+            .font(resolvedFont.weight(.medium))
+            .foregroundStyle(Color(colors.reasoningTitle))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -207,6 +210,10 @@ public struct StreamingReasoningView: View {
         .accessibilityLabel([title, isThinking ? nil : summary].compactMap { $0 }.joined(separator: ". "))
         .accessibilityHint(isOpen ? L10n.Reasoning.hideHint : L10n.Reasoning.showHint)
         .accessibilityAddTraits(.isButton)
+    }
+
+    private var resolvedFont: Font {
+        font ?? fonts.subheadline
     }
 
     /// "Thinking…" while the model thinks, then how long it thought.
@@ -243,15 +250,16 @@ struct ThinkingTitle: View {
 
 /// The brain, pulsing while the model thinks (on systems that animate symbols).
 struct ThinkingIcon: View {
+    var image: Image
     var isActive: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         if #available(iOS 17.0, *) {
-            Image(systemName: "brain")
+            image
                 .symbolEffect(.pulse, options: .repeating, isActive: isActive && !reduceMotion)
         } else {
-            Image(systemName: "brain")
+            image
         }
     }
 }

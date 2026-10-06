@@ -86,6 +86,31 @@ final class AIClientToolRunner_Tests: XCTestCase {
         XCTAssertEqual(attempts, 2)
     }
 
+    func test_run_whenRunnerIsReleasedWhileToolRuns_stillSendsTheResult() async {
+        final class SlowTool: AIClientTool {
+            let name = "athena_device_location"
+            var finish: CheckedContinuation<Void, Never>?
+            func run(_ call: AIToolCallPart) async -> AIClientToolResult {
+                await withCheckedContinuation { finish = $0 }
+                return .completed(["city": "Skopje"])
+            }
+        }
+        let tool = SlowTool()
+        var runner: AIClientToolRunner? = AIClientToolRunner(userID: "u_1", clientID: "ios-1", tools: [tool])
+        weak var released: AIClientToolRunner?
+        released = runner
+        var sent = 0
+
+        runner?.run(awaiting()) { _, _ in sent += 1 }
+        await settle()
+        runner = nil
+        tool.finish?.resume()
+        await settle()
+
+        XCTAssertEqual(sent, 1)
+        XCTAssertNil(released, "the runner is released once the result is sent")
+    }
+
     func test_run_whenCallIsFinished_doesNotRunTool() async {
         let tool = CountingTool()
         let runner = AIClientToolRunner(userID: "u_1", clientID: "ios-1", tools: [tool])

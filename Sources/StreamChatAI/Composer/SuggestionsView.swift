@@ -2,29 +2,31 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 public struct SuggestionsView: View {
     var suggestions: [String]
     var height: CGFloat
     var itemMaxWidth: CGFloat
-    private let colors: Colors
     var onMessageSend: (MessageData) -> Void
     
     public init(
         suggestions: [String],
         height: CGFloat = 100,
         itemMaxWidth: CGFloat = 160,
-        colors: Colors = Colors(),
         onMessageSend: @escaping (MessageData) -> Void
     ) {
         self.suggestions = suggestions
         self.height = height
         self.itemMaxWidth = itemMaxWidth
-        self.colors = colors
         self.onMessageSend = onMessageSend
     }
     
+    @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.tokens.layout) private var layout
+
     public var body: some View {
         ScrollView(.horizontal) {
             LazyHStack {
@@ -33,15 +35,15 @@ public struct SuggestionsView: View {
                         onMessageSend(.init(text: option))
                     } label: {
                         Text(option)
-                            .font(.subheadline)
-                            .foregroundColor(colors.suggestions.text)
+                            .font(fonts.subheadline)
+                            .foregroundColor(Color(colors.suggestionText))
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: itemMaxWidth)
                             .padding()
-                            .background(colors.suggestions.background)
-                            .cornerRadius(16)
+                            .background(Color(colors.suggestionBackground))
+                            .cornerRadius(layout.radiusXl)
                     }
                 }
             }

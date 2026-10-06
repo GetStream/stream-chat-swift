@@ -6,7 +6,7 @@ This repo hosts Stream's iOS Chat SDK in Swift. It provides:
 - A low-level client (**StreamChat**) for the Stream Chat API — models, networking, state, persistence
 - A UIKit-based UI SDK (**StreamChatUI**) that provides ready-made chat screens and components
 - A shared UI module (**StreamChatCommonUI**) with appearance tokens, localization, and formatters used by both UIKit and SwiftUI SDKs
-- SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It does not depend on the other modules
+- SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It depends on StreamCore (`StreamCore` and `StreamCoreUI`) but not on the other modules
 
 Agents should prioritize backwards compatibility, API stability, and high test coverage when changing code. Avoid doing any source-breaking changes without adding deprecations.
 
@@ -79,7 +79,8 @@ Sources/
     Reactions/             # Reaction types and utilities
     Resources/             # Localization files (en.lproj, etc.)
     Utils/                 # Common UI utilities
-  StreamChatAI/            # SwiftUI AI components (independent of the modules above)
+  StreamChatAI/            # SwiftUI AI components (depends only on StreamCore)
+    Appearance/            # AIAppearance: StreamCore design tokens, AI colors and images
     Composer/              # Prompt composer, view factory, suggestions
     LocalModel/            # On-device model fallback
     Parts/                 # AI message parts: reasoning, tool calls, approvals
@@ -257,6 +258,7 @@ Accessibility & UI quality
 - Ensure UIKit components have accessibility labels, traits, and dynamic type support.
 - Support both light/dark mode.
 - Use the Appearance system (`Appearance`, `Components`) for theming and configuration.
+- In StreamChatAI, take colors, fonts, spacing and icons from `AIAppearance`, never hard-coded values. Each view injects only what it reads, e.g. `@Injected(\.aiAppearance.colors) var colors`, `@Injected(\.aiAppearance.tokens.fonts) var fonts`, `@Injected(\.aiAppearance.images) var images`. A new color goes in `AIAppearance+Colors.swift`, derived from the StreamCore `DesignSystemTokens`; a new icon goes in `AIAppearance.Images`. Keep re-exporting only `DesignSystemTokens` from StreamCoreUI: the rest of it clashes with StreamChatCommonUI names such as `ImageResize` and `BoxShadow`.
 
 Testing policy
 

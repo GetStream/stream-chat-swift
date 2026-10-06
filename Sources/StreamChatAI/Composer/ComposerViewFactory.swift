@@ -52,7 +52,7 @@ public protocol ComposerViewFactory {
     /// Returns the view rendered to the left of the input field.
     ///
     /// The default implementation renders ``AddAttachmentsButton``.
-    /// - Parameter options: Colors and the tap handler that opens the attachment picker.
+    /// - Parameter options: The tap handler that opens the attachment picker.
     func makeLeadingComposerView(options: LeadingComposerViewOptions) -> LeadingComposerViewType
 
     /// The view type returned by ``makeTrailingComposerView(options:)``.
@@ -72,7 +72,7 @@ public protocol ComposerViewFactory {
     /// The default implementation renders ``ComposerInputView``.
     /// Replace this to take full control of the text-entry surface, while keeping
     /// the rest of the composer chrome intact.
-    /// - Parameter options: View model, colors, generating state, send and stop callbacks.
+    /// - Parameter options: View model, generating state, send and stop callbacks.
     func makeComposerInputView(options: ComposerInputViewOptions) -> ComposerInputViewType
 
     /// The view type returned by ``makeComposerInputTrailingView(options:)``.
@@ -83,7 +83,7 @@ public protocol ComposerViewFactory {
     ///
     /// The default implementation renders ``SpeechToTextButton``, which dictates into the
     /// field. Return `EmptyView` to leave dictation out.
-    /// - Parameter options: View model, speech handler, and colors.
+    /// - Parameter options: View model and speech handler.
     func makeComposerInputTrailingView(options: ComposerInputTrailingViewOptions) -> ComposerInputTrailingViewType
 
     /// The view type returned by ``makeComposerPickerView(options:)``.
@@ -99,7 +99,7 @@ public protocol ComposerViewFactory {
 @available(iOS 16, *)
 public extension ComposerViewFactory {
     func makeLeadingComposerView(options: LeadingComposerViewOptions) -> some View {
-        AddAttachmentsButton(colors: options.colors) {
+        AddAttachmentsButton {
             options.onTap()
         }
     }
@@ -112,13 +112,11 @@ public extension ComposerViewFactory {
         ComposerInputView(
             viewModel: options.viewModel,
             speechHandler: options.speechHandler,
-            colors: options.colors,
             isGenerating: options.isGenerating,
             trailingView: makeComposerInputTrailingView(
                 options: .init(
                     viewModel: options.viewModel,
-                    speechHandler: options.speechHandler,
-                    colors: options.colors
+                    speechHandler: options.speechHandler
                 )
             ),
             onMessageSend: options.onMessageSend,
@@ -128,8 +126,7 @@ public extension ComposerViewFactory {
 
     func makeComposerInputTrailingView(options: ComposerInputTrailingViewOptions) -> some View {
         SpeechToTextButton(
-            speechHandler: options.speechHandler,
-            colors: options.colors
+            speechHandler: options.speechHandler
         ) { newText in
             options.viewModel.text = newText
         }
@@ -155,8 +152,6 @@ public final class DefaultViewFactory: ComposerViewFactory {
 
 /// Configuration passed to ``ComposerViewFactory/makeLeadingComposerView(options:)``.
 public struct LeadingComposerViewOptions {
-    /// The color palette in use for the composer.
-    public let colors: Colors
     /// Called when the user taps the leading button to open the attachment picker.
     public var onTap: () -> Void
 }
@@ -174,8 +169,6 @@ public struct ComposerInputViewOptions {
     /// rather than letting ``ComposerInputView`` own it keeps the handler alive at the
     /// outermost view level, preventing identity resets when the input area is recreated.
     public var speechHandler: SpeechHandler
-    /// The color palette in use for the composer.
-    public let colors: Colors
     /// `true` while an AI response is being streamed; hides the send button and shows
     /// the stop-generating control.
     public let isGenerating: Bool
@@ -192,8 +185,6 @@ public struct ComposerInputTrailingViewOptions {
     public var viewModel: ComposerViewModel
     /// The shared speech handler owned by ``ComposerView``.
     public var speechHandler: SpeechHandler
-    /// The color palette in use for the composer.
-    public let colors: Colors
 }
 
 /// Configuration passed to ``ComposerViewFactory/makeComposerPickerView(options:)``.

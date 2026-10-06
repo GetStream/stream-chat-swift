@@ -98,14 +98,16 @@ public final class AIClientToolRunner {
             state.sending = true
             calls[call.id] = state
             let done = state.result
-            Task { @MainActor [weak self] in
+            // Holds the runner until the result is delivered: a runner released while its tool
+            // runs would otherwise drop the result, and a new runner would run the tool again.
+            Task { @MainActor in
                 let result: AIClientToolResult
                 if let done {
                     result = done
                 } else {
                     result = await tool.run(call)
                 }
-                await self?.deliver(result, for: call, send: send)
+                await self.deliver(result, for: call, send: send)
             }
         }
     }

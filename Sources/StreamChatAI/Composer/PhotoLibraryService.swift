@@ -3,6 +3,7 @@
 //
 
 import Photos
+import StreamCore
 import UIKit
 
 @MainActor
@@ -202,30 +203,33 @@ final class PhotoLibraryService: ObservableObject {
     }
 }
 
-/// One image manager request: it resumes its continuation once, and starts the full-size
-/// fallback once, from whichever queue Photos calls back on.
-private final class PhotoRequest<Value>: @unchecked Sendable {
-    private let lock = NSLock()
-    private var continuation: CheckedContinuation<Value, Never>?
-    private var fallbackStarted = false
+// Photos can call a request's handler several times, from any queue: the request resumes its
+// continuation once, and starts the full-size fallback once.
+final class PhotoRequest<Value>: Sendable {
+    private struct State {
+        var continuation: CheckedContinuation<Value, Never>?
+        var fallbackStarted = false
+    }
+
+    private let state: AllocatedUnfairLock<State>
 
     init(_ continuation: CheckedContinuation<Value, Never>) {
-        self.continuation = continuation
+        state = AllocatedUnfairLock(State(continuation: continuation))
     }
 
     func resume(_ value: sending Value) {
-        lock.lock()
-        let continuation = continuation
-        self.continuation = nil
-        lock.unlock()
+        let continuation = state.withLock { state in
+            defer { state.continuation = nil }
+            return state.continuation
+        }
         continuation?.resume(returning: value)
     }
 
     func startFallback() -> Bool {
-        lock.lock()
-        defer { lock.unlock() }
-        guard !fallbackStarted else { return false }
-        fallbackStarted = true
-        return true
+        state.withLock { state in
+            guard !state.fallbackStarted else { return false }
+            state.fallbackStarted = true
+            return true
+        }
     }
 }

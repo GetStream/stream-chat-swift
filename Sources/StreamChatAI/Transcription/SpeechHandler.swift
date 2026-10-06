@@ -6,6 +6,7 @@ import AVFoundation
 import Combine
 import Foundation
 import Speech
+import StreamCore
 
 @MainActor
 public final class SpeechHandler: NSObject, ObservableObject {
@@ -24,11 +25,17 @@ public final class SpeechHandler: NSObject, ObservableObject {
     private var audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let speechActivity = SpeechActivity()
+    // When the person last spoke: written from the audio thread, read on the main actor.
+    private let lastSpeech = AllocatedUnfairLock(Date.distantPast)
     private var monitorTask: Task<Void, Never>?
     private var interruptionObserver: NSObjectProtocol?
     // Incremented each session so callbacks from the previous session are ignored.
     private var sessionGeneration = 0
+    private var isStarting = false
+    private var isSessionActive = false
+    // Activating and deactivating the audio session can block for a while, so both run here,
+    // in order, off the main thread.
+    private nonisolated static let audioSessionQueue = DispatchQueue(label: "io.getstream.ai.speech-audio-session")
 
     override public init() {
         // Public init.
@@ -47,7 +54,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
     // MARK: - Recording Control
 
     public func start() {
-        guard !isRecording else { return }
+        guard !isRecording, !isStarting else { return }
         lastError = nil
 
         let currentStatus = SFSpeechRecognizer.authorizationStatus()
@@ -68,8 +75,25 @@ public final class SpeechHandler: NSObject, ObservableObject {
             return
         }
 
+        isStarting = true
+        isSessionActive = true
+        sessionGeneration += 1
+        let generation = sessionGeneration
+        Self.audioSessionQueue.async { [weak self] in
+            let activation = Result { try Self.activateAudioSession() }
+            Task { @MainActor in
+                self?.finishStarting(generation: generation, activation: activation)
+            }
+        }
+    }
+
+    private func finishStarting(generation: Int, activation: Result<Void, Error>) {
+        // A stop, or a newer start, since this one began.
+        guard isStarting, generation == sessionGeneration, let recognizer = speechRecognizer else { return }
+        isStarting = false
         do {
-            try configureAudioSession()
+            try activation.get()
+            observeInterruptions()
             let request = startRecognition(using: recognizer)
             try startAudioEngine(feeding: request)
             isRecording = true
@@ -81,6 +105,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
     }
 
     public func stop() {
+        isStarting = false
         monitorTask?.cancel()
         monitorTask = nil
 
@@ -100,19 +125,29 @@ public final class SpeechHandler: NSObject, ObservableObject {
         // Fresh engine so the next session never inherits stale AVAudioEngine state.
         audioEngine = AVAudioEngine()
 
+        // Lets other apps' audio, which the session ducked, play at full volume again.
+        if isSessionActive {
+            isSessionActive = false
+            Self.audioSessionQueue.async {
+                try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            }
+        }
+
         isRecording = false
     }
 
     // MARK: - Private helpers
 
-    private func configureAudioSession() throws {
+    private nonisolated static func activateAudioSession() throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .measurement, options: [.duckOthers])
         try session.setActive(true, options: .notifyOthersOnDeactivation)
+    }
 
+    private func observeInterruptions() {
         interruptionObserver = NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
-            object: session,
+            object: AVAudioSession.sharedInstance(),
             queue: .main
         ) { @Sendable [weak self] note in
             guard
@@ -134,7 +169,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
             onBus: 0,
             bufferSize: 1024,
             format: format,
-            block: Self.audioTap(feeding: request, activity: speechActivity)
+            block: Self.audioTap(feeding: request, lastSpeech: lastSpeech)
         )
 
         audioEngine.prepare()
@@ -150,12 +185,11 @@ public final class SpeechHandler: NSObject, ObservableObject {
         recognitionRequest = request
 
         transcript = ""
-        speechActivity.markSpeech()
+        lastSpeech.value = Date()
 
-        sessionGeneration += 1
         recognitionTask = recognizer.recognitionTask(
             with: request,
-            resultHandler: Self.recognitionHandler(for: self, generation: sessionGeneration, activity: speechActivity)
+            resultHandler: Self.recognitionHandler(for: self, generation: sessionGeneration, lastSpeech: lastSpeech)
         )
         return request
     }
@@ -166,7 +200,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 300_000_000) // 0.3s
                 guard !Task.isCancelled, let self else { break }
-                let elapsed = Date().timeIntervalSince(self.speechActivity.lastSpeechTime)
+                let elapsed = Date().timeIntervalSince(self.lastSpeech.value)
                 if elapsed >= self.silenceTimeout {
                     self.stop()
                     break
@@ -180,7 +214,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
 
     private nonisolated static func audioTap(
         feeding request: SFSpeechAudioBufferRecognitionRequest,
-        activity: SpeechActivity
+        lastSpeech: AllocatedUnfairLock<Date>
     ) -> AVAudioNodeTapBlock {
         { buffer, _ in
             request.append(buffer)
@@ -189,7 +223,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
             var sum: Float = 0
             for i in 0..<frameCount { sum += channelData[i] * channelData[i] }
             if sqrt(sum / Float(frameCount)) > 0.01 {
-                activity.markSpeech()
+                lastSpeech.value = Date()
             }
         }
     }
@@ -197,12 +231,12 @@ public final class SpeechHandler: NSObject, ObservableObject {
     private nonisolated static func recognitionHandler(
         for handler: SpeechHandler,
         generation: Int,
-        activity: SpeechActivity
+        lastSpeech: AllocatedUnfairLock<Date>
     ) -> (SFSpeechRecognitionResult?, Error?) -> Void {
         { [weak handler] result, error in
             let text = result?.bestTranscription.formattedString ?? ""
             if !text.isEmpty {
-                activity.markSpeech()
+                lastSpeech.value = Date()
             }
             Task { @MainActor in
                 guard let handler, handler.sessionGeneration == generation else { return }
@@ -214,24 +248,6 @@ public final class SpeechHandler: NSObject, ObservableObject {
                 }
             }
         }
-    }
-}
-
-/// When the person last spoke: written from the audio thread, read on the main actor.
-private final class SpeechActivity: @unchecked Sendable {
-    private let lock = NSLock()
-    private var lastSpeech = Date.distantPast
-
-    var lastSpeechTime: Date {
-        lock.lock()
-        defer { lock.unlock() }
-        return lastSpeech
-    }
-
-    func markSpeech() {
-        lock.lock()
-        lastSpeech = Date()
-        lock.unlock()
     }
 }
 
