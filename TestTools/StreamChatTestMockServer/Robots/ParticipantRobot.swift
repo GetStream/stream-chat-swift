@@ -44,6 +44,13 @@ public class ParticipantRobot {
         return self
     }
 
+    /// Marks the user's messages in the current channel as delivered, but not read, by the participant.
+    @discardableResult
+    public func markMessagesDelivered() -> ParticipantRobot {
+        _ = mockServer.postRequest(endpoint: "participant/delivered")
+        return self
+    }
+
     @discardableResult
     public func readMessage() -> ParticipantRobot {
         _ = mockServer.postRequest(endpoint: "participant/read")

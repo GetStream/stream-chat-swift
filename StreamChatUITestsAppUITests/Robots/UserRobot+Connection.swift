@@ -11,4 +11,17 @@ extension UserRobot {
         XCTAssertFalse(ChannelListPage.userAvatar.exists, "Channel list is still shown", file: file, line: line)
         return self
     }
+
+    @discardableResult
+    func loginAsSecondUser() -> Self {
+        StartPage.startAsSecondUserButton.safeTap()
+        return self
+    }
+
+    @discardableResult
+    func assertChannelListIsLoading(file: StaticString = #filePath, line: UInt = #line) -> Self {
+        XCTAssertTrue(ChannelListPage.loadingView.wait().exists, "Channel list loading view is not shown", file: file, line: line)
+        XCTAssertEqual(ChannelListPage.cells.count, 0, "Channel list is already loaded", file: file, line: line)
+        return self
+    }
 }

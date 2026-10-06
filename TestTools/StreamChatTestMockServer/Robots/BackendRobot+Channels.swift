@@ -41,6 +41,14 @@ public extension BackendRobot {
         return self
     }
 
+    /// Mutes the current channel for the app user as a server-side action.
+    @discardableResult
+    func muteChannel() -> BackendRobot {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "mute_channel")
+        return self
+    }
+
     /// Adds a member to the current channel as a server-side action.
     @discardableResult
     func addMember(withUserId userId: String = "leia_organa") -> BackendRobot {
@@ -54,6 +62,15 @@ public extension BackendRobot {
     func removeMember(withUserId userId: String) -> BackendRobot {
         waitForMockServerToStart()
         _ = mockServer.postRequest(endpoint: "remove_member?user_id=\(userId)")
+        return self
+    }
+
+    /// Makes the mock centre the messages page around a message on the target, like the real backend,
+    /// instead of returning the target and the newer messages only.
+    @discardableResult
+    func setCenteredAroundPagination(enabled: Bool = true) -> BackendRobot {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "config/centered_around_pagination?value=\(enabled)")
         return self
     }
 }

@@ -330,9 +330,14 @@ class MessageListPage {
                 .firstMatch
         }
 
+        static var videos: XCUIElementQuery {
+            app.scrollViews.images.matching(NSPredicate(format: "label BEGINSWITH 'Video'"))
+        }
+
         static var images: XCUIElementQuery {
             if ProcessInfo().operatingSystemVersion.majorVersion > 13 {
-                return app.scrollViews.images
+                // Skips the videos `PhotoLibrary.seedVideo()` adds to the library.
+                return app.scrollViews.images.matching(NSPredicate(format: "NOT (label BEGINSWITH 'Video')"))
             } else {
                 return app.collectionViews.cells
             }

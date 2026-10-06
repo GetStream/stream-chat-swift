@@ -9,6 +9,8 @@ import XCTest
 enum ChannelListPage {
     static var userAvatar: XCUIElement { app.otherElements["CurrentChatUserAvatarView"] }
 
+    static var loadingView: XCUIElement { app.descendants(matching: .any)["ChatChannelListLoadingView"].firstMatch }
+
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatChannelListCollectionViewCell'"))
     }

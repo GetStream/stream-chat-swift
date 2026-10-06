@@ -59,4 +59,37 @@ extension MessageList_Tests {
                 .assertThreadReply(threadReply)
         }
     }
+
+    func test_threadReplyIsRemovedEverywhere_whenParticipantRemovesItFromThread() {
+        linkToScenario(withId: 113)
+
+        let message = "message"
+        let threadReply = "thread reply"
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        AND("user sends a message") {
+            userRobot.sendMessage(message)
+        }
+        WHEN("participant adds a thread reply to user's message and sends it also to main channel") {
+            participantRobot.sendMessageInThread(threadReply, alsoSendInChannel: true)
+        }
+        AND("user opens the thread") {
+            userRobot
+                .openThread(messageCellIndex: 1, waitForThreadIcon: true)
+                .assertThreadReply(threadReply)
+        }
+        AND("participant removes the thread reply from thread") {
+            participantRobot.deleteMessage()
+        }
+        THEN("the message is deleted from the thread") {
+            userRobot.assertDeletedMessage()
+        }
+        AND("the message is deleted from the channel") {
+            userRobot
+                .tapOnBackButton()
+                .assertDeletedMessage()
+        }
+    }
 }

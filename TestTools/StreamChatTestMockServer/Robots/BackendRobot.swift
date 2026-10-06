@@ -57,6 +57,27 @@ public class BackendRobot {
         return self
     }
     
+    /// Delays every channel list query, so the channel list stays in the loading state.
+    @discardableResult
+    public func delayChannelList(by seconds: Int) -> BackendRobot {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "delay_channel_list?delay=\(seconds)")
+        return self
+    }
+
+    /// Makes the mock server serve `id` as the app user from the next login on, as a member of every channel.
+    @discardableResult
+    public func setAppUser(id: String, name: String) -> BackendRobot {
+        waitForMockServerToStart()
+        var components = URLComponents()
+        components.queryItems = [
+            URLQueryItem(name: "id", value: id),
+            URLQueryItem(name: "name", value: name)
+        ]
+        _ = mockServer.postRequest(endpoint: "app_user?\(components.percentEncodedQuery ?? "")")
+        return self
+    }
+
     @discardableResult
     public func waitForJwtToExpire() -> Self {
         let sleepTime = UInt32((StreamMockServer.jwtTimeout + 2) * 1_000_000)
