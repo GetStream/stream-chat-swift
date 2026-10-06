@@ -750,6 +750,32 @@ import XCTest
         XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
     }
 
+    func test_jumpToMessage_whenPageAroundIsShownBeforeLoadCompletes_shouldScrollOnCompletion() {
+        mockedDataSource.messages = [.mock(id: "0"), .mock(id: "1")]
+        sut.jumpToMessage(id: "30")
+
+        mockedDataSource.messages = [.mock(id: "29"), .mock(id: "30"), .mock(id: "31")]
+        mockedDelegate.shouldLoadPageAroundMessageCompletion?(nil)
+
+        XCTAssertEqual(mockedListView.scrollToRowCallCount, 1)
+        XCTAssertEqual(mockedListView.scrollToRowCalledWith?.row, 1)
+    }
+
+    func test_jumpToMessage_whenPageAroundIsShownAfterLoadCompletes_shouldScrollAfterUpdate() {
+        mockedDataSource.messages = [.mock(id: "0"), .mock(id: "1")]
+        sut.jumpToMessage(id: "30")
+
+        mockedDelegate.shouldLoadPageAroundMessageCompletion?(nil)
+        XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
+
+        mockedDataSource.messages = [.mock(id: "29"), .mock(id: "30"), .mock(id: "31")]
+        sut.updateMessages(with: [])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToRowCallCount, 1)
+        XCTAssertEqual(mockedListView.scrollToRowCalledWith?.row, 1)
+    }
+
     // MARK: jumpToUnreadMessage()
 
     func test_jumpToUnreadMessage_whenUnreadMessageIsLocallyAvailable() {

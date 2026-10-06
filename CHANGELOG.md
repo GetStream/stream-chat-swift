@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- Fix jumping to a message that is not loaded yet sometimes not scrolling to it [#4308](https://github.com/GetStream/stream-chat-swift/pull/4308)
+
 ### 🔄 Changed
 
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
