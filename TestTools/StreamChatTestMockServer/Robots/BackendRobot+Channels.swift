@@ -40,4 +40,20 @@ public extension BackendRobot {
         _ = mockServer.postRequest(endpoint: "truncate_channel?with_message=\(withMessage)")
         return self
     }
+
+    /// Adds a member to the current channel as a server-side action.
+    @discardableResult
+    func addMember(withUserId userId: String = "leia_organa") -> BackendRobot {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "add_member?user_id=\(userId)")
+        return self
+    }
+
+    /// Removes a member from the current channel as a server-side action.
+    @discardableResult
+    func removeMember(withUserId userId: String) -> BackendRobot {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "remove_member?user_id=\(userId)")
+        return self
+    }
 }
