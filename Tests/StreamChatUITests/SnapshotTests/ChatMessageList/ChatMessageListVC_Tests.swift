@@ -776,6 +776,38 @@ import XCTest
         XCTAssertEqual(mockedListView.scrollToRowCalledWith?.row, 1)
     }
 
+    func test_jumpToMessage_whenMessageIsVisible_highlightsItRightAway() {
+        mockedDataSource.messages = [.mock(id: "0"), .mock(id: "1"), .mock(id: "2")]
+        mockedListView.mockedIndexPathsForVisibleRows = [IndexPath(item: 1, section: 0)]
+        let highlighted = expectation(description: "highlight")
+
+        sut.jumpToMessage(id: "1") { indexPath in
+            XCTAssertEqual(indexPath, IndexPath(item: 1, section: 0))
+            highlighted.fulfill()
+        }
+
+        wait(for: [highlighted], timeout: defaultTimeout)
+    }
+
+    func test_jumpToMessage_whenMessageIsNotVisible_highlightsItOnceScrollingEnds() {
+        mockedDataSource.messages = [.mock(id: "0"), .mock(id: "1"), .mock(id: "2")]
+        mockedListView.mockedIndexPathsForVisibleRows = [IndexPath(item: 0, section: 0)]
+        let highlighted = expectation(description: "highlight")
+        var highlightCount = 0
+
+        sut.jumpToMessage(id: "2") { indexPath in
+            highlightCount += 1
+            XCTAssertEqual(indexPath, IndexPath(item: 2, section: 0))
+            highlighted.fulfill()
+        }
+        mockedListView.mockedIndexPathsForVisibleRows = [IndexPath(item: 2, section: 0)]
+        sut.scrollViewDidEndScrollingAnimation(mockedListView)
+        sut.scrollViewDidEndScrollingAnimation(mockedListView)
+
+        wait(for: [highlighted], timeout: defaultTimeout)
+        XCTAssertEqual(highlightCount, 1)
+    }
+
     // MARK: jumpToUnreadMessage()
 
     func test_jumpToUnreadMessage_whenUnreadMessageIsLocallyAvailable() {

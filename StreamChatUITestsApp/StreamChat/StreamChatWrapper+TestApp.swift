@@ -38,7 +38,6 @@ extension StreamChatWrapper {
         Components.default.channelVC = ChannelVC.self
         Components.default.threadVC = ThreadVC.self
         Components.default.messageActionsVC = MessageActionsVC.self
-        Components.default.messageContentView = MessageContentView.self
         Components.default.messageSwipeToReplyEnabled = true
         Components.default.isDraftMessagesEnabled = true
         Components.default.isBlockingUsersEnabled = true

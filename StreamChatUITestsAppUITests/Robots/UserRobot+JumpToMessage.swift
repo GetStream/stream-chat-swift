@@ -99,39 +99,4 @@ extension UserRobot {
         XCTAssertFalse(messageCell(withText: text).exists, "Message '\(text)' is loaded", file: file, line: line)
         return self
     }
-
-    /// The jump highlight lasts well under a second, so the tree is polled without waiting for the app to idle.
-    @discardableResult
-    func assertMessageIsHighlighted(
-        _ text: String,
-        timeout: Double = 5,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> Self {
-        let highlightedMessage = MessageListPage.cells
-            .matching(NSPredicate(format: "value == 'highlighted'"))
-            .containing(NSPredicate(format: "identifier == 'textView' AND value == %@ AND enabled == true", text))
-            .firstMatch
-        let deadline = Date().addingTimeInterval(timeout)
-        var isHighlighted = false
-        while !isHighlighted && Date() < deadline {
-            isHighlighted = highlightedMessage.exists
-        }
-        XCTAssertTrue(isHighlighted, "Message '\(text)' was not highlighted", file: file, line: line)
-        return self
-    }
-
-    @discardableResult
-    func assertNoMessageIsHighlighted(
-        timeout: Double = 5,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> Self {
-        let highlightedMessage = MessageListPage.cells
-            .matching(NSPredicate(format: "value == 'highlighted'"))
-            .firstMatch
-        let isHighlighted = highlightedMessage.waitForDisappearance(timeout: timeout).exists
-        XCTAssertFalse(isHighlighted, "Message highlight did not fade out", file: file, line: line)
-        return self
-    }
 }
