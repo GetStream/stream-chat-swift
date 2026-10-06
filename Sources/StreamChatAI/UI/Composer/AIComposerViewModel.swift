@@ -4,9 +4,10 @@
 
 import Combine
 import Foundation
+import StreamCore
 
 @MainActor
-public class ComposerViewModel: ObservableObject {
+public class AIComposerViewModel: ObservableObject {
     @Published public var text = ""
     @Published public var sheetShown = false
     @Published public var attachments: [URL] = [] {
@@ -23,6 +24,9 @@ public class ComposerViewModel: ObservableObject {
     @Published public var temporaryAttachmentURLs: Set<URL> = []
     @Published public var selectedChatOption: ChatOption?
     @Published public var isTextFieldFocused: Bool
+    /// Whether the agent is answering. While it is, the composer shows a stop button in place
+    /// of the send button.
+    @Published public var isGenerating: Bool
     @Published public var chatOptions: [ChatOption]
 
     public init(
@@ -32,6 +36,7 @@ public class ComposerViewModel: ObservableObject {
         temporaryAttachmentURLs: Set<URL> = [],
         selectedChatOption: ChatOption? = nil,
         isTextFieldFocused: Bool = false,
+        isGenerating: Bool = false,
         chatOptions: [ChatOption] = []
     ) {
         self.sheetShown = sheetShown
@@ -40,6 +45,7 @@ public class ComposerViewModel: ObservableObject {
         self.temporaryAttachmentURLs = temporaryAttachmentURLs
         self.selectedChatOption = selectedChatOption
         self.isTextFieldFocused = isTextFieldFocused
+        self.isGenerating = isGenerating
         self.chatOptions = chatOptions
     }
     
@@ -54,6 +60,16 @@ public class ComposerViewModel: ObservableObject {
         }
         
         attachments.removeAll(where: { $0 == url })
+    }
+    
+    /// Empties the composer once a message is sent. Unlike ``cleanUpData()``, it keeps the
+    /// temporary attachment files, which the sent message may still be uploading. They are in
+    /// the temporary directory, so the system removes them later.
+    public func clearAfterSending() {
+        temporaryAttachmentURLs.removeAll()
+        selectedAssetURLs.removeAll()
+        attachments.removeAll()
+        text = ""
     }
     
     public func cleanUpData() {
@@ -102,7 +118,7 @@ public class ComposerViewModel: ObservableObject {
                    error.code == NSFileNoSuchFileError {
                     continue
                 }
-                print("ComposerView attachment cleanup error: \(error.localizedDescription)")
+                log.error("Couldn't remove a temporary attachment", error: error)
             }
         }
     }

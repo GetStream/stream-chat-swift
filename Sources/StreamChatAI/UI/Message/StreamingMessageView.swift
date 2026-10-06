@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 internal import MarkdownUI
 internal import Splash
@@ -16,6 +17,8 @@ public struct StreamingMessageView: View {
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
     @State var queue = DispatchQueue(label: "com.streamai.textview")
+
+    @Injected(\.aiAppearance.colors) private var colors
     
     private static let supportedChartLanguages = ["json", "chart", "chartjs", "echarts", "highcharts", "vega-lite", "vegalite"]
     
@@ -36,7 +39,7 @@ public struct StreamingMessageView: View {
                     USpecChartView(spec: spec)
                 } else {
                     // Not a chart language, not valid ChartSpec JSON, or Swift Charts is unavailable: render as code block
-                    CodeBlockView(configuration: cfg, theme: theme)
+                    CodeBlockView(configuration: cfg)
                 }
             }
             .markdownCodeSyntaxHighlighter(.splash(theme: self.theme))
@@ -125,10 +128,25 @@ public struct StreamingMessageView: View {
     private static func chartSpec(_ configuration: CodeBlockConfiguration) -> USpec? {
         guard let language = configuration.language, supportedChartLanguages.contains(language.lowercased()),
               let data = configuration.content.data(using: .utf8) else { return nil }
-        return try? parseUSpec(from: data)
+        return try? ChartSpecParser.parse(data)
     }
 
     private var theme: Splash.Theme {
-        .sunset(withFont: .init(size: 16))
+        Theme(
+            font: .init(size: 16),
+            plainTextColor: colors.codeText,
+            tokenColors: [
+                .keyword: colors.codeKeyword,
+                .string: colors.codeString,
+                .type: colors.codeType,
+                .call: colors.codeCall,
+                .number: colors.codeNumber,
+                .comment: colors.codeComment,
+                .property: colors.codeProperty,
+                .dotAccess: colors.codeDotAccess,
+                .preprocessing: colors.codePreprocessing
+            ],
+            backgroundColor: colors.codeBlockHeaderBackground
+        )
     }
 }

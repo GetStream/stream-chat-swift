@@ -5,28 +5,26 @@
 import StreamCore
 import SwiftUI
 
-/// The default central input area rendered by ``ComposerView``.
+/// The default central input area rendered by ``AIComposerView``.
 ///
 /// Contains a multi-line `TextField`, an inline ``SpeechToTextButton``, a send
 /// button, and a stop-generating button. It also shows attachment thumbnails and
 /// the active chat-option chip when those are present on the view model.
 ///
-/// `ComposerInputView` observes ``ComposerViewModel/isTextFieldFocused`` and keeps
+/// `AIComposerInputView` observes ``AIComposerViewModel/isTextFieldFocused`` and keeps
 /// the keyboard in sync: set `isTextFieldFocused = true` to programmatically focus
 /// the field and `false` to dismiss the keyboard.
 ///
-/// Override ``ComposerViewFactory/makeComposerInputView(options:)`` to replace this
+/// Override ``AIComposerViewFactory/makeComposerInputView(options:)`` to replace this
 /// view with your own implementation while keeping the rest of the composer intact.
 @available(iOS 16, *)
-public struct ComposerInputView<TrailingView: View>: View {
-    @ObservedObject var viewModel: ComposerViewModel
+public struct AIComposerInputView<TrailingView: View>: View {
+    @ObservedObject var viewModel: AIComposerViewModel
     @ObservedObject var speechHandler: SpeechHandler
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
-
-    var isGenerating: Bool
 
     /// Shown inside the field while it is empty and nothing is generating.
     private let trailingView: TrailingView
@@ -37,16 +35,14 @@ public struct ComposerInputView<TrailingView: View>: View {
     @FocusState var isFocused: Bool
 
     public init(
-        viewModel: ComposerViewModel,
+        viewModel: AIComposerViewModel,
         speechHandler: SpeechHandler,
-        isGenerating: Bool,
         trailingView: TrailingView,
         onMessageSend: @escaping (MessageData) -> Void,
         onStopGenerating: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.speechHandler = speechHandler
-        self.isGenerating = isGenerating
         self.trailingView = trailingView
         self.onMessageSend = onMessageSend
         self.onStopGenerating = onStopGenerating
@@ -99,7 +95,7 @@ public struct ComposerInputView<TrailingView: View>: View {
         ZStack {
             trailingView
                 .fontWeight(.semibold)
-                .opacity(isGenerating ? 0 : (text.isEmpty ? 1 : 0))
+                .opacity(viewModel.isGenerating ? 0 : (text.isEmpty ? 1 : 0))
             
             Button {
                 send()
@@ -109,7 +105,7 @@ public struct ComposerInputView<TrailingView: View>: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 22)
             }
-            .opacity(isGenerating ? 0 : (text.isEmpty ? 0 : 1))
+            .opacity(viewModel.isGenerating ? 0 : (text.isEmpty ? 0 : 1))
             
             Button {
                 onStopGenerating?()
@@ -117,13 +113,13 @@ public struct ComposerInputView<TrailingView: View>: View {
                 images.composerStopGenerating
                     .foregroundStyle(Color(colors.composerIcon))
             }
-            .opacity(isGenerating ? 1 : 0)
+            .opacity(viewModel.isGenerating ? 1 : 0)
         }
     }
 
     private func send() {
         onMessageSend(.init(text: text, attachments: viewModel.attachments, chatOption: viewModel.selectedChatOption))
-        viewModel.cleanUpData()
+        viewModel.clearAfterSending()
         if speechHandler.isRecording {
             speechHandler.stop()
         }
@@ -135,19 +131,17 @@ public struct ComposerInputView<TrailingView: View>: View {
 }
 
 @available(iOS 16, *)
-public extension ComposerInputView where TrailingView == SpeechToTextButton {
+public extension AIComposerInputView where TrailingView == SpeechToTextButton {
     /// Creates the input with the default ``SpeechToTextButton`` inside the field.
     init(
-        viewModel: ComposerViewModel,
+        viewModel: AIComposerViewModel,
         speechHandler: SpeechHandler,
-        isGenerating: Bool,
         onMessageSend: @escaping (MessageData) -> Void,
         onStopGenerating: (() -> Void)? = nil
     ) {
         self.init(
             viewModel: viewModel,
             speechHandler: speechHandler,
-            isGenerating: isGenerating,
             trailingView: SpeechToTextButton(speechHandler: speechHandler) { newText in
                 viewModel.text = newText
             },

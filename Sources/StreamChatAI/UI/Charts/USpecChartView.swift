@@ -2,16 +2,19 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamCore
 import SwiftUI
 
 @available(iOS 16.0, *)
-public struct USpecChartView: View {
-    public let spec: USpec
-    public init(spec: USpec) { self.spec = spec }
+struct USpecChartView: View {
+    let spec: USpec
+    init(spec: USpec) { self.spec = spec }
+
+    @Injected(\.aiAppearance.fonts) private var fonts
     
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if let title = spec.title { Text(title).font(.headline) }
+            if let title = spec.title { Text(title).font(fonts.chartTitle) }
             
             switch spec.kind {
             case .pie:

@@ -6,13 +6,13 @@
 import XCTest
 
 @MainActor
-final class ComposerViewModel_Tests: XCTestCase {
-    private var viewModel: ComposerViewModel!
+final class AIComposerViewModel_Tests: XCTestCase {
+    private var viewModel: AIComposerViewModel!
     private var createdFiles: [URL] = []
 
     override func setUp() async throws {
         try await super.setUp()
-        viewModel = ComposerViewModel()
+        viewModel = AIComposerViewModel()
     }
 
     override func tearDown() async throws {
@@ -25,7 +25,7 @@ final class ComposerViewModel_Tests: XCTestCase {
     func test_init_storesValues() {
         let option = ChatOption(id: "search", title: "Search", description: "Search the web", icon: "globe", shortTitle: "Search")
 
-        let viewModel = ComposerViewModel(selectedChatOption: option, isTextFieldFocused: true, chatOptions: [option])
+        let viewModel = AIComposerViewModel(selectedChatOption: option, isTextFieldFocused: true, chatOptions: [option])
 
         XCTAssertEqual(viewModel.text, "")
         XCTAssertFalse(viewModel.sheetShown)
@@ -123,6 +123,25 @@ final class ComposerViewModel_Tests: XCTestCase {
         XCTAssertTrue(viewModel.temporaryAttachmentURLs.isEmpty)
         XCTAssertFalse(FileManager.default.fileExists(atPath: temporary.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: library.path))
+    }
+
+    func test_clearAfterSending_emptiesTheComposerButKeepsTemporaryFiles() throws {
+        let temporary = try makeFile()
+        viewModel.text = "Describe this photo"
+        viewModel.selectAsset(assetID: "asset-1", attachment: AttachmentLocation(url: temporary, isTemporary: true))
+
+        viewModel.clearAfterSending()
+
+        XCTAssertEqual(viewModel.text, "")
+        XCTAssertTrue(viewModel.attachments.isEmpty)
+        XCTAssertTrue(viewModel.selectedAssetURLs.isEmpty)
+        XCTAssertTrue(viewModel.temporaryAttachmentURLs.isEmpty)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: temporary.path), "the sent message may still be uploading it")
+    }
+
+    func test_isGenerating_isFalseUnlessSet() {
+        XCTAssertFalse(viewModel.isGenerating)
+        XCTAssertTrue(AIComposerViewModel(isGenerating: true).isGenerating)
     }
 
     func test_attachments_whenCleared_dropSelectionsAndTemporaryFiles() throws {

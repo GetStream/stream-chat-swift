@@ -6,15 +6,14 @@ import StreamCore
 import SwiftUI
 import UIKit
 internal import MarkdownUI
-internal import Splash
 
 /// A code block in a message: its language and a copy button over the highlighted code,
 /// which scrolls sideways.
 struct CodeBlockView: View {
     let configuration: CodeBlockConfiguration
-    let theme: Splash.Theme
 
     @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
@@ -22,9 +21,9 @@ struct CodeBlockView: View {
         VStack(spacing: 0) {
             HStack {
                 Text(configuration.language ?? L10n.StreamingMessage.codeBlockLanguageFallback)
-                    .font(.system(.caption, design: .monospaced))
+                    .font(fonts.codeBlockLanguage)
                     .fontWeight(.semibold)
-                    .foregroundColor(Color(theme.plainTextColor))
+                    .foregroundColor(Color(colors.codeBlockHeaderText))
                 Spacer()
 
                 images.codeBlockCopy
@@ -35,7 +34,7 @@ struct CodeBlockView: View {
             .padding(.horizontal)
             .padding(.vertical, layout.spacingXs)
             .background {
-                Color(theme.backgroundColor)
+                Color(colors.codeBlockHeaderBackground)
             }
 
             Divider()

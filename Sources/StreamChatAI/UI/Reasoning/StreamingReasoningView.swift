@@ -33,7 +33,7 @@ public struct StreamingReasoningView: View {
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     /// What the reader chose by tapping the header. Until they do, the reasoning is open
@@ -66,7 +66,7 @@ public struct StreamingReasoningView: View {
     ///   - initiallyExpanded: Whether the reasoning is open once the model is done.
     ///   - showsLiveReasoning: Whether the reasoning is open while the model thinks.
     ///   - maxExpandedHeight: How tall the reasoning grows before it scrolls.
-    ///   - font: The font of the reasoning, the design tokens' `subheadline` by default. The
+    ///   - font: The font of the reasoning, `AIAppearance.fonts.messagePart` by default. The
     ///     header uses it in a medium weight.
     public init(
         text: String,
@@ -113,7 +113,7 @@ public struct StreamingReasoningView: View {
                     // would push the reply down just as it starts.
                     if let footnote, !isThinking, choice == true || initiallyExpanded {
                         Text(footnote)
-                            .font(.caption2)
+                            .font(fonts.reasoningFootnote)
                             .foregroundStyle(Color(colors.reasoningFootnote))
                     }
                 }
@@ -213,7 +213,7 @@ public struct StreamingReasoningView: View {
     }
 
     private var resolvedFont: Font {
-        font ?? fonts.subheadline
+        font ?? fonts.messagePart
     }
 
     /// "Thinking…" while the model thinks, then how long it thought.

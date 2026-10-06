@@ -12,7 +12,7 @@ struct SelectedChatOptionChip: View {
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var body: some View {
@@ -20,7 +20,7 @@ struct SelectedChatOptionChip: View {
             HStack {
                 Image(systemName: option.icon)
                 Text(option.shortTitle)
-                    .font(fonts.headline)
+                    .font(fonts.composerChatOption)
                 Button {
                     onRemove()
                 } label: {

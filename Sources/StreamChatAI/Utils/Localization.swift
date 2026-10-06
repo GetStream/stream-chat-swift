@@ -93,6 +93,44 @@ enum L10n {
         }
     }
     
+    enum Charts {
+        static var series: String {
+            localized("charts.series", comment: "Name of a chart's data series when the chart gives it none.")
+        }
+        
+        static var pie: String {
+            localized("charts.pie", comment: "Name of a pie chart's data when the chart gives it none.")
+        }
+        
+        static var axisX: String {
+            localized("charts.axis.x", comment: "Label of a chart's horizontal axis when the chart gives it none.")
+        }
+        
+        static var axisY: String {
+            localized("charts.axis.y", comment: "Label of a chart's vertical axis when the chart gives it none.")
+        }
+        
+        static var size: String {
+            localized("charts.size", comment: "Label of the size of a bubble chart's points.")
+        }
+        
+        static var value: String {
+            localized("charts.value", comment: "Label of the values of a pie chart or heatmap.")
+        }
+        
+        static var category: String {
+            localized("charts.category", comment: "Label of the categories of a pie chart.")
+        }
+        
+        static var bin: String {
+            localized("charts.bin", comment: "Label of a histogram's ranges of values.")
+        }
+        
+        static var count: String {
+            localized("charts.count", comment: "Label of how many values fall in each of a histogram's ranges.")
+        }
+    }
+    
     enum Transcription {
         static var recognizerUnavailable: String {
             localized("transcription.error.recognizer_unavailable", comment: "Error shown when the speech recognizer cannot be used.")
@@ -100,20 +138,6 @@ enum L10n {
     }
     
     private static func localized(_ key: String, comment: StaticString) -> String {
-        String(
-            localized: String.LocalizationValue(key),
-            bundle: localizationBundle,
-            comment: comment
-        )
+        AIAppearance.localizationProvider(key, "Localizable")
     }
-    
-    private static let localizationBundle: Bundle = {
-        #if SWIFT_PACKAGE
-        return .module
-        #else
-        return Bundle(for: BundleToken.self)
-        #endif
-    }()
-    
-    private final class BundleToken {}
 }

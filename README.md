@@ -110,7 +110,7 @@ The components are styled with `AIAppearance`, which builds on the design tokens
 
 StreamChatAI requires iOS 15 or later. When you add it with Swift Package Manager, build with Xcode 27 or later.
 
-StreamChatAI doesn't depend on the Model Context Protocol SDK. Client tools are described with `ClientToolDefinition`, which reads the same JSON as an MCP tool, so a tool from the MCP SDK converts with `try ClientToolDefinition(encoding: tool)`.
+StreamChatAI doesn't depend on the Model Context Protocol SDK. Client tools are described with `AIClientToolDefinition`, which reads the same JSON as an MCP tool, so a tool from the MCP SDK converts with `try AIClientToolDefinition(encoding: tool)`.
 
 To find out more about these components, please check our [docs](https://getstream.io/chat/docs/sdk/ios/ai-integrations/overview/).
 

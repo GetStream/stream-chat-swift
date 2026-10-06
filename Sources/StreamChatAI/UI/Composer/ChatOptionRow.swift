@@ -10,7 +10,7 @@ struct ChatOptionRow: View {
     let option: ChatOption
 
     @Injected(\.aiAppearance.colors) private var colors
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var body: some View {
@@ -24,10 +24,10 @@ struct ChatOptionRow: View {
 
                 VStack(alignment: .leading) {
                     Text(option.title)
-                        .font(fonts.headline)
+                        .font(fonts.chatOptionTitle)
 
                     Text(option.description)
-                        .font(fonts.subheadline)
+                        .font(fonts.chatOptionDescription)
                         .foregroundStyle(Color(colors.attachmentPickerOptionDescription))
                 }
                 Spacer()

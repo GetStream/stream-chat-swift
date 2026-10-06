@@ -8,7 +8,7 @@ import SwiftUI
 
 @available(iOS 16, *)
 struct ComposerPickerView: View {
-    @ObservedObject var viewModel: ComposerViewModel
+    @ObservedObject var viewModel: AIComposerViewModel
     
     @StateObject private var photoLibrary = PhotoLibraryService()
     @State private var allPhotosSelection: [PhotosPickerItem] = []

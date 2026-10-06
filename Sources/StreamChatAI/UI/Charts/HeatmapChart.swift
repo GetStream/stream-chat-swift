@@ -14,12 +14,12 @@ struct HeatmapChart: View {
             ForEach(spec.series) { s in
                 ForEach(s.points) { p in
                     RectangleMark(
-                        x: .value("X", p.x),
-                        y: .value("Y", s.name),
+                        x: .value(L10n.Charts.axisX, p.x),
+                        y: .value(L10n.Charts.axisY, s.name),
                         width: .ratio(1.0),
                         height: .ratio(1.0)
                     )
-                    .foregroundStyle(by: .value("Value", p.z ?? p.y))
+                    .foregroundStyle(by: .value(L10n.Charts.value, p.z ?? p.y))
                 }
             }
         }

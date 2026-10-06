@@ -7,7 +7,7 @@ import SwiftUI
 
 /// A fully featured prompt-composer surface for AI chat applications.
 ///
-/// `ComposerView` is generic over a ``ComposerViewFactory`` so you can swap out any
+/// `AIComposerView` is generic over a ``AIComposerViewFactory`` so you can swap out any
 /// individual slot — the leading attachment button, the central input area, the
 /// trailing action area, or the attachment picker sheet — without rebuilding the
 /// whole composer from scratch.
@@ -15,7 +15,7 @@ import SwiftUI
 /// ## Basic usage
 ///
 /// ```swift
-/// ComposerView { message in
+/// AIComposerView { message in
 ///     send(message)
 /// }
 /// ```
@@ -23,49 +23,45 @@ import SwiftUI
 /// ## Custom factory
 ///
 /// ```swift
-/// ComposerView(viewFactory: MyFactory()) { message in
+/// AIComposerView(viewFactory: MyFactory()) { message in
 ///     send(message)
 /// }
 /// ```
 ///
-/// Pass a ``ComposerViewModel`` instance if you need to control focus, inject
+/// Pass a ``AIComposerViewModel`` instance if you need to control focus, inject
 /// pre-filled text, or manage chat-option chips from outside the view:
 ///
 /// ```swift
-/// @StateObject private var composerViewModel = ComposerViewModel()
+/// @StateObject private var composerViewModel = AIComposerViewModel()
 ///
-/// ComposerView(viewModel: composerViewModel) { message in
+/// AIComposerView(viewModel: composerViewModel) { message in
 ///     send(message)
 /// }
 /// ```
 ///
 /// - Note: Requires iOS 16 or later.
 @available(iOS 16, *)
-public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
+public struct AIComposerView<ComposerFactory: AIComposerViewFactory>: View {
     private let viewFactory: ComposerFactory
 
-    @StateObject var viewModel: ComposerViewModel
+    @StateObject var viewModel: AIComposerViewModel
     @StateObject var speechHandler: SpeechHandler = .init()
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    var isGenerating: Bool
-
     var onMessageSend: (MessageData) -> Void
     var onStopGenerating: (() -> Void)?
 
     public init(
-        viewFactory: ComposerFactory = DefaultViewFactory.shared,
-        viewModel: ComposerViewModel? = nil,
-        isGenerating: Bool = false,
+        viewFactory: ComposerFactory = DefaultAIComposerViewFactory.shared,
+        viewModel: AIComposerViewModel? = nil,
         onMessageSend: @escaping (MessageData) -> Void,
         onStopGenerating: (() -> Void)? = nil
     ) {
         self.viewFactory = viewFactory
-        _viewModel = StateObject(wrappedValue: viewModel ?? ComposerViewModel())
+        _viewModel = StateObject(wrappedValue: viewModel ?? AIComposerViewModel())
         self.onMessageSend = onMessageSend
-        self.isGenerating = isGenerating
         self.onStopGenerating = onStopGenerating
     }
     
@@ -81,7 +77,6 @@ public struct ComposerView<ComposerFactory: ComposerViewFactory>: View {
                 options: .init(
                     viewModel: viewModel,
                     speechHandler: speechHandler,
-                    isGenerating: isGenerating,
                     onMessageSend: onMessageSend,
                     onStopGenerating: onStopGenerating
                 )

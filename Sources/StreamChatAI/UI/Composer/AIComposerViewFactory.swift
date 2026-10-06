@@ -4,28 +4,28 @@
 
 import SwiftUI
 
-/// A factory protocol that controls which views are rendered inside ``ComposerView``.
+/// A factory protocol that controls which views are rendered inside ``AIComposerView``.
 ///
-/// `ComposerViewFactory` gives you five independent extension points, each backed by
+/// `AIComposerViewFactory` gives you five independent extension points, each backed by
 /// a default implementation so you only need to override the slots you want to change:
 ///
 /// | Slot | Default |
 /// |------|---------|
 /// | Leading (left of the input field) | ``AddAttachmentsButton`` |
-/// | Input (the text field area) | ``ComposerInputView`` |
+/// | Input (the text field area) | ``AIComposerInputView`` |
 /// | Input trailing (inside the field, while it is empty) | ``SpeechToTextButton`` |
 /// | Trailing (right of the input field) | `EmptyView` |
 /// | Picker (attachment sheet) | `ComposerPickerView` |
 ///
 /// ## Creating a custom factory
 ///
-/// Subclass or conform to `ComposerViewFactory`, override only the methods you need,
-/// and pass your factory to ``ComposerView``:
+/// Subclass or conform to `AIComposerViewFactory`, override only the methods you need,
+/// and pass your factory to ``AIComposerView``:
 ///
 /// ```swift
-/// class MyFactory: ComposerViewFactory {
+/// class MyFactory: AIComposerViewFactory {
 ///     // Override just the leading button — everything else stays at its default.
-///     func makeLeadingComposerView(options: LeadingComposerViewOptions) -> some View {
+///     func makeLeadingComposerView(options: AIComposerLeadingViewOptions) -> some View {
 ///         Button {
 ///             options.onTap()
 ///         } label: {
@@ -36,24 +36,24 @@ import SwiftUI
 ///     }
 /// }
 ///
-/// ComposerView(viewFactory: MyFactory()) { message in
+/// AIComposerView(viewFactory: MyFactory()) { message in
 ///     send(message)
 /// }
 /// ```
 ///
 /// All five `make*` methods have default implementations provided by the protocol
-/// extension on `ComposerViewFactory`, so conforming types are free to override none,
+/// extension on `AIComposerViewFactory`, so conforming types are free to override none,
 /// some, or all of them.
 @available(iOS 16, *)
 @MainActor
-public protocol ComposerViewFactory {
+public protocol AIComposerViewFactory {
     /// The view type returned by ``makeLeadingComposerView(options:)``.
     associatedtype LeadingComposerViewType: View
     /// Returns the view rendered to the left of the input field.
     ///
     /// The default implementation renders ``AddAttachmentsButton``.
     /// - Parameter options: The tap handler that opens the attachment picker.
-    func makeLeadingComposerView(options: LeadingComposerViewOptions) -> LeadingComposerViewType
+    func makeLeadingComposerView(options: AIComposerLeadingViewOptions) -> LeadingComposerViewType
 
     /// The view type returned by ``makeTrailingComposerView(options:)``.
     associatedtype TrailingComposerViewType: View
@@ -62,18 +62,18 @@ public protocol ComposerViewFactory {
     /// The default implementation returns `EmptyView`. Override to add a custom action
     /// button, a mode toggle, or any other control.
     /// - Parameter options: Reserved for future configuration; currently empty.
-    func makeTrailingComposerView(options: TrailingComposerViewOptions) -> TrailingComposerViewType
+    func makeTrailingComposerView(options: AIComposerTrailingViewOptions) -> TrailingComposerViewType
 
     /// The view type returned by ``makeComposerInputView(options:)``.
     associatedtype ComposerInputViewType: View
     /// Returns the central input view that contains the text field, send button, and
     /// optional speech-to-text control.
     ///
-    /// The default implementation renders ``ComposerInputView``.
+    /// The default implementation renders ``AIComposerInputView``.
     /// Replace this to take full control of the text-entry surface, while keeping
     /// the rest of the composer chrome intact.
     /// - Parameter options: View model, generating state, send and stop callbacks.
-    func makeComposerInputView(options: ComposerInputViewOptions) -> ComposerInputViewType
+    func makeComposerInputView(options: AIComposerInputViewOptions) -> ComposerInputViewType
 
     /// The view type returned by ``makeComposerInputTrailingView(options:)``.
     associatedtype ComposerInputTrailingViewType: View
@@ -84,7 +84,7 @@ public protocol ComposerViewFactory {
     /// The default implementation renders ``SpeechToTextButton``, which dictates into the
     /// field. Return `EmptyView` to leave dictation out.
     /// - Parameter options: View model and speech handler.
-    func makeComposerInputTrailingView(options: ComposerInputTrailingViewOptions) -> ComposerInputTrailingViewType
+    func makeComposerInputTrailingView(options: AIComposerInputTrailingViewOptions) -> ComposerInputTrailingViewType
 
     /// The view type returned by ``makeComposerPickerView(options:)``.
     associatedtype ComposerPickerViewType: View
@@ -92,27 +92,26 @@ public protocol ComposerViewFactory {
     ///
     /// The default implementation renders the built-in `ComposerPickerView` which
     /// shows recent photos, a camera option, and the chat-option chips.
-    /// - Parameter options: The shared ``ComposerViewModel``.
-    func makeComposerPickerView(options: ComposerPickerViewOptions) -> ComposerPickerViewType
+    /// - Parameter options: The shared ``AIComposerViewModel``.
+    func makeComposerPickerView(options: AIComposerPickerViewOptions) -> ComposerPickerViewType
 }
 
 @available(iOS 16, *)
-public extension ComposerViewFactory {
-    func makeLeadingComposerView(options: LeadingComposerViewOptions) -> some View {
+public extension AIComposerViewFactory {
+    func makeLeadingComposerView(options: AIComposerLeadingViewOptions) -> some View {
         AddAttachmentsButton {
             options.onTap()
         }
     }
 
-    func makeTrailingComposerView(options: TrailingComposerViewOptions) -> some View {
+    func makeTrailingComposerView(options: AIComposerTrailingViewOptions) -> some View {
         EmptyView()
     }
 
-    func makeComposerInputView(options: ComposerInputViewOptions) -> some View {
-        ComposerInputView(
+    func makeComposerInputView(options: AIComposerInputViewOptions) -> some View {
+        AIComposerInputView(
             viewModel: options.viewModel,
             speechHandler: options.speechHandler,
-            isGenerating: options.isGenerating,
             trailingView: makeComposerInputTrailingView(
                 options: .init(
                     viewModel: options.viewModel,
@@ -124,7 +123,7 @@ public extension ComposerViewFactory {
         )
     }
 
-    func makeComposerInputTrailingView(options: ComposerInputTrailingViewOptions) -> some View {
+    func makeComposerInputTrailingView(options: AIComposerInputTrailingViewOptions) -> some View {
         SpeechToTextButton(
             speechHandler: options.speechHandler
         ) { newText in
@@ -132,18 +131,18 @@ public extension ComposerViewFactory {
         }
     }
 
-    func makeComposerPickerView(options: ComposerPickerViewOptions) -> some View {
+    func makeComposerPickerView(options: AIComposerPickerViewOptions) -> some View {
         ComposerPickerView(viewModel: options.viewModel)
     }
 }
 
-/// The default ``ComposerViewFactory`` used when no custom factory is provided.
+/// The default ``AIComposerViewFactory`` used when no custom factory is provided.
 ///
 /// All five factory methods fall through to the protocol-extension defaults,
-/// producing the standard Stream AI composer appearance. Pass `DefaultViewFactory.shared`
-/// explicitly or omit the `viewFactory` argument on ``ComposerView`` — both are
+/// producing the standard Stream AI composer appearance. Pass `DefaultAIComposerViewFactory.shared`
+/// explicitly or omit the `viewFactory` argument on ``AIComposerView`` — both are
 /// equivalent.
 @available(iOS 16, *)
-public final class DefaultViewFactory: ComposerViewFactory {
-    public static let shared = DefaultViewFactory()
+public final class DefaultAIComposerViewFactory: AIComposerViewFactory {
+    public static let shared = DefaultAIComposerViewFactory()
 }

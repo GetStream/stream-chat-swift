@@ -24,6 +24,15 @@ final class Localization_Tests: XCTestCase {
         XCTAssertEqual(L10n.ToolApproval.decline, "Don't Allow")
         XCTAssertEqual(L10n.ToolApproval.notSent, "Your answer couldn't be sent. Try again.")
         XCTAssertEqual(L10n.Transcription.recognizerUnavailable, "Speech recognizer is unavailable.")
+        XCTAssertEqual(L10n.Charts.series, "Series")
+        XCTAssertEqual(L10n.Charts.pie, "Pie")
+        XCTAssertEqual(L10n.Charts.axisX, "X")
+        XCTAssertEqual(L10n.Charts.axisY, "Y")
+        XCTAssertEqual(L10n.Charts.size, "Size")
+        XCTAssertEqual(L10n.Charts.value, "Value")
+        XCTAssertEqual(L10n.Charts.category, "Category")
+        XCTAssertEqual(L10n.Charts.bin, "Bin")
+        XCTAssertEqual(L10n.Charts.count, "Count")
     }
 
     func test_formattedStrings_insertTheDuration() {
@@ -33,5 +42,17 @@ final class Localization_Tests: XCTestCase {
 
     func test_speechHandlerError_isDescribedWithLocalizedText() {
         XCTAssertEqual(SpeechHandlerError.recognizerUnavailable.errorDescription, L10n.Transcription.recognizerUnavailable)
+    }
+
+    func test_localizationProvider_whenReplaced_changesTheTexts() {
+        let provider = AIAppearance.localizationProvider
+        defer { AIAppearance.localizationProvider = provider }
+
+        AIAppearance.localizationProvider = { key, table in
+            key == "tool_approval.button.allow" ? "Erlauben" : provider(key, table)
+        }
+
+        XCTAssertEqual(L10n.ToolApproval.allow, "Erlauben")
+        XCTAssertEqual(L10n.ToolApproval.decline, "Don't Allow")
     }
 }

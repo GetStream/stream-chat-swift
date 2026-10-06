@@ -41,6 +41,12 @@ public final class AIClientToolRunner {
     /// The names of the tools this device can run.
     public var toolNames: [String] { tools.keys.sorted() }
 
+    /// How this device's tools are described to the agent, sorted by name. Send them to your
+    /// backend so the agent knows it can call them.
+    public var registrations: [AIClientToolRegistration] {
+        toolNames.compactMap { tools[$0] }.map(AIClientToolRegistration.init(tool:))
+    }
+
     /// Runs the calls among `parts` that await this device, and sends their results.
     public func run(
         _ parts: [AIMessagePart],

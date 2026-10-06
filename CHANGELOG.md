@@ -8,9 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatAI
 ### ✅ Added
 - Add the `StreamChatAI` library with SwiftUI components for AI chat experiences, previously available in `stream-chat-swift-ai` [#4306](https://github.com/GetStream/stream-chat-swift/pull/4306)
-### 🔄 Changed
-- Describe client tools with `ClientToolDefinition` instead of the MCP `Tool`, so the SDK no longer depends on the Model Context Protocol SDK [#4306](https://github.com/GetStream/stream-chat-swift/pull/4306)
-- Style the components with `AIAppearance`, built on the shared StreamCore design tokens, instead of `Colors` [#4306](https://github.com/GetStream/stream-chat-swift/pull/4306)
 
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
 _October 01, 2026_

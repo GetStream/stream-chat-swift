@@ -9,8 +9,9 @@ extension AIAppearance {
     /// Colors of the AI components, derived from the shared ``DesignSystemTokens``.
     ///
     /// They read the tokens lazily, so change the tokens before the first read.
+    @MainActor
     public final class Colors {
-        private let colors: DesignSystemTokens.Colors
+        private nonisolated(unsafe) let colors: DesignSystemTokens.Colors
 
         // MARK: - Composer
 
@@ -42,9 +43,23 @@ extension AIAppearance {
         public lazy var suggestionBackground: UIColor = colors.backgroundCoreSurfaceDefault
         public lazy var suggestionText: UIColor = colors.textPrimary
 
-        // MARK: - Message
+        // MARK: - Code
 
         public lazy var codeBlockBackground: UIColor = colors.backgroundCoreSurfaceSubtle
+        /// The bar above the code, with its language and the copy button.
+        public lazy var codeBlockHeaderBackground: UIColor = colors.backgroundCoreSurfaceDefault
+        public lazy var codeBlockHeaderText: UIColor = colors.textPrimary
+        /// Code that isn't highlighted.
+        public lazy var codeText: UIColor = colors.textPrimary
+        public lazy var codeKeyword: UIColor = .code(light: 0x294277, dark: 0xfc5fa3)
+        public lazy var codeString: UIColor = .code(light: 0xdf0700, dark: 0xfc6a5d)
+        public lazy var codeType: UIColor = .code(light: 0xb44500, dark: 0x5dd8ff)
+        public lazy var codeCall: UIColor = .code(light: 0x476a97, dark: 0x67b7a4)
+        public lazy var codeNumber: UIColor = .code(light: 0x294277, dark: 0xd0bf69)
+        public lazy var codeComment: UIColor = .code(light: 0xc3741c, dark: 0x7f8c98)
+        public lazy var codeProperty: UIColor = .code(light: 0x476a97, dark: 0x67b7a4)
+        public lazy var codeDotAccess: UIColor = .code(light: 0x476a97, dark: 0xa167e6)
+        public lazy var codePreprocessing: UIColor = .code(light: 0x646485, dark: 0xfd8f3f)
 
         // MARK: - Reasoning
 
@@ -88,8 +103,23 @@ extension AIAppearance {
         /// The dimming over the content while the sidebar is open.
         public lazy var sidebarScrim: UIColor = colors.backgroundCoreOverlayDark
 
-        public init(tokens: DesignSystemTokens = DesignSystemTokens()) {
+        public nonisolated init(tokens: DesignSystemTokens = DesignSystemTokens()) {
             colors = tokens.colors
+        }
+    }
+}
+
+private extension UIColor {
+    // Syntax colors have no design token, so they keep a light and a dark variant here.
+    static func code(light: UInt32, dark: UInt32) -> UIColor {
+        UIColor { traits in
+            let hex = traits.userInterfaceStyle == .dark ? dark : light
+            return UIColor(
+                red: CGFloat((hex >> 16) & 0xff) / 255,
+                green: CGFloat((hex >> 8) & 0xff) / 255,
+                blue: CGFloat(hex & 0xff) / 255,
+                alpha: 1
+            )
         }
     }
 }

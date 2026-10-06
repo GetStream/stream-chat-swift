@@ -5,10 +5,10 @@
 import StreamCore
 import SwiftUI
 
-/// The default leading button for ``ComposerView``.
+/// The default leading button for ``AIComposerView``.
 ///
 /// Renders a circular `+` icon that, when tapped, opens the attachment picker sheet.
-/// The ``ComposerViewFactory/makeLeadingComposerView(options:)`` default implementation
+/// The ``AIComposerViewFactory/makeLeadingComposerView(options:)`` default implementation
 /// returns this view. Supply your own factory method to replace it.
 @available(iOS 16, *)
 public struct AddAttachmentsButton: View {

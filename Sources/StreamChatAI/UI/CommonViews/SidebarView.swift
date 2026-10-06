@@ -5,6 +5,19 @@
 import StreamCore
 import SwiftUI
 
+/// A menu that slides in from the leading edge, over the content, such as a list of
+/// conversations next to the chat.
+///
+/// Drag from the leading edge, or set `isOpen`, to open it. Drag it back, or tap the dimmed
+/// content, to close it.
+///
+/// ```swift
+/// SidebarView(isOpen: $isMenuOpen, excludedBottomHeight: 80) {
+///     ConversationList()
+/// } content: {
+///     ChatView()
+/// }
+/// ```
 public struct SidebarView<Menu: View, Content: View>: View {
     @Binding var isOpen: Bool
     var splitWidthRatio: CGFloat
@@ -20,6 +33,14 @@ public struct SidebarView<Menu: View, Content: View>: View {
     
     private let sidebarAnimation = Animation.spring(response: 0.28, dampingFraction: 0.85)
     
+    /// - Parameters:
+    ///   - isOpen: Whether the menu is open.
+    ///   - splitWidthRatio: The share of the width the open menu takes.
+    ///   - edgeActivationWidth: How close to the leading edge a drag must start to open the menu.
+    ///   - excludedBottomHeight: The height at the bottom, such as a composer's, where dragging
+    ///     doesn't move the menu.
+    ///   - menu: The menu.
+    ///   - content: The content the menu slides over.
     public init(
         isOpen: Binding<Bool>,
         splitWidthRatio: CGFloat = 0.82,

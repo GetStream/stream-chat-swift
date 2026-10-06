@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 import UIKit
 
 func writeAttachmentDataToTemporaryURL(_ data: Data) -> URL? {
@@ -25,7 +26,7 @@ func writeAttachmentDataToTemporaryURL(_ data: Data) -> URL? {
         try dataToWrite.write(to: fileURL, options: [.atomic])
         return fileURL
     } catch {
-        print("ComposerView attachment write error: \(error.localizedDescription)")
+        log.error("Couldn't write a temporary attachment", error: error)
         return nil
     }
 }

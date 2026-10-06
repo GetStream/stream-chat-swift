@@ -6,8 +6,9 @@ import SwiftUI
 
 extension AIAppearance {
     /// The icons the AI components render.
+    @MainActor
     public final class Images {
-        public init() { /* Public init. */ }
+        public nonisolated init() { /* Public init. */ }
 
         // MARK: - Composer
 

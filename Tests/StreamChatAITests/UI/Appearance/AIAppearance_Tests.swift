@@ -3,20 +3,22 @@
 //
 
 @testable import StreamChatAI
+import SwiftUI
 import XCTest
 
+@MainActor
 final class AIAppearance_Tests: XCTestCase {
     private var injected: AIAppearance!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         injected = InjectedValues[\.aiAppearance]
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         InjectedValues[\.aiAppearance] = injected
         injected = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     func test_colors_deriveFromTheSharedTokens() {
@@ -64,6 +66,29 @@ final class AIAppearance_Tests: XCTestCase {
 
         XCTAssertTrue(InjectedValues[\.aiAppearance.colors] === appearance.colors)
         XCTAssertEqual(InjectedValues[\.aiAppearance.colors].toolCallSuccess, .systemMint)
+        XCTAssertTrue(InjectedValues[\.aiAppearance.fonts] === appearance.fonts)
         XCTAssertTrue(InjectedValues[\.aiAppearance.tokens.fonts] === appearance.tokens.fonts)
+    }
+
+    func test_fonts_deriveFromTheSharedTokens() {
+        let tokens = DesignSystemTokens()
+        tokens.fonts.subheadline = .title
+        tokens.fonts.headline = .largeTitle
+
+        let appearance = AIAppearance(tokens: tokens)
+
+        XCTAssertEqual(appearance.fonts.messagePart, .title)
+        XCTAssertEqual(appearance.fonts.suggestion, .title)
+        XCTAssertEqual(appearance.fonts.chatOptionTitle, .largeTitle)
+    }
+
+    func test_codeColors_haveLightAndDarkVariants() {
+        let colors = AIAppearance().colors
+        let light = UITraitCollection(userInterfaceStyle: .light)
+        let dark = UITraitCollection(userInterfaceStyle: .dark)
+
+        for color in [colors.codeKeyword, colors.codeString, colors.codeType, colors.codeComment] {
+            XCTAssertNotEqual(color.resolvedColor(with: light), color.resolvedColor(with: dark))
+        }
     }
 }

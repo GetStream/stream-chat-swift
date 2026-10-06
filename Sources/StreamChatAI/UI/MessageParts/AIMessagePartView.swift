@@ -13,10 +13,10 @@ public struct AIMessagePartView: View {
     var approver: AIToolApprover?
     var font: Font?
 
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    /// - Parameter font: The font of the step, the design tokens' `subheadline` by default.
+    /// - Parameter font: The font of the step, `AIAppearance.fonts.messagePart` by default.
     public init(part: AIMessagePart, approver: AIToolApprover? = nil, font: Font? = nil) {
         self.part = part
         self.approver = approver
@@ -34,7 +34,7 @@ public struct AIMessagePartView: View {
                 }
             }
         } else {
-            UnsupportedPartView(font: font ?? fonts.subheadline)
+            UnsupportedPartView(font: font ?? fonts.messagePart)
         }
     }
 }

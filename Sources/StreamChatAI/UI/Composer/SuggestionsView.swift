@@ -24,7 +24,7 @@ public struct SuggestionsView: View {
     }
     
     @Injected(\.aiAppearance.colors) private var colors
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     public var body: some View {
@@ -35,7 +35,7 @@ public struct SuggestionsView: View {
                         onMessageSend(.init(text: option))
                     } label: {
                         Text(option)
-                            .font(fonts.subheadline)
+                            .font(fonts.suggestion)
                             .foregroundColor(Color(colors.suggestionText))
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)

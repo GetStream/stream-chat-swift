@@ -868,7 +868,9 @@ private_lane :frameworks_sizes do
   # StreamChatAI isn't linked by the Demo app and has no asset catalog, so its own unsigned archive is enough
   ai_archive_dir = "#{root_dir}/StreamChatAI.xcarchive"
   archive_stream_chat_ai(archive_path: ai_archive_dir)
-  stream_chat_ai_size = File.size("../#{ai_archive_dir}/Products/Library/Frameworks/StreamChatAI.framework/StreamChatAI")
+  # StreamCore and StreamCoreUI are linked into the framework, but an app with StreamChat already has them
+  shared_core_size = linked_objects_size(linkmap: '../linkmaps/StreamChatAI-arm64-LinkMap.txt', objects: ['StreamCore.o', 'StreamCoreUI.o'])
+  stream_chat_ai_size = File.size("../#{ai_archive_dir}/Products/Library/Frameworks/StreamChatAI.framework/StreamChatAI") - shared_core_size
 
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
@@ -881,6 +883,32 @@ private_lane :frameworks_sizes do
     StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0),
     StreamChatAI: stream_chat_ai_size_kb.round(0)
   }
+end
+
+# The bytes the given object files, such as a package's, take in a linked binary
+private_lane :linked_objects_size do |options|
+  object_ids = []
+  section = nil
+  File.foreach(options[:linkmap], encoding: 'ISO-8859-1').sum do |line|
+    if line.start_with?('#')
+      section = :objects if line.start_with?('# Object files:')
+      section = :symbols if line.start_with?('# Symbols:')
+      section = nil if line.start_with?('# Sections:', '# Dead Stripped Symbols:')
+      next 0
+    end
+
+    case section
+    when :objects
+      match = line.match(/^\[\s*(\d+)\]\s+(.+)$/)
+      object_ids << match[1].to_i if match && options[:objects].include?(File.basename(match[2].strip))
+      0
+    when :symbols
+      match = line.match(/^0x\h+\s+0x(\h+)\s+\[\s*(\d+)\]/)
+      match && object_ids.include?(match[2].to_i) ? match[1].to_i(16) : 0
+    else
+      0
+    end
+  end
 end
 
 # Archiving also writes the framework's link map (linkmaps/StreamChatAI-arm64-LinkMap.txt).

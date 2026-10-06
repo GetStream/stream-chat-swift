@@ -17,3 +17,12 @@
 "tool_approval.button.allow" = "Allow";
 "tool_approval.button.decline" = "Don't Allow";
 "tool_approval.error.not_sent" = "Your answer couldn't be sent. Try again.";
+"charts.series" = "Series";
+"charts.pie" = "Pie";
+"charts.axis.x" = "X";
+"charts.axis.y" = "Y";
+"charts.size" = "Size";
+"charts.value" = "Value";
+"charts.category" = "Category";
+"charts.bin" = "Bin";
+"charts.count" = "Count";

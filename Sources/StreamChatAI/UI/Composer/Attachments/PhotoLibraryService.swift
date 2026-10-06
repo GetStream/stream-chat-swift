@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import Photos
+import StreamCore
 import UIKit
 
 @MainActor
@@ -151,7 +152,7 @@ final class PhotoLibraryService: ObservableObject {
         }
 
         if let error = info?[PHImageErrorKey] as? Error {
-            print("PhotoLibraryService \(request) error: \(error.localizedDescription)")
+            log.error("Photo library \(request) failed", error: error)
             return .failed
         }
 
@@ -181,7 +182,7 @@ final class PhotoLibraryService: ObservableObject {
             collected.append(chunk)
         } completionHandler: { error in
             if let error {
-                print("PhotoLibraryService \(request) error: \(error.localizedDescription)")
+                log.error("Photo library \(request) failed", error: error)
                 resume(nil)
                 return
             }

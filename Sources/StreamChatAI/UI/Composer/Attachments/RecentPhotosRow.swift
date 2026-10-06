@@ -9,7 +9,7 @@ import UIKit
 /// The camera, then the most recent photos, each selectable as an attachment.
 @available(iOS 16, *)
 struct RecentPhotosRow: View {
-    @ObservedObject var viewModel: ComposerViewModel
+    @ObservedObject var viewModel: AIComposerViewModel
     @ObservedObject var photoLibrary: PhotoLibraryService
     let onCamera: () -> Void
 

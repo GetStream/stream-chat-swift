@@ -7,7 +7,7 @@ import XCTest
 
 final class ChartSpecParsing_Tests: XCTestCase {
     private func parse(_ json: String) throws -> USpec {
-        try parseUSpec(from: Data(json.utf8))
+        try ChartSpecParser.parse(Data(json.utf8))
     }
 
     private func points(_ series: USeries) -> [String] {

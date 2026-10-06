@@ -12,10 +12,10 @@ public struct AIToolCallView: View {
 
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    /// - Parameter font: The font of the call, the design tokens' `subheadline` by default.
+    /// - Parameter font: The font of the call, `AIAppearance.fonts.messagePart` by default.
     public init(part: AIToolCallPart, font: Font? = nil) {
         self.part = part
         self.font = font
@@ -30,7 +30,7 @@ public struct AIToolCallView: View {
                     .foregroundStyle(Color(colors.toolCallTitle))
                 if let detail {
                     Text(detail)
-                        .font(fonts.caption1)
+                        .font(fonts.toolCallDetail)
                         .foregroundStyle(Color(colors.toolCallDetail))
                         .lineLimit(2)
                 }
@@ -38,11 +38,11 @@ public struct AIToolCallView: View {
             Spacer(minLength: layout.spacingXs)
             if let duration = part.duration, part.status.isFinished {
                 Text(Self.format(duration))
-                    .font(fonts.caption1.monospacedDigit())
+                    .font(fonts.toolCallDetail.monospacedDigit())
                     .foregroundStyle(Color(colors.toolCallDetail))
             }
         }
-        .font(font ?? fonts.subheadline)
+        .font(font ?? fonts.messagePart)
         .accessibilityElement(children: .combine)
     }
 
@@ -75,11 +75,11 @@ public struct AIToolCallView: View {
                 .foregroundStyle(Color(colors.toolCallAccent))
                 .modifier(Shimmer(isActive: true, highlight: Color(colors.toolCallTitle)))
         case .completed:
-            images.toolCallCompleted.font(fonts.caption1.weight(.bold)).foregroundStyle(Color(colors.toolCallSuccess))
+            images.toolCallCompleted.font(fonts.toolCallDetail.weight(.bold)).foregroundStyle(Color(colors.toolCallSuccess))
         case .failed:
-            images.toolCallFailed.font(fonts.caption1.weight(.bold)).foregroundStyle(Color(colors.toolCallFailure))
+            images.toolCallFailed.font(fonts.toolCallDetail.weight(.bold)).foregroundStyle(Color(colors.toolCallFailure))
         case .cancelled:
-            images.toolCallCancelled.font(fonts.caption1.weight(.bold)).foregroundStyle(Color(colors.toolCallDetail))
+            images.toolCallCancelled.font(fonts.toolCallDetail.weight(.bold)).foregroundStyle(Color(colors.toolCallDetail))
         default:
             ProgressView().controlSize(.mini).tint(Color(colors.toolCallAccent))
         }

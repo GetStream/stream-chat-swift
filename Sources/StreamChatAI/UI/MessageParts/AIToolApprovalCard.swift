@@ -14,10 +14,10 @@ public struct AIToolApprovalCard: View {
     var decide: @MainActor @Sendable (Bool) -> Void
 
     @Injected(\.aiAppearance.colors) private var colors
-    @Injected(\.aiAppearance.tokens.fonts) private var fonts
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    /// - Parameter font: The font of the question, the design tokens' `subheadline` by default.
+    /// - Parameter font: The font of the question, `AIAppearance.fonts.messagePart` by default.
     public init(
         approval: AIToolApproval,
         state: AIToolApprovalState = AIToolApprovalState(),
@@ -38,7 +38,7 @@ public struct AIToolApprovalCard: View {
                     .foregroundStyle(Color(colors.toolApprovalTitle))
                 ForEach(Self.lines(of: approval), id: \.self) { line in
                     Text(line)
-                        .font(fonts.footnote)
+                        .font(fonts.toolApprovalMessage)
                         .foregroundStyle(Color(colors.toolApprovalMessage))
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -57,11 +57,11 @@ public struct AIToolApprovalCard: View {
             .disabled(state.isSending)
             if state.failed {
                 Text(L10n.ToolApproval.notSent)
-                    .font(fonts.caption1)
+                    .font(fonts.toolApprovalFailure)
                     .foregroundStyle(Color(colors.toolApprovalFailure))
             }
         }
-        .font(font ?? fonts.subheadline)
+        .font(font ?? fonts.messagePart)
         .padding(layout.spacingSm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(colors.toolApprovalBackground), in: RoundedRectangle(cornerRadius: layout.radiusLg, style: .continuous))

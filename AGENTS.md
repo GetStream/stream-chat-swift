@@ -30,7 +30,7 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 - **swift-docc-plugin** (exact 1.0.0) — for documentation generation
 - **Splash** (exact 0.16.0) and **swift-markdown-ui** (exact 2.4.0) — used only by StreamChatAI
 - MarkdownUI requires iOS 15 / macOS 12, above the package's iOS 13 / macOS 11 (kept on purpose for existing customers). Xcode 27+ raises the StreamChatAI target to match; Xcode 26 and older reject it. So StreamChatAI is not part of `Integration/SPM`, whose CI lane runs on Xcode 26.2
-- StreamChatAI must not depend on the Model Context Protocol SDK (it adds a large dependency tree); `ClientToolDefinition` and `AIJSONValue` read and write the same JSON as MCP's `Tool` and `Value`
+- StreamChatAI must not depend on the Model Context Protocol SDK (it adds a large dependency tree); `AIClientToolDefinition` reads and writes the same JSON as MCP's `Tool`, with schemas as StreamCore's `RawJSON`
 - **Vendored libraries** (do not edit directly):
   - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
@@ -84,8 +84,7 @@ Sources/
       Charts/              # Chart specs parsed from code blocks (Chart.js, ECharts, Vega-Lite, …)
       LocalModel/          # On-device model fallback
       MessageParts/        # A reply's ai_reasoning / ai_tool_call steps
-      ToolCalls/           # Client tool runner, results, approvals
-      ToolRegistry/        # Client tool registry and JSON values
+      ToolCalls/           # Client tools: definitions, registration, runner, results, approvals
     UI/                    # SwiftUI views and the state behind them
       Appearance/          # AIAppearance: StreamCore design tokens, AI colors and images
       Charts/              # Chart rendering
@@ -246,7 +245,7 @@ Do not manually edit files in `Sources/StreamChatCommonUI/Generated/`:
 
 The SDK uses `defaultLocalization: "en"`. String resources live in `Sources/StreamChatCommonUI/Resources/`. After modifying `.strings` files, regenerate `L10n.swift` by running SwiftGen (or let CI handle it). Always use `L10n` accessors for user-facing strings rather than raw string literals.
 
-StreamChatAI keeps its own strings in `Sources/StreamChatAI/Resources/en.lproj/Localizable.strings`, read through the internal `L10n` in `Sources/StreamChatAI/Localization.swift`. That file is written by hand: add an accessor there for each new key.
+StreamChatAI keeps its own strings in `Sources/StreamChatAI/Resources/en.lproj/Localizable.strings`, read through the internal `L10n` in `Sources/StreamChatAI/Utils/Localization.swift`. That file is written by hand: add an accessor there for each new key. `L10n` reads every string through `AIAppearance.localizationProvider`, so apps can override them.
 
 ### Concurrency model
 
@@ -270,7 +269,7 @@ Accessibility & UI quality
 - Support both light/dark mode.
 - Use the Appearance system (`Appearance`, `Components`) for theming and configuration.
 - In StreamChatAI, keep code without UI (models, parsing, tool calls) under `AI/`, importing Foundation rather than SwiftUI, and views under `UI/`, one view per file. Split a view whose body grows long into smaller views.
-- In StreamChatAI, take colors, fonts, spacing and icons from `AIAppearance`, never hard-coded values. Each view injects only what it reads, e.g. `@Injected(\.aiAppearance.colors) var colors`, `@Injected(\.aiAppearance.tokens.fonts) var fonts`, `@Injected(\.aiAppearance.images) var images`. A new color goes in `AIAppearance+Colors.swift`, derived from the StreamCore `DesignSystemTokens`; a new icon goes in `AIAppearance.Images`. Keep re-exporting only `DesignSystemTokens` from StreamCoreUI: the rest of it clashes with StreamChatCommonUI names such as `ImageResize` and `BoxShadow`.
+- In StreamChatAI, take colors, fonts, spacing and icons from `AIAppearance`, never hard-coded values. Each view injects only what it reads, e.g. `@Injected(\.aiAppearance.colors) var colors`, `@Injected(\.aiAppearance.fonts) var fonts`, `@Injected(\.aiAppearance.tokens.layout) var layout`, `@Injected(\.aiAppearance.images) var images`. A new color or font goes in `AIAppearance+Colors.swift` or `AIAppearance+Fonts.swift`, derived from the StreamCore `DesignSystemTokens`; a new icon goes in `AIAppearance.Images`. Don't add `InjectedValues` keys such as `\.colors` or `\.fonts`: StreamChatSwiftUI already defines them. Log with StreamCore's `log`, not `print`. Keep re-exporting only `DesignSystemTokens` from StreamCoreUI: the rest of it clashes with StreamChatCommonUI names such as `ImageResize` and `BoxShadow`.
 
 Testing policy
 

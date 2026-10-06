@@ -8,7 +8,7 @@ import XCTest
 @MainActor
 final class AIClientToolRunner_Tests: XCTestCase {
     final class CountingTool: AIClientTool {
-        let name = "athena_device_location"
+        let definition = AIClientToolDefinition(name: "athena_device_location")
         var runs = 0
         func run(_ call: AIToolCallPart) async -> AIClientToolResult {
             runs += 1
@@ -88,7 +88,7 @@ final class AIClientToolRunner_Tests: XCTestCase {
 
     func test_run_whenRunnerIsReleasedWhileToolRuns_stillSendsTheResult() async {
         final class SlowTool: AIClientTool {
-            let name = "athena_device_location"
+            let definition = AIClientToolDefinition(name: "athena_device_location")
             var finish: CheckedContinuation<Void, Never>?
             func run(_ call: AIToolCallPart) async -> AIClientToolResult {
                 await withCheckedContinuation { finish = $0 }
@@ -124,9 +124,9 @@ final class AIClientToolRunner_Tests: XCTestCase {
 
     func test_toolNames_areSortedAndKeepTheFirstToolOfAName() async {
         final class NamedTool: AIClientTool {
-            let name: String
+            let definition: AIClientToolDefinition
             var runs = 0
-            init(_ name: String) { self.name = name }
+            init(_ name: String) { definition = AIClientToolDefinition(name: name) }
             func run(_ call: AIToolCallPart) async -> AIClientToolResult {
                 runs += 1
                 return .failed("Not now")
@@ -142,5 +142,44 @@ final class AIClientToolRunner_Tests: XCTestCase {
         XCTAssertEqual(runner.toolNames, ["athena_device_location", "open_camera"])
         XCTAssertEqual(first.runs, 1)
         XCTAssertEqual(duplicate.runs, 0)
+    }
+
+    func test_registrations_describeEveryToolToTheAgent() throws {
+        final class WeatherTool: AIClientTool {
+            let definition = AIClientToolDefinition(
+                name: "get_weather",
+                description: "Gets the weather for a city.",
+                inputSchema: ["type": "object", "properties": ["city": ["type": "string"]], "required": ["city"]]
+            )
+            let instructions: String? = "Use it when the person asks about the weather."
+            let showExternalSourcesIndicator = true
+            func run(_ call: AIToolCallPart) async -> AIClientToolResult { .failed("Not now") }
+        }
+        let runner = AIClientToolRunner(userID: "u_1", clientID: "ios-1", tools: [WeatherTool(), CountingTool()])
+
+        let registrations = runner.registrations
+
+        XCTAssertEqual(registrations.map(\.name), ["athena_device_location", "get_weather"])
+        XCTAssertEqual(registrations[0].description, "", "a tool without a description or instructions")
+        XCTAssertEqual(registrations[0].showExternalSourcesIndicator, false)
+        let json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(registrations[1])) as? NSDictionary
+        XCTAssertEqual(json, [
+            "name": "get_weather",
+            "description": "Gets the weather for a city.",
+            "instructions": "Use it when the person asks about the weather.",
+            "parameters": ["type": "object", "properties": ["city": ["type": "string"]], "required": ["city"]],
+            "showExternalSourcesIndicator": true
+        ] as NSDictionary)
+    }
+
+    func test_registration_whenToolHasNoDescription_describesItWithItsInstructions() {
+        final class LocationTool: AIClientTool {
+            let definition = AIClientToolDefinition(name: "get_location")
+            let instructions: String? = "Ask before sharing the location."
+            func run(_ call: AIToolCallPart) async -> AIClientToolResult { .failed("Not now") }
+        }
+        let runner = AIClientToolRunner(userID: "u_1", clientID: "ios-1", tools: [LocationTool()])
+
+        XCTAssertEqual(runner.registrations.first?.description, "Ask before sharing the location.")
     }
 }

@@ -13,7 +13,7 @@ struct HistogramChart: View {
         let raw = spec.series.first?.points.map { $0.y } ?? []
         let bins = makeBins(raw, targetBins: 10)
         Chart(bins) { b in
-            BarMark(x: .value("Bin", b.label), y: .value("Count", b.count))
+            BarMark(x: .value(L10n.Charts.bin, b.label), y: .value(L10n.Charts.count, b.count))
         }
     }
 }
