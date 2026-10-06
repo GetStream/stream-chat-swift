@@ -86,31 +86,63 @@ final class FullUserResponse: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case avgResponseTime = "avg_response_time"
-        case banned
-        case blockedUserIds = "blocked_user_ids"
-        case channelMutes = "channel_mutes"
-        case createdAt = "created_at"
-        case custom
-        case deactivatedAt = "deactivated_at"
-        case devices
-        case id
-        case image
-        case invisible
-        case language
-        case lastActive = "last_active"
-        case mutes
-        case name
-        case online
-        case privacySettings = "privacy_settings"
-        case role
-        case shadowBanned = "shadow_banned"
-        case teams
-        case teamsRole = "teams_role"
-        case totalUnreadCount = "total_unread_count"
-        case unreadChannels = "unread_channels"
-        case unreadThreads = "unread_threads"
-        case updatedAt = "updated_at"
+    static let allKeys: Set<String> = [
+        StringCodingKey.avgResponseTime.stringValue,
+        StringCodingKey.banned.stringValue,
+        StringCodingKey.blockedUserIds.stringValue,
+        StringCodingKey.channelMutes.stringValue,
+        StringCodingKey.createdAt.stringValue,
+        StringCodingKey.custom.stringValue,
+        StringCodingKey.deactivatedAt.stringValue,
+        StringCodingKey.devices.stringValue,
+        StringCodingKey.id.stringValue,
+        StringCodingKey.image.stringValue,
+        StringCodingKey.invisible.stringValue,
+        StringCodingKey.language.stringValue,
+        StringCodingKey.lastActive.stringValue,
+        StringCodingKey.mutes.stringValue,
+        StringCodingKey.name.stringValue,
+        StringCodingKey.online.stringValue,
+        StringCodingKey.privacySettings.stringValue,
+        StringCodingKey.role.stringValue,
+        StringCodingKey.shadowBanned.stringValue,
+        StringCodingKey.teams.stringValue,
+        StringCodingKey.teamsRole.stringValue,
+        StringCodingKey.totalUnreadCount.stringValue,
+        StringCodingKey.unreadChannels.stringValue,
+        StringCodingKey.unreadThreads.stringValue,
+        StringCodingKey.updatedAt.stringValue
+    ]
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        banned = try container.decode(Bool.self, forKey: .banned)
+        blockedUserIds = try container.decode([String].self, forKey: .blockedUserIds)
+        channelMutes = try container.decode([MutedChannelPayload].self, forKey: .channelMutes)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
+        devices = try container.decode([Device].self, forKey: .devices)
+        id = try container.decode(String.self, forKey: .id)
+        image = try container.decodeIfPresent(String.self, forKey: .image)
+        invisible = try container.decode(Bool.self, forKey: .invisible)
+        language = try container.decode(String.self, forKey: .language)
+        lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
+        mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        online = try container.decode(Bool.self, forKey: .online)
+        privacySettings = try container.decodeIfPresent(
+            UserPrivacySettings.self,
+            forKey: .privacySettings
+        )
+        role = try container.decode(String.self, forKey: .role)
+        shadowBanned = try container.decode(Bool.self, forKey: .shadowBanned)
+        teams = try container.decode([String].self, forKey: .teams)
+        teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
+        totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+        unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+        unreadThreads = try container.decode(Int.self, forKey: .unreadThreads)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }

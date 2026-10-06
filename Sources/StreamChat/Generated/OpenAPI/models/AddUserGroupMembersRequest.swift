@@ -18,9 +18,10 @@ final class AddUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
         self.teamId = teamId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case asAdmin = "as_admin"
-        case memberIds = "member_ids"
-        case teamId = "team_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(asAdmin, forKey: .asAdmin)
+        try container.encode(memberIds, forKey: .memberIds)
+        try container.encodeIfPresent(teamId, forKey: .teamId)
     }
 }

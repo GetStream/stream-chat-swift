@@ -30,16 +30,8 @@ final class QueryBannedUsersPayload: Sendable, Encodable, JSONEncodable {
         self.sort = sort
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case excludeExpiredBans = "exclude_expired_bans"
-        case filterConditions = "filter_conditions"
-        case limit
-        case offset
-        case sort
-    }
-
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encodeIfPresent(excludeExpiredBans, forKey: .excludeExpiredBans)
         try container.encode(filterConditions, forKey: .filterConditions)
         try container.encodeIfPresent(limit, forKey: .limit)

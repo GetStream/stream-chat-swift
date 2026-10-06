@@ -12,7 +12,8 @@ final class QueryBannedUsersResponse: Sendable, Decodable {
         self.bans = bans
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case bans
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.bans = try container.decode([BanResponse].self, forKey: .bans)
     }
 }

@@ -31,13 +31,23 @@ final class MessageModerationDetailsPayload: Sendable, Decodable {
         self.textHarms = textHarms
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case action
-        case blocklistsMatched = "blocklists_matched"
-        case imageHarms = "image_harms"
-        case originalText = "original_text"
-        case platformCircumvented = "platform_circumvented"
-        case semanticFilterMatched = "semantic_filter_matched"
-        case textHarms = "text_harms"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.action = try container.decode(String.self, forKey: .action)
+        self.blocklistsMatched = try container.decodeIfPresent(
+            [String].self,
+            forKey: .blocklistsMatched
+        )
+        self.imageHarms = try container.decodeIfPresent([String].self, forKey: .imageHarms)
+        self.originalText = try container.decode(String.self, forKey: .originalText)
+        self.platformCircumvented = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .platformCircumvented
+        )
+        self.semanticFilterMatched = try container.decodeIfPresent(
+            String.self,
+            forKey: .semanticFilterMatched
+        )
+        self.textHarms = try container.decodeIfPresent([String].self, forKey: .textHarms)
     }
 }

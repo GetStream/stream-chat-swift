@@ -30,11 +30,12 @@ final class BanRequest: Sendable, Encodable, JSONEncodable {
         self.timeout = timeout
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCid = "channel_cid"
-        case reason
-        case shadow
-        case targetUserId = "target_user_id"
-        case timeout
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(channelCid, forKey: .channelCid)
+        try container.encodeIfPresent(reason, forKey: .reason)
+        try container.encodeIfPresent(shadow, forKey: .shadow)
+        try container.encode(targetUserId, forKey: .targetUserId)
+        try container.encodeIfPresent(timeout, forKey: .timeout)
     }
 }

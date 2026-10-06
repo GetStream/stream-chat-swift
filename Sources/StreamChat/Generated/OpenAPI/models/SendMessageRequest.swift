@@ -16,9 +16,10 @@ final class SendMessageRequest: Sendable, Encodable, JSONEncodable {
         self.skipPush = skipPush
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case message
-        case skipEnrichUrl = "skip_enrich_url"
-        case skipPush = "skip_push"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(message, forKey: .message)
+        try container.encodeIfPresent(skipEnrichUrl, forKey: .skipEnrichUrl)
+        try container.encodeIfPresent(skipPush, forKey: .skipPush)
     }
 }

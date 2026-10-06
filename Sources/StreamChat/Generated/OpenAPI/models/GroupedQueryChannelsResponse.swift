@@ -12,7 +12,8 @@ final class GroupedQueryChannelsResponse: Sendable, Decodable {
         self.groups = groups
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case groups
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.groups = try container.decode([String: GroupedChannelsBucket].self, forKey: .groups)
     }
 }

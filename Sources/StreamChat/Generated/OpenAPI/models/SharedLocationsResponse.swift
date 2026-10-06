@@ -11,7 +11,11 @@ final class SharedLocationsResponse: Sendable, Decodable {
         self.activeLiveLocations = activeLiveLocations
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case activeLiveLocations = "active_live_locations"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.activeLiveLocations = try container.decode(
+            [SharedLocation].self,
+            forKey: .activeLiveLocations
+        )
     }
 }

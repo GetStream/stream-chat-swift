@@ -13,8 +13,9 @@ final class ChannelMemberRequest: Sendable, Encodable, JSONEncodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case userId = "user_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encodeIfPresent(userId, forKey: .userId)
     }
 }

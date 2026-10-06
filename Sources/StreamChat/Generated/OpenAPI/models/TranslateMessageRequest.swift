@@ -78,7 +78,8 @@ final class TranslateMessageRequest: Sendable, Encodable, JSONEncodable {
         self.language = language
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case language
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(language, forKey: .language)
     }
 }

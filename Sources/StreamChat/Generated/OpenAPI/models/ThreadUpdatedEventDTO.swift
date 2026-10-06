@@ -15,9 +15,10 @@ final class ThreadUpdatedEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case thread
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.thread = try container.decodeIfPresent(ThreadResponse.self, forKey: .thread)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

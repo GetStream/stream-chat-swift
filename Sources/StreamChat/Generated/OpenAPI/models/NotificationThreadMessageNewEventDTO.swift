@@ -37,13 +37,17 @@ final class NotificationThreadMessageNewEventDTO: Sendable, Event, Decodable {
         self.unreadThreads = unreadThreads
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelMessageCount = "channel_message_count"
-        case cid
-        case createdAt = "created_at"
-        case message
-        case type
-        case unreadThreads = "unread_threads"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.channelMessageCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .channelMessageCount
+        )
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.unreadThreads = try container.decodeIfPresent(Int.self, forKey: .unreadThreads)
     }
 }

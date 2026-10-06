@@ -53,22 +53,8 @@ final class DraftMessagePayload: Sendable, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case attachments
-        case custom
-        case id
-        case mentionedUsers = "mentioned_users"
-        case parentId = "parent_id"
-        case pollId = "poll_id"
-        case quotedMessageId = "quoted_message_id"
-        case showInChannel = "show_in_channel"
-        case silent
-        case text
-        case type
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         attachments = try container.decodeIfPresent(
             [MessageAttachmentPayload].self,
             forKey: .attachments

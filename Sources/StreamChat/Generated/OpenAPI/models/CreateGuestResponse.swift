@@ -15,8 +15,9 @@ final class CreateGuestResponse: Sendable, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case accessToken = "access_token"
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.accessToken = try container.decode(String.self, forKey: .accessToken)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
     }
 }

@@ -15,8 +15,9 @@ final class UploadChannelFileResponse: Sendable, Decodable {
         self.thumbUrl = thumbUrl
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case file
-        case thumbUrl = "thumb_url"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.file = try container.decodeIfPresent(String.self, forKey: .file)
+        self.thumbUrl = try container.decodeIfPresent(String.self, forKey: .thumbUrl)
     }
 }

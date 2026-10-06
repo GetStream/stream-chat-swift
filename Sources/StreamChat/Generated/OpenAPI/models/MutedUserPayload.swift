@@ -18,10 +18,11 @@ final class MutedUserPayload: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case expires
-        case target
-        case updatedAt = "updated_at"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.expires = try container.decodeIfPresent(Date.self, forKey: .expires)
+        self.target = try container.decodeIfPresent(UserPayload.self, forKey: .target)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }

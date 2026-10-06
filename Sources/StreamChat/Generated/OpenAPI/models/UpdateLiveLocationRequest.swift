@@ -21,10 +21,11 @@ final class UpdateLiveLocationRequest: Sendable, Encodable, JSONEncodable {
         self.messageId = messageId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case endAt = "end_at"
-        case latitude
-        case longitude
-        case messageId = "message_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(endAt, forKey: .endAt)
+        try container.encodeIfPresent(latitude, forKey: .latitude)
+        try container.encodeIfPresent(longitude, forKey: .longitude)
+        try container.encode(messageId, forKey: .messageId)
     }
 }

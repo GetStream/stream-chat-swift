@@ -54,25 +54,8 @@ final class ChannelStateResponse: Sendable, Decodable {
         self.watchers = watchers
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case activeLiveLocations = "active_live_locations"
-        case channel
-        case draft
-        case hidden
-        case members
-        case membership
-        case messages
-        case pendingMessages = "pending_messages"
-        case pinnedMessages = "pinned_messages"
-        case pushPreferences = "push_preferences"
-        case read
-        case threads
-        case watcherCount = "watcher_count"
-        case watchers
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         activeLiveLocations = try container.decodeArrayIfPresentIgnoringFailures(
             [SharedLocation].self,
             forKey: .activeLiveLocations

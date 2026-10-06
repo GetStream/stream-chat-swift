@@ -34,17 +34,8 @@ final class SearchPayload: Sendable, Encodable, JSONEncodable {
         self.sort = sort
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case filterConditions = "filter_conditions"
-        case limit
-        case messageFilterConditions = "message_filter_conditions"
-        case next
-        case offset
-        case sort
-    }
-
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encode(filterConditions, forKey: .filterConditions)
         try container.encodeIfPresent(limit, forKey: .limit)
         if let messageFilterConditions {

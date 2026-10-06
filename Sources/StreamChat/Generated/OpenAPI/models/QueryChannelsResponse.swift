@@ -14,13 +14,8 @@ final class QueryChannelsResponse: Sendable, Decodable {
         self.predefinedFilter = predefinedFilter
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channels
-        case predefinedFilter = "predefined_filter"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         channels = try container.decodeArrayIgnoringFailures(
             [ChannelStateResponse].self,
             forKey: .channels
