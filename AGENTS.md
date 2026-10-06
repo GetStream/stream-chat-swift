@@ -80,13 +80,24 @@ Sources/
     Resources/             # Localization files (en.lproj, etc.)
     Utils/                 # Common UI utilities
   StreamChatAI/            # SwiftUI AI components (depends only on StreamCore)
-    Appearance/            # AIAppearance: StreamCore design tokens, AI colors and images
-    Composer/              # Prompt composer, view factory, suggestions
-    LocalModel/            # On-device model fallback
-    Parts/                 # AI message parts: reasoning, tool calls, approvals
+    AI/                    # Non-UI code: what agents send, and how the device answers
+      Charts/              # Chart specs parsed from code blocks (Chart.js, ECharts, Vega-Lite, …)
+      LocalModel/          # On-device model fallback
+      MessageParts/        # A reply's ai_reasoning / ai_tool_call steps
+      ToolCalls/           # Client tool runner, results, approvals
+      ToolRegistry/        # Client tool registry and JSON values
+    UI/                    # SwiftUI views and the state behind them
+      Appearance/          # AIAppearance: StreamCore design tokens, AI colors and images
+      Charts/              # Chart rendering
+      CommonViews/         # Sidebar
+      Composer/            # Prompt composer, view factory, suggestions, attachments
+      Message/             # Streaming Markdown message, code blocks, typing indicator
+      MessageParts/        # Reasoning and tool call steps, tool approvals
+      Reasoning/           # Streaming reasoning view
+      Transcription/       # Speech to text
+      Utils/               # Shared modifiers and formatting
     Resources/             # Localization files (en.lproj)
-    Tools/                 # Client tool registry and JSON values
-    Transcription/         # Speech to text
+    Utils/                 # Localization accessors, exported modules
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -258,6 +269,7 @@ Accessibility & UI quality
 - Ensure UIKit components have accessibility labels, traits, and dynamic type support.
 - Support both light/dark mode.
 - Use the Appearance system (`Appearance`, `Components`) for theming and configuration.
+- In StreamChatAI, keep code without UI (models, parsing, tool calls) under `AI/`, importing Foundation rather than SwiftUI, and views under `UI/`, one view per file. Split a view whose body grows long into smaller views.
 - In StreamChatAI, take colors, fonts, spacing and icons from `AIAppearance`, never hard-coded values. Each view injects only what it reads, e.g. `@Injected(\.aiAppearance.colors) var colors`, `@Injected(\.aiAppearance.tokens.fonts) var fonts`, `@Injected(\.aiAppearance.images) var images`. A new color goes in `AIAppearance+Colors.swift`, derived from the StreamCore `DesignSystemTokens`; a new icon goes in `AIAppearance.Images`. Keep re-exporting only `DesignSystemTokens` from StreamCoreUI: the rest of it clashes with StreamChatCommonUI names such as `ImageResize` and `BoxShadow`.
 
 Testing policy
