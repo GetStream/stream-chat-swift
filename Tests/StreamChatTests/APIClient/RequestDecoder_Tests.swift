@@ -114,21 +114,48 @@ final class RequestDecoder_Tests: XCTestCase {
         XCTAssertEqual(levels, [.error])
     }
 
+    func test_decodingInvalidPayload_logsErrorWithHTTPAttachment() throws {
+        let response = HTTPURLResponse(url: .unique(), statusCode: 200, httpVersion: nil, headerFields: nil)
+        let data = Data(#"{"name": 1}"#.utf8)
+        var thrownError: Error?
+
+        let details = try capturedLogDetails(count: 2) {
+            XCTAssertThrowsError(try {
+                let _: TestUser = try self.decode(data: data, response: response, error: nil)
+            }()) { thrownError = $0 }
+        }
+
+        XCTAssert(thrownError is DecodingError)
+        XCTAssertEqual(details.map(\.level), [.debug, .error])
+        let attachment = try XCTUnwrap(details.last?.attachment as? HTTPLogAttachment)
+        XCTAssertEqual(attachment.response as? HTTPURLResponse, response)
+        XCTAssertEqual(attachment.responseBody, data)
+        XCTAssert(attachment.error is DecodingError)
+        XCTAssertNotNil(attachment.session)
+    }
+
     private func loggedLevels(forEmptyResponseWithStatusCode statusCode: Int) throws -> [LogLevel] {
+        let response = HTTPURLResponse(url: .unique(), statusCode: statusCode, httpVersion: nil, headerFields: nil)
+        return try capturedLogDetails(count: 1) {
+            XCTAssertThrowsError(try {
+                let _: Data = try self.decode(data: nil, response: response, error: nil)
+            }()) { error in
+                XCTAssert(error is ClientError.ResponseBodyEmpty)
+            }
+        }.map(\.level)
+    }
+
+    private func capturedLogDetails(count: Int, during action: () throws -> Void) rethrows -> [LogDetails] {
         let logged = expectation(description: "logged")
+        logged.expectedFulfillmentCount = count
         let destination = CapturingLogDestination { logged.fulfill() }
         let previousDestinations = LogConfig.destinations
         LogConfig.destinations = [destination]
         defer { LogConfig.destinations = previousDestinations }
-        let response = HTTPURLResponse(url: .unique(), statusCode: statusCode, httpVersion: nil, headerFields: nil)
 
-        XCTAssertThrowsError(try {
-            let _: Data = try self.decode(data: nil, response: response, error: nil)
-        }()) { error in
-            XCTAssert(error is ClientError.ResponseBodyEmpty)
-        }
+        try action()
         wait(for: [logged], timeout: defaultTimeout)
-        return destination.levels
+        return destination.details
     }
 
     private func decode<ResponseType: Decodable>(
@@ -152,13 +179,13 @@ private struct TestModel: Decodable {
 
 private final class CapturingLogDestination: BaseLogDestination, @unchecked Sendable {
     private let lock = NSLock()
-    private var capturedLevels: [LogLevel] = []
+    private var capturedDetails: [LogDetails] = []
     private var onProcess: @Sendable () -> Void = {}
 
-    var levels: [LogLevel] {
+    var details: [LogDetails] {
         lock.lock()
         defer { lock.unlock() }
-        return capturedLevels
+        return capturedDetails
     }
 
     convenience init(onProcess: @escaping @Sendable () -> Void) {
@@ -181,7 +208,7 @@ private final class CapturingLogDestination: BaseLogDestination, @unchecked Send
 
     override func process(logDetails: LogDetails) {
         lock.lock()
-        capturedLevels.append(logDetails.level)
+        capturedDetails.append(logDetails)
         lock.unlock()
         onProcess()
     }

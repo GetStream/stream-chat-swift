@@ -106,7 +106,17 @@ struct DefaultRequestDecoder: RequestDecoder {
             let decodedPayload = try JSONDecoder.default.decode(ResponseType.self, from: data)
             return decodedPayload
         } catch {
-            log.error(error, subsystems: .httpRequests)
+            log.error(
+                message,
+                subsystems: .httpRequests,
+                attachment: HTTPLogAttachment(
+                    request: request,
+                    response: httpResponse,
+                    responseBody: data,
+                    error: error,
+                    session: session
+                )
+            )
             throw error
         }
     }
