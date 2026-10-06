@@ -3,16 +3,24 @@
 //
 
 import Foundation
+import XCTest
 
 public extension BackendRobot {
     /// Generates channels, naming the first ones after `channelNames` in channel order.
     /// Channels without an entry keep their positional name ("1", "2", ...).
+    /// The mock server receives the names comma-separated, so a name must not contain a comma.
     @discardableResult
     func generateChannels(
         channelsCount: Int,
         channelNames: [String],
-        messagesCount: Int = 0
+        messagesCount: Int = 0,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) -> BackendRobot {
+        if let name = channelNames.first(where: { $0.contains(",") }) {
+            XCTFail("Channel name '\(name)' contains a comma, which the mock server reads as a separator", file: file, line: line)
+            return self
+        }
         waitForMockServerToStart()
         var components = URLComponents()
         components.queryItems = [

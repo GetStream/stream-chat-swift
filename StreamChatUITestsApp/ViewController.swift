@@ -87,8 +87,10 @@ final class ViewController: UIViewController {
 
         // pops when tapped on user icon
         router?.onLeave = { [weak self] in
-            self?.streamChat.client?.logout {}
-            self?.navigationController?.popViewController(animated: true)
+            // Pop only once logout has cleared the local storage, so the next login can't race it.
+            self?.streamChat.client?.logout {
+                self?.navigationController?.popViewController(animated: true)
+            }
         }
     }
 

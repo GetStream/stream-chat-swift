@@ -12,7 +12,7 @@ extension UserRobot {
     func createPoll(question: String, options: [String], multipleVotes: Bool = false) -> Self {
         MessageListPage.Composer.attachmentButton.wait().safeTap()
         PollsPage.attachmentMenuPollButton.wait().safeTap()
-        let questionField = PollsPage.Creation.questionField.wait(timeout: 10)
+        let questionField = PollsPage.Creation.questionField.wait(timeout: XCUIElement.longWaitTimeout)
         // Toggled before typing, while the keyboard does not cover the setting.
         if multipleVotes {
             PollsPage.Creation.multipleVotesSwitch.wait().waitForHitPoint().safeTap()

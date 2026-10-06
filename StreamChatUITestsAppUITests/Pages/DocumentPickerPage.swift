@@ -41,7 +41,12 @@ enum LocalFiles {
             return
         }
         let storage = "\(appGroups)/\(localStorage)/File Provider Storage"
-        try? fileManager.createDirectory(atPath: storage, withIntermediateDirectories: true)
+        do {
+            try fileManager.createDirectory(atPath: storage, withIntermediateDirectories: true)
+        } catch {
+            XCTFail("Could not create \(storage): \(error)", file: file, line: line)
+            return
+        }
         let pdf = Data("%PDF-1.4\n%%EOF\n".utf8)
         for name in pdfNames {
             XCTAssertTrue(

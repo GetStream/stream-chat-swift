@@ -45,11 +45,10 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let giphyLabel = attributes.giphyLabel(in: cells.firstMatch)
-        let endTime = Date().addingTimeInterval(XCUIElement.waitTimeout)
-        while giphyLabel.exists && giphyLabel.isHittable && Date() < endTime {
-            usleep(200_000)
-        }
-        XCTAssertFalse(giphyLabel.exists && giphyLabel.isHittable, "Giphy image is displayed", file: file, line: line)
+        // A cancelled giphy cell stays in the accessibility tree off screen, so wait for it to stop being hittable
+        // rather than for it not to exist.
+        let hidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false OR hittable == false"), object: giphyLabel)
+        XCTAssertEqual(XCTWaiter().wait(for: [hidden], timeout: XCUIElement.waitTimeout), .completed, "Giphy image is displayed", file: file, line: line)
         return self
     }
 }
