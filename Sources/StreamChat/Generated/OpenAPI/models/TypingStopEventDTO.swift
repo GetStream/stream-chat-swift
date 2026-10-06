@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a user stops typing in a channel/thread.
 final class TypingStopEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the user stopped typing
     let cid: ChannelId

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user's message get deleted. The event contains information about the user whose messages got deleted.
 final class UserMessagesDeletedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

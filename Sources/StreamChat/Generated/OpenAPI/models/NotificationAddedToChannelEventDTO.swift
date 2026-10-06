@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Sent to a user when they are added to a channel (as a personal notification to update their channel list).
 final class NotificationAddedToChannelEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

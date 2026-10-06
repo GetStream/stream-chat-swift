@@ -12,20 +12,19 @@ final class OwnUserResponse: Sendable, Decodable {
     let createdAt: Date
     let custom: [String: RawJSON]
     let deactivatedAt: Date?
-    let deletedAt: Date?
     let devices: [Device]
     let id: String
     let image: String?
     let invisible: Bool
     let language: String
     let lastActive: Date?
-    let latestHiddenChannels: [String]?
     let mutes: [MutedUserPayload]
     let name: String?
     let online: Bool
+    /// The privacy settings of the user.
     let privacySettings: UserPrivacySettings?
+    /// The push preference details.
     let pushPreferences: PushPreference?
-    let revokeTokensIssuedBefore: Date?
     let role: String
     let teams: [String]
     let teamsRole: [String: String]?
@@ -43,20 +42,17 @@ final class OwnUserResponse: Sendable, Decodable {
         createdAt: Date,
         custom: [String: RawJSON],
         deactivatedAt: Date? = nil,
-        deletedAt: Date? = nil,
         devices: [Device],
         id: String,
         image: String? = nil,
         invisible: Bool,
         language: String,
         lastActive: Date? = nil,
-        latestHiddenChannels: [String]? = nil,
         mutes: [MutedUserPayload],
         name: String? = nil,
         online: Bool,
         privacySettings: UserPrivacySettings? = nil,
         pushPreferences: PushPreference? = nil,
-        revokeTokensIssuedBefore: Date? = nil,
         role: String,
         teams: [String],
         teamsRole: [String: String]? = nil,
@@ -73,20 +69,17 @@ final class OwnUserResponse: Sendable, Decodable {
         self.createdAt = createdAt
         self.custom = custom
         self.deactivatedAt = deactivatedAt
-        self.deletedAt = deletedAt
         self.devices = devices
         self.id = id
         self.image = image
         self.invisible = invisible
         self.language = language
         self.lastActive = lastActive
-        self.latestHiddenChannels = latestHiddenChannels
         self.mutes = mutes
         self.name = name
         self.online = online
         self.privacySettings = privacySettings
         self.pushPreferences = pushPreferences
-        self.revokeTokensIssuedBefore = revokeTokensIssuedBefore
         self.role = role
         self.teams = teams
         self.teamsRole = teamsRole
@@ -105,20 +98,17 @@ final class OwnUserResponse: Sendable, Decodable {
         case createdAt = "created_at"
         case custom
         case deactivatedAt = "deactivated_at"
-        case deletedAt = "deleted_at"
         case devices
         case id
         case image
         case invisible
         case language
         case lastActive = "last_active"
-        case latestHiddenChannels = "latest_hidden_channels"
         case mutes
         case name
         case online
         case privacySettings = "privacy_settings"
         case pushPreferences = "push_preferences"
-        case revokeTokensIssuedBefore = "revoke_tokens_issued_before"
         case role
         case teams
         case teamsRole = "teams_role"
@@ -141,17 +131,12 @@ final class OwnUserResponse: Sendable, Decodable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         devices = try container.decodeArrayIgnoringFailures([Device].self, forKey: .devices)
         id = try container.decode(String.self, forKey: .id)
         image = try container.decodeIfPresent(String.self, forKey: .image)
         invisible = try container.decodeIfPresent(Bool.self, forKey: .invisible) ?? false
         language = try container.decodeIfPresent(String.self, forKey: .language) ?? ""
         lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
-        latestHiddenChannels = try container.decodeIfPresent(
-            [String].self,
-            forKey: .latestHiddenChannels
-        )
         mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
         name = try container.decodeIfPresent(String.self, forKey: .name)
         online = try container.decode(Bool.self, forKey: .online)
@@ -162,10 +147,6 @@ final class OwnUserResponse: Sendable, Decodable {
         pushPreferences = try container.decodeIfPresent(
             PushPreference.self,
             forKey: .pushPreferences
-        )
-        revokeTokensIssuedBefore = try container.decodeIfPresent(
-            Date.self,
-            forKey: .revokeTokensIssuedBefore
         )
         role = try container.decode(String.self, forKey: .role)
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []

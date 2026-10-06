@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user stops watching a channel. The event contains information about the user that stopped watching the channel.
 final class UserWatchingStopEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel which the user stopped watching
     let cid: ChannelId

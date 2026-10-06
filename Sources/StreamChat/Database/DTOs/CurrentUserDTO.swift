@@ -167,8 +167,9 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         dto.blockedUserIds = Set(blockedUserIds)
 
+        // CHA-4826
         let channelMuteDTOs = Set(
-            try channelMutes.map { try saveChannelMute(payload: $0) }
+            channelMutes.compactMapLoggingError { try saveChannelMute(payload: $0) }
         )
         dto.channelMutes.subtracting(channelMuteDTOs).forEach { delete($0) }
         dto.channelMutes = channelMuteDTOs

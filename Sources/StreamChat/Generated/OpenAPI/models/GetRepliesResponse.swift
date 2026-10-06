@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class GetRepliesResponse: Sendable, Decodable {
     let messages: [MessageResponse]
 

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a message is deleted.
 final class MessageDeletedEventDTO: Sendable, Event, Decodable {
     /// The number of messages in the channel
     let channelMessageCount: Int?

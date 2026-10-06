@@ -214,7 +214,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
     }
 
-    func test_groupedQueryChannelsPayload_decodesNextAndPrevCursors() throws {
+    func test_groupedQueryChannelsPayload_decodesNextCursor() throws {
         let json = """
         {
           "groups": {

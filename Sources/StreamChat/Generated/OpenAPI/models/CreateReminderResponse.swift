@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class CreateReminderResponse: Sendable, Decodable {
     let reminder: ReminderPayload
 

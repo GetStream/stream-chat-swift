@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Sync request
 final class SyncRequest: Sendable, Encodable, JSONEncodable {
     /// List of channel CIDs to sync
     let channelCids: [String]

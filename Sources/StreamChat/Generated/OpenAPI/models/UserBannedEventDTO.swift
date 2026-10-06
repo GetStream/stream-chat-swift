@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user gets banned. The event contains information about the user that was banned.
 final class UserBannedEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the target user was banned
     let cid: ChannelId?

@@ -5,31 +5,18 @@
 import Foundation
 
 final class SendMessageRequest: Sendable, Encodable, JSONEncodable {
-    /// When true, the response includes mentioned_members: for each mentioned user, whether that user is currently a channel member. Requires the ReadChannelMembers permission
-    let includeMentionedMembers: Bool?
-    let keepChannelHidden: Bool?
     /// Message data for creating or updating a message
     let message: MessageRequest
     let skipEnrichUrl: Bool?
     let skipPush: Bool?
 
-    init(
-        includeMentionedMembers: Bool? = nil,
-        keepChannelHidden: Bool? = nil,
-        message: MessageRequest,
-        skipEnrichUrl: Bool? = nil,
-        skipPush: Bool? = nil
-    ) {
-        self.includeMentionedMembers = includeMentionedMembers
-        self.keepChannelHidden = keepChannelHidden
+    init(message: MessageRequest, skipEnrichUrl: Bool? = nil, skipPush: Bool? = nil) {
         self.message = message
         self.skipEnrichUrl = skipEnrichUrl
         self.skipPush = skipPush
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case includeMentionedMembers = "include_mentioned_members"
-        case keepChannelHidden = "keep_channel_hidden"
         case message
         case skipEnrichUrl = "skip_enrich_url"
         case skipPush = "skip_push"

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a message is marked as delivered.
 final class MessageDeliveredEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?

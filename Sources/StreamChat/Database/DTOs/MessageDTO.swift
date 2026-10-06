@@ -1177,11 +1177,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     // swiftlint:enable function_body_length
 
     func saveMessages(
-        messagesPayload: MessageListPayload,
+        _ messages: [MessageResponse],
         syncOwnReactions: Bool = true
     ) -> [MessageDTO] {
-        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
-        return messagesPayload.messages.compactMapLoggingError {
+        let cache = messages.getPayloadToModelIdMappings(context: self)
+        return messages.compactMapLoggingError {
             try saveMessage(
                 payload: $0,
                 syncOwnReactions: syncOwnReactions,
@@ -1304,7 +1304,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         do {
             dto.extraData = try JSONEncoder.default.encode(
                 draftDetailsPayload.custom.removingValues(
-                    forKeys: [MessagePayloadsCodingKeys.args.rawValue, MessagePayloadsCodingKeys.command.rawValue]
+                    forKeys: [MessageResponse.argsKey, MessageResponse.CodingKeys.command.rawValue]
                 )
             )
         } catch {
@@ -1670,7 +1670,7 @@ extension MessageDTO {
         // Messages have no dedicated args field, it is stored as custom data.
         var custom = extraData
         if let args {
-            custom[MessagePayloadsCodingKeys.args.rawValue] = .string(args)
+            custom[MessageResponse.argsKey] = .string(args)
         }
 
         return MessageRequest(
@@ -1715,10 +1715,10 @@ extension MessageDTO {
         // Drafts have no dedicated command and args fields, they are stored as custom data.
         var custom = extraData
         if let command {
-            custom[MessagePayloadsCodingKeys.command.rawValue] = .string(command)
+            custom[MessageResponse.CodingKeys.command.rawValue] = .string(command)
         }
         if let args {
-            custom[MessagePayloadsCodingKeys.args.rawValue] = .string(args)
+            custom[MessageResponse.argsKey] = .string(args)
         }
 
         return MessageRequest(

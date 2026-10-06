@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when the notification mutes of a user are updated.
 final class NotificationMutesUpdatedEventDTO: Sendable, Event, Decodable {
     /// Date/time of creation
     let createdAt: Date

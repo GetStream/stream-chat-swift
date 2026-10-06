@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a channel is successfully truncated.
 final class ChannelTruncatedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload
