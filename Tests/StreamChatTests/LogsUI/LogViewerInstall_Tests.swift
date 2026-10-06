@@ -24,6 +24,22 @@ final class LogViewerInstall_Tests: XCTestCase {
         super.tearDown()
     }
 
+    func test_install_withSharedSettings_listsStreamChatSubsystems() {
+        LogViewer.install()
+
+        XCTAssertEqual(LogSettings.shared.availableSubsystems, [
+            "other",
+            "database",
+            "httpRequests",
+            "webSocket",
+            "offlineSupport",
+            "authentication",
+            "audio-playback",
+            "audio-recording"
+        ])
+        XCTAssertTrue(LogConfig.destinations.contains { $0 is LogViewerDestination })
+    }
+
     func test_install_setsDefaultsFromLogConfig() {
         LogViewer.install(subsystems: [.other, .httpRequests, .webSocket], settings: settings)
 
