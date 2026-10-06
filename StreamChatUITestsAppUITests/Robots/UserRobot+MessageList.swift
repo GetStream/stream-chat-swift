@@ -27,22 +27,6 @@ extension UserRobot {
 
 extension UserRobot {
     @discardableResult
-    func assertMessageTimestampCount(
-        _ expectedCount: Int,
-        timeout: Double = XCUIElement.waitTimeout,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> Self {
-        let timestamps = cells.staticTexts.matching(identifier: "timestampLabel")
-        let endTime = Date().timeIntervalSince1970 + timeout
-        while timestamps.count != expectedCount && Date().timeIntervalSince1970 < endTime {
-            Thread.sleep(forTimeInterval: 0.2)
-        }
-        XCTAssertEqual(expectedCount, timestamps.count, "Wrong number of message timestamps", file: file, line: line)
-        return self
-    }
-
-    @discardableResult
     func assertMessageEditedLabel(
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,

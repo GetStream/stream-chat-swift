@@ -61,8 +61,6 @@ enum PollsPage {
         static var endPollConfirmationButton: XCUIElement {
             app.buttons.matching(NSPredicate(format: "label == 'End'")).firstMatch
         }
-
-        static var commentsButton: XCUIElement { app.buttons["pollCommentsButton"] }
     }
 
     enum Results {

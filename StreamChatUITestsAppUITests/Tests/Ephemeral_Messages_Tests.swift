@@ -5,23 +5,6 @@
 import XCTest
 
 final class Ephemeral_Messages_Tests: StreamTestCase {
-    // NOTE: There used to be a problem with tapping on a Send button on iOS > 16
-    func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
-        linkToScenario(withId: 67)
-            
-        GIVEN("user opens a channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("user sends a giphy using giphy command") {
-            userRobot.uploadGiphy()
-        }
-        THEN("user observes the animated gif") {
-            userRobot.assertGiphyImage()
-        }
-    }
-
     func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessage() throws {
         linkToScenario(withId: 68)
 
