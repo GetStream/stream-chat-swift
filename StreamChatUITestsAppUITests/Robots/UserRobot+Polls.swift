@@ -116,14 +116,6 @@ extension UserRobot {
         return self
     }
 
-    @discardableResult
-    func assertPollComments(count: Int, file: StaticString = #filePath, line: UInt = #line) -> Self {
-        let expectedTitle = count == 1 ? "View 1 Comment" : "View \(count) Comments"
-        let button = PollsPage.Message.commentsButton.wait()
-        XCTAssertEqual(expectedTitle, button.waitForText(expectedTitle).label, file: file, line: line)
-        return self
-    }
-
     // The vote checkbox exposes no checked state; its label is derived from the SF Symbol it shows.
     private static let checkedPollOptionLabel = "selected"
     private static let uncheckedPollOptionLabel = "circle"

@@ -12,6 +12,9 @@ final class PollsRepository_Mock: PollsRepository, Spy, @unchecked Sendable {
     @Atomic var closePoll_completion: ((Error?) -> Void)?
     @Atomic var suggestPollOption_completion: ((Error?) -> Void)?
     @Atomic var deletePoll_completion: ((Error?) -> Void)?
+    @Atomic var castPollVote_optionId: String?
+    @Atomic var removePollVote_voteId: String?
+    @Atomic var closePoll_pollId: String?
     
     var recordedFunctions: [String] = []
     let spyState: SpyState = .init()
@@ -36,6 +39,7 @@ final class PollsRepository_Mock: PollsRepository, Spy, @unchecked Sendable {
         deleteExistingVotes: [PollVote] = [],
         completion: ((Error?) -> Void)? = nil
     ) {
+        castPollVote_optionId = optionId
         castPollVote_completion = completion
     }
     
@@ -45,10 +49,12 @@ final class PollsRepository_Mock: PollsRepository, Spy, @unchecked Sendable {
         voteId: String,
         completion: ((Error?) -> Void)? = nil
     ) {
+        removePollVote_voteId = voteId
         removePollVote_completion = completion
     }
     
     override func closePoll(pollId: String, completion: ((Error?) -> Void)? = nil) {
+        closePoll_pollId = pollId
         closePoll_completion = completion
     }
     
