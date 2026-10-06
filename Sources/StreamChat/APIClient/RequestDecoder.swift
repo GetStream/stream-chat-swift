@@ -57,11 +57,13 @@ struct DefaultRequestDecoder: RequestDecoder {
         let message = request.logMessage(status: "\(statusCode)")
         guard let data = data, !data.isEmpty else {
             let attachment = HTTPLogAttachment(request: request, response: httpResponse, session: session)
-            if statusCode < 300 {
-                log.debug(message, subsystems: .httpRequests, attachment: attachment)
-            } else {
-                log.error(message, subsystems: .httpRequests, attachment: attachment)
-            }
+            log.log(
+                statusCode < 400 ? .debug : .error,
+                message: message,
+                subsystems: .httpRequests,
+                error: nil,
+                attachment: attachment
+            )
             throw ClientError.ResponseBodyEmpty()
         }
 

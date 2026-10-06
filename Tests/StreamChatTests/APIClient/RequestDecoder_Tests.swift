@@ -102,6 +102,35 @@ final class RequestDecoder_Tests: XCTestCase {
         XCTAssertEqual(request.logMessage(status: "201"), "201 POST /channels/query")
     }
 
+    func test_decodingEmptyResponse_redirectStatus_logsDebug() throws {
+        let levels = try loggedLevels(forEmptyResponseWithStatusCode: 304)
+
+        XCTAssertEqual(levels, [.debug])
+    }
+
+    func test_decodingEmptyResponse_serverErrorStatus_logsError() throws {
+        let levels = try loggedLevels(forEmptyResponseWithStatusCode: 500)
+
+        XCTAssertEqual(levels, [.error])
+    }
+
+    private func loggedLevels(forEmptyResponseWithStatusCode statusCode: Int) throws -> [LogLevel] {
+        let logged = expectation(description: "logged")
+        let destination = CapturingLogDestination { logged.fulfill() }
+        let previousDestinations = LogConfig.destinations
+        LogConfig.destinations = [destination]
+        defer { LogConfig.destinations = previousDestinations }
+        let response = HTTPURLResponse(url: .unique(), statusCode: statusCode, httpVersion: nil, headerFields: nil)
+
+        XCTAssertThrowsError(try {
+            let _: Data = try self.decode(data: nil, response: response, error: nil)
+        }()) { error in
+            XCTAssert(error is ClientError.ResponseBodyEmpty)
+        }
+        wait(for: [logged], timeout: defaultTimeout)
+        return destination.levels
+    }
+
     private func decode<ResponseType: Decodable>(
         data: Data?,
         response: URLResponse?,
@@ -119,4 +148,41 @@ final class RequestDecoder_Tests: XCTestCase {
 
 private struct TestModel: Decodable {
     let date: Date
+}
+
+private final class CapturingLogDestination: BaseLogDestination, @unchecked Sendable {
+    private let lock = NSLock()
+    private var capturedLevels: [LogLevel] = []
+    private var onProcess: @Sendable () -> Void = {}
+
+    var levels: [LogLevel] {
+        lock.lock()
+        defer { lock.unlock() }
+        return capturedLevels
+    }
+
+    convenience init(onProcess: @escaping @Sendable () -> Void) {
+        self.init(
+            identifier: UUID().uuidString,
+            level: .debug,
+            subsystems: .all,
+            showDate: false,
+            dateFormatter: DateFormatter(),
+            formatters: [],
+            showLevel: false,
+            showIdentifier: false,
+            showThreadName: false,
+            showFileName: false,
+            showLineNumber: false,
+            showFunctionName: false
+        )
+        self.onProcess = onProcess
+    }
+
+    override func process(logDetails: LogDetails) {
+        lock.lock()
+        capturedLevels.append(logDetails.level)
+        lock.unlock()
+        onProcess()
+    }
 }
