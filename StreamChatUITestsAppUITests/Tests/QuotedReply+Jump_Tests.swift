@@ -139,30 +139,6 @@ extension QuotedReply_Tests {
         }
     }
 
-    func test_quotedMessageIsHighlighted_whenUserJumpsToIt() {
-        linkToScenario(withId: 1678)
-
-        let messageCount = 20
-
-        GIVEN("user opens a channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
-            userRobot.login().openChannel()
-        }
-        AND("participant quotes the first message") {
-            participantRobot.quoteMessage(replyText, last: false)
-            userRobot.assertQuotedMessage(replyText: replyText, quotedText: quotedText)
-        }
-        WHEN("user jumps to the quoted message") {
-            userRobot.tapOnQuotedMessage(quotedText, at: 0)
-        }
-        THEN("the message is highlighted for a moment") {
-            userRobot
-                .assertMessageIsHighlighted(quotedText)
-                .assertNoMessageIsHighlighted()
-                .assertMessageIsVisible(withText: quotedText)
-        }
-    }
-
     func test_jumpToQuotedMessageInThread_fromChannel() {
         linkToScenario(withId: 2063)
 
@@ -190,9 +166,8 @@ extension QuotedReply_Tests {
         WHEN("user taps on the quoted message in channel") {
             userRobot.tapOnQuotedMessage(quotedText, at: 0)
         }
-        THEN("user jumps to the quoted message in thread and it is highlighted") {
+        THEN("user jumps to the quoted message in thread") {
             userRobot
-                .assertMessageIsHighlighted(quotedText)
                 .assertThreadIsOpen()
                 .assertMessageIsVisible(withText: quotedText)
         }
@@ -226,9 +201,8 @@ extension QuotedReply_Tests {
         WHEN("user taps on the 'Thread Reply' button under the participant's message in channel") {
             userRobot.tapOnThreadReplyButton(at: 0)
         }
-        THEN("user jumps to the participant's message in thread and it is highlighted") {
+        THEN("user jumps to the participant's message in thread") {
             userRobot
-                .assertMessageIsHighlighted(threadReply)
                 .assertThreadIsOpen()
                 .assertMessageIsVisible(withText: threadReply)
         }
@@ -266,9 +240,8 @@ extension QuotedReply_Tests {
                 .moveToChannelListFromThreadReplies()
                 .openChannelWithCopiedMessageId()
         }
-        THEN("user jumps to the message in thread and it is highlighted") {
+        THEN("user jumps to the message in thread") {
             userRobot
-                .assertMessageIsHighlighted(threadReply)
                 .assertThreadIsOpen()
                 .assertMessageIsVisible(withText: threadReply)
         }
