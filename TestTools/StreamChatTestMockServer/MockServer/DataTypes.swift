@@ -30,6 +30,7 @@ public enum MessageDeliveryStatus: String {
     case read
     case pending
     case sent
+    case delivered
     case failed
     
     var status: String {

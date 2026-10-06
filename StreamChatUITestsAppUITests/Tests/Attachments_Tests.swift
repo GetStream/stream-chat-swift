@@ -207,4 +207,49 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.assertGalleryPosition(2, of: 2)
         }
     }
+
+    func test_restartImageUploadAfterRestartingTheApp() throws {
+        linkToScenario(withId: 2723)
+
+        GIVEN("user opens the channel") {
+            userRobot
+                .setIsLocalStorageEnabled(to: .on)
+                .login()
+                .openChannel()
+        }
+        WHEN("user sends an image being offline") {
+            userRobot
+                .setConnectivity(to: .off)
+                .uploadImage()
+                .assertImageUploadFailed()
+        }
+        AND("user restarts the app") {
+            app.terminate()
+            app.launch()
+            userRobot
+                .setIsLocalStorageEnabled(to: .on)
+                .login()
+                .openChannel()
+        }
+        AND("user restarts an image upload being online") {
+            userRobot.restartImageUpload()
+        }
+        THEN("user can see uploaded image") {
+            userRobot.assertImage(isPresent: true)
+        }
+    }
+
+    func test_userUploadsVideo() throws {
+        linkToScenario(withId: 30)
+
+        GIVEN("user opens a channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a video") {
+            userRobot.uploadVideo()
+        }
+        THEN("user can see uploaded video") {
+            userRobot.assertVideo(isPresent: true)
+        }
+    }
 }

@@ -7,6 +7,7 @@ import StreamChatUI
 import UIKit
 
 var settings = Settings()
+var loggedInUserCredentials = UserCredentials.default
 
 final class ViewController: UIViewController {
     var streamChat = StreamChatWrapper.shared
@@ -25,6 +26,7 @@ final class ViewController: UIViewController {
         stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(createStartButton())
+        stackView.addArrangedSubview(createStartAsSecondUserButton())
         stackView.addArrangedSubview(createConnectGuestButton())
         view.addSubview(stackView)
         NSLayoutConstraint.activate([
@@ -34,6 +36,16 @@ final class ViewController: UIViewController {
     }
 
     @objc func didTap() {
+        loggedInUserCredentials = .default
+        startChat()
+    }
+
+    @objc func didTapStartAsSecondUser() {
+        loggedInUserCredentials = .hanSolo
+        startChat()
+    }
+
+    private func startChat() {
         // Setup chat client
         streamChat.setUpChat()
         streamChat.connectUser(completion: { _ in })
@@ -182,6 +194,15 @@ extension ViewController {
         return startButton
     }
 
+    func createStartAsSecondUserButton() -> UIButton {
+        let startButton = UIButton(type: .system)
+        startButton.translatesAutoresizingMaskIntoConstraints = false
+        startButton.setTitle("Start Chat as Han Solo", for: .normal)
+        startButton.accessibilityIdentifier = "TestApp.StartAsSecondUser"
+        startButton.addTarget(self, action: #selector(didTapStartAsSecondUser), for: .touchUpInside)
+        return startButton
+    }
+
     func createConnectGuestButton() -> UIButton {
         let startButton = UIButton(type: .system)
         startButton.translatesAutoresizingMaskIntoConstraints = false
@@ -217,7 +238,7 @@ extension ViewController {
 
 extension StreamChatWrapper {
     func connectUser(completion: @escaping @Sendable (Error?) -> Void) {
-        let userCredentials = UserCredentials.default
+        let userCredentials = loggedInUserCredentials
         let tokenProvider = mockTokenProvider(for: userCredentials)
         client?.connectUser(
             userInfo: userCredentials.userInfo,

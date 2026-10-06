@@ -50,6 +50,9 @@ extension StreamChatWrapper {
         if arguments.contains("COMPOSER_LINK_PREVIEW") {
             Components.default.isComposerLinkPreviewEnabled = true
         }
+        if arguments.contains("CHANNEL_LIST_STATES") {
+            Components.default.isChatChannelListStatesEnabled = true
+        }
         if arguments.contains("USE_CHANNEL_SEARCH") {
             Components.default.channelListSearchStrategy = .channels
         } else if arguments.contains("USE_MESSAGE_SEARCH") {
