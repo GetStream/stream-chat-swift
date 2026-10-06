@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a user is invited to a channel.
 final class NotificationInvitedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

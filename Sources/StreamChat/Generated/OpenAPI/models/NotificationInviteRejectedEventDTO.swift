@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Sent to a user when they reject an invite to a channel (as a personal notification to update their channel list).
 final class NotificationInviteRejectedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload

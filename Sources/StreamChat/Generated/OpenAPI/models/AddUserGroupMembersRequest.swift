@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Request body for adding members to a user group
 final class AddUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
     /// Whether to add the members as group admins. Defaults to false
     let asAdmin: Bool?

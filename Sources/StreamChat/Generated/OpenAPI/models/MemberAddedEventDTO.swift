@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a member is added to a channel.
 final class MemberAddedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?

@@ -311,8 +311,8 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO] {
-        underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
+    func saveMessages(_ messages: [MessageResponse], syncOwnReactions: Bool) -> [MessageDTO] {
+        underlyingSession.saveMessages(messages, syncOwnReactions: syncOwnReactions)
     }
 
     func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
@@ -452,10 +452,6 @@ class DatabaseSession_Mock: DatabaseSession {
     ) throws -> MemberDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query, cache: cache)
-    }
-
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
     }
 
     func saveMembers(response: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {

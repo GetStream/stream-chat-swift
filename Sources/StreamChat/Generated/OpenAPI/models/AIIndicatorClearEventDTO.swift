@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when the AI indicator is cleared.
 final class AIIndicatorClearEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel
     let cid: ChannelId?

@@ -25,7 +25,6 @@ extension SearchResultMessage {
             createdAt: createdAt,
             custom: extraData,
             deletedReplyCount: 0,
-            html: "",
             id: messageId,
             latestReactions: [],
             mentionedChannel: false,

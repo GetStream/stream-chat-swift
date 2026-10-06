@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a Draft is created or updated.
 final class DraftUpdatedEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the draft was created/updated
     let cid: ChannelId

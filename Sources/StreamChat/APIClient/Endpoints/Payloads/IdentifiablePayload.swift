@@ -87,7 +87,7 @@ extension IdentifiablePayloadProxy {
     static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 }
 
-extension Array where Element: IdentifiablePayload {
+extension Array: IdentifiablePayload where Element: IdentifiablePayload {
     var databaseId: DatabaseId? { nil }
     static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 
@@ -104,12 +104,6 @@ extension QueryUsersResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        messages.fillIds(cache: &cache)
-    }
-}
-
 extension MessageReactionsPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         reactions.fillIds(cache: &cache)
@@ -122,21 +116,9 @@ extension SearchResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageResponse.Boxed: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        message.fillIds(cache: &cache)
-    }
-}
-
 extension SearchResult: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message.fillIds(cache: &cache)
-    }
-}
-
-extension ChannelMemberListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        members.fillIds(cache: &cache)
     }
 }
 

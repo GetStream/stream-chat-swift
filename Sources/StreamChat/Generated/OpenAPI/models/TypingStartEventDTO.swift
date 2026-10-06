@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a user starts typing in a channel/thread.
 final class TypingStartEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the user started typing
     let cid: ChannelId

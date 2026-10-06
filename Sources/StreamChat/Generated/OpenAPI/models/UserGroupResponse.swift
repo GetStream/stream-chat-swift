@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// EmptyResponse for getting a user group
 final class UserGroupResponse: Sendable, Decodable {
     let userGroup: UserGroup?
 

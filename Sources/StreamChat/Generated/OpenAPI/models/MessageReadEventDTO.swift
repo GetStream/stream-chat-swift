@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a channel or thread is marked as read.
 final class MessageReadEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload?

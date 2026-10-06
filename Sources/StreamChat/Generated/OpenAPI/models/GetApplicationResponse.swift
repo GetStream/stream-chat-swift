@@ -4,7 +4,9 @@
 
 import Foundation
 
+/// Basic response information
 final class GetApplicationResponse: Sendable, Decodable {
+    /// A type representing the app settings.
     let app: AppSettings
 
     init(app: AppSettings) {
