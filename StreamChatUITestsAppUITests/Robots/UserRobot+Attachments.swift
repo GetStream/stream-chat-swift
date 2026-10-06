@@ -13,17 +13,17 @@ extension UserRobot {
     @discardableResult
     func attachFiles(count: Int = 1) -> Self {
         LocalFiles.seed()
-        MessageListPage.Composer.attachmentButton.wait(timeout: 10).safeTap()
-        MessageListPage.AttachmentMenu.fileButton.wait(timeout: 10).safeTap()
+        MessageListPage.Composer.attachmentButton.wait(timeout: XCUIElement.longWaitTimeout).safeTap()
+        MessageListPage.AttachmentMenu.fileButton.wait(timeout: XCUIElement.longWaitTimeout).safeTap()
         openLocalFilesInDocumentPicker()
         for name in LocalFiles.pdfNames.prefix(count) {
             DocumentPickerPage.file(named: name).wait().safeTap()
         }
         let openButton = DocumentPickerPage.openButton
-        if openButton.waitForExistence(timeout: 2) {
+        if openButton.waitForExistence(timeout: XCUIElement.probeTimeout) {
             openButton.safeTap()
         }
-        _ = composer.inputField.waitForHitPoint(timeout: 10)
+        _ = composer.inputField.waitForHitPoint(timeout: XCUIElement.longWaitTimeout)
         return self
     }
 
@@ -87,10 +87,10 @@ extension UserRobot {
     /// The document picker reopens the last visited location, so it may already show the local files.
     private func openLocalFilesInDocumentPicker() {
         let firstFile = DocumentPickerPage.file(named: LocalFiles.pdfNames[0])
-        if firstFile.waitForExistence(timeout: 5) { return }
+        if firstFile.waitForExistence(timeout: XCUIElement.waitTimeout) { return }
         if DocumentPickerPage.browseTab.exists {
             DocumentPickerPage.browseTab.safeTap()
-            if firstFile.waitForExistence(timeout: 3) { return }
+            if firstFile.waitForExistence(timeout: XCUIElement.probeTimeout) { return }
         }
         DocumentPickerPage.onMyDeviceLocation.wait().safeTap()
     }

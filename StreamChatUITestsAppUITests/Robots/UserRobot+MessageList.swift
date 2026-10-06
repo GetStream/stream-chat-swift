@@ -35,7 +35,9 @@ extension UserRobot {
     ) -> Self {
         let timestamps = cells.staticTexts.matching(identifier: "timestampLabel")
         let endTime = Date().timeIntervalSince1970 + timeout
-        while timestamps.count != expectedCount && Date().timeIntervalSince1970 < endTime {}
+        while timestamps.count != expectedCount && Date().timeIntervalSince1970 < endTime {
+            Thread.sleep(forTimeInterval: 0.2)
+        }
         XCTAssertEqual(expectedCount, timestamps.count, "Wrong number of message timestamps", file: file, line: line)
         return self
     }

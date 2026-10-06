@@ -54,7 +54,7 @@ extension UserRobot {
     @discardableResult
     func unmuteMessageAuthor(_ text: String) -> Self {
         openContextMenu(forMessageWithText: text)
-        menuOptions.unmute.wait(timeout: 15).safeTap()
+        menuOptions.unmute.wait(timeout: XCUIElement.longWaitTimeout).safeTap()
         return self
     }
 
@@ -68,7 +68,7 @@ extension UserRobot {
     @discardableResult
     func unblockMessageAuthor(_ text: String) -> Self {
         openContextMenu(forMessageWithText: text)
-        menuOptions.unblock.wait(timeout: 15).safeTap()
+        menuOptions.unblock.wait(timeout: XCUIElement.longWaitTimeout).safeTap()
         return self
     }
 
@@ -78,7 +78,7 @@ extension UserRobot {
         composer.textView.obtainKeyboardFocus()
         for _ in 0..<5 {
             composer.textView.tap()
-            if pasteButton.wait(timeout: 2).exists { break }
+            if pasteButton.wait(timeout: XCUIElement.probeTimeout).exists { break }
         }
         pasteButton.safeTap()
         return self
@@ -149,7 +149,7 @@ extension UserRobot {
         for _ in 0..<5 {
             openContextMenu(forMessageWithText: messageText)
             menuOptions.copy.wait()
-            if expected.wait(timeout: 2).exists { break }
+            if expected.wait(timeout: XCUIElement.probeTimeout).exists { break }
             MessageListPage.dismissMessageActions()
         }
         XCTAssertTrue(expected.exists, "Expected message action is not shown", file: file, line: line)
@@ -179,9 +179,9 @@ extension UserRobot {
     ) -> Self {
         let channel = ChannelListPage.channel(withName: name)
         if isDisplayed {
-            XCTAssertTrue(channel.wait(timeout: 10).exists, "Channel '\(name)' is not shown", file: file, line: line)
+            XCTAssertTrue(channel.wait(timeout: XCUIElement.longWaitTimeout).exists, "Channel '\(name)' is not shown", file: file, line: line)
         } else {
-            XCTAssertFalse(channel.waitForDisappearance(timeout: 10).exists, "Channel '\(name)' is shown", file: file, line: line)
+            XCTAssertFalse(channel.waitForDisappearance(timeout: XCUIElement.longWaitTimeout).exists, "Channel '\(name)' is shown", file: file, line: line)
         }
         return self
     }
@@ -192,7 +192,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let actualCount = ChannelListPage.cells.waitCount(expectedCount, timeout: 10, exact: true).count
+        let actualCount = ChannelListPage.cells.waitCount(expectedCount, timeout: XCUIElement.longWaitTimeout, exact: true).count
         XCTAssertEqual(expectedCount, actualCount, file: file, line: line)
         return self
     }

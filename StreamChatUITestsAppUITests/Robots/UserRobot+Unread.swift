@@ -41,7 +41,7 @@ extension UserRobot {
 extension UserRobot {
     @discardableResult
     func assertUnreadSeparator(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        let separator = UnreadMessagesPage.unreadSeparator.wait(timeout: 10)
+        let separator = UnreadMessagesPage.unreadSeparator.wait(timeout: XCUIElement.longWaitTimeout)
         XCTAssertTrue(separator.exists, "Unread separator is not shown", file: file, line: line)
         XCTAssertTrue(separator.waitForHitPoint().isHittable, "Unread separator is not on screen", file: file, line: line)
         return self
@@ -67,7 +67,7 @@ extension UserRobot {
             XCTAssertFalse(button.waitForDisappearance().exists, "Jump to unread button is shown", file: file, line: line)
             return self
         }
-        XCTAssertTrue(button.wait(timeout: 10).exists, "Jump to unread button is not shown", file: file, line: line)
+        XCTAssertTrue(button.wait(timeout: XCUIElement.longWaitTimeout).exists, "Jump to unread button is not shown", file: file, line: line)
         if let unreadCount {
             let expectedText = "\(unreadCount) unread"
             let text = UnreadMessagesPage.jumpToUnreadButtonText.waitForText(expectedText)

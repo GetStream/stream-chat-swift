@@ -22,7 +22,8 @@ extension MessageListPage {
 
     /// Dismisses the message actions popup by tapping outside of the message and its actions.
     static func dismissMessageActions() {
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15)).tap()
+        // A corner is used because message bubbles are inset from the screen edges, so no message length reaches it.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.02, dy: 0.15)).tap()
         ContextMenu.copy.element.waitForDisappearance()
     }
 }
