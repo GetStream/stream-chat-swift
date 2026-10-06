@@ -6,7 +6,7 @@ import Foundation
 
 final class ThreadStateResponse: Sendable, Decodable {
     /// Active Participant Count
-    let activeParticipantCount: Int?
+    let activeParticipantCount: Int
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
     /// Channel CID
@@ -19,8 +19,6 @@ final class ThreadStateResponse: Sendable, Decodable {
     let createdByUserId: String
     /// Custom data for this object
     let custom: [String: RawJSON]
-    /// Deleted At
-    let deletedAt: Date?
     let draft: DraftPayload?
     /// Last Message At
     let lastMessageAt: Date?
@@ -42,14 +40,13 @@ final class ThreadStateResponse: Sendable, Decodable {
     let updatedAt: Date
 
     init(
-        activeParticipantCount: Int? = nil,
+        activeParticipantCount: Int,
         channel: ChannelDetailPayload? = nil,
         channelCid: String,
         createdAt: Date,
         createdBy: UserPayload? = nil,
         createdByUserId: String,
         custom: [String: RawJSON],
-        deletedAt: Date? = nil,
         draft: DraftPayload? = nil,
         lastMessageAt: Date? = nil,
         latestReplies: [MessageResponse],
@@ -69,7 +66,6 @@ final class ThreadStateResponse: Sendable, Decodable {
         self.createdBy = createdBy
         self.createdByUserId = createdByUserId
         self.custom = custom
-        self.deletedAt = deletedAt
         self.draft = draft
         self.lastMessageAt = lastMessageAt
         self.latestReplies = latestReplies
@@ -91,7 +87,6 @@ final class ThreadStateResponse: Sendable, Decodable {
         case createdBy = "created_by"
         case createdByUserId = "created_by_user_id"
         case custom
-        case deletedAt = "deleted_at"
         case draft
         case lastMessageAt = "last_message_at"
         case latestReplies = "latest_replies"
@@ -105,29 +100,18 @@ final class ThreadStateResponse: Sendable, Decodable {
         case updatedAt = "updated_at"
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         activeParticipantCount = try container.decodeIfPresent(
             Int.self,
             forKey: .activeParticipantCount
-        )
+        ) ?? 0
         channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         channelCid = try container.decode(String.self, forKey: .channelCid)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(

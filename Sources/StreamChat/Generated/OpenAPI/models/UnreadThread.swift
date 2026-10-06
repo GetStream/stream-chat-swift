@@ -4,10 +4,15 @@
 
 import Foundation
 
+/// The unread information of a thread.
 public final class UnreadThread: Sendable, Decodable {
+    /// The date which the current user last read the thread.
     public let lastRead: Date?
+    /// The id of the last reply which the current user read in the thread.
     public let lastReadMessageId: String?
+    /// The message id of the root of the thread.
     public let parentMessageId: String
+    /// The number of unread replies inside the thread.
     public let unreadCount: Int
 
     init(

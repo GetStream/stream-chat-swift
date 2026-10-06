@@ -163,8 +163,10 @@ final class ChannelListPayload_Tests: XCTestCase {
                     "cid": "\(channelId.rawValue)",
                     "id": "\(channelId.id)",
                     "type": "\(channelId.type.rawValue)",
-                    "name": "Support",
-                    "image": "https://getstream.imgix.net/images/random_svg/stream_logo.svg",
+                    "custom": {
+                      "name": "Support",
+                      "image": "https://getstream.imgix.net/images/random_svg/stream_logo.svg"
+                    },
                     "created_at": "2024-01-01T00:00:00.000Z",
                     "updated_at": "2024-01-02T00:00:00.000Z",
                     "frozen": false,
@@ -212,7 +214,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
     }
 
-    func test_groupedQueryChannelsPayload_decodesNextAndPrevCursors() throws {
+    func test_groupedQueryChannelsPayload_decodesNextCursor() throws {
         let json = """
         {
           "groups": {
@@ -290,6 +292,7 @@ final class ChannelListPayload_Tests: XCTestCase {
               "channels": [
                 {
                   "channel": {
+                    "custom": {},
                     "cid": "\(channelId.rawValue)",
                     "id": "\(channelId.id)",
                     "type": "\(channelId.type.rawValue)",

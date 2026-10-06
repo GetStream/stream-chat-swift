@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Request body for creating a user group
 final class CreateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// An optional description for the group
     let description: String?

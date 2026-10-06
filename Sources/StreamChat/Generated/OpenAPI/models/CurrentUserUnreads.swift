@@ -4,12 +4,19 @@
 
 import Foundation
 
+/// The total unread information from the current user.
 public final class CurrentUserUnreads: Sendable, Decodable {
+    /// The unread information per channel type.
     public let channelType: [UnreadChannelByType]
+    /// The unread information per channel.
     public let channels: [UnreadChannel]
+    /// The unread information per thread.
     public let threads: [UnreadThread]
+    /// The total number of unread messages.
     public let totalUnreadCount: Int
+    /// The total number of unread messages grouped by team.
     public let totalUnreadCountByTeam: [String: Int]?
+    /// The total number of unread threads.
     public let totalUnreadThreadsCount: Int
 
     init(

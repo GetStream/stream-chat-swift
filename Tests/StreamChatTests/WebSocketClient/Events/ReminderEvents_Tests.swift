@@ -10,11 +10,11 @@ final class ReminderEvents_Tests: XCTestCase {
     private let messageId = "477172a9-a59b-48dc-94a3-9aec4dc181bb"
     private let cid = ChannelId(type: .messaging, id: "!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E")
     
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
     
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
     
     override func tearDown() {
@@ -143,7 +143,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDueEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDue")
-        let event = try eventDecoder.decode(from: json) as? ReminderDueNotificationEventDTO
+        let event = try eventDecoder.decode(from: json) as? ReminderNotificationEventDTO
         
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.messageId, messageId)
@@ -154,7 +154,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDueEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDue")
-        let event = try eventDecoder.decode(from: json) as? ReminderDueNotificationEventDTO
+        let event = try eventDecoder.decode(from: json) as? ReminderNotificationEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
@@ -170,7 +170,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDueEvent_toDomainEvent_returnsNilWhenMissingData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDue")
-        let event = try eventDecoder.decode(from: json) as? ReminderDueNotificationEventDTO
+        let event = try eventDecoder.decode(from: json) as? ReminderNotificationEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Don't save any data to test nil case

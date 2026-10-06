@@ -11,10 +11,13 @@ public final class VotingVisibility: RawRepresentable, Codable, Hashable, Sendab
         self.rawValue = rawValue
     }
 
+    /// Votes are public and can be seen by everyone.
     public static let `public` = VotingVisibility(rawValue: "public")
+    /// Votes are anonymous and cannot be attributed to individual users.
     public static let anonymous = VotingVisibility(rawValue: "anonymous")
 }
 
+/// Contains all information needed to create a new poll
 final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     /// Indicates whether users can suggest user defined answers
     let allowAnswers: Bool?
@@ -25,14 +28,12 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
     let description: String?
     /// Indicates whether users can cast multiple votes
     let enforceUniqueVote: Bool?
-    let id: String?
-    /// Indicates whether the poll is open for voting
-    let isClosed: Bool?
     /// Indicates the maximum amount of votes a user can cast
     let maxVotesAllowed: Int?
     /// The name of the poll
     let name: String
     let options: [PollOptionRequestBody]?
+    /// Represents the visibility of votes in a poll.
     let votingVisibility: VotingVisibility?
 
     init(
@@ -41,8 +42,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         custom: [String: RawJSON]? = nil,
         description: String? = nil,
         enforceUniqueVote: Bool? = nil,
-        id: String? = nil,
-        isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         name: String,
         options: [PollOptionRequestBody]? = nil,
@@ -53,8 +52,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         self.custom = custom
         self.description = description
         self.enforceUniqueVote = enforceUniqueVote
-        self.id = id
-        self.isClosed = isClosed
         self.maxVotesAllowed = maxVotesAllowed
         self.name = name
         self.options = options
@@ -67,8 +64,6 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         case custom
         case description
         case enforceUniqueVote = "enforce_unique_vote"
-        case id
-        case isClosed = "is_closed"
         case maxVotesAllowed = "max_votes_allowed"
         case name
         case options

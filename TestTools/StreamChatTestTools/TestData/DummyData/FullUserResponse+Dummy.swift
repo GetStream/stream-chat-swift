@@ -52,7 +52,6 @@ extension FullUserResponse {
             teamsRole: teamsRole?.mapValues(\.rawValue),
             totalUnreadCount: unreadCount?.messages ?? 0,
             unreadChannels: unreadCount?.channels ?? 0,
-            unreadCount: unreadCount?.messages ?? 0,
             unreadThreads: unreadCount?.threads ?? 0,
             updatedAt: updatedAt
         )
@@ -61,7 +60,7 @@ extension FullUserResponse {
     /// Returns a dummy full user response carrying the same data as the given user payload.
     static func dummy(userPayload: UserPayload) -> FullUserResponse {
         .init(
-            banned: userPayload.banned ?? false,
+            banned: userPayload.banned,
             blockedUserIds: [],
             channelMutes: [],
             createdAt: userPayload.createdAt,
@@ -71,18 +70,17 @@ extension FullUserResponse {
             id: userPayload.id,
             image: userPayload.image,
             invisible: false,
-            language: userPayload.language ?? "",
+            language: userPayload.language,
             lastActive: userPayload.lastActive,
             mutes: [],
             name: userPayload.name,
             online: userPayload.online,
             role: userPayload.role,
             shadowBanned: false,
-            teams: userPayload.teams ?? [],
+            teams: userPayload.teams,
             teamsRole: userPayload.teamsRole,
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadCount: 0,
             unreadThreads: 0,
             updatedAt: userPayload.updatedAt
         )

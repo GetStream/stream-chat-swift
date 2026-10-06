@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class CreateDraftResponse: Sendable, Decodable {
     let draft: DraftPayload
 

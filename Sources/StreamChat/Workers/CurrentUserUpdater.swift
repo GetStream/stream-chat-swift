@@ -39,23 +39,23 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
 
         var set = userExtraData ?? [:]
         if let name = name {
-            set[UserPayloadsCodingKeys.name.rawValue] = .string(name)
+            set[FullUserResponse.CodingKeys.name.rawValue] = .string(name)
         }
         if let imageURL = imageURL {
-            set[UserPayloadsCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+            set[FullUserResponse.CodingKeys.image.rawValue] = .string(imageURL.absoluteString)
         }
         if let privacySettings = privacySettings {
             guard let rawJSON = privacySettings.rawJSON else {
                 completion?(ClientError.InvalidJSON("Failed to encode privacy settings: \(privacySettings)"))
                 return
             }
-            set[UserPayloadsCodingKeys.privacySettings.rawValue] = rawJSON
+            set[FullUserResponse.CodingKeys.privacySettings.rawValue] = rawJSON
         }
         if let role = role {
-            set[UserPayloadsCodingKeys.role.rawValue] = .string(role.rawValue)
+            set[FullUserResponse.CodingKeys.role.rawValue] = .string(role.rawValue)
         }
         if let teamsRole = teamsRole {
-            set[UserPayloadsCodingKeys.teamsRole.rawValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
+            set[FullUserResponse.CodingKeys.teamsRole.rawValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
         }
 
         let request = UpdateUsersPartialRequest(users: [
@@ -106,7 +106,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     endpoint: .createDevice(
                         createDeviceRequest: CreateDeviceRequest(
                             id: deviceId,
-                            pushProvider: .init(rawValue: pushProvider.rawValue),
+                            pushProvider: CreateDeviceRequest.PushProvider(rawValue: pushProvider.rawValue) ?? .unknown,
                             pushProviderName: providerName
                         )
                     ),

@@ -103,12 +103,16 @@ extension Dictionary {
                 "updated_at": "2020-05-02T13:21:03.855468Z",
                 "role": "user",
                 "total_unread_count": 0,
+                "unread_threads": 0,
+                "language": "",
+                "teams": [String](),
                 "online": true,
                 "name": "Steep Moon",
-                "test": 1
+                "custom": ["test": 1]
             ] as [String: Any],
             "type": "health.check",
-            "connection_id": connectionId
+            "connection_id": connectionId,
+            "custom": [String: Any]()
         ]
     }
 }

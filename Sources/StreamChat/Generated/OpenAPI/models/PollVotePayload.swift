@@ -9,7 +9,7 @@ final class PollVotePayload: Sendable, Decodable {
     let createdAt: Date
     let id: String
     let isAnswer: Bool?
-    let optionId: String?
+    let optionId: String
     let pollId: String
     let updatedAt: Date
     /// User response object
@@ -21,7 +21,7 @@ final class PollVotePayload: Sendable, Decodable {
         createdAt: Date,
         id: String,
         isAnswer: Bool? = nil,
-        optionId: String? = nil,
+        optionId: String,
         pollId: String,
         updatedAt: Date,
         user: UserPayload? = nil,

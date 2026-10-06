@@ -5,14 +5,24 @@
 import Foundation
 
 public final class SharedLocation: Sendable, Decodable {
+    /// The CID (type:id) of the channel that the location is attached to.
     public let channelCid: ChannelId
+    /// The date when the location was created.
     public let createdAt: Date
+    /// The ID of the device that created the location.
     public let createdByDeviceId: DeviceId
+    /// The date when the location sharing ends.
+    /// If it's empty, it means the location sharing is static instead of live.
     public let endAt: Date?
+    /// The latitude of the location.
     public let latitude: Double
+    /// The longitude of the location.
     public let longitude: Double
+    /// The ID of the message that the location is attached to.
     public let messageId: MessageId
+    /// The date when the location was updated.
     public let updatedAt: Date
+    /// The ID of the user that created the location.
     public let userId: UserId
 
     init(

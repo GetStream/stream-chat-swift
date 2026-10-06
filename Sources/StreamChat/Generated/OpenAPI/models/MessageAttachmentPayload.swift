@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// An attachment is a message object that represents a file uploaded by a user.
 final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
     let actions: [AttachmentActionPayload]?
     let assetUrl: String?
@@ -102,10 +103,6 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         case type
     }
 
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
-    }
-
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         actions = try container.decodeIfPresent([AttachmentActionPayload].self, forKey: .actions)
@@ -114,13 +111,7 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         authorLink = try container.decodeIfPresent(String.self, forKey: .authorLink)
         authorName = try container.decodeIfPresent(String.self, forKey: .authorName)
         color = try container.decodeIfPresent(String.self, forKey: .color)
-        if let decoded = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         fallback = try container.decodeIfPresent(String.self, forKey: .fallback)
         fields = try container.decodeIfPresent([AttachmentFieldPayload].self, forKey: .fields)
         footer = try container.decodeIfPresent(String.self, forKey: .footer)
