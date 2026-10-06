@@ -1363,6 +1363,68 @@ import XCTest
         XCTAssertEqual(vc.showTypingIndicatorChatUsersCallCount, 1)
         XCTAssertEqual(vc.showTypingIndicatorChatUsersCalledWith, [user])
     }
+
+    // MARK: - Poll actions
+
+    func test_pollAttachmentViewDidTapOption_whenCurrentUserHasNotVoted_castsVote() {
+        let option = PollOption(id: .unique, text: "Red")
+        let message = ChatMessage.mock(poll: .mock(options: [option]))
+
+        sut.pollAttachmentView(PollAttachmentView(), didTapOption: option, in: message)
+
+        XCTAssertEqual(mockPollsRepository.castPollVote_optionId, option.id)
+        XCTAssertNil(mockPollsRepository.removePollVote_voteId)
+    }
+
+    func test_pollAttachmentViewDidTapOption_whenCurrentUserHasVoted_removesVote() {
+        let option = PollOption(id: .unique, text: "Red")
+        let ownVote = PollVote.mock(optionId: option.id)
+        let message = ChatMessage.mock(poll: .mock(options: [option], ownVotes: [ownVote]))
+
+        sut.pollAttachmentView(PollAttachmentView(), didTapOption: option, in: message)
+
+        XCTAssertEqual(mockPollsRepository.removePollVote_voteId, ownVote.id)
+        XCTAssertNil(mockPollsRepository.castPollVote_optionId)
+    }
+
+    func test_pollAttachmentViewDidTapOption_whenPollIsClosed_doesNotVote() {
+        let option = PollOption(id: .unique, text: "Red")
+        let message = ChatMessage.mock(poll: .mock(isClosed: true, options: [option]))
+
+        sut.pollAttachmentView(PollAttachmentView(), didTapOption: option, in: message)
+
+        XCTAssertNil(mockPollsRepository.castPollVote_optionId)
+        XCTAssertNil(mockPollsRepository.removePollVote_voteId)
+    }
+
+    func test_pollAttachmentViewDidTapEndPoll_whenUserConfirms_closesPoll() {
+        let poll = Poll.mock()
+        let message = ChatMessage.mock(poll: poll)
+        let alertsRouter = ConfirmingAlertsRouter_Mock(rootViewController: sut)
+        sut.alertRouter = alertsRouter
+
+        sut.pollAttachmentView(PollAttachmentView(), didTapEndPoll: poll, in: message)
+
+        XCTAssertEqual(alertsRouter.showPollEndVoteAlertCallCount, 1)
+        XCTAssertEqual(mockPollsRepository.closePoll_pollId, poll.id)
+    }
+
+    private var mockPollsRepository: PollsRepository_Mock {
+        (sut.client as! ChatClient_Mock).mockPollsRepository
+    }
+}
+
+private final class ConfirmingAlertsRouter_Mock: AlertsRouter {
+    var showPollEndVoteAlertCallCount = 0
+
+    override func showPollEndVoteAlert(
+        for poll: Poll,
+        in messageId: MessageId,
+        handler: @escaping () -> Void
+    ) {
+        showPollEndVoteAlertCallCount += 1
+        handler()
+    }
 }
 
 class AttachmentViewCatalog_Mock: AttachmentViewCatalog {

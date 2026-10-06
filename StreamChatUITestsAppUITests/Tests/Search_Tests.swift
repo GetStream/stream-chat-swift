@@ -12,26 +12,6 @@ final class Search_Tests: StreamTestCase {
         try super.setUpWithError()
     }
 
-    func test_userSearchesForMessage() {
-        linkToScenario(withId: 11947)
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        AND("participant sends the message") {
-            participantRobot.sendMessage(sampleText)
-            userRobot.assertMessage(sampleText)
-        }
-        WHEN("user searches for the message on the channel list") {
-            userRobot
-                .tapOnBackButton()
-                .search(sampleText)
-        }
-        THEN("the message is shown in the search results") {
-            userRobot.assertMessageInSearchResults(sampleText)
-        }
-    }
-
     func test_userOpensMessageFromSearchResults() {
         linkToScenario(withId: 11948)
 

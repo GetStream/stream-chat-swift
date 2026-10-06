@@ -1130,6 +1130,7 @@
 				StreamChatUITests/SnapshotTests/ChatMessageList/Poll/PollResultsVC_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/Poll/PollResultsVoteListVC_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC_Tests.swift,
+				StreamChatUITests/SnapshotTests/ChatMessageList/Reactions/ChatMessageReactionsPickerVC_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/Reactions/ChatMessageReactionsView_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/TypingIndicatorView_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatThread/ChatThreadVC_Tests.swift,

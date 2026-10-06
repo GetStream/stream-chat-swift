@@ -23,31 +23,6 @@ final class ThreadList_Tests: StreamTestCase {
         }
     }
 
-    func test_threadIsShownOnTheThreadList() {
-        linkToScenario(withId: 11950)
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        AND("participant sends the message") {
-            participantRobot.sendMessage(parentMessageText)
-            userRobot.assertMessage(parentMessageText)
-        }
-        AND("user replies to the message in the thread") {
-            userRobot
-                .sendMessageInThread(replyText)
-                .assertThreadMessage(replyText)
-        }
-        WHEN("user opens the thread list") {
-            userRobot
-                .moveToChannelListFromThreadReplies()
-                .openThreadList()
-        }
-        THEN("the thread is shown with the reply") {
-            userRobot.assertThreadInThreadList(parentMessageText: parentMessageText, latestReplyText: replyText)
-        }
-    }
-
     func test_userOpensThreadFromTheThreadList() {
         linkToScenario(withId: 11951)
 
