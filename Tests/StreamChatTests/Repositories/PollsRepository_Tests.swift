@@ -473,6 +473,60 @@ final class PollsRepository_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
+    func test_queryPollVotesById_whenSuccess() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        
+        repository.queryPollVotes(
+            pollId: pollId,
+            limit: nil,
+            next: nil,
+            prev: nil,
+            sort: [nil],
+            filter: nil
+        ) { result in
+            XCTAssertNil(result.error)
+            completionCalled.fulfill()
+        }
+        
+        let vote = XCTestCase().dummyPollVotePayload()
+        let response = PollVoteListResponse.dummy(votes: [vote])
+        apiClient.test_simulateResponse(.success(response))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
+            pollId: pollId, queryPollVotesRequest: .init()
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(response.votes.count, 1)
+    }
+    
+    func test_queryPollVotesById_whenFailure() {
+        let completionCalled = expectation(description: "completion called")
+        let pollId = String.unique
+        
+        repository.queryPollVotes(
+            pollId: pollId,
+            limit: nil,
+            next: nil,
+            prev: nil,
+            sort: [nil],
+            filter: nil
+        ) { result in
+            XCTAssertNotNil(result.error)
+            completionCalled.fulfill()
+        }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PollVoteListResponse, Error>.failure(error))
+        
+        wait(for: [completionCalled], timeout: defaultTimeout)
+        let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
+            pollId: pollId, queryPollVotesRequest: .init()
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
     // MARK: - Deleting polls
     
     func test_deletePoll_whenSuccessful() {

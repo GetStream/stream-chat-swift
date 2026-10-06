@@ -259,6 +259,43 @@ class PollsRepository: @unchecked Sendable {
         }
     }
     
+    func queryPollVotes(
+        pollId: String,
+        limit: Int?,
+        next: String?,
+        prev: String?,
+        sort: [SortParamRequest?],
+        filter: [String: RawJSON]?,
+        completion: (@Sendable (Result<PollVoteListResponse, Error>) -> Void)? = nil
+    ) {
+        let sort = sort.compactMap { $0 }
+        let request = QueryPollVotesRequestBody(
+            filter: filter,
+            limit: limit,
+            next: next,
+            prev: prev,
+            sort: sort.isEmpty ? nil : sort
+        )
+        apiClient.request(
+            endpoint: .queryPollVotes(pollId: pollId, queryPollVotesRequest: request),
+            completion: { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case let .success(response):
+                    self.database.write { session in
+                        for payload in response.votes {
+                            try session.savePollVote(payload: payload, query: nil, cache: nil)
+                        }
+                    } completion: { _ in
+                        completion?(result)
+                    }
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
+            }
+        )
+    }
+    
     func link(pollVote: PollVote, to query: PollVoteListQuery) {
         database.write { session in
             try session.linkVote(
