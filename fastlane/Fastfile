@@ -867,16 +867,7 @@ private_lane :frameworks_sizes do
 
   # StreamChatAI isn't linked by the Demo app and has no asset catalog, so its own unsigned archive is enough
   ai_archive_dir = "#{root_dir}/StreamChatAI.xcarchive"
-  gym(
-    scheme: 'StreamChatAI',
-    configuration: 'Release',
-    archive_path: ai_archive_dir,
-    skip_package_ipa: true,
-    skip_codesigning: true,
-    xcargs: 'SKIP_INSTALL=NO',
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path
-  )
+  archive_stream_chat_ai(archive_path: ai_archive_dir)
   stream_chat_ai_size = File.size("../#{ai_archive_dir}/Products/Library/Frameworks/StreamChatAI.framework/StreamChatAI")
 
   stream_chat_size_kb = stream_chat_size / 1024.0
@@ -890,6 +881,21 @@ private_lane :frameworks_sizes do
     StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0),
     StreamChatAI: stream_chat_ai_size_kb.round(0)
   }
+end
+
+# Archiving also writes the framework's link map (linkmaps/StreamChatAI-arm64-LinkMap.txt).
+# Unlike a plain build of the scheme, it leaves out the code coverage its test plan turns on.
+private_lane :archive_stream_chat_ai do |options|
+  gym(
+    scheme: 'StreamChatAI',
+    configuration: 'Release',
+    archive_path: options[:archive_path],
+    skip_package_ipa: true,
+    skip_codesigning: true,
+    xcargs: 'SKIP_INSTALL=NO',
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path
+  )
 end
 
 lane :size_analyze do
@@ -907,6 +913,8 @@ lane :size_analyze do
     xcodebuild_formatter: xcodebuild_formatter
   )
 
-  # StreamChatAI isn't linked by the Demo app, so there is no link map to measure it with
-  show_detailed_sdk_size(sdk_names: sdk_names - ['StreamChatAI'], threshold: 42)
+  # StreamChatAI isn't linked by the Demo app, so its link map comes from its own archive
+  archive_stream_chat_ai(archive_path: 'Build/SDKSize/StreamChatAI.xcarchive')
+
+  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
 end
