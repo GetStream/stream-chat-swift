@@ -16,6 +16,36 @@ extension UserRobot {
     }
 
     @discardableResult
+    func copyMessageId(_ text: String) -> Self {
+        openContextMenu(forMessageWithText: text)
+        MessageListPage.ContextMenu.copyMessageId.element.wait().safeTap()
+        return self
+    }
+
+    /// Opens the channel from the channel list's swipe actions, at the message id that was copied before.
+    @discardableResult
+    func openChannelWithCopiedMessageId(channelCellIndex: Int = 0) -> Self {
+        let cell = ChannelListPage.cells.allElementsBoundByIndex[channelCellIndex].wait()
+        cell.swipeLeft()
+        ChannelListPage.moreSwipeActionButton.safeTap()
+        ChannelListPage.ChannelActions.showChannelWithMessageId.wait().safeTap()
+
+        let textField = ChannelListPage.ChannelActions.messageIdTextField.wait()
+        let pasteButton = MessageListPage.Composer.pasteButton
+        for _ in 0..<5 {
+            textField.tap()
+            if pasteButton.wait(timeout: XCUIElement.probeTimeout).exists { break }
+        }
+        // The menu is outside the alert, so a regular tap would make XCTest dismiss the alert as an interruption first.
+        let pasteFrame = pasteButton.frame
+        app.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: pasteFrame.midX, dy: pasteFrame.midY))
+            .tap()
+        ChannelListPage.ChannelActions.okButton.wait().safeTap()
+        return self
+    }
+
+    @discardableResult
     func tapOnThreadReplyButton(at messageCellIndex: Int = 0) -> Self {
         MessageListPage.Attributes
             .threadReplyCountButton(in: messageCell(withIndex: messageCellIndex))

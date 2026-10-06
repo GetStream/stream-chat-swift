@@ -114,6 +114,7 @@ class MessageListPage {
         case edit
         case delete
         case hardDelete
+        case copyMessageId
         case resend
         case block
         case unblock
@@ -138,6 +139,8 @@ class MessageListPage {
                 return Element.delete
             case .hardDelete:
                 return Element.hardDelete
+            case .copyMessageId:
+                return Element.copyMessageId
             case .resend:
                 return Element.resend
             case .block:
@@ -158,6 +161,7 @@ class MessageListPage {
             static var edit: XCUIElement { app.otherElements["EditActionItem"] }
             static var delete: XCUIElement { app.otherElements["DeleteActionItem"] }
             static var hardDelete: XCUIElement { app.otherElements["HardDeleteActionItem"] }
+            static var copyMessageId: XCUIElement { app.otherElements["CopyMessageIdActionItem"] }
             static var resend: XCUIElement { app.otherElements["ResendActionItem"] }
             static var block: XCUIElement { app.otherElements["BlockUserActionItem"] }
             static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
