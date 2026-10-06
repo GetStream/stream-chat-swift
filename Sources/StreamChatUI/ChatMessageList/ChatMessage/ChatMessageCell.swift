@@ -46,12 +46,6 @@ public class ChatMessageCell: _TableViewCell, ThemeProvider {
         selectionStyle = .none
     }
 
-    // Exposes the transient jump highlight to UI tests.
-    override public var accessibilityValue: String? {
-        get { messageContentView?.isJumpHighlighted == true ? "highlighted" : super.accessibilityValue }
-        set { super.accessibilityValue = newValue }
-    }
-
     override public func setUpLayout() {
         super.setUpLayout()
 
