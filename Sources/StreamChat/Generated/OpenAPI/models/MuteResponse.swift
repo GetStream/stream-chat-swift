@@ -21,9 +21,13 @@ final class MuteResponse: Sendable, Decodable {
         self.ownUser = ownUser
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case mutes
-        case nonExistingUsers = "non_existing_users"
-        case ownUser = "own_user"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.mutes = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutes)
+        self.nonExistingUsers = try container.decodeIfPresent(
+            [String].self,
+            forKey: .nonExistingUsers
+        )
+        self.ownUser = try container.decodeIfPresent(OwnUserResponse.self, forKey: .ownUser)
     }
 }

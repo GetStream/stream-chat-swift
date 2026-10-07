@@ -42,14 +42,18 @@ final class MessageDeletedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelMessageCount = "channel_message_count"
-        case cid
-        case createdAt = "created_at"
-        case deletedForMe = "deleted_for_me"
-        case hardDelete = "hard_delete"
-        case message
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelMessageCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .channelMessageCount
+        )
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
+        self.hardDelete = try container.decodeIfPresent(Bool.self, forKey: .hardDelete)
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

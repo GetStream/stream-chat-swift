@@ -187,58 +187,8 @@ final class MessageResponse: Sendable, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case attachments
-        case cid
-        case command
-        case createdAt = "created_at"
-        case custom
-        case deletedAt = "deleted_at"
-        case deletedForMe = "deleted_for_me"
-        case deletedReplyCount = "deleted_reply_count"
-        case draft
-        case i18n
-        case id
-        case latestReactions = "latest_reactions"
-        case member
-        case mentionedChannel = "mentioned_channel"
-        case mentionedChannelMembers = "mentioned_channel_members"
-        case mentionedGroupIds = "mentioned_group_ids"
-        case mentionedGroups = "mentioned_groups"
-        case mentionedHere = "mentioned_here"
-        case mentionedRoles = "mentioned_roles"
-        case mentionedUsers = "mentioned_users"
-        case messageTextUpdatedAt = "message_text_updated_at"
-        case moderation
-        case ownReactions = "own_reactions"
-        case parentId = "parent_id"
-        case pinExpires = "pin_expires"
-        case pinned
-        case pinnedAt = "pinned_at"
-        case pinnedBy = "pinned_by"
-        case poll
-        case pollId = "poll_id"
-        case quotedMessage = "quoted_message"
-        case quotedMessageId = "quoted_message_id"
-        case reactionCounts = "reaction_counts"
-        case reactionGroups = "reaction_groups"
-        case reactionScores = "reaction_scores"
-        case reminder
-        case replyCount = "reply_count"
-        case restrictedVisibility = "restricted_visibility"
-        case shadowed
-        case sharedLocation = "shared_location"
-        case showInChannel = "show_in_channel"
-        case silent
-        case text
-        case threadParticipants = "thread_participants"
-        case type
-        case updatedAt = "updated_at"
-        case user
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         attachments = try container.decodeArrayIgnoringFailures(
             [MessageAttachmentPayload].self,
             forKey: .attachments

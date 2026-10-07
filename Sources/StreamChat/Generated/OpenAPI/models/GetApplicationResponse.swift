@@ -13,7 +13,8 @@ final class GetApplicationResponse: Sendable, Decodable {
         self.app = app
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case app
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.app = try container.decode(AppSettings.self, forKey: .app)
     }
 }

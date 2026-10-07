@@ -15,9 +15,10 @@ final class PollOptionPayload: Sendable, Decodable {
         self.text = text
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case id
-        case text
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.text = try container.decode(String.self, forKey: .text)
     }
 }

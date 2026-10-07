@@ -11,7 +11,8 @@ final class CastPollVoteRequestBody: Sendable, Encodable, JSONEncodable {
         self.vote = vote
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case vote
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(vote, forKey: .vote)
     }
 }

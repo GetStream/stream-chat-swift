@@ -18,9 +18,10 @@ final class NotificationMutesUpdatedEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case me
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.me = try container.decode(OwnUserResponse.self, forKey: .me)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

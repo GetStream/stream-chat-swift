@@ -52,17 +52,24 @@ final class NotificationMarkReadEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case cid
-        case createdAt = "created_at"
-        case groupedUnreadChannels = "grouped_unread_channels"
-        case lastReadMessageId = "last_read_message_id"
-        case thread
-        case totalUnreadCount = "total_unread_count"
-        case type
-        case unreadChannels = "unread_channels"
-        case unreadThreads = "unread_threads"
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.groupedUnreadChannels = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .groupedUnreadChannels
+        )
+        self.lastReadMessageId = try container.decodeIfPresent(
+            String.self,
+            forKey: .lastReadMessageId
+        )
+        self.thread = try container.decodeIfPresent(ThreadResponse.self, forKey: .thread)
+        self.totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+        self.unreadThreads = try container.decodeIfPresent(Int.self, forKey: .unreadThreads)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

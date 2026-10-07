@@ -17,9 +17,10 @@ public final class PushPreference: Sendable, Decodable {
         self.disabledUntil = disabledUntil
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case _level = "chat_level"
-        case disabledUntil = "disabled_until"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self._level = try container.decodeIfPresent(PushPreferenceLevel.self, forKey: .chatLevel)
+        self.disabledUntil = try container.decodeIfPresent(Date.self, forKey: .disabledUntil)
     }
 }
 

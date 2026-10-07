@@ -49,16 +49,17 @@ final class UpdateChannelRequest: Sendable, Encodable, JSONEncodable {
         self.removeMembers = removeMembers
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case acceptInvite = "accept_invite"
-        case addFilterTags = "add_filter_tags"
-        case addMembers = "add_members"
-        case data
-        case hideHistory = "hide_history"
-        case hideHistoryBefore = "hide_history_before"
-        case invites
-        case message
-        case rejectInvite = "reject_invite"
-        case removeMembers = "remove_members"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(acceptInvite, forKey: .acceptInvite)
+        try container.encodeIfPresent(addFilterTags, forKey: .addFilterTags)
+        try container.encodeIfPresent(addMembers, forKey: .addMembers)
+        try container.encodeIfPresent(data, forKey: .data)
+        try container.encodeIfPresent(hideHistory, forKey: .hideHistory)
+        try container.encodeIfPresent(hideHistoryBefore, forKey: .hideHistoryBefore)
+        try container.encodeIfPresent(invites, forKey: .invites)
+        try container.encodeIfPresent(message, forKey: .message)
+        try container.encodeIfPresent(rejectInvite, forKey: .rejectInvite)
+        try container.encodeIfPresent(removeMembers, forKey: .removeMembers)
     }
 }

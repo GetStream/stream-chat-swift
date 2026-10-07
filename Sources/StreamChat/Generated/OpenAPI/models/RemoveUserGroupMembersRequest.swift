@@ -15,8 +15,9 @@ final class RemoveUserGroupMembersRequest: Sendable, Encodable, JSONEncodable {
         self.teamId = teamId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case memberIds = "member_ids"
-        case teamId = "team_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(memberIds, forKey: .memberIds)
+        try container.encodeIfPresent(teamId, forKey: .teamId)
     }
 }

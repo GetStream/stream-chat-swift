@@ -44,9 +44,10 @@ if unclassified:
 if missing:
     raise SystemExit(f"Classified models missing from generated output: {sorted(missing)}")
 
-# Models with deprecated fields get an explicit init(from:) and encode(to:) from the
-# generator; the one for the dropped coding direction no longer compiles. Keyed by the
-# direction that doesn't need the coder.
+# Every model gets an explicit init(from:) and encode(to:) from the generator; the one
+# for the dropped coding direction no longer compiles. The other one must stay: without
+# CodingKeys, synthesis would take the wire keys from the camelCase property names.
+# Keyed by the direction that doesn't need the coder.
 unused_coder = {
     "Decodable": r"func encode\(to encoder: Encoder\) throws",
     "Encodable": r"init\(from decoder: Decoder\) throws",
@@ -88,18 +89,14 @@ for direction, names in groups.items():
             raise SystemExit(f"{name} retains an encoding conformance")
 
         text = "".join(output)
-        # Without deprecated accessors left (e.g. after remove_property), synthesis works again,
-        # except for WSEvent, which decodes by its `type` discriminator.
-        has_deprecated = re.search(r"^\s*var \w+: .* \{ _\w+ \}$", text, flags=re.M)
-        for coder_direction, coder in unused_coder.items():
-            if coder_direction == direction or not (has_deprecated or name == "WSEvent"):
-                text = re.sub(
-                    rf"\n?^    (?:public )?{coder} \{{\n.*?^    \}}\n",
-                    "",
-                    text,
-                    count=1,
-                    flags=re.M | re.S,
-                )
+        if direction in unused_coder:
+            text = re.sub(
+                rf"\n?^    (?:public )?{unused_coder[direction]} \{{\n.*?^    \}}\n",
+                "",
+                text,
+                count=1,
+                flags=re.M | re.S,
+            )
         path.write_text(text)
 PY
 }
@@ -113,13 +110,15 @@ contains() {
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration). The memberwise init
-#     parameter is relaxed too.
+#     parameter and the init(from:)/encode(to:) lines are relaxed too.
 optionalize_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   P="$2" perl -0777 -pi -e '
     my $p = $ENV{P};
     s/^(    let \Q$p\E: [^?\n]+)$/$1?/m;
     s/([(,]\s*)\Q$p\E: ([^,)\n]+)(?=[,)])/${1}$p: $2? = nil/;
+    s/^(        self\.\Q$p\E = try container\.)decode\(/${1}decodeIfPresent(/m;
+    s/^(        try container\.)encode\(\Q$p\E, /${1}encodeIfPresent($p, /m;
   ' "$file"
 }
 
@@ -192,6 +191,39 @@ prune_models() {
   done
 }
 
+# Drop the StringCodingKey lets nothing references: the generator emits one per wire key
+# of every model in the spec, most of which prune_models removes. A key counts as used
+# when a generated file names it as `forKey: .key` or any SDK or test source names it as
+# `StringCodingKey.key`. Hand-written `forKey: .key` lines belong to other types'
+# CodingKeys enums, so they don't count.
+prune_string_coding_keys() {
+  python3 - "$OUTPUT_DIR_CHAT/StringCodingKey.swift" "$OUTPUT_DIR_CHAT" \
+    "$REPO_ROOT/Sources" "$REPO_ROOT/Tests" "$REPO_ROOT/TestTools" <<'PY'
+import pathlib
+import re
+import sys
+
+keys_file, generated_dir = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+generated_reference = re.compile(r"(?:forKey: \.|StringCodingKey\.)`?(\w+)`?")
+reference = re.compile(r"StringCodingKey\.`?(\w+)`?")
+used = set()
+for root in sys.argv[3:]:
+    for path in pathlib.Path(root).rglob("*.swift"):
+        if path == keys_file:
+            continue
+        pattern = generated_reference if path.is_relative_to(generated_dir) else reference
+        used.update(pattern.findall(path.read_text()))
+
+declaration = re.compile(r"^    static let `?(\w+)`?: StringCodingKey = ")
+kept = [
+    line
+    for line in keys_file.read_text().splitlines(keepends=True)
+    if not (match := declaration.match(line)) or match.group(1) in used
+]
+keys_file.write_text("".join(kept))
+PY
+}
+
 prune_wsevent_cases() {
   local file="$OUTPUT_DIR_CHAT/models/WSEvent.swift"
   local allowed_events_csv
@@ -231,8 +263,9 @@ PY
 }
 
 # Expose a generated model as public API. The type and its stored properties become
-# public, along with the generated Hashable conformance (== and hash(into:)); the
-# memberwise init and CodingKeys stay internal.
+# public, along with the generated Hashable conformance (== and hash(into:)) and the
+# init(from:)/encode(to:) that witness the public Decodable/Encodable conformances; the
+# memberwise init stays internal.
 publicize_model() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   sed -i '' -E \
@@ -241,6 +274,8 @@ publicize_model() {
     -e 's/^    var /    public var /' \
     -e 's/^    static func == /    public static func == /' \
     -e 's/^    func hash\(into /    public func hash(into /' \
+    -e 's/^    init\(from decoder: /    public init(from decoder: /' \
+    -e 's/^    func encode\(to encoder: /    public func encode(to encoder: /' \
     "$file"
 }
 
@@ -263,7 +298,7 @@ publicize_raw_representable() {
 }
 
 # Remove generated properties (declaration, doc comment, init param, assignment,
-#     CodingKeys case, init(from:)/encode(to:) lines). A deprecated property is emitted as a
+#     init(from:)/encode(to:) lines). A deprecated property is emitted as a
 #     private `_name` backing property plus a deprecated `name` accessor; both are removed.
 #     Runs before publicize, so there are no access modifiers to handle. Assumes the
 #     single-line init the generator emits (step 8 re-wraps).
@@ -280,7 +315,6 @@ remove_property() {
       s ~ "^var " p ": .* \\{ _" p " \\}$" { n = 0; next }
       s ~ "^self\\._?" p " = " p "$"     { next }
       s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
-      s ~ "^case " p "( =|$)"            { next }
       s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
       s ~ "^hasher\\.combine\\(_?" p "\\)$"    { next }
       s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
@@ -289,7 +323,9 @@ remove_property() {
     ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
     # Drop a trailing `&&` left dangling when the removed field was last in an == chain.
     perl -0777 -pi -e 's/ &&(\n\s*\})/$1/g' "$file"
-    perl -0777 -pi -e 's/\n\h*enum CodingKeys: String, CodingKey, CaseIterable \{\n\h*\}\n//' "$file"
+    # A model left without properties has no wire keys, so synthesis can replace coders whose
+    # container would go unused.
+    perl -0777 -pi -e 's/\n\h*(?:init\(from decoder: Decoder\) throws|func encode\(to encoder: Encoder\) throws) \{\n\h*(?:let|var) container = [^\n]+\n\h*\}\n//g' "$file"
   done
 }
 
@@ -329,14 +365,22 @@ rename_generated_type() {
   find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E "s/[[:<:]]$old[[:>:]]/$new/g" {} +
 }
 
+# Rename a generated property. The coders keep `forKey: .old`: StringCodingKey names
+#     follow the wire key, not the property. A Sourcery source is refused: the stencil
+#     keys every property by its name, so `new` would decode the wrong key.
 rename_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  if grep -q "/$1\.swift$" "$SOURCERY_CONFIG"; then
+    echo "rename_property: $1 is a Sourcery source; its stencil decoder would key $3 by name, not by the wire key" >&2
+    exit 1
+  fi
   O="$2" N="$3" perl -0777 -pi -e '
     my ($o, $n) = ($ENV{O}, $ENV{N});
     s/^(\s*(?:public )?let )\Q$o\E:/$1$n:/mg;
     s/([(,]\s*)\Q$o\E:/$1$n:/g;
     s/^(\s*self\.)\Q$o\E = \Q$o\E$/$1$n = $n/mg;
-    s{^(\s*)case \Q$o\E( = "[^"]*")?$}{"$1case $n" . (defined $2 ? $2 : " = \"$o\"")}mge;
+    s/^(\s*self\.)\Q$o\E( = try container\.)/$1$n$2/mg;
+    s/(try container\.encode(?:IfPresent)?\()\Q$o\E(, forKey: )/$1$n$2/g;
     s/(lhs\.)\Q$o\E( == rhs\.)\Q$o\E/${1}$n${2}$n/g;
     s/(hasher\.combine\()\Q$o\E(\))/$1$n$2/g;
   ' "$file"
@@ -348,6 +392,8 @@ require_property() {
     my $p = $ENV{P};
     s/^(    let \Q$p\E: [^\n]+)\?$/$1/m;
     s/([(,]\s*)\Q$p\E: ([^,)\n]+?)\? = nil(?=[,)])/${1}$p: $2/;
+    s/^(        self\.\Q$p\E = try container\.)decodeIfPresent\(/${1}decode(/m;
+    s/^(        try container\.)encodeIfPresent\(\Q$p\E, /${1}encode($p, /m;
   ' "$file"
 }
 
@@ -359,7 +405,8 @@ restore_nonoptional_property() {
     my ($p, $t, $d) = ($ENV{P}, $ENV{T}, $ENV{D});
     s/^    let \Q$p\E: \Q$t\E\?$/    private let _$p: $t?\n    public var $p: $t { _$p ?? $d }/m;
     s/^        self\.\Q$p\E = \Q$p\E$/        self._$p = $p/m;
-    s{^    case \Q$p\E( = "[^"]*")?$}{"    case _$p" . (defined $1 ? $1 : " = \"$p\"")}me;
+    s/^(        self\.)\Q$p\E( = try container\.)/${1}_$p$2/m;
+    s/^(        try container\.encode(?:IfPresent)?\()\Q$p\E(, forKey: )/${1}_$p$2/m;
   ' "$file"
 }
 
@@ -368,6 +415,7 @@ retype_property() {
   P="$2" O="$3" N="$4" perl -0777 -pi -e '
     my ($p, $o, $n) = ($ENV{P}, $ENV{O}, $ENV{N});
     s/(?<!\w)\Q$p\E: \Q$o\E(?!\w)/$p: $n/g;
+    s/^(        self\.\Q$p\E = try container\.decode(?:IfPresent)?\()\Q$o\E\.self/$1$n.self/m;
   ' "$file"
 }
 

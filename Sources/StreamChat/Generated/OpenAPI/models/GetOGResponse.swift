@@ -45,15 +45,16 @@ final class GetOGResponse: Sendable, Decodable {
         self.titleLink = titleLink
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case assetUrl = "asset_url"
-        case authorName = "author_name"
-        case custom
-        case imageUrl = "image_url"
-        case ogScrapeUrl = "og_scrape_url"
-        case text
-        case thumbUrl = "thumb_url"
-        case title
-        case titleLink = "title_link"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.assetUrl = try container.decodeIfPresent(String.self, forKey: .assetUrl)
+        self.authorName = try container.decodeIfPresent(String.self, forKey: .authorName)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        self.ogScrapeUrl = try container.decodeIfPresent(String.self, forKey: .ogScrapeUrl)
+        self.text = try container.decodeIfPresent(String.self, forKey: .text)
+        self.thumbUrl = try container.decodeIfPresent(String.self, forKey: .thumbUrl)
+        self.title = try container.decodeIfPresent(String.self, forKey: .title)
+        self.titleLink = try container.decodeIfPresent(String.self, forKey: .titleLink)
     }
 }

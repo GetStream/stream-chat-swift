@@ -16,9 +16,10 @@ final class QueryRemindersResponse: Sendable, Decodable {
         self.reminders = reminders
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case next
-        case prev
-        case reminders
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.next = try container.decodeIfPresent(String.self, forKey: .next)
+        self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
+        self.reminders = try container.decode([ReminderPayload].self, forKey: .reminders)
     }
 }

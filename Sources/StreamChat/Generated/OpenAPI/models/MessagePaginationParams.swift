@@ -34,12 +34,13 @@ final class MessagePaginationParams: Sendable, Encodable, JSONEncodable {
         self.limit = limit
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case idAround = "id_around"
-        case idGt = "id_gt"
-        case idGte = "id_gte"
-        case idLt = "id_lt"
-        case idLte = "id_lte"
-        case limit
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(idAround, forKey: .idAround)
+        try container.encodeIfPresent(idGt, forKey: .idGt)
+        try container.encodeIfPresent(idGte, forKey: .idGte)
+        try container.encodeIfPresent(idLt, forKey: .idLt)
+        try container.encodeIfPresent(idLte, forKey: .idLte)
+        try container.encodeIfPresent(limit, forKey: .limit)
     }
 }

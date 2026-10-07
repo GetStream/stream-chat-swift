@@ -12,7 +12,11 @@ public final class UnmuteUsersResponse: Sendable, Decodable {
         self.nonExistingUsers = nonExistingUsers
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case nonExistingUsers = "non_existing_users"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.nonExistingUsers = try container.decodeIfPresent(
+            [String].self,
+            forKey: .nonExistingUsers
+        )
     }
 }

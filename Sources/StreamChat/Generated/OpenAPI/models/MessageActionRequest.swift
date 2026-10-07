@@ -12,7 +12,8 @@ final class MessageActionRequest: Sendable, Encodable, JSONEncodable {
         self.formData = formData
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case formData = "form_data"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(formData, forKey: .formData)
     }
 }

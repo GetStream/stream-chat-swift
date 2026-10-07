@@ -1,8 +1,16 @@
-{# A stored `_x` is the generator's backing property for a deprecated `x`: it decodes from the `.x` CodingKeys case and lossyArrays/defaultValues refer to it as `x`. restore_nonoptional_property keeps a `._x` case instead, so align its models before adding them to sources. #}
+{# A property decodes from the StringCodingKey named after it without `_`: a stored `_x` is the generator's backing property for a deprecated `x`, decodes from `.x`, and lossyArrays/defaultValues refer to it as `x`. StringCodingKey names follow the wire keys, so a property that rename_property moved away from its wire key's name would decode the wrong key; rename_property refuses models listed in sources. #}
 {% for type in types.classes %}
 // sourcery:decoder:{{ type.name }}
+{% if type.name in argument.allKeys %}
+    static let allKeys: Set<String> = [
+{% for stored in type.storedVariables %}
+        StringCodingKey.{{ stored.name|replace:"_","" }}.stringValue{% if not forloop.last %},{% endif %}
+{% endfor %}
+    ]
+
+{% endif %}
     {% if not type.isFinal %}required {% endif %}init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
 {% for variable in type.storedVariables %}
 {% set key %}{{ variable.name|replace:"_","" }}{% endset %}
 {% if key in argument.lossyArrays[type.name] %}

@@ -58,15 +58,16 @@ final class CreatePollRequestBody: Sendable, Encodable, JSONEncodable {
         self.votingVisibility = votingVisibility
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case allowAnswers = "allow_answers"
-        case allowUserSuggestedOptions = "allow_user_suggested_options"
-        case custom
-        case description
-        case enforceUniqueVote = "enforce_unique_vote"
-        case maxVotesAllowed = "max_votes_allowed"
-        case name
-        case options
-        case votingVisibility = "voting_visibility"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(allowAnswers, forKey: .allowAnswers)
+        try container.encodeIfPresent(allowUserSuggestedOptions, forKey: .allowUserSuggestedOptions)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(enforceUniqueVote, forKey: .enforceUniqueVote)
+        try container.encodeIfPresent(maxVotesAllowed, forKey: .maxVotesAllowed)
+        try container.encode(name, forKey: .name)
+        try container.encodeIfPresent(options, forKey: .options)
+        try container.encodeIfPresent(votingVisibility, forKey: .votingVisibility)
     }
 }

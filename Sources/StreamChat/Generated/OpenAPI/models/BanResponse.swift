@@ -34,13 +34,14 @@ final class BanResponse: Sendable, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case bannedBy = "banned_by"
-        case channel
-        case createdAt = "created_at"
-        case expires
-        case reason
-        case shadow
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.bannedBy = try container.decodeIfPresent(UserPayload.self, forKey: .bannedBy)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.expires = try container.decodeIfPresent(Date.self, forKey: .expires)
+        self.reason = try container.decodeIfPresent(String.self, forKey: .reason)
+        self.shadow = try container.decodeIfPresent(Bool.self, forKey: .shadow)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

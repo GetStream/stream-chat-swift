@@ -22,10 +22,11 @@ final class UserRequest: Sendable, Encodable, JSONEncodable {
         self.name = name
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case id
-        case image
-        case name
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(image, forKey: .image)
+        try container.encodeIfPresent(name, forKey: .name)
     }
 }

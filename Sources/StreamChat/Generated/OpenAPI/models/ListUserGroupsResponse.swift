@@ -13,7 +13,8 @@ final class ListUserGroupsResponse: Sendable, Decodable {
         self.userGroups = userGroups
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case userGroups = "user_groups"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.userGroups = try container.decode([UserGroup].self, forKey: .userGroups)
     }
 }

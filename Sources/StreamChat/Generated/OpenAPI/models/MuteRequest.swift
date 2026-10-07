@@ -15,8 +15,9 @@ final class MuteRequest: Sendable, Encodable, JSONEncodable {
         self.timeout = timeout
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case targetIds = "target_ids"
-        case timeout
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(targetIds, forKey: .targetIds)
+        try container.encodeIfPresent(timeout, forKey: .timeout)
     }
 }

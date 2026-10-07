@@ -35,15 +35,16 @@ public final class UserGroup: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case description
-        case id
-        case _members = "members"
-        case name
-        case teamId = "team_id"
-        case updatedAt = "updated_at"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.createdBy = try container.decodeIfPresent(String.self, forKey: .createdBy)
+        self.description = try container.decodeIfPresent(String.self, forKey: .description)
+        self.id = try container.decode(String.self, forKey: .id)
+        self._members = try container.decodeIfPresent([UserGroupMember].self, forKey: .members)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.teamId = try container.decodeIfPresent(String.self, forKey: .teamId)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }
 
