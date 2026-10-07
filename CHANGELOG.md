@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- Fix full channel update unfreezing frozen channels and failing on auto-translated, disabled or team channels [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
+
 ### 🔄 Changed
 
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
