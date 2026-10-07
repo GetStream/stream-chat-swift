@@ -28,15 +28,12 @@ _September 24, 2026_
 - Fix channel data being overridden by events with stale channel data [#4278](https://github.com/GetStream/stream-chat-swift/pull/4278)
 
 ## StreamChatUI
-### 🐞 Fixed
-- Fix UI hang caused by activating or deactivating the audio session on the main thread [#4286](https://github.com/GetStream/stream-chat-swift/pull/4286)
-
-## StreamChatUI
 ### ✅ Added
 - Improved support for the iPhone Duo [#4287](https://github.com/GetStream/stream-chat-swift/pull/4287)
 ### 🐞 Fixed
 - Fix incorrect rounded corner on image attachments shown below other attachments [#4277](https://github.com/GetStream/stream-chat-swift/pull/4277)
 - Fix empty voice recording preview when quoting a message with multiple attachments [#4276](https://github.com/GetStream/stream-chat-swift/pull/4276)
+- Fix UI hang caused by activating or deactivating the audio session on the main thread [#4286](https://github.com/GetStream/stream-chat-swift/pull/4286)
 
 # [5.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.11.0)
 _September 09, 2026_
