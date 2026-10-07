@@ -11,8 +11,6 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
     let filterValues: [String: RawJSON]?
     /// Number of channels to limit
     let limit: Int?
-    /// Top-level keys of the message sender's channel-member custom data to include under member.custom (max 8 keys, 64 chars each)
-    let memberCustomInclude: [String]?
     /// Number of members to limit
     let memberLimit: Int?
     /// Number of messages to limit
@@ -34,7 +32,6 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
         filterConditions: (any Encodable & Sendable)? = nil,
         filterValues: [String: RawJSON]? = nil,
         limit: Int? = nil,
-        memberCustomInclude: [String]? = nil,
         memberLimit: Int? = nil,
         messageLimit: Int? = nil,
         offset: Int? = nil,
@@ -48,7 +45,6 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
         self.filterConditions = filterConditions
         self.filterValues = filterValues
         self.limit = limit
-        self.memberCustomInclude = memberCustomInclude
         self.memberLimit = memberLimit
         self.messageLimit = messageLimit
         self.offset = offset
@@ -64,7 +60,6 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
         case filterConditions = "filter_conditions"
         case filterValues = "filter_values"
         case limit
-        case memberCustomInclude = "member_custom_include"
         case memberLimit = "member_limit"
         case messageLimit = "message_limit"
         case offset
@@ -83,7 +78,6 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
         }
         try container.encodeIfPresent(filterValues, forKey: .filterValues)
         try container.encodeIfPresent(limit, forKey: .limit)
-        try container.encodeIfPresent(memberCustomInclude, forKey: .memberCustomInclude)
         try container.encodeIfPresent(memberLimit, forKey: .memberLimit)
         try container.encodeIfPresent(messageLimit, forKey: .messageLimit)
         try container.encodeIfPresent(offset, forKey: .offset)

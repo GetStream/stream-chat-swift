@@ -58,6 +58,11 @@
     "show_in_channel": true,
     "parent_id": "3294-4c0c-9a62-c9d0928bf733",
     "channel" : {
+        "custom" : {
+            "image" : "https:\/\/picsum.photos\/seed\/63\/100\/100",
+            "example" : 7,
+            "name" : "Giant Disk"
+        },
         "id" : "channel-ex7-63",
         "created_at" : "2019-12-17T17:11:26.131888Z",
         "created_by" : null,
@@ -117,9 +122,6 @@
             "read_events" : true,
             "search" : true
         },
-        "image" : "https:\/\/picsum.photos\/seed\/63\/100\/100",
-        "example" : 7,
-        "name" : "Giant Disk",
         "last_message_at" : "2020-12-23T08:26:45.307447Z"
     },
     "attachments" : [
@@ -185,12 +187,14 @@
         
     ],
     "quoted_message" : {
+        "custom": {
+            "secret_note": ""
+        },
         "cid": "messaging:channel-ex7-63",
         "deleted_reply_count": 0,
         "mentioned_channel": false,
         "mentioned_here": false,
         "restricted_visibility": [],
-        "secret_note": "",
         "updated_at" : "2021-01-02T07:23:41.411638Z",
         "reply_count" : 0,
         "html" : "<p>@thierry @1ae405d6-c279-3a8e-a27f-b91ec604de07 Hey!<\/p>\n",
@@ -201,13 +205,15 @@
         "pinned_at" : null,
         "id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
         "user" : {
+            "custom" : {
+                "value" : "cilvia"
+            },
             "banned" : false,
             "online" : true,
             "id" : "cilvia",
             "role" : "user",
             "created_at" : "2019-10-24T08:34:11.155375Z",
             "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
-            "value" : "cilvia",
             "updated_at" : "2021-01-12T16:43:25.726221Z",
             "last_active" : "2021-01-12T16:38:26.444716Z",
             "name" : "Neil Hannah"
@@ -238,6 +244,9 @@
     "quoted_message_id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
     "thread_participants" : [
         {
+            "custom" : {
+                "value" : "josh"
+            },
             "id" : "josh",
             "role" : "user",
             "created_at" : "2020-04-15T06:43:08.776911Z",
@@ -246,7 +255,6 @@
             "banned" : false,
             "online" : false,
             "name" : "Joshua",
-            "value" : "josh",
             "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
         }
     ],

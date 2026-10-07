@@ -12,6 +12,7 @@ sources:
   - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
   - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
   - ./Generated/OpenAPI/models/SearchResultMessage.swift
+  - ./Generated/OpenAPI/models/SyncResponse.swift
   - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
   - ./Generated/OpenAPI/models/ThreadStateResponse.swift
@@ -23,28 +24,65 @@ output:
 args:
   # Non-optional properties which fall back to a default when the key is missing or null.
   defaultValues:
+    ChannelDetailPayload:
+      custom: "[:]"
     ChannelStateResponse:
       threads: "[]"
+    DraftMessagePayload:
+      custom: "[:]"
     MemberInfoPayload:
       notificationsMuted: "false"
+    MemberPayload:
+      banned: "false"
+      channelRole: "\"channel_member\""
+      custom: "[:]"
+      notificationsMuted: "false"
+      shadowBanned: "false"
+    MessageAttachmentPayload:
+      custom: "[:]"
+    MessageReactionPayload:
+      custom: "[:]"
     MessageResponse:
+      custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
+      reactionCounts: "[:]"
       reactionScores: "[:]"
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    OwnUserResponse:
+      banned: "false"
+      custom: "[:]"
+      invisible: "false"
+      language: "\"\""
+      teams: "[]"
+      unreadThreads: "0"
     SearchResultMessage:
+      custom: "[:]"
       mentionedChannel: "false"
       mentionedHere: "false"
       pinned: "false"
+      reactionCounts: "[:]"
       reactionScores: "[:]"
       restrictedVisibility: "[]"
       shadowed: "false"
       silent: "false"
+    ThreadParticipantPayload:
+      custom: "[:]"
+    ThreadResponse:
+      activeParticipantCount: "0"
+      custom: "[:]"
     ThreadStateResponse:
+      activeParticipantCount: "0"
+      custom: "[:]"
       latestReplies: "[]"
+    UserPayload:
+      banned: "false"
+      custom: "[:]"
+      language: "\"\""
+      teams: "[]"
   # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
   lossyArrays:
     ChannelDetailPayload: [members]
@@ -55,11 +93,6 @@ args:
     QueryChannelsResponse: [channels]
     QueryThreadsResponse: [threads]
     SearchResultMessage: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
+    # Remove when fixed: IOS-2065
+    SyncResponse: [events]
     ThreadStateResponse: [latestReplies, read, threadParticipants]
-  # v1 endpoints return the user's custom data flattened next to a wider set of keys than v2
-  # declares, so those have to be excluded too when rebuilding the extra data.
-  v1CodingKeys:
-    MessageResponse: MessagePayloadsCodingKeys
-    OwnUserResponse: UserPayloadsCodingKeys
-    SearchResultMessage: MessagePayloadsCodingKeys
-    UserPayload: UserPayloadsCodingKeys

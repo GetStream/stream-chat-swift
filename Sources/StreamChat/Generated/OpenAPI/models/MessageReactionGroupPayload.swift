@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// MessageReactionGroupPayload contains all information about a reaction of the same type.
 final class MessageReactionGroupPayload: Sendable, Decodable {
     /// Count is the number of reactions of this type.
     let count: Int

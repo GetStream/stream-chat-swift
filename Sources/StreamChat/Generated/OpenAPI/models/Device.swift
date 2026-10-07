@@ -4,8 +4,9 @@
 
 import Foundation
 
+/// An object representing a device which can receive push notifications.
 public final class Device: Sendable, Codable, JSONEncodable {
-    /// Date/time of creation
+    /// The date when the device was created.
     public let createdAt: Date?
     /// Whether device is disabled or not
     public let disabled: Bool?
@@ -13,7 +14,7 @@ public final class Device: Sendable, Codable, JSONEncodable {
     public let disabledReason: String?
     /// Stable physical device identifier used to deduplicate pushes across push providers
     public let hardwareId: String?
-    /// Device ID
+    /// The device identifier.
     public let id: String
     /// Push provider
     public let pushProvider: String

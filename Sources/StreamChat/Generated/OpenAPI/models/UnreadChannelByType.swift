@@ -4,9 +4,13 @@
 
 import Foundation
 
+/// The unread information from channels with a specific type.
 public final class UnreadChannelByType: Sendable, Decodable {
+    /// The number of unread channels of this channel type.
     public let channelCount: Int
+    /// The channel type.
     public let channelType: ChannelType
+    /// The number of unread messages of all the channels with this type.
     public let unreadCount: Int
 
     init(channelCount: Int, channelType: ChannelType, unreadCount: Int) {

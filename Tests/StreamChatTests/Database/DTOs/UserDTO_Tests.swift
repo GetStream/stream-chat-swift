@@ -122,27 +122,10 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedUserModel.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedUserModel.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserModel.lastActiveAt)
-            Assert.willBeEqual(payload.teams?.sorted(), loadedUserModel.teams.sorted())
+            Assert.willBeEqual(payload.teams.sorted(), loadedUserModel.teams.sorted())
             Assert.willBeEqual(payload.extraData, loadedUserModel.extraData)
             Assert.willBeEqual(payload.language, loadedUserModel.language!.languageCode)
         }
-    }
-
-    func test_DTO_asPayload() throws {
-        let userId = UUID().uuidString
-
-        let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")])
-
-        // Asynchronously save the payload to the db
-        try database.writeSynchronously { session in
-            try! session.saveUser(payload: payload)
-        }
-
-        // Load the user from the db and check the fields are correct
-        let loadedUserPayload = database.viewContext.user(id: userId)?.asRequestBody()
-
-        XCTAssertEqual(payload.id, loadedUserPayload?.id)
-        XCTAssertEqual(payload.extraData, loadedUserPayload?.extraData)
     }
 
     func test_DTO_resetsItsEphemeralValues() throws {

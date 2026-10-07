@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class SendReactionResponse: Sendable, Decodable {
     /// Represents any chat message
     let message: MessageResponse

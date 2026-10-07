@@ -14,9 +14,8 @@ extension MessageAttachmentPayload {
         return type.map(AttachmentType.init(rawValue:)) ?? .unknown
     }
 
-    /// A raw attachment payload in the flattened shape used by local storage and v1
-    /// endpoints, where standard and custom fields share the top level and `type` is
-    /// stripped.
+    /// A raw attachment payload in the flattened shape used by local storage, where
+    /// standard and custom fields share the top level and `type` is stripped.
     var payload: RawJSON {
         guard var rawJSONDictionary = rawJSON?.dictionaryValue else { return .dictionary([:]) }
         rawJSONDictionary.removeValue(forKey: CodingKeys.type.rawValue)

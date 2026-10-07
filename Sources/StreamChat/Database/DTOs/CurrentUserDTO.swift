@@ -105,11 +105,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         try saveCurrentUserCommonFields(
             blockedUserIds: payload.blockedUserIds ?? [],
-            channelMutes: payload.channelMutes ?? [],
-            devices: payload.devices ?? [],
+            channelMutes: payload.channelMutes,
+            devices: payload.devices,
             dto: dto,
-            isInvisible: payload.invisible ?? false,
-            mutes: payload.mutes ?? [],
+            isInvisible: payload.invisible,
+            mutes: payload.mutes,
             privacySettings: payload.privacySettings,
             totalUnreadCount: payload.totalUnreadCount,
             unreadChannels: payload.unreadChannels,
@@ -167,8 +167,9 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         dto.blockedUserIds = Set(blockedUserIds)
 
+        // CHA-4826
         let channelMuteDTOs = Set(
-            try channelMutes.map { try saveChannelMute(payload: $0) }
+            channelMutes.compactMapLoggingError { try saveChannelMute(payload: $0) }
         )
         dto.channelMutes.subtracting(channelMuteDTOs).forEach { delete($0) }
         dto.channelMutes = channelMuteDTOs

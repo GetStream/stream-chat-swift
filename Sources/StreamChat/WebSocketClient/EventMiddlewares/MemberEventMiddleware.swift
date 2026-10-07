@@ -23,22 +23,22 @@ struct MemberEventMiddleware: EventMiddleware {
                 }
 
             case let event as MemberRemovedEventDTO:
-                guard let channel = session.channel(cid: event.cid) else {
+                guard let userId = event.user?.id, let channel = session.channel(cid: event.cid) else {
                     // No need to throw ChannelNotFound error here
                     break
                 }
 
-                guard let member = channel.members.first(where: { $0.user.id == event.user.id }) else {
+                guard let member = channel.members.first(where: { $0.user.id == userId }) else {
                     // No need to throw MemberNotFound error here
                     break
                 }
 
                 // Mark channel as unread
-                session.markChannelAsUnread(cid: event.cid, by: event.user.id)
+                session.markChannelAsUnread(cid: event.cid, by: userId)
 
                 // We remove the member from the channel
                 channel.members.remove(member)
-                if let membership = channel.membership, membership.user.id == event.user.id {
+                if let membership = channel.membership, membership.user.id == userId {
                     channel.membership = nil
                 }
 
