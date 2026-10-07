@@ -1726,7 +1726,13 @@ final class ChannelController_Tests: XCTestCase {
     func test_updateChannel_callsChannelUpdater() {
         // Simulate `updateChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
-        controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { error in
+        controller.updateChannel(
+            name: .unique,
+            imageURL: .unique(),
+            team: .unique,
+            autoTranslationLanguages: [.english],
+            extraData: .init()
+        ) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -1739,7 +1745,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Assert payload is passed to `channelUpdater`, completion is not called yet
-        XCTAssertNotNil(env.channelUpdater!.updateChannel_arguments)
+        XCTAssertEqual(env.channelUpdater!.updateChannel_arguments?.autoTranslationLanguages, [.english])
 
         // Simulate successful update
         env.channelUpdater!.updateChannel_completion?(nil)

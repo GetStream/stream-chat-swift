@@ -260,6 +260,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - members: New members.
     ///   - invites: New invites.
     ///   - filterTags: A list of tags to add to the channel.
+    ///   - autoTranslationLanguages: The languages for automatically translating new messages. An empty set removes them.
+    ///     Takes effect when automatic translation is enabled. Defaults to `nil`, which keeps the current languages.
     ///   - extraData: The extra data of the channel. Keys that are not passed are removed.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -271,6 +273,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         filterTags: Set<String> = [],
+        autoTranslationLanguages: Set<TranslationLanguage>? = nil,
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
@@ -288,6 +291,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             members: members,
             invites: invites,
             filterTags: filterTags,
+            autoTranslationLanguages: autoTranslationLanguages,
             extraData: extraData
         ) { error in
             self.callback {
@@ -298,7 +302,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Updates only the passed channel fields and keeps the rest of the channel data.
     ///
-    /// To replace all of the channel data instead, use ``updateChannel(name:imageURL:team:members:invites:filterTags:extraData:completion:)``.
+    /// To replace all of the channel data instead, use ``updateChannel(name:imageURL:team:members:invites:filterTags:autoTranslationLanguages:extraData:completion:)``.
     ///
     /// - Parameters:
     ///   - name: The name of the channel. Passing `nil` keeps the current name.

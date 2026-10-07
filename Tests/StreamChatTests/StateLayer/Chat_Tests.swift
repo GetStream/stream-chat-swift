@@ -1544,6 +1544,7 @@ final class Chat_Tests: XCTestCase {
         let members: Set<UserId> = [.unique, .unique]
         let invites: Set<UserId> = [.unique]
         let filterTags: Set<String> = ["tag1", "tag2"]
+        let autoTranslationLanguages: Set<TranslationLanguage> = [.english, .french]
         let extraData: [String: RawJSON] = ["custom": .string("value")]
         
         try await chat.update(
@@ -1553,6 +1554,7 @@ final class Chat_Tests: XCTestCase {
             members: members,
             invites: invites,
             filterTags: filterTags,
+            autoTranslationLanguages: autoTranslationLanguages,
             extraData: extraData
         )
         
@@ -1563,6 +1565,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(arguments.members, members)
         XCTAssertEqual(arguments.invites, invites)
         XCTAssertEqual(arguments.filterTags, filterTags)
+        XCTAssertEqual(arguments.autoTranslationLanguages, autoTranslationLanguages)
         XCTAssertEqual(arguments.extraData, extraData)
     }
     

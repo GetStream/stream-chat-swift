@@ -1007,6 +1007,32 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(data["team"] as? String, "blue")
     }
 
+    func test_updateChannel_whenAutoTranslationLanguagesArePassed_sendsPassedLanguages() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid, autoTranslationLanguage: "de"), query: nil, cache: nil)
+        }
+
+        updateChannel(cid: cid, autoTranslationLanguages: [.french, .english])
+
+        let body = try XCTUnwrap(apiClient.waitForRequest()).bodyAsDictionary()
+        let data = try XCTUnwrap(body["data"] as? [String: Any])
+        XCTAssertEqual(data["auto_translation_language"] as? String, "en,fr")
+    }
+
+    func test_updateChannel_whenAutoTranslationLanguagesAreEmpty_removesLanguages() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid, autoTranslationLanguage: "de"), query: nil, cache: nil)
+        }
+
+        updateChannel(cid: cid, autoTranslationLanguages: [])
+
+        let body = try XCTUnwrap(apiClient.waitForRequest()).bodyAsDictionary()
+        let data = try XCTUnwrap(body["data"] as? [String: Any])
+        XCTAssertEqual(data["auto_translation_language"] as? String, "")
+    }
+
     func test_updateChannel_whenChannelIsNotStored_omitsStoredState() throws {
         updateChannel()
 
@@ -3041,6 +3067,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         cid: ChannelId = .unique,
         name: String? = .unique,
         team: String? = nil,
+        autoTranslationLanguages: Set<TranslationLanguage>? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         channelUpdater.updateChannel(
@@ -3051,6 +3078,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             members: [],
             invites: [],
             filterTags: [],
+            autoTranslationLanguages: autoTranslationLanguages,
             extraData: [:],
             completion: completion
         )

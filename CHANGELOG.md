@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add `autoTranslationLanguages` to `ChatChannelController.updateChannel` and `Chat.update` [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
+
 ### 🐞 Fixed
 - Fix full channel update unfreezing frozen channels and failing on auto-translated, disabled or team channels [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
 

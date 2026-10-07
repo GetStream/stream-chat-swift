@@ -137,17 +137,21 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         members: Set<UserId>,
         invites: Set<UserId>,
         filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
         extraData: [String: RawJSON],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         database.read { session in
             let channelDTO = session.channel(cid: cid)
             let allMembers = members.union(invites)
+            let autoTranslationLanguage = autoTranslationLanguages.map {
+                $0.map(\.languageCode).sorted().joined(separator: ",")
+            }
             return UpdateChannelRequest(
                 addFilterTags: filterTags.isEmpty ? nil : Array(filterTags),
                 data: ChannelInputRequest(
                     autoTranslationEnabled: channelDTO?.isAutoTranslationEnabled,
-                    autoTranslationLanguage: channelDTO?.autoTranslationLanguage,
+                    autoTranslationLanguage: autoTranslationLanguage ?? channelDTO?.autoTranslationLanguage,
                     custom: ChannelInput.customData(name: name, imageURL: imageURL, extraData: extraData),
                     disabled: channelDTO?.isDisabled,
                     frozen: channelDTO?.isFrozen,
@@ -1273,6 +1277,7 @@ extension ChannelUpdater {
         members: Set<UserId>,
         invites: Set<UserId>,
         filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
         extraData: [String: RawJSON]
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
@@ -1284,6 +1289,7 @@ extension ChannelUpdater {
                 members: members,
                 invites: invites,
                 filterTags: filterTags,
+                autoTranslationLanguages: autoTranslationLanguages,
                 extraData: extraData
             ) { error in
                 continuation.resume(with: error)

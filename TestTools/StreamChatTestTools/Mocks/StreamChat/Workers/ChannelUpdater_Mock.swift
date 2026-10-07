@@ -23,7 +23,19 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         extraData: [String: RawJSON]
     )
 
-    @Atomic var updateChannel_arguments: ChannelUpdateArguments?
+    typealias FullChannelUpdateArguments = (
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
+        extraData: [String: RawJSON]
+    )
+
+    @Atomic var updateChannel_arguments: FullChannelUpdateArguments?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
     @Atomic var updateChannel_completion_result: Result<Void, Error>?
 
@@ -372,10 +384,11 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         members: Set<UserId>,
         invites: Set<UserId>,
         filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
         extraData: [String: RawJSON],
         completion: ((Error?) -> Void)? = nil
     ) {
-        updateChannel_arguments = (cid, name, imageURL, team, members, invites, filterTags, extraData)
+        updateChannel_arguments = (cid, name, imageURL, team, members, invites, filterTags, autoTranslationLanguages, extraData)
         updateChannel_completion = completion
         updateChannel_completion_result?.invoke(with: completion)
     }

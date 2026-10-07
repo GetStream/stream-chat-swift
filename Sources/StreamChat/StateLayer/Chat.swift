@@ -1513,6 +1513,8 @@ public class Chat: @unchecked Sendable {
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
     ///   - filterTags: A list of tags to add to the channel.
+    ///   - autoTranslationLanguages: The languages for automatically translating new messages. An empty set removes them.
+    ///     Takes effect when automatic translation is enabled. Defaults to `nil`, which keeps the current languages.
     ///   - extraData: The extra data of the channel. Keys that are not passed are removed.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -1523,6 +1525,7 @@ public class Chat: @unchecked Sendable {
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         filterTags: Set<String> = [],
+        autoTranslationLanguages: Set<TranslationLanguage>? = nil,
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await channelUpdater.update(
@@ -1533,6 +1536,7 @@ public class Chat: @unchecked Sendable {
             members: members,
             invites: invites,
             filterTags: filterTags,
+            autoTranslationLanguages: autoTranslationLanguages,
             extraData: extraData
         )
     }
@@ -1541,7 +1545,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// A partial update can be used to set and unset specific fields when it is necessary to retain additional
     /// custom data fields on the object (a patch style update). To replace all of the channel data instead,
-    /// use ``update(name:imageURL:team:members:invites:filterTags:extraData:)``.
+    /// use ``update(name:imageURL:team:members:invites:filterTags:autoTranslationLanguages:extraData:)``.
     ///
     /// - Parameters:
     ///   - name: The name of the channel. Passing `nil` keeps the current name.
