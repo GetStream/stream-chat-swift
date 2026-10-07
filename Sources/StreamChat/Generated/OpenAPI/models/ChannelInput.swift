@@ -26,11 +26,12 @@ final class ChannelInput: Sendable, Encodable, JSONEncodable {
         self.team = team
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case filterTags = "filter_tags"
-        case invites
-        case members
-        case team
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encodeIfPresent(filterTags, forKey: .filterTags)
+        try container.encodeIfPresent(invites, forKey: .invites)
+        try container.encodeIfPresent(members, forKey: .members)
+        try container.encodeIfPresent(team, forKey: .team)
     }
 }

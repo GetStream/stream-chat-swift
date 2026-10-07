@@ -12,7 +12,8 @@ final class HideChannelRequest: Sendable, Encodable, JSONEncodable {
         self.clearHistory = clearHistory
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case clearHistory = "clear_history"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(clearHistory, forKey: .clearHistory)
     }
 }

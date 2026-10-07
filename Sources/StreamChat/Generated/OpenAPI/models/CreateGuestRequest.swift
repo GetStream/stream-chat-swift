@@ -12,7 +12,8 @@ final class CreateGuestRequest: Sendable, Encodable, JSONEncodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(user, forKey: .user)
     }
 }

@@ -29,11 +29,12 @@ final class BlockedUserResponse: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case blockedUser = "blocked_user"
-        case blockedUserId = "blocked_user_id"
-        case createdAt = "created_at"
-        case user
-        case userId = "user_id"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.blockedUser = try container.decode(UserPayload.self, forKey: .blockedUser)
+        self.blockedUserId = try container.decode(String.self, forKey: .blockedUserId)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
+        self.userId = try container.decode(String.self, forKey: .userId)
     }
 }

@@ -21,10 +21,11 @@ final class DraftUpdatedEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case createdAt = "created_at"
-        case draft
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

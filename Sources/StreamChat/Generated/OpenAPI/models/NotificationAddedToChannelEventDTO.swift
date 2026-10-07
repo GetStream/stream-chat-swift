@@ -26,10 +26,11 @@ final class NotificationAddedToChannelEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case createdAt = "created_at"
-        case member
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.member = try container.decode(MemberPayload.self, forKey: .member)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

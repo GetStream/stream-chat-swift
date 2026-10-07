@@ -12,7 +12,8 @@ final class SearchRolesResponse: Sendable, Decodable {
         self.roles = roles
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case roles
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.roles = try container.decode([Role].self, forKey: .roles)
     }
 }

@@ -27,10 +27,14 @@ public final class UnreadThread: Sendable, Decodable {
         self.unreadCount = unreadCount
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case lastRead = "last_read"
-        case lastReadMessageId = "last_read_message_id"
-        case parentMessageId = "parent_message_id"
-        case unreadCount = "unread_count"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.lastRead = try container.decodeIfPresent(Date.self, forKey: .lastRead)
+        self.lastReadMessageId = try container.decodeIfPresent(
+            String.self,
+            forKey: .lastReadMessageId
+        )
+        self.parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
+        self.unreadCount = try container.decode(Int.self, forKey: .unreadCount)
     }
 }

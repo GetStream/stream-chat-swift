@@ -16,8 +16,9 @@ final class SyncRequest: Sendable, Encodable, JSONEncodable {
         self.lastSyncAt = lastSyncAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCids = "channel_cids"
-        case lastSyncAt = "last_sync_at"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(channelCids, forKey: .channelCids)
+        try container.encode(lastSyncAt, forKey: .lastSyncAt)
     }
 }

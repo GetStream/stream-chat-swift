@@ -13,7 +13,8 @@ final class ListDevicesResponse: Sendable, Decodable {
         self.devices = devices
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case devices
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.devices = try container.decode([Device].self, forKey: .devices)
     }
 }

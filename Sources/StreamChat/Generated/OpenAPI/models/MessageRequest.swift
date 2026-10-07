@@ -92,25 +92,26 @@ final class MessageRequest: Sendable, Encodable, JSONEncodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case attachments
-        case custom
-        case id
-        case mentionedChannel = "mentioned_channel"
-        case mentionedGroupIds = "mentioned_group_ids"
-        case mentionedHere = "mentioned_here"
-        case mentionedRoles = "mentioned_roles"
-        case mentionedUsers = "mentioned_users"
-        case parentId = "parent_id"
-        case pinExpires = "pin_expires"
-        case pinned
-        case pollId = "poll_id"
-        case quotedMessageId = "quoted_message_id"
-        case restrictedVisibility = "restricted_visibility"
-        case sharedLocation = "shared_location"
-        case showInChannel = "show_in_channel"
-        case silent
-        case text
-        case type
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(attachments, forKey: .attachments)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(mentionedChannel, forKey: .mentionedChannel)
+        try container.encodeIfPresent(mentionedGroupIds, forKey: .mentionedGroupIds)
+        try container.encodeIfPresent(mentionedHere, forKey: .mentionedHere)
+        try container.encodeIfPresent(mentionedRoles, forKey: .mentionedRoles)
+        try container.encodeIfPresent(mentionedUsers, forKey: .mentionedUsers)
+        try container.encodeIfPresent(parentId, forKey: .parentId)
+        try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
+        try container.encodeIfPresent(pinned, forKey: .pinned)
+        try container.encodeIfPresent(pollId, forKey: .pollId)
+        try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
+        try container.encodeIfPresent(restrictedVisibility, forKey: .restrictedVisibility)
+        try container.encodeIfPresent(sharedLocation, forKey: .sharedLocation)
+        try container.encodeIfPresent(showInChannel, forKey: .showInChannel)
+        try container.encodeIfPresent(silent, forKey: .silent)
+        try container.encodeIfPresent(text, forKey: .text)
+        try container.encodeIfPresent(type, forKey: .type)
     }
 }

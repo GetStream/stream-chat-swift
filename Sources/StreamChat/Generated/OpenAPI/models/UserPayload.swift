@@ -68,26 +68,27 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case avgResponseTime = "avg_response_time"
-        case banned
-        case createdAt = "created_at"
-        case custom
-        case deactivatedAt = "deactivated_at"
-        case id
-        case image
-        case language
-        case lastActive = "last_active"
-        case name
-        case online
-        case role
-        case teams
-        case teamsRole = "teams_role"
-        case updatedAt = "updated_at"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(avgResponseTime, forKey: .avgResponseTime)
+        try container.encode(banned, forKey: .banned)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(custom, forKey: .custom)
+        try container.encodeIfPresent(deactivatedAt, forKey: .deactivatedAt)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(image, forKey: .image)
+        try container.encode(language, forKey: .language)
+        try container.encodeIfPresent(lastActive, forKey: .lastActive)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encode(online, forKey: .online)
+        try container.encode(role, forKey: .role)
+        try container.encode(teams, forKey: .teams)
+        try container.encodeIfPresent(teamsRole, forKey: .teamsRole)
+        try container.encode(updatedAt, forKey: .updatedAt)
     }
 
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
         createdAt = try container.decode(Date.self, forKey: .createdAt)

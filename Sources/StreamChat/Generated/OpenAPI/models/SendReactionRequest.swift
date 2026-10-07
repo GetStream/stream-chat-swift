@@ -18,9 +18,10 @@ final class SendReactionRequest: Sendable, Encodable, JSONEncodable {
         self.skipPush = skipPush
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case enforceUnique = "enforce_unique"
-        case reaction
-        case skipPush = "skip_push"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(enforceUnique, forKey: .enforceUnique)
+        try container.encode(reaction, forKey: .reaction)
+        try container.encodeIfPresent(skipPush, forKey: .skipPush)
     }
 }

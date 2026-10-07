@@ -109,36 +109,8 @@ final class ChannelDetailPayload: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case autoTranslationEnabled = "auto_translation_enabled"
-        case autoTranslationLanguage = "auto_translation_language"
-        case blocked
-        case cid
-        case config
-        case cooldown
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case custom
-        case deletedAt = "deleted_at"
-        case disabled
-        case filterTags = "filter_tags"
-        case frozen
-        case hidden
-        case id
-        case lastMessageAt = "last_message_at"
-        case memberCount = "member_count"
-        case members
-        case messageCount = "message_count"
-        case ownCapabilities = "own_capabilities"
-        case team
-        case truncatedAt = "truncated_at"
-        case truncatedBy = "truncated_by"
-        case type
-        case updatedAt = "updated_at"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         autoTranslationEnabled = try container.decodeIfPresent(
             Bool.self,
             forKey: .autoTranslationEnabled

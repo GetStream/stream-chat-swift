@@ -26,10 +26,11 @@ final class ReminderCreatedEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case messageId = "message_id"
-        case reminder
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.messageId = try container.decode(String.self, forKey: .messageId)
+        self.reminder = try container.decode(ReminderPayload.self, forKey: .reminder)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

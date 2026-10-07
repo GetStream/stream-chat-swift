@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
+SOURCERY_CONFIG="$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 CHAT_DIR="$REPO_ROOT/../chat"
 
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
@@ -558,6 +559,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
     --opt raw_representable_over_enum=true \
+    --opt string_coding_keys=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # Drop the generated async API client — the SDK ships its own APIClient.
@@ -897,11 +899,13 @@ apply_directional_coding_conformances
 strip_hashable_conformance
 strip_streamcore_imports
 
-# 8. Format, splice the generated decoders and wrap long declarations.
+# 8. Format, splice the generated decoders, prune unused StringCodingKey lets and wrap
+#    long declarations.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-sourcery --config "$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
+sourcery --config "$SOURCERY_CONFIG"
 splice_generated_decoders
+prune_string_coding_keys
 
 swiftformat "$OUTPUT_DIR_CHAT" \
   --rules wrapArguments \

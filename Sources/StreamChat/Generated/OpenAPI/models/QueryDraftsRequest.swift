@@ -27,16 +27,8 @@ final class QueryDraftsRequest: Sendable, Encodable, JSONEncodable {
         self.sort = sort
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case filter
-        case limit
-        case next
-        case prev
-        case sort
-    }
-
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         if let filter {
             try container.encode(filter, forKey: .filter)
         }

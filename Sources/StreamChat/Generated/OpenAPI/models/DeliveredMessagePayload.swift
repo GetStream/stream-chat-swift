@@ -13,8 +13,9 @@ final class DeliveredMessagePayload: Sendable, Encodable, JSONEncodable {
         self.id = id
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case id
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(cid, forKey: .cid)
+        try container.encodeIfPresent(id, forKey: .id)
     }
 }
