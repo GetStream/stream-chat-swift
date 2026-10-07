@@ -379,9 +379,6 @@ final class UserUpdater_Tests: XCTestCase {
             unflagCompletionCalled = true
         }
 
-        // Simulate `unflagUser` API response with success.
-        apiClient.test_simulateResponse(.success(payload))
-
         // Assert user is not a member of `flaggedUsers`.
         AssertAsync {
             Assert.willBeEqual(currentUser?.flaggedUsers, [])
