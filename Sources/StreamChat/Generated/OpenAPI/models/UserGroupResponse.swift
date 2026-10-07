@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// EmptyResponse for getting a user group
 final class UserGroupResponse: Sendable, Decodable {
     let userGroup: UserGroup?
 
@@ -11,7 +12,8 @@ final class UserGroupResponse: Sendable, Decodable {
         self.userGroup = userGroup
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case userGroup = "user_group"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.userGroup = try container.decodeIfPresent(UserGroup.self, forKey: .userGroup)
     }
 }

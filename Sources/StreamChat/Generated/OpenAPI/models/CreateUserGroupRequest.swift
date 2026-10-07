@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Request body for creating a user group
 final class CreateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// An optional description for the group
     let description: String?
@@ -30,11 +31,12 @@ final class CreateUserGroupRequest: Sendable, Encodable, JSONEncodable {
         self.teamId = teamId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case description
-        case id
-        case memberIds = "member_ids"
-        case name
-        case teamId = "team_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(memberIds, forKey: .memberIds)
+        try container.encode(name, forKey: .name)
+        try container.encodeIfPresent(teamId, forKey: .teamId)
     }
 }

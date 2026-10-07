@@ -26,10 +26,11 @@ final class GroupedQueryChannelsRequest: Sendable, Encodable, JSONEncodable {
         self.watch = watch
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case groups
-        case limit
-        case presence
-        case watch
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(groups, forKey: .groups)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(presence, forKey: .presence)
+        try container.encodeIfPresent(watch, forKey: .watch)
     }
 }

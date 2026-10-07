@@ -16,9 +16,10 @@ final class QueryDraftsResponse: Sendable, Decodable {
         self.prev = prev
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case drafts
-        case next
-        case prev
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.drafts = try container.decode([DraftPayload].self, forKey: .drafts)
+        self.next = try container.decodeIfPresent(String.self, forKey: .next)
+        self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
     }
 }

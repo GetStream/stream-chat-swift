@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user starts watching a channel. The event contains information about the user that started watching the channel.
 final class UserWatchingStartEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel which the user started watching
     let cid: ChannelId
@@ -29,11 +30,12 @@ final class UserWatchingStartEventDTO: Sendable, Event, Decodable {
         self.watcherCount = watcherCount
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case createdAt = "created_at"
-        case type
-        case user
-        case watcherCount = "watcher_count"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
+        self.watcherCount = try container.decode(Int.self, forKey: .watcherCount)
     }
 }

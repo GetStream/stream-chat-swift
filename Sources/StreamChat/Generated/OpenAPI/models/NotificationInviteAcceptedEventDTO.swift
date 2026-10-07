@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Sent to a user when they accept an invite to a channel (as a personal notification to update their channel list).
 final class NotificationInviteAcceptedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload
@@ -28,11 +29,12 @@ final class NotificationInviteAcceptedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case createdAt = "created_at"
-        case member
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.member = try container.decode(MemberPayload.self, forKey: .member)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

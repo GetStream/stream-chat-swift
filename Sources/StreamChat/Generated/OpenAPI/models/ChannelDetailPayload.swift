@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Represents channel in chat
 final class ChannelDetailPayload: Sendable, Decodable {
     /// Whether auto translation is enabled or not
     let autoTranslationEnabled: Bool?
@@ -31,8 +32,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
     let frozen: Bool
     /// Whether this channel is hidden by current user or not
     let hidden: Bool?
-    /// Date since when the message history is accessible
-    let hideMessagesBefore: Date?
     /// Channel unique ID
     let id: String
     /// Date of the last message sent
@@ -43,10 +42,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
     let members: [MemberPayload]?
     /// Number of messages in the channel
     let messageCount: Int?
-    /// Date of mute expiration
-    let muteExpiresAt: Date?
-    /// Whether this channel is muted or not
-    let muted: Bool?
     /// List of channel capabilities of authenticated user
     let ownCapabilities: [ChannelCapability]?
     /// Team the channel belongs to (multi-tenant only)
@@ -75,14 +70,11 @@ final class ChannelDetailPayload: Sendable, Decodable {
         filterTags: [String]? = nil,
         frozen: Bool,
         hidden: Bool? = nil,
-        hideMessagesBefore: Date? = nil,
         id: String,
         lastMessageAt: Date? = nil,
         memberCount: Int? = nil,
         members: [MemberPayload]? = nil,
         messageCount: Int? = nil,
-        muteExpiresAt: Date? = nil,
-        muted: Bool? = nil,
         ownCapabilities: [ChannelCapability]? = nil,
         team: String? = nil,
         truncatedAt: Date? = nil,
@@ -104,14 +96,11 @@ final class ChannelDetailPayload: Sendable, Decodable {
         self.filterTags = filterTags
         self.frozen = frozen
         self.hidden = hidden
-        self.hideMessagesBefore = hideMessagesBefore
         self.id = id
         self.lastMessageAt = lastMessageAt
         self.memberCount = memberCount
         self.members = members
         self.messageCount = messageCount
-        self.muteExpiresAt = muteExpiresAt
-        self.muted = muted
         self.ownCapabilities = ownCapabilities
         self.team = team
         self.truncatedAt = truncatedAt
@@ -120,39 +109,8 @@ final class ChannelDetailPayload: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case autoTranslationEnabled = "auto_translation_enabled"
-        case autoTranslationLanguage = "auto_translation_language"
-        case blocked
-        case cid
-        case config
-        case cooldown
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case custom
-        case deletedAt = "deleted_at"
-        case disabled
-        case filterTags = "filter_tags"
-        case frozen
-        case hidden
-        case hideMessagesBefore = "hide_messages_before"
-        case id
-        case lastMessageAt = "last_message_at"
-        case memberCount = "member_count"
-        case members
-        case messageCount = "message_count"
-        case muteExpiresAt = "mute_expires_at"
-        case muted
-        case ownCapabilities = "own_capabilities"
-        case team
-        case truncatedAt = "truncated_at"
-        case truncatedBy = "truncated_by"
-        case type
-        case updatedAt = "updated_at"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         autoTranslationEnabled = try container.decodeIfPresent(
             Bool.self,
             forKey: .autoTranslationEnabled
@@ -173,7 +131,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
         filterTags = try container.decodeIfPresent([String].self, forKey: .filterTags)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
-        hideMessagesBefore = try container.decodeIfPresent(Date.self, forKey: .hideMessagesBefore)
         id = try container.decode(String.self, forKey: .id)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount)
@@ -182,8 +139,6 @@ final class ChannelDetailPayload: Sendable, Decodable {
             forKey: .members
         )
         messageCount = try container.decodeIfPresent(Int.self, forKey: .messageCount)
-        muteExpiresAt = try container.decodeIfPresent(Date.self, forKey: .muteExpiresAt)
-        muted = try container.decodeIfPresent(Bool.self, forKey: .muted)
         ownCapabilities = try container.decodeIfPresent(
             [ChannelCapability].self,
             forKey: .ownCapabilities

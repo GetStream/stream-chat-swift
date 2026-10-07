@@ -11,7 +11,8 @@ final class UpdateUsersPartialRequest: Sendable, Encodable, JSONEncodable {
         self.users = users
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case users
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(users, forKey: .users)
     }
 }

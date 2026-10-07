@@ -7,18 +7,15 @@ import Foundation
 final class ImageUploadResponse: Sendable, Decodable {
     let file: String?
     let thumbUrl: String?
-    /// Array of image size configurations
-    let uploadSizes: [ImageSize]?
 
-    init(file: String? = nil, thumbUrl: String? = nil, uploadSizes: [ImageSize]? = nil) {
+    init(file: String? = nil, thumbUrl: String? = nil) {
         self.file = file
         self.thumbUrl = thumbUrl
-        self.uploadSizes = uploadSizes
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case file
-        case thumbUrl = "thumb_url"
-        case uploadSizes = "upload_sizes"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.file = try container.decodeIfPresent(String.self, forKey: .file)
+        self.thumbUrl = try container.decodeIfPresent(String.self, forKey: .thumbUrl)
     }
 }

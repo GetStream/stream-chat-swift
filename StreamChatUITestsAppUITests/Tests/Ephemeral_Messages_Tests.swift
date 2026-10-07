@@ -5,23 +5,6 @@
 import XCTest
 
 final class Ephemeral_Messages_Tests: StreamTestCase {
-    // NOTE: There used to be a problem with tapping on a Send button on iOS > 16
-    func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
-        linkToScenario(withId: 67)
-            
-        GIVEN("user opens a channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("user sends a giphy using giphy command") {
-            userRobot.uploadGiphy()
-        }
-        THEN("user observes the animated gif") {
-            userRobot.assertGiphyImage()
-        }
-    }
-
     func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessage() throws {
         linkToScenario(withId: 68)
 
@@ -137,6 +120,84 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         }
         THEN("user observes the animated gif") {
             userRobot.assertGiphyImage()
+        }
+    }
+
+    func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessageInThread() {
+        linkToScenario(withId: 11908)
+
+        GIVEN("user opens a channel") {
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("user runs a giphy command in thread") {
+            userRobot
+                .openThread()
+                .uploadGiphy()
+        }
+        THEN("user observes the animated gif in thread") {
+            userRobot.assertGiphyImage()
+        }
+    }
+
+    func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessageInThread() {
+        linkToScenario(withId: 11909)
+
+        GIVEN("user opens a channel") {
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("participant sends a giphy in thread") {
+            participantRobot.uploadGiphyInThread()
+        }
+        THEN("user observes the animated gif in thread") {
+            userRobot
+                .openThread(waitForThreadIcon: true)
+                .assertGiphyImage()
+        }
+    }
+
+    func test_messageIsNotSent_whenUserCancelsEphemeralMessage() {
+        linkToScenario(withId: 11910)
+
+        GIVEN("user opens a channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user cancels a giphy") {
+            userRobot
+                .uploadGiphy(send: false)
+                .tapOnCancelGiphyButton()
+        }
+        THEN("user does not observe the animated gif") {
+            userRobot
+                .assertGiphyImageIsNotDisplayed()
+                .assertGiphyButtons(areDisplayed: false)
+        }
+    }
+
+    func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage_AfterShuffling() {
+        linkToScenario(withId: 11911)
+
+        GIVEN("user opens a channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user shuffles a giphy") {
+            userRobot
+                .uploadGiphy(send: false)
+                .tapOnShuffleGiphyButton()
+        }
+        THEN("the giphy is shuffled but not sent") {
+            userRobot
+                .assertGiphyImageVisible()
+                .assertGiphyButtons(areDisplayed: true)
+        }
+        WHEN("user sends a giphy") {
+            userRobot.tapOnSendGiphyButton()
+        }
+        THEN("user observes the animated gif") {
+            userRobot
+                .assertGiphyImage()
+                .assertGiphyButtons(areDisplayed: false)
         }
     }
 }

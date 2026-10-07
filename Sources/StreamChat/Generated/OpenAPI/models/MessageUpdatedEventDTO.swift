@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a BaseEvent is updated with translation data or when a message is updated.
 final class MessageUpdatedEventDTO: Sendable, Event, Decodable {
     /// The number of messages in the channel
     let channelMessageCount: Int?
@@ -33,12 +34,16 @@ final class MessageUpdatedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelMessageCount = "channel_message_count"
-        case cid
-        case createdAt = "created_at"
-        case message
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelMessageCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .channelMessageCount
+        )
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

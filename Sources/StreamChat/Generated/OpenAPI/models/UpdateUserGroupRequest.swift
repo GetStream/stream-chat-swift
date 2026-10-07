@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Request body for updating a user group
 final class UpdateUserGroupRequest: Sendable, Encodable, JSONEncodable {
     /// The new description for the group
     let description: String?
@@ -17,9 +18,10 @@ final class UpdateUserGroupRequest: Sendable, Encodable, JSONEncodable {
         self.teamId = teamId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case description
-        case name
-        case teamId = "team_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(teamId, forKey: .teamId)
     }
 }

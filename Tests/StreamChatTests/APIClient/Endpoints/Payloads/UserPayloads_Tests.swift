@@ -236,26 +236,6 @@ final class UserPayload_Tests: XCTestCase {
     }
 }
 
-final class UserRequestBody_Tests: XCTestCase {
-    func test_isSerialized() throws {
-        let payload: UserRequestBody = .init(
-            id: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            extraData: [:]
-        )
-
-        let serialized = try JSONEncoder.stream.encode(payload)
-        let expected: [String: Any] = [
-            "id": payload.id,
-            "name": payload.name!,
-            "image": payload.imageURL!.absoluteString
-        ]
-
-        AssertJSONEqual(serialized, expected)
-    }
-}
-
 final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse")

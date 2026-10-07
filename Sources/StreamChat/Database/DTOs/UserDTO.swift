@@ -283,21 +283,6 @@ extension NSManagedObjectContext: UserDatabaseSession {
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatUser { try .create(fromDTO: self) }
-
-    /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
-    func asRequestBody() -> UserRequestBody {
-        let extraData: [String: RawJSON]
-        do {
-            extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
-        } catch {
-            log.assertionFailure(
-                "Failed decoding saved extra data with error: \(error). This should never happen because"
-                    + "the extra data must be a valid JSON to be saved."
-            )
-            extraData = [:]
-        }
-        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData)
-    }
 }
 
 extension UserDTO {

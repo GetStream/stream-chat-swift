@@ -30,12 +30,22 @@ public final class Role: Sendable, Codable, JSONEncodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case custom
-        case name
-        case scopes
-        case updatedAt = "updated_at"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        self.custom = try container.decode(Bool.self, forKey: .custom)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.scopes = try container.decode([String].self, forKey: .scopes)
+        self.updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(createdAt, forKey: .createdAt)
+        try container.encode(custom, forKey: .custom)
+        try container.encode(name, forKey: .name)
+        try container.encode(scopes, forKey: .scopes)
+        try container.encodeIfPresent(updatedAt, forKey: .updatedAt)
     }
 }
 

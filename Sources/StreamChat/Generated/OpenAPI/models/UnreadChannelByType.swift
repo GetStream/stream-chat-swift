@@ -4,9 +4,13 @@
 
 import Foundation
 
+/// The unread information from channels with a specific type.
 public final class UnreadChannelByType: Sendable, Decodable {
+    /// The number of unread channels of this channel type.
     public let channelCount: Int
+    /// The channel type.
     public let channelType: ChannelType
+    /// The number of unread messages of all the channels with this type.
     public let unreadCount: Int
 
     init(channelCount: Int, channelType: ChannelType, unreadCount: Int) {
@@ -15,9 +19,10 @@ public final class UnreadChannelByType: Sendable, Decodable {
         self.unreadCount = unreadCount
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCount = "channel_count"
-        case channelType = "channel_type"
-        case unreadCount = "unread_count"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelCount = try container.decode(Int.self, forKey: .channelCount)
+        self.channelType = try container.decode(ChannelType.self, forKey: .channelType)
+        self.unreadCount = try container.decode(Int.self, forKey: .unreadCount)
     }
 }

@@ -19,8 +19,6 @@ final class ThreadStateResponse: Sendable, Decodable {
     let createdByUserId: String
     /// Custom data for this object
     let custom: [String: RawJSON]
-    /// Deleted At
-    let deletedAt: Date?
     let draft: DraftPayload?
     /// Last Message At
     let lastMessageAt: Date?
@@ -49,7 +47,6 @@ final class ThreadStateResponse: Sendable, Decodable {
         createdBy: UserPayload? = nil,
         createdByUserId: String,
         custom: [String: RawJSON],
-        deletedAt: Date? = nil,
         draft: DraftPayload? = nil,
         lastMessageAt: Date? = nil,
         latestReplies: [MessageResponse],
@@ -69,7 +66,6 @@ final class ThreadStateResponse: Sendable, Decodable {
         self.createdBy = createdBy
         self.createdByUserId = createdByUserId
         self.custom = custom
-        self.deletedAt = deletedAt
         self.draft = draft
         self.lastMessageAt = lastMessageAt
         self.latestReplies = latestReplies
@@ -83,30 +79,8 @@ final class ThreadStateResponse: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case activeParticipantCount = "active_participant_count"
-        case channel
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case createdByUserId = "created_by_user_id"
-        case custom
-        case deletedAt = "deleted_at"
-        case draft
-        case lastMessageAt = "last_message_at"
-        case latestReplies = "latest_replies"
-        case parentMessage = "parent_message"
-        case parentMessageId = "parent_message_id"
-        case participantCount = "participant_count"
-        case read
-        case replyCount = "reply_count"
-        case threadParticipants = "thread_participants"
-        case title
-        case updatedAt = "updated_at"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         activeParticipantCount = try container.decodeIfPresent(
             Int.self,
             forKey: .activeParticipantCount
@@ -117,7 +91,6 @@ final class ThreadStateResponse: Sendable, Decodable {
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         createdByUserId = try container.decode(String.self, forKey: .createdByUserId)
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         latestReplies = try container.decodeArrayIfPresentIgnoringFailures(

@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a channel is successfully updated.
 final class ChannelUpdatedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload
@@ -32,12 +33,16 @@ final class ChannelUpdatedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelMessageCount = "channel_message_count"
-        case createdAt = "created_at"
-        case message
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.channelMessageCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .channelMessageCount
+        )
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

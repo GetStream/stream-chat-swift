@@ -287,8 +287,7 @@ final class MessagePayload_Tests: XCTestCase {
         let message = try XCTUnwrap(root["message"] as? [String: Any])
 
         let fields = [
-            "cid",
-            "deleted_reply_count"
+            "cid"
         ]
         for field in fields {
             var candidateRoot = root

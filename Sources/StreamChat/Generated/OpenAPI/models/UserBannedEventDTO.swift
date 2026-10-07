@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user gets banned. The event contains information about the user that was banned.
 final class UserBannedEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the target user was banned
     let cid: ChannelId?
@@ -40,14 +41,15 @@ final class UserBannedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case expiration
-        case reason
-        case shadow
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        self.expiration = try container.decodeIfPresent(Date.self, forKey: .expiration)
+        self.reason = try container.decodeIfPresent(String.self, forKey: .reason)
+        self.shadow = try container.decodeIfPresent(Bool.self, forKey: .shadow)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
     }
 }

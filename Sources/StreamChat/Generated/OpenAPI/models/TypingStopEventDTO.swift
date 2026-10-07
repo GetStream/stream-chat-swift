@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a user stops typing in a channel/thread.
 final class TypingStopEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the user stopped typing
     let cid: ChannelId
@@ -32,12 +33,13 @@ final class TypingStopEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case createdAt = "created_at"
-        case member
-        case parentId = "parent_id"
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
+        self.parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

@@ -317,17 +317,8 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         self.body = body
     }
 
-    private enum CodingKeys: String, CodingKey {
-        case path
-        case method
-        case queryItems
-        case requiresConnectionId
-        case requiresToken
-        case body
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         path = try container.decode(EndpointPath.self, forKey: .path)
         method = try container.decode(EndpointMethod.self, forKey: .method)
         queryItems = try container.decodeIfPresent(Data.self, forKey: .queryItems)
@@ -337,7 +328,7 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
     }
 
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encode(path, forKey: .path)
         try container.encode(method, forKey: .method)
         if let queryItems = try queryItems?.encodedAsData() {

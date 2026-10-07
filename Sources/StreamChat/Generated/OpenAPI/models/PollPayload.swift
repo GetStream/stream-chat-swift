@@ -86,27 +86,40 @@ final class PollPayload: Sendable, Decodable {
         self.votingVisibility = votingVisibility
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case allowAnswers = "allow_answers"
-        case allowUserSuggestedOptions = "allow_user_suggested_options"
-        case answersCount = "answers_count"
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case createdById = "created_by_id"
-        case custom
-        case description
-        case enforceUniqueVote = "enforce_unique_vote"
-        case id
-        case isClosed = "is_closed"
-        case latestAnswers = "latest_answers"
-        case latestVotesByOption = "latest_votes_by_option"
-        case maxVotesAllowed = "max_votes_allowed"
-        case name
-        case options
-        case ownVotes = "own_votes"
-        case updatedAt = "updated_at"
-        case voteCount = "vote_count"
-        case voteCountsByOption = "vote_counts_by_option"
-        case votingVisibility = "voting_visibility"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.allowAnswers = try container.decode(Bool.self, forKey: .allowAnswers)
+        self.allowUserSuggestedOptions = try container.decode(
+            Bool.self,
+            forKey: .allowUserSuggestedOptions
+        )
+        self.answersCount = try container.decode(Int.self, forKey: .answersCount)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        self.createdById = try container.decode(String.self, forKey: .createdById)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
+        self.description = try container.decode(String.self, forKey: .description)
+        self.enforceUniqueVote = try container.decode(Bool.self, forKey: .enforceUniqueVote)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.isClosed = try container.decodeIfPresent(Bool.self, forKey: .isClosed)
+        self.latestAnswers = try container.decode([PollVotePayload].self, forKey: .latestAnswers)
+        self.latestVotesByOption = try container.decode(
+            [String: [PollVotePayload]].self,
+            forKey: .latestVotesByOption
+        )
+        self.maxVotesAllowed = try container.decodeIfPresent(Int.self, forKey: .maxVotesAllowed)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.options = try container.decode([PollOptionPayload].self, forKey: .options)
+        self.ownVotes = try container.decode([PollVotePayload].self, forKey: .ownVotes)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.voteCount = try container.decode(Int.self, forKey: .voteCount)
+        self.voteCountsByOption = try container.decode(
+            [String: Int].self,
+            forKey: .voteCountsByOption
+        )
+        self.votingVisibility = try container.decode(
+            PollResponseDataVotingVisibility.self,
+            forKey: .votingVisibility
+        )
     }
 }

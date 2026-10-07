@@ -15,9 +15,10 @@ final class GroupedChannelsGroupRequest: Sendable, Encodable, JSONEncodable {
         self.prev = prev
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case limit
-        case next
-        case prev
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(next, forKey: .next)
+        try container.encodeIfPresent(prev, forKey: .prev)
     }
 }

@@ -701,8 +701,10 @@ open class ChatMessageListVC: _ViewController,
 
             // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
             // So we need to wait when the updates messages are available in the UI, and only then
-            // we can scroll to it.
+            // we can scroll to it. The UI may also have been updated before this completion runs,
+            // in which case there is no further update to trigger the scroll, so try it right away.
             self?.messagePendingScrolling = (id, animated)
+            self?.scrollPendingMessageIfNeeded()
         }
     }
 

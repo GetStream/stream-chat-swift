@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when a channel is successfully deleted.
 final class ChannelDeletedEventDTO: Sendable, Event, Decodable {
     /// Represents channel in chat
     let channel: ChannelDetailPayload
@@ -25,10 +26,11 @@ final class ChannelDeletedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case createdAt = "created_at"
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

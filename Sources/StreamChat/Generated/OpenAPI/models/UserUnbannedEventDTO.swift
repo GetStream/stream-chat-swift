@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// This event is sent when a user gets unbanned. The event contains information about the user that was unbanned.
 final class UserUnbannedEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel where the target user was unbanned
     let cid: ChannelId?
@@ -20,10 +21,11 @@ final class UserUnbannedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case createdAt = "created_at"
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
     }
 }

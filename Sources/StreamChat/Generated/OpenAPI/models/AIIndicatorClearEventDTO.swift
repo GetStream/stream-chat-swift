@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Emitted when the AI indicator is cleared.
 final class AIIndicatorClearEventDTO: Sendable, Event, Decodable {
     /// The CID of the channel
     let cid: ChannelId?
@@ -18,9 +19,10 @@ final class AIIndicatorClearEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        case createdAt = "created_at"
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

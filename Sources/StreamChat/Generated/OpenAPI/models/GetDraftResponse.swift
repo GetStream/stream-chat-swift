@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class GetDraftResponse: Sendable, Decodable {
     let draft: DraftPayload
 
@@ -11,7 +12,8 @@ final class GetDraftResponse: Sendable, Decodable {
         self.draft = draft
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case draft
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.draft = try container.decode(DraftPayload.self, forKey: .draft)
     }
 }

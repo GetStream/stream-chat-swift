@@ -15,9 +15,17 @@ final class AttachmentFieldPayload: Sendable, Codable, JSONEncodable {
         self.value = value
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case short
-        case title
-        case value
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.short = try container.decode(Bool.self, forKey: .short)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.value = try container.decode(String.self, forKey: .value)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(short, forKey: .short)
+        try container.encode(title, forKey: .title)
+        try container.encode(value, forKey: .value)
     }
 }

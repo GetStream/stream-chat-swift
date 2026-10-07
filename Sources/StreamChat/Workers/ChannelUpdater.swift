@@ -816,7 +816,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             case let .success(payload):
                 nonisolated(unsafe) var pinnedMessages: [ChatMessage] = []
                 self?.database.write { (session) in
-                    pinnedMessages = session.saveMessages(messagesPayload: MessageListPayload(messages: payload.messages), syncOwnReactions: false)
+                    pinnedMessages = session.saveMessages(payload.messages, syncOwnReactions: false)
                         .compactMap { try? $0.asModel() }
                 } completion: { _ in
                     completion(.success(pinnedMessages.compactMap { $0 }))
