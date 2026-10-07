@@ -16,7 +16,6 @@ public struct StreamingMessageView: View {
     @State private var displayedText: String = ""
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
-    @State var queue = DispatchQueue(label: "com.streamai.textview")
 
     @Injected(\.aiAppearance.colors) private var colors
     
@@ -66,31 +65,27 @@ public struct StreamingMessageView: View {
                 content: content,
                 isGenerating: isGenerating,
                 onContentChange: { oldValue, newValue in
-                    queue.sync {
-                        if !isGenerating {
-                            if oldValue.isEmpty && !newValue.isEmpty {
-                                self.displayedText = newValue
-                            }
-                            return
+                    if !isGenerating {
+                        if oldValue.isEmpty && !newValue.isEmpty {
+                            self.displayedText = newValue
                         }
-                        let newChunk = getNewChunk(oldText: oldValue, newText: newValue)
-                        self.characterQueue.append(contentsOf: newChunk)
+                        return
                     }
+                    let newChunk = getNewChunk(oldText: oldValue, newText: newValue)
+                    self.characterQueue.append(contentsOf: newChunk)
                 },
                 onIsGeneratingChange: { oldValue, newValue in
-                    queue.sync {
-                        if newValue {
-                            if typingTimer == nil {
-                                if self.characterQueue.isEmpty {
-                                    self.characterQueue.append(contentsOf: content)
-                                }
-                                startTypingTimer()
+                    if newValue {
+                        if typingTimer == nil {
+                            if self.characterQueue.isEmpty {
+                                self.characterQueue.append(contentsOf: content)
                             }
-                        } else if oldValue && !newValue {
-                            let inQueue = String(characterQueue)
-                            let newChunk = getNewChunk(oldText: displayedText + inQueue, newText: content)
-                            self.characterQueue.append(contentsOf: newChunk)
+                            startTypingTimer()
                         }
+                    } else if oldValue && !newValue {
+                        let inQueue = String(characterQueue)
+                        let newChunk = getNewChunk(oldText: displayedText + inQueue, newText: content)
+                        self.characterQueue.append(contentsOf: newChunk)
                     }
                 }
             )

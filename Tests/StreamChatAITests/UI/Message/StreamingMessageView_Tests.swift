@@ -24,4 +24,15 @@ final class StreamingMessageView_Tests: XCTestCase {
     func test_getNewChunk_whenTextIsUnchanged_returnsNothing() {
         XCTAssertEqual(view.getNewChunk(oldText: "Same", newText: "Same"), "")
     }
+
+    func test_changeListeners_startFromTheTextTheViewAppearedWith() {
+        let listeners = StreamingMessageViewChangeListeners(
+            text: "Already streamed",
+            isGenerating: true,
+            onContentChange: { _, _ in },
+            onIsGeneratingChange: { _, _ in }
+        )
+
+        XCTAssertEqual(listeners.previousValue, "Already streamed", "so its first change doesn't queue the whole text again")
+    }
 }

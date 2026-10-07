@@ -5,13 +5,28 @@
 import SwiftUI
 
 struct StreamingMessageViewChangeListeners: ViewModifier {
-    @State var previousValue: String = ""
+    // Before iOS 17 `onChange` doesn't pass the old text, so the modifier keeps it. It starts
+    // as the text the view appeared with, which the view has already queued.
+    @State var previousValue: String
     
     var text: String
     var isGenerating: Bool
     
     var onContentChange: (_ oldValue: String, _ newValue: String) -> Void
     var onIsGeneratingChange: (_ oldValue: Bool, _ newValue: Bool) -> Void
+
+    init(
+        text: String,
+        isGenerating: Bool,
+        onContentChange: @escaping (_ oldValue: String, _ newValue: String) -> Void,
+        onIsGeneratingChange: @escaping (_ oldValue: Bool, _ newValue: Bool) -> Void
+    ) {
+        _previousValue = State(initialValue: text)
+        self.text = text
+        self.isGenerating = isGenerating
+        self.onContentChange = onContentChange
+        self.onIsGeneratingChange = onIsGeneratingChange
+    }
     
     func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
