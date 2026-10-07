@@ -22,10 +22,11 @@ final class MessageReactionGroupPayload: Sendable, Decodable {
         self.sumScores = sumScores
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case count
-        case firstReactionAt = "first_reaction_at"
-        case lastReactionAt = "last_reaction_at"
-        case sumScores = "sum_scores"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.count = try container.decode(Int.self, forKey: .count)
+        self.firstReactionAt = try container.decode(Date.self, forKey: .firstReactionAt)
+        self.lastReactionAt = try container.decode(Date.self, forKey: .lastReactionAt)
+        self.sumScores = try container.decode(Int.self, forKey: .sumScores)
     }
 }

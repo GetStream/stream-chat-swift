@@ -12,7 +12,8 @@ final class UpdateUsersResponse: Sendable, Decodable {
         self.users = users
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case users
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.users = try container.decode([String: FullUserResponse].self, forKey: .users)
     }
 }

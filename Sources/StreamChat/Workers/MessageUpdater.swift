@@ -231,7 +231,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
             set["attachments"] = .array(attachments.compactMap { attachment in
                 // Note: partial update expects flattened data without custom being nested
                 guard var flattenedPayload = attachment.payload.rawJSON?.dictionaryValue else { return nil }
-                flattenedPayload[MessageAttachmentPayload.CodingKeys.type.rawValue] = .string(attachment.type.rawValue)
+                flattenedPayload[StringCodingKey.type.stringValue] = .string(attachment.type.rawValue)
                 return .dictionary(flattenedPayload)
             })
         }

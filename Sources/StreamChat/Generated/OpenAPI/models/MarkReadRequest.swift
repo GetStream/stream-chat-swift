@@ -12,7 +12,8 @@ final class MarkReadRequest: Sendable, Encodable, JSONEncodable {
         self.threadId = threadId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case threadId = "thread_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(threadId, forKey: .threadId)
     }
 }

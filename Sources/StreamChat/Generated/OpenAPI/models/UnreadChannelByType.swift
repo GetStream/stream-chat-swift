@@ -19,9 +19,10 @@ public final class UnreadChannelByType: Sendable, Decodable {
         self.unreadCount = unreadCount
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCount = "channel_count"
-        case channelType = "channel_type"
-        case unreadCount = "unread_count"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelCount = try container.decode(Int.self, forKey: .channelCount)
+        self.channelType = try container.decode(ChannelType.self, forKey: .channelType)
+        self.unreadCount = try container.decode(Int.self, forKey: .unreadCount)
     }
 }

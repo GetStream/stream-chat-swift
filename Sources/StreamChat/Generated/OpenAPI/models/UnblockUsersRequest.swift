@@ -11,7 +11,8 @@ final class UnblockUsersRequest: Sendable, Encodable, JSONEncodable {
         self.blockedUserId = blockedUserId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case blockedUserId = "blocked_user_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(blockedUserId, forKey: .blockedUserId)
     }
 }

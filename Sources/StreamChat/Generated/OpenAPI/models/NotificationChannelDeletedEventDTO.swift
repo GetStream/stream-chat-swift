@@ -38,13 +38,17 @@ final class NotificationChannelDeletedEventDTO: Sendable, Event, Decodable {
         self.unreadChannels = unreadChannels
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case cid
-        case createdAt = "created_at"
-        case groupedUnreadChannels = "grouped_unread_channels"
-        case totalUnreadCount = "total_unread_count"
-        case type
-        case unreadChannels = "unread_channels"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.groupedUnreadChannels = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .groupedUnreadChannels
+        )
+        self.totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
     }
 }

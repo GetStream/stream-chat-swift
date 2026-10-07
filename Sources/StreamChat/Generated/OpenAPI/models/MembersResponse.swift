@@ -12,7 +12,8 @@ final class MembersResponse: Sendable, Decodable {
         self.members = members
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case members
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.members = try container.decode([MemberPayload].self, forKey: .members)
     }
 }

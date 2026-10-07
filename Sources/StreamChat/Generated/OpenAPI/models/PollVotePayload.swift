@@ -38,15 +38,16 @@ final class PollVotePayload: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case answerText = "answer_text"
-        case createdAt = "created_at"
-        case id
-        case isAnswer = "is_answer"
-        case optionId = "option_id"
-        case pollId = "poll_id"
-        case updatedAt = "updated_at"
-        case user
-        case userId = "user_id"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.answerText = try container.decodeIfPresent(String.self, forKey: .answerText)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.isAnswer = try container.decodeIfPresent(Bool.self, forKey: .isAnswer)
+        self.optionId = try container.decode(String.self, forKey: .optionId)
+        self.pollId = try container.decode(String.self, forKey: .pollId)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        self.userId = try container.decodeIfPresent(String.self, forKey: .userId)
     }
 }

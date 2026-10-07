@@ -13,12 +13,8 @@ final class SyncResponse: Sendable, Decodable {
         self.events = events
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case events
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         events = try container.decodeArrayIgnoringFailures([WSEvent].self, forKey: .events)
     }
 }

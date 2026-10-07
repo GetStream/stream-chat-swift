@@ -42,19 +42,8 @@ final class MessageReactionPayload: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case custom
-        case messageId = "message_id"
-        case score
-        case type
-        case updatedAt = "updated_at"
-        case user
-        case userId = "user_id"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         messageId = try container.decode(String.self, forKey: .messageId)

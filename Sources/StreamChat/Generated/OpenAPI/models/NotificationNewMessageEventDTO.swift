@@ -39,14 +39,21 @@ final class NotificationNewMessageEventDTO: Sendable, Event, Decodable {
         self.unreadChannels = unreadChannels
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelMessageCount = "channel_message_count"
-        case createdAt = "created_at"
-        case groupedUnreadChannels = "grouped_unread_channels"
-        case message
-        case totalUnreadCount = "total_unread_count"
-        case type
-        case unreadChannels = "unread_channels"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.channelMessageCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .channelMessageCount
+        )
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.groupedUnreadChannels = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .groupedUnreadChannels
+        )
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
     }
 }

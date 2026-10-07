@@ -61,19 +61,29 @@ final class NotificationMarkUnreadEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case cid
-        case createdAt = "created_at"
-        case firstUnreadMessageId = "first_unread_message_id"
-        case groupedUnreadChannels = "grouped_unread_channels"
-        case lastReadAt = "last_read_at"
-        case lastReadMessageId = "last_read_message_id"
-        case totalUnreadCount = "total_unread_count"
-        case type
-        case unreadChannels = "unread_channels"
-        case unreadMessages = "unread_messages"
-        case unreadThreads = "unread_threads"
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.firstUnreadMessageId = try container.decodeIfPresent(
+            String.self,
+            forKey: .firstUnreadMessageId
+        )
+        self.groupedUnreadChannels = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .groupedUnreadChannels
+        )
+        self.lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
+        self.lastReadMessageId = try container.decodeIfPresent(
+            String.self,
+            forKey: .lastReadMessageId
+        )
+        self.totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
+        self.unreadMessages = try container.decodeIfPresent(Int.self, forKey: .unreadMessages)
+        self.unreadThreads = try container.decodeIfPresent(Int.self, forKey: .unreadThreads)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

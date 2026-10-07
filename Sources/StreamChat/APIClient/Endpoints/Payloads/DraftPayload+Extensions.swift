@@ -6,6 +6,6 @@ import Foundation
 
 // Generated properties are slightly different from the previously hand-written ones.
 extension DraftMessagePayload {
-    var command: String? { custom[MessageResponse.CodingKeys.command.rawValue]?.stringValue }
+    var command: String? { custom[StringCodingKey.command.stringValue]?.stringValue }
     var args: String? { custom[MessageResponse.argsKey]?.stringValue }
 }

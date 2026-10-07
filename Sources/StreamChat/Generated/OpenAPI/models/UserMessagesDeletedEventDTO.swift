@@ -26,10 +26,11 @@ final class UserMessagesDeletedEventDTO: Sendable, Event, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case hardDelete = "hard_delete"
-        case type
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.hardDelete = try container.decodeIfPresent(Bool.self, forKey: .hardDelete)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
     }
 }

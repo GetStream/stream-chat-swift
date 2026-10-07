@@ -35,12 +35,13 @@ final class AIIndicatorUpdateEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case aiMessage = "ai_message"
-        case aiState = "ai_state"
-        case cid
-        case createdAt = "created_at"
-        case messageId = "message_id"
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.aiMessage = try container.decodeIfPresent(String.self, forKey: .aiMessage)
+        self.aiState = try container.decode(String.self, forKey: .aiState)
+        self.cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.messageId = try container.decode(String.self, forKey: .messageId)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }
