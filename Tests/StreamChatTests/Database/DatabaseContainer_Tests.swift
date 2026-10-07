@@ -162,6 +162,44 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
 
+    func test_removingAllData_whenMainContextIsBusy_doesNotBlockWriter() throws {
+        let container = DatabaseContainer(kind: .inMemory)
+        try container.createCurrentUser()
+        let writer = container.writableContext
+        let writerBlockFinished = DispatchSemaphore(value: 0)
+        let removalFinished = DispatchSemaphore(value: 0)
+        let error: Error? = try waitFor { completion in
+            container.viewContext.performAndWait {
+                XCTAssertTrue(Thread.isMainThread)
+                _ = container.viewContext.currentUser
+                container.removeAllData { error in
+                    removalFinished.signal()
+                    completion(error)
+                }
+                writer.perform {
+                    writerBlockFinished.signal()
+                }
+
+                // Bound the main queue's wait so a writer waiting for main fails without hanging the runner.
+                XCTAssertEqual(
+                    writerBlockFinished.wait(timeout: .now() + waitForTimeout),
+                    .success,
+                    "Writer timed out while logout waited for the main context"
+                )
+                XCTAssertEqual(
+                    removalFinished.wait(timeout: .now()),
+                    .timedOut,
+                    "Logout completed before the main context was cleaned"
+                )
+            }
+        }
+
+        XCTAssertNil(error)
+        XCTAssertNil(container.viewContext.currentUser)
+        let currentUserId = try container.readSynchronously { $0.currentUser?.user.id }
+        XCTAssertNil(currentUserId)
+    }
+
     func test_databaseContainer_removesAllData_whenShouldFlushOnStartIsTrue() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
