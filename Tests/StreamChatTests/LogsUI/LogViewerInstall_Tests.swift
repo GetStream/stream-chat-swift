@@ -8,11 +8,13 @@ import XCTest
 
 @MainActor
 final class LogViewerInstall_Tests: XCTestCase {
+    private let userDefaultsSuiteName = "LogViewerInstall_Tests"
     private var settings: LogSettings!
 
     override func setUp() {
         super.setUp()
-        settings = LogSettings()
+        UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
+        settings = LogSettings(userDefaults: UserDefaults(suiteName: userDefaultsSuiteName)!)
         LogConfig.destinationTypes = [ConsoleLogDestination.self]
         LogConfig.level = .warning
         LogConfig.subsystems = [.httpRequests, .webSocket]
@@ -21,10 +23,12 @@ final class LogViewerInstall_Tests: XCTestCase {
     override func tearDown() {
         LogConfig.reset()
         settings = nil
+        UserDefaults().removePersistentDomain(forName: userDefaultsSuiteName)
         super.tearDown()
     }
 
     func test_install_withSharedSettings_listsStreamChatSubsystems() {
+        LogSettings.shared.reset()
         LogViewer.install()
 
         XCTAssertEqual(LogSettings.shared.availableSubsystems, [
