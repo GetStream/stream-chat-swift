@@ -127,35 +127,77 @@ class ChannelUpdater: Worker, @unchecked Sendable {
 
     /// Updates specific channel with new data.
     /// - Parameters:
-    ///   - channelPayload: New channel data.
+    ///   - cid: The channel to update.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func updateChannel(channelPayload: ChannelEditDetailPayload, completion: (@Sendable (Error?) -> Void)? = nil) {
-        guard let cid = channelPayload.cid else {
-            completion?(ClientError.ChannelNotCreatedYet())
-            return
+    func updateChannel(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON],
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
+        database.read { session in
+            let channelDTO = session.channel(cid: cid)
+            let allMembers = members.union(invites)
+            return UpdateChannelRequest(
+                addFilterTags: filterTags.isEmpty ? nil : Array(filterTags),
+                data: ChannelInputRequest(
+                    autoTranslationEnabled: channelDTO?.isAutoTranslationEnabled,
+                    autoTranslationLanguage: channelDTO?.autoTranslationLanguage,
+                    custom: ChannelInput.customData(name: name, imageURL: imageURL, extraData: extraData),
+                    disabled: channelDTO?.isDisabled,
+                    frozen: channelDTO?.isFrozen,
+                    invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
+                    members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
+                    team: team ?? channelDTO?.team
+                )
+            )
+        } completion: { [weak self] result in
+            switch result {
+            case let .success(request):
+                self?.updateChannel(cid: cid, request: request, completion: completion)
+            case let .failure(error):
+                completion?(error)
+            }
         }
-        let request = UpdateChannelRequest(
-            addFilterTags: channelPayload.filterTags.isEmpty ? nil : Array(channelPayload.filterTags),
-            data: channelPayload.toChannelInputRequest()
-        )
-        updateChannel(cid: cid, request: request, completion: completion)
     }
 
     /// Updates specific channel with provided data, and removes unneeded properties.
     /// - Parameters:
-    ///   - updates: Updated channel data. Only non-nil data will be updated.
+    ///   - cid: The channel to update.
     ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func partialChannelUpdate(
-        updates: ChannelEditDetailPayload,
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON],
         unsetProperties: [String],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        guard let cid = updates.cid else {
-            completion?(ClientError.ChannelNotCreatedYet())
-            return
+        var set = ChannelInput.customData(name: name, imageURL: imageURL, extraData: extraData)
+        if let team {
+            set[ChannelCodingKeys.team.rawValue] = .string(team)
         }
-        let request = UpdateChannelPartialRequest(set: updates.toPartialUpdateSet(), unset: unsetProperties)
+        if !invites.isEmpty {
+            set[ChannelCodingKeys.invites.rawValue] = .array(invites.map { .string($0) })
+        }
+        if !filterTags.isEmpty {
+            set[ChannelCodingKeys.filterTags.rawValue] = .array(filterTags.map { .string($0) })
+        }
+        let allMembers = members.union(invites)
+        if !allMembers.isEmpty {
+            set[ChannelCodingKeys.members.rawValue] = .array(allMembers.map { .string($0) })
+        }
+        let request = UpdateChannelPartialRequest(set: set, unset: unsetProperties)
         updateChannelPartial(cid: cid, request: request, completion: completion)
     }
 
@@ -1223,17 +1265,55 @@ extension ChannelUpdater {
         }
     }
 
-    func update(channelPayload: ChannelEditDetailPayload) async throws {
+    func update(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON]
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            updateChannel(channelPayload: channelPayload) { error in
+            updateChannel(
+                cid: cid,
+                name: name,
+                imageURL: imageURL,
+                team: team,
+                members: members,
+                invites: invites,
+                filterTags: filterTags,
+                extraData: extraData
+            ) { error in
                 continuation.resume(with: error)
             }
         }
     }
 
-    func updatePartial(channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
+    func updatePartial(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON],
+        unsetProperties: [String]
+    ) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            partialChannelUpdate(updates: channelPayload, unsetProperties: unsetProperties) { error in
+            partialChannelUpdate(
+                cid: cid,
+                name: name,
+                imageURL: imageURL,
+                team: team,
+                members: members,
+                invites: invites,
+                filterTags: filterTags,
+                extraData: extraData,
+                unsetProperties: unsetProperties
+            ) { error in
                 continuation.resume(with: error)
             }
         }

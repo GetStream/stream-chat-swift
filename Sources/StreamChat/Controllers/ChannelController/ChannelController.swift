@@ -248,21 +248,26 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Actions
 
-    /// Updated channel with new data.
+    /// Updates the channel with a full update, which replaces the channel data.
+    ///
+    /// - Warning: The name, image and extra data are replaced with the passed values, and values that are not passed are **removed**.
+    /// To change only specific fields and keep the rest, use ``partialChannelUpdate(name:imageURL:team:members:invites:filterTags:extraData:unsetProperties:completion:)``.
     ///
     /// - Parameters:
-    ///   - team: New team.
+    ///   - name: The name of the channel. Passing `nil` removes the current name.
+    ///   - imageURL: The channel avatar URL. Passing `nil` removes the current image.
+    ///   - team: Changing the team is not supported client-side and fails with an API error. Defaults to `nil`, which keeps the current team.
     ///   - members: New members.
     ///   - invites: New invites.
     ///   - filterTags: A list of tags to add to the channel.
-    ///   - extraData: New `ExtraData`.
+    ///   - extraData: The extra data of the channel. Keys that are not passed are removed.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
     public func updateChannel(
         name: String?,
         imageURL: URL?,
-        team: String?,
+        team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         filterTags: Set<String> = [],
@@ -275,7 +280,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelEditDetailPayload = .init(
+        updater.updateChannel(
             cid: cid,
             name: name,
             imageURL: imageURL,
@@ -284,24 +289,26 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             invites: invites,
             filterTags: filterTags,
             extraData: extraData
-        )
-
-        updater.updateChannel(channelPayload: payload) { error in
+        ) { error in
             self.callback {
                 completion?(error)
             }
         }
     }
 
-    /// Updates  channel information with provided data, and removes unneeded properties.
+    /// Updates only the passed channel fields and keeps the rest of the channel data.
+    ///
+    /// To replace all of the channel data instead, use ``updateChannel(name:imageURL:team:members:invites:filterTags:extraData:completion:)``.
     ///
     /// - Parameters:
-    ///   - team: New team.
+    ///   - name: The name of the channel. Passing `nil` keeps the current name.
+    ///   - imageURL: The channel avatar URL. Passing `nil` keeps the current image.
+    ///   - team: Setting the team is not supported client-side and fails with an API error.
     ///   - members: New members.
     ///   - invites: New invites.
-    ///   - filterTags: A list of tags to add to the channel.
-    ///   - extraData: New `ExtraData`.
-    ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
+    ///   - filterTags: Replaces the channel's filter tags when not empty.
+    ///   - extraData: Extra data keys to set. Other extra data keys are kept.
+    ///   - unsetProperties: Custom fields to remove from the channel, such as extra data keys, `name` or `image`.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
@@ -322,7 +329,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelEditDetailPayload = .init(
+        updater.partialChannelUpdate(
             cid: cid,
             name: name,
             imageURL: imageURL,
@@ -330,10 +337,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             members: members,
             invites: invites,
             filterTags: filterTags,
-            extraData: extraData
-        )
-
-        updater.partialChannelUpdate(updates: payload, unsetProperties: unsetProperties) { error in
+            extraData: extraData,
+            unsetProperties: unsetProperties
+        ) { error in
             self.callback {
                 completion?(error)
             }
