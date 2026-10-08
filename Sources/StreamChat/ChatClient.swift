@@ -568,9 +568,9 @@ public class ChatClient: @unchecked Sendable {
         group.enter()
         databaseContainer.removeAllData { error in
             if let error = error {
-                log.error("Logging out current user failed with error \(error)", subsystems: .all)
+                log.error("Logging out current user failed with error \(error)", subsystems: .authentication)
             } else {
-                log.debug("Logging out current user successfully.", subsystems: .all)
+                log.debug("Logging out current user successfully.", subsystems: .authentication)
             }
             group.leave()
         }
