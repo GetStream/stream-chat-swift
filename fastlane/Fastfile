@@ -864,13 +864,9 @@ private_lane :frameworks_sizes do
   stream_chat_size = File.size("#{frameworks_path}/StreamChat.framework/StreamChat")
   stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
   stream_chat_common_ui_size = File.size("#{frameworks_path}/StreamChatCommonUI.framework/StreamChatCommonUI")
-
-  # StreamChatAI isn't linked by the Demo app and has no asset catalog, so its own unsigned archive is enough
-  ai_archive_dir = "#{root_dir}/StreamChatAI.xcarchive"
-  archive_stream_chat_ai(archive_path: ai_archive_dir)
   # StreamCore and StreamCoreUI are linked into the framework, but an app with StreamChat already has them
   shared_core_size = linked_objects_size(linkmap: '../linkmaps/StreamChatAI-arm64-LinkMap.txt', objects: ['StreamCore.o', 'StreamCoreUI.o'])
-  stream_chat_ai_size = File.size("../#{ai_archive_dir}/Products/Library/Frameworks/StreamChatAI.framework/StreamChatAI") - shared_core_size
+  stream_chat_ai_size = File.size("#{frameworks_path}/StreamChatAI.framework/StreamChatAI") - shared_core_size
 
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
@@ -911,21 +907,6 @@ private_lane :linked_objects_size do |options|
   end
 end
 
-# Archiving also writes the framework's link map (linkmaps/StreamChatAI-arm64-LinkMap.txt).
-# Unlike a plain build of the scheme, it leaves out the code coverage its test plan turns on.
-private_lane :archive_stream_chat_ai do |options|
-  gym(
-    scheme: 'StreamChatAI',
-    configuration: 'Release',
-    archive_path: options[:archive_path],
-    skip_package_ipa: true,
-    skip_codesigning: true,
-    xcargs: 'SKIP_INSTALL=NO',
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path
-  )
-end
-
 lane :size_analyze do
   next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
@@ -940,9 +921,6 @@ lane :size_analyze do
     cloned_source_packages_path: source_packages_path,
     xcodebuild_formatter: xcodebuild_formatter
   )
-
-  # StreamChatAI isn't linked by the Demo app, so its link map comes from its own archive
-  archive_stream_chat_ai(archive_path: 'Build/SDKSize/StreamChatAI.xcarchive')
 
   show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
 end
