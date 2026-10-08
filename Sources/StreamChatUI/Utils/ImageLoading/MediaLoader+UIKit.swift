@@ -25,7 +25,7 @@ extension MediaLoader {
         imageView.currentImageLoadingTask = task
 
         let loadOptions = ImageLoadOptions(resize: options.resize)
-        loadImage(url: url, options: loadOptions) { result in
+        let loadTask = loadImageTask(url: url, options: loadOptions) { result in
             guard !task.isCancelled else { return }
             switch result {
             case let .success(loaded):
@@ -35,6 +35,7 @@ extension MediaLoader {
                 completion?(.failure(error))
             }
         }
+        task.addCancellationHandler { loadTask.cancel() }
 
         return task
     }
@@ -120,14 +121,7 @@ final class ImageBatchResult: @unchecked Sendable {
     }
 }
 
-/// A cancellable image loading task.
-public class ImageLoadingTask: Cancellable, @unchecked Sendable {
-    public private(set) var isCancelled = false
-
-    public func cancel() {
-        isCancelled = true
-    }
-}
+extension ImageLoadingTask: Cancellable {}
 
 private extension UIImageView {
     static var imageLoadingTaskKey: UInt8 = 0
