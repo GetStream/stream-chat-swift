@@ -161,6 +161,37 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         XCTAssertTrue(firstTask.isCancelled)
     }
 
+    @MainActor
+    func test_loadImageInto_cancels_previousDownload() {
+        let imageView = UIImageView()
+        let options = ImageLoaderOptions()
+        downloader.completionDelay = 0.1
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+
+        sut.loadImage(into: imageView, from: URL(string: "https://example.com/1.jpg")!, with: options)
+        sut.loadImage(into: imageView, from: URL(string: "https://example.com/2.jpg")!, with: options)
+
+        XCTAssertEqual(downloader.downloadTasks.map(\.isCancelled), [true, false])
+    }
+
+    @MainActor
+    func test_loadImageInto_cancelledTask_whenLoaderIgnoresCancellation_doesNotUpdateImageView() {
+        downloader.completionDelay = 0.1
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+        let sut = CancellationIgnoringMediaLoader(downloader: downloader, cdnRequester: MockCDNRequester())
+        let imageView = UIImageView()
+        let expectation = expectation(description: "Wait for delayed completion")
+        expectation.isInverted = true
+
+        let task = sut.loadImage(into: imageView, from: URL(string: "https://example.com/image.jpg")!) { _ in
+            expectation.fulfill()
+        }
+        task.cancel()
+
+        waitForExpectations(timeout: 0.5)
+        XCTAssertNil(imageView.image)
+    }
+
     // MARK: - downloadImage
 
     func test_downloadImage_success_returnsImage() {
@@ -381,9 +412,41 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         task.cancel()
         XCTAssertTrue(task.isCancelled)
     }
+
+    func test_imageLoadingTask_cancelCallsCancellationHandlerOnce() {
+        let count = AllocatedUnfairLock(0)
+        let task = ImageLoadingTask()
+        task.addCancellationHandler { count.withLock { $0 += 1 } }
+
+        task.cancel()
+        task.cancel()
+
+        XCTAssertEqual(count.value, 1)
+    }
+
+    func test_imageLoadingTask_addCancellationHandlerAfterCancel_callsHandlerImmediately() {
+        let count = AllocatedUnfairLock(0)
+        let task = ImageLoadingTask()
+        task.cancel()
+
+        task.addCancellationHandler { count.withLock { $0 += 1 } }
+
+        XCTAssertEqual(count.value, 1)
+    }
 }
 
 // MARK: - Mocks
+
+private final class CancellationIgnoringMediaLoader: StreamMediaLoader, @unchecked Sendable {
+    override func loadImageTask(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        loadImage(url: url, options: options, completion: completion)
+        return ImageLoadingTask()
+    }
+}
 
 private final class MockCDNRequester: CDNRequester, @unchecked Sendable {
     var imageRequestResult: Result<CDNRequest, Error>?
@@ -404,6 +467,7 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
     var result: Result<DownloadedImage, Error> = .failure(NSError(domain: "MockImageDownloader", code: 0))
     var resultsByURL: [URL: Result<DownloadedImage, Error>] = [:]
     var completionDelay: TimeInterval = 0
+    var downloadTasks: [ImageLoadingTask] = []
 
     func downloadImage(
         url: URL,
@@ -420,6 +484,17 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
                 completion(resolvedResult)
             }
         }
+    }
+
+    func downloadImageTask(
+        url: URL,
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        downloadImage(url: url, options: options, completion: completion)
+        let task = ImageLoadingTask()
+        downloadTasks.append(task)
+        return task
     }
 }
 
