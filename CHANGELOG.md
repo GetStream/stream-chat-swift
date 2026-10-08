@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
+### 🐞 Fixed
+- Fix `addDevice` sending a registration request when the device is already registered [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 ## StreamChatCommonUI
 ### ✅ Added
 - Add `MediaLoader.loadImageTask(url:options:completion:)` for loading images with cancellation support [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
