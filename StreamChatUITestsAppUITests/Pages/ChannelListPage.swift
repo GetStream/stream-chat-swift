@@ -9,12 +9,27 @@ import XCTest
 enum ChannelListPage {
     static var userAvatar: XCUIElement { app.otherElements["CurrentChatUserAvatarView"] }
 
+    static var loadingView: XCUIElement { app.descendants(matching: .any)["ChatChannelListLoadingView"].firstMatch }
+
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatChannelListCollectionViewCell'"))
     }
 
     static var list: XCUIElement {
         app.collectionViews["collectionView"]
+    }
+
+    /// The swipe action views are plain views, so only their buttons are in the tree; "more" is left of "delete".
+    static var moreSwipeActionButton: XCUIElement {
+        let buttons = app.buttons.matching(identifier: "actionButton")
+        buttons.firstMatch.wait()
+        return buttons.allElementsBoundByIndex.min { $0.frame.minX < $1.frame.minX } ?? buttons.firstMatch
+    }
+
+    enum ChannelActions {
+        static var showChannelWithMessageId: XCUIElement { app.alerts.buttons["Show channel with message id"] }
+        static var messageIdTextField: XCUIElement { app.alerts.textFields["debug_alert_textfield"] }
+        static var okButton: XCUIElement { app.alerts.buttons["OK"] }
     }
 
     static func channel(withName: String) -> XCUIElement {

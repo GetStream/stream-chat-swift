@@ -796,8 +796,10 @@ import XCTest
     }
 
     func test_shouldLoadPageAroundMessageId_thenLoadPageAroundMessageId() {
-        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: .unique) { _ in }
+        let messageId: MessageId = .unique
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: messageId) { _ in }
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 1)
+        XCTAssertEqual(channelControllerMock.loadPageAroundMessageId_messageId, messageId)
     }
 
     // This test is temporary until we support jumping to inside a thread.
@@ -1805,6 +1807,31 @@ import XCTest
 
         XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
         XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, false)
+    }
+
+    func test_jumpToMessage_whenShouldHighlight_highlightsTheMessageCell() {
+        var components = Components.mock
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        vc.jumpToMessage(id: "message", shouldHighlight: true)
+        messageListVCMock?.jumpToMessageCalledWith?.onHighlight?(IndexPath(item: 3, section: 0))
+
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.id, "message")
+        XCTAssertEqual(messageListVCMock?.highlightCellCalledWith, IndexPath(item: 3, section: 0))
+    }
+
+    func test_jumpToMessage_whenShouldNotHighlight_doesNotPassHighlight() {
+        var components = Components.mock
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        vc.jumpToMessage(id: "message", shouldHighlight: false)
+
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertNil(messageListVCMock?.jumpToMessageCalledWith?.onHighlight)
     }
 
     // MARK: - didFinishSynchronizing()
