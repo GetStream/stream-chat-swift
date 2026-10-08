@@ -25,7 +25,7 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
         manualEventHandler: ManualEventHandler? = nil
     ) {
         self.database = database
-        self.manualEventHandler = manualEventHandler ?? ManualEventHandler(database: database)
+        self.manualEventHandler = manualEventHandler ?? ManualEventHandler()
         super.init()
     }
 
@@ -72,7 +72,7 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
 
         database.write({ session in
             events.forEach { event in
-                if let manualEvent = self.manualEventHandler.handle(event.wsEvent ?? event.event) {
+                if let manualEvent = self.manualEventHandler.handle(event.wsEvent ?? event.event, session: session) {
                     manualHandlingEvents.append(manualEvent)
                 } else {
                     middlewareEvents.append(event)

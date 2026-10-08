@@ -63,6 +63,33 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
         XCTAssertFalse(tracker.workItems[messageId]?.isCancelled ?? true)
     }
 
+    func test_trackerSchedulesWorkItem_whenActiveLiveLocationExistsBeforeTrackerIsCreated() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+        tracker = nil
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid)
+        try database.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            cid: cid,
+            location: .dummy(
+                channelId: cid,
+                endAt: Date().addingTimeInterval(100),
+                latitude: 10.0,
+                longitude: 20.0,
+                messageId: messageId
+            )
+        )
+
+        tracker = ActiveLiveLocationsEndTimeTracker(database: database, apiClient: apiClient)
+
+        AssertAsync.willBeEqual(tracker.workItems.count, 1)
+        XCTAssertNotNil(tracker.workItems[messageId])
+    }
+
     func test_trackerSchedulesMultipleWorkItems_forMultipleActiveLiveLocations() throws {
         let cid: ChannelId = .unique
         let messageId1: MessageId = .unique

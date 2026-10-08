@@ -155,21 +155,22 @@ class SyncRepository: @unchecked Sendable {
     func syncLocalState(completion: @escaping @Sendable () -> Void) {
         cancelRecoveryFlow()
 
-        getUser { [weak self] in
-            guard let currentUser = $0 else {
+        database.read { session in
+            guard let currentUser = session.currentUser else { throw ClientError.CurrentUserDoesNotExist() }
+            return currentUser.lastSynchedEventDate?.bridgeDate
+        } completion: { [weak self] result in
+            switch result {
+            case .failure:
                 log.error("Current user must exist", subsystems: .offlineSupport)
                 completion()
-                return
-            }
-
-            guard let lastSyncAt = currentUser.lastSynchedEventDate?.bridgeDate else {
+            case .success(nil):
                 log.info("It's the first session of the current user, skipping recovery flow", subsystems: .offlineSupport)
                 self?.updateLastSyncAt(with: Date(), completion: { _ in
                     completion()
                 })
-                return
+            case let .success(lastSyncAt?):
+                self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
             }
-            self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
         }
     }
 
@@ -344,14 +345,6 @@ class SyncRepository: @unchecked Sendable {
                 ids.formUnion(chats.compactMap { try? $0.cid })
                 finish(ids)
             }
-        }
-    }
-
-    private func getUser(completion: @escaping @Sendable (CurrentUserDTO?) -> Void) {
-        nonisolated(unsafe) var user: CurrentUserDTO?
-        database.backgroundReadOnlyContext.perform {
-            user = self.database.backgroundReadOnlyContext.currentUser
-            completion(user)
         }
     }
 

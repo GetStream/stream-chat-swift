@@ -7,9 +7,7 @@ import XCTest
 
 final class ManualEventHandler_Mock: ManualEventHandler, @unchecked Sendable {
     init() {
-        super.init(
-            database: DatabaseContainer_Spy()
-        )
+        super.init()
     }
 
     static func mock() -> Self {
@@ -36,7 +34,7 @@ final class ManualEventHandler_Mock: ManualEventHandler, @unchecked Sendable {
     var handleCalledWith: [Event] = []
     var handleReturnValue: Event?
 
-    override func handle(_ event: Event) -> Event? {
+    override func handle(_ event: Event, session: DatabaseSession) -> Event? {
         handleCallCount += 1
         handleCalledWith.append(event)
         return handleReturnValue

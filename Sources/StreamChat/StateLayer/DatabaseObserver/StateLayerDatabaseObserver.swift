@@ -47,6 +47,22 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
             cacheName: nil
         )
     }
+
+    private func performFetch(_ onFetched: @Sendable () -> Void) throws {
+        nonisolated(unsafe) let frc = frc
+        nonisolated(unsafe) let changeAggregator = changeAggregator
+        nonisolated(unsafe) var fetchError: Error?
+        context.performAndWait {
+            do {
+                frc.delegate = changeAggregator
+                try frc.performFetch()
+                onFetched()
+            } catch {
+                fetchError = error
+            }
+        }
+        if let fetchError { throw fetchError }
+    }
 }
 
 // MARK: - Observing a Single Entity
@@ -100,8 +116,8 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
             let item = self.updateEntityItem(changes)
             onContextDidChange(item, EntityChange(listChange: change))
         }
-        frc.delegate = changeAggregator
-        try frc.performFetch()
+        nonisolated(unsafe) var item: Item?
+        try performFetch { item = updateEntityItem(nil) }
         return item
     }
     
@@ -183,8 +199,8 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
             let items = self.updateItems(changes)
             onContextDidChange(items, changes)
         }
-        frc.delegate = changeAggregator
-        try frc.performFetch()
+        nonisolated(unsafe) var items = [Item]()
+        try performFetch { items = updateItems(nil) }
         return items
     }
     

@@ -6,9 +6,6 @@ import Foundation
 
 /// Handles manual event processing for channels that opt out of middleware processing.
 class ManualEventHandler: @unchecked Sendable {
-    /// The database used when evaluating events.
-    private let database: DatabaseContainer
-
     /// The queue for thread-safe operations.
     private let queue: DispatchQueue
 
@@ -20,11 +17,9 @@ class ManualEventHandler: @unchecked Sendable {
     private var cachedChannels: [ChannelId: ChatChannel] = [:]
 
     init(
-        database: DatabaseContainer,
         cachedChannels: [ChannelId: ChatChannel] = [:],
         queue: DispatchQueue = DispatchQueue(label: "io.getstream.chat.manualEventHandler", qos: .utility)
     ) {
-        self.database = database
         self.cachedChannels = cachedChannels
         self.queue = queue
     }
@@ -47,7 +42,7 @@ class ManualEventHandler: @unchecked Sendable {
     }
 
     /// Converts a manual event to its domain representation.
-    func handle(_ event: Event) -> Event? {
+    func handle(_ event: Event, session: DatabaseSession) -> Event? {
         guard let wsEvent = event as? WSEvent else {
             return nil
         }
@@ -62,22 +57,22 @@ class ManualEventHandler: @unchecked Sendable {
 
         switch wsEvent {
         case let .typeMessageNewEvent(eventPayload):
-            return createMessageNewEvent(from: eventPayload, cid: cid)
+            return createMessageNewEvent(from: eventPayload, cid: cid, session: session)
 
         case let .typeMessageUpdatedEvent(eventPayload):
-            return createMessageUpdatedEvent(from: eventPayload, cid: cid)
+            return createMessageUpdatedEvent(from: eventPayload, cid: cid, session: session)
 
         case let .typeMessageDeletedEvent(eventPayload):
-            return createMessageDeletedEvent(from: eventPayload, cid: cid)
+            return createMessageDeletedEvent(from: eventPayload, cid: cid, session: session)
 
         case let .typeReactionNewEvent(eventPayload):
-            return createReactionNewEvent(from: eventPayload, cid: cid)
+            return createReactionNewEvent(from: eventPayload, cid: cid, session: session)
 
         case let .typeReactionUpdatedEvent(eventPayload):
-            return createReactionUpdatedEvent(from: eventPayload, cid: cid)
+            return createReactionUpdatedEvent(from: eventPayload, cid: cid, session: session)
 
         case let .typeReactionDeletedEvent(eventPayload):
-            return createReactionDeletedEvent(from: eventPayload, cid: cid)
+            return createReactionDeletedEvent(from: eventPayload, cid: cid, session: session)
 
         case let .typeTypingStartEvent(eventPayload):
             return createTypingEvent(from: eventPayload, cid: cid)
@@ -96,11 +91,11 @@ class ManualEventHandler: @unchecked Sendable {
 
     // MARK: - Event Creation Helpers
 
-    private func createMessageNewEvent(from payload: MessageNewEventDTO, cid: ChannelId) -> MessageNewEvent? {
+    private func createMessageNewEvent(from payload: MessageNewEventDTO, cid: ChannelId, session: DatabaseSession) -> MessageNewEvent? {
         guard
             let userPayload = payload.user,
-            let channel = getLocalChannel(id: cid),
-            let currentUserId = database.writableContext.currentUser?.user.id
+            let channel = getLocalChannel(id: cid, session: session),
+            let currentUserId = session.currentUser?.user.id
         else {
             return nil
         }
@@ -123,11 +118,11 @@ class ManualEventHandler: @unchecked Sendable {
         )
     }
 
-    private func createMessageUpdatedEvent(from payload: MessageUpdatedEventDTO, cid: ChannelId) -> MessageUpdatedEvent? {
+    private func createMessageUpdatedEvent(from payload: MessageUpdatedEventDTO, cid: ChannelId, session: DatabaseSession) -> MessageUpdatedEvent? {
         guard
             let userPayload = payload.user,
-            let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid)
+            let currentUserId = session.currentUser?.user.id,
+            let channel = getLocalChannel(id: cid, session: session)
         else { return nil }
 
         let message = payload.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
@@ -140,10 +135,10 @@ class ManualEventHandler: @unchecked Sendable {
         )
     }
 
-    private func createMessageDeletedEvent(from payload: MessageDeletedEventDTO, cid: ChannelId) -> MessageDeletedEvent? {
+    private func createMessageDeletedEvent(from payload: MessageDeletedEventDTO, cid: ChannelId, session: DatabaseSession) -> MessageDeletedEvent? {
         guard
-            let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid)
+            let currentUserId = session.currentUser?.user.id,
+            let channel = getLocalChannel(id: cid, session: session)
         else { return nil }
 
         let message = payload.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
@@ -159,13 +154,13 @@ class ManualEventHandler: @unchecked Sendable {
         )
     }
 
-    private func createReactionNewEvent(from payload: ReactionNewEventDTO, cid: ChannelId) -> ReactionNewEvent? {
+    private func createReactionNewEvent(from payload: ReactionNewEventDTO, cid: ChannelId, session: DatabaseSession) -> ReactionNewEvent? {
         guard
             let userPayload = payload.user,
             let messagePayload = payload.message,
             let reactionPayload = payload.reaction,
-            let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid)
+            let currentUserId = session.currentUser?.user.id,
+            let channel = getLocalChannel(id: cid, session: session)
         else { return nil }
 
         let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
@@ -179,12 +174,12 @@ class ManualEventHandler: @unchecked Sendable {
         )
     }
 
-    private func createReactionUpdatedEvent(from payload: ReactionUpdatedEventDTO, cid: ChannelId) -> ReactionUpdatedEvent? {
+    private func createReactionUpdatedEvent(from payload: ReactionUpdatedEventDTO, cid: ChannelId, session: DatabaseSession) -> ReactionUpdatedEvent? {
         guard
             let userPayload = payload.user,
             let reactionPayload = payload.reaction,
-            let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid)
+            let currentUserId = session.currentUser?.user.id,
+            let channel = getLocalChannel(id: cid, session: session)
         else { return nil }
 
         let message = payload.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
@@ -211,13 +206,13 @@ class ManualEventHandler: @unchecked Sendable {
         )
     }
 
-    private func createReactionDeletedEvent(from payload: ReactionDeletedEventDTO, cid: ChannelId) -> ReactionDeletedEvent? {
+    private func createReactionDeletedEvent(from payload: ReactionDeletedEventDTO, cid: ChannelId, session: DatabaseSession) -> ReactionDeletedEvent? {
         guard
             let userPayload = payload.user,
             let messagePayload = payload.message,
             let reactionPayload = payload.reaction,
-            let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid)
+            let currentUserId = session.currentUser?.user.id,
+            let channel = getLocalChannel(id: cid, session: session)
         else { return nil }
 
         let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
@@ -232,15 +227,13 @@ class ManualEventHandler: @unchecked Sendable {
     }
 
     // This is only needed because some events wrongly require the channel to create them.
-    private func getLocalChannel(id: ChannelId) -> ChatChannel? {
-        queue.sync {
-            if let cachedChannel = cachedChannels[id] {
-                return cachedChannel
-            }
-
-            let channel = try? database.writableContext.channel(cid: id)?.asModel()
-            cachedChannels[id] = channel
-            return channel
+    private func getLocalChannel(id: ChannelId, session: DatabaseSession) -> ChatChannel? {
+        if let cachedChannel = queue.sync(execute: { cachedChannels[id] }) {
+            return cachedChannel
         }
+
+        let channel = try? session.channel(cid: id)?.asModel()
+        queue.sync { cachedChannels[id] = channel }
+        return channel
     }
 }
