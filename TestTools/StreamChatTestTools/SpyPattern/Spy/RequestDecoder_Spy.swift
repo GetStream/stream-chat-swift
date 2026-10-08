@@ -17,6 +17,8 @@ final class RequestDecoder_Spy: RequestDecoder, Spy, @unchecked Sendable {
     var onDecodeRequestResponseCall: (() -> Void)?
 
     func decodeRequestResponse<ResponseType>(
+        request: URLRequest,
+        session: URLSession,
         data: Data?,
         response: URLResponse?,
         error: Error?

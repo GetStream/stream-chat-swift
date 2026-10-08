@@ -3,7 +3,9 @@
 //
 
 import StreamChat
+import StreamChatLogsUI
 import StreamChatUI
+import SwiftUI
 import UIKit
 
 /// The Demo App Configuration.
@@ -189,11 +191,14 @@ class AppConfigViewController: UITableViewController {
         case isPremiumMemberFeatureEnabled
         case shouldShowPremiumBadge
         case isRemindersEnabled
+        case logSettings
 
         var title: String {
             switch self {
             case .shouldShowPremiumBadge:
                 return "Show premium badge"
+            case .logSettings:
+                return "Log Settings"
             default:
                 return rawValue
             }
@@ -372,6 +377,8 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(demoAppConfig.isRemindersEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isRemindersEnabled = newValue
             }
+        case .logSettings:
+            cell.accessoryType = .disclosureIndicator
         }
     }
 
@@ -588,9 +595,16 @@ class AppConfigViewController: UITableViewController {
         switch option {
         case .tokenRefreshDetails:
             showTokenDetailsAlert()
+        case .logSettings:
+            pushLogSettings()
         default:
             break
         }
+    }
+
+    private func pushLogSettings() {
+        guard #available(iOS 16.0, *) else { return }
+        navigationController?.pushViewController(UIHostingController(rootView: LogSettingsView()), animated: true)
     }
 
     // MARK: - Helpers
