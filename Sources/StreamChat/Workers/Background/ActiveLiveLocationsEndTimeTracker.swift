@@ -5,12 +5,12 @@
 import Foundation
 
 /// An observer type that observes all active live locations in the database.
-typealias ActiveLiveLocationsObserver = StateLayerDatabaseObserver<ListResult, MessageId, MessageDTO>
+typealias ActiveLiveLocationsObserver = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>
 
 /// A worker that is responsible for tracking when the end time of active locations is reached.
 class ActiveLiveLocationsEndTimeTracker: Worker, @unchecked Sendable {
     private let activeLiveLocationsObserver: ActiveLiveLocationsObserver
-    @Atomic internal var workItems: [String: DispatchWorkItem] = [:]
+    internal var workItems: [String: DispatchWorkItem] = [:]
     private let queue = DispatchQueue(label: "io.getstream.ActiveLiveLocationsEndTimeTracker")
 
     override init(
@@ -18,10 +18,8 @@ class ActiveLiveLocationsEndTimeTracker: Worker, @unchecked Sendable {
         apiClient: APIClient
     ) {
         activeLiveLocationsObserver = ActiveLiveLocationsObserver(
-            database: database,
-            fetchRequest: MessageDTO.activeLiveLocationMessagesFetchRequest(),
-            itemCreator: { $0.id },
-            itemReuseKeyPaths: nil
+            context: database.writableContext,
+            fetchRequest: MessageDTO.activeLiveLocationMessagesFetchRequest()
         )
         super.init(database: database, apiClient: apiClient)
         startObserving()
@@ -41,20 +39,21 @@ class ActiveLiveLocationsEndTimeTracker: Worker, @unchecked Sendable {
         }
     }
 
-    private func handle(changes: [ListChange<MessageId>]) {
+    private func handle(changes: [ListChange<MessageDTO>]) {
         guard !changes.isEmpty else {
             return
         }
 
-        database.write { session in
-            for change in changes {
+        nonisolated(unsafe) let unsafeChanges = changes
+        database.write { _ in
+            for change in unsafeChanges {
                 switch change {
-                case .insert(let messageId, _):
-                    guard let endAt = session.message(id: messageId)?.location?.endAt?.bridgeDate else { continue }
-                    self.scheduleInactiveLocation(for: messageId, at: endAt)
-                case .remove(let messageId, _):
-                    self.setInactiveLocation(for: messageId)
-                    self.cancelWorkItem(for: messageId)
+                case .insert(let message, _):
+                    guard let endAt = message.location?.endAt?.bridgeDate else { continue }
+                    self.scheduleInactiveLocation(for: message.id, at: endAt)
+                case .remove(let message, _):
+                    self.setInactiveLocation(for: message.id)
+                    self.cancelWorkItem(for: message.id)
                 case .move, .update:
                     break
                 }
@@ -63,14 +62,13 @@ class ActiveLiveLocationsEndTimeTracker: Worker, @unchecked Sendable {
     }
 
     private func scheduleInactiveLocation(for messageId: String, at endAt: Date) {
+        // Cancel any existing work item for the same messageId
+        cancelWorkItem(for: messageId)
+
         let workItem = DispatchWorkItem { [weak self] in
             self?.setInactiveLocation(for: messageId)
         }
-        _workItems.mutate { workItems in
-            // Cancel any existing work item for the same messageId
-            workItems[messageId]?.cancel()
-            workItems[messageId] = workItem
-        }
+        workItems[messageId] = workItem
 
         let endAtTime = endAt.timeIntervalSinceNow
         queue.asyncAfter(deadline: .now() + endAtTime, execute: workItem)
@@ -95,6 +93,7 @@ class ActiveLiveLocationsEndTimeTracker: Worker, @unchecked Sendable {
     }
 
     private func cancelWorkItem(for messageId: String) {
-        _workItems.mutate { $0.removeValue(forKey: messageId)?.cancel() }
+        workItems[messageId]?.cancel()
+        workItems.removeValue(forKey: messageId)
     }
 }

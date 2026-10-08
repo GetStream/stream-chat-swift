@@ -43,10 +43,10 @@ class MessageEditor: Worker, @unchecked Sendable {
 
     private func startObserving() {
         do {
-            let items = try observer.startObserving(onContextDidChange: { [weak self] _, changes in
+            try observer.startObserving(onContextDidChange: { [weak self] _, changes in
                 self?.handleChanges(changes: changes)
             })
-            let changes = items.map { ListChange.insert($0, index: .init(item: 0, section: 0)) }
+            let changes = observer.items.map { ListChange.insert($0, index: .init(item: 0, section: 0)) }
             handleChanges(changes: changes)
         } catch {
             log.error("Failed to start MessageEditor worker. \(error)")
