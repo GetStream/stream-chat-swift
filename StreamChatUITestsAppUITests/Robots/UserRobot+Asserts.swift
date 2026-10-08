@@ -932,23 +932,6 @@ extension UserRobot {
     }
 
     @discardableResult
-    func assertCooldownIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertNotEqual(
-            MessageListPage.Composer.placeholder.text,
-            L10n.Composer.Placeholder.slowMode,
-            file: file,
-            line: line
-        )
-        XCTAssertFalse(
-            MessageListPage.Composer.cooldown.exists,
-            "Cooldown should not be visible",
-            file: file,
-            line: line
-        )
-        return self
-    }
-
-    @discardableResult
     func assertSendButtonIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
         let sendButton = MessageListPage.Composer.sendButton.waitForDisappearance()
         XCTAssertFalse(sendButton.exists, "Send button is visible", file: file, line: line)

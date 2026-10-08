@@ -24,6 +24,13 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     /// The limit of the local  video preview thumbnails cache.
     private let videoPreviewCacheCountLimit: Int = 50
 
+    /// The task of the ongoing `loadImageTask` call, which `loadImage` picks up to cancel its download.
+    ///
+    /// `loadImageTask` routes through the open `loadImage` so that subclass customizations of
+    /// `loadImage` keep working. A task-local passes the task along without changing the
+    /// overridable `loadImage` signature, which would break existing overrides.
+    @TaskLocal private static var loadingTask: ImageLoadingTask?
+
     public init(
         downloader: ImageDownloading,
         cdnRequester: CDNRequester = StreamCDNRequester()
@@ -52,6 +59,30 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         options: ImageLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
     ) {
+        loadImage(url: url, options: options, task: StreamMediaLoader.loadingTask ?? ImageLoadingTask(), completion: completion)
+    }
+
+    @discardableResult
+    open func loadImageTask(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        let task = ImageLoadingTask()
+        StreamMediaLoader.$loadingTask.withValue(task) {
+            loadImage(url: url, options: options) { result in
+                completion(task.isCancelled ? .failure(CancellationError()) : result)
+            }
+        }
+        return task
+    }
+
+    private func loadImage(
+        url: URL?,
+        options: ImageLoadOptions,
+        task: ImageLoadingTask,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) {
         guard let url else {
             StreamConcurrency.onMain {
                 completion(.failure(ClientError.Unknown()))
@@ -63,6 +94,12 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         cdnRequester.imageRequest(for: url, options: ImageRequestOptions(imageResize: options.resize)) { result in
             switch result {
             case let .success(cdnRequest):
+                guard !task.isCancelled else {
+                    StreamConcurrency.onMain {
+                        completion(.failure(CancellationError()))
+                    }
+                    return
+                }
                 let resizeSize: CGSize? = options.resize.map { CGSize(width: $0.width, height: $0.height) }
                 let downloadOptions = ImageDownloadingOptions(
                     headers: cdnRequest.headers,
@@ -70,18 +107,25 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     resize: resizeSize
                 )
                 let cachingKey = cdnRequest.cachingKey
-                downloader.downloadImage(url: cdnRequest.url, options: downloadOptions) { imageResult in
-                    completion(imageResult.map {
-                        MediaLoaderImage(
-                            image: $0.image,
-                            animatedImageData: $0.animatedImageData,
-                            cachingKey: cachingKey
-                        )
-                    })
+                let downloadTask = downloader.downloadImageTask(url: cdnRequest.url, options: downloadOptions) { imageResult in
+                    StreamConcurrency.onMain {
+                        guard !task.isCancelled else {
+                            completion(.failure(CancellationError()))
+                            return
+                        }
+                        completion(imageResult.map { downloadedImage in
+                            MediaLoaderImage(
+                                image: downloadedImage.image,
+                                animatedImageData: downloadedImage.animatedImageData,
+                                cachingKey: cachingKey
+                            )
+                        })
+                    }
                 }
+                task.addCancellationHandler { downloadTask.cancel() }
             case let .failure(error):
                 StreamConcurrency.onMain {
-                    completion(.failure(error))
+                    completion(.failure(task.isCancelled ? CancellationError() : error))
                 }
             }
         }

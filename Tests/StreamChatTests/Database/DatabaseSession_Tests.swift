@@ -1250,4 +1250,181 @@ final class DatabaseSession_Tests: XCTestCase {
             XCTAssertEqual(pollDTO.name, "Updated Poll")
         }
     }
+
+    // MARK: - Poll events
+
+    func test_saveEvent_whenPollUpdated_addsTheNewOptionToThePoll() throws {
+        let currentUserId = String.unique
+        let pollId = String.unique
+        let firstOption = PollOptionPayload(custom: [:], id: .unique, text: "Red")
+        let secondOption = PollOptionPayload(custom: [:], id: .unique, text: "Blue")
+        let suggestedOption = PollOptionPayload(custom: [:], id: .unique, text: "Green")
+        try database.createCurrentUser(id: currentUserId)
+        let poll = XCTestCase().dummyPollPayload(id: pollId, options: [firstOption, secondOption])
+        let messageId = try savePollMessage(poll: poll)
+
+        let updatedPoll = XCTestCase().dummyPollPayload(id: pollId, options: [firstOption, secondOption, suggestedOption])
+        let event = WSEvent.typePollUpdatedEvent(PollUpdatedEventDTO(createdAt: .unique, poll: updatedPoll))
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        let pollModel = try XCTUnwrap(database.viewContext.poll(id: pollId)?.asModel())
+        XCTAssertEqual(pollModel.options.map(\.text), ["Red", "Blue", "Green"])
+        let messagePoll = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel().poll)
+        XCTAssertEqual(messagePoll.options.map(\.text), ["Red", "Blue", "Green"])
+    }
+
+    func test_saveEvent_whenPollUpdated_notifiesTheMessageObserverWithTheUpdatedPoll() throws {
+        let pollId = String.unique
+        let firstOption = PollOptionPayload(custom: [:], id: .unique, text: "Red")
+        let suggestedOption = PollOptionPayload(custom: [:], id: .unique, text: "Green")
+        try database.createCurrentUser(id: .unique)
+        let messageId = try savePollMessage(poll: XCTestCase().dummyPollPayload(id: pollId, options: [firstOption]))
+
+        let observer = BackgroundEntityDatabaseObserver<ChatMessage, MessageDTO>(
+            database: database,
+            fetchRequest: MessageDTO.message(withID: messageId),
+            itemCreator: { try $0.asModel() }
+        )
+        try observer.startObserving()
+        let updateExpectation = expectation(description: "message observer reports the updated poll")
+        observer.onChange { change in
+            if case let .update(message) = change, message.poll?.options.count == 2 {
+                updateExpectation.fulfill()
+            }
+        }
+
+        let updatedPoll = XCTestCase().dummyPollPayload(id: pollId, options: [firstOption, suggestedOption])
+        let event = WSEvent.typePollUpdatedEvent(PollUpdatedEventDTO(createdAt: .unique, poll: updatedPoll))
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
+    func test_saveEvent_whenPollClosed_marksThePollAsClosed() throws {
+        let pollId = String.unique
+        try database.createCurrentUser(id: .unique)
+        let messageId = try savePollMessage(poll: XCTestCase().dummyPollPayload(id: pollId, isClosed: false))
+        XCTAssertEqual(try database.viewContext.poll(id: pollId)?.asModel().isClosed, false)
+
+        let closedPoll = XCTestCase().dummyPollPayload(id: pollId, isClosed: true)
+        let event = WSEvent.typePollClosedEvent(PollClosedEventDTO(createdAt: .unique, poll: closedPoll))
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        XCTAssertEqual(try database.viewContext.poll(id: pollId)?.asModel().isClosed, true)
+        XCTAssertEqual(try database.viewContext.message(id: messageId)?.asModel().poll?.isClosed, true)
+    }
+
+    func test_saveEvent_whenPollVoteCasted_updatesTheVoteCounts() throws {
+        let pollId = String.unique
+        let optionId = String.unique
+        let option = PollOptionPayload(custom: [:], id: optionId, text: "Red")
+        try database.createCurrentUser(id: .unique)
+        let messageId = try savePollMessage(
+            poll: XCTestCase().dummyPollPayload(id: pollId, voteCount: 0, options: [option])
+        )
+
+        let vote = XCTestCase().dummyPollVotePayload(optionId: optionId, pollId: pollId)
+        let pollWithVote = XCTestCase().dummyPollPayload(
+            id: pollId,
+            voteCount: 1,
+            options: [option],
+            voteCountsByOption: [optionId: 1]
+        )
+        let event = WSEvent.typePollVoteCastedEvent(PollVoteCastedEventDTO(createdAt: .unique, poll: pollWithVote, pollVote: vote))
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        let pollModel = try XCTUnwrap(database.viewContext.poll(id: pollId)?.asModel())
+        XCTAssertEqual(pollModel.voteCount, 1)
+        XCTAssertEqual(pollModel.voteCountsByOption?[optionId], 1)
+        XCTAssertNotNil(try database.viewContext.pollVote(id: vote.id, pollId: pollId))
+    }
+
+    func test_saveEvent_whenPollVoteRemoved_updatesTheVoteCounts() throws {
+        let pollId = String.unique
+        let optionId = String.unique
+        let option = PollOptionPayload(custom: [:], id: optionId, text: "Red")
+        let vote = XCTestCase().dummyPollVotePayload(optionId: optionId, pollId: pollId)
+        try database.createCurrentUser(id: .unique)
+        let messageId = try savePollMessage(
+            poll: XCTestCase().dummyPollPayload(
+                id: pollId,
+                voteCount: 1,
+                options: [option],
+                voteCountsByOption: [optionId: 1]
+            )
+        )
+        try database.writeSynchronously { session in
+            try session.savePollVote(payload: vote, query: nil, cache: nil)
+        }
+
+        let pollWithoutVote = XCTestCase().dummyPollPayload(
+            id: pollId,
+            voteCount: 0,
+            options: [option],
+            voteCountsByOption: [optionId: 0]
+        )
+        let event = WSEvent.typePollVoteRemovedEvent(PollVoteRemovedEventDTO(createdAt: .unique, poll: pollWithoutVote, pollVote: vote))
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        let pollModel = try XCTUnwrap(database.viewContext.poll(id: pollId)?.asModel())
+        XCTAssertEqual(pollModel.voteCount, 0)
+        XCTAssertEqual(pollModel.voteCountsByOption?[optionId], 0)
+        XCTAssertNil(try database.viewContext.pollVote(id: vote.id, pollId: pollId))
+    }
+
+    func test_saveEvent_whenPollAnswerCasted_updatesTheAnswersCount() throws {
+        let pollId = String.unique
+        try database.createCurrentUser(id: .unique)
+        let messageId = try savePollMessage(
+            poll: XCTestCase().dummyPollPayload(allowAnswers: true, answersCount: 0, id: pollId)
+        )
+
+        let answer = XCTestCase().dummyPollVotePayload(
+            optionId: "",
+            pollId: pollId,
+            answerText: "Purple",
+            isAnswer: true
+        )
+        let pollWithAnswer = XCTestCase().dummyPollPayload(
+            allowAnswers: true,
+            answersCount: 1,
+            id: pollId,
+            latestAnswers: [answer]
+        )
+        let event = WSEvent.typePollVoteCastedEvent(PollVoteCastedEventDTO(createdAt: .unique, poll: pollWithAnswer, pollVote: answer))
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: event)
+        }
+
+        let pollModel = try XCTUnwrap(database.viewContext.message(id: messageId)?.asModel().poll)
+        XCTAssertEqual(pollModel.answersCount, 1)
+        XCTAssertEqual(pollModel.latestAnswers.map(\.answerText), ["Purple"])
+    }
+
+    private func savePollMessage(poll: PollPayload) throws -> MessageId {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.writeSynchronously { session in
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: .unique, poll: poll),
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                skipDraftUpdate: false,
+                cache: nil
+            )
+        }
+        return messageId
+    }
 }
