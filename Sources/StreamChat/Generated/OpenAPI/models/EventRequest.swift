@@ -15,9 +15,10 @@ final class EventRequest: Sendable, Encodable, JSONEncodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case parentId = "parent_id"
-        case type
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encodeIfPresent(parentId, forKey: .parentId)
+        try container.encode(type, forKey: .type)
     }
 }

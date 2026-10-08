@@ -30,17 +30,8 @@ final class QueryMembersPayload: Sendable, Encodable, JSONEncodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case filterConditions = "filter_conditions"
-        case id
-        case limit
-        case offset
-        case sort
-        case type
-    }
-
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         if let filterConditions {
             try container.encode(filterConditions, forKey: .filterConditions)
         }

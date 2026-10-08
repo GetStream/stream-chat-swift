@@ -12,7 +12,8 @@ final class MessageReactionsPayload: Sendable, Decodable {
         self.reactions = reactions
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case reactions
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.reactions = try container.decode([MessageReactionPayload].self, forKey: .reactions)
     }
 }

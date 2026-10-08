@@ -26,10 +26,11 @@ final class FlagRequest: Sendable, Encodable, JSONEncodable {
         self.reason = reason
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case entityId = "entity_id"
-        case entityType = "entity_type"
-        case reason
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encode(entityId, forKey: .entityId)
+        try container.encode(entityType, forKey: .entityType)
+        try container.encodeIfPresent(reason, forKey: .reason)
     }
 }

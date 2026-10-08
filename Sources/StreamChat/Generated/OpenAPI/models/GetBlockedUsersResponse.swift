@@ -12,7 +12,8 @@ final class GetBlockedUsersResponse: Sendable, Decodable {
         self.blocks = blocks
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case blocks
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.blocks = try container.decode([BlockedUserResponse].self, forKey: .blocks)
     }
 }

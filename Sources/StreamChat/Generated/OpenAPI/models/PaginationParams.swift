@@ -13,8 +13,9 @@ final class PaginationParams: Sendable, Encodable, JSONEncodable {
         self.offset = offset
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case limit
-        case offset
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(offset, forKey: .offset)
     }
 }

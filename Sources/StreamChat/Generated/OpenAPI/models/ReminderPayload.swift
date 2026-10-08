@@ -36,14 +36,15 @@ final class ReminderPayload: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case message
-        case messageId = "message_id"
-        case remindAt = "remind_at"
-        case updatedAt = "updated_at"
-        case userId = "user_id"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.channelCid = try container.decode(String.self, forKey: .channelCid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
+        self.messageId = try container.decode(String.self, forKey: .messageId)
+        self.remindAt = try container.decodeIfPresent(Date.self, forKey: .remindAt)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.userId = try container.decode(String.self, forKey: .userId)
     }
 }

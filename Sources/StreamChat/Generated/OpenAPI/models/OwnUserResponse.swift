@@ -90,37 +90,8 @@ final class OwnUserResponse: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case avgResponseTime = "avg_response_time"
-        case banned
-        case blockedUserIds = "blocked_user_ids"
-        case channelMutes = "channel_mutes"
-        case createdAt = "created_at"
-        case custom
-        case deactivatedAt = "deactivated_at"
-        case devices
-        case id
-        case image
-        case invisible
-        case language
-        case lastActive = "last_active"
-        case mutes
-        case name
-        case online
-        case privacySettings = "privacy_settings"
-        case pushPreferences = "push_preferences"
-        case role
-        case teams
-        case teamsRole = "teams_role"
-        case totalUnreadCount = "total_unread_count"
-        case totalUnreadCountByTeam = "total_unread_count_by_team"
-        case unreadChannels = "unread_channels"
-        case unreadThreads = "unread_threads"
-        case updatedAt = "updated_at"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
         blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)

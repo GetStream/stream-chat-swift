@@ -18,9 +18,17 @@ final class SortParamRequest: Sendable, Codable, JSONEncodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case direction
-        case field
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.direction = try container.decodeIfPresent(Int.self, forKey: .direction)
+        self.field = try container.decodeIfPresent(String.self, forKey: .field)
+        self.type = try container.decodeIfPresent(String.self, forKey: .type)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(direction, forKey: .direction)
+        try container.encodeIfPresent(field, forKey: .field)
+        try container.encodeIfPresent(type, forKey: .type)
     }
 }

@@ -71,7 +71,7 @@ public struct PollVoteListSortingKey: RawRepresentable, Hashable, SortingKey {
 
 public extension PollVoteListSortingKey {
     /// Sorts votes by `created_at` field.
-    static let createdAt = Self(rawValue: PollVotePayload.CodingKeys.createdAt.rawValue)
+    static let createdAt = Self(rawValue: StringCodingKey.createdAt.stringValue)
 }
 
 /// A namespace for the `FilterKey`s suitable to be used for `PollVoteListQuery`.

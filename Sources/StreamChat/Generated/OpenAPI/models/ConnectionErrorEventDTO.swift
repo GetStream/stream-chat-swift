@@ -19,10 +19,11 @@ final class ConnectionErrorEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case connectionId = "connection_id"
-        case createdAt = "created_at"
-        case error
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.connectionId = try container.decode(String.self, forKey: .connectionId)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.error = try container.decode(APIError.self, forKey: .error)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

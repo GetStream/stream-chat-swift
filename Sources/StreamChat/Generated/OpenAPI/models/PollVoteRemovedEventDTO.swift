@@ -25,10 +25,11 @@ final class PollVoteRemovedEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case poll
-        case pollVote = "poll_vote"
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.poll = try container.decode(PollPayload.self, forKey: .poll)
+        self.pollVote = try container.decode(PollVotePayload.self, forKey: .pollVote)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

@@ -13,7 +13,8 @@ final class DeleteChannelResponse: Sendable, Decodable {
         self.channel = channel
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
     }
 }

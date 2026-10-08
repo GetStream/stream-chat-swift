@@ -12,7 +12,8 @@ final class UpsertPushPreferencesRequest: Sendable, Encodable, JSONEncodable {
         self.preferences = preferences
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case preferences
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(preferences, forKey: .preferences)
     }
 }

@@ -55,7 +55,7 @@ public struct DraftListSortingKey: RawRepresentable, Hashable, SortingKey {
 /// The supported sorting keys.
 public extension DraftListSortingKey {
     /// Sorts drafts by `created_at` field.
-    static let createdAt = Self(rawValue: MessageResponse.CodingKeys.createdAt.rawValue)
+    static let createdAt = Self(rawValue: StringCodingKey.createdAt.stringValue)
 }
 
 extension Sorting where Key == DraftListSortingKey {

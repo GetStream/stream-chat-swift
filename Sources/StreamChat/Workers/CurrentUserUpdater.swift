@@ -39,23 +39,23 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
 
         var set = userExtraData ?? [:]
         if let name = name {
-            set[FullUserResponse.CodingKeys.name.rawValue] = .string(name)
+            set[StringCodingKey.name.stringValue] = .string(name)
         }
         if let imageURL = imageURL {
-            set[FullUserResponse.CodingKeys.image.rawValue] = .string(imageURL.absoluteString)
+            set[StringCodingKey.image.stringValue] = .string(imageURL.absoluteString)
         }
         if let privacySettings = privacySettings {
             guard let rawJSON = privacySettings.rawJSON else {
                 completion?(ClientError.InvalidJSON("Failed to encode privacy settings: \(privacySettings)"))
                 return
             }
-            set[FullUserResponse.CodingKeys.privacySettings.rawValue] = rawJSON
+            set[StringCodingKey.privacySettings.stringValue] = rawJSON
         }
         if let role = role {
-            set[FullUserResponse.CodingKeys.role.rawValue] = .string(role.rawValue)
+            set[StringCodingKey.role.stringValue] = .string(role.rawValue)
         }
         if let teamsRole = teamsRole {
-            set[FullUserResponse.CodingKeys.teamsRole.rawValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
+            set[StringCodingKey.teamsRole.stringValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
         }
 
         let request = UpdateUsersPartialRequest(users: [

@@ -15,8 +15,9 @@ final class MuteChannelRequest: Sendable, Encodable, JSONEncodable {
         self.expiration = expiration
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCids = "channel_cids"
-        case expiration
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(channelCids, forKey: .channelCids)
+        try container.encodeIfPresent(expiration, forKey: .expiration)
     }
 }

@@ -11,7 +11,8 @@ final class CreateReminderRequest: Sendable, Encodable, JSONEncodable {
         self.remindAt = remindAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case remindAt = "remind_at"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(remindAt, forKey: .remindAt)
     }
 }

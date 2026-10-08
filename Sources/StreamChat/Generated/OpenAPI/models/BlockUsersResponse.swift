@@ -18,9 +18,10 @@ final class BlockUsersResponse: Sendable, Decodable {
         self.createdAt = createdAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case blockedByUserId = "blocked_by_user_id"
-        case blockedUserId = "blocked_user_id"
-        case createdAt = "created_at"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.blockedByUserId = try container.decode(String.self, forKey: .blockedByUserId)
+        self.blockedUserId = try container.decode(String.self, forKey: .blockedUserId)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
     }
 }

@@ -411,6 +411,89 @@ import XCTest
         XCTAssertEqual(mockedCooldownTracker.startCallCount, 1)
     }
 
+    func test_publishMessage_whenChannelHasSlowMode_startsCooldown() {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(cooldownDuration: 15)
+        composerVC.content.text = "Test text"
+
+        composerVC.publishMessage(sender: UIButton())
+
+        XCTAssertEqual(cooldownTracker.startedCooldowns, [15])
+        XCTAssertTrue(composerVC.content.isSlowModeOn)
+        XCTAssertEqual(composerVC.content.cooldownTime, 15)
+    }
+
+    func test_publishMessage_whenQuotingMessageInSlowMode_startsCooldown() {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(cooldownDuration: 15)
+        composerVC.content.quoteMessage(.mock())
+        composerVC.content.text = "Test text"
+
+        composerVC.publishMessage(sender: UIButton())
+
+        XCTAssertEqual(cooldownTracker.startedCooldowns, [15])
+        XCTAssertTrue(composerVC.content.isSlowModeOn)
+    }
+
+    func test_publishMessage_whenUserCanSkipSlowMode_doesNotStartCooldown() {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(
+            cooldownDuration: 15,
+            ownCapabilities: [.sendMessage, .skipSlowMode]
+        )
+        composerVC.content.text = "Test text"
+
+        composerVC.publishMessage(sender: UIButton())
+
+        XCTAssertEqual(cooldownTracker.startedCooldowns, [])
+        XCTAssertFalse(composerVC.content.isSlowModeOn)
+    }
+
+    func test_publishMessage_whenEditingMessageInSlowMode_doesNotStartCooldown() {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(cooldownDuration: 15)
+        composerVC.content.editMessage(.mock(text: "Message", isSentByCurrentUser: true))
+        composerVC.content.text = "Edited message"
+
+        composerVC.publishMessage(sender: UIButton())
+
+        XCTAssertEqual(cooldownTracker.startedCooldowns, [])
+        XCTAssertFalse(composerVC.content.isSlowModeOn)
+    }
+
+    func test_cooldownChange_whenEditingMessage_doesNotTurnOnSlowMode() {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(cooldownDuration: 15)
+        composerVC.content.editMessage(.mock(text: "Message", isSentByCurrentUser: true))
+
+        cooldownTracker.onChange?(10)
+
+        XCTAssertFalse(composerVC.content.isSlowModeOn)
+        XCTAssertEqual(composerVC.content.cooldownTime, 0)
+    }
+
+    func test_viewWillAppear_whenThreadComposerOpensDuringActiveCooldown_resumesRemainingCooldown() throws {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(
+            cooldownDuration: 15,
+            lastMessageFromCurrentUser: .mock(createdAt: Date().addingTimeInterval(-5), isSentByCurrentUser: true)
+        )
+        composerVC.content.threadMessage = .mock()
+
+        composerVC.viewWillAppear(false)
+
+        let resumedCooldown = try XCTUnwrap(cooldownTracker.startedCooldowns.last)
+        XCTAssertTrue((9...10).contains(resumedCooldown), "Unexpected cooldown: \(resumedCooldown)")
+        XCTAssertTrue(composerVC.content.isSlowModeOn)
+    }
+
+    func test_viewWillAppear_whenCooldownIsOver_doesNotTurnOnSlowMode() {
+        let cooldownTracker = makeLoadedComposerWithCooldownTracker(
+            cooldownDuration: 15,
+            lastMessageFromCurrentUser: .mock(createdAt: Date().addingTimeInterval(-60), isSentByCurrentUser: true)
+        )
+        composerVC.content.threadMessage = .mock()
+
+        composerVC.viewWillAppear(false)
+
+        XCTAssertEqual(cooldownTracker.startedCooldowns.last, 0)
+        XCTAssertFalse(composerVC.content.isSlowModeOn)
+    }
+
     func test_editMessage_addsAttachmentsToContent() {
         // Given
         var content = ComposerVC.Content.initial()
@@ -1825,5 +1908,25 @@ private final class ComposerVC_CustomPickerConfig: ComposerVC {
 
     func test_observedFractionCompleted_whenTheLoadHasNotStarted_thenThereIsNoFraction() {
         XCTAssertNil(MediaLoadProgress().observedFractionCompleted())
+    }
+}
+
+private extension ComposerVC_Tests {
+    func makeLoadedComposerWithCooldownTracker(
+        cooldownDuration: Int,
+        ownCapabilities: Set<ChannelCapability> = [.sendMessage],
+        lastMessageFromCurrentUser: ChatMessage? = nil
+    ) -> CooldownTracker_Mock {
+        mockedChatChannelController.channel_mock = .mock(
+            cid: .unique,
+            config: .mock(commands: []),
+            ownCapabilities: ownCapabilities,
+            cooldownDuration: cooldownDuration,
+            lastMessageFromCurrentUser: lastMessageFromCurrentUser
+        )
+        let cooldownTracker = CooldownTracker_Mock(timer: ScheduledStreamTimer_Mock())
+        composerVC.cooldownTracker = cooldownTracker
+        composerVC.loadViewIfNeeded()
+        return cooldownTracker
     }
 }

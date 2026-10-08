@@ -15,9 +15,10 @@ final class ParsedPredefinedFilterResponse: Sendable, Decodable {
         self.sort = sort
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case filter
-        case name
-        case sort
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.filter = try container.decode([String: RawJSON].self, forKey: .filter)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.sort = try container.decodeIfPresent([SortParamRequest].self, forKey: .sort)
     }
 }

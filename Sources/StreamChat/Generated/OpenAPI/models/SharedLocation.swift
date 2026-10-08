@@ -47,16 +47,17 @@ public final class SharedLocation: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case createdByDeviceId = "created_by_device_id"
-        case endAt = "end_at"
-        case latitude
-        case longitude
-        case messageId = "message_id"
-        case updatedAt = "updated_at"
-        case userId = "user_id"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelCid = try container.decode(ChannelId.self, forKey: .channelCid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.createdByDeviceId = try container.decode(DeviceId.self, forKey: .createdByDeviceId)
+        self.endAt = try container.decodeIfPresent(Date.self, forKey: .endAt)
+        self.latitude = try container.decode(Double.self, forKey: .latitude)
+        self.longitude = try container.decode(Double.self, forKey: .longitude)
+        self.messageId = try container.decode(MessageId.self, forKey: .messageId)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.userId = try container.decode(UserId.self, forKey: .userId)
     }
 }
 

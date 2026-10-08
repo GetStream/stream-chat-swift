@@ -71,28 +71,8 @@ final class MemberPayload: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case archivedAt = "archived_at"
-        case banExpires = "ban_expires"
-        case banned
-        case channelRole = "channel_role"
-        case createdAt = "created_at"
-        case custom
-        case deletedAt = "deleted_at"
-        case inviteAcceptedAt = "invite_accepted_at"
-        case inviteRejectedAt = "invite_rejected_at"
-        case invited
-        case notificationsMuted = "notifications_muted"
-        case pinnedAt = "pinned_at"
-        case shadowBanned = "shadow_banned"
-        case status
-        case updatedAt = "updated_at"
-        case user
-        case userId = "user_id"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
         banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false

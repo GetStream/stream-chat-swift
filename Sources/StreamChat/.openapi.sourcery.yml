@@ -2,6 +2,7 @@ sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
   - ./Generated/OpenAPI/models/ChannelStateResponse.swift
   - ./Generated/OpenAPI/models/DraftMessagePayload.swift
+  - ./Generated/OpenAPI/models/FullUserResponse.swift
   - ./Generated/OpenAPI/models/GroupedChannelsBucket.swift
   - ./Generated/OpenAPI/models/MemberInfoPayload.swift
   - ./Generated/OpenAPI/models/MemberPayload.swift
@@ -22,6 +23,8 @@ templates:
 output:
   ./Generated/OpenAPI/OpenAPIDecoders.generated.swift
 args:
+  # Models exposing `allKeys`, the wire keys of their stored properties.
+  allKeys: [FullUserResponse, MessageAttachmentPayload]
   # Non-optional properties which fall back to a default when the key is missing or null.
   defaultValues:
     ChannelDetailPayload:

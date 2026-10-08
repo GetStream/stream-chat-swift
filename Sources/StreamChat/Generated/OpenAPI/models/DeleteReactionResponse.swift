@@ -15,8 +15,9 @@ final class DeleteReactionResponse: Sendable, Decodable {
         self.reaction = reaction
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case message
-        case reaction
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.reaction = try container.decode(MessageReactionPayload.self, forKey: .reaction)
     }
 }
