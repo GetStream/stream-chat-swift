@@ -238,7 +238,7 @@ public final class SpeechHandler: NSObject, ObservableObject {
             if !text.isEmpty {
                 lastSpeech.value = Date()
             }
-            Task { @MainActor in
+            Task { @MainActor [handler] in
                 guard let handler, handler.sessionGeneration == generation else { return }
                 if !text.isEmpty {
                     handler.transcript = text

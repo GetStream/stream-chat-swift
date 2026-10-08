@@ -70,3 +70,9 @@ extension InjectedValues {
         }
     }
 }
+
+// Swift 6.0 (Xcode 16) rejects reading a non-Sendable `nonisolated(unsafe)` token from a lazy
+// property of a main-actor class, so the appearances keep their tokens in this box instead.
+struct UncheckedSendable<Value>: @unchecked Sendable {
+    let value: Value
+}

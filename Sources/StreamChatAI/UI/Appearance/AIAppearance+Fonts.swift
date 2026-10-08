@@ -11,7 +11,8 @@ extension AIAppearance {
     /// They read the tokens lazily, so change the tokens before the first read.
     @MainActor
     public final class Fonts {
-        private nonisolated(unsafe) let fonts: DesignSystemTokens.Fonts
+        private nonisolated let storage: UncheckedSendable<DesignSystemTokens.Fonts>
+        private nonisolated var fonts: DesignSystemTokens.Fonts { storage.value }
 
         // MARK: - Composer
 
@@ -42,7 +43,7 @@ extension AIAppearance {
         public lazy var toolApprovalFailure: Font = fonts.caption1
 
         public nonisolated init(tokens: DesignSystemTokens = DesignSystemTokens()) {
-            fonts = tokens.fonts
+            storage = UncheckedSendable(value: tokens.fonts)
         }
     }
 }

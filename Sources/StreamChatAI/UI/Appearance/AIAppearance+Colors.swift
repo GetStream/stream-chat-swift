@@ -11,7 +11,8 @@ extension AIAppearance {
     /// They read the tokens lazily, so change the tokens before the first read.
     @MainActor
     public final class Colors {
-        private nonisolated(unsafe) let colors: DesignSystemTokens.Colors
+        private nonisolated let storage: UncheckedSendable<DesignSystemTokens.Colors>
+        private nonisolated var colors: DesignSystemTokens.Colors { storage.value }
 
         // MARK: - Composer
 
@@ -104,7 +105,7 @@ extension AIAppearance {
         public lazy var sidebarScrim: UIColor = colors.backgroundCoreOverlayDark
 
         public nonisolated init(tokens: DesignSystemTokens = DesignSystemTokens()) {
-            colors = tokens.colors
+            storage = UncheckedSendable(value: tokens.colors)
         }
     }
 }

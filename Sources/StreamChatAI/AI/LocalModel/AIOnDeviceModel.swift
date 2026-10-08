@@ -40,7 +40,7 @@ public struct AIOnDeviceModel: AILocalModel {
                     if #available(iOS 26.0, macOS 26.0, *) {
                         let model = SystemLanguageModel.default
                         guard model.isAvailable else { throw Unavailable() }
-                        let budget = model.contextSize - maximumResponseTokens - instructions.utf8.count / 3
+                        let budget = Self.contextSize(of: model) - maximumResponseTokens - instructions.utf8.count / 3
                         let turns = AIConversationTurn.fitting(turns, tokens: budget)
                         guard let question = turns.last, question.role == .user else { throw Unavailable() }
                         let session = LanguageModelSession(model: model, transcript: Self.transcript(instructions, turns.dropLast()))
@@ -65,6 +65,16 @@ public struct AIOnDeviceModel: AILocalModel {
     struct Unavailable: Error {}
 
     #if canImport(FoundationModels)
+    // `contextSize` arrived in the iOS 26.4 SDK (Swift 6.3); older SDKs fall back to the model's 4096 tokens.
+    @available(iOS 26.0, macOS 26.0, *)
+    private static func contextSize(of model: SystemLanguageModel) -> Int {
+        #if compiler(>=6.3)
+        model.contextSize
+        #else
+        4096
+        #endif
+    }
+
     @available(iOS 26.0, macOS 26.0, *)
     private static func transcript(_ instructions: String, _ history: ArraySlice<AIConversationTurn>) -> Transcript {
         func text(_ content: String) -> [Transcript.Segment] { [.text(Transcript.TextSegment(content: content))] }
