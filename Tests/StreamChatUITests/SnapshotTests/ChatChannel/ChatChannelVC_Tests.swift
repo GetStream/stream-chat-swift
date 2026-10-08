@@ -796,8 +796,10 @@ import XCTest
     }
 
     func test_shouldLoadPageAroundMessageId_thenLoadPageAroundMessageId() {
-        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: .unique) { _ in }
+        let messageId: MessageId = .unique
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: messageId) { _ in }
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 1)
+        XCTAssertEqual(channelControllerMock.loadPageAroundMessageId_messageId, messageId)
     }
 
     // This test is temporary until we support jumping to inside a thread.
