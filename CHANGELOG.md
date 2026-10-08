@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)
+### 🔄 Changed
+- `Device.createdAt` is now non-optional [#4318](https://github.com/GetStream/stream-chat-swift/pull/4318)
 
 ## StreamChatCommonUI
 ### ✅ Added
