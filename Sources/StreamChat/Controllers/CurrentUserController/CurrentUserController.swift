@@ -374,10 +374,19 @@ public extension CurrentChatUserController {
     }
 
     /// Registers the current user's device for push notifications.
+    ///
+    /// It is safe to call this on every app launch: no request is sent when the device is already registered
+    /// for the current user with the same push provider and provider name.
+    ///
     /// - Parameters:
     ///   - pushDevice: The device information required for the desired push provider.
+    ///   - forceRegistration: Sends the registration request even when the device is already registered. Defaults to `false`.
     ///   - completion: Callback when device is successfully registered, or failed with error.
-    func addDevice(_ pushDevice: PushDevice, completion: (@MainActor (Error?) -> Void)? = nil) {
+    func addDevice(
+        _ pushDevice: PushDevice,
+        forceRegistration: Bool = false,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
         guard let currentUserId = client.currentUserId else {
             callback {
                 completion?(ClientError.CurrentUserDoesNotExist())
@@ -389,7 +398,8 @@ public extension CurrentChatUserController {
             deviceId: pushDevice.deviceId,
             pushProvider: pushDevice.pushProvider,
             providerName: pushDevice.providerName,
-            currentUserId: currentUserId
+            currentUserId: currentUserId,
+            forceRegistration: forceRegistration
         ) { error in
             self.callback {
                 completion?(error)
