@@ -7,9 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)
 
+## StreamChatCommonUI
+### ✅ Added
+- Add `MediaLoader.loadImageTask(url:options:completion:)` for loading images with cancellation support [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
+- Add `ImageDownloading.downloadImageTask(url:options:completion:)` for downloading images with cancellation support [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
+- Add `ImageLoadingTask.addCancellationHandler(_:)` for reacting to cancellation in custom loaders and downloaders [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix jumping to a message that is not loaded yet sometimes not scrolling to it [#4308](https://github.com/GetStream/stream-chat-swift/pull/4308)
+### 🔄 Changed
+- Cancel image downloads that are no longer needed when image views are reused [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
 
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
 _October 01, 2026_
