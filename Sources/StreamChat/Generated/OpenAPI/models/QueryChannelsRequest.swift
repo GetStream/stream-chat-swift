@@ -56,23 +56,8 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
         self.watch = watch
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case filterConditions = "filter_conditions"
-        case filterValues = "filter_values"
-        case limit
-        case memberLimit = "member_limit"
-        case messageLimit = "message_limit"
-        case offset
-        case predefinedFilter = "predefined_filter"
-        case presence
-        case sort
-        case sortValues = "sort_values"
-        case state
-        case watch
-    }
-
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         if let filterConditions {
             try container.encode(filterConditions, forKey: .filterConditions)
         }

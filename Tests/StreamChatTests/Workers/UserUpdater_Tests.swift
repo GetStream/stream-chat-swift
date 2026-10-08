@@ -498,4 +498,75 @@ final class UserUpdater_Tests: XCTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+
+    // MARK: - Block / unblock database effects
+
+    func test_blockUser_whenSucceeds_savesBlockedUserIdAndHidesDirectMessageChannel() throws {
+        let currentUserId: UserId = .unique
+        let blockedUserId: UserId = .unique
+        let directMessageCid = ChannelId(type: .messaging, id: "!members-\(String.unique)")
+        let groupCid: ChannelId = .unique
+        try database.createCurrentUser(id: currentUserId)
+        try saveChannel(cid: directMessageCid, memberIds: [currentUserId, blockedUserId])
+        try saveChannel(cid: groupCid, memberIds: [currentUserId, blockedUserId, .unique])
+
+        apiClient.test_mockResponseResult(
+            Result<BlockUsersResponse, Error>.success(
+                BlockUsersResponse(blockedByUserId: currentUserId, blockedUserId: blockedUserId, createdAt: .unique)
+            )
+        )
+        let error = try waitFor { userUpdater.blockUser(blockedUserId, completion: $0) }
+
+        XCTAssertNil(error)
+        let blockedUserIds = try database.readSynchronously { $0.currentUser?.blockedUserIds }
+        XCTAssertEqual(blockedUserIds, [blockedUserId])
+        XCTAssertEqual(try channelState(cid: directMessageCid), ChannelState(isBlocked: true, isHidden: true))
+        XCTAssertEqual(try channelState(cid: groupCid), ChannelState(isBlocked: false, isHidden: false))
+    }
+
+    func test_unblockUser_whenSucceeds_removesBlockedUserIdAndShowsDirectMessageChannel() throws {
+        let currentUserId: UserId = .unique
+        let blockedUserId: UserId = .unique
+        let directMessageCid = ChannelId(type: .messaging, id: "!members-\(String.unique)")
+        try database.createCurrentUser(id: currentUserId)
+        try saveChannel(cid: directMessageCid, memberIds: [currentUserId, blockedUserId])
+        try database.writeSynchronously { session in
+            session.currentUser?.blockedUserIds = [blockedUserId]
+            let channel = try XCTUnwrap(session.channel(cid: directMessageCid))
+            channel.isBlocked = true
+            channel.isHidden = true
+        }
+
+        apiClient.test_mockResponseResult(Result<UnblockUsersResponse, Error>.success(.init()))
+        let error = try waitFor { userUpdater.unblockUser(blockedUserId, completion: $0) }
+
+        XCTAssertNil(error)
+        let blockedUserIds = try database.readSynchronously { $0.currentUser?.blockedUserIds }
+        XCTAssertEqual(blockedUserIds, [])
+        XCTAssertEqual(try channelState(cid: directMessageCid), ChannelState(isBlocked: false, isHidden: false))
+    }
+
+    // MARK: - Helpers
+
+    private struct ChannelState: Equatable, Sendable {
+        let isBlocked: Bool
+        let isHidden: Bool
+    }
+
+    private func channelState(cid: ChannelId) throws -> ChannelState? {
+        try database.readSynchronously { session in
+            session.channel(cid: cid).map { ChannelState(isBlocked: $0.isBlocked, isHidden: $0.isHidden) }
+        }
+    }
+
+    private func saveChannel(cid: ChannelId, memberIds: [UserId]) throws {
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(cid: cid),
+                    members: memberIds.map { .dummy(user: .dummy(userId: $0)) }
+                )
+            )
+        }
+    }
 }

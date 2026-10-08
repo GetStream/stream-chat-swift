@@ -34,13 +34,14 @@ final class ChannelGetOrCreateRequest: Sendable, Encodable, JSONEncodable {
         self.watchers = watchers
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case data
-        case members
-        case messages
-        case presence
-        case state
-        case watch
-        case watchers
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(data, forKey: .data)
+        try container.encodeIfPresent(members, forKey: .members)
+        try container.encodeIfPresent(messages, forKey: .messages)
+        try container.encodeIfPresent(presence, forKey: .presence)
+        try container.encodeIfPresent(state, forKey: .state)
+        try container.encodeIfPresent(watch, forKey: .watch)
+        try container.encodeIfPresent(watchers, forKey: .watchers)
     }
 }

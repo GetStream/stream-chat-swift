@@ -26,15 +26,8 @@ final class GroupedChannelsBucket: Sendable, Decodable {
         self.unreadChannels = unreadChannels
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channels
-        case next
-        case prev
-        case unreadChannels = "unread_channels"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         channels = try container.decodeArrayIgnoringFailures(
             [ChannelStateResponse].self,
             forKey: .channels

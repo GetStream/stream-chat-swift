@@ -51,17 +51,24 @@ final class MessageNewEventDTO: Sendable, Event, Decodable {
         self.watcherCount = watcherCount
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelMessageCount = "channel_message_count"
-        case cid
-        case createdAt = "created_at"
-        case groupedUnreadChannels = "grouped_unread_channels"
-        case message
-        case totalUnreadCount = "total_unread_count"
-        case type
-        case unreadChannels = "unread_channels"
-        case user
-        case watcherCount = "watcher_count"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.channelMessageCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .channelMessageCount
+        )
+        self.cid = try container.decode(ChannelId.self, forKey: .cid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.groupedUnreadChannels = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .groupedUnreadChannels
+        )
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        self.watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
     }
 }

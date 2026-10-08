@@ -48,11 +48,12 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
         self.removeDisable = removeDisable
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCid = "channel_cid"
-        case chatLevel = "chat_level"
-        case disabledUntil = "disabled_until"
-        case removeDisable = "remove_disable"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(channelCid, forKey: .channelCid)
+        try container.encodeIfPresent(chatLevel, forKey: .chatLevel)
+        try container.encodeIfPresent(disabledUntil, forKey: .disabledUntil)
+        try container.encodeIfPresent(removeDisable, forKey: .removeDisable)
     }
 }
 

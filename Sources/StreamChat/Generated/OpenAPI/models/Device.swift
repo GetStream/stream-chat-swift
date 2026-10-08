@@ -47,16 +47,30 @@ public final class Device: Sendable, Codable, JSONEncodable {
         self.voip = voip
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case disabled
-        case disabledReason = "disabled_reason"
-        case hardwareId = "hardware_id"
-        case id
-        case pushProvider = "push_provider"
-        case pushProviderName = "push_provider_name"
-        case userId = "user_id"
-        case voip
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        self.disabled = try container.decodeIfPresent(Bool.self, forKey: .disabled)
+        self.disabledReason = try container.decodeIfPresent(String.self, forKey: .disabledReason)
+        self.hardwareId = try container.decodeIfPresent(String.self, forKey: .hardwareId)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.pushProvider = try container.decode(String.self, forKey: .pushProvider)
+        self.pushProviderName = try container.decodeIfPresent(String.self, forKey: .pushProviderName)
+        self.userId = try container.decode(String.self, forKey: .userId)
+        self.voip = try container.decodeIfPresent(Bool.self, forKey: .voip)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(disabled, forKey: .disabled)
+        try container.encodeIfPresent(disabledReason, forKey: .disabledReason)
+        try container.encodeIfPresent(hardwareId, forKey: .hardwareId)
+        try container.encode(id, forKey: .id)
+        try container.encode(pushProvider, forKey: .pushProvider)
+        try container.encodeIfPresent(pushProviderName, forKey: .pushProviderName)
+        try container.encode(userId, forKey: .userId)
+        try container.encodeIfPresent(voip, forKey: .voip)
     }
 }
 

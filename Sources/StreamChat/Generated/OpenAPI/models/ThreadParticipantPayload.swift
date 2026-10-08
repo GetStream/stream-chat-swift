@@ -32,17 +32,8 @@ final class ThreadParticipantPayload: Sendable, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case custom
-        case lastReadAt = "last_read_at"
-        case threadId = "thread_id"
-        case user
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         channelCid = try container.decode(String.self, forKey: .channelCid)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]

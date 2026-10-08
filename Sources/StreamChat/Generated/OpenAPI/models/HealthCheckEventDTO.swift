@@ -22,10 +22,11 @@ final class HealthCheckEventDTO: Sendable, Event, Decodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case connectionId = "connection_id"
-        case createdAt = "created_at"
-        case me
-        case type
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.connectionId = try container.decode(String.self, forKey: .connectionId)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.me = try container.decodeIfPresent(OwnUserResponse.self, forKey: .me)
+        self.type = try container.decode(String.self, forKey: .type)
     }
 }

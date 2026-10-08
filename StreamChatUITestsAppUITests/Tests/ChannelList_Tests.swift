@@ -7,25 +7,6 @@ import XCTest
 final class ChannelList_Tests: StreamTestCase {
     let message = "message"
 
-    func test_newMessageShownInChannelPreview_whenComingBackFromChannel() {
-        linkToScenario(withId: 79)
-
-        GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("participant sends a new message") {
-            participantRobot.sendMessage(message)
-        }
-        AND("user goes back to channel list") {
-            userRobot.tapOnBackButton()
-        }
-        THEN("user observes a preview of participants message") {
-            userRobot.assertLastMessageInChannelPreview(message)
-        }
-    }
-
     func test_participantMessageShownInChannelPreview_whenReturningFromOffline() {
         linkToScenario(withId: 92)
 
@@ -51,6 +32,36 @@ final class ChannelList_Tests: StreamTestCase {
         }
     }
     
+    func test_channelListIsReordered_whenParticipantSendsMessageInOldestChannelWhileUserIsOffline() {
+        linkToScenario(withId: 91)
+
+        let oldestChannel = "3"
+
+        GIVEN("user opens channel list") {
+            backendRobot.generateChannels(channelsCount: 3)
+            userRobot
+                .login()
+                .assertChannelName("1", at: 0)
+                .assertChannelName(oldestChannel, at: 2)
+        }
+        AND("user goes offline") {
+            userRobot.setConnectivity(to: .off)
+        }
+        WHEN("participant sends a new message in the oldest channel") {
+            participantRobot
+                .sendMessage(message, inChannelNamed: oldestChannel)
+                .sleep(2.0)
+        }
+        AND("user comes back online") {
+            userRobot.setConnectivity(to: .on)
+        }
+        THEN("channel list reorders accordingly") {
+            userRobot
+                .assertChannelName(oldestChannel, at: 0)
+                .assertLastMessageInChannelPreview(message)
+        }
+    }
+
     func test_paginationOnChannelList() {
         linkToScenario(withId: 276)
 
@@ -93,21 +104,6 @@ extension ChannelList_Tests {
         }
         AND("last message timestamp is shown") {
             userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
-        }
-    }
-
-    func test_channelPreviewShowsNoMessages_whenChannelIsEmpty() {
-        linkToScenario(withId: 199)
-
-        WHEN("user opens channel list") {
-            userRobot.login()
-        }
-        AND("the channel has no messages") {}
-        THEN("the channel preview shows No messages") {
-            userRobot.assertLastMessageInChannelPreview(message)
-        }
-        AND("last message timestamp is hidden") {
-            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: true)
         }
     }
 

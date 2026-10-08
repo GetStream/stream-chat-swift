@@ -18,9 +18,10 @@ final class ReactionRequest: Sendable, Encodable, JSONEncodable {
         self.type = type
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case score
-        case type
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encodeIfPresent(score, forKey: .score)
+        try container.encode(type, forKey: .type)
     }
 }

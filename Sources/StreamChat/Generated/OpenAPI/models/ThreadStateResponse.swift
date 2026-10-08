@@ -79,29 +79,8 @@ final class ThreadStateResponse: Sendable, Decodable {
         self.updatedAt = updatedAt
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case activeParticipantCount = "active_participant_count"
-        case channel
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case createdBy = "created_by"
-        case createdByUserId = "created_by_user_id"
-        case custom
-        case draft
-        case lastMessageAt = "last_message_at"
-        case latestReplies = "latest_replies"
-        case parentMessage = "parent_message"
-        case parentMessageId = "parent_message_id"
-        case participantCount = "participant_count"
-        case read
-        case replyCount = "reply_count"
-        case threadParticipants = "thread_participants"
-        case title
-        case updatedAt = "updated_at"
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         activeParticipantCount = try container.decodeIfPresent(
             Int.self,
             forKey: .activeParticipantCount

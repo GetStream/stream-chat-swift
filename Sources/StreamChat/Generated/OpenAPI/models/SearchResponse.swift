@@ -15,8 +15,9 @@ final class SearchResponse: Sendable, Decodable {
         self.results = results
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case next
-        case results
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.next = try container.decodeIfPresent(String.self, forKey: .next)
+        self.results = try container.decode([SearchResult].self, forKey: .results)
     }
 }

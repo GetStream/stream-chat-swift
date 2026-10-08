@@ -33,6 +33,7 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
     /// An image view that displays the link image preview, or the link icon in case no image found.
     open private(set) lazy var imagePreviewView = UIImageView()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "imagePreviewView")
 
     /// The stack view that holds the divider, title and description of the link.
     open private(set) lazy var textContainerStackView = UIStackView()
@@ -50,15 +51,18 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
     open private(set) lazy var titleLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withAccessibilityIdentifier(identifier: "titleLabel")
 
     /// The label that displays the description of the link.
     open private(set) lazy var descriptionLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withAccessibilityIdentifier(identifier: "descriptionLabel")
 
     /// The button that closes the link preview view.
     open private(set) lazy var closeButton = UIButton()
         .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "closeButton")
 
     /// The width of the divider.
     open var dividerWidth: CGFloat {

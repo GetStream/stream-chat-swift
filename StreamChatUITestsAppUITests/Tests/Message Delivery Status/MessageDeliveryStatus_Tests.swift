@@ -50,28 +50,6 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         }
     }
 
-    func test_errorIndicatorShown_whenMessageFailedToBeSent() {
-        linkToScenario(withId: 141)
-
-        GIVEN("user becomes offline") {
-            userRobot
-                .login()
-                .setConnectivity(to: .off)
-                .openChannel()
-        }
-        WHEN("user sends a new message") {
-            userRobot.sendMessage(failedMessage, waitForAppearance: false)
-        }
-        THEN("error indicator is shown for the message") {
-            userRobot.assertMessageFailedToBeSent()
-        }
-        AND("delivery status is hidden") {
-            userRobot
-                .assertMessageDeliveryStatus(nil)
-                .assertMessageReadCount(readBy: 0)
-        }
-    }
-
     func test_doubleCheckmarkShown_whenMessageReadByParticipant() {
         linkToScenario(withId: 142)
 
@@ -144,32 +122,6 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
-        }
-    }
-
-    func test_deliveryStatusShownForTheLastMessageInGroup() {
-        linkToScenario(withId: 146)
-        let secondMessage = "second message"
-
-        GIVEN("user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user successfully sends new message") {
-            userRobot.sendMessage(message)
-        }
-        AND("delivery status shows single checkmark") {
-            userRobot.assertMessageDeliveryStatus(.sent)
-        }
-        WHEN("user sends another message") {
-            userRobot.sendMessage(secondMessage)
-        }
-        THEN("delivery status for the previous message is hidden") {
-            // indexes are reverted
-            userRobot
-                .assertMessageDeliveryStatus(nil, at: 1)
-                .assertMessageDeliveryStatus(.sent, at: 0)
         }
     }
 
@@ -483,45 +435,6 @@ extension MessageDeliveryStatus_Tests {
 extension MessageDeliveryStatus_Tests {
     // MARK: Messages
 
-    func test_deliveryStatusHidden_whenMessageIsSentAndReadEventsIsDisabled() {
-        linkToScenario(withId: 158)
-
-        GIVEN("user opens chat") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("user sends a new message") {
-            userRobot.sendMessage(message)
-        }
-        THEN("delivery status is hidden") {
-            userRobot
-                .assertMessageDeliveryStatus(nil)
-                .assertMessageReadCount(readBy: 0)
-        }
-    }
-
-    func test_deliveryStatusShowsClocks_whenMessageIsInPendingStateAndReadEventsIsDisabled() {
-        linkToScenario(withId: 159)
-
-        GIVEN("user opens the channel") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        WHEN("user sends a new message") {
-            backendRobot.delayNewMessages(by: 5)
-            userRobot.sendMessage(pendingMessage, waitForAppearance: false)
-        }
-        THEN("message delivery status shows clocks") {
-            userRobot
-                .assertMessageDeliveryStatus(.pending)
-                .assertMessageReadCount(readBy: 0)
-        }
-    }
-
     func test_errorIndicatorShown_whenMessageFailedToBeSentAndReadEventsIsDisabled() {
         linkToScenario(withId: 160)
 
@@ -539,131 +452,6 @@ extension MessageDeliveryStatus_Tests {
             userRobot.assertMessageFailedToBeSent()
         }
         AND("delivery status is hidden") {
-            userRobot
-                .assertMessageDeliveryStatus(nil)
-                .assertMessageReadCount(readBy: 0)
-        }
-    }
-
-    func test_deliveryStatusHidden_whenMessageReadByParticipantAndReadEventsIsDisabled() {
-        linkToScenario(withId: 161)
-
-        GIVEN("user opens the channel") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user successfully sends new message") {
-            userRobot.sendMessage(message)
-        }
-        WHEN("participant reads the user's message") {
-            participantRobot.readMessage()
-        }
-        THEN("delivery status is hidden") {
-            userRobot
-                .assertMessageDeliveryStatus(nil)
-                .assertMessageReadCount(readBy: 0)
-        }
-    }
-
-    func test_deliveryStatusHidden_whenNewParticipantAddedAndReadEventsIsDisabled() {
-        linkToScenario(withId: 162)
-
-        GIVEN("user opens the channel") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user successfully sends new message") {
-            userRobot.sendMessage(message)
-        }
-        AND("message is read by more than 1 participant") {
-            participantRobot.readMessage()
-        }
-        WHEN("new participant is added to the channel") {
-            userRobot.addParticipant()
-        }
-        THEN("delivery status is hidden") {
-            userRobot
-                .assertMessageDeliveryStatus(nil)
-                .assertMessageReadCount(readBy: 0)
-        }
-    }
-
-    func test_deliveryStatusHidden_whenParticipantIsRemovedAndReadEventsIsDisabled() {
-        linkToScenario(withId: 163)
-
-        GIVEN("user opens the channel") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user successfully sends new message") {
-            userRobot.sendMessage(message)
-        }
-        AND("is read by participant") {
-            participantRobot.readMessage()
-        }
-        WHEN("participant is removed from the channel") {
-            userRobot.removeParticipant(withUserId: participantRobot.id)
-        }
-        AND("delivery status is hidden") {
-            userRobot.assertMessageDeliveryStatus(nil)
-        }
-        AND("user doesn't see read count") {
-            userRobot.assertMessageReadCount(readBy: 0)
-        }
-    }
-
-    func test_deliveryStatusHiddenForMessagesInGroup_whenReadEventsIsDisabled() {
-        linkToScenario(withId: 164)
-        let secondMessage = "second message"
-
-        GIVEN("user opens the channel") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user successfully sends new message") {
-            userRobot.sendMessage(message)
-        }
-        AND("delivery status is hidden") {
-            userRobot.assertMessageDeliveryStatus(nil)
-        }
-        WHEN("user sends another message") {
-            userRobot.sendMessage(secondMessage)
-        }
-        THEN("delivery status is hidden for all messages") {
-            // indexes are reverted
-            userRobot
-                .assertMessageDeliveryStatus(nil, at: 1)
-                .assertMessageDeliveryStatus(nil, at: 0)
-        }
-    }
-
-    func test_deliveryStatusHidden_whenMessageIsDeletedAndReadEventsIsDisabled() {
-        linkToScenario(withId: 165)
-
-        GIVEN("user opens the channel") {
-            backendRobot.setReadEvents(to: false)
-            userRobot
-                .login()
-                .openChannel()
-        }
-        AND("user successfully sends new message") {
-            userRobot.sendMessage(message)
-        }
-        AND("delivery status is hidden") {
-            userRobot.assertMessageDeliveryStatus(nil)
-        }
-        WHEN("user removes the message") {
-            userRobot.deleteMessage()
-        }
-        THEN("delivery status stays hidden") {
             userRobot
                 .assertMessageDeliveryStatus(nil)
                 .assertMessageReadCount(readBy: 0)

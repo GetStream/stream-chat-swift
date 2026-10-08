@@ -18,9 +18,10 @@ final class TruncateChannelRequest: Sendable, Encodable, JSONEncodable {
         self.skipPush = skipPush
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case hardDelete = "hard_delete"
-        case message
-        case skipPush = "skip_push"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(hardDelete, forKey: .hardDelete)
+        try container.encodeIfPresent(message, forKey: .message)
+        try container.encodeIfPresent(skipPush, forKey: .skipPush)
     }
 }

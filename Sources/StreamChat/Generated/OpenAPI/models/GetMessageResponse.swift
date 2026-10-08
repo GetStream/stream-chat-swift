@@ -13,7 +13,8 @@ final class GetMessageResponse: Sendable, Decodable {
         self.message = message
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case message
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.message = try container.decode(MessageWithChannelResponse.self, forKey: .message)
     }
 }
