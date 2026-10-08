@@ -116,7 +116,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_saveCurrentUser_fullUserResponse_isStoredAndLoadedFromDB() throws {
-        let device = Device(id: .unique, pushProvider: "apn", userId: .unique)
+        let device = Device(createdAt: .unique, id: .unique, pushProvider: "apn", userId: .unique)
         let payload = FullUserResponse.dummy(
             userId: .unique,
             teamsRole: ["ios": .guest],
