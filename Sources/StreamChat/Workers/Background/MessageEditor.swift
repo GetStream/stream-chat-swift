@@ -21,15 +21,17 @@ import Foundation
 class MessageEditor: Worker, @unchecked Sendable {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
 
-    private let observer: StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>
+    private let observer: StateLayerDatabaseObserver<ListResult, MessageId, MessageDTO>
     private let messageRepository: MessageRepository
     private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
     private let continuationsQueue = DispatchQueue(label: "co.getStream.ChatClient.MessageEditor")
 
     init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
         observer = StateLayerDatabaseObserver(
-            context: database.backgroundReadOnlyContext,
-            fetchRequest: MessageDTO.messagesPendingSyncFetchRequest()
+            database: database,
+            fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
+            itemCreator: { $0.id },
+            itemReuseKeyPaths: nil
         )
         self.messageRepository = messageRepository
         super.init(database: database, apiClient: apiClient)
@@ -51,7 +53,7 @@ class MessageEditor: Worker, @unchecked Sendable {
         }
     }
 
-    private func handleChanges(changes: [ListChange<MessageDTO>]) {
+    private func handleChanges(changes: [ListChange<MessageId>]) {
         guard !changes.isEmpty else { return }
 
         var wasEmpty: Bool = false
@@ -116,12 +118,12 @@ class MessageEditor: Worker, @unchecked Sendable {
     }
 }
 
-private extension Array where Element == ListChange<MessageDTO> {
+private extension Array where Element == ListChange<MessageId> {
     var pendingEditMessageIDs: [MessageId] {
         compactMap {
             switch $0 {
-            case let .insert(dto, _), let .update(dto, _):
-                return dto.id
+            case let .insert(messageId, _), let .update(messageId, _):
+                return messageId
             case .move, .remove:
                 return nil
             }

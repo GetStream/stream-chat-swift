@@ -12,11 +12,34 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
-    @Atomic var updateChannel_payload: ChannelEditDetailPayload?
+    typealias ChannelUpdateArguments = (
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON]
+    )
+
+    typealias FullChannelUpdateArguments = (
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
+        extraData: [String: RawJSON]
+    )
+
+    @Atomic var updateChannel_arguments: FullChannelUpdateArguments?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
     @Atomic var updateChannel_completion_result: Result<Void, Error>?
 
-    @Atomic var partialChannelUpdate_updates: ChannelEditDetailPayload?
+    @Atomic var partialChannelUpdate_arguments: ChannelUpdateArguments?
     @Atomic var partialChannelUpdate_unsetProperties: [String]?
     @Atomic var partialChannelUpdate_completion: ((Error?) -> Void)?
     @Atomic var partialChannelUpdate_completion_result: Result<Void, Error>?
@@ -179,11 +202,11 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_onChannelCreated = nil
         update_completion = nil
 
-        updateChannel_payload = nil
+        updateChannel_arguments = nil
         updateChannel_completion = nil
         updateChannel_completion_result = nil
 
-        partialChannelUpdate_updates = nil
+        partialChannelUpdate_arguments = nil
         partialChannelUpdate_unsetProperties = nil
         partialChannelUpdate_completion = nil
         partialChannelUpdate_completion_result = nil
@@ -353,14 +376,36 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_callCount += 1
     }
 
-    override func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
-        updateChannel_payload = channelPayload
+    override func updateChannel(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
+        extraData: [String: RawJSON],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        updateChannel_arguments = (cid, name, imageURL, team, members, invites, filterTags, autoTranslationLanguages, extraData)
         updateChannel_completion = completion
         updateChannel_completion_result?.invoke(with: completion)
     }
 
-    override func partialChannelUpdate(updates: ChannelEditDetailPayload, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
-        partialChannelUpdate_updates = updates
+    override func partialChannelUpdate(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON],
+        unsetProperties: [String],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        partialChannelUpdate_arguments = (cid, name, imageURL, team, members, invites, filterTags, extraData)
         partialChannelUpdate_unsetProperties = unsetProperties
         partialChannelUpdate_completion = completion
         partialChannelUpdate_completion_result?.invoke(with: completion)

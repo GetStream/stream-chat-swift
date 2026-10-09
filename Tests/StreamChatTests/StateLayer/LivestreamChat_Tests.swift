@@ -846,17 +846,7 @@ private extension LivestreamChat_Tests {
     }
 
     func makeChannelQueryWithoutCid() -> ChannelQuery {
-        let payload = ChannelEditDetailPayload(
-            type: .messaging,
-            name: nil,
-            imageURL: nil,
-            team: nil,
-            members: [],
-            invites: [],
-            filterTags: [],
-            extraData: [:]
-        )
-        return ChannelQuery(channelPayload: payload)
+        ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput())
     }
 
     func makeLivestreamChatWithoutCid() -> LivestreamChat {

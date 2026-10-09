@@ -1544,6 +1544,7 @@ final class Chat_Tests: XCTestCase {
         let members: Set<UserId> = [.unique, .unique]
         let invites: Set<UserId> = [.unique]
         let filterTags: Set<String> = ["tag1", "tag2"]
+        let autoTranslationLanguages: Set<TranslationLanguage> = [.english, .french]
         let extraData: [String: RawJSON] = ["custom": .string("value")]
         
         try await chat.update(
@@ -1553,17 +1554,19 @@ final class Chat_Tests: XCTestCase {
             members: members,
             invites: invites,
             filterTags: filterTags,
+            autoTranslationLanguages: autoTranslationLanguages,
             extraData: extraData
         )
         
-        let payload = try XCTUnwrap(env.channelUpdaterMock.updateChannel_payload)
-        XCTAssertEqual(payload.name, name)
-        XCTAssertEqual(payload.imageURL, imageURL)
-        XCTAssertEqual(payload.team, team)
-        XCTAssertEqual(payload.members, members)
-        XCTAssertEqual(payload.invites, invites)
-        XCTAssertEqual(payload.filterTags, filterTags)
-        XCTAssertEqual(payload.extraData, extraData)
+        let arguments = try XCTUnwrap(env.channelUpdaterMock.updateChannel_arguments)
+        XCTAssertEqual(arguments.name, name)
+        XCTAssertEqual(arguments.imageURL, imageURL)
+        XCTAssertEqual(arguments.team, team)
+        XCTAssertEqual(arguments.members, members)
+        XCTAssertEqual(arguments.invites, invites)
+        XCTAssertEqual(arguments.filterTags, filterTags)
+        XCTAssertEqual(arguments.autoTranslationLanguages, autoTranslationLanguages)
+        XCTAssertEqual(arguments.extraData, extraData)
     }
     
     func test_update_whenChannelUpdaterFails_thenUpdateFails() async throws {
@@ -1605,14 +1608,14 @@ final class Chat_Tests: XCTestCase {
             unsetProperties: unsetProperties
         )
         
-        let payload = try XCTUnwrap(env.channelUpdaterMock.partialChannelUpdate_updates)
-        XCTAssertEqual(payload.name, name)
-        XCTAssertEqual(payload.imageURL, imageURL)
-        XCTAssertEqual(payload.team, team)
-        XCTAssertEqual(payload.members, Set(members))
-        XCTAssertEqual(payload.invites, Set(invites))
-        XCTAssertEqual(payload.filterTags, filterTags)
-        XCTAssertEqual(payload.extraData, extraData)
+        let arguments = try XCTUnwrap(env.channelUpdaterMock.partialChannelUpdate_arguments)
+        XCTAssertEqual(arguments.name, name)
+        XCTAssertEqual(arguments.imageURL, imageURL)
+        XCTAssertEqual(arguments.team, team)
+        XCTAssertEqual(arguments.members, Set(members))
+        XCTAssertEqual(arguments.invites, Set(invites))
+        XCTAssertEqual(arguments.filterTags, filterTags)
+        XCTAssertEqual(arguments.extraData, extraData)
         XCTAssertEqual(env.channelUpdaterMock.partialChannelUpdate_unsetProperties, unsetProperties)
     }
     
