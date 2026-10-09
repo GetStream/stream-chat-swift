@@ -9,6 +9,20 @@ enum DemoScheduledDateFormatter {
         "\(dayString(from: date, now: now, calendar: calendar)) at \(timeString(from: date))"
     }
 
+    static func separatorString(from date: Date, now: Date = Date(), calendar: Calendar = .current) -> String {
+        if calendar.isDate(date, inSameDayAs: now) {
+            return "Scheduled for today"
+        }
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now), calendar.isDate(date, inSameDayAs: tomorrow) {
+            return "Scheduled for tomorrow"
+        }
+
+        let formatter = DateFormatter()
+        let isSameYear = calendar.isDate(date, equalTo: now, toGranularity: .year)
+        formatter.setLocalizedDateFormatFromTemplate(isSameYear ? "MMMMd" : "MMMMdy")
+        return "Scheduled for \(formatter.string(from: date))"
+    }
+
     static func timeString(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .none

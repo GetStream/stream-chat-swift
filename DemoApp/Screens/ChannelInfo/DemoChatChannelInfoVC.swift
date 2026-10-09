@@ -24,6 +24,7 @@ final class DemoChatChannelInfoVC: UIViewController,
 
     private enum Item {
         case pinnedMessages
+        case scheduledMessages
         case media
         case files
         case member(DemoParticipantInfo)
@@ -192,7 +193,12 @@ final class DemoChatChannelInfoVC: UIViewController,
     private func updateSections() {
         var sections: [(section: Section, items: [Item])] = []
 
-        sections.append((.options, [.pinnedMessages, .media, .files]))
+        var optionItems: [Item] = [.pinnedMessages]
+        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled, channel?.canScheduleMessage == true {
+            optionItems.append(.scheduledMessages)
+        }
+        optionItems += [.media, .files]
+        sections.append((.options, optionItems))
 
         if !showsSingleMemberDMView {
             var memberItems = displayedParticipants.map { Item.member($0) }
@@ -379,6 +385,11 @@ final class DemoChatChannelInfoVC: UIViewController,
         navigationController?.pushViewController(pinnedMessagesVC, animated: true)
     }
 
+    private func showScheduledMessages() {
+        let scheduledMessagesVC = DemoChannelScheduledMessagesVC(channelController: channelController)
+        navigationController?.pushViewController(scheduledMessagesVC, animated: true)
+    }
+
     private func showMediaAttachments() {
         guard let channel else { return }
 
@@ -559,6 +570,11 @@ final class DemoChatChannelInfoVC: UIViewController,
             cell.configure(icon: appearance.images.pin, title: "Pinned Messages", accessory: .disclosure)
             return cell
 
+        case .scheduledMessages:
+            let cell = dequeueItemCell(at: indexPath)
+            cell.configure(icon: UIImage(systemName: "clock"), title: "Scheduled Messages", accessory: .disclosure)
+            return cell
+
         case .media:
             let cell = dequeueItemCell(at: indexPath)
             cell.configure(icon: appearance.images.imagePlaceholder, title: "Photos & Videos", accessory: .disclosure)
@@ -656,6 +672,8 @@ final class DemoChatChannelInfoVC: UIViewController,
         switch sections[indexPath.section].items[indexPath.row] {
         case .pinnedMessages:
             showPinnedMessages()
+        case .scheduledMessages:
+            showScheduledMessages()
         case .media:
             showMediaAttachments()
         case .files:
