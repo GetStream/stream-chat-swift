@@ -67,7 +67,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
            let cid = channelController?.cid,
            let messages = scheduledMessageListController?.scheduledMessages {
             let parentId = content.threadMessage?.id
-            count = messages.filter { $0.isPending && $0.cid == cid && $0.parentMessageId == parentId }.count
+            count = messages.filter { $0.isPending && $0.cid == cid && $0.message.parentMessageId == parentId }.count
             let place = parentId == nil ? "channel" : "thread"
             scheduledMessagesBannerView.title = "\(count) scheduled message\(count == 1 ? "" : "s") in this \(place) · View all"
         }
@@ -335,7 +335,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             command: nil,
             extraData: editingContent.extraData,
             cooldownTime: content.cooldownTime,
-            showReplyInChannel: message.showReplyInChannel
+            showReplyInChannel: message.message.showReplyInChannel
         )
     }
 
@@ -369,13 +369,13 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
 private extension DemoScheduledMessageContent {
     init(_ message: ScheduledMessage) {
         self.init(
-            text: message.text,
-            attachments: message.attachments.toAnyAttachmentPayload(),
-            mentionedUserIds: message.mentionedUserIds,
+            text: message.message.text,
+            attachments: message.message.allAttachments.toAnyAttachmentPayload(),
+            mentionedUserIds: message.message.mentionedUsers.map(\.id),
             quotedMessageId: message.quotedMessageId,
-            parentId: message.parentMessageId,
-            showReplyInChannel: message.showReplyInChannel,
-            extraData: message.extraData
+            parentId: message.message.parentMessageId,
+            showReplyInChannel: message.message.showReplyInChannel,
+            extraData: message.message.extraData
         )
     }
 }

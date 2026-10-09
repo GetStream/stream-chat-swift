@@ -158,7 +158,7 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMess
     private func openConversation(editing message: ScheduledMessage) {
         let channelController = client.channelController(for: message.cid, messageOrdering: .topToBottom)
 
-        if let parentId = message.parentMessageId {
+        if let parentId = message.message.parentMessageId {
             let threadVC = DemoChatThreadVC()
             threadVC.channelController = channelController
             threadVC.messageController = client.messageController(cid: message.cid, messageId: parentId)
@@ -340,7 +340,7 @@ class DemoScheduledMessageCell: UITableViewCell {
             )
         } ?? message.cid.id
 
-        if message.parentMessageId != nil {
+        if message.message.parentMessageId != nil {
             channelNameLabel.text = "Thread in # \(channelName)"
         } else {
             channelNameLabel.text = "# \(channelName)"
@@ -358,9 +358,9 @@ class DemoScheduledMessageCell: UITableViewCell {
             statusLabel.textColor = colors.accentError
         }
 
-        let attachmentsCount = message.attachments.count
-        if !message.text.isEmpty {
-            messageLabel.text = message.text
+        let attachmentsCount = message.message.allAttachments.count
+        if !message.message.text.isEmpty {
+            messageLabel.text = message.message.text
         } else if attachmentsCount > 0 {
             messageLabel.text = "📎 \(attachmentsCount) attachment\(attachmentsCount == 1 ? "" : "s")"
         } else {
