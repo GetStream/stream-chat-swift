@@ -118,7 +118,21 @@ optionalize_property() {
     s/^(    let \Q$p\E: [^?\n]+)$/$1?/m;
     s/([(,]\s*)\Q$p\E: ([^,)\n]+)(?=[,)])/${1}$p: $2? = nil/;
     s/^(        self\.\Q$p\E = try container\.)decode\(/${1}decodeIfPresent(/m;
+    s/^(        self\.\Q$p\E = try container\.)decodeArrayIgnoringFailures\(/${1}decodeArrayIfPresentIgnoringFailures(/m;
     s/^(        try container\.)encode\(\Q$p\E, /${1}encodeIfPresent($p, /m;
+  ' "$file"
+}
+
+# Decode a required generated property with a fallback when its key is missing or null.
+#     The property stays non-optional; only its init(from:) line changes. Fails when the
+#     line isn't a required decode, so a spec change can't silently drop a default.
+property_fallback_value() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  M="$1" P="$2" D="$3" perl -0777 -pi -e '
+    my ($m, $p, $d) = ($ENV{M}, $ENV{P}, $ENV{D});
+    s/^(        self\.\Q$p\E = try container\.)decode\((.*)\)$/${1}decodeIfPresent($2) ?? $d/m
+      or s/^(        self\.\Q$p\E = try container\.)decodeArrayIgnoringFailures\((.*)\)$/${1}decodeArrayIfPresentIgnoringFailures($2) ?? $d/m
+      or die "property_fallback_value: $m.$p has no required decode line\n";
   ' "$file"
 }
 
@@ -314,7 +328,7 @@ remove_property() {
       s ~ "^private let _" p ": "        { n = 0; next }
       s ~ "^var " p ": .* \\{ _" p " \\}$" { n = 0; next }
       s ~ "^self\\._?" p " = " p "$"     { next }
-      s ~ "^self\\._?" p " = try container\\.decode(IfPresent)?\\(.*, forKey: \\." p "\\)$" { next }
+      s ~ "^self\\._?" p " = try container\\.decode(IfPresent|ArrayIgnoringFailures|ArrayIfPresentIgnoringFailures)?\\(.*, forKey: \\." p "\\)$" { next }
       s ~ "^lhs\\._?" p " == rhs\\._?" p "( &&)?$" { next }
       s ~ "^hasher\\.combine\\(_?" p "\\)$"    { next }
       s ~ "^try container\\.encode(IfPresent)?\\(_?" p ", forKey: \\." p "\\)$" { next }
@@ -366,14 +380,9 @@ rename_generated_type() {
 }
 
 # Rename a generated property. The coders keep `forKey: .old`: StringCodingKey names
-#     follow the wire key, not the property. A Sourcery source is refused: the stencil
-#     keys every property by its name, so `new` would decode the wrong key.
+#     follow the wire key, not the property.
 rename_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  if grep -q "/$1\.swift$" "$SOURCERY_CONFIG"; then
-    echo "rename_property: $1 is a Sourcery source; its stencil decoder would key $3 by name, not by the wire key" >&2
-    exit 1
-  fi
   O="$2" N="$3" perl -0777 -pi -e '
     my ($o, $n) = ($ENV{O}, $ENV{N});
     s/^(\s*(?:public )?let )\Q$o\E:/$1$n:/mg;
@@ -393,6 +402,7 @@ require_property() {
     s/^(    let \Q$p\E: [^\n]+)\?$/$1/m;
     s/([(,]\s*)\Q$p\E: ([^,)\n]+?)\? = nil(?=[,)])/${1}$p: $2/;
     s/^(        self\.\Q$p\E = try container\.)decodeIfPresent\(/${1}decode(/m;
+    s/^(        self\.\Q$p\E = try container\.)decodeArrayIfPresentIgnoringFailures\(/${1}decodeArrayIgnoringFailures(/m;
     s/^(        try container\.)encodeIfPresent\(\Q$p\E, /${1}encode($p, /m;
   ' "$file"
 }
@@ -415,7 +425,7 @@ retype_property() {
   P="$2" O="$3" N="$4" perl -0777 -pi -e '
     my ($p, $o, $n) = ($ENV{P}, $ENV{O}, $ENV{N});
     s/(?<!\w)\Q$p\E: \Q$o\E(?!\w)/$p: $n/g;
-    s/^(        self\.\Q$p\E = try container\.decode(?:IfPresent)?\()\Q$o\E\.self/$1$n.self/m;
+    s/^(        self\.\Q$p\E = try container\.decode(?:IfPresent|ArrayIgnoringFailures|ArrayIfPresentIgnoringFailures)?\()\Q$o\E\.self/$1$n.self/m;
   ' "$file"
 }
 
@@ -424,38 +434,6 @@ shape_wsevent() {
   sed -i '' -E 's/^enum WSEvent: Codable, Hashable \{[[:space:]]*$/enum WSEvent: Codable {/' "$file"
   sed -i '' -E 's/^    var rawValue: Event \{[[:space:]]*$/    var rawValue: EventDTO {/' "$file"
   perl -0777 -pi -e 's/\n    func encode\(to encoder: Encoder\) throws \{\n.*?\n    \}\n//s' "$file"
-}
-
-# Generate a lenient `init(from:)` and splice it into the model's class body, where a
-# `required` initializer is allowed. It replaces any `init(from:)` the generator
-# emitted itself (e.g. for models with deprecated fields).
-splice_generated_decoders() {
-  local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
-  python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
-import pathlib
-import re
-import sys
-
-generated = pathlib.Path(sys.argv[1])
-models_dir = pathlib.Path(sys.argv[2])
-blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=re.M)
-
-for name, body in zip(blocks[1::2], blocks[2::2]):
-    path = models_dir / f"{name}.swift"
-    text = re.sub(
-        r"\n?^    (?:public )?(?:required )?init\(from decoder: Decoder\) throws \{\n.*?^    \}\n",
-        "",
-        path.read_text(),
-        count=1,
-        flags=re.M | re.S,
-    )
-    lines = text.splitlines(keepends=True)
-    closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
-    lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
-    path.write_text("".join(lines))
-
-generated.unlink()
-PY
 }
 
 # Strip the generated Hashable conformance from every model not in

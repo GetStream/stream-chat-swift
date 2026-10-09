@@ -18,6 +18,9 @@ final class SearchResponse: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.next = try container.decodeIfPresent(String.self, forKey: .next)
-        self.results = try container.decode([SearchResult].self, forKey: .results)
+        self.results = try container.decodeArrayIgnoringFailures(
+            [SearchResult].self,
+            forKey: .results
+        )
     }
 }

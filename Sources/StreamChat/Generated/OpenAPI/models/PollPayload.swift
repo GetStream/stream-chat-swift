@@ -102,15 +102,24 @@ final class PollPayload: Sendable, Decodable {
         self.enforceUniqueVote = try container.decode(Bool.self, forKey: .enforceUniqueVote)
         self.id = try container.decode(String.self, forKey: .id)
         self.isClosed = try container.decodeIfPresent(Bool.self, forKey: .isClosed)
-        self.latestAnswers = try container.decode([PollVotePayload].self, forKey: .latestAnswers)
+        self.latestAnswers = try container.decodeArrayIgnoringFailures(
+            [PollVotePayload].self,
+            forKey: .latestAnswers
+        )
         self.latestVotesByOption = try container.decode(
             [String: [PollVotePayload]].self,
             forKey: .latestVotesByOption
         )
         self.maxVotesAllowed = try container.decodeIfPresent(Int.self, forKey: .maxVotesAllowed)
         self.name = try container.decode(String.self, forKey: .name)
-        self.options = try container.decode([PollOptionPayload].self, forKey: .options)
-        self.ownVotes = try container.decode([PollVotePayload].self, forKey: .ownVotes)
+        self.options = try container.decodeArrayIgnoringFailures(
+            [PollOptionPayload].self,
+            forKey: .options
+        )
+        self.ownVotes = try container.decodeArrayIgnoringFailures(
+            [PollVotePayload].self,
+            forKey: .ownVotes
+        )
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         self.voteCount = try container.decode(Int.self, forKey: .voteCount)
         self.voteCountsByOption = try container.decode(

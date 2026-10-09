@@ -14,6 +14,9 @@ final class GetPinnedMessagesResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.messages = try container.decode([MessageResponse].self, forKey: .messages)
+        self.messages = try container.decodeArrayIgnoringFailures(
+            [MessageResponse].self,
+            forKey: .messages
+        )
     }
 }

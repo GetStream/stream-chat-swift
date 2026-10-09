@@ -78,6 +78,38 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         self.type = type
     }
 
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.actions = try container.decodeArrayIfPresentIgnoringFailures(
+            [AttachmentActionPayload].self,
+            forKey: .actions
+        )
+        self.assetUrl = try container.decodeIfPresent(String.self, forKey: .assetUrl)
+        self.authorIcon = try container.decodeIfPresent(String.self, forKey: .authorIcon)
+        self.authorLink = try container.decodeIfPresent(String.self, forKey: .authorLink)
+        self.authorName = try container.decodeIfPresent(String.self, forKey: .authorName)
+        self.color = try container.decodeIfPresent(String.self, forKey: .color)
+        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        self.fallback = try container.decodeIfPresent(String.self, forKey: .fallback)
+        self.fields = try container.decodeArrayIfPresentIgnoringFailures(
+            [AttachmentFieldPayload].self,
+            forKey: .fields
+        )
+        self.footer = try container.decodeIfPresent(String.self, forKey: .footer)
+        self.footerIcon = try container.decodeIfPresent(String.self, forKey: .footerIcon)
+        self.giphy = try container.decodeIfPresent(GiphyImages.self, forKey: .giphy)
+        self.imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        self.ogScrapeUrl = try container.decodeIfPresent(String.self, forKey: .ogScrapeUrl)
+        self.originalHeight = try container.decodeIfPresent(Int.self, forKey: .originalHeight)
+        self.originalWidth = try container.decodeIfPresent(Int.self, forKey: .originalWidth)
+        self.pretext = try container.decodeIfPresent(String.self, forKey: .pretext)
+        self.text = try container.decodeIfPresent(String.self, forKey: .text)
+        self.thumbUrl = try container.decodeIfPresent(String.self, forKey: .thumbUrl)
+        self.title = try container.decodeIfPresent(String.self, forKey: .title)
+        self.titleLink = try container.decodeIfPresent(String.self, forKey: .titleLink)
+        self.type = try container.decodeIfPresent(String.self, forKey: .type)
+    }
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encodeIfPresent(actions, forKey: .actions)
@@ -102,56 +134,5 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(titleLink, forKey: .titleLink)
         try container.encodeIfPresent(type, forKey: .type)
-    }
-
-    static let allKeys: Set<String> = [
-        StringCodingKey.actions.stringValue,
-        StringCodingKey.assetUrl.stringValue,
-        StringCodingKey.authorIcon.stringValue,
-        StringCodingKey.authorLink.stringValue,
-        StringCodingKey.authorName.stringValue,
-        StringCodingKey.color.stringValue,
-        StringCodingKey.custom.stringValue,
-        StringCodingKey.fallback.stringValue,
-        StringCodingKey.fields.stringValue,
-        StringCodingKey.footer.stringValue,
-        StringCodingKey.footerIcon.stringValue,
-        StringCodingKey.giphy.stringValue,
-        StringCodingKey.imageUrl.stringValue,
-        StringCodingKey.ogScrapeUrl.stringValue,
-        StringCodingKey.originalHeight.stringValue,
-        StringCodingKey.originalWidth.stringValue,
-        StringCodingKey.pretext.stringValue,
-        StringCodingKey.text.stringValue,
-        StringCodingKey.thumbUrl.stringValue,
-        StringCodingKey.title.stringValue,
-        StringCodingKey.titleLink.stringValue,
-        StringCodingKey.type.stringValue
-    ]
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: StringCodingKey.self)
-        actions = try container.decodeIfPresent([AttachmentActionPayload].self, forKey: .actions)
-        assetUrl = try container.decodeIfPresent(String.self, forKey: .assetUrl)
-        authorIcon = try container.decodeIfPresent(String.self, forKey: .authorIcon)
-        authorLink = try container.decodeIfPresent(String.self, forKey: .authorLink)
-        authorName = try container.decodeIfPresent(String.self, forKey: .authorName)
-        color = try container.decodeIfPresent(String.self, forKey: .color)
-        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        fallback = try container.decodeIfPresent(String.self, forKey: .fallback)
-        fields = try container.decodeIfPresent([AttachmentFieldPayload].self, forKey: .fields)
-        footer = try container.decodeIfPresent(String.self, forKey: .footer)
-        footerIcon = try container.decodeIfPresent(String.self, forKey: .footerIcon)
-        giphy = try container.decodeIfPresent(GiphyImages.self, forKey: .giphy)
-        imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
-        ogScrapeUrl = try container.decodeIfPresent(String.self, forKey: .ogScrapeUrl)
-        originalHeight = try container.decodeIfPresent(Int.self, forKey: .originalHeight)
-        originalWidth = try container.decodeIfPresent(Int.self, forKey: .originalWidth)
-        pretext = try container.decodeIfPresent(String.self, forKey: .pretext)
-        text = try container.decodeIfPresent(String.self, forKey: .text)
-        thumbUrl = try container.decodeIfPresent(String.self, forKey: .thumbUrl)
-        title = try container.decodeIfPresent(String.self, forKey: .title)
-        titleLink = try container.decodeIfPresent(String.self, forKey: .titleLink)
-        type = try container.decodeIfPresent(String.self, forKey: .type)
     }
 }

@@ -20,6 +20,9 @@ final class PollVoteListResponse: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.next = try container.decodeIfPresent(String.self, forKey: .next)
         self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
-        self.votes = try container.decode([PollVotePayload].self, forKey: .votes)
+        self.votes = try container.decodeArrayIgnoringFailures(
+            [PollVotePayload].self,
+            forKey: .votes
+        )
     }
 }
