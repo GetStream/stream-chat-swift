@@ -547,6 +547,7 @@
 		4F1C0DF12F7E00AA00C0FFEE /* Exceptions for "Sources" folder in "StreamChatLogsUI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"StreamChatLogsUI/LogEntry+Subsystem.swift",
 				"StreamChatLogsUI/LogViewer+StreamChat.swift",
 				StreamChatLogsUI/LogViewerDestination.swift,
 			);
@@ -1325,6 +1326,7 @@
 				"StreamChatCommonUI/Utils/UIColor+Extensions.swift",
 				"StreamChatCommonUI/Utils/UIFont+Extensions.swift",
 				"StreamChatCommonUI/Utils/UIImage+Extensions.swift",
+				"StreamChatLogsUI/LogEntry+Subsystem.swift",
 				"StreamChatLogsUI/LogViewer+StreamChat.swift",
 				StreamChatLogsUI/LogViewerDestination.swift,
 				StreamChatUI/AppearanceProvider.swift,
@@ -5580,8 +5582,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-logs-ui-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
+				kind = revision;
+				revision = b80fb6677b47ed0538c149d2400639103bc5452e;
 			};
 		};
 		4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */ = {

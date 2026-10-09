@@ -34,13 +34,13 @@ extension LogViewer {
     static func install(subsystems: [LogSubsystem], settings: LogSettings) {
         let consoleDestinationTypes = LogConfig.destinationTypes
         settings.availableLevels = [.debug, .info, .warning, .error]
-        settings.availableSubsystems = subsystems.map(\.description)
+        settings.availableSubsystems = subsystems.map(LogEntry.Subsystem.init)
         settings.setDefaults([
             LogDestinationSettings(
                 id: LogViewerDestination.consoleID,
                 name: "Console",
                 level: LogEntry.Level(LogConfig.level),
-                disabledSubsystems: Set(subsystems.filter { !LogConfig.subsystems.contains($0) }.map(\.description))
+                disabledSubsystems: Set(subsystems.filter { !LogConfig.subsystems.contains($0) }.map(LogEntry.Subsystem.init))
             ),
             LogDestinationSettings(id: LogViewerDestination.logViewerID, name: "Log Viewer", level: .debug)
         ])
@@ -53,7 +53,7 @@ extension LogViewer {
                 // Logs of subsystems that are not listed in the settings are only kept when none is disabled.
                 let logSubsystems = destination.disabledSubsystems.isEmpty
                     ? LogSubsystem.all
-                    : LogSubsystem(subsystems.filter { enabledSubsystems.contains($0.description) })
+                    : LogSubsystem(subsystems.filter { enabledSubsystems.contains(LogEntry.Subsystem($0)) })
                 return types.map { type in
                     type.init(
                         identifier: LogConfig.identifier,

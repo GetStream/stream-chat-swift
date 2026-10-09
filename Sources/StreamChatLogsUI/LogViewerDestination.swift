@@ -28,7 +28,7 @@ extension LogEntry {
         self.init(
             date: logDetails.date,
             level: Level(logDetails.level),
-            subsystems: LogSubsystem.allCases.filter { logDetails.subsystem.contains($0) }.map(\.description),
+            subsystems: LogSubsystem.allCases.filter { logDetails.subsystem.contains($0) }.map(LogEntry.Subsystem.init),
             threadName: logDetails.threadName,
             functionName: logDetails.functionName,
             fileName: logDetails.fileName,

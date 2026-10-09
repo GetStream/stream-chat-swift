@@ -44,7 +44,7 @@ final class LogViewerDestination_Tests: XCTestCase {
         let entry = try XCTUnwrap(InMemoryLogRecorder.shared.entries.last)
         XCTAssertEqual(entry.date, date)
         XCTAssertEqual(entry.level, .warning)
-        XCTAssertEqual(entry.subsystems, ["httpRequests"])
+        XCTAssertEqual(entry.subsystems, [.httpRequests])
         XCTAssertEqual(entry.message, "200 GET /users")
         XCTAssertEqual(entry.threadName, "main")
         XCTAssertEqual(entry.functionName, "request()")

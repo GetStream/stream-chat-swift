@@ -27,19 +27,25 @@ final class LogViewerInstall_Tests: XCTestCase {
         super.tearDown()
     }
 
+    func test_subsystem_usesTheLoggerName() {
+        XCTAssertEqual(LogEntry.Subsystem(.httpRequests), .httpRequests)
+        XCTAssertEqual(LogEntry.Subsystem(.audioPlayback).rawValue, "audio-playback")
+        XCTAssertEqual(LogEntry.Subsystem(.audioRecording).rawValue, "audio-recording")
+    }
+
     func test_install_withSharedSettings_listsStreamChatSubsystems() {
         LogSettings.shared.reset()
         LogViewer.install()
 
         XCTAssertEqual(LogSettings.shared.availableSubsystems, [
-            "other",
-            "database",
-            "httpRequests",
-            "webSocket",
-            "offlineSupport",
-            "authentication",
-            "audio-playback",
-            "audio-recording"
+            .other,
+            .database,
+            .httpRequests,
+            .webSocket,
+            .offlineSupport,
+            .authentication,
+            .audioPlayback,
+            .audioRecording
         ])
         XCTAssertTrue(LogConfig.destinations.contains { $0 is LogViewerDestination })
     }
@@ -48,9 +54,9 @@ final class LogViewerInstall_Tests: XCTestCase {
         LogViewer.install(subsystems: [.other, .httpRequests, .webSocket], settings: settings)
 
         XCTAssertEqual(settings.availableLevels, [.debug, .info, .warning, .error])
-        XCTAssertEqual(settings.availableSubsystems, ["other", "httpRequests", "webSocket"])
+        XCTAssertEqual(settings.availableSubsystems, [.other, .httpRequests, .webSocket])
         XCTAssertEqual(settings.destinations, [
-            LogDestinationSettings(id: "console", name: "Console", level: .warning, disabledSubsystems: ["other"]),
+            LogDestinationSettings(id: "console", name: "Console", level: .warning, disabledSubsystems: [.other]),
             LogDestinationSettings(id: "logViewer", name: "Log Viewer", level: .debug)
         ])
     }
@@ -88,7 +94,7 @@ final class LogViewerInstall_Tests: XCTestCase {
     func test_settingsChange_withDisabledSubsystem_keepsOnlyEnabledListedSubsystems() throws {
         LogViewer.install(subsystems: [.other, .httpRequests, .webSocket], settings: settings)
 
-        settings.destinations[1].disabledSubsystems = ["webSocket"]
+        settings.destinations[1].disabledSubsystems = [.webSocket]
 
         let logViewer = try XCTUnwrap(LogConfig.destinations.last as? LogViewerDestination)
         XCTAssertEqual(logViewer.subsystems, [.other, .httpRequests])
