@@ -13,7 +13,9 @@ class DemoComposerVC: ComposerVC {
     var componentsBeforeScheduledEditing: Components?
     var editingScheduledMessageObservation: AnyCancellable?
     var isSubmittingScheduledMessage = false
+    var scheduledMessagesObservation: AnyCancellable?
 
+    lazy var scheduledMessagesBannerView = DemoComposerBannerView()
     lazy var scheduledEditingBannerView = DemoComposerBannerView()
 
     override func setUp() {
@@ -21,6 +23,15 @@ class DemoComposerVC: ComposerVC {
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(sendButtonLongPressed(_:)))
         composerView.sendButton.addGestureRecognizer(longPress)
+
+        scheduledMessagesBannerView.isHidden = true
+        scheduledMessagesBannerView.onTap = { [weak self] in
+            (self?.tabBarController as? DemoAppTabBarController)?.showScheduledMessages()
+        }
+        scheduledMessagesObservation = DemoScheduledMessagesService.shared.$scheduledMessages
+            .sink { [weak self] messages in
+                self?.updateScheduledMessagesBanner(with: messages)
+            }
 
         scheduledEditingBannerView.isHidden = true
         scheduledEditingBannerView.onDismiss = { [weak self] in
@@ -32,6 +43,13 @@ class DemoComposerVC: ComposerVC {
         super.setUpLayout()
 
         composerView.container.insertArrangedSubview(scheduledEditingBannerView, at: 0)
+        composerView.container.insertArrangedSubview(scheduledMessagesBannerView, at: 0)
+    }
+
+    override func updateContent() {
+        super.updateContent()
+
+        updateScheduledMessagesBanner(with: DemoScheduledMessagesService.shared.scheduledMessages)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

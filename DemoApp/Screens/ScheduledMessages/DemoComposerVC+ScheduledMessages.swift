@@ -32,6 +32,23 @@ extension DemoComposerVC {
             && !hasProcessingAttachments
     }
 
+    // MARK: - Banner
+
+    func updateScheduledMessagesBanner(with messages: [DemoScheduledMessage]) {
+        var count = 0
+        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled, editingScheduledMessage == nil, let cid = channelController?.cid {
+            let parentId = content.threadMessage?.id
+            count = messages.filter { $0.isPending && $0.cid == cid && $0.content.parentId == parentId }.count
+            let place = parentId == nil ? "channel" : "thread"
+            scheduledMessagesBannerView.title = "\(count) scheduled message\(count == 1 ? "" : "s") in this \(place) · View all"
+        }
+
+        // The composer container relayouts on every `isHidden` change, and this runs on every keystroke.
+        if scheduledMessagesBannerView.isHidden != (count == 0) {
+            scheduledMessagesBannerView.isHidden = count == 0
+        }
+    }
+
     // MARK: - Scheduling
 
     func presentScheduleSheet() {

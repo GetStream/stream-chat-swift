@@ -119,6 +119,13 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         }
         viewControllers = tabs
     }
+
+    func showScheduledMessages() {
+        guard viewControllers?.contains(scheduledMessageListVC) == true else { return }
+
+        (scheduledMessageListVC as? UINavigationController)?.popToRootViewController(animated: false)
+        selectedViewController = scheduledMessageListVC
+    }
     
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
         let unreadCount = didChangeCurrentUserUnreadCount
