@@ -643,6 +643,13 @@ public extension ChatChannel {
         ownCapabilities.contains(.sendMessage)
     }
 
+    /// Can the current user schedule messages in this channel.
+    var canScheduleMessage: Bool {
+        // The backend does not return the capability yet, so scheduled messages are simulated
+        // wherever messages can be sent. Remove the fallback once it does: CHA-5635
+        ownCapabilities.contains(.scheduleMessage) || canSendMessage
+    }
+
     /// Can the current user send reactions in this channel.
     var canSendReaction: Bool {
         ownCapabilities.contains(.sendReaction)
