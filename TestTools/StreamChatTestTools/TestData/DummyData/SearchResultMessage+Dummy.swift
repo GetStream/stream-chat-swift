@@ -19,29 +19,31 @@ extension SearchResultMessage {
         extraData: [String: RawJSON] = [:]
     ) -> SearchResultMessage {
         SearchResultMessage(
-            attachments: [],
-            channel: channel,
-            cid: cid.rawValue,
-            createdAt: createdAt,
-            custom: extraData,
-            deletedReplyCount: 0,
-            id: messageId,
-            latestReactions: [],
-            mentionedChannel: false,
-            mentionedHere: false,
-            mentionedUsers: [],
-            ownReactions: [],
-            pinned: false,
-            reactionCounts: [:],
-            reactionScores: [:],
-            replyCount: 0,
-            restrictedVisibility: [],
-            shadowed: false,
-            silent: false,
-            text: text,
-            type: MessageType.regular.rawValue,
-            updatedAt: updatedAt,
-            user: .dummy(userId: authorUserId)
+            message: MessageResponse(
+                attachments: [],
+                cid: cid.rawValue,
+                createdAt: createdAt,
+                custom: extraData,
+                deletedReplyCount: 0,
+                id: messageId,
+                latestReactions: [],
+                mentionedChannel: false,
+                mentionedHere: false,
+                mentionedUsers: [],
+                ownReactions: [],
+                pinned: false,
+                reactionCounts: [:],
+                reactionScores: [:],
+                replyCount: 0,
+                restrictedVisibility: [],
+                shadowed: false,
+                silent: false,
+                text: text,
+                type: MessageType.regular.rawValue,
+                updatedAt: updatedAt,
+                user: .dummy(userId: authorUserId)
+            ),
+            channel: channel
         )
     }
 }

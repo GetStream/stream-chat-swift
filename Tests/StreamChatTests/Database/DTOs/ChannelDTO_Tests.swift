@@ -1821,17 +1821,19 @@ final class ChannelDTO_Tests: XCTestCase {
         let channelDetail: ChannelDetailPayload = .dummy(cid: cid)
         let parentMessageId: MessageId = .unique
         let threadPayload = ThreadPayload(
-            activeParticipantCount: 0,
-            channelCid: cid.rawValue,
-            createdAt: .unique,
-            createdByUserId: .unique,
-            custom: [:],
-            latestReplies: [],
-            parentMessageId: parentMessageId,
-            participantCount: 0,
-            replyCount: 0,
-            title: "",
-            updatedAt: .unique
+            thread: ThreadPartialPayload(
+                activeParticipantCount: 0,
+                channelCid: cid.rawValue,
+                createdAt: .unique,
+                createdByUserId: .unique,
+                custom: [:],
+                parentMessageId: parentMessageId,
+                participantCount: 0,
+                replyCount: 0,
+                title: "",
+                updatedAt: .unique
+            ),
+            latestReplies: []
         )
         let channelPayload: ChannelPayload = .dummy(channel: channelDetail, threads: [threadPayload])
 

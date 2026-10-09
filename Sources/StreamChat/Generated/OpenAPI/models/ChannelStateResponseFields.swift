@@ -4,22 +4,31 @@
 
 import Foundation
 
-final class ChannelStateResponse: Sendable, Decodable {
+final class ChannelStateResponseFields: Sendable, Decodable {
+    /// Active live locations in the channel
     let activeLiveLocations: [SharedLocation]?
     /// Represents channel in chat
     let channel: ChannelDetailPayload
     let draft: DraftPayload?
+    /// Whether this channel is hidden or not
     let hidden: Bool?
+    /// List of channel members
     let members: [MemberPayload]
     let membership: MemberPayload?
+    /// List of channel messages
     let messages: [MessageResponse]
+    /// Pending messages that this user has sent
     let pendingMessages: [PendingMessageResponse]?
+    /// List of pinned messages in the channel
     let pinnedMessages: [MessageResponse]
     /// The push preference details.
     let pushPreferences: PushPreference?
+    /// List of read states
     let read: [ReadStateResponse]?
     let threads: [ThreadStateResponse]
+    /// Number of channel watchers
     let watcherCount: Int?
+    /// List of user who is watching the channel
     let watchers: [UserPayload]?
 
     init(
@@ -56,41 +65,44 @@ final class ChannelStateResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        activeLiveLocations = try container.decodeArrayIfPresentIgnoringFailures(
+        self.activeLiveLocations = try container.decodeArrayIfPresentIgnoringFailures(
             [SharedLocation].self,
             forKey: .activeLiveLocations
         )
-        channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
-        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
-        members = try container.decodeArrayIgnoringFailures([MemberPayload].self, forKey: .members)
-        membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
-        messages = try container.decodeArrayIgnoringFailures(
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        self.draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        self.hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        self.members = try container.decodeArrayIgnoringFailures(
+            [MemberPayload].self,
+            forKey: .members
+        )
+        self.membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
+        self.messages = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .messages
         )
-        pendingMessages = try container.decodeArrayIfPresentIgnoringFailures(
+        self.pendingMessages = try container.decodeArrayIfPresentIgnoringFailures(
             [PendingMessageResponse].self,
             forKey: .pendingMessages
         )
-        pinnedMessages = try container.decodeArrayIgnoringFailures(
+        self.pinnedMessages = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .pinnedMessages
         )
-        pushPreferences = try container.decodeIfPresent(
+        self.pushPreferences = try container.decodeIfPresent(
             PushPreference.self,
             forKey: .pushPreferences
         )
-        read = try container.decodeArrayIfPresentIgnoringFailures(
+        self.read = try container.decodeArrayIfPresentIgnoringFailures(
             [ReadStateResponse].self,
             forKey: .read
         )
-        threads = try container.decodeArrayIfPresentIgnoringFailures(
+        self.threads = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadStateResponse].self,
             forKey: .threads
         ) ?? []
-        watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
-        watchers = try container.decodeArrayIfPresentIgnoringFailures(
+        self.watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
+        self.watchers = try container.decodeArrayIfPresentIgnoringFailures(
             [UserPayload].self,
             forKey: .watchers
         )

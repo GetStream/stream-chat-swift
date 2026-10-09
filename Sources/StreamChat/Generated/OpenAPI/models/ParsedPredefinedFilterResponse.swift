@@ -19,6 +19,9 @@ final class ParsedPredefinedFilterResponse: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.filter = try container.decode([String: RawJSON].self, forKey: .filter)
         self.name = try container.decode(String.self, forKey: .name)
-        self.sort = try container.decodeIfPresent([SortParamRequest].self, forKey: .sort)
+        self.sort = try container.decodeArrayIfPresentIgnoringFailures(
+            [SortParamRequest].self,
+            forKey: .sort
+        )
     }
 }

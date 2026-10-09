@@ -758,7 +758,7 @@ extension Endpoint {
         id: String,
         channelGetOrCreateRequest: ChannelGetOrCreateRequest,
         requiresConnectionId: Bool = true
-    ) -> Endpoint<ChannelStateResponse> {
+    ) -> Endpoint<ChannelStateResponseFields> {
         return .init(
             path: .getOrCreateChannel(type: type, id: id),
             method: .post,
@@ -772,7 +772,7 @@ extension Endpoint {
         type: String,
         channelGetOrCreateRequest: ChannelGetOrCreateRequest,
         requiresConnectionId: Bool = true
-    ) -> Endpoint<ChannelStateResponse> {
+    ) -> Endpoint<ChannelStateResponseFields> {
         return .init(
             path: .getOrCreateDistinctChannel(type: type),
             method: .post,

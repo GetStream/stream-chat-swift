@@ -15,6 +15,9 @@ final class ListUserGroupsResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.userGroups = try container.decode([UserGroup].self, forKey: .userGroups)
+        self.userGroups = try container.decodeArrayIgnoringFailures(
+            [UserGroup].self,
+            forKey: .userGroups
+        )
     }
 }

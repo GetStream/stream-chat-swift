@@ -14,6 +14,9 @@ final class QueryUsersResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.users = try container.decode([FullUserResponse].self, forKey: .users)
+        self.users = try container.decodeArrayIgnoringFailures(
+            [FullUserResponse].self,
+            forKey: .users
+        )
     }
 }

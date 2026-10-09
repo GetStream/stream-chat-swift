@@ -162,11 +162,11 @@ extension QueryThreadsResponse: IdentifiablePayloadProxy {
 extension ThreadStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        parentMessage?.fillIds(cache: &cache)
-        channel?.fillIds(cache: &cache)
-        createdBy?.fillIds(cache: &cache)
+        thread.parentMessage?.fillIds(cache: &cache)
+        thread.channel?.fillIds(cache: &cache)
+        thread.createdBy?.fillIds(cache: &cache)
         latestReplies.fillIds(cache: &cache)
-        threadParticipants?.fillIds(cache: &cache)
+        thread.threadParticipants?.fillIds(cache: &cache)
         read?.fillIds(cache: &cache)
     }
 }
@@ -197,7 +197,7 @@ extension ThreadParticipantPayload: IdentifiablePayloadProxy {
 }
 
 extension FullUserResponse: IdentifiablePayload {
-    var databaseId: DatabaseId? { id }
+    var databaseId: DatabaseId? { user.id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
@@ -231,20 +231,10 @@ extension MessageResponse: IdentifiablePayload {
     }
 }
 
-extension SearchResultMessage: IdentifiablePayload {
-    var databaseId: DatabaseId? { id }
-    static let modelClass: (IdentifiableDatabaseObject).Type? = MessageDTO.self
-
+extension SearchResultMessage: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        addId(cache: &cache)
+        message.fillIds(cache: &cache)
         channel?.fillIds(cache: &cache)
-        user.fillIds(cache: &cache)
-        quotedMessage?.fillIds(cache: &cache)
-        mentionedUsers.fillIds(cache: &cache)
-        threadParticipants?.fillIds(cache: &cache)
-        latestReactions.fillIds(cache: &cache)
-        ownReactions.fillIds(cache: &cache)
-        pinnedBy?.fillIds(cache: &cache)
     }
 }
 

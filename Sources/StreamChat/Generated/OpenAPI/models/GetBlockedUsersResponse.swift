@@ -14,6 +14,9 @@ final class GetBlockedUsersResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.blocks = try container.decode([BlockedUserResponse].self, forKey: .blocks)
+        self.blocks = try container.decodeArrayIgnoringFailures(
+            [BlockedUserResponse].self,
+            forKey: .blocks
+        )
     }
 }

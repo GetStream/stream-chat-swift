@@ -222,7 +222,7 @@ Do not manually edit files in `Sources/StreamChatCommonUI/Generated/`:
 `Scripts/openapi_generate.sh` regenerates `Sources/StreamChat/Generated/OpenAPI/` from the backend spec. The config (allow-lists) and the ordered pipeline steps live in that script; the transform functions live in `Scripts/openapi_generate_helpers.sh` (alphabetical).
 
 Running it:
-- Requires the `chat` backend repo checked out at `../chat` (the script runs `make openapi` and builds the generator there), plus `swiftformat`, `sourcery`, and `python3`.
+- Requires the `chat` backend repo checked out at `../chat` (the script runs `make openapi` and builds the generator there), plus `swiftformat` and `python3`.
 - Run `Scripts/openapi_generate.sh` from the repo root. It deletes and rebuilds the output directory and ends by printing the endpoints the spec offers but `allowed_endpoints` prunes.
 - If unrelated files change because the spec moved on, revert them with `git checkout HEAD -- <file>`.
 

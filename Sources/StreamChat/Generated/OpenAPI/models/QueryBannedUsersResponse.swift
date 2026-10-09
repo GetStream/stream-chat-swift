@@ -14,6 +14,6 @@ final class QueryBannedUsersResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.bans = try container.decode([BanResponse].self, forKey: .bans)
+        self.bans = try container.decodeArrayIgnoringFailures([BanResponse].self, forKey: .bans)
     }
 }

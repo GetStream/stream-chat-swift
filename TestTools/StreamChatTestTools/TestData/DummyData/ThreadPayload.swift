@@ -47,24 +47,24 @@ extension ThreadPayload {
         extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
-            activeParticipantCount: activeParticipantCount,
-            channel: channel,
-            channelCid: channel.cid.rawValue,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            createdByUserId: createdBy.id,
-            custom: extraData,
+            thread: .dummy(
+                parentMessageId: parentMessageId,
+                parentMessage: parentMessage,
+                channel: channel,
+                createdBy: createdBy,
+                replyCount: replyCount,
+                participantCount: participantCount,
+                activeParticipantCount: activeParticipantCount,
+                threadParticipants: threadParticipants,
+                lastMessageAt: lastMessageAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                title: title,
+                extraData: extraData
+            ),
             draft: draft,
-            lastMessageAt: lastMessageAt,
             latestReplies: latestReplies,
-            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId, cid: channel.cid),
-            parentMessageId: parentMessageId,
-            participantCount: participantCount,
-            read: read,
-            replyCount: replyCount,
-            threadParticipants: threadParticipants,
-            title: title,
-            updatedAt: updatedAt
+            read: read
         )
     }
 }
@@ -78,6 +78,7 @@ extension ThreadPartialPayload {
         replyCount: Int = 0,
         participantCount: Int = 0,
         activeParticipantCount: Int = 0,
+        threadParticipants: [ThreadParticipantPayload]? = nil,
         lastMessageAt: Date? = nil,
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
@@ -97,6 +98,7 @@ extension ThreadPartialPayload {
             parentMessageId: parentMessageId,
             participantCount: participantCount,
             replyCount: replyCount,
+            threadParticipants: threadParticipants,
             title: title,
             updatedAt: updatedAt
         )

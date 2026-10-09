@@ -23,7 +23,10 @@ final class MuteResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.mutes = try container.decodeIfPresent([MutedUserPayload].self, forKey: .mutes)
+        self.mutes = try container.decodeArrayIfPresentIgnoringFailures(
+            [MutedUserPayload].self,
+            forKey: .mutes
+        )
         self.nonExistingUsers = try container.decodeIfPresent(
             [String].self,
             forKey: .nonExistingUsers

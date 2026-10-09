@@ -674,7 +674,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         var query = ChannelQuery(cid: cid)
         query.options = .all
         let endpoint = query.endpoint
-        let completion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { completion?($0.error) }
+        let completion: @Sendable (Result<ChannelStateResponseFields, Error>) -> Void = { completion?($0.error) }
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
         } else {
@@ -703,7 +703,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: (@Sendable (Result<ChannelPayload, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<ChannelStateResponse> = .getOrCreateChannel(
+        let endpoint: Endpoint<ChannelStateResponseFields> = .getOrCreateChannel(
             type: query.cid.type.rawValue,
             id: query.cid.id,
             channelGetOrCreateRequest: query.toRequest(),

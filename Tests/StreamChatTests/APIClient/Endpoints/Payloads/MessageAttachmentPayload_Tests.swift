@@ -119,6 +119,46 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(attachment.payload, expected)
     }
 
+    func test_allKeys_matchEncodedKeys() throws {
+        let image = GiphyImageData(frames: "1", height: "200", size: "100", url: "https://getstream.io/giphy.gif", width: "200")
+        let attachment = MessageAttachmentPayload(
+            actions: [AttachmentActionPayload(name: "image_action", text: "Send", type: "button")],
+            assetUrl: "https://getstream.io/asset.mp4",
+            authorIcon: "https://getstream.io/icon.png",
+            authorLink: "https://getstream.io",
+            authorName: "Stream",
+            color: "#000000",
+            custom: ["my_field": .string("my_value")],
+            fallback: "fallback",
+            fields: [AttachmentFieldPayload(short: true, title: "title", value: "value")],
+            footer: "footer",
+            footerIcon: "https://getstream.io/footer.png",
+            giphy: GiphyImages(
+                fixedHeight: image,
+                fixedHeightDownsampled: image,
+                fixedHeightStill: image,
+                fixedWidth: image,
+                fixedWidthDownsampled: image,
+                fixedWidthStill: image,
+                original: image
+            ),
+            imageUrl: "https://getstream.io/image.jpg",
+            ogScrapeUrl: "https://getstream.io",
+            originalHeight: 200,
+            originalWidth: 200,
+            pretext: "pretext",
+            text: "text",
+            thumbUrl: "https://getstream.io/thumb.jpg",
+            title: "title",
+            titleLink: "https://getstream.io",
+            type: "image"
+        )
+
+        let encoded = try JSONDecoder.default.decode(RawJSON.self, from: JSONEncoder.default.encode(attachment))
+
+        XCTAssertEqual(Set(try XCTUnwrap(encoded.dictionaryValue).keys), MessageAttachmentPayload.allKeys)
+    }
+
     // Builds the flattened local-storage shape `payload` returns: `type` dropped and `custom` merged into the top level.
     // IOS-1987
     private func flattenedPayload(_ json: Data) throws -> RawJSON {

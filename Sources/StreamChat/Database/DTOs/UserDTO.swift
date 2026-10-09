@@ -172,38 +172,6 @@ extension NSManagedObjectContext: UserDatabaseSession {
         return dto
     }
 
-    func saveUser(
-        fullResponse: FullUserResponse,
-        query: UserListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> UserDTO {
-        let dto = UserDTO.loadOrCreate(id: fullResponse.id, context: self, cache: cache)
-        saveUserCommonFields(
-            avgResponseTime: fullResponse.avgResponseTime,
-            banned: fullResponse.banned,
-            createdAt: fullResponse.createdAt,
-            custom: fullResponse.custom,
-            deactivatedAt: fullResponse.deactivatedAt,
-            dto: dto,
-            id: fullResponse.id,
-            image: fullResponse.image,
-            language: fullResponse.language,
-            lastActive: fullResponse.lastActive,
-            name: fullResponse.name,
-            online: fullResponse.online,
-            role: fullResponse.role,
-            teams: fullResponse.teams,
-            teamsRole: fullResponse.teamsRole,
-            updatedAt: fullResponse.updatedAt
-        )
-
-        // payloadHash doesn't cover the query
-        if let query = query, let queryDTO = try saveQuery(query: query) {
-            queryDTO.users.insert(dto)
-        }
-        return dto
-    }
-
     func saveUser(ownResponse: OwnUserResponse) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: ownResponse.id, context: self, cache: nil)
         saveUserCommonFields(
@@ -275,7 +243,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.users.compactMapLoggingError {
-            try saveUser(fullResponse: $0, query: query, cache: cache)
+            try saveUser(payload: $0.user, query: query, cache: cache)
         }
     }
 }

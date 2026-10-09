@@ -20,6 +20,9 @@ final class QueryRemindersResponse: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.next = try container.decodeIfPresent(String.self, forKey: .next)
         self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
-        self.reminders = try container.decode([ReminderPayload].self, forKey: .reminders)
+        self.reminders = try container.decodeArrayIgnoringFailures(
+            [ReminderPayload].self,
+            forKey: .reminders
+        )
     }
 }

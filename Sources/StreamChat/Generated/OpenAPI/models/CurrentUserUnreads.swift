@@ -37,9 +37,18 @@ public final class CurrentUserUnreads: Sendable, Decodable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.channelType = try container.decode([UnreadChannelByType].self, forKey: .channelType)
-        self.channels = try container.decode([UnreadChannel].self, forKey: .channels)
-        self.threads = try container.decode([UnreadThread].self, forKey: .threads)
+        self.channelType = try container.decodeArrayIgnoringFailures(
+            [UnreadChannelByType].self,
+            forKey: .channelType
+        )
+        self.channels = try container.decodeArrayIgnoringFailures(
+            [UnreadChannel].self,
+            forKey: .channels
+        )
+        self.threads = try container.decodeArrayIgnoringFailures(
+            [UnreadThread].self,
+            forKey: .threads
+        )
         self.totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
         self.totalUnreadCountByTeam = try container.decodeIfPresent(
             [String: Int].self,

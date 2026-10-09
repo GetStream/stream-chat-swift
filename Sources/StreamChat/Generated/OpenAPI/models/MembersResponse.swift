@@ -14,6 +14,9 @@ final class MembersResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.members = try container.decode([MemberPayload].self, forKey: .members)
+        self.members = try container.decodeArrayIgnoringFailures(
+            [MemberPayload].self,
+            forKey: .members
+        )
     }
 }

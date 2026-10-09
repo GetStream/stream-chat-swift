@@ -4,7 +4,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
-SOURCERY_CONFIG="$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 CHAT_DIR="$REPO_ROOT/../chat"
 
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
@@ -128,7 +127,7 @@ allowed_models=(
   ChannelMute
   ChannelOwnCapability
   ChannelResponse
-  ChannelStateResponse
+  ChannelStateResponseFields
   CreateDraftRequest
   CreateDraftResponse
   CreateGuestRequest
@@ -179,6 +178,7 @@ allowed_models=(
   MessagePaginationParams
   MessageRequest
   MessageResponse
+  MessageWithChannelResponse
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
@@ -442,7 +442,7 @@ decodable_only_models=(
   BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
-  ChannelStateResponse
+  ChannelStateResponseFields
   CreateDraftResponse
   CreateGuestResponse
   CreateReminderResponse
@@ -474,6 +474,7 @@ decodable_only_models=(
   MessageReactionPayload
   MessageReactionsPayload
   MessageResponse
+  MessageWithChannelResponse
   MutedChannelPayload
   MutedChannelPayloadResponse
   MutedUserPayload
@@ -555,6 +556,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
     --opt encodable_filter_conditions=true \
     --opt raw_representable_over_enum=true \
     --opt string_coding_keys=true \
+    --opt optimized_models=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # Drop the generated async API client — the SDK ships its own APIClient.
@@ -649,8 +651,7 @@ rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type ChannelPushPreferencesResponse PushPreference
-# CHA-5170
-rename_generated_type ChannelStateResponseFields ChannelStateResponse
+rename_generated_type ChannelStateResponse ChannelStateResponseFields
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
@@ -715,12 +716,13 @@ optionalize_property MemberRemovedEventDTO channel
 optionalize_property MemberUpdatedEventDTO channel
 
 optionalize_property ThreadResponse createdByUserId
+optionalize_property UserPayload blockedUserIds
 
 # Will be changed on the generation side later
 # CHA-4621
 require_property ChannelDetailPayload config
 # CHA-5028
-require_property ChannelStateResponse channel
+require_property ChannelStateResponseFields channel
 # CHA-5105
 require_property SearchResult message
 # CHA-5607
@@ -761,7 +763,7 @@ remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
 remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest channelRole user
-remove_property ChannelStateResponse hideMessagesBefore
+remove_property ChannelStateResponseFields hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
@@ -771,7 +773,7 @@ remove_property DraftDeletedEventDTO custom parentId receivedAt
 remove_property DraftMessagePayload html mml
 remove_property DraftUpdatedEventDTO custom parentId receivedAt
 remove_property FlagRequest entityCreatorId moderationPayload
-remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore unreadCount
+remove_property FullUserResponse banExpires latestHiddenChannels unreadCount
 remove_property GetOGResponse actions authorIcon authorLink color fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
 remove_property HealthCheckEventDTO cid custom receivedAt
 remove_property ImageUploadResponse uploadSizes
@@ -834,14 +836,12 @@ remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
-remove_property SearchResultMessage html imageLabels mml
 remove_property SendMessageRequest includeChannelContext includeMentionedMembers keepChannelHidden
 remove_property SendMessageResponsePayload channelContext mentionedMembers
 remove_property SharedLocation channel message
 remove_property SyncResponse inaccessibleCids
 remove_property ThreadParticipantPayload lastThreadMessageAt leftThreadAt userId
-remove_property ThreadResponse deletedAt threadParticipants
-remove_property ThreadStateResponse deletedAt
+remove_property ThreadResponse deletedAt
 remove_property ThreadUpdatedEventDTO channelId channelType cid custom receivedAt
 remove_property TruncateChannelRequest memberIds truncatedAt
 remove_property TypingStartEventDTO channelId channelType custom receivedAt
@@ -856,13 +856,49 @@ remove_property UploadChannelResponse moderationAction uploadSizes
 remove_property UserBannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt reviewQueueItemId team totalBans
 remove_property UserGroupMember appPk
 remove_property UserMessagesDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
-remove_property UserPayload blockedUserIds deletedAt revokeTokensIssuedBefore
+remove_property UserPayload deletedAt revokeTokensIssuedBefore
 remove_property UserPresenceChangedEventDTO custom receivedAt
 remove_property UserRequest invisible language privacySettings
 remove_property UserUnbannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType createdBy custom receivedAt shadow team
 remove_property UserUpdatedEventDTO custom receivedAt
 remove_property UserWatchingStartEventDTO channelId channelType custom receivedAt
 remove_property UserWatchingStopEventDTO channelId channelType custom receivedAt
+
+# Lenient like the hand-written payloads were: a missing or null key decodes to the default.
+property_fallback_value ChannelDetailPayload custom '[:]'
+property_fallback_value ChannelStateResponseFields threads '[]'
+property_fallback_value DraftMessagePayload custom '[:]'
+property_fallback_value MemberInfoPayload notificationsMuted false
+property_fallback_value MemberPayload banned false
+property_fallback_value MemberPayload channelRole '"channel_member"'
+property_fallback_value MemberPayload custom '[:]'
+property_fallback_value MemberPayload notificationsMuted false
+property_fallback_value MemberPayload shadowBanned false
+property_fallback_value MessageAttachmentPayload custom '[:]'
+property_fallback_value MessageReactionPayload custom '[:]'
+property_fallback_value MessageResponse custom '[:]'
+property_fallback_value MessageResponse mentionedChannel false
+property_fallback_value MessageResponse mentionedHere false
+property_fallback_value MessageResponse pinned false
+property_fallback_value MessageResponse reactionCounts '[:]'
+property_fallback_value MessageResponse reactionScores '[:]'
+property_fallback_value MessageResponse restrictedVisibility '[]'
+property_fallback_value MessageResponse shadowed false
+property_fallback_value MessageResponse silent false
+property_fallback_value OwnUserResponse banned false
+property_fallback_value OwnUserResponse custom '[:]'
+property_fallback_value OwnUserResponse invisible false
+property_fallback_value OwnUserResponse language '""'
+property_fallback_value OwnUserResponse teams '[]'
+property_fallback_value OwnUserResponse unreadThreads 0
+property_fallback_value ThreadParticipantPayload custom '[:]'
+property_fallback_value ThreadResponse activeParticipantCount 0
+property_fallback_value ThreadResponse custom '[:]'
+property_fallback_value ThreadStateResponse latestReplies '[]'
+property_fallback_value UserPayload banned false
+property_fallback_value UserPayload custom '[:]'
+property_fallback_value UserPayload language '""'
+property_fallback_value UserPayload teams '[]'
 
 remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
@@ -892,12 +928,9 @@ apply_directional_coding_conformances
 strip_hashable_conformance
 strip_streamcore_imports
 
-# 8. Format, splice the generated decoders, prune unused StringCodingKey lets and wrap
-#    long declarations.
+# 8. Format, prune unused StringCodingKey lets and wrap long declarations.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
-sourcery --config "$SOURCERY_CONFIG"
-splice_generated_decoders
 prune_string_coding_keys
 
 swiftformat "$OUTPUT_DIR_CHAT" \

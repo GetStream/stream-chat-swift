@@ -4,12 +4,13 @@
 
 import Foundation
 
-final class SearchResultMessage: Sendable, Decodable {
+/// Represents any chat message
+final class MessageWithChannelResponse: Sendable, Decodable {
     let message: MessageResponse
     /// Represents channel in chat
-    let channel: ChannelDetailPayload?
+    let channel: ChannelDetailPayload
 
-    init(message: MessageResponse, channel: ChannelDetailPayload? = nil) {
+    init(message: MessageResponse, channel: ChannelDetailPayload) {
         self.message = message
         self.channel = channel
     }
@@ -17,6 +18,6 @@ final class SearchResultMessage: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.message = try MessageResponse(from: decoder)
-        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
     }
 }

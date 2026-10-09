@@ -18,17 +18,20 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
         self.notificationsMuted = notificationsMuted
     }
 
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelRole = try container.decode(String.self, forKey: .channelRole)
+        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.notificationsMuted = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .notificationsMuted
+        ) ?? false
+    }
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encode(channelRole, forKey: .channelRole)
         try container.encodeIfPresent(custom, forKey: .custom)
         try container.encode(notificationsMuted, forKey: .notificationsMuted)
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: StringCodingKey.self)
-        channelRole = try container.decode(String.self, forKey: .channelRole)
-        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
-        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
     }
 }

@@ -168,7 +168,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedCurrentUser.unreadCount.threads, payload.unreadThreads)
         XCTAssertEqual(mutedUserIds, Set(loadedCurrentUser.mutedUsers.map(\.id)))
         XCTAssertEqual(mutedChannelIds, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
-        XCTAssertEqual(Set(payload.blockedUserIds), loadedCurrentUser.blockedUserIds)
+        XCTAssertEqual(Set(payload.blockedUserIds ?? []), loadedCurrentUser.blockedUserIds)
         XCTAssertEqual(payload.devices.map(\.id), loadedCurrentUser.devices.map(\.id))
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)

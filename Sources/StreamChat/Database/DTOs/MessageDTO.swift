@@ -1324,7 +1324,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let channel = payload.channel {
             _ = try saveChannel(payload: channel, query: nil, cache: cache)
         }
-        let messageDTO = try saveMessage(payload: payload.asMessageResponse(), cache: cache)
+        let messageDTO = try saveMessage(payload: payload.message, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }
