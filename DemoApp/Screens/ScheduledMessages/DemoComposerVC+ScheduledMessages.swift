@@ -6,15 +6,13 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-extension DemoComposerVC {
-    private var scheduledMessagesService: DemoScheduledMessagesService { .shared }
-
-    var scheduledContent: DemoScheduledMessage.Content {
+extension DemoComposerVC: ScheduledMessageListControllerDelegate {
+    var scheduledContent: DemoScheduledMessageContent {
         let text = content.inputText
         let mentionedUserIds = content.mentionedUsers
             .filter { text.contains("@\($0.name ?? $0.id)") }
             .map(\.id)
-        return DemoScheduledMessage.Content(
+        return DemoScheduledMessageContent(
             text: text,
             attachments: content.attachments,
             mentionedUserIds: mentionedUserIds,
@@ -32,13 +30,29 @@ extension DemoComposerVC {
             && !hasProcessingAttachments
     }
 
+    private var canScheduleMessages: Bool {
+        AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled
+            && channelController?.channel?.canScheduleMessage == true
+    }
+
+    func controller(
+        _ controller: ScheduledMessageListController,
+        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+    ) {
+        updateScheduledMessagesBanner()
+        editingScheduledMessageDidChange(in: controller.scheduledMessages)
+    }
+
     // MARK: - Banner
 
-    func updateScheduledMessagesBanner(with messages: [DemoScheduledMessage]) {
+    func updateScheduledMessagesBanner() {
         var count = 0
-        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled, editingScheduledMessage == nil, let cid = channelController?.cid {
+        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled,
+           editingScheduledMessage == nil,
+           let cid = channelController?.cid,
+           let messages = scheduledMessageListController?.scheduledMessages {
             let parentId = content.threadMessage?.id
-            count = messages.filter { $0.isPending && $0.cid == cid && $0.content.parentId == parentId }.count
+            count = messages.filter { $0.isPending && $0.cid == cid && $0.parentMessageId == parentId }.count
             let place = parentId == nil ? "channel" : "thread"
             scheduledMessagesBannerView.title = "\(count) scheduled message\(count == 1 ? "" : "s") in this \(place) · View all"
         }
@@ -52,9 +66,7 @@ extension DemoComposerVC {
     // MARK: - Scheduling
 
     func presentScheduleSheet() {
-        guard isContentSchedulable, scheduledMessagesService.canScheduleMessages(in: channelController?.channel) else {
-            return
-        }
+        guard isContentSchedulable, canScheduleMessages else { return }
 
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         DemoScheduleMessagePicker.present(from: self, sourceView: composerView.sendButton) { [weak self] date in
@@ -63,9 +75,10 @@ extension DemoComposerVC {
     }
 
     private func scheduleContent(at date: Date) {
-        guard let cid = channelController?.cid, validateLinks() else { return }
+        guard let channelController, let cid = channelController.cid, validateLinks() else { return }
 
-        scheduledMessagesService.schedule(cid: cid, content: scheduledContent, scheduledAt: date) { [weak self] result in
+        let content = scheduledContent
+        let completion: @MainActor (Result<ScheduledMessage, Error>) -> Void = { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(message):
@@ -75,11 +88,34 @@ extension DemoComposerVC {
                 presentAlert(title: "Couldn't schedule message", message: error.localizedDescription)
             }
         }
+
+        if let parentId = content.parentId {
+            channelController.client.messageController(cid: cid, messageId: parentId).scheduleReply(
+                text: content.text,
+                attachments: content.attachments,
+                mentionedUserIds: content.mentionedUserIds,
+                showReplyInChannel: content.showReplyInChannel,
+                quotedMessageId: content.quotedMessageId,
+                extraData: content.extraData,
+                scheduledAt: date,
+                completion: completion
+            )
+        } else {
+            channelController.scheduleMessage(
+                text: content.text,
+                attachments: content.attachments,
+                mentionedUserIds: content.mentionedUserIds,
+                quotedMessageId: content.quotedMessageId,
+                extraData: content.extraData,
+                scheduledAt: date,
+                completion: completion
+            )
+        }
     }
 
     // MARK: - Editing
 
-    func startEditing(_ message: DemoScheduledMessage) {
+    func startEditing(_ message: ScheduledMessage) {
         if editingScheduledMessage == nil {
             componentsBeforeScheduledEditing = components
             var components = components
@@ -88,19 +124,14 @@ extension DemoComposerVC {
         }
 
         editingScheduledMessage = message
+        editingScheduledContent = DemoScheduledMessageContent(message)
         applyEditingScheduledMessageContent()
         scheduledEditingBannerView.title = "Editing scheduled message · \(DemoScheduledDateFormatter.string(from: message.scheduledAt))"
         scheduledEditingBannerView.isHidden = false
-
-        editingScheduledMessageObservation = scheduledMessagesService.$scheduledMessages
-            .dropFirst()
-            .sink { [weak self] messages in
-                self?.editingScheduledMessageDidChange(in: messages)
-            }
     }
 
     // Channel screens load their draft into the composer when they appear, so the edited content is applied after it.
-    func applyScheduledMessageEditing(starting message: DemoScheduledMessage?) {
+    func applyScheduledMessageEditing(starting message: ScheduledMessage?) {
         if let message {
             startEditing(message)
         } else {
@@ -112,7 +143,7 @@ extension DemoComposerVC {
         guard editingScheduledMessage != nil else { return }
 
         editingScheduledMessage = nil
-        editingScheduledMessageObservation = nil
+        editingScheduledContent = nil
         isSubmittingScheduledMessage = false
         if let componentsBeforeScheduledEditing {
             components = componentsBeforeScheduledEditing
@@ -123,14 +154,13 @@ extension DemoComposerVC {
     }
 
     func saveEditedScheduledMessageIfNeeded() {
-        guard var message = editingScheduledMessage, !isSubmittingScheduledMessage, !content.isEmpty else { return }
+        guard let message = editingScheduledMessage, !isSubmittingScheduledMessage, !content.isEmpty else { return }
 
         let editedContent = scheduledContent
-        guard editedContent != message.content else { return }
+        guard editedContent != editingScheduledContent else { return }
 
-        message.content = editedContent
-        editingScheduledMessage = message
-        scheduledMessagesService.update(id: message.id, content: editedContent) { result in
+        editingScheduledContent = editedContent
+        update(message, with: editedContent, scheduledAt: nil) { result in
             if case let .failure(error) = result {
                 log.error("Failed to save the scheduled message: \(error)")
             }
@@ -172,22 +202,24 @@ extension DemoComposerVC {
     }
 
     private func sendEditedScheduledMessageNow() {
-        guard let message = editingScheduledMessage else { return }
+        guard let message = editingScheduledMessage, let channelController else { return }
 
         isSubmittingScheduledMessage = true
         let id = message.id
         let sendNow = { [weak self] in
-            DemoScheduledMessagesService.shared.sendNow(id: id) { result in
-                self?.finishScheduledMessageSubmission(result) { _ in "Message sent" }
+            channelController.sendScheduledMessageNow(id: id) { error in
+                self?.finishScheduledMessageSubmission(error.map { .failure($0) } ?? .success(message)) { _ in
+                    "Message sent"
+                }
             }
         }
 
         let editedContent = scheduledContent
-        guard editedContent != message.content else {
+        guard editedContent != editingScheduledContent else {
             sendNow()
             return
         }
-        scheduledMessagesService.update(id: id, content: editedContent) { [weak self] result in
+        update(message, with: editedContent, scheduledAt: nil) { [weak self] result in
             switch result {
             case .success:
                 sendNow()
@@ -201,16 +233,50 @@ extension DemoComposerVC {
         guard let message = editingScheduledMessage, validateLinks() else { return }
 
         isSubmittingScheduledMessage = true
-        scheduledMessagesService.update(id: message.id, content: scheduledContent, scheduledAt: date) { [weak self] result in
+        update(message, with: scheduledContent, scheduledAt: date) { [weak self] result in
             self?.finishScheduledMessageSubmission(result) {
                 "Message rescheduled for \(DemoScheduledDateFormatter.string(from: $0.scheduledAt))"
             }
         }
     }
 
+    private func update(
+        _ message: ScheduledMessage,
+        with content: DemoScheduledMessageContent,
+        scheduledAt: Date?,
+        completion: @escaping @MainActor (Result<ScheduledMessage, Error>) -> Void
+    ) {
+        guard let channelController else { return }
+
+        if let parentId = content.parentId {
+            channelController.client.messageController(cid: message.cid, messageId: parentId).updateScheduledReply(
+                id: message.id,
+                text: content.text,
+                attachments: content.attachments,
+                mentionedUserIds: content.mentionedUserIds,
+                showReplyInChannel: content.showReplyInChannel,
+                quotedMessageId: content.quotedMessageId,
+                extraData: content.extraData,
+                scheduledAt: scheduledAt,
+                completion: completion
+            )
+        } else {
+            channelController.updateScheduledMessage(
+                id: message.id,
+                text: content.text,
+                attachments: content.attachments,
+                mentionedUserIds: content.mentionedUserIds,
+                quotedMessageId: content.quotedMessageId,
+                extraData: content.extraData,
+                scheduledAt: scheduledAt,
+                completion: completion
+            )
+        }
+    }
+
     private func finishScheduledMessageSubmission(
-        _ result: Result<DemoScheduledMessage, Error>,
-        successMessage: (DemoScheduledMessage) -> String
+        _ result: Result<ScheduledMessage, Error>,
+        successMessage: (ScheduledMessage) -> String
     ) {
         isSubmittingScheduledMessage = false
         switch result {
@@ -222,38 +288,41 @@ extension DemoComposerVC {
         }
     }
 
-    private func editingScheduledMessageDidChange(in messages: [DemoScheduledMessage]) {
+    private func editingScheduledMessageDidChange(in messages: [ScheduledMessage]) {
         guard let editingMessage = editingScheduledMessage, !isSubmittingScheduledMessage else { return }
 
         guard let message = messages.first(where: { $0.id == editingMessage.id }) else {
             endScheduledMessageEditing()
-            showToast(DemoScheduledMessageError.notFound.localizedDescription)
+            showToast("This scheduled message no longer exists")
             return
         }
         if message.status == .sending {
             endScheduledMessageEditing()
             showToast("Your scheduled message was sent")
+            return
         }
+        editingScheduledMessage = message
+        scheduledEditingBannerView.title = "Editing scheduled message · \(DemoScheduledDateFormatter.string(from: message.scheduledAt))"
     }
 
     private func applyEditingScheduledMessageContent() {
-        guard let message = editingScheduledMessage else { return }
+        guard let message = editingScheduledMessage, let editingContent = editingScheduledContent else { return }
 
         let dataStore = channelController?.dataStore
-        let quotedMessage = message.content.quotedMessageId.flatMap { dataStore?.message(id: $0) }
-        let mentionedUsers = message.content.mentionedUserIds.compactMap { dataStore?.user(id: $0) }
+        let quotedMessage = editingContent.quotedMessageId.flatMap { dataStore?.message(id: $0) }
+        let mentionedUsers = editingContent.mentionedUserIds.compactMap { dataStore?.user(id: $0) }
         content = Content(
-            text: message.content.text,
+            text: editingContent.text,
             state: quotedMessage != nil ? .quote : .new,
             editingMessage: nil,
             quotingMessage: quotedMessage,
             threadMessage: content.threadMessage,
-            attachments: message.content.attachments,
+            attachments: editingContent.attachments,
             mentionedUsers: Set(mentionedUsers),
             command: nil,
-            extraData: message.content.extraData,
+            extraData: editingContent.extraData,
             cooldownTime: content.cooldownTime,
-            showReplyInChannel: message.content.showReplyInChannel
+            showReplyInChannel: message.showReplyInChannel
         )
     }
 
@@ -281,5 +350,19 @@ extension DemoComposerVC {
 
     private func showToast(_ text: String) {
         DemoToastView.show(text, in: view)
+    }
+}
+
+private extension DemoScheduledMessageContent {
+    init(_ message: ScheduledMessage) {
+        self.init(
+            text: message.text,
+            attachments: message.attachments.toAnyAttachmentPayload(),
+            mentionedUserIds: message.mentionedUserIds,
+            quotedMessageId: message.quotedMessageId,
+            parentId: message.parentMessageId,
+            showReplyInChannel: message.showReplyInChannel,
+            extraData: message.extraData
+        )
     }
 }

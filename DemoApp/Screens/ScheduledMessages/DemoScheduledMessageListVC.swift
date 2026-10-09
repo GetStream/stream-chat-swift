@@ -2,13 +2,12 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Combine
 import StreamChat
 import StreamChatCommonUI
 import StreamChatUI
 import UIKit
 
-class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
+class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMessageListControllerDelegate {
     var onLogout: (() -> Void)?
     var onDisconnect: (() -> Void)?
 
@@ -25,9 +24,8 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
     }
 
     private let currentUserController: CurrentChatUserController
-    private let service = DemoScheduledMessagesService.shared
-    private var sections: [(section: Section, messages: [DemoScheduledMessage])] = []
-    private var scheduledMessagesObservation: AnyCancellable?
+    private let scheduledMessageListController: ScheduledMessageListController
+    private var sections: [(section: Section, messages: [ScheduledMessage])] = []
     // Channels that are not in the local database are loaded once to show their names.
     private var channelControllers: [ChannelId: ChatChannelController] = [:]
 
@@ -73,8 +71,9 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         }
     }()
 
-    init(currentUserController: CurrentChatUserController) {
+    init(currentUserController: CurrentChatUserController, scheduledMessageListController: ScheduledMessageListController) {
         self.currentUserController = currentUserController
+        self.scheduledMessageListController = scheduledMessageListController
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -96,10 +95,9 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
 
         setUpViews()
 
-        scheduledMessagesObservation = service.$scheduledMessages
-            .sink { [weak self] messages in
-                self?.update(with: messages)
-            }
+        scheduledMessageListController.delegate = self
+        update(with: scheduledMessageListController.scheduledMessages)
+        scheduledMessageListController.synchronize()
     }
 
     private func setUpViews() {
@@ -121,7 +119,7 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         ])
     }
 
-    private func update(with messages: [DemoScheduledMessage]) {
+    private func update(with messages: [ScheduledMessage]) {
         let pending = messages.filter(\.isPending)
         let failed = messages.filter { !$0.isPending }
         sections = [(section: .scheduled, messages: pending), (section: .failed, messages: failed)]
@@ -131,8 +129,8 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         loadMissingChannels(for: messages)
     }
 
-    private func loadMissingChannels(for messages: [DemoScheduledMessage]) {
-        for cid in Set(messages.map(\.cid)) where channelControllers[cid] == nil {
+    private func loadMissingChannels(for messages: [ScheduledMessage]) {
+        for cid in Set(messages.filter { $0.channel == nil }.map(\.cid)) where channelControllers[cid] == nil {
             let controller = client.channelController(for: cid)
             channelControllers[cid] = controller
             guard controller.channel == nil else { continue }
@@ -143,7 +141,7 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         }
     }
 
-    private func message(at indexPath: IndexPath) -> DemoScheduledMessage {
+    private func message(at indexPath: IndexPath) -> ScheduledMessage {
         sections[indexPath.section].messages[indexPath.row]
     }
 
@@ -157,10 +155,10 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
 
     // MARK: - Actions
 
-    private func openConversation(editing message: DemoScheduledMessage) {
+    private func openConversation(editing message: ScheduledMessage) {
         let channelController = client.channelController(for: message.cid, messageOrdering: .topToBottom)
 
-        if let parentId = message.content.parentId {
+        if let parentId = message.parentMessageId {
             let threadVC = DemoChatThreadVC()
             threadVC.channelController = channelController
             threadVC.messageController = client.messageController(cid: message.cid, messageId: parentId)
@@ -175,7 +173,7 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         navigationController?.pushViewController(channelVC, animated: true)
     }
 
-    private func confirmSendNow(_ message: DemoScheduledMessage) {
+    private func confirmSendNow(_ message: ScheduledMessage) {
         let alert = UIAlertController(
             title: "Send now?",
             message: "This message will be sent right away instead of at its scheduled time.",
@@ -183,8 +181,8 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         )
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         let sendNowAction = UIAlertAction(title: "Send Now", style: .default) { [weak self] _ in
-            self?.service.sendNow(id: message.id) { result in
-                self?.handle(result, successMessage: "Message sent")
+            self?.scheduledMessageListController.sendScheduledMessageNow(id: message.id) { error in
+                self?.handle(error, successMessage: "Message sent")
             }
         }
         alert.addAction(sendNowAction)
@@ -192,32 +190,39 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider {
         present(alert, animated: true)
     }
 
-    private func reschedule(_ message: DemoScheduledMessage, sourceView: UIView?) {
+    private func reschedule(_ message: ScheduledMessage, sourceView: UIView?) {
         DemoScheduleMessagePicker.present(
             from: self,
             title: "Reschedule message",
             sourceView: sourceView,
             initialDate: message.scheduledAt
         ) { [weak self] date in
-            self?.service.update(id: message.id, scheduledAt: date) { result in
-                self?.handle(result, successMessage: "Message rescheduled for \(DemoScheduledDateFormatter.string(from: date))")
+            self?.scheduledMessageListController.rescheduleMessage(id: message.id, scheduledAt: date) { result in
+                let error: Error? = if case let .failure(error) = result { error } else { nil }
+                self?.handle(error, successMessage: "Message rescheduled for \(DemoScheduledDateFormatter.string(from: date))")
             }
         }
     }
 
-    private func delete(_ message: DemoScheduledMessage) {
-        service.delete(id: message.id) { [weak self] result in
-            self?.handle(result, successMessage: "Scheduled message deleted")
+    private func delete(_ message: ScheduledMessage) {
+        scheduledMessageListController.deleteScheduledMessage(id: message.id) { [weak self] error in
+            self?.handle(error, successMessage: "Scheduled message deleted")
         }
     }
 
-    private func handle(_ result: Result<DemoScheduledMessage, Error>, successMessage: String) {
-        switch result {
-        case .success:
-            DemoToastView.show(successMessage, in: view)
-        case let .failure(error):
+    private func handle(_ error: Error?, successMessage: String) {
+        if let error {
             presentAlert(title: "Something went wrong", message: error.localizedDescription)
+        } else {
+            DemoToastView.show(successMessage, in: view)
         }
+    }
+
+    func controller(
+        _ controller: ScheduledMessageListController,
+        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+    ) {
+        update(with: controller.scheduledMessages)
     }
 }
 
@@ -242,7 +247,7 @@ extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate
             for: indexPath
         ) as? DemoScheduledMessageCell
         let message = message(at: indexPath)
-        cell?.configure(with: message, channel: channelControllers[message.cid]?.channel)
+        cell?.configure(with: message, channel: message.channel ?? channelControllers[message.cid]?.channel)
         return cell ?? .init()
     }
 
@@ -326,7 +331,7 @@ class DemoScheduledMessageCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with message: DemoScheduledMessage, channel: ChatChannel?) {
+    func configure(with message: ScheduledMessage, channel: ChatChannel?) {
         let colors = Appearance.default.colorPalette
         let channelName = channel.flatMap {
             Appearance.default.formatters.channelName.format(
@@ -335,7 +340,7 @@ class DemoScheduledMessageCell: UITableViewCell {
             )
         } ?? message.cid.id
 
-        if message.content.parentId != nil {
+        if message.parentMessageId != nil {
             channelNameLabel.text = "Thread in # \(channelName)"
         } else {
             channelNameLabel.text = "# \(channelName)"
@@ -348,14 +353,14 @@ class DemoScheduledMessageCell: UITableViewCell {
         case .sending:
             statusLabel.text = "Sending…"
             statusLabel.textColor = colors.textSecondary
-        case .failed:
+        default:
             statusLabel.text = message.failureReason?.localizedDescription ?? "Failed to send"
             statusLabel.textColor = colors.accentError
         }
 
-        let attachmentsCount = message.content.attachments.count
-        if !message.content.text.isEmpty {
-            messageLabel.text = message.content.text
+        let attachmentsCount = message.attachments.count
+        if !message.text.isEmpty {
+            messageLabel.text = message.text
         } else if attachmentsCount > 0 {
             messageLabel.text = "📎 \(attachmentsCount) attachment\(attachmentsCount == 1 ? "" : "s")"
         } else {

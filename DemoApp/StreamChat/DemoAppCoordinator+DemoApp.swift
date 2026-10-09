@@ -23,12 +23,7 @@ extension DemoAppCoordinator {
     }
 
     func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping @MainActor @Sendable (Error?) -> Void) {
-        logIn(as: user) { error in
-            if error == nil, let client = StreamChatWrapper.shared.client {
-                DemoScheduledMessagesService.shared.start(client: client)
-            }
-            completion(error)
-        }
+        logIn(as: user, completion: completion)
 
         let chatVC = makeChatVC(
             for: user,
@@ -75,7 +70,8 @@ extension DemoAppCoordinator {
         }
 
         let scheduledMessageListVC = DemoScheduledMessageListVC(
-            currentUserController: client.currentUserController()
+            currentUserController: client.currentUserController(),
+            scheduledMessageListController: client.scheduledMessageListController()
         )
         scheduledMessageListVC.onLogout = { [weak self] in
             self?.logOut()
@@ -91,7 +87,8 @@ extension DemoAppCoordinator {
             reminderListVC: UINavigationController(rootViewController: reminderListVC),
             scheduledMessageListVC: UINavigationController(rootViewController: scheduledMessageListVC),
             currentUserController: client.currentUserController(),
-            allRemindersListController: client.messageReminderListController()
+            allRemindersListController: client.messageReminderListController(),
+            allScheduledMessagesListController: client.scheduledMessageListController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
@@ -241,7 +238,6 @@ private extension DemoAppCoordinator {
     }
 
     func logOut() {
-        DemoScheduledMessagesService.shared.stop()
         chat.logOut { [weak self] in
             UserDefaults.shared.currentUserId = nil
             self?.showLogin(animated: true)
@@ -249,7 +245,6 @@ private extension DemoAppCoordinator {
     }
 
     func disconnect() {
-        DemoScheduledMessagesService.shared.stop()
         chat.client?.disconnect { [weak self] in
             self?.showLogin(animated: true)
         }

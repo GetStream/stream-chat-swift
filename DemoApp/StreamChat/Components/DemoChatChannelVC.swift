@@ -26,7 +26,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         return indicator
     }()
 
-    var scheduledMessageToEdit: DemoScheduledMessage?
+    var scheduledMessageToEdit: ScheduledMessage?
 
     // MARK: - Lifecycle
 

@@ -104,8 +104,8 @@ final class DemoScheduleDatePickerVC: UIViewController {
         )
 
         let now = Date()
-        let minimumDate = now.addingTimeInterval(DemoScheduledMessagesService.minimumLeadTime)
-        let maximumDate = now.addingTimeInterval(DemoScheduledMessagesService.maximumLeadTime)
+        let minimumDate = now.addingTimeInterval(DemoScheduledMessageLimits.minimumLeadTime)
+        let maximumDate = now.addingTimeInterval(DemoScheduledMessageLimits.maximumLeadTime)
         datePicker.datePickerMode = .dateAndTime
         datePicker.preferredDatePickerStyle = .inline
         datePicker.minimumDate = minimumDate

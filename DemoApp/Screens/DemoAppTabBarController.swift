@@ -8,7 +8,7 @@ import StreamChatCommonUI
 import StreamChatUI
 import UIKit
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate, ScheduledMessageListControllerDelegate {
     private var locationProvider = LocationProvider.shared
     
     let channelListVC: UIViewController
@@ -18,10 +18,10 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     let scheduledMessageListVC: UIViewController
     let currentUserController: CurrentChatUserController
     let allRemindersListController: MessageReminderListController
+    let allScheduledMessagesListController: ScheduledMessageListController
 
     // Events controller for listening to chat events
     private var eventsController: EventsController!
-    private var scheduledMessagesObservation: AnyCancellable?
 
     init(
         channelListVC: UIViewController,
@@ -30,7 +30,8 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         reminderListVC: UIViewController,
         scheduledMessageListVC: UIViewController,
         currentUserController: CurrentChatUserController,
-        allRemindersListController: MessageReminderListController
+        allRemindersListController: MessageReminderListController,
+        allScheduledMessagesListController: ScheduledMessageListController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
@@ -39,6 +40,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         self.scheduledMessageListVC = scheduledMessageListVC
         self.currentUserController = currentUserController
         self.allRemindersListController = allRemindersListController
+        self.allScheduledMessagesListController = allScheduledMessagesListController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -111,11 +113,9 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         }
         if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled {
             tabs.append(scheduledMessageListVC)
-            scheduledMessagesObservation = DemoScheduledMessagesService.shared.$scheduledMessages
-                .sink { [weak self] messages in
-                    let pendingCount = messages.filter(\.isPending).count
-                    self?.scheduledMessageListVC.tabBarItem.badgeValue = pendingCount > 0 ? "\(pendingCount)" : nil
-                }
+            allScheduledMessagesListController.delegate = self
+            allScheduledMessagesListController.synchronize()
+            updateScheduledMessagesBadge()
         }
         viewControllers = tabs
     }
@@ -175,5 +175,17 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     private func updateRemindersBadge() {
         let reminders = allRemindersListController.reminders
         reminderListVC.tabBarItem.badgeValue = reminders.isEmpty ? nil : "\(reminders.count)"
+    }
+
+    func controller(
+        _ controller: ScheduledMessageListController,
+        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+    ) {
+        updateScheduledMessagesBadge()
+    }
+
+    private func updateScheduledMessagesBadge() {
+        let pendingCount = allScheduledMessagesListController.scheduledMessages.filter(\.isPending).count
+        scheduledMessageListVC.tabBarItem.badgeValue = pendingCount > 0 ? "\(pendingCount)" : nil
     }
 }

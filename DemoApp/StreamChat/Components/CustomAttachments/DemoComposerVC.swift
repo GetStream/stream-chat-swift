@@ -2,18 +2,24 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Combine
 import CoreLocation
 import StreamChat
 import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
-    var editingScheduledMessage: DemoScheduledMessage?
+    var editingScheduledMessage: ScheduledMessage?
+    var editingScheduledContent: DemoScheduledMessageContent?
     var componentsBeforeScheduledEditing: Components?
-    var editingScheduledMessageObservation: AnyCancellable?
     var isSubmittingScheduledMessage = false
-    var scheduledMessagesObservation: AnyCancellable?
+
+    // Created on first use, once the channel controller is set.
+    lazy var scheduledMessageListController: ScheduledMessageListController? = {
+        guard AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled else { return nil }
+        let controller = channelController?.client.scheduledMessageListController()
+        controller?.delegate = self
+        return controller
+    }()
 
     lazy var scheduledMessagesBannerView = DemoComposerBannerView()
     lazy var scheduledEditingBannerView = DemoComposerBannerView()
@@ -28,10 +34,6 @@ class DemoComposerVC: ComposerVC {
         scheduledMessagesBannerView.onTap = { [weak self] in
             (self?.tabBarController as? DemoAppTabBarController)?.showScheduledMessages()
         }
-        scheduledMessagesObservation = DemoScheduledMessagesService.shared.$scheduledMessages
-            .sink { [weak self] messages in
-                self?.updateScheduledMessagesBanner(with: messages)
-            }
 
         scheduledEditingBannerView.isHidden = true
         scheduledEditingBannerView.onDismiss = { [weak self] in
@@ -49,7 +51,7 @@ class DemoComposerVC: ComposerVC {
     override func updateContent() {
         super.updateContent()
 
-        updateScheduledMessagesBanner(with: DemoScheduledMessagesService.shared.scheduledMessages)
+        updateScheduledMessagesBanner()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

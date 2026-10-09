@@ -26,7 +26,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
     }()
 
     var thread: ChatThread?
-    var scheduledMessageToEdit: DemoScheduledMessage?
+    var scheduledMessageToEdit: ScheduledMessage?
 
     override func viewDidLoad() {
         super.viewDidLoad()
