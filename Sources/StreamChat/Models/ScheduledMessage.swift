@@ -17,8 +17,8 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The channel the message is sent to.
     public let cid: ChannelId
 
-    /// The channel the message is sent to, if it is available locally.
-    public let channel: ChatChannel?
+    /// A summary of the channel the message is sent to.
+    public let channel: ScheduledMessageChannel
 
     /// The message that will be sent, so it can be rendered like any other message.
     ///
@@ -53,7 +53,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     init(
         id: String,
         cid: ChannelId,
-        channel: ChatChannel?,
+        channel: ScheduledMessageChannel,
         message: ChatMessage,
         quotedMessageId: MessageId?,
         scheduledAt: Date,
@@ -77,6 +77,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     public static func == (lhs: ScheduledMessage, rhs: ScheduledMessage) -> Bool {
         lhs.id == rhs.id
             && lhs.cid == rhs.cid
+            && lhs.channel == rhs.channel
             && lhs.message.text == rhs.message.text
             && lhs.message.allAttachments == rhs.message.allAttachments
             && lhs.message.mentionedUsers.map(\.id).sorted() == rhs.message.mentionedUsers.map(\.id).sorted()
@@ -89,6 +90,34 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.failureReason == rhs.failureReason
             && lhs.createdAt == rhs.createdAt
             && lhs.updatedAt == rhs.updatedAt
+    }
+}
+
+/// A summary of the channel a scheduled message is sent to.
+public final class ScheduledMessageChannel: Equatable, Sendable {
+    /// The identifier of the channel.
+    public let cid: ChannelId
+
+    /// The type of the channel.
+    public var type: ChannelType { cid.type }
+
+    /// The identifier of the channel, without its type.
+    public var id: String { cid.id }
+
+    /// The name of the channel, if it has one. Channels without a name, like most direct messages, are named after their members.
+    public let name: String?
+
+    /// The image of the channel, if it has one.
+    public let imageURL: URL?
+
+    init(cid: ChannelId, name: String?, imageURL: URL?) {
+        self.cid = cid
+        self.name = name
+        self.imageURL = imageURL
+    }
+
+    public static func == (lhs: ScheduledMessageChannel, rhs: ScheduledMessageChannel) -> Bool {
+        lhs.cid == rhs.cid && lhs.name == rhs.name && lhs.imageURL == rhs.imageURL
     }
 }
 

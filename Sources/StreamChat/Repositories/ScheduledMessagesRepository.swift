@@ -194,8 +194,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     private func model(from payload: SimulatedScheduledMessagePayload) -> ScheduledMessage {
-        let channel = client.flatMap { DataStore(client: $0).channel(cid: payload.cid) }
-        return payload.asModel(channel: channel, client: client)
+        payload.asModel(client: client)
     }
 
     private func currentState() -> State {

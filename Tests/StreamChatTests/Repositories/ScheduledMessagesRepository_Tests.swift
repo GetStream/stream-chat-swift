@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -75,6 +76,36 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.message.mentionedUsers.map(\.id), ["mentioned"])
         XCTAssertEqual(message.message.extraData["key"], .string("value"))
         XCTAssertEqual(message.quotedMessageId, "quoted")
+    }
+
+    func test_schedule_withoutALocalChannel_exposesTheChannelSummaryWithoutName() throws {
+        let message = try schedule().get()
+
+        XCTAssertEqual(message.channel.cid, cid)
+        XCTAssertEqual(message.channel.type, cid.type)
+        XCTAssertEqual(message.channel.id, cid.id)
+        XCTAssertNil(message.channel.name)
+        XCTAssertNil(message.channel.imageURL)
+    }
+
+    func test_schedule_withALocalChannel_exposesItsNameAndImage_evenAfterItIsGone() throws {
+        try client.mockDatabaseContainer.createChannel(cid: cid)
+        let localChannel = try XCTUnwrap(DataStore(client: client).channel(cid: cid))
+        let id = String.unique
+
+        let message = try schedule(id: id).get()
+
+        XCTAssertEqual(message.channel.name, localChannel.name)
+        XCTAssertEqual(message.channel.imageURL, localChannel.imageURL)
+        XCTAssertNotNil(message.channel.name)
+
+        try client.mockDatabaseContainer.writeSynchronously { [cid = cid!] session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            context.delete(try XCTUnwrap(session.channel(cid: cid)))
+        }
+        XCTAssertNil(DataStore(client: client).channel(cid: cid))
+        let page = try waitFor { repository.load(query: .init(), completion: $0) }.get()
+        XCTAssertEqual(page.messages.first(where: { $0.id == id })?.channel.name, localChannel.name)
     }
 
     func test_schedule_withTheSameId_returnsTheExistingMessage() throws {
@@ -266,6 +297,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let payload = SimulatedScheduledMessagePayload(
             id: id,
             cid: cid ?? self.cid,
+            channel: nil,
             message: .init(
                 text: "Hello",
                 attachments: [],
@@ -281,6 +313,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             createdAt: Date(),
             updatedAt: Date()
         )
-        return payload.asModel(channel: nil)
+        return payload.asModel()
     }
 }

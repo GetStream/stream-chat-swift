@@ -68,6 +68,8 @@ final class ScheduledMessagesSimulator: @unchecked Sendable {
             let payload = SimulatedScheduledMessagePayload(
                 id: id,
                 cid: cid,
+                channel: client.flatMap { DataStore(client: $0).channel(cid: cid) }
+                    .map { .init(name: $0.name, imageURL: $0.imageURL) },
                 message: message,
                 scheduledAt: scheduledAt,
                 status: ScheduledMessageStatus.scheduled.rawValue,
@@ -89,7 +91,7 @@ final class ScheduledMessagesSimulator: @unchecked Sendable {
         respond(completion) { [self] in
             let messages = messages
             let payloads = Dictionary(uniqueKeysWithValues: messages.map { ($0.id, $0) })
-            let models = messages.map { $0.asModel(channel: nil) }.filter(query.matches)
+            let models = messages.map { $0.asModel() }.filter(query.matches)
             let matching = query.sorted(models).compactMap { payloads[$0.id] }
             let offset = query.pagination.cursor.flatMap(Int.init) ?? 0
             let end = min(offset + query.pagination.pageSize, matching.count)
@@ -339,8 +341,7 @@ final class ScheduledMessagesSimulator: @unchecked Sendable {
         _ makeEvent: (ScheduledMessage) -> Event
     ) {
         guard let client else { return }
-        let channel = DataStore(client: client).channel(cid: payload.cid)
-        client.eventNotificationCenter.process(makeEvent(payload.asModel(channel: channel, client: client)))
+        client.eventNotificationCenter.process(makeEvent(payload.asModel(client: client)))
     }
 
     private static func error(_ statusCode: Int, _ message: String) -> ClientError {
@@ -365,8 +366,14 @@ struct SimulatedScheduledMessagePayload: Codable, Sendable {
         var payload: Data
     }
 
+    struct Channel: Codable, Sendable {
+        var name: String?
+        var imageURL: URL?
+    }
+
     let id: String
     let cid: ChannelId
+    var channel: Channel?
     var message: Message
     var scheduledAt: Date
     var status: String
@@ -384,8 +391,16 @@ struct SimulatedScheduledMessagePayload: Codable, Sendable {
         }
     }
 
+    // The backend returns the channel it has. The simulator refreshes what it stored with the local channel, when there is one.
+    private func channelSummary(in dataStore: DataStore?) -> ScheduledMessageChannel {
+        if let localChannel = dataStore?.channel(cid: cid) {
+            return ScheduledMessageChannel(cid: cid, name: localChannel.name, imageURL: localChannel.imageURL)
+        }
+        return ScheduledMessageChannel(cid: cid, name: channel?.name, imageURL: channel?.imageURL)
+    }
+
     // The message is built from what is available locally: the client resolves the author, the mentioned users and the quoted message.
-    func asModel(channel: ChatChannel?, client: ChatClient? = nil) -> ScheduledMessage {
+    func asModel(client: ChatClient? = nil) -> ScheduledMessage {
         let dataStore = client.map { DataStore(client: $0) }
         let authorId = client?.currentUserId ?? ""
         let author: ChatUser = dataStore?.currentUser() ?? .placeholder(id: authorId)
@@ -440,7 +455,7 @@ struct SimulatedScheduledMessagePayload: Codable, Sendable {
         return ScheduledMessage(
             id: id,
             cid: cid,
-            channel: channel,
+            channel: channelSummary(in: dataStore),
             message: chatMessage,
             quotedMessageId: message.quotedMessageId,
             scheduledAt: scheduledAt,
