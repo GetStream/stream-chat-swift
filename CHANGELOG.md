@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix rare crashes caused by concurrent access to the local database [#4317](https://github.com/GetStream/stream-chat-swift/pull/4317)
 - Fix full channel update unfreezing frozen channels and failing on auto-translated, disabled or team channels [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
 ### 🔄 Changed
+- The log viewer filter takes `LogEntry.Subsystem` values, such as `.httpRequests` [#4321](https://github.com/GetStream/stream-chat-swift/pull/4321)
 - `Device.createdAt` is now non-optional [#4318](https://github.com/GetStream/stream-chat-swift/pull/4318)
 
 ## StreamChatCommonUI
