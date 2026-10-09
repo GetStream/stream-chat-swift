@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatLogsUI
 import StreamChatUI
 import UIKit
 
@@ -78,9 +79,11 @@ extension DemoAppCoordinator {
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
+        LogViewer.showsFloatingButton = true
     }
 
     func showLogin(animated: Bool) {
+        LogViewer.showsFloatingButton = false
         let loginVC = makeLoginVC { [weak self] user in
             self?.showChat(for: user, cid: nil, animated: true) { error in
                 if let error = error {

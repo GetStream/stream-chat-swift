@@ -346,47 +346,26 @@ final class UserUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         try database.createUser(id: flaggedUserId)
 
-        // Simulate `flagUser` call.
-        nonisolated(unsafe) var flagCompletionCalled = false
-        userUpdater.flagUser(true, with: flaggedUserId, reason: nil, extraData: nil) { error in
-            XCTAssertNil(error)
-            flagCompletionCalled = true
-        }
-
         // Simulate `flagUser` API response with success.
         let payload = EmptyResponse()
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_mockResponseResult(.success(payload))
 
-        AssertAsync.willBeTrue(flagCompletionCalled)
-
-        // Load current user
-        let currentUser = database.viewContext.currentUser
-        // Load flagged user
-        var user: UserDTO? {
-            database.viewContext.user(id: flaggedUserId)
-        }
+        // Simulate `flagUser` call.
+        let flagError = try waitFor { userUpdater.flagUser(true, with: flaggedUserId, reason: nil, extraData: nil, completion: $0) }
+        XCTAssertNil(flagError)
 
         // Assert flagged user exists in the database, and current user has it as flagged.
-        AssertAsync {
-            Assert.willBeTrue(user != nil)
-            Assert.willBeEqual(currentUser?.flaggedUsers ?? [], [user])
-        }
+        let flaggedUserIds = try database.readSynchronously { $0.currentUser?.flaggedUsers.map(\.id) }
+        XCTAssertEqual(flaggedUserIds, [flaggedUserId])
 
         // Simulate `unflagUser` call.
-        nonisolated(unsafe) var unflagCompletionCalled = false
-        userUpdater.flagUser(false, with: flaggedUserId, reason: nil, extraData: nil) { error in
-            XCTAssertNil(error)
-            unflagCompletionCalled = true
-        }
-
-        // Simulate `unflagUser` API response with success.
-        apiClient.test_simulateResponse(.success(payload))
+        // unflag is local change only, backend does not support unflagging users
+        let unflagError = try waitFor { userUpdater.flagUser(false, with: flaggedUserId, reason: nil, extraData: nil, completion: $0) }
+        XCTAssertNil(unflagError)
 
         // Assert user is not a member of `flaggedUsers`.
-        AssertAsync {
-            Assert.willBeEqual(currentUser?.flaggedUsers, [])
-            Assert.willBeTrue(unflagCompletionCalled)
-        }
+        let flaggedUserIdsAfterUnflag = try database.readSynchronously { $0.currentUser?.flaggedUsers.map(\.id) }
+        XCTAssertEqual(flaggedUserIdsAfterUnflag, [])
     }
 
     func test_flagUser_propagatesNetworkError() {
