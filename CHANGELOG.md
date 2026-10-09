@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
+_October 09, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
