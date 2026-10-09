@@ -149,7 +149,7 @@ final class Chat_Tests: XCTestCase {
 
         let chat = try env.client.makeChat(
             with: .unique,
-            members: [
+            memberInfos: [
                 MemberInfo(userId: moderatorId, extraData: ["channel_role": .string("channel_moderator")]),
                 MemberInfo(userId: memberId)
             ]

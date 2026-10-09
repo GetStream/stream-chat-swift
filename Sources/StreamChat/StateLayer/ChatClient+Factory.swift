@@ -188,7 +188,7 @@ extension ChatClient {
     ///   - name: The name of the channel.
     ///   - imageURL: The channel avatar URL.
     ///   - team: The team for the channel.
-    ///   - members: The members of the channel, with their optional extra data.
+    ///   - memberInfos: The members of the channel, with their optional extra data.
     ///   - isCurrentUserMember: If `true`, the current user is added as member.
     ///   - invites: A list of users who will get invites.
     ///   - filterTags: A list of tags to add to the channel.
@@ -204,7 +204,7 @@ extension ChatClient {
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
-        members: [MemberInfo],
+        memberInfos: [MemberInfo],
         isCurrentUserMember: Bool = true,
         invites: [UserId] = [],
         filterTags: Set<String> = [],
@@ -218,7 +218,7 @@ extension ChatClient {
             name: name,
             imageURL: imageURL,
             team: team,
-            members: members + (isCurrentUserMember ? [MemberInfo(userId: currentUserId)] : []),
+            members: memberInfos + (isCurrentUserMember ? [MemberInfo(userId: currentUserId)] : []),
             invites: Set(invites),
             filterTags: filterTags,
             extraData: extraData
