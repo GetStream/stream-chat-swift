@@ -45,6 +45,21 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
 
     // MARK: - Banner
 
+    // Like the suggestions, the banners float above the composer instead of making it taller.
+    func attachScheduledBanners() {
+        guard let parentView = parent?.view, scheduledMessagesBannerView.superview == nil else { return }
+
+        for banner in [scheduledMessagesBannerView, scheduledEditingBannerView] {
+            banner.translatesAutoresizingMaskIntoConstraints = false
+            parentView.addSubview(banner)
+            NSLayoutConstraint.activate([
+                banner.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 12),
+                banner.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -12),
+                composerView.topAnchor.constraint(equalTo: banner.bottomAnchor, constant: 8)
+            ])
+        }
+    }
+
     func updateScheduledMessagesBanner() {
         var count = 0
         if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled,
@@ -57,10 +72,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             scheduledMessagesBannerView.title = "\(count) scheduled message\(count == 1 ? "" : "s") in this \(place) · View all"
         }
 
-        // The composer container relayouts on every `isHidden` change, and this runs on every keystroke.
-        if scheduledMessagesBannerView.isHidden != (count == 0) {
-            scheduledMessagesBannerView.isHidden = count == 0
-        }
+        scheduledMessagesBannerView.isHidden = count == 0 || suggestionsVC.isPresented
+        scheduledEditingBannerView.isHidden = editingScheduledMessage == nil || suggestionsVC.isPresented
     }
 
     // MARK: - Scheduling
@@ -127,7 +140,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         editingScheduledContent = DemoScheduledMessageContent(message)
         applyEditingScheduledMessageContent()
         scheduledEditingBannerView.title = "Editing scheduled message · \(DemoScheduledDateFormatter.string(from: message.scheduledAt))"
-        scheduledEditingBannerView.isHidden = false
+        updateScheduledMessagesBanner()
     }
 
     // Channel screens load their draft into the composer when they appear, so the edited content is applied after it.
@@ -149,7 +162,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             components = componentsBeforeScheduledEditing
         }
         componentsBeforeScheduledEditing = nil
-        scheduledEditingBannerView.isHidden = true
+        updateScheduledMessagesBanner()
         restoreDraftOrClearContent()
     }
 
@@ -349,7 +362,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
     }
 
     private func showToast(_ text: String) {
-        DemoToastView.show(text, in: view)
+        DemoToastView.show(text, in: parent?.view ?? view)
     }
 }
 

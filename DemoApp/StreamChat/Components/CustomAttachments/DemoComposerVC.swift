@@ -41,11 +41,22 @@ class DemoComposerVC: ComposerVC {
         }
     }
 
-    override func setUpLayout() {
-        super.setUpLayout()
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
 
-        composerView.container.insertArrangedSubview(scheduledEditingBannerView, at: 0)
-        composerView.container.insertArrangedSubview(scheduledMessagesBannerView, at: 0)
+        attachScheduledBanners()
+    }
+
+    override func showSuggestions() {
+        super.showSuggestions()
+
+        updateScheduledMessagesBanner()
+    }
+
+    override func dismissSuggestions() {
+        super.dismissSuggestions()
+
+        updateScheduledMessagesBanner()
     }
 
     override func updateContent() {

@@ -9,7 +9,7 @@ final class DemoToastView: UIView {
     private let label = UILabel()
 
     static func show(_ text: String, in view: UIView) {
-        let container = view.window ?? view
+        let container = view
         let toast = DemoToastView(text: text)
         toast.alpha = 0
         container.addSubview(toast)
