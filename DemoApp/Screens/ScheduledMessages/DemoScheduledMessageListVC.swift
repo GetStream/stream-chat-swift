@@ -15,9 +15,9 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMess
         case scheduled
         case failed
 
-        var title: String {
+        var title: String? {
             switch self {
-            case .scheduled: return "Scheduled"
+            case .scheduled: return nil
             case .failed: return "Failed to send"
             }
         }
