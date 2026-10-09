@@ -52,4 +52,42 @@ final class ChannelQuery_Tests: XCTestCase {
             "watchers": [:]
         ])
     }
+
+    func test_endpoint_channelInput_isSentAsData() throws {
+        let cid: ChannelId = .unique
+        let member: UserId = .unique
+        let invite: UserId = .unique
+        let channelInput = ChannelInput(
+            name: "Team",
+            imageURL: URL(string: "https://getstream.io/image.jpg"),
+            team: "red",
+            members: [member],
+            invites: [invite],
+            filterTags: ["vip"],
+            extraData: ["color": .string("blue")]
+        )
+        let query = ChannelQuery(type: cid.type, id: cid.id, channelInput: channelInput)
+
+        XCTAssertEqual(query.cid, cid)
+        let body = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+        let data = try XCTUnwrap(body["data"] as? [String: Any])
+        XCTAssertEqual(data["custom"] as? [String: String], [
+            "name": "Team",
+            "image": "https://getstream.io/image.jpg",
+            "color": "blue"
+        ])
+        XCTAssertEqual(data["team"] as? String, "red")
+        XCTAssertEqual(data["filter_tags"] as? [String], ["vip"])
+        let invites = try XCTUnwrap(data["invites"] as? [[String: Any]])
+        XCTAssertEqual(invites.compactMap { $0["user_id"] as? String }, [invite])
+        let members = try XCTUnwrap(data["members"] as? [[String: Any]])
+        XCTAssertEqual(Set(members.compactMap { $0["user_id"] as? String }), [member, invite])
+    }
+
+    func test_cid_whenIdIsNil_isNil() {
+        let query = ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput())
+
+        XCTAssertNil(query.cid)
+        XCTAssertEqual(query.type, .messaging)
+    }
 }

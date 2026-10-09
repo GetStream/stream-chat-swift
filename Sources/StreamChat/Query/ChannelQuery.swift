@@ -25,8 +25,8 @@ public struct ChannelQuery: Encodable, Sendable {
     public let watchersLimit: Int?
     /// A query options.
     public var options: QueryOptions = .all
-    /// ChannelCreatePayload that is needed only when creating channel
-    let channelPayload: ChannelEditDetailPayload?
+    /// Channel data that is needed only when creating channel
+    let channelInput: ChannelInput?
     /// A pagination for members for the channel to be retrieved.
     let membersPagination: Pagination?
 
@@ -74,7 +74,7 @@ public struct ChannelQuery: Encodable, Sendable {
     ) {
         id = cid.id
         type = cid.type
-        channelPayload = nil
+        channelInput = nil
         pagination = messagesPagination
         self.membersPagination = membersPagination
         self.watchersLimit = watchersLimit
@@ -82,11 +82,13 @@ public struct ChannelQuery: Encodable, Sendable {
 
     /// Init a channel query.
     /// - Parameters:
-    ///   - channelPayload: a payload that has data needed for channel creation.
-    init(channelPayload: ChannelEditDetailPayload) {
-        id = channelPayload.id
-        type = channelPayload.type
-        self.channelPayload = channelPayload
+    ///   - type: the type of the channel.
+    ///   - id: the id of the channel, `nil` when the backend generates it.
+    ///   - channelInput: the data needed for channel creation.
+    init(type: ChannelType, id: String?, channelInput: ChannelInput) {
+        self.id = id
+        self.type = type
+        self.channelInput = channelInput
         pagination = nil
         membersPagination = nil
         watchersLimit = nil
@@ -112,7 +114,7 @@ public struct ChannelQuery: Encodable, Sendable {
         try options.encode(to: encoder)
 
         // Only needed for channel creation
-        try container.encodeIfPresent(channelPayload, forKey: .data)
+        try container.encodeIfPresent(channelInput, forKey: .data)
 
         try pagination.map { try container.encode($0, forKey: .messages) }
         try membersPagination.map { try container.encode($0, forKey: .members) }
@@ -123,7 +125,7 @@ public struct ChannelQuery: Encodable, Sendable {
 extension ChannelQuery {
     var endpoint: Endpoint<ChannelStateResponse> {
         let request = ChannelGetOrCreateRequest(
-            data: channelPayload?.toChannelInput(),
+            data: channelInput,
             members: membersPagination?.toPaginationParams(),
             messages: pagination?.toMessagePaginationParams(),
             presence: options.contains(.presence),
