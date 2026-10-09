@@ -15,17 +15,20 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     let threadListVC: UIViewController
     let draftListVC: UIViewController
     let reminderListVC: UIViewController
+    let scheduledMessageListVC: UIViewController
     let currentUserController: CurrentChatUserController
     let allRemindersListController: MessageReminderListController
 
     // Events controller for listening to chat events
     private var eventsController: EventsController!
+    private var scheduledMessagesObservation: AnyCancellable?
 
     init(
         channelListVC: UIViewController,
         threadListVC: UIViewController,
         draftListVC: UIViewController,
         reminderListVC: UIViewController,
+        scheduledMessageListVC: UIViewController,
         currentUserController: CurrentChatUserController,
         allRemindersListController: MessageReminderListController
     ) {
@@ -33,6 +36,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         self.threadListVC = threadListVC
         self.draftListVC = draftListVC
         self.reminderListVC = reminderListVC
+        self.scheduledMessageListVC = scheduledMessageListVC
         self.currentUserController = currentUserController
         self.allRemindersListController = allRemindersListController
         super.init(nibName: nil, bundle: nil)
@@ -97,12 +101,23 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         reminderListVC.tabBarItem.title = "Reminders"
         reminderListVC.tabBarItem.image = UIImage(systemName: "bell")
 
+        scheduledMessageListVC.tabBarItem.title = "Scheduled"
+        scheduledMessageListVC.tabBarItem.image = UIImage(systemName: "clock")
+
+        var tabs = [channelListVC, threadListVC, draftListVC]
         // Only show reminders tab if the feature is enabled
         if AppConfig.shared.demoAppConfig.isRemindersEnabled {
-            viewControllers = [channelListVC, threadListVC, draftListVC, reminderListVC]
-        } else {
-            viewControllers = [channelListVC, threadListVC, draftListVC]
+            tabs.append(reminderListVC)
         }
+        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled {
+            tabs.append(scheduledMessageListVC)
+            scheduledMessagesObservation = DemoScheduledMessagesService.shared.$scheduledMessages
+                .sink { [weak self] messages in
+                    let pendingCount = messages.filter(\.isPending).count
+                    self?.scheduledMessageListVC.tabBarItem.badgeValue = pendingCount > 0 ? "\(pendingCount)" : nil
+                }
+        }
+        viewControllers = tabs
     }
     
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
