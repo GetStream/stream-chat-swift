@@ -115,7 +115,7 @@ final class APIClient_Tests: XCTestCase {
         let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         AssertResultFailure(result, testError)
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 1)
-        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+        XCTAssertNotCall("decodeRequestResponse(request:session:data:response:error:)", on: decoder)
     }
 
     func test_requestEncoder_tokenWaiterTimeout() throws {
@@ -155,7 +155,7 @@ final class APIClient_Tests: XCTestCase {
         XCTAssertEqual(result?.error, secondCallError)
         // Should retry once, as the waiter timeout is only returned in the first try
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 2)
-        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+        XCTAssertNotCall("decodeRequestResponse(request:session:data:response:error:)", on: decoder)
     }
 
     func test_callingRequest_createsNetworkRequest() throws {
@@ -329,7 +329,7 @@ final class APIClient_Tests: XCTestCase {
         apiClient.enterRecoveryMode()
 
         // We expect only one request (the initial one) to go through
-        AssertAsync.willBeTrue(decoder.numberOfCalls(on: "decodeRequestResponse(data:response:error:)") == 1)
+        AssertAsync.willBeTrue(decoder.numberOfCalls(on: "decodeRequestResponse(request:session:data:response:error:)") == 1)
 
         // Gets enqueued because we switched to recovery mode
         XCTEnsureRequestsWereExecuted(times: 1)
@@ -576,7 +576,7 @@ final class APIClient_Tests: XCTestCase {
             }
         }
         XCTAssertNotCall("encodeRequest(for:completion:)", on: encoder)
-        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+        XCTAssertNotCall("decodeRequestResponse(request:session:data:response:error:)", on: decoder)
     }
 
     func test_whenInRecoveryModeRecoveryRequestsShouldGoThrough() {
@@ -614,7 +614,7 @@ final class APIClient_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTAssertEqual(Logger_Spy.assertionFailureCalls, 5)
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 5)
-        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: 5)
+        XCTAssertCall("decodeRequestResponse(request:session:data:response:error:)", on: decoder, times: 5)
         Logger_Spy.restoreLogger()
     }
 
@@ -796,6 +796,6 @@ extension APIClient_Tests {
 
     func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: times, file: file, line: line)
-        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
+        XCTAssertCall("decodeRequestResponse(request:session:data:response:error:)", on: decoder, times: times, file: file, line: line)
     }
 }

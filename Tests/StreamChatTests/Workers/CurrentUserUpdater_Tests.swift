@@ -482,6 +482,133 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
     }
 
+    func test_addDevice_whenDeviceIsAlreadyRegistered_doesNotMakeAPICall() throws {
+        let userId = UserId.unique
+        let device = Device(id: "test", pushProvider: "apn", pushProviderName: "APN Configuration", userId: userId)
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user, devices: [device]))
+        }
+
+        let error = try waitFor { completion in
+            currentUserUpdater.addDevice(
+                deviceId: device.id,
+                pushProvider: .apn,
+                providerName: "APN Configuration",
+                currentUserId: userId,
+                completion: completion
+            )
+        }
+
+        XCTAssertNil(error)
+        XCTAssertTrue(apiClient.request_allRecordedCalls.isEmpty)
+        let currentDeviceId = try database.readSynchronously { $0.currentUser?.currentDevice?.id }
+        XCTAssertEqual(currentDeviceId, device.id)
+    }
+
+    func test_addDevice_whenDeviceIsRegisteredWithDifferentProviderName_makesAPICall() throws {
+        let userId = UserId.unique
+        let device = Device(id: "test", pushProvider: "apn", pushProviderName: "Old Configuration", userId: userId)
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user, devices: [device]))
+        }
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
+        let error = try waitFor { completion in
+            currentUserUpdater.addDevice(
+                deviceId: device.id,
+                pushProvider: .apn,
+                providerName: "New Configuration",
+                currentUserId: userId,
+                completion: completion
+            )
+        }
+
+        XCTAssertNil(error)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        let savedProviderName = try database.readSynchronously { $0.currentUser?.devices.first?.pushProviderName }
+        XCTAssertEqual(savedProviderName, "New Configuration")
+    }
+
+    func test_addDevice_whenDeviceIsRegisteredForAnotherUser_makesAPICall() throws {
+        let storedUserId = UserId.unique
+        let device = Device(id: "test", pushProvider: "apn", userId: storedUserId)
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: storedUserId, role: .user, devices: [device]))
+        }
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
+        let error = try waitFor { completion in
+            currentUserUpdater.addDevice(deviceId: device.id, pushProvider: .apn, currentUserId: .unique, completion: completion)
+        }
+
+        XCTAssertNil(error)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+    }
+
+    func test_addDevice_whenForceRegistration_makesAPICallForRegisteredDevice() throws {
+        let userId = UserId.unique
+        let device = Device(id: "test", pushProvider: "apn", userId: userId)
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user, devices: [device]))
+        }
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
+        let error = try waitFor { completion in
+            currentUserUpdater.addDevice(
+                deviceId: device.id,
+                pushProvider: .apn,
+                currentUserId: userId,
+                forceRegistration: true,
+                completion: completion
+            )
+        }
+
+        XCTAssertNil(error)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+    }
+
+    func test_addDevice_whenDeviceWasRegisteredBefore_doesNotMakeAPICallAgain() throws {
+        let userId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        let firstError = try waitFor { completion in
+            currentUserUpdater.addDevice(deviceId: "test", pushProvider: .apn, currentUserId: userId, completion: completion)
+        }
+
+        let secondError = try waitFor { completion in
+            currentUserUpdater.addDevice(deviceId: "test", pushProvider: .apn, currentUserId: userId, completion: completion)
+        }
+
+        XCTAssertNil(firstError)
+        XCTAssertNil(secondError)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        let savedDevice = try database.readSynchronously { try $0.currentUser?.devices.first?.asModel() }
+        XCTAssertEqual(savedDevice?.pushProvider, PushProvider.apn.rawValue)
+        XCTAssertEqual(savedDevice?.userId, userId)
+    }
+
+    func test_addDevice_whenPreviousRegistrationFailed_makesAPICallAgain() throws {
+        let userId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(TestError()))
+        let firstError = try waitFor { completion in
+            currentUserUpdater.addDevice(deviceId: "test", pushProvider: .apn, currentUserId: userId, completion: completion)
+        }
+
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        let secondError = try waitFor { completion in
+            currentUserUpdater.addDevice(deviceId: "test", pushProvider: .apn, currentUserId: userId, completion: completion)
+        }
+
+        XCTAssertNotNil(firstError)
+        XCTAssertNil(secondError)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+    }
+
     // MARK: removeDevice
 
     func test_removeDevice_makesCorrectAPICall() throws {

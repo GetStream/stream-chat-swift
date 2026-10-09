@@ -74,6 +74,34 @@ final class UnreadMessages_Tests: StreamTestCase {
         }
     }
 
+    func test_jumpToUnreadButtonShowsUnreadCount_whenUserMarksMessageAsUnread() throws {
+        linkToScenario(withId: 10242)
+
+        let unreadCount = 25
+
+        GIVEN("user opens the channel and sends the message") {
+            userRobot.login().openChannel().sendMessage(sampleText)
+        }
+        AND("the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(.sent)
+        }
+        AND("participant sends more messages than fit on the screen") {
+            participantRobot.sendMultipleMessages("New", count: unreadCount)
+            userRobot.assertMessage("New-\(unreadCount)")
+        }
+        WHEN("user marks the first participant message as unread") {
+            userRobot
+                .scrollMessageListUp(untilMessageIsVisible: "New-1")
+                .markMessageAsUnread("New-1")
+        }
+        AND("user scrolls back to the bottom") {
+            userRobot.scrollMessageListDown(untilMessageIsVisible: "New-\(unreadCount)")
+        }
+        THEN("the jump to unread button shows the unread count") {
+            userRobot.assertJumpToUnreadButton(unreadCount: unreadCount)
+        }
+    }
+
     func test_userMarksMessageAsUnread() throws {
         linkToScenario(withId: 11955)
 

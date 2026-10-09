@@ -222,7 +222,147 @@ final class StreamImageDownloader_Tests: XCTestCase {
         } catch {}
     }
 
+    @MainActor
+    func test_downloadImageTask_whenCancelled_stopsTheRequestAndCompletesWithError() {
+        let url = URL(string: "https://example.com/cancel.png")!
+        StreamImageDownloaderURLProtocolMock.stub(url, data: nil, neverResponds: true)
+        let completion = expectation(description: "completion")
+        var results: [Result<DownloadedImage, Error>] = []
+
+        let task = sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { result in
+            results.append(result)
+            completion.fulfill()
+        }
+        wait(for: [requestStarted(for: url)], timeout: 5)
+        task.cancel()
+
+        wait(for: [completion, requestStopped(for: url)], timeout: 5)
+        XCTAssertEqual(results.count, 1)
+        XCTAssertThrowsError(try results.first?.get())
+    }
+
+    @MainActor
+    func test_downloadImageTask_whenOneOfCoalescedRequestsIsCancelled_cancelledFailsAndOtherReceivesTheImage() {
+        let url = URL(string: "https://example.com/cancel-one.png")!
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 40, height: 40), delay: 0.1)
+        let cancelledCompletion = expectation(description: "cancelled completion")
+        let otherCompletion = expectation(description: "other completion")
+        var cancelledResults: [Result<DownloadedImage, Error>] = []
+        var otherResults: [Result<DownloadedImage, Error>] = []
+
+        let task = sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { result in
+            cancelledResults.append(result)
+            cancelledCompletion.fulfill()
+        }
+        sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { result in
+            otherResults.append(result)
+            otherCompletion.fulfill()
+        }
+        task.cancel()
+
+        wait(for: [cancelledCompletion, otherCompletion], timeout: 5, enforceOrder: true)
+        XCTAssertEqual(cancelledResults.count, 1)
+        XCTAssertThrowsError(try cancelledResults.first?.get()) { XCTAssertEqual(($0 as? URLError)?.code, .cancelled) }
+        XCTAssertEqual(otherResults.count, 1)
+        XCTAssertNoThrow(try otherResults.first?.get())
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.requestCount(for: url), 1)
+    }
+
+    @MainActor
+    func test_downloadImageTask_whenOneOfCoalescedRequestsIsCancelled_completesItWithoutWaitingForTheDownload() {
+        let url = URL(string: "https://example.com/cancel-one-pending.png")!
+        StreamImageDownloaderURLProtocolMock.stub(url, data: nil, neverResponds: true)
+        let cancelledCompletion = expectation(description: "cancelled completion")
+        var cancelledResults: [Result<DownloadedImage, Error>] = []
+
+        let task = sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { result in
+            cancelledResults.append(result)
+            cancelledCompletion.fulfill()
+        }
+        let otherTask = sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { _ in }
+        wait(for: [requestStarted(for: url)], timeout: 5)
+        task.cancel()
+
+        wait(for: [cancelledCompletion], timeout: 5)
+        XCTAssertThrowsError(try cancelledResults.first?.get()) { XCTAssertEqual(($0 as? URLError)?.code, .cancelled) }
+        XCTAssertEqual(StreamImageDownloaderURLProtocolMock.stopCount(for: url), 0)
+        otherTask.cancel()
+    }
+
+    @MainActor
+    func test_downloadImageTask_whenAllCoalescedRequestsAreCancelled_stopsTheRequestAndCompletesWithErrors() {
+        let url = URL(string: "https://example.com/cancel-all.png")!
+        StreamImageDownloaderURLProtocolMock.stub(url, data: nil, neverResponds: true)
+        let completions = expectation(description: "completions")
+        completions.expectedFulfillmentCount = 2
+        var results: [Result<DownloadedImage, Error>] = []
+
+        let firstTask = sut.downloadImageTask(
+            url: url,
+            options: ImageDownloadingOptions(cachingKey: "source", resize: CGSize(width: 50, height: 50))
+        ) { result in
+            results.append(result)
+            completions.fulfill()
+        }
+        let secondTask = sut.downloadImageTask(
+            url: url,
+            options: ImageDownloadingOptions(cachingKey: "source", resize: CGSize(width: 100, height: 100))
+        ) { result in
+            results.append(result)
+            completions.fulfill()
+        }
+        wait(for: [requestStarted(for: url)], timeout: 5)
+        firstTask.cancel()
+        secondTask.cancel()
+
+        wait(for: [completions, requestStopped(for: url)], timeout: 5)
+        XCTAssertEqual(results.count, 2)
+        for result in results {
+            XCTAssertThrowsError(try result.get())
+        }
+    }
+
+    @MainActor
+    func test_downloadImageTask_whenCancelledAfterCompletion_doesNotCompleteAgain() async throws {
+        let url = URL(string: "https://example.com/cancel-late.png")!
+        StreamImageDownloaderURLProtocolMock.stub(url, data: pngData(width: 40, height: 40))
+        let completion = expectation(description: "completion")
+        var results: [Result<DownloadedImage, Error>] = []
+
+        let task = sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { result in
+            results.append(result)
+            completion.fulfill()
+        }
+        await fulfillment(of: [completion], timeout: 5)
+        task.cancel()
+        await Task.yield()
+
+        XCTAssertEqual(results.count, 1)
+        XCTAssertNotNil(try results.first?.get())
+    }
+
+    @MainActor
+    func test_downloadImageTask_whenCancelledAfterMemoryCacheHit_doesNotCompleteAgain() {
+        let url = URL(string: "https://example.com/cancel-cached.png")!
+        sut.store(DownloadedImage(image: renderedImage(width: 20, height: 20)), for: url, options: ImageDownloadingOptions())
+        var results: [Result<DownloadedImage, Error>] = []
+
+        let task = sut.downloadImageTask(url: url, options: ImageDownloadingOptions()) { results.append($0) }
+        task.cancel()
+
+        XCTAssertEqual(results.count, 1)
+        XCTAssertNotNil(try results.first?.get())
+    }
+
     // MARK: - Helpers
+
+    private func requestStarted(for url: URL) -> XCTestExpectation {
+        expectation(for: NSPredicate { _, _ in StreamImageDownloaderURLProtocolMock.requestCount(for: url) > 0 }, evaluatedWith: nil)
+    }
+
+    private func requestStopped(for url: URL) -> XCTestExpectation {
+        expectation(for: NSPredicate { _, _ in StreamImageDownloaderURLProtocolMock.stopCount(for: url) > 0 }, evaluatedWith: nil)
+    }
 
     private func download(url: URL, options: ImageDownloadingOptions) async throws -> DownloadedImage {
         try await withCheckedThrowingContinuation { continuation in
@@ -288,17 +428,20 @@ private final class StreamImageDownloaderURLProtocolMock: URLProtocol {
         let data: Data?
         let headers: [String: String]?
         let delay: TimeInterval
+        let neverResponds: Bool
     }
 
     private static let lock = NSLock()
     private nonisolated(unsafe) static var stubs: [URL: Stub] = [:]
     private nonisolated(unsafe) static var counts: [URL: Int] = [:]
+    private nonisolated(unsafe) static var stopCounts: [URL: Int] = [:]
     private nonisolated(unsafe) static var recordedHeaders: [URL: [String: String]] = [:]
 
     static func reset() {
         lock.lock()
         stubs = [:]
         counts = [:]
+        stopCounts = [:]
         recordedHeaders = [:]
         lock.unlock()
     }
@@ -308,10 +451,11 @@ private final class StreamImageDownloaderURLProtocolMock: URLProtocol {
         statusCode: Int = 200,
         data: Data?,
         headers: [String: String]? = nil,
-        delay: TimeInterval = 0
+        delay: TimeInterval = 0,
+        neverResponds: Bool = false
     ) {
         lock.lock()
-        stubs[url] = Stub(statusCode: statusCode, data: data, headers: headers, delay: delay)
+        stubs[url] = Stub(statusCode: statusCode, data: data, headers: headers, delay: delay, neverResponds: neverResponds)
         lock.unlock()
     }
 
@@ -319,6 +463,12 @@ private final class StreamImageDownloaderURLProtocolMock: URLProtocol {
         lock.lock()
         defer { lock.unlock() }
         return counts[url] ?? 0
+    }
+
+    static func stopCount(for url: URL) -> Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return stopCounts[url] ?? 0
     }
 
     static func headers(for url: URL) -> [String: String]? {
@@ -349,6 +499,7 @@ private final class StreamImageDownloaderURLProtocolMock: URLProtocol {
             client?.urlProtocol(self, didFailWithError: URLError(.fileDoesNotExist))
             return
         }
+        guard !stub.neverResponds else { return }
         if let response = HTTPURLResponse(url: url, statusCode: stub.statusCode, httpVersion: "HTTP/1.1", headerFields: stub.headers) {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .allowed)
         }
@@ -358,5 +509,10 @@ private final class StreamImageDownloaderURLProtocolMock: URLProtocol {
         client?.urlProtocolDidFinishLoading(self)
     }
 
-    override func stopLoading() {}
+    override func stopLoading() {
+        guard let url = request.url else { return }
+        Self.lock.lock()
+        Self.stopCounts[url, default: 0] += 1
+        Self.lock.unlock()
+    }
 }

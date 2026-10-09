@@ -480,6 +480,16 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertNotNil(env.currentUserUpdater.addDevice_completion)
     }
 
+    func test_addDevice_forwardsForceRegistration() {
+        client.authenticationRepository.setMockToken()
+
+        controller.addDevice(.apn(token: Data("test".utf8)))
+        XCTAssertEqual(env.currentUserUpdater.addDevice_forceRegistration, false)
+
+        controller.addDevice(.apn(token: Data("test".utf8)), forceRegistration: true)
+        XCTAssertEqual(env.currentUserUpdater.addDevice_forceRegistration, true)
+    }
+
     func test_addDevice_propagatesError() throws {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()

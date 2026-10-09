@@ -20,6 +20,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
     @Atomic var addDevice_currentUserId: UserId?
     @Atomic var addDevice_pushProvider: PushProvider?
     @Atomic var addDevice_providerName: String?
+    @Atomic var addDevice_forceRegistration: Bool?
     @Atomic var addDevice_completion: ((Error?) -> Void)?
 
     @Atomic var removeDevice_id: String?
@@ -81,12 +82,14 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
         pushProvider: PushProvider,
         providerName: String?,
         currentUserId: UserId,
+        forceRegistration: Bool = false,
         completion: ((Error?) -> Void)? = nil
     ) {
         addDevice_id = deviceId
         addDevice_currentUserId = currentUserId
         addDevice_pushProvider = pushProvider
         addDevice_providerName = providerName
+        addDevice_forceRegistration = forceRegistration
         addDevice_completion = completion
     }
 
@@ -168,6 +171,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
 
         addDevice_id = nil
         addDevice_currentUserId = nil
+        addDevice_forceRegistration = nil
         addDevice_completion = nil
 
         removeDevice_id = nil
