@@ -10,7 +10,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '26.2'
 xcode_project = 'StreamChat.xcodeproj'
-sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI']
+sdk_names = ['StreamChat', 'StreamChatUI', 'StreamChatCommonUI', 'StreamChatAI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 derived_data_path = 'derived_data'
@@ -575,6 +575,29 @@ lane :test_common_ui do |options|
   )
 end
 
+desc 'Runs AI tests in Debug config'
+lane :test_ai do |options|
+  next unless is_check_required(sources: sources_matrix[:ai], force_check: @force_check)
+
+  scheme = 'StreamChatAI'
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
+
+  scan(
+    project: xcode_project,
+    scheme: scheme,
+    testplan: scheme,
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    build_for_testing: options[:build_for_testing],
+    skip_build: options[:skip_build],
+    result_bundle: true,
+    devices: options[:device],
+    number_of_retries: options[:cron] ? 3 : 2,
+    xcodebuild_formatter: xcodebuild_formatter
+  )
+end
+
 private_lane :match_macos do
   %w[development appstore].each do |type|
     match(
@@ -719,6 +742,7 @@ lane :sources_matrix do
     llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
     common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
+    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
     integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
@@ -840,16 +864,47 @@ private_lane :frameworks_sizes do
   stream_chat_size = File.size("#{frameworks_path}/StreamChat.framework/StreamChat")
   stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
   stream_chat_common_ui_size = File.size("#{frameworks_path}/StreamChatCommonUI.framework/StreamChatCommonUI")
+  # StreamCore and StreamCoreUI are linked into the framework, but an app with StreamChat already has them
+  shared_core_size = linked_objects_size(linkmap: '../linkmaps/StreamChatAI-arm64-LinkMap.txt', objects: ['StreamCore.o', 'StreamCoreUI.o'])
+  stream_chat_ai_size = File.size("#{frameworks_path}/StreamChatAI.framework/StreamChatAI") - shared_core_size
 
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
   stream_chat_common_ui_size_kb = (stream_chat_common_ui_size + assets_thinned_size) / 1024.0
+  stream_chat_ai_size_kb = stream_chat_ai_size / 1024.0
 
   {
     StreamChat: stream_chat_size_kb.round(0),
     StreamChatUI: stream_chat_ui_size_kb.round(0),
-    StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0)
+    StreamChatCommonUI: stream_chat_common_ui_size_kb.round(0),
+    StreamChatAI: stream_chat_ai_size_kb.round(0)
   }
+end
+
+# The bytes the given object files, such as a package's, take in a linked binary
+private_lane :linked_objects_size do |options|
+  object_ids = []
+  section = nil
+  File.foreach(options[:linkmap], encoding: 'ISO-8859-1').sum do |line|
+    if line.start_with?('#')
+      section = :objects if line.start_with?('# Object files:')
+      section = :symbols if line.start_with?('# Symbols:')
+      section = nil if line.start_with?('# Sections:', '# Dead Stripped Symbols:')
+      next 0
+    end
+
+    case section
+    when :objects
+      match = line.match(/^\[\s*(\d+)\]\s+(.+)$/)
+      object_ids << match[1].to_i if match && options[:objects].include?(File.basename(match[2].strip))
+      0
+    when :symbols
+      match = line.match(/^0x\h+\s+0x(\h+)\s+\[\s*(\d+)\]/)
+      match && object_ids.include?(match[2].to_i) ? match[1].to_i(16) : 0
+    else
+      0
+    end
+  end
 end
 
 lane :size_analyze do

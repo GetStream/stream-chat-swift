@@ -29,6 +29,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Cancel image downloads that are no longer needed when image views are reused [#4305](https://github.com/GetStream/stream-chat-swift/pull/4305)
 
+## StreamChatAI
+### ✅ Added
+- Add the `StreamChatAI` library with SwiftUI components for AI chat experiences, previously available in `stream-chat-swift-ai` [#4306](https://github.com/GetStream/stream-chat-swift/pull/4306)
+
 # [5.12.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.12.1)
 _October 01, 2026_
 
