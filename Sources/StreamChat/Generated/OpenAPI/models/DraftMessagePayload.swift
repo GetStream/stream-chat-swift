@@ -55,19 +55,22 @@ final class DraftMessagePayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        attachments = try container.decodeIfPresent(
+        self.attachments = try container.decodeArrayIfPresentIgnoringFailures(
             [MessageAttachmentPayload].self,
             forKey: .attachments
         )
-        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        id = try container.decode(String.self, forKey: .id)
-        mentionedUsers = try container.decodeIfPresent([UserPayload].self, forKey: .mentionedUsers)
-        parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
-        pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
-        quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
-        showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
-        silent = try container.decodeIfPresent(Bool.self, forKey: .silent)
-        text = try container.decode(String.self, forKey: .text)
-        type = try container.decodeIfPresent(String.self, forKey: .type)
+        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        self.id = try container.decode(String.self, forKey: .id)
+        self.mentionedUsers = try container.decodeArrayIfPresentIgnoringFailures(
+            [UserPayload].self,
+            forKey: .mentionedUsers
+        )
+        self.parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
+        self.pollId = try container.decodeIfPresent(String.self, forKey: .pollId)
+        self.quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
+        self.showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
+        self.silent = try container.decodeIfPresent(Bool.self, forKey: .silent)
+        self.text = try container.decode(String.self, forKey: .text)
+        self.type = try container.decodeIfPresent(String.self, forKey: .type)
     }
 }

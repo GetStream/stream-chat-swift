@@ -58,7 +58,7 @@ final class UserDTO_Tests: XCTestCase {
         let payload: FullUserResponse = .dummy(userId: userId, extraData: ["k": .string("v")], language: "pt")
 
         try database.writeSynchronously { session in
-            try session.saveUser(fullResponse: payload)
+            try session.saveUser(payload: payload.user)
         }
 
         // Load the user from the db and check the fields are correct

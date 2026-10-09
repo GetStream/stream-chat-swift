@@ -14,6 +14,6 @@ final class SearchRolesResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.roles = try container.decode([Role].self, forKey: .roles)
+        self.roles = try container.decodeArrayIgnoringFailures([Role].self, forKey: .roles)
     }
 }

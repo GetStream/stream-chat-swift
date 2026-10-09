@@ -41,7 +41,10 @@ public final class UserGroup: Sendable, Decodable {
         self.createdBy = try container.decodeIfPresent(String.self, forKey: .createdBy)
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
         self.id = try container.decode(String.self, forKey: .id)
-        self._members = try container.decodeIfPresent([UserGroupMember].self, forKey: .members)
+        self._members = try container.decodeArrayIfPresentIgnoringFailures(
+            [UserGroupMember].self,
+            forKey: .members
+        )
         self.name = try container.decode(String.self, forKey: .name)
         self.teamId = try container.decodeIfPresent(String.self, forKey: .teamId)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
