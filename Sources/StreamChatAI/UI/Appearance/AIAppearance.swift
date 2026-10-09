@@ -27,7 +27,7 @@ public final class AIAppearance {
 
     /// Shared color, layout and typography tokens. Mutating this instance is visible to any
     /// other appearance constructed with it.
-    public nonisolated(unsafe) let tokens: DesignSystemTokens
+    public let tokens: DesignSystemTokens
 
     /// AI-specific colors, derived from ``tokens``.
     public var colors: Colors
@@ -69,10 +69,4 @@ extension InjectedValues {
             Self[AIAppearanceKey.self] = newValue
         }
     }
-}
-
-// Swift 6.0 (Xcode 16) rejects reading a non-Sendable `nonisolated(unsafe)` token from a lazy
-// property of a main-actor class, so the appearances keep their tokens in this box instead.
-struct UncheckedSendable<Value>: @unchecked Sendable {
-    let value: Value
 }
