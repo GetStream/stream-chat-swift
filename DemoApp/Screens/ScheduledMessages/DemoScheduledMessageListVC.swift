@@ -26,8 +26,6 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMess
     private let currentUserController: CurrentChatUserController
     private let scheduledMessageListController: ScheduledMessageListController
     private var sections: [(section: Section, messages: [ScheduledMessage])] = []
-    // Channels that are not in the local database are loaded once to show their names.
-    private var channelControllers: [ChannelId: ChatChannelController] = [:]
 
     private var client: ChatClient { currentUserController.client }
     private var colors: Appearance.ColorPalette { Appearance.default.colorPalette }
@@ -126,19 +124,15 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMess
             .filter { !$0.messages.isEmpty }
         tableView.reloadData()
         emptyStateView.isHidden = !messages.isEmpty
-        loadMissingChannels(for: messages)
     }
 
-    private func loadMissingChannels(for messages: [ScheduledMessage]) {
-        for cid in Set(messages.filter { $0.channel == nil }.map(\.cid)) where channelControllers[cid] == nil {
-            let controller = client.channelController(for: cid)
-            channelControllers[cid] = controller
-            guard controller.channel == nil else { continue }
-
-            controller.synchronize { [weak self] _ in
-                self?.tableView.reloadData()
-            }
+    // Channels without a name, like direct messages, are named after their members when they are in the local database.
+    private func channelName(for message: ScheduledMessage) -> String {
+        let localChannel = client.channelController(for: message.cid).channel
+        let localName = localChannel.flatMap {
+            appearance.formatters.channelName.format(channel: $0, forCurrentUserId: client.currentUserId)
         }
+        return localName ?? message.channel.name ?? message.cid.id
     }
 
     private func message(at indexPath: IndexPath) -> ScheduledMessage {
@@ -247,7 +241,7 @@ extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate
             for: indexPath
         ) as? DemoScheduledMessageCell
         let message = message(at: indexPath)
-        cell?.configure(with: message, channel: message.channel ?? channelControllers[message.cid]?.channel)
+        cell?.configure(with: message, channelName: channelName(for: message))
         return cell ?? .init()
     }
 
@@ -331,15 +325,8 @@ class DemoScheduledMessageCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with message: ScheduledMessage, channel: ChatChannel?) {
+    func configure(with message: ScheduledMessage, channelName: String) {
         let colors = Appearance.default.colorPalette
-        let channelName = channel.flatMap {
-            Appearance.default.formatters.channelName.format(
-                channel: $0,
-                forCurrentUserId: StreamChatWrapper.shared.client?.currentUserId
-            )
-        } ?? message.cid.id
-
         if message.message.parentMessageId != nil {
             channelNameLabel.text = "Thread in # \(channelName)"
         } else {
