@@ -81,8 +81,8 @@ public extension ChatChannelController {
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,
-            parentId: existing?.parentMessageId,
-            showReplyInChannel: existing?.showReplyInChannel ?? false,
+            parentId: existing?.message.parentMessageId,
+            showReplyInChannel: existing?.message.showReplyInChannel ?? false,
             extraData: extraData
         )
         repository.update(id: id, content: content, scheduledAt: scheduledAt) { result in

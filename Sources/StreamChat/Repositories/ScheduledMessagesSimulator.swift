@@ -191,7 +191,7 @@ final class ScheduledMessagesSimulator: @unchecked Sendable {
                 self.didDeliver(id: id, result: result)
             }
         }
-        let attachments = payload.asModel(channel: nil).attachments.toAnyAttachmentPayload()
+        let attachments = payload.attachmentModels.toAnyAttachmentPayload()
 
         if let parentId = message.parentId {
             let controller = client.messageController(cid: payload.cid, messageId: parentId)
@@ -340,7 +340,7 @@ final class ScheduledMessagesSimulator: @unchecked Sendable {
     ) {
         guard let client else { return }
         let channel = DataStore(client: client).channel(cid: payload.cid)
-        client.eventNotificationCenter.process(makeEvent(payload.asModel(channel: channel)))
+        client.eventNotificationCenter.process(makeEvent(payload.asModel(channel: channel, client: client)))
     }
 
     private static func error(_ statusCode: Int, _ message: String) -> ClientError {
@@ -378,25 +378,99 @@ struct SimulatedScheduledMessagePayload: Codable, Sendable {
         status != ScheduledMessageStatus.failed.rawValue
     }
 
-    func asModel(channel: ChatChannel?) -> ScheduledMessage {
-        ScheduledMessage(
+    var attachmentModels: [AnyChatMessageAttachment] {
+        message.attachments.enumerated().map { index, attachment in
+            attachment.asModel(cid: cid, scheduledMessageId: id, index: index)
+        }
+    }
+
+    // The message is built from what is available locally: the client resolves the author, the mentioned users and the quoted message.
+    func asModel(channel: ChatChannel?, client: ChatClient? = nil) -> ScheduledMessage {
+        let dataStore = client.map { DataStore(client: $0) }
+        let authorId = client?.currentUserId ?? ""
+        let author: ChatUser = dataStore?.currentUser() ?? .placeholder(id: authorId)
+        let mentionedUsers = Set(message.mentionedUserIds.map { dataStore?.user(id: $0) ?? .placeholder(id: $0) })
+        let quotedMessage = message.quotedMessageId.flatMap { dataStore?.message(id: $0) }
+
+        let chatMessage = ChatMessage(
+            id: id,
+            cid: cid,
+            text: message.text,
+            type: message.parentId == nil ? .regular : .reply,
+            command: nil,
+            createdAt: scheduledAt,
+            locallyCreatedAt: nil,
+            updatedAt: updatedAt,
+            deletedAt: nil,
+            arguments: nil,
+            parentMessageId: message.parentId,
+            showReplyInChannel: message.showReplyInChannel,
+            replyCount: 0,
+            extraData: message.extraData,
+            quotedMessage: quotedMessage,
+            isBounced: false,
+            isSilent: false,
+            isShadowed: false,
+            deletedForMe: false,
+            reactionScores: [:],
+            reactionCounts: [:],
+            reactionGroups: [:],
+            author: author,
+            mentionedUsers: mentionedUsers,
+            threadParticipants: [],
+            attachments: attachmentModels,
+            latestReplies: [],
+            localState: nil,
+            isFlaggedByCurrentUser: false,
+            latestReactions: [],
+            currentUserReactions: [],
+            isSentByCurrentUser: true,
+            pinDetails: nil,
+            translations: nil,
+            originalLanguage: nil,
+            moderationDetails: nil,
+            readBy: [],
+            poll: nil,
+            textUpdatedAt: nil,
+            draftReply: nil,
+            reminder: nil,
+            sharedLocation: nil
+        )
+
+        return ScheduledMessage(
             id: id,
             cid: cid,
             channel: channel,
-            text: message.text,
-            attachments: message.attachments.enumerated().map { index, attachment in
-                attachment.asModel(cid: cid, scheduledMessageId: id, index: index)
-            },
-            mentionedUserIds: message.mentionedUserIds,
+            message: chatMessage,
             quotedMessageId: message.quotedMessageId,
-            parentMessageId: message.parentId,
-            showReplyInChannel: message.showReplyInChannel,
-            extraData: message.extraData,
             scheduledAt: scheduledAt,
             status: ScheduledMessageStatus(rawValue: status),
             failureReason: failureReason.map(ScheduledMessageFailureReason.init(rawValue:)),
             createdAt: createdAt,
             updatedAt: updatedAt
+        )
+    }
+}
+
+private extension ChatUser {
+    static func placeholder(id: UserId) -> ChatUser {
+        ChatUser(
+            id: id,
+            name: nil,
+            imageURL: nil,
+            isOnline: false,
+            isBanned: false,
+            isFlaggedByCurrentUser: false,
+            userRole: .user,
+            teamsRole: nil,
+            createdAt: Date(timeIntervalSince1970: 0),
+            updatedAt: Date(timeIntervalSince1970: 0),
+            deactivatedAt: nil,
+            lastActiveAt: nil,
+            teams: [],
+            language: nil,
+            avgResponseTime: nil,
+            extraData: [:]
         )
     }
 }

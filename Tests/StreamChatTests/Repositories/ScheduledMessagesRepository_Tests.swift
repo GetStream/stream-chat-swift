@@ -41,11 +41,40 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         let message = try schedule(text: "Hello", scheduledAt: scheduledAt).get()
 
-        XCTAssertEqual(message.text, "Hello")
+        XCTAssertEqual(message.message.text, "Hello")
         XCTAssertEqual(message.cid, cid)
         XCTAssertEqual(message.scheduledAt, scheduledAt)
         XCTAssertEqual(message.status, .scheduled)
         XCTAssertEqual(repository.scheduledMessages, [message])
+    }
+
+    func test_schedule_exposesTheMessageToRenderAuthoredByTheCurrentUser() throws {
+        let scheduledAt = Date().addingTimeInterval(3600)
+        let content = ScheduledMessageContent(
+            text: "Hi @mentioned",
+            attachments: [],
+            mentionedUserIds: ["mentioned"],
+            quotedMessageId: "quoted",
+            parentId: "parent",
+            showReplyInChannel: true,
+            extraData: ["key": .string("value")]
+        )
+
+        let message = try waitFor {
+            repository.schedule(id: "scheduled-id", cid: cid, content: content, scheduledAt: scheduledAt, completion: $0)
+        }.get()
+
+        XCTAssertEqual(message.message.id, "scheduled-id")
+        XCTAssertEqual(message.message.cid, cid)
+        XCTAssertEqual(message.message.author.id, client.currentUserId)
+        XCTAssertTrue(message.message.isSentByCurrentUser)
+        XCTAssertEqual(message.message.createdAt, scheduledAt)
+        XCTAssertEqual(message.message.type, .reply)
+        XCTAssertEqual(message.message.parentMessageId, "parent")
+        XCTAssertTrue(message.message.showReplyInChannel)
+        XCTAssertEqual(message.message.mentionedUsers.map(\.id), ["mentioned"])
+        XCTAssertEqual(message.message.extraData["key"], .string("value"))
+        XCTAssertEqual(message.quotedMessageId, "quoted")
     }
 
     func test_schedule_withTheSameId_returnsTheExistingMessage() throws {
@@ -87,7 +116,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let rescheduled = try waitFor { repository.reschedule(id: message.id, scheduledAt: newDate, completion: $0) }.get()
 
         XCTAssertEqual(rescheduled.scheduledAt, newDate)
-        XCTAssertEqual(rescheduled.text, "Hello")
+        XCTAssertEqual(rescheduled.message.text, "Hello")
         XCTAssertEqual(repository.scheduledMessages, [rescheduled])
     }
 
@@ -98,9 +127,9 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             repository.update(id: message.id, content: content(text: "Updated"), scheduledAt: nil, completion: $0)
         }.get()
 
-        XCTAssertEqual(updated.text, "Updated")
+        XCTAssertEqual(updated.message.text, "Updated")
         XCTAssertEqual(updated.scheduledAt, message.scheduledAt)
-        XCTAssertEqual(repository.scheduledMessage(id: message.id)?.text, "Updated")
+        XCTAssertEqual(repository.scheduledMessage(id: message.id)?.message.text, "Updated")
     }
 
     // MARK: - Delete
@@ -233,22 +262,25 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         scheduledAt: Date = Date().addingTimeInterval(3600),
         status: ScheduledMessageStatus = .scheduled
     ) -> ScheduledMessage {
-        ScheduledMessage(
-            id: .unique,
+        let id = String.unique
+        let payload = SimulatedScheduledMessagePayload(
+            id: id,
             cid: cid ?? self.cid,
-            channel: nil,
-            text: "Hello",
-            attachments: [],
-            mentionedUserIds: [],
-            quotedMessageId: nil,
-            parentMessageId: nil,
-            showReplyInChannel: false,
-            extraData: [:],
+            message: .init(
+                text: "Hello",
+                attachments: [],
+                mentionedUserIds: [],
+                quotedMessageId: nil,
+                parentId: nil,
+                showReplyInChannel: false,
+                extraData: [:]
+            ),
             scheduledAt: scheduledAt,
-            status: status,
+            status: status.rawValue,
             failureReason: nil,
             createdAt: Date(),
             updatedAt: Date()
         )
+        return payload.asModel(channel: nil)
     }
 }

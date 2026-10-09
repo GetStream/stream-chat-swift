@@ -11,7 +11,7 @@ import Foundation
 public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendable {
     /// The unique identifier of the scheduled message.
     ///
-    /// It is not the identifier of the message created when it is sent.
+    /// It is also the identifier of `message`, and not necessarily the one of the message created when it is sent.
     public let id: String
 
     /// The channel the message is sent to.
@@ -20,26 +20,15 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The channel the message is sent to, if it is available locally.
     public let channel: ChatChannel?
 
-    /// The text of the message.
-    public let text: String
+    /// The message that will be sent, so it can be rendered like any other message.
+    ///
+    /// It is authored by the current user, and its `createdAt` is `scheduledAt`. It is not part of the channel,
+    /// and has no reactions, replies or read state. Users and the quoted message are only fully populated
+    /// when they are available locally.
+    public let message: ChatMessage
 
-    /// The attachments of the message, already uploaded.
-    public let attachments: [AnyChatMessageAttachment]
-
-    /// The identifiers of the users mentioned in the message.
-    public let mentionedUserIds: [UserId]
-
-    /// The identifier of the message quoted by this message.
+    /// The identifier of the message quoted by `message`, even when the quoted message is not available locally.
     public let quotedMessageId: MessageId?
-
-    /// The identifier of the parent message when the message is a thread reply.
-    public let parentMessageId: MessageId?
-
-    /// Whether a thread reply is also shown in the channel.
-    public let showReplyInChannel: Bool
-
-    /// Additional data associated with the message.
-    public let extraData: [String: RawJSON]
 
     /// The date when the message is sent.
     public let scheduledAt: Date
@@ -65,13 +54,8 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         id: String,
         cid: ChannelId,
         channel: ChatChannel?,
-        text: String,
-        attachments: [AnyChatMessageAttachment],
-        mentionedUserIds: [UserId],
+        message: ChatMessage,
         quotedMessageId: MessageId?,
-        parentMessageId: MessageId?,
-        showReplyInChannel: Bool,
-        extraData: [String: RawJSON],
         scheduledAt: Date,
         status: ScheduledMessageStatus,
         failureReason: ScheduledMessageFailureReason?,
@@ -81,13 +65,8 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         self.id = id
         self.cid = cid
         self.channel = channel
-        self.text = text
-        self.attachments = attachments
-        self.mentionedUserIds = mentionedUserIds
+        self.message = message
         self.quotedMessageId = quotedMessageId
-        self.parentMessageId = parentMessageId
-        self.showReplyInChannel = showReplyInChannel
-        self.extraData = extraData
         self.scheduledAt = scheduledAt
         self.status = status
         self.failureReason = failureReason
@@ -98,13 +77,13 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     public static func == (lhs: ScheduledMessage, rhs: ScheduledMessage) -> Bool {
         lhs.id == rhs.id
             && lhs.cid == rhs.cid
-            && lhs.text == rhs.text
-            && lhs.attachments == rhs.attachments
-            && lhs.mentionedUserIds == rhs.mentionedUserIds
+            && lhs.message.text == rhs.message.text
+            && lhs.message.allAttachments == rhs.message.allAttachments
+            && lhs.message.mentionedUsers.map(\.id).sorted() == rhs.message.mentionedUsers.map(\.id).sorted()
             && lhs.quotedMessageId == rhs.quotedMessageId
-            && lhs.parentMessageId == rhs.parentMessageId
-            && lhs.showReplyInChannel == rhs.showReplyInChannel
-            && lhs.extraData == rhs.extraData
+            && lhs.message.parentMessageId == rhs.message.parentMessageId
+            && lhs.message.showReplyInChannel == rhs.message.showReplyInChannel
+            && lhs.message.extraData == rhs.message.extraData
             && lhs.scheduledAt == rhs.scheduledAt
             && lhs.status == rhs.status
             && lhs.failureReason == rhs.failureReason
