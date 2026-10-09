@@ -14,12 +14,37 @@ extension ChannelInput {
         filterTags: Set<String>,
         extraData: [String: RawJSON]
     ) {
-        let allMembers = members.union(invites)
+        self.init(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members.map { MemberInfo(userId: $0) },
+            invites: invites,
+            filterTags: filterTags,
+            extraData: extraData
+        )
+    }
+
+    convenience init(
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: [MemberInfo],
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON]
+    ) {
+        var seenUserIds = Set<UserId>()
+        let memberRequests = (members + invites.map { MemberInfo(userId: $0) }).compactMap { member in
+            seenUserIds.insert(member.userId).inserted
+                ? ChannelMemberRequest(custom: member.extraData, userId: member.userId)
+                : nil
+        }
         self.init(
             custom: Self.customData(name: name, imageURL: imageURL, extraData: extraData),
             filterTags: filterTags.isEmpty ? nil : Array(filterTags),
             invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
-            members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
+            members: memberRequests.isEmpty ? nil : memberRequests,
             team: team
         )
     }

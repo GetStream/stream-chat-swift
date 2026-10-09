@@ -176,6 +176,61 @@ extension ChatClient {
         )
     }
     
+    /// An instance of `Chat` which represents a channel with specified configuration and members with additional data.
+    ///
+    /// Use this overload to set member extra data when the channel is created, for example to assign the `channel_role` of a member.
+    /// Creates a new channel or returns an existing channel by modifying its configuration if needed.
+    ///
+    /// - Note: It is caller's responsibility to call ``Chat/get(watch:)`` for receiving the most recent state from the server.
+    ///
+    /// - Parameters:
+    ///   - cid: The id of the channel.
+    ///   - name: The name of the channel.
+    ///   - imageURL: The channel avatar URL.
+    ///   - team: The team for the channel.
+    ///   - members: The members of the channel, with their optional extra data.
+    ///   - isCurrentUserMember: If `true`, the current user is added as member.
+    ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add to the channel.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
+    ///   - channelListQuery: The channel list query the channel belongs to.
+    ///   - extraData: Extra data for the new channel.
+    ///
+    /// - Throws: An error if no user is currently logged-in.
+    /// - Returns: An instance of `Chat` representing the channel.
+    public func makeChat(
+        with cid: ChannelId,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        members: [MemberInfo],
+        isCurrentUserMember: Bool = true,
+        invites: [UserId] = [],
+        filterTags: Set<String> = [],
+        messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
+        channelListQuery: ChannelListQuery? = nil,
+        extraData: [String: RawJSON] = [:]
+    ) throws -> Chat {
+        guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+        let channelInput = ChannelInput(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members + (isCurrentUserMember ? [MemberInfo(userId: currentUserId)] : []),
+            invites: Set(invites),
+            filterTags: filterTags,
+            extraData: extraData
+        )
+        let channelQuery = ChannelQuery(type: cid.type, id: cid.id, channelInput: channelInput)
+        return makeChat(
+            with: channelQuery,
+            messageOrdering: messageOrdering,
+            memberSorting: memberSorting
+        )
+    }
+
     // MARK: - Create a Chat for Direct Messages
     
     /// An instance of `Chat` which represents a channel with specified members.
