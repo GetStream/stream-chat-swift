@@ -26,7 +26,16 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         return indicator
     }()
 
+    var scheduledMessageToEdit: DemoScheduledMessage?
+
     // MARK: - Lifecycle
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        (messageComposerVC as? DemoComposerVC)?.applyScheduledMessageEditing(starting: scheduledMessageToEdit)
+        scheduledMessageToEdit = nil
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

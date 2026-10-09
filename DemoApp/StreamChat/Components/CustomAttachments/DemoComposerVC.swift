@@ -2,17 +2,50 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreLocation
 import StreamChat
 import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
+    var editingScheduledMessage: DemoScheduledMessage?
+    var componentsBeforeScheduledEditing: Components?
+    var editingScheduledMessageObservation: AnyCancellable?
+    var isSubmittingScheduledMessage = false
+
+    lazy var scheduledEditingBannerView = DemoComposerBannerView()
+
     override func setUp() {
         super.setUp()
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(sendButtonLongPressed(_:)))
         composerView.sendButton.addGestureRecognizer(longPress)
+
+        scheduledEditingBannerView.isHidden = true
+        scheduledEditingBannerView.onDismiss = { [weak self] in
+            self?.endScheduledMessageEditing()
+        }
+    }
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        composerView.container.insertArrangedSubview(scheduledEditingBannerView, at: 0)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        saveEditedScheduledMessageIfNeeded()
+
+        super.viewWillDisappear(animated)
+    }
+
+    override func publishMessage(sender: UIButton) {
+        if editingScheduledMessage != nil {
+            confirmSendingEditedScheduledMessage()
+        } else {
+            super.publishMessage(sender: sender)
+        }
     }
 
     override var attachmentsPickerActions: [UIAlertAction] {
@@ -42,59 +75,13 @@ class DemoComposerVC: ComposerVC {
         present(navigationController, animated: true)
     }
 
-    // MARK: - Scheduled Messages
-
-    var canScheduleContent: Bool {
-        DemoScheduledMessagesService.shared.canScheduleMessages(in: channelController?.channel)
-            && content.editingMessage == nil
-            && !content.hasCommand
-            && !content.isEmpty
-            && !hasProcessingAttachments
-    }
-
-    var scheduledContent: DemoScheduledMessage.Content {
-        let text = content.inputText
-        let mentionedUserIds = content.mentionedUsers
-            .filter { text.contains("@\($0.name ?? $0.id)") }
-            .map(\.id)
-        return DemoScheduledMessage.Content(
-            text: text,
-            attachments: content.attachments,
-            mentionedUserIds: mentionedUserIds,
-            quotedMessageId: content.quotingMessage?.id,
-            parentId: content.threadMessage?.id,
-            showReplyInChannel: content.threadMessage != nil && composerView.checkboxControl.isSelected,
-            extraData: content.extraData
-        )
-    }
-
     @objc private func sendButtonLongPressed(_ recognizer: UILongPressGestureRecognizer) {
-        guard recognizer.state == .began, canScheduleContent else { return }
+        guard recognizer.state == .began else { return }
 
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        DemoScheduleMessagePicker.present(from: self, sourceView: composerView.sendButton) { [weak self] date in
-            self?.scheduleContent(at: date)
-        }
-    }
-
-    private func scheduleContent(at date: Date) {
-        guard let cid = channelController?.cid else { return }
-
-        if !canSendLinks && inputContainsLinks {
-            presentAlert(title: L10n.Composer.LinksDisabled.title, message: L10n.Composer.LinksDisabled.subtitle)
-            return
-        }
-
-        DemoScheduledMessagesService.shared.schedule(cid: cid, content: scheduledContent, scheduledAt: date) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(message):
-                clearContent(sender: composerView.sendButton)
-                let time = DemoScheduledDateFormatter.string(from: message.scheduledAt)
-                DemoToastView.show("Message scheduled for \(time)", in: view)
-            case let .failure(error):
-                presentAlert(title: "Couldn't schedule message", message: error.localizedDescription)
-            }
+        if editingScheduledMessage != nil {
+            presentRescheduleSheet()
+        } else {
+            presentScheduleSheet()
         }
     }
 }
