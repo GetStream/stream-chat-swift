@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)
 ### 🐞 Fixed
 - Fix UI freeze when opening a channel while logging out [#4313](https://github.com/GetStream/stream-chat-swift/pull/4313)
+- Fix rare crashes caused by concurrent access to the local database [#4317](https://github.com/GetStream/stream-chat-swift/pull/4317)
 
 ## StreamChatCommonUI
 ### ✅ Added

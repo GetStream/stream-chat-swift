@@ -19,7 +19,6 @@ enum DemoAppLogging {
 
         LogViewer.install()
         LogViewer.defaultFilter = LogFilter(
-            levels: [.debug],
             subsystems: Set([LogSubsystem.webSocket, .httpRequests].map(\.description))
         )
         LogViewer.presentsOnShake = true
