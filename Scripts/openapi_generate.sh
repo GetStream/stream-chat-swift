@@ -142,7 +142,6 @@ allowed_models=(
   DeleteMessageResponse
   DeleteReactionResponse
   DeliveredMessagePayload
-  DeviceResponse
   DraftPayloadResponse
   DraftResponse
   EventRequest
@@ -169,7 +168,6 @@ allowed_models=(
   ImageData
   Images
   ImageUploadResponse
-  ListDevicesResponse
   ListUserGroupsResponse
   MarkChannelsReadRequest
   MarkDeliveredRequest
@@ -350,7 +348,6 @@ allowed_events=(
 # unlike allowed_models above which uses the generator's original names.
 allowed_hashable_models=(
   AppSettings
-  Device
   MarkUnreadRequest
   PushPreference
   PushPreferenceInput
@@ -468,7 +465,6 @@ decodable_only_models=(
   GroupedChannelsBucket
   GroupedQueryChannelsResponse
   ImageUploadResponse
-  ListDevicesResponse
   ListUserGroupsResponse
   MemberPayload
   MembersResponse
@@ -542,7 +538,6 @@ codable_models=(
   AttachmentActionPayload
   AttachmentFieldPayload
   ChannelCapability
-  Device
   GiphyImageData
   GiphyImages
   MemberInfoPayload
@@ -578,7 +573,6 @@ for model in "${allowed_models[@]}"; do
 done
 
 # Remove in the next major.
-optionalize_property DeviceResponse createdAt
 optionalize_property Role createdAt
 optionalize_property Role updatedAt
 optionalize_property UnreadCountsChannel lastRead
@@ -617,7 +611,6 @@ rename_generated ChannelOwnCapability ChannelCapability
 rename_generated ChannelResponse ChannelDetailPayload
 rename_generated CreatePollOptionRequest CreatePollOptionRequestBody
 rename_generated CreatePollRequest CreatePollRequestBody
-rename_generated DeviceResponse Device
 rename_generated DraftPayloadResponse DraftMessagePayload
 rename_generated DraftResponse DraftPayload
 rename_generated Field AttachmentFieldPayload
@@ -673,8 +666,9 @@ rename_generated_type CreatePollRequestVotingVisibility VotingVisibility
 rename_generated_type PushPreferenceInputChatLevel PushPreferenceLevel
 rename_generated_type TranslateMessageRequestLanguage TranslationLanguage
 
-# StreamCore provides the privacy settings models; only point the references at its names.
+# StreamCore provides the device and privacy settings models; only point the references at its names.
 rename_generated_type DeliveryReceiptsResponse DeliveryReceiptsPrivacySettings
+rename_generated_type DeviceResponse Device
 rename_generated_type PrivacySettingsResponse UserPrivacySettings
 rename_generated_type ReadReceiptsResponse ReadReceiptsPrivacySettings
 rename_generated_type TypingIndicatorsResponse TypingIndicatorPrivacySettings
@@ -759,13 +753,13 @@ require_property UserWatchingStopEventDTO cid
 remove_property AIIndicatorClearEventDTO channelId channelType custom receivedAt
 remove_property AIIndicatorStopEventDTO channelId channelType custom receivedAt
 remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedAt
-remove_property BanRequest deleteMessages ipBan
+remove_property BanRequest banFromFutureChannels deleteMessages deleteReactions ipBan
 remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
 remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
-remove_property ChannelInputRequest autoTranslationEnabled autoTranslationLanguage configOverrides createdBy disabled frozen
+remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest channelRole user
 remove_property ChannelStateResponse hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
@@ -877,7 +871,6 @@ remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 # 6. Expose selected generated models as public API.
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
-publicize_model Device
 publicize_model PushPreference
 publicize_model Role
 publicize_model SharedLocation

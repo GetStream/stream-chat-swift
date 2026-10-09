@@ -87,8 +87,7 @@ public extension ChatClient {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        let payload = ChannelEditDetailPayload(
-            cid: cid,
+        let channelInput = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -99,7 +98,7 @@ public extension ChatClient {
         )
 
         return .init(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(type: cid.type, id: cid.id, channelInput: channelInput),
             channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,
@@ -145,8 +144,7 @@ public extension ChatClient {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
 
-        let payload = ChannelEditDetailPayload(
-            type: type,
+        let channelInput = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -156,7 +154,7 @@ public extension ChatClient {
             extraData: extraData
         )
         return .init(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(type: type, id: nil, channelInput: channelInput),
             channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,

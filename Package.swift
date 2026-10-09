@@ -42,9 +42,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.12.0"),
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.13.0"),
         .package(url: "https://github.com/JohnSundell/Splash.git", exact: "0.16.0"),
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui.git", exact: "2.4.0")
+        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui.git", exact: "2.4.0"),
         .package(url: "https://github.com/GetStream/stream-logs-ui-swift.git", from: "0.2.0")
     ],
     targets: [
