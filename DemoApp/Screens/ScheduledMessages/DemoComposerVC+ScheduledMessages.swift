@@ -64,6 +64,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         var count = 0
         if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled,
            editingScheduledMessage == nil,
+           !isSchedulingOnly,
            let cid = channelController?.cid,
            let messages = scheduledMessageListController?.scheduledMessages {
             let parentId = content.threadMessage?.id
@@ -163,7 +164,11 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         }
         componentsBeforeScheduledEditing = nil
         updateScheduledMessagesBanner()
-        restoreDraftOrClearContent()
+        if isSchedulingOnly {
+            clearContent(sender: composerView.sendButton)
+        } else {
+            restoreDraftOrClearContent()
+        }
     }
 
     func saveEditedScheduledMessageIfNeeded() {
@@ -198,6 +203,19 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         alert.addAction(sendNowAction)
         alert.preferredAction = sendNowAction
         present(alert, animated: true)
+    }
+
+    func publishScheduledMessageOnly() {
+        guard let message = editingScheduledMessage else {
+            presentScheduleSheet()
+            return
+        }
+        guard !content.isEmpty, !hasProcessingAttachments, validateLinks() else { return }
+
+        isSubmittingScheduledMessage = true
+        update(message, with: scheduledContent, scheduledAt: nil) { [weak self] result in
+            self?.finishScheduledMessageSubmission(result) { _ in "Scheduled message updated" }
+        }
     }
 
     func presentRescheduleSheet() {
