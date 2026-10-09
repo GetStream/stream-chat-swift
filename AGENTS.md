@@ -6,6 +6,7 @@ This repo hosts Stream's iOS Chat SDK in Swift. It provides:
 - A low-level client (**StreamChat**) for the Stream Chat API — models, networking, state, persistence
 - A UIKit-based UI SDK (**StreamChatUI**) that provides ready-made chat screens and components
 - A shared UI module (**StreamChatCommonUI**) with appearance tokens, localization, and formatters used by both UIKit and SwiftUI SDKs
+- SwiftUI AI components (**StreamChatAI**) for AI chat experiences: streaming markdown messages, reasoning, tool calls, charts, and a prompt composer. It depends on StreamCore (`StreamCore` and `StreamCoreUI`) but not on the other modules
 
 Agents should prioritize backwards compatibility, API stability, and high test coverage when changing code. Avoid doing any source-breaking changes without adding deprecations.
 
@@ -27,6 +28,9 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 
 - **StreamCore** from [`stream-core-swift`](https://github.com/GetStream/stream-core-swift.git) (exact 0.6.2)
 - **swift-docc-plugin** (exact 1.0.0) — for documentation generation
+- **Splash** (exact 0.16.0) and **swift-markdown-ui** (exact 2.4.0) — used only by StreamChatAI
+- MarkdownUI requires iOS 15 / macOS 12, above the package's iOS 13 / macOS 11 (kept on purpose for existing customers). Xcode 27+ raises the StreamChatAI target to match; Xcode 26 and older reject it. So StreamChatAI is not part of `Integration/SPM`, whose CI lane runs on Xcode 26.2
+- StreamChatAI must not depend on the Model Context Protocol SDK (it adds a large dependency tree); `AIClientToolDefinition` reads and writes the same JSON as MCP's `Tool`, with schemas as StreamCore's `RawJSON`
 - **Vendored libraries** (do not edit directly):
   - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
@@ -75,6 +79,24 @@ Sources/
     Reactions/             # Reaction types and utilities
     Resources/             # Localization files (en.lproj, etc.)
     Utils/                 # Common UI utilities
+  StreamChatAI/            # SwiftUI AI components (depends only on StreamCore)
+    AI/                    # Non-UI code: what agents send, and how the device answers
+      Charts/              # Chart specs parsed from code blocks (Chart.js, ECharts, Vega-Lite, …)
+      LocalModel/          # On-device model fallback
+      MessageParts/        # A reply's ai_reasoning / ai_tool_call steps
+      ToolCalls/           # Client tools: definitions, registration, runner, results, approvals
+    UI/                    # SwiftUI views and the state behind them
+      Appearance/          # AIAppearance: StreamCore design tokens, AI colors and images
+      Charts/              # Chart rendering
+      CommonViews/         # Sidebar
+      Composer/            # Prompt composer, view factory, suggestions, attachments
+      Message/             # Streaming Markdown message, code blocks, typing indicator
+      MessageParts/        # Reasoning and tool call steps, tool approvals
+      Reasoning/           # Streaming reasoning view
+      Transcription/       # Speech to text
+      Utils/               # Shared modifiers and formatting
+    Resources/             # Localization files (en.lproj)
+    Utils/                 # Localization accessors, exported modules
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -88,6 +110,7 @@ Tests/
   StreamChatTests/         # Unit tests for StreamChat (mirrors source structure)
   StreamChatUITests/       # Snapshot & unit tests for StreamChatUI
   StreamChatCommonUITests/ # Tests for StreamChatCommonUI
+  StreamChatAITests/       # Tests for StreamChatAI
 StreamChatUITestsApp/      # Test harness app for E2E tests
 StreamChatUITestsAppUITests/ # E2E / UI automation tests
 Scripts/                   # Helper scripts (bootstrap, dependency updates)
@@ -97,7 +120,7 @@ Documentation.docc         # DocC documentation catalog
 
 ### New files & target membership
 
-When creating new source or resource files, add them to the correct Xcode target(s). Update the project (e.g. `project.pbxproj`) so each new file is included in the appropriate target's "Compile Sources" (or "Copy Bundle Resources" for assets). Match the target(s) used by sibling files in the same directory (e.g. `Sources/StreamChat/` → StreamChat target; `Sources/StreamChatUI/` → StreamChatUI; `Sources/StreamChatCommonUI/` → StreamChatCommonUI; `Tests/StreamChatTests/` → StreamChatTests target). Omitting target membership will cause build failures or unused files.
+When creating new source or resource files, add them to the correct Xcode target(s). Update the project (e.g. `project.pbxproj`) so each new file is included in the appropriate target's "Compile Sources" (or "Copy Bundle Resources" for assets). Match the target(s) used by sibling files in the same directory (e.g. `Sources/StreamChat/` → StreamChat target; `Sources/StreamChatUI/` → StreamChatUI; `Sources/StreamChatCommonUI/` → StreamChatCommonUI; `Sources/StreamChatAI/` → StreamChatAI; `Tests/StreamChatTests/` → StreamChatTests target). Omitting target membership will cause build failures or unused files.
 
 ### Local setup (SPM)
 
@@ -117,6 +140,7 @@ Available shared schemes (under `StreamChat.xcodeproj/xcshareddata/xcschemes/`):
   - `StreamChat` — builds the core framework
   - `StreamChatUI` — builds the UIKit framework
   - `StreamChatCommonUI` — builds the shared UI framework
+  - `StreamChatAI` — builds the AI components framework and runs its tests
   - `StreamChatTests` — runs core unit tests
   - `StreamChatTestToolsTests` — runs test tools tests
   - `DemoApp` — builds and runs the demo app
@@ -197,6 +221,7 @@ CI is driven by Fastlane (see `fastlane/Fastfile`). Key lanes:
 - `test` — runs StreamChat unit tests
 - `test_ui` — runs StreamChatUI snapshot/unit tests
 - `test_common_ui` — runs StreamChatCommonUI tests
+- `test_ai` — runs StreamChatAI tests
 - `test_e2e_mock` — runs E2E tests against a mock server
 - `build_demo` — builds the demo app
 - `build_test_app_and_frameworks` — builds test app and SDK frameworks
@@ -245,6 +270,8 @@ Rules:
 
 The SDK uses `defaultLocalization: "en"`. String resources live in `Sources/StreamChatCommonUI/Resources/`. After modifying `.strings` files, regenerate `L10n.swift` by running SwiftGen (or let CI handle it). Always use `L10n` accessors for user-facing strings rather than raw string literals.
 
+StreamChatAI keeps its own strings in `Sources/StreamChatAI/Resources/en.lproj/Localizable.strings`, read through the internal `L10n` in `Sources/StreamChatAI/Utils/Localization.swift`. That file is written by hand: add an accessor there for each new key. `L10n` reads every string through `AIAppearance.localizationProvider`, so apps can override them.
+
 ### Concurrency model
 
 The project uses Swift 6.0 strict concurrency. When adding new code:
@@ -266,6 +293,8 @@ Accessibility & UI quality
 - Ensure UIKit components have accessibility labels, traits, and dynamic type support.
 - Support both light/dark mode.
 - Use the Appearance system (`Appearance`, `Components`) for theming and configuration.
+- In StreamChatAI, keep code without UI (models, parsing, tool calls) under `AI/`, importing Foundation rather than SwiftUI, and views under `UI/`, one view per file. Split a view whose body grows long into smaller views.
+- In StreamChatAI, take colors, fonts, spacing and icons from `AIAppearance`, never hard-coded values. Each view injects only what it reads, e.g. `@Injected(\.aiAppearance.colors) var colors`, `@Injected(\.aiAppearance.fonts) var fonts`, `@Injected(\.aiAppearance.tokens.layout) var layout`, `@Injected(\.aiAppearance.images) var images`. A new color or font goes in `AIAppearance+Colors.swift` or `AIAppearance+Fonts.swift`, derived from the StreamCore `DesignSystemTokens`; a new icon goes in `AIAppearance.Images`. Don't add `InjectedValues` keys such as `\.colors` or `\.fonts`: StreamChatSwiftUI already defines them. Log with StreamCore's `log`, not `print`. Keep re-exporting only `DesignSystemTokens` from StreamCoreUI: the rest of it clashes with StreamChatCommonUI names such as `ImageResize` and `BoxShadow`.
 
 Testing policy
 
@@ -273,6 +302,7 @@ Testing policy
   - `Tests/StreamChatTests/` for core client tests
   - `Tests/StreamChatUITests/` for UIKit component tests (including snapshot tests)
   - `Tests/StreamChatCommonUITests/` for shared UI module tests
+  - `Tests/StreamChatAITests/` for AI components tests
 - Test infrastructure (mocks, shared helpers, fixtures) lives in `TestTools/StreamChatTestTools/`
 - Use fakes/mocks from the test helpers provided by the repo when possible.
 - Use `waitFor` from StreamChatTestTools to await async completion handlers instead of manual `XCTestExpectation` + `waitForExpectations`.
@@ -303,7 +333,7 @@ Compatibility & distribution
 - Name branches with a type prefix and a short kebab-case description, e.g. `add/dynamic-search-debounce`, `fix/empty-search-results`, `docs/channel-search`.
 - Prefer prefixes that match the change type: `add/`, `fix/`, `docs/`, etc. Do **not** use personal name prefixes (e.g. `nuno/...`) or ticket IDs (e.g. `ios-1932`, `IOS-1932`) in branch names.
 - Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with `### Added`, `### Fixed`, `### Changed` subsections).
-- The changelog has separate subsections for **StreamChat**, **StreamChatUI**, and **StreamChatCommonUI**.
+- The changelog has separate subsections for **StreamChat**, **StreamChatUI**, **StreamChatCommonUI**, and **StreamChatAI**.
 - Only update `CHANGELOG.md` **after the PR has been opened**, so the entry can include the PR link (e.g. `[#1234](https://github.com/GetStream/stream-chat-swift/pull/1234)`). Push the changelog update as a follow-up commit on the same branch.
 - Keep changelog entries as short and high-level as possible. Describe the user-visible outcome in one line and do not explain implementation details, file names, or internal APIs.
 

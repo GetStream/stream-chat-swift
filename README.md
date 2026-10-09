@@ -14,6 +14,7 @@
   <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.67%20MB-blue"/>
   <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-3.38%20MB-blue"/>
   <img id="stream-chat-common-ui-label" alt="StreamChatCommonUI" src="https://img.shields.io/badge/StreamChatCommonUI-0.99%20MB-blue"/>
+  <img id="stream-chat-ai-label" alt="StreamChatAI" src="https://img.shields.io/badge/StreamChatAI-2.29%20MB-blue"/>
 </p>
 
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
@@ -101,9 +102,15 @@ To find out more about this product, please check our [docs](https://getstream.i
 
 ## AI Components
 
-Bring your AI experience to life with Stream’s frontend components available for [SwiftUI](https://github.com/GetStream/stream-chat-swift-ai) (and other platforms, such as React, React Native, and Android).
+Bring your AI experience to life with Stream’s frontend components, available for SwiftUI in the **StreamChatAI** library of this package (and on other platforms, such as React, React Native, and Android).
 
 Featuring natural streaming message animation, full markdown and code rendering, charts, tables, thinking indicators, text-to-speech, and a completely flexible composer. Designed to work seamlessly with Stream Chat’s frontend SDKs, it’s everything you need to ship a premium AI chat interface out of the box.
+
+The components are styled with `AIAppearance`, which builds on the design tokens shared by Stream's SDKs, so the AI components reskin together with Chat and Video.
+
+StreamChatAI requires iOS 15 or later. When you add it with Swift Package Manager, build with Xcode 27 or later.
+
+StreamChatAI doesn't depend on the Model Context Protocol SDK. Client tools are described with `AIClientToolDefinition`, which reads the same JSON as an MCP tool, so a tool from the MCP SDK converts with `try AIClientToolDefinition(encoding: tool)`.
 
 To find out more about these components, please check our [docs](https://getstream.io/chat/docs/sdk/ios/ai-integrations/overview/).
 
