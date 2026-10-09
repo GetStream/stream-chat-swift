@@ -44,13 +44,13 @@ final class MessageReactionPayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        createdAt = try container.decode(Date.self, forKey: .createdAt)
-        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        messageId = try container.decode(String.self, forKey: .messageId)
-        score = try container.decode(Int.self, forKey: .score)
-        type = try container.decode(MessageReactionType.self, forKey: .type)
-        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-        user = try container.decode(UserPayload.self, forKey: .user)
-        userId = try container.decode(String.self, forKey: .userId)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        self.messageId = try container.decode(String.self, forKey: .messageId)
+        self.score = try container.decode(Int.self, forKey: .score)
+        self.type = try container.decode(MessageReactionType.self, forKey: .type)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
+        self.userId = try container.decode(String.self, forKey: .userId)
     }
 }

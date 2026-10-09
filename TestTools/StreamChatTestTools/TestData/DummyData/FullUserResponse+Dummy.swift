@@ -30,59 +30,47 @@ extension FullUserResponse {
         blockedUserIds: Set<UserId> = []
     ) -> FullUserResponse {
         .init(
-            banned: isBanned,
-            blockedUserIds: Array(blockedUserIds),
+            user: UserPayload(
+                banned: isBanned,
+                blockedUserIds: Array(blockedUserIds),
+                createdAt: .unique,
+                custom: extraData,
+                deactivatedAt: deactivatedAt,
+                id: userId,
+                image: imageUrl?.absoluteString,
+                language: language ?? "",
+                lastActive: .unique,
+                name: name,
+                online: isOnline,
+                role: role.rawValue,
+                teams: teams,
+                teamsRole: teamsRole?.mapValues(\.rawValue),
+                updatedAt: updatedAt
+            ),
             channelMutes: mutedChannels,
-            createdAt: .unique,
-            custom: extraData,
-            deactivatedAt: deactivatedAt,
             devices: devices,
-            id: userId,
-            image: imageUrl?.absoluteString,
             invisible: isInvisible,
-            language: language ?? "",
-            lastActive: .unique,
             mutes: mutedUsers,
-            name: name,
-            online: isOnline,
             privacySettings: privacySettings,
-            role: role.rawValue,
             shadowBanned: false,
-            teams: teams,
-            teamsRole: teamsRole?.mapValues(\.rawValue),
             totalUnreadCount: unreadCount?.messages ?? 0,
             unreadChannels: unreadCount?.channels ?? 0,
-            unreadThreads: unreadCount?.threads ?? 0,
-            updatedAt: updatedAt
+            unreadThreads: unreadCount?.threads ?? 0
         )
     }
 
     /// Returns a dummy full user response carrying the same data as the given user payload.
     static func dummy(userPayload: UserPayload) -> FullUserResponse {
         .init(
-            banned: userPayload.banned,
-            blockedUserIds: [],
+            user: userPayload,
             channelMutes: [],
-            createdAt: userPayload.createdAt,
-            custom: userPayload.custom,
-            deactivatedAt: userPayload.deactivatedAt,
             devices: [],
-            id: userPayload.id,
-            image: userPayload.image,
             invisible: false,
-            language: userPayload.language,
-            lastActive: userPayload.lastActive,
             mutes: [],
-            name: userPayload.name,
-            online: userPayload.online,
-            role: userPayload.role,
             shadowBanned: false,
-            teams: userPayload.teams,
-            teamsRole: userPayload.teamsRole,
             totalUnreadCount: 0,
             unreadChannels: 0,
-            unreadThreads: 0,
-            updatedAt: userPayload.updatedAt
+            unreadThreads: 0
         )
     }
 }

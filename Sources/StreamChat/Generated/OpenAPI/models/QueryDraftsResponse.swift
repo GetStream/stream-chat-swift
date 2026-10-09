@@ -18,7 +18,7 @@ final class QueryDraftsResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.drafts = try container.decode([DraftPayload].self, forKey: .drafts)
+        self.drafts = try container.decodeArrayIgnoringFailures([DraftPayload].self, forKey: .drafts)
         self.next = try container.decodeIfPresent(String.self, forKey: .next)
         self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
     }

@@ -123,10 +123,10 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         invalidateCurrentUserCache()
 
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.user = try saveUser(fullResponse: fullResponse)
+        dto.user = try saveUser(payload: fullResponse.user)
 
         try saveCurrentUserCommonFields(
-            blockedUserIds: fullResponse.blockedUserIds,
+            blockedUserIds: fullResponse.blockedUserIds ?? [],
             channelMutes: fullResponse.channelMutes,
             devices: fullResponse.devices,
             dto: dto,
