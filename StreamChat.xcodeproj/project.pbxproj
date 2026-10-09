@@ -5589,7 +5589,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "add/immutable-push-models";
+				branch = develop;
 				kind = branch;
 			};
 		};
