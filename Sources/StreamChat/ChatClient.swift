@@ -91,6 +91,11 @@ public class ChatClient: @unchecked Sendable {
         environment.remindersRepositoryBuilder(databaseContainer, apiClient)
     }()
 
+    /// Repository for handling scheduled messages.
+    lazy var scheduledMessagesRepository: ScheduledMessagesRepository = {
+        ScheduledMessagesRepository(client: self)
+    }()
+
     /// Repository for handling user groups.
     lazy var userGroupsRepository: UserGroupsRepository = {
         environment.userGroupsRepositoryBuilder(databaseContainer, apiClient)
