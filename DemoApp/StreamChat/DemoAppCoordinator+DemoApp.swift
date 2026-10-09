@@ -23,7 +23,12 @@ extension DemoAppCoordinator {
     }
 
     func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping @MainActor @Sendable (Error?) -> Void) {
-        logIn(as: user, completion: completion)
+        logIn(as: user) { error in
+            if error == nil, let client = StreamChatWrapper.shared.client {
+                DemoScheduledMessagesService.shared.start(client: client)
+            }
+            completion(error)
+        }
 
         let chatVC = makeChatVC(
             for: user,
@@ -225,6 +230,7 @@ private extension DemoAppCoordinator {
     }
 
     func logOut() {
+        DemoScheduledMessagesService.shared.stop()
         chat.logOut { [weak self] in
             UserDefaults.shared.currentUserId = nil
             self?.showLogin(animated: true)
@@ -232,6 +238,7 @@ private extension DemoAppCoordinator {
     }
 
     func disconnect() {
+        DemoScheduledMessagesService.shared.stop()
         chat.client?.disconnect { [weak self] in
             self?.showLogin(animated: true)
         }

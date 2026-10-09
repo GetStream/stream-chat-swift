@@ -30,6 +30,8 @@ struct DemoAppConfig {
     var shouldShowPremiumBadge: Bool
     /// A Boolean value to define if the reminders feature is enabled.
     var isRemindersEnabled: Bool
+    /// A Boolean value to define if the scheduled messages feature is enabled.
+    var isScheduledMessagesEnabled: Bool
     /// A Boolean value to define if the poll should be deleted when the message is deleted.
     var shouldDeletePollOnMessageDeletion: Bool
 
@@ -63,6 +65,7 @@ class AppConfig: @unchecked Sendable {
             isPremiumMemberFeatureEnabled: false,
             shouldShowPremiumBadge: false,
             isRemindersEnabled: true,
+            isScheduledMessagesEnabled: true,
             shouldDeletePollOnMessageDeletion: false
         )
 
@@ -74,6 +77,7 @@ class AppConfig: @unchecked Sendable {
             demoAppConfig.isPremiumMemberFeatureEnabled = true
             demoAppConfig.shouldShowPremiumBadge = true
             demoAppConfig.isRemindersEnabled = true
+            demoAppConfig.isScheduledMessagesEnabled = true
             demoAppConfig.shouldDeletePollOnMessageDeletion = true
             demoAppConfig.isMessageDeliveredInfoEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
@@ -191,6 +195,7 @@ class AppConfigViewController: UITableViewController {
         case isPremiumMemberFeatureEnabled
         case shouldShowPremiumBadge
         case isRemindersEnabled
+        case isScheduledMessagesEnabled
         case logSettings
 
         var title: String {
@@ -376,6 +381,10 @@ class AppConfigViewController: UITableViewController {
         case .isRemindersEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isRemindersEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isRemindersEnabled = newValue
+            }
+        case .isScheduledMessagesEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isScheduledMessagesEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isScheduledMessagesEnabled = newValue
             }
         case .logSettings:
             cell.accessoryType = .disclosureIndicator
