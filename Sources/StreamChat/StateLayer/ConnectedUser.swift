@@ -98,11 +98,16 @@ public final class ConnectedUser: Sendable {
     ///
     /// - Tip: Register the user's device for remote push notifications once your user is successfully connected to Chat.
     ///
-    /// - Parameter device: The device information required for registering the device. Use ``PushDevice/apn(token:providerName:)`` for APN.
+    /// - Note: It is safe to call this on every app launch: no request is sent when the device is already registered
+    /// for the current user with the same push provider and provider name.
+    ///
+    /// - Parameters:
+    ///   - device: The device information required for registering the device. Use ``PushDevice/apn(token:providerName:)`` for APN.
+    ///   - forceRegistration: Sends the registration request even when the device is already registered. Defaults to `false`.
     ///
     /// - Throws: An error while communicating with the Stream API or when user is not logged in.
-    public func addDevice(_ device: PushDevice) async throws {
-        try await currentUserUpdater.addDevice(device, currentUserId: try currentUserId())
+    public func addDevice(_ device: PushDevice, forceRegistration: Bool = false) async throws {
+        try await currentUserUpdater.addDevice(device, currentUserId: try currentUserId(), forceRegistration: forceRegistration)
     }
     
     /// Removes the specified device from the current user.
