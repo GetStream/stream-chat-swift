@@ -38,26 +38,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
             action: #selector(debugTap)
         )
         navigationItem.rightBarButtonItems?.append(debugButton)
-
-        // Custom back button to make sure swipe back gesture is not overridden.
-        let customBackButton = UIBarButtonItem(
-            image: UIImage(systemName: "chevron.backward"),
-            style: .plain,
-            target: self,
-            action: #selector(goBack)
-        )
-        customBackButton.accessibilityLabel = "Back"
-        // Devices that place a bar on a vertical edge, like a foldable, host navigation items
-        // there rather than in the navigation bar. The axis behavior ships with the iOS 27.1
-        // SDK, so the check on the underlying UIKit module keeps the app compiling with Xcode
-        // versions that do not know about it yet.
-        #if canImport(UIKit, _underlyingVersion: 9127.0.85)
-        if #available(iOS 27.1, *) {
-            customBackButton.axisBehavior = .verticalPreferred
-        }
-        #endif
-        navigationItem.leftBarButtonItems = [customBackButton]
-        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        updateBackButton()
 
         channelAvatarView.isUserInteractionEnabled = true
         channelAvatarView.isAccessibilityElement = true
@@ -66,6 +47,48 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         channelAvatarView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(channelAvatarTapped))
         )
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateBackButton()
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        updateBackButton()
+    }
+
+    private lazy var customBackButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: UIImage(systemName: "chevron.backward"),
+            style: .plain,
+            target: self,
+            action: #selector(goBack)
+        )
+        button.accessibilityLabel = "Back"
+        // Devices that place a bar on a vertical edge, like a foldable, host navigation items
+        // there rather than in the navigation bar. The axis behavior ships with the iOS 27.1
+        // SDK, so the check on the underlying UIKit module keeps the app compiling with Xcode
+        // versions that do not know about it yet.
+        #if canImport(UIKit, _underlyingVersion: 9127.0.85)
+        if #available(iOS 27.1, *) {
+            button.axisBehavior = .verticalPreferred
+        }
+        #endif
+        return button
+    }()
+
+    private func updateBackButton() {
+        // The iPad detail column is the root of its navigation controller, so pop would do nothing.
+        let canPop = navigationController.map { $0.viewControllers.first !== self } ?? false
+        navigationItem.leftBarButtonItem = canPop ? customBackButton : nil
+        let popGesture = navigationController?.interactivePopGestureRecognizer
+        if canPop {
+            popGesture?.delegate = self
+        } else if popGesture?.delegate === self {
+            popGesture?.delegate = nil
+        }
     }
 
     @objc private func channelAvatarTapped() {
