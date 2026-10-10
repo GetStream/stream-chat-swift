@@ -12,6 +12,7 @@ _October 09, 2026_
 ### ✅ Added
 - Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add `autoTranslationLanguages` to `ChatChannelController.updateChannel` and `Chat.update` [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
+- Add `MemberInfo` overloads for creating a channel with member extra data, such as `channel_role` [#4322](https://github.com/GetStream/stream-chat-swift/pull/4322)
 ### 🐞 Fixed
 - Fix `addDevice` sending a registration request when the device is already registered [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)
