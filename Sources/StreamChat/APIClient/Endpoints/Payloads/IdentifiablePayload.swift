@@ -197,7 +197,7 @@ extension ThreadParticipantPayload: IdentifiablePayloadProxy {
 }
 
 extension FullUserResponse: IdentifiablePayload {
-    var databaseId: DatabaseId? { user.id }
+    var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {

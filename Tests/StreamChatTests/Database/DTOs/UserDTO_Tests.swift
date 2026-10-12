@@ -66,18 +66,18 @@ final class UserDTO_Tests: XCTestCase {
             let loadedUserDTO = try XCTUnwrap(session.user(id: userId))
 
             XCTAssertEqual(payload.id, loadedUserDTO.id)
-            XCTAssertEqual(payload.name, loadedUserDTO.name)
-            XCTAssertEqual(payload.image, loadedUserDTO.imageURL?.absoluteString)
-            XCTAssertEqual(payload.online, loadedUserDTO.isOnline)
-            XCTAssertEqual(payload.banned, loadedUserDTO.isBanned)
-            XCTAssertEqual(payload.role, loadedUserDTO.userRoleRaw)
-            XCTAssertEqual(payload.createdAt, loadedUserDTO.userCreatedAt.bridgeDate)
-            XCTAssertEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
-            XCTAssertEqual(payload.lastActive, loadedUserDTO.lastActivityAt?.bridgeDate)
-            XCTAssertEqual(payload.teams, loadedUserDTO.teams)
+            XCTAssertEqual(payload.user.name, loadedUserDTO.name)
+            XCTAssertEqual(payload.user.image, loadedUserDTO.imageURL?.absoluteString)
+            XCTAssertEqual(payload.user.online, loadedUserDTO.isOnline)
+            XCTAssertEqual(payload.user.banned, loadedUserDTO.isBanned)
+            XCTAssertEqual(payload.user.role, loadedUserDTO.userRoleRaw)
+            XCTAssertEqual(payload.user.createdAt, loadedUserDTO.userCreatedAt.bridgeDate)
+            XCTAssertEqual(payload.user.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
+            XCTAssertEqual(payload.user.lastActive, loadedUserDTO.lastActivityAt?.bridgeDate)
+            XCTAssertEqual(payload.user.teams, loadedUserDTO.teams)
             XCTAssertEqual(loadedUserDTO.language, "pt")
             XCTAssertEqual(
-                payload.custom,
+                payload.user.custom,
                 try JSONDecoder.default.decode([String: RawJSON].self, from: loadedUserDTO.extraData)
             )
         }
