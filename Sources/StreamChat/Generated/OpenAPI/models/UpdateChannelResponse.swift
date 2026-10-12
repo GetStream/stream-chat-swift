@@ -25,10 +25,7 @@ final class UpdateChannelResponse: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        self.members = try container.decodeArrayIgnoringFailures(
-            [MemberPayload].self,
-            forKey: .members
-        )
+        self.members = try container.decode([MemberPayload].self, forKey: .members)
         self.message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
     }
 }
