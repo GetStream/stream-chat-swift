@@ -17,15 +17,15 @@ extension MessageWithChannelResponse {
         extraData: [String: RawJSON] = [:]
     ) -> MessageWithChannelResponse {
         MessageWithChannelResponse(
-            message: SearchResultMessage.dummy(
+            message: .dummy(
                 messageId: messageId,
-                text: text,
                 authorUserId: authorUserId,
-                cid: cid,
+                text: text,
+                extraData: extraData,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
-                extraData: extraData
-            ).message,
+                cid: cid
+            ),
             channel: .dummy(cid: cid)
         )
     }

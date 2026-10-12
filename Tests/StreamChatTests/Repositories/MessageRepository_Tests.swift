@@ -371,7 +371,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate `getMessage(cid:, messageId:)` call
         nonisolated(unsafe) var completionCalledError: Error?
-        repository.getMessage(cid: channelId, messageId: messagePayload.message.id, store: true) {
+        repository.getMessage(cid: channelId, messageId: messagePayload.message.message.id, store: true) {
             completionCalledError = $0.error
         }
 
