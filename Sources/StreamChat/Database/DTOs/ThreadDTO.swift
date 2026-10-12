@@ -226,13 +226,13 @@ extension NSManagedObjectContext {
         payload: ThreadStateResponse,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO {
-        guard let channel = payload.channel else {
+        guard let channel = payload.thread.channel else {
             throw ClientError("Thread payload is missing a channel")
         }
-        guard let parentMessage = payload.parentMessage else {
+        guard let parentMessage = payload.thread.parentMessage else {
             throw ClientError("Thread payload is missing a parent message")
         }
-        guard let createdBy = payload.createdBy else {
+        guard let createdBy = payload.thread.createdBy else {
             throw ClientError("Thread payload is missing a creator")
         }
         let threadDTO = ThreadDTO.loadOrCreate(
@@ -262,7 +262,7 @@ extension NSManagedObjectContext {
             return replyDTO
         }
 
-        let threadParticipants = payload.threadParticipants ?? []
+        let threadParticipants = payload.thread.threadParticipants ?? []
         let threadParticipantsDTO: [ThreadParticipantDTO] = try threadParticipants.map { participantPayload in
             let participantDTO = try saveThreadParticipant(
                 payload: participantPayload,
@@ -285,7 +285,7 @@ extension NSManagedObjectContext {
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(payload.custom)
+            extraData = try JSONEncoder.default.encode(payload.thread.custom)
         } catch {
             extraData = Data()
         }
@@ -309,13 +309,13 @@ extension NSManagedObjectContext {
 
         threadDTO.fill(
             parentMessage: parentMessageDTO,
-            title: payload.title,
-            replyCount: Int64(payload.replyCount),
-            participantCount: Int64(payload.participantCount),
-            activeParticipantCount: Int64(payload.activeParticipantCount),
-            createdAt: payload.createdAt.bridgeDate,
-            lastMessageAt: payload.lastMessageAt?.bridgeDate,
-            updatedAt: payload.updatedAt.bridgeDate,
+            title: payload.thread.title,
+            replyCount: Int64(payload.thread.replyCount),
+            participantCount: Int64(payload.thread.participantCount),
+            activeParticipantCount: Int64(payload.thread.activeParticipantCount),
+            createdAt: payload.thread.createdAt.bridgeDate,
+            lastMessageAt: payload.thread.lastMessageAt?.bridgeDate,
+            updatedAt: payload.thread.updatedAt.bridgeDate,
             latestReplies: Set(latestRepliesDTO),
             threadParticipants: Set(threadParticipantsDTO),
             read: Set(readsDTO),

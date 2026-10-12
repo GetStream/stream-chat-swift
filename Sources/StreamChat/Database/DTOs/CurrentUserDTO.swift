@@ -126,7 +126,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.user = try saveUser(payload: fullResponse.user)
 
         try saveCurrentUserCommonFields(
-            blockedUserIds: fullResponse.blockedUserIds ?? [],
+            blockedUserIds: fullResponse.user.blockedUserIds ?? [],
             channelMutes: fullResponse.channelMutes,
             devices: fullResponse.devices,
             dto: dto,

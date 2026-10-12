@@ -157,6 +157,13 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let encoded = try JSONDecoder.default.decode(RawJSON.self, from: JSONEncoder.default.encode(attachment))
 
         XCTAssertEqual(Set(try XCTUnwrap(encoded.dictionaryValue).keys), MessageAttachmentPayload.allKeys)
+        // A nil property isn't encoded, so a new optional property would otherwise pass unnoticed.
+        let properties = Mirror(reflecting: attachment).children
+        XCTAssertEqual(properties.count, MessageAttachmentPayload.allKeys.count)
+        for property in properties {
+            let value = Mirror(reflecting: property.value)
+            XCTAssertFalse(value.displayStyle == .optional && value.children.isEmpty, "\(property.label ?? "") is nil")
+        }
     }
 
     // Builds the flattened local-storage shape `payload` returns: `type` dropped and `custom` merged into the top level.
