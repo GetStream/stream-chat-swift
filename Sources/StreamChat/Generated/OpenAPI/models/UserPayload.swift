@@ -71,26 +71,6 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         self.updatedAt = updatedAt
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
-        self.banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
-        self.blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
-        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        self.deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
-        self.id = try container.decode(String.self, forKey: .id)
-        self.image = try container.decodeIfPresent(String.self, forKey: .image)
-        self.language = try container.decodeIfPresent(String.self, forKey: .language) ?? ""
-        self.lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
-        self.name = try container.decodeIfPresent(String.self, forKey: .name)
-        self.online = try container.decode(Bool.self, forKey: .online)
-        self.role = try container.decode(String.self, forKey: .role)
-        self.teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
-        self.teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
-        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
-    }
-
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encodeIfPresent(avgResponseTime, forKey: .avgResponseTime)
@@ -109,5 +89,25 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         try container.encode(teams, forKey: .teams)
         try container.encodeIfPresent(teamsRole, forKey: .teamsRole)
         try container.encode(updatedAt, forKey: .updatedAt)
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
+        blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
+        deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
+        id = try container.decode(String.self, forKey: .id)
+        image = try container.decodeIfPresent(String.self, forKey: .image)
+        language = try container.decodeIfPresent(String.self, forKey: .language) ?? ""
+        lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        online = try container.decode(Bool.self, forKey: .online)
+        role = try container.decode(String.self, forKey: .role)
+        teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
+        teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }

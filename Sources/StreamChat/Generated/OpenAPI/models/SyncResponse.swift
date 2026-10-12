@@ -15,6 +15,6 @@ final class SyncResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.events = try container.decodeArrayIgnoringFailures([WSEvent].self, forKey: .events)
+        events = try container.decodeArrayIgnoringFailures([WSEvent].self, forKey: .events)
     }
 }

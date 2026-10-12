@@ -44,16 +44,10 @@ final class FullUserResponse: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.user = try UserPayload(from: decoder)
-        self.channelMutes = try container.decodeArrayIgnoringFailures(
-            [MutedChannelPayload].self,
-            forKey: .channelMutes
-        )
-        self.devices = try container.decodeArrayIgnoringFailures([Device].self, forKey: .devices)
+        self.channelMutes = try container.decode([MutedChannelPayload].self, forKey: .channelMutes)
+        self.devices = try container.decode([Device].self, forKey: .devices)
         self.invisible = try container.decode(Bool.self, forKey: .invisible)
-        self.mutes = try container.decodeArrayIgnoringFailures(
-            [MutedUserPayload].self,
-            forKey: .mutes
-        )
+        self.mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
         self.privacySettings = try container.decodeIfPresent(
             UserPrivacySettings.self,
             forKey: .privacySettings

@@ -19,11 +19,11 @@ final class QueryChannelsResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.channels = try container.decodeArrayIgnoringFailures(
+        channels = try container.decodeArrayIgnoringFailures(
             [ChannelStateResponseFields].self,
             forKey: .channels
         )
-        self.predefinedFilter = try container.decodeIfPresent(
+        predefinedFilter = try container.decodeIfPresent(
             ParsedPredefinedFilterResponse.self,
             forKey: .predefinedFilter
         )

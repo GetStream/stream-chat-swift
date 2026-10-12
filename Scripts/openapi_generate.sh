@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
+SOURCERY_CONFIG="$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 CHAT_DIR="$REPO_ROOT/../chat"
 
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
@@ -554,7 +555,6 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
-    --opt lossy_model_arrays=true \
     --opt nested_embedded_models=true \
     --opt raw_representable_over_enum=true \
     --opt string_coding_keys=true \
@@ -865,42 +865,6 @@ remove_property UserUpdatedEventDTO custom receivedAt
 remove_property UserWatchingStartEventDTO channelId channelType custom receivedAt
 remove_property UserWatchingStopEventDTO channelId channelType custom receivedAt
 
-# Lenient like the hand-written payloads were: a missing or null key decodes to the default.
-property_fallback_value ChannelDetailPayload custom '[:]'
-property_fallback_value ChannelStateResponseFields threads '[]'
-property_fallback_value DraftMessagePayload custom '[:]'
-property_fallback_value MemberInfoPayload notificationsMuted false
-property_fallback_value MemberPayload banned false
-property_fallback_value MemberPayload channelRole '"channel_member"'
-property_fallback_value MemberPayload custom '[:]'
-property_fallback_value MemberPayload notificationsMuted false
-property_fallback_value MemberPayload shadowBanned false
-property_fallback_value MessageAttachmentPayload custom '[:]'
-property_fallback_value MessageReactionPayload custom '[:]'
-property_fallback_value MessageResponse custom '[:]'
-property_fallback_value MessageResponse mentionedChannel false
-property_fallback_value MessageResponse mentionedHere false
-property_fallback_value MessageResponse pinned false
-property_fallback_value MessageResponse reactionCounts '[:]'
-property_fallback_value MessageResponse reactionScores '[:]'
-property_fallback_value MessageResponse restrictedVisibility '[]'
-property_fallback_value MessageResponse shadowed false
-property_fallback_value MessageResponse silent false
-property_fallback_value OwnUserResponse banned false
-property_fallback_value OwnUserResponse custom '[:]'
-property_fallback_value OwnUserResponse invisible false
-property_fallback_value OwnUserResponse language '""'
-property_fallback_value OwnUserResponse teams '[]'
-property_fallback_value OwnUserResponse unreadThreads 0
-property_fallback_value ThreadParticipantPayload custom '[:]'
-property_fallback_value ThreadResponse activeParticipantCount 0
-property_fallback_value ThreadResponse custom '[:]'
-property_fallback_value ThreadStateResponse latestReplies '[]'
-property_fallback_value UserPayload banned false
-property_fallback_value UserPayload custom '[:]'
-property_fallback_value UserPayload language '""'
-property_fallback_value UserPayload teams '[]'
-
 remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
@@ -929,9 +893,12 @@ apply_directional_coding_conformances
 strip_hashable_conformance
 strip_streamcore_imports
 
-# 8. Format, prune unused StringCodingKey lets and wrap long declarations.
+# 8. Format, splice the generated decoders, prune unused StringCodingKey lets and wrap
+#    long declarations.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
+sourcery --config "$SOURCERY_CONFIG"
+splice_generated_decoders
 prune_string_coding_keys
 
 swiftformat "$OUTPUT_DIR_CHAT" \
