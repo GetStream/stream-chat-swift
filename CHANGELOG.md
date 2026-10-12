@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix `AIIndicatorUpdateEvent` not being delivered [#4324](https://github.com/GetStream/stream-chat-swift/pull/4324)
+
 ### 🔄 Changed
 
 # [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
