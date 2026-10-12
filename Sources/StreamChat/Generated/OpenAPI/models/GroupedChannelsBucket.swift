@@ -28,12 +28,12 @@ final class GroupedChannelsBucket: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.channels = try container.decodeArrayIgnoringFailures(
+        channels = try container.decodeArrayIgnoringFailures(
             [ChannelStateResponseFields].self,
             forKey: .channels
         )
-        self.next = try container.decodeIfPresent(String.self, forKey: .next)
-        self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
-        self.unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
+        next = try container.decodeIfPresent(String.self, forKey: .next)
+        prev = try container.decodeIfPresent(String.self, forKey: .prev)
+        unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels)
     }
 }

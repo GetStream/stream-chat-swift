@@ -13,7 +13,7 @@ final class SharedLocationsResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.activeLiveLocations = try container.decodeArrayIgnoringFailures(
+        self.activeLiveLocations = try container.decode(
             [SharedLocation].self,
             forKey: .activeLiveLocations
         )
