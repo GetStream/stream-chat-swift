@@ -107,6 +107,22 @@ contains() {
   printf '%s\n' "$@" | grep -qxF "$needle"
 }
 
+# Decode generated array properties lossily: an element that fails to decode is logged
+#     and dropped instead of failing the whole payload. Matches the generator's `self.x =`
+#     and the Sourcery decoders' `x =` lines. Fails when a property has no decode line, so
+#     a spec change can't silently make an array strict.
+lossy_array_property() {
+  local file="$OUTPUT_DIR_CHAT/models/$1.swift"
+  local p
+  for p in "${@:2}"; do
+    M="$1" P="$p" perl -0777 -pi -e '
+      my ($m, $p) = ($ENV{M}, $ENV{P});
+      s/^(\s+(?:self\.)?\Q$p\E = try container\.)decode(IfPresent)?\(/$1 . ($2 ? "decodeArrayIfPresentIgnoringFailures(" : "decodeArrayIgnoringFailures(")/me
+        or die "lossy_array_property: $m.$p has no decode line\n";
+    ' "$file"
+  done
+}
+
 # Relax selected generated stored properties back to optional. Some models are
 #     exposed as public API where a property was historically optional (e.g.
 #     Device.createdAt was Date? before the OpenAPI migration). The memberwise init
