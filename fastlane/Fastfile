@@ -21,6 +21,10 @@ testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
 mock_server_driver_port = 4566
+e2e_coverage_dir = File.expand_path('test_output/e2e_coverage')
+e2e_coverage_map_path = File.expand_path('test_output/e2e_coverage_map.json')
+e2e_coverage_map_artifact = 'e2e-coverage-map'
+e2e_selection_path = File.expand_path("../#{derived_data_path}/Build/e2e_selection.json")
 @force_check = false
 xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
@@ -467,25 +471,122 @@ lane :test_e2e_mock do |options|
     xcodebuild_formatter: xcodebuild_formatter
   }
 
-  if ENV['MATRIX_SIZE'] && options[:batch]
-    products_dir = File.expand_path("../#{derived_data_path}/Build/Products")
-    xctestrun = Dir.glob(File.expand_path("#{products_dir}/*.xctestrun")).first
-    tests = retrieve_xctest_names(xctestrun: xctestrun).values.flatten
-    slice_size = (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
-    only_testing = []
-    tests.each_slice(slice_size) { |test| only_testing << test }
-    only_testing_batch = only_testing[options[:batch].to_i]
-    scan_options[:only_testing] = only_testing_batch
-    UI.important("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
+  if options[:coverage]
+    scan(scan_options.merge(build_for_testing: true, code_coverage: true))
+    scan_options[:test_without_building] = true
+    scan_options[:clean] = false
+    FileUtils.rm_rf(e2e_coverage_dir)
+    ENV['TEST_RUNNER_E2E_COVERAGE_DIR'] = e2e_coverage_dir
   end
 
+  if ENV['MATRIX_SIZE'] && options[:batch]
+    tests = File.exist?(e2e_selection_path) ? JSON.parse(File.read(e2e_selection_path))['tests'] : all_e2e_tests
+    slice_size = [(tests.size / ENV['MATRIX_SIZE'].to_f).ceil, 1].max
+    only_testing_batch = tests.each_slice(slice_size).to_a[options[:batch].to_i].to_a
+    UI.important("Tests in total: #{tests.size}. Running #{only_testing_batch.size} of them ⌛️")
+    next if only_testing_batch.empty?
+
+    scan_options[:only_testing] = only_testing_batch
+  end
+
+  failed_tests = []
   begin
     scan(scan_options)
   rescue StandardError
     failed_tests = retreive_failed_tests
     UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    scan(scan_options.merge(only_testing: failed_tests))
+    begin
+      scan(scan_options.merge(only_testing: failed_tests))
+      failed_tests = []
+    rescue StandardError
+      # The retry overwrote the junit report, so only the tests that failed again stay failed for the coverage map.
+      failed_tests = retreive_failed_tests
+      raise
+    end
+  ensure
+    build_e2e_coverage_map(failed_tests: failed_tests) if options[:coverage]
   end
+end
+
+desc 'Picks the e2e tests the pull request can affect and exposes how many CI batches they need'
+lane :select_e2e_tests do |options|
+  all_tests = all_e2e_tests
+  tests = []
+  if is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+    selection = select_impacted_tests(
+      all_tests: all_tests,
+      coverage_map: options[:coverage_map],
+      coverage_map_artifact: e2e_coverage_map_artifact,
+      diff_base: options[:diff_base],
+      source_paths: ['Sources', 'StreamChatUITestsApp'],
+      test_paths: ['StreamChatUITestsAppUITests/Tests'],
+      ignore_paths: ['**/*.md', '**/*.stencil', '**/*.yml', 'Sources/*/Info.plist'],
+      run_all_paths: [
+        'StreamChatUITestsAppUITests/Tests/Base TestCase',
+        'StreamChatUITestsAppUITests/Extensions',
+        'StreamChatUITestsAppUITests/Pages',
+        'StreamChatUITestsAppUITests/Robots',
+        'StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan',
+        'StreamChatUITestsAppUITests/StreamChatUITests.swift',
+        'TestTools/StreamChatTestMockServer',
+        'Package.swift',
+        'Package.resolved',
+        xcode_project,
+        '.github/workflows/smoke-checks.yml',
+        'fastlane/Fastfile',
+        'Gemfile.lock'
+      ],
+      # Target membership edits in the project; the member files themselves are diffed and mapped.
+      ignored_diff_lines: {
+        "#{xcode_project}/project.pbxproj" => [
+          '/\* .+ \*/,?$',
+          '/\* .+ \*/ = \{isa = PBX(BuildFile|FileReference); ',
+          '/\* Exceptions for .+ \*/ = \{$',
+          '^\s*isa = PBXFileSystemSynchronized\w*ExceptionSet;$',
+          '^\s*(buildPhase|target) = \w+ /\* .+ \*/;$',
+          '^\s*(children|exceptions|files|membershipExceptions) = \($',
+          '^\s*[^=]+\.\w+,$',
+          '^\s*\)?;?$',
+          '^\s*\};$'
+        ]
+      },
+      # Changes to code nearly every test runs (launch, login, channel list) take one test per class; the nightly run covers the rest.
+      hot_test_ratio: 0.9,
+      output_path: e2e_selection_path
+    )
+    tests = selection['tests']
+  else
+    File.write(e2e_selection_path, JSON.generate(run_all: false, tests: [], reasons: ['no e2e sources changed']))
+  end
+
+  # Up to 3 batches, none bigger than a third of the suite, so a small selection takes fewer runners.
+  max_batches = 3
+  batch_size = (all_tests.size / max_batches.to_f).ceil
+  batches = (0...[(tests.size / batch_size.to_f).ceil, max_batches].min).to_a
+  UI.important("E2E batches: #{batches.size}")
+  File.write(ENV['GITHUB_OUTPUT'], "e2e_batches=#{batches.to_json}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
+  batches
+end
+
+private_lane :build_e2e_coverage_map do |options|
+  next UI.important('No e2e coverage was collected') if Dir.glob("#{e2e_coverage_dir}/*/*/*.profraw").empty?
+
+  app = Dir.glob(File.expand_path("../#{derived_data_path}/Build/Products/*-iphonesimulator/StreamChatUITestsApp.app")).first
+  executable = ["#{app}/StreamChatUITestsApp.debug.dylib", "#{app}/StreamChatUITestsApp"].find { |path| File.exist?(path) }
+  frameworks = Dir.glob("#{app}/Frameworks/*.framework").map { |framework| "#{framework}/#{File.basename(framework, '.framework')}" }
+
+  build_test_coverage_map(
+    coverage_dir: e2e_coverage_dir,
+    binaries: [executable] + frameworks,
+    output_path: e2e_coverage_map_path,
+    previous_map_artifact: e2e_coverage_map_artifact,
+    failed_tests: options[:failed_tests]
+  )
+end
+
+private_lane :all_e2e_tests do
+  xctestrun = Dir.glob(File.expand_path("../#{derived_data_path}/Build/Products/*.xctestrun")).first
+  retrieve_xctest_names(xctestrun: xctestrun).values.flatten
 end
 
 private_lane :retreive_failed_tests do
@@ -738,7 +839,7 @@ end
 
 lane :sources_matrix do
   {
-    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project],
+    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project],
     llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
     common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],

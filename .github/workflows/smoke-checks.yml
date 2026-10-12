@@ -34,6 +34,7 @@ env:
 permissions:
   contents: read
   pull-requests: write
+  actions: read # to download the e2e coverage map
 
 jobs:
   guard:
@@ -49,13 +50,20 @@ jobs:
     name: Build Test App and Frameworks
     runs-on: macos-15
     needs: guard
+    outputs:
+      e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
     steps:
     - uses: actions/checkout@v4.1.1
+      with:
+        fetch-depth: 2 # the PR merge commit and its base, to diff them
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Build
       run: bundle exec fastlane build_test_app_and_frameworks ${{ env.VERBOSE }}
       timeout-minutes: 60
+    - name: Select E2E Tests
+      id: select_e2e_tests
+      run: bundle exec fastlane select_e2e_tests ${{ env.VERBOSE }}
     - uses: actions/upload-artifact@v4
       if: success()
       with:
@@ -64,6 +72,7 @@ jobs:
           derived_data/Build/**/*.app
           derived_data/Build/**/*.xctestrun
           derived_data/Build/**/*.framework
+          derived_data/Build/e2e_selection.json
 
   automated-code-review:
     name: Automated Code Review
@@ -251,7 +260,7 @@ jobs:
   allure_testops_launch:
     name: Launch Allure TestOps
     runs-on: macos-15
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
       - build-test-app-and-frameworks
@@ -272,7 +281,7 @@ jobs:
   test-e2e-debug:
     name: Test E2E UI (Debug)
     runs-on: macos-15
-    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
       - allure_testops_launch
@@ -281,7 +290,7 @@ jobs:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     strategy:
       matrix:
-        batch: [0, 1, 2]
+        batch: ${{ fromJson(needs.build-test-app-and-frameworks.outputs.e2e_batches) }}
       fail-fast: false
     steps:
     - uses: actions/checkout@v4.1.1
