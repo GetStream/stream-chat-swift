@@ -69,48 +69,45 @@ final class ChannelStateResponseFields: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.activeLiveLocations = try container.decodeArrayIfPresentIgnoringFailures(
+        activeLiveLocations = try container.decodeArrayIfPresentIgnoringFailures(
             [SharedLocation].self,
             forKey: .activeLiveLocations
         )
-        self.channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
-        self.draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        self.hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
-        self.members = try container.decodeArrayIgnoringFailures(
-            [MemberPayload].self,
-            forKey: .members
-        )
-        self.membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
-        self.messages = try container.decodeArrayIgnoringFailures(
+        channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        members = try container.decodeArrayIgnoringFailures([MemberPayload].self, forKey: .members)
+        membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
+        messages = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .messages
         )
-        self.pendingMessages = try container.decodeArrayIfPresentIgnoringFailures(
+        pendingMessages = try container.decodeArrayIfPresentIgnoringFailures(
             [PendingMessageResponse].self,
             forKey: .pendingMessages
         )
-        self.pinnedMessages = try container.decodeArrayIgnoringFailures(
+        pinnedMessages = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .pinnedMessages
         )
-        self.pushPreferences = try container.decodeIfPresent(
+        pushPreferences = try container.decodeIfPresent(
             PushPreference.self,
             forKey: .pushPreferences
         )
-        self.read = try container.decodeArrayIfPresentIgnoringFailures(
+        read = try container.decodeArrayIfPresentIgnoringFailures(
             [ReadStateResponse].self,
             forKey: .read
         )
-        self.scheduledMessages = try container.decodeIfPresent(
+        scheduledMessages = try container.decodeIfPresent(
             [ScheduledMessageResponse].self,
             forKey: .scheduledMessages
         )
-        self.threads = try container.decodeArrayIfPresentIgnoringFailures(
+        threads = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadStateResponse].self,
             forKey: .threads
         ) ?? []
-        self.watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
-        self.watchers = try container.decodeArrayIfPresentIgnoringFailures(
+        watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
+        watchers = try container.decodeArrayIfPresentIgnoringFailures(
             [UserPayload].self,
             forKey: .watchers
         )

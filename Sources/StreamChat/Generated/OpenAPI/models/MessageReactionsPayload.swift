@@ -14,9 +14,6 @@ final class MessageReactionsPayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.reactions = try container.decodeArrayIgnoringFailures(
-            [MessageReactionPayload].self,
-            forKey: .reactions
-        )
+        self.reactions = try container.decode([MessageReactionPayload].self, forKey: .reactions)
     }
 }
