@@ -20,6 +20,10 @@ struct EventDecoder {
             let type = (try? decoder.decode(EventTypeEnvelope.self, from: data))?.type ?? "unknown"
             if type == EventType.channelCreated.rawValue { throw ClientError.IgnoredEventType() }
             if isUnknownEventType(error), let event = try? decodeUnknownEvent(from: data) { return event }
+            if type == EventType.aiTypingIndicatorChanged.rawValue,
+               let event = try? decoder.decode(WSEvent.self, from: flattenCustomData(in: data)) {
+                return event
+            }
             throw ClientError.EventDecoding(failedParsingValue: "WSEvent", for: type, with: error)
         }
     }
@@ -28,6 +32,15 @@ struct EventDecoder {
     private func isUnknownEventType(_ error: Error) -> Bool {
         guard case let DecodingError.typeMismatch(type, _) = error else { return false }
         return type == WSEvent.Type.self
+    }
+
+    // The v2 WebSocket nests the fields of an event sent with SendEvent in `custom`, while
+    // `ai_indicator.update` reads them at the root, where the v1 WebSocket flattens them.
+    private func flattenCustomData(in data: Data) throws -> Data {
+        var json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
+        guard case let .dictionary(custom)? = json["custom"] else { return data }
+        json.merge(custom) { root, _ in root }
+        return try JSONEncoder.default.encode(json)
     }
 
     private func decodeUnknownEvent(from data: Data) throws -> Event {
