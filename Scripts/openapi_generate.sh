@@ -554,9 +554,10 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
+    --opt lossy_model_arrays=true \
+    --opt nested_embedded_models=true \
     --opt raw_representable_over_enum=true \
     --opt string_coding_keys=true \
-    --opt optimized_models=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 # Drop the generated async API client — the SDK ships its own APIClient.
