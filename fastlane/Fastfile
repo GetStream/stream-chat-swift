@@ -541,20 +541,6 @@ lane :select_e2e_tests do |options|
         'fastlane/Fastfile',
         'Gemfile.lock'
       ],
-      # Target membership edits in the project; the member files themselves are diffed and mapped.
-      ignored_diff_lines: {
-        "#{xcode_project}/project.pbxproj" => [
-          '/\* .+ \*/,?$',
-          '/\* .+ \*/ = \{isa = PBX(BuildFile|FileReference); ',
-          '/\* Exceptions for .+ \*/ = \{$',
-          '^\s*isa = PBXFileSystemSynchronized\w*ExceptionSet;$',
-          '^\s*(buildPhase|target) = \w+ /\* .+ \*/;$',
-          '^\s*(children|exceptions|files|membershipExceptions) = \($',
-          '^\s*[^=]+\.\w+,$',
-          '^\s*\)?;?$',
-          '^\s*\};$'
-        ]
-      },
       # Changes to code nearly every test runs (launch, login, channel list) take one test per class; the nightly run covers the rest.
       hot_test_ratio: 0.9,
       output_path: e2e_selection_path
