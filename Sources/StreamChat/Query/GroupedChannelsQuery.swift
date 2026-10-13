@@ -22,7 +22,7 @@ public extension FilterKey where Scope == GroupedChannelsFilterScope {
     static var queryTimestamp: FilterKey<Scope, GroupedChannelsTimestamp> { .init(
         rawValue: "query_timestamp",
         keyPathString: #keyPath(ChannelDTO.defaultSortingAt),
-        valueMapper: { $0.cutoffDate(now: Date()) }
+        valueMapper: { $0.cutoffDate }
     ) }
 }
 
@@ -46,7 +46,7 @@ public enum GroupedChannelsTimestamp: FilterValue, Hashable {
 }
 
 extension GroupedChannelsTimestamp {
-    /// Converts a decoded filter value: a `Date`, or a `"now-7d"` / `"7d"` string.
+    // A decoded filter value: a `Date`, or a `"now-7d"` / `"7d"` string.
     init?(filterValue: FilterValue) {
         if let date = filterValue as? Date {
             self = .date(date)
@@ -58,10 +58,10 @@ extension GroupedChannelsTimestamp {
         self = .daysAgo(days)
     }
 
-    func cutoffDate(now: Date) -> Date {
+    var cutoffDate: Date {
         switch self {
         case let .daysAgo(days):
-            return now.addingTimeInterval(-TimeInterval(days) * 86400)
+            return Date().addingTimeInterval(-TimeInterval(days) * 86400)
         case let .date(date):
             return date
         }
@@ -69,28 +69,41 @@ extension GroupedChannelsTimestamp {
 }
 
 extension GroupedChannelsFilterScope {
-    /// Re-attaches the local wiring of the grouped filter keys to decoded filter leaves.
     static let keyMapping: [String: @Sendable (Filter<Self>) -> Filter<Self>] = [
         FilterKey<Self, String>.group.rawValue: { filter in
-            filter.withLocalWiring(of: .group, value: filter.value)
+            filter.withLocalWiring(of: .group, value: filter.value, predicateMapper: groupPredicateMapper)
         },
         FilterKey<Self, GroupedChannelsTimestamp>.queryTimestamp.rawValue: { filter in
-            // A cutoff that can't be parsed stays unwired: it has no predicate, so the backend decides.
+            // A cutoff that can't be parsed stays unwired, which disables the whole filter locally.
             guard let cutoff = GroupedChannelsTimestamp(filterValue: filter.value) else { return filter }
             return filter.withLocalWiring(of: .queryTimestamp, value: cutoff)
         }
     ]
+
+    // The default `$in` predicate (`%@ IN %K`) is a substring match on a string key path.
+    private static let groupPredicateMapper: Filter<Self>.PredicateMapper = { op, values in
+        guard op == .in, let values = values as? [String] else { return nil }
+        let groups = values.compactMap(GroupedChannelKey.normalizedGroup)
+        return NSPredicate(format: "%K IN %@", argumentArray: [#keyPath(ChannelDTO.group), groups])
+    }
 }
 
 extension Filter where Scope == GroupedChannelsFilterScope {
-    /// Decodes a persisted grouped channels filter and re-attaches its Core Data wiring.
+    // Decodes a persisted grouped channels filter and re-attaches its Core Data wiring. `nil` when any
+    // condition can't be evaluated locally: dropping a single leaf would change `$or` / `$nor` results,
+    // so the backend decides instead.
     static func groupedFilter(fromJSONData data: Data) throws -> Filter? {
         guard !data.isEmpty else { return nil }
         let decoded = try JSONDecoder.default.decode(Filter.self, from: data)
-        return decoded.applyingCoreDataFilteringKeys(GroupedChannelsFilterScope.keyMapping)
+        let wired = decoded.applyingCoreDataFilteringKeys(GroupedChannelsFilterScope.keyMapping)
+        return wired.hasCoreDataWiringOnEveryLeaf ? wired : nil
     }
 
-    fileprivate func withLocalWiring<Value: FilterValue>(of key: FilterKey<Scope, Value>, value: FilterValue) -> Filter {
+    fileprivate func withLocalWiring<Value: FilterValue>(
+        of key: FilterKey<Scope, Value>,
+        value: FilterValue,
+        predicateMapper: PredicateMapper? = nil
+    ) -> Filter {
         Filter(
             operator: `operator`,
             key: self.key,
@@ -98,7 +111,7 @@ extension Filter where Scope == GroupedChannelsFilterScope {
             valueMapper: key.valueMapper,
             keyPathString: key.keyPathString,
             isCollectionFilter: key.isCollectionFilter,
-            predicateMapper: key.predicateMapper
+            predicateMapper: predicateMapper ?? key.predicateMapper
         )
     }
 }

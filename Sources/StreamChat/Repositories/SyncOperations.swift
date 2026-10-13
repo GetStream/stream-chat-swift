@@ -130,14 +130,11 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
 
             Task {
                 do {
-                    var states: [ChannelListUpdater.GroupedQueryPaginationState] = []
-                    for groupKey in groupKeys {
-                        states.append(try await channelListUpdater.paginationState(for: groupKey))
-                    }
-                    // All grouped lists share the same persisted flags (set together by the initial
-                    // `queryGroupedChannels` call), so any one of them is a valid source. The sorted
-                    // first key keeps the choice deterministic across runs. Each group keeps its own
-                    // filter, while the sort is shared by the whole request.
+                    let statesByGroupKey = try await channelListUpdater.paginationStates(for: groupKeys)
+                    let states = groupKeys.map { statesByGroupKey[$0] ?? .empty }
+                    // Each group keeps its own filter. The flags and the sort are shared by the whole
+                    // request, so they come from the first group that has been queried; a tracked group
+                    // that was never queried has an empty state.
                     let groups = Dictionary(uniqueKeysWithValues: zip(groupKeys, states).map { groupKey, state in
                         (groupKey, GroupedChannelsGroupRequest(filterConditions: state.filter))
                     })
@@ -145,8 +142,8 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                         groups: groups,
                         limit: nil,
                         sort: states.lazy.compactMap(\.sort).first,
-                        watch: states[0].watch ?? false,
-                        presence: states[0].presence ?? false
+                        watch: states.lazy.compactMap(\.watch).first ?? false,
+                        presence: states.lazy.compactMap(\.presence).first ?? false
                     )
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)

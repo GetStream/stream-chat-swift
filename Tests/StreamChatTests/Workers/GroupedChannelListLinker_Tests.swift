@@ -103,6 +103,8 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         let cid = ChannelId.unique
         try saveGroup(filterJSON: cutoffFilterJSON)
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(1), isLinked: true)
+        // The updated channel is already saved when observers are notified.
+        try saveChannel(cid: cid, group: "new", lastMessageAt: daysBeforeNow(1), isLinked: true)
 
         process(ChannelUpdatedEvent(
             channel: .mock(cid: cid, lastMessageAt: daysBeforeNow(1), createdAt: daysBeforeNow(1), extraData: [GroupedChannelKey.group: .string("new")]),
@@ -220,7 +222,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// The cutoff is resolved when the predicate is built, so dates are relative to the wall clock.
+    // The cutoff is resolved when the predicate is built, so dates are relative to the wall clock.
     private func daysBeforeNow(_ days: Int) -> Date {
         Date().addingTimeInterval(-TimeInterval(days) * 86400)
     }

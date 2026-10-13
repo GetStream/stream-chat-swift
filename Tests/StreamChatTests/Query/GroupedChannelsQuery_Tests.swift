@@ -63,6 +63,7 @@ final class GroupedChannelsQuery_Tests: XCTestCase {
         XCTAssertTrue(predicate.evaluate(with: channel(group: "expired", daysAgo: 13)))
         XCTAssertFalse(predicate.evaluate(with: channel(group: "expired", daysAgo: 15)))
         XCTAssertFalse(predicate.evaluate(with: channel(group: "bee", daysAgo: 0)))
+        XCTAssertFalse(predicate.evaluate(with: channel(group: "renewal", daysAgo: 0)))
     }
 
     func test_groupedFilterPredicate_relativeCutoffs_matchAfterTheCutoff() throws {
@@ -92,6 +93,8 @@ final class GroupedChannelsQuery_Tests: XCTestCase {
     func test_groupedFilterPredicate_unsupportedConditions_haveNoPredicate() throws {
         XCTAssertNil(try groupedFilterPredicate(Data(#"{"members":{"$in":["user"]}}"#.utf8)))
         XCTAssertNil(try groupedFilterPredicate(Data(#"{"query_timestamp":{"$gte":"yesterday"}}"#.utf8)))
+        // One unsupported branch disables the whole filter instead of narrowing the `$or`.
+        XCTAssertNil(try groupedFilterPredicate(Data(#"{"$or":[{"query_timestamp":{"$gte":"now-24h"}},{"group":"new"}]}"#.utf8)))
     }
 
     // MARK: - Helpers
@@ -100,7 +103,7 @@ final class GroupedChannelsQuery_Tests: XCTestCase {
         try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: data)?.predicate
     }
 
-    /// Key-value coding stand-in for `ChannelDTO`, matching the key paths of the grouped filter keys.
+    // Key-value coding stand-in for `ChannelDTO`, matching the key paths of the grouped filter keys.
     private func channel(group: String?, daysAgo: Double) -> NSDictionary {
         channel(group: group, queryTimestamp: Date().addingTimeInterval(-daysAgo * 86400))
     }

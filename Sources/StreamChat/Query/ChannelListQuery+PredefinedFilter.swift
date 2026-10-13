@@ -40,6 +40,14 @@ extension Filter {
         }
         return mapFilter(self)
     }
+
+    // Whether every leaf carries a Core Data key path, so the whole tree has a predicate.
+    var hasCoreDataWiringOnEveryLeaf: Bool {
+        if `operator`.isGroupOperator {
+            return (value as? [Filter])?.allSatisfy(\.hasCoreDataWiringOnEveryLeaf) ?? false
+        }
+        return keyPathString != nil
+    }
 }
 
 // MARK: - Sort

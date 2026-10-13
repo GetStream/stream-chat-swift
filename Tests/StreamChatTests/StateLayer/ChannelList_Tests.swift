@@ -295,6 +295,42 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertTrue(fullyLoaded)
     }
 
+    func test_expirySweep_whenQueryHasGroupKeyWithFilter_unlinksChannelsPastTheCutoff() async throws {
+        let time = VirtualTime()
+        VirtualTimeTimer.time = time
+        defer { VirtualTimeTimer.invalidate() }
+        let groupedQuery = ChannelListQuery(groupKey: "expired")
+        var environment = env.channelListEnvironment(usesMockedUpdater: true)
+        environment.timerType = VirtualTimeTimer.self
+        let expiredCid = ChannelId.unique
+        let recentCid = ChannelId.unique
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            for (cid, daysAgo) in [(expiredCid, 15.0), (recentCid, 13.0)] {
+                let lastMessageAt = Date().addingTimeInterval(-daysAgo * 86400)
+                let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, lastMessageAt: lastMessageAt, createdAt: lastMessageAt)))
+                queryDTO.channels.insert(channelDTO)
+            }
+        }
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: environment
+        )
+        XCTAssertEqual(Set([expiredCid, recentCid]), Set(await channelList.state.channels.map(\.cid)))
+        let expectation = XCTestExpectation(description: "Expired channel unlinked")
+        let cancellable = await channelList.state.$channels
+            .filter { $0.map(\.cid) == [recentCid] }
+            .sink { _ in expectation.fulfill() }
+
+        time.run(numberOfSeconds: 60)
+
+        await fulfillment(of: [expectation], timeout: defaultTimeout)
+        cancellable.cancel()
+    }
+
     func test_loadMoreChannels_withoutGroupHandler_usesOffsetPath() async throws {
         await setUpChannelList(usesMockedChannelUpdater: true, pageSize: 2)
         let responseChannels = makeChannels(count: 2, createdAtOffset: 0)

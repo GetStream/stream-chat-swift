@@ -226,17 +226,21 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     }
 
     func paginationState(for groupKey: String) async throws -> GroupedQueryPaginationState {
+        try await paginationStates(for: [groupKey])[groupKey] ?? .empty
+    }
+
+    func paginationStates(for groupKeys: [String]) async throws -> [String: GroupedQueryPaginationState] {
         try await database.read { session in
-            guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else {
-                return GroupedQueryPaginationState.empty
+            try groupKeys.reduce(into: [:]) { states, groupKey in
+                guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
+                states[groupKey] = GroupedQueryPaginationState(
+                    next: dto.next,
+                    watch: dto.watch,
+                    presence: dto.presence,
+                    filter: try dto.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) },
+                    sort: try dto.groupSortJSONData.map { try JSONDecoder.stream.decode([SortParamRequest].self, from: $0) }
+                )
             }
-            return GroupedQueryPaginationState(
-                next: dto.next,
-                watch: dto.watch,
-                presence: dto.presence,
-                filter: try dto.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) },
-                sort: try dto.groupSortJSONData.map { try JSONDecoder.stream.decode([SortParamRequest].self, from: $0) }
-            )
         }
     }
 
@@ -244,7 +248,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
-        sort: [SortParamRequest]?,
+        sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
@@ -306,7 +310,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
-        sort: [SortParamRequest]?,
+        sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool
     ) async throws -> [ChannelGroup] {

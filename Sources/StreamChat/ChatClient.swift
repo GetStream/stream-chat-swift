@@ -687,7 +687,6 @@ public class ChatClient: @unchecked Sendable {
         return try await channelListUpdater.queryGroupedChannels(
             groups: groupRequests,
             limit: groupRequests == nil ? limit : nil,
-            sort: nil,
             watch: watch,
             presence: presence
         )

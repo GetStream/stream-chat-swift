@@ -32,7 +32,8 @@ public class ChannelList: @unchecked Sendable {
                 channelListUpdater,
                 client.databaseContainer,
                 client.eventNotificationCenter,
-                client.channelWatcherHandler
+                client.channelWatcherHandler,
+                environment.timerType
             )
         }
     }
@@ -143,7 +144,8 @@ extension ChannelList {
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter,
-            _ channelWatcherHandler: ChannelWatcherHandling
+            _ channelWatcherHandler: ChannelWatcherHandling,
+            _ timerType: TimerScheduling.Type
         ) -> ChannelListState = { @MainActor in
             ChannelListState(
                 query: $0,
@@ -152,8 +154,11 @@ extension ChannelList {
                 channelListUpdater: $3,
                 database: $4,
                 eventNotificationCenter: $5,
-                channelWatcherHandler: $6
+                channelWatcherHandler: $6,
+                timerType: $7
             )
         }
+
+        nonisolated(unsafe) var timerType: TimerScheduling.Type = DefaultTimer.self
     }
 }

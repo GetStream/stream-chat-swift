@@ -263,6 +263,11 @@ class SyncRepository_Tests: XCTestCase {
         groupedQuery.groupKey = "all"
         let channelList = ChannelList_Mock.mock(query: groupedQuery, client: client)
         repository.startTrackingChannelList(channelList)
+        // A tracked group that was never queried has no persisted state and must not override the flags.
+        var unqueriedQuery = ChannelListQuery(filter: .exists(.cid))
+        unqueriedQuery.groupKey = "archive"
+        let unqueriedList = ChannelList_Mock.mock(query: unqueriedQuery, client: client)
+        repository.startTrackingChannelList(unqueriedList)
 
         // Pre-populate the persisted state for the group with both flags enabled.
         try database.writeSynchronously { session in
