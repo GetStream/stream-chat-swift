@@ -1124,7 +1124,6 @@
 				StreamChatTests/Workers/EventObservers/MemberEventObserver_Tests.swift,
 				StreamChatTests/Workers/EventSender_Tests.swift,
 				StreamChatTests/Workers/GroupedChannelListLinker_Tests.swift,
-				StreamChatTests/Workers/GroupedChannelsFilterMatcher_Tests.swift,
 				StreamChatTests/Workers/ManualEventHandler_Tests.swift,
 				StreamChatTests/Workers/MessageUpdater_Tests.swift,
 				StreamChatTests/Workers/ReactionListUpdater_Tests.swift,

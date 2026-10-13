@@ -316,17 +316,6 @@ public extension Filter {
         )
     }
 
-    /// Matches values that are not equal to a specified value.
-    static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
-        .init(
-            operator: .notEqual,
-            key: key,
-            value: value,
-            valueMapper: key.valueMapper,
-            keyPathString: key.keyPathString
-        )
-    }
-
     /// Matches values that are greater than a specified value.
     static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(

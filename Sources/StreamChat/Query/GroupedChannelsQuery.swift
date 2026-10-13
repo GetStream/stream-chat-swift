@@ -10,12 +10,20 @@ public struct GroupedChannelsFilterScope: FilterScope {}
 /// Filter keys for grouped channels.
 public extension FilterKey where Scope == GroupedChannelsFilterScope {
     /// A filter key for matching the channel's stored group.
-    /// Supported operators: `equal`, `in`, `notEqual`
-    static var group: FilterKey<Scope, String> { "group" }
+    /// Supported operators: `equal`, `in`
+    static var group: FilterKey<Scope, String> { .init(
+        rawValue: "group",
+        keyPathString: #keyPath(ChannelDTO.group),
+        valueMapper: { GroupedChannelKey.normalizedGroup($0) }
+    ) }
 
     /// A filter key for matching the channel's latest activity time.
     /// Supported operators: `greaterOrEqual`
-    static var queryTimestamp: FilterKey<Scope, GroupedChannelsTimestamp> { "query_timestamp" }
+    static var queryTimestamp: FilterKey<Scope, GroupedChannelsTimestamp> { .init(
+        rawValue: "query_timestamp",
+        keyPathString: #keyPath(ChannelDTO.defaultSortingAt),
+        valueMapper: { $0.cutoffDate(now: Date()) }
+    ) }
 }
 
 /// A cutoff value for the `queryTimestamp` filter key of ``GroupedChannelsFilterScope``.
@@ -34,6 +42,64 @@ public enum GroupedChannelsTimestamp: FilterValue, Hashable {
         case let .date(date):
             try container.encode(date)
         }
+    }
+}
+
+extension GroupedChannelsTimestamp {
+    /// Converts a decoded filter value: a `Date`, or a `"now-7d"` / `"7d"` string.
+    init?(filterValue: FilterValue) {
+        if let date = filterValue as? Date {
+            self = .date(date)
+            return
+        }
+        guard let string = filterValue as? String else { return nil }
+        let relative = string.hasPrefix("now-") ? string.dropFirst(4) : Substring(string)
+        guard relative.hasSuffix("d"), let days = Int(relative.dropLast()) else { return nil }
+        self = .daysAgo(days)
+    }
+
+    func cutoffDate(now: Date) -> Date {
+        switch self {
+        case let .daysAgo(days):
+            return now.addingTimeInterval(-TimeInterval(days) * 86400)
+        case let .date(date):
+            return date
+        }
+    }
+}
+
+extension GroupedChannelsFilterScope {
+    /// Re-attaches the local wiring of the grouped filter keys to decoded filter leaves.
+    static let keyMapping: [String: @Sendable (Filter<Self>) -> Filter<Self>] = [
+        FilterKey<Self, String>.group.rawValue: { filter in
+            filter.withLocalWiring(of: .group, value: filter.value)
+        },
+        FilterKey<Self, GroupedChannelsTimestamp>.queryTimestamp.rawValue: { filter in
+            // A cutoff that can't be parsed stays unwired: it has no predicate, so the backend decides.
+            guard let cutoff = GroupedChannelsTimestamp(filterValue: filter.value) else { return filter }
+            return filter.withLocalWiring(of: .queryTimestamp, value: cutoff)
+        }
+    ]
+}
+
+extension Filter where Scope == GroupedChannelsFilterScope {
+    /// Decodes a persisted grouped channels filter and re-attaches its Core Data wiring.
+    static func groupedFilter(fromJSONData data: Data) throws -> Filter? {
+        guard !data.isEmpty else { return nil }
+        let decoded = try JSONDecoder.default.decode(Filter.self, from: data)
+        return decoded.applyingCoreDataFilteringKeys(GroupedChannelsFilterScope.keyMapping)
+    }
+
+    fileprivate func withLocalWiring<Value: FilterValue>(of key: FilterKey<Scope, Value>, value: FilterValue) -> Filter {
+        Filter(
+            operator: `operator`,
+            key: self.key,
+            value: value,
+            valueMapper: key.valueMapper,
+            keyPathString: key.keyPathString,
+            isCollectionFilter: key.isCollectionFilter,
+            predicateMapper: key.predicateMapper
+        )
     }
 }
 

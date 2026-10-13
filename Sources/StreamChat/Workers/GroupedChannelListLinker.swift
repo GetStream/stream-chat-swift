@@ -18,7 +18,7 @@ import Foundation
 /// - Any other `groupKey` links a channel only when its `"group"` value (whitespace-trimmed and
 ///   lowercased) equals the query's `groupKey`; otherwise the channel is unlinked.
 ///
-/// When the group was queried with a filter, the channel must also match it (see ``GroupedChannelsFilterMatcher``).
+/// When the group was queried with a filter, the channel must also match it, evaluated as a Core Data predicate.
 /// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are
 /// re-checked periodically and unlinked once they no longer match.
 final class GroupedChannelListLinker: Sendable, ChannelListLinking {
@@ -52,16 +52,12 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in
-                    self?.updateLinking(for: event.channel, latestActivity: event.message.createdAt)
-                }
+                callback: { [weak self] event in self?.updateLinking(for: event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in
-                    self?.updateLinking(for: event.channel, latestActivity: event.message.createdAt)
-                }
+                callback: { [weak self] event in self?.updateLinking(for: event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -91,19 +87,11 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// Unlinks the channels that no longer match the group's filter, for example after passing its
     /// `query_timestamp` cutoff.
     private func removeExpiredChannels() {
-        let now = timerType.currentTime()
         databaseContainer.write({ [query] session in
-            guard let queryDTO = session.channelListQuery(query), let filter = try Self.filter(of: queryDTO) else { return }
-            for channelDTO in queryDTO.channels {
-                let extraData = try JSONDecoder.stream.decodeRawJSON(from: channelDTO.extraData)
-                let matcher = GroupedChannelsFilterMatcher(
-                    group: extraData[GroupedChannelKey.group]?.stringValue,
-                    queryTimestamp: channelDTO.defaultSortingAt.bridgeDate,
-                    now: now
-                )
-                if !matcher.matches(filter) {
-                    queryDTO.channels.remove(channelDTO)
-                }
+            guard let queryDTO = session.channelListQuery(query),
+                  let filterPredicate = try Self.filterPredicate(of: queryDTO) else { return }
+            for channelDTO in queryDTO.channels where !filterPredicate.evaluate(with: channelDTO) {
+                queryDTO.channels.remove(channelDTO)
             }
         }, completion: { error in
             guard let error else { return }
@@ -115,18 +103,11 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    ///
-    /// - Parameter latestActivity: The time of activity the channel may not reflect yet, such as a new message.
-    private func updateLinking(for channel: ChatChannel, latestActivity: Date? = nil) {
+    private func updateLinking(for channel: ChatChannel) {
         let isInGroup = shouldChannelBelongToCurrentQuery(channel)
-        let matcher = GroupedChannelsFilterMatcher(
-            group: channel.extraData[GroupedChannelKey.group]?.stringValue,
-            queryTimestamp: [channel.createdAt, channel.lastMessageAt, latestActivity].compactMap { $0 }.max() ?? channel.createdAt,
-            now: timerType.currentTime()
-        )
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else { return false }
-            let shouldBelong = try isInGroup && (Self.filter(of: queryDTO).map(matcher.matches) ?? true)
+            let shouldBelong = try isInGroup && (Self.filterPredicate(of: queryDTO)?.evaluate(with: channelDTO) ?? true)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
@@ -163,8 +144,8 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
         return query.groupKey == currentGroupKey || query.groupKey == GroupedChannelKey.all
     }
 
-    /// The `filter_conditions` the group was queried with, `nil` when it has none.
-    private static func filter(of queryDTO: ChannelListQueryDTO) throws -> RawJSON? {
-        try queryDTO.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) }
+    /// The predicate of the `filter_conditions` the group was queried with, `nil` when it has none.
+    private static func filterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
+        try queryDTO.groupFilterJSONData.flatMap { try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: $0)?.predicate }
     }
 }

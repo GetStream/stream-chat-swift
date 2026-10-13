@@ -20,6 +20,22 @@ final class ChannelDTO_Tests: XCTestCase {
         super.tearDown()
     }
 
+    func test_saveChannel_storesNormalizedGroupFromExtraData() throws {
+        let groupedCid = ChannelId.unique
+        let emptyGroupCid = ChannelId.unique
+        let ungroupedCid = ChannelId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: groupedCid, extraData: [GroupedChannelKey.group: .string(" Expired ")])))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: emptyGroupCid, extraData: [GroupedChannelKey.group: .string(" ")])))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: ungroupedCid)))
+        }
+
+        XCTAssertEqual("expired", database.viewContext.channel(cid: groupedCid)?.group)
+        XCTAssertNil(database.viewContext.channel(cid: emptyGroupCid)?.group)
+        XCTAssertNil(database.viewContext.channel(cid: ungroupedCid)?.group)
+    }
+
     func test_saveChannel_latestMessagesFirstReturnsNewestMessage() throws {
         // GIVEN
         let olderMessage: MessagePayload = .dummy(

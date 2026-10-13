@@ -41,4 +41,10 @@ enum GroupedChannelKey {
     static let all = "all"
     /// `ChatChannel.extraData` field that carries the channel's group membership.
     static let group = "group"
+
+    /// Trims and lowercases a group value, `nil` when it is empty.
+    static func normalizedGroup(_ group: String) -> String? {
+        let normalized = group.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return normalized.isEmpty ? nil : normalized
+    }
 }

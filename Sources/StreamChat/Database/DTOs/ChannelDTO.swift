@@ -15,6 +15,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
+    /// The channel's stored group from `extraData["group"]`, normalized. Grouped list membership is `queries`.
+    @NSManaged var group: String?
     @NSManaged var config: ChannelConfigDTO
     @NSManaged var filterTags: Set<ChannelFilterTagDTO>
     @NSManaged var ownCapabilities: [String]
@@ -281,6 +283,7 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
+        dto.group = payload.extraData[GroupedChannelKey.group]?.stringValue.flatMap(GroupedChannelKey.normalizedGroup)
         dto.typeRawValue = payload.type
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
