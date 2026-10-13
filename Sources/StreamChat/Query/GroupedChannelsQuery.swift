@@ -27,7 +27,7 @@ public extension FilterKey where Scope == GroupedChannelsFilterScope {
 }
 
 /// A cutoff value for the `queryTimestamp` filter key of ``GroupedChannelsFilterScope``.
-public enum GroupedChannelsTimestamp: FilterValue, Hashable {
+public enum GroupedChannelsTimestamp: FilterValue {
     /// A cutoff relative to the time the request is handled, in whole days. The backend resolves it on every request,
     /// so loading more channels and refreshing after a reconnect keep the cutoff rolling.
     case daysAgo(Int)

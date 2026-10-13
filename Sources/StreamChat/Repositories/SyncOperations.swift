@@ -130,20 +130,18 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
 
             Task {
                 do {
-                    let statesByGroupKey = try await channelListUpdater.paginationStates(for: groupKeys)
-                    let states = groupKeys.map { statesByGroupKey[$0] ?? .empty }
+                    let states = try await channelListUpdater.paginationStates(for: groupKeys)
                     // Each group keeps its own filter. The flags and the sort are shared by the whole
-                    // request, so they come from the first group that has been queried; a tracked group
-                    // that was never queried has an empty state.
-                    let groups = Dictionary(uniqueKeysWithValues: zip(groupKeys, states).map { groupKey, state in
-                        (groupKey, GroupedChannelsGroupRequest(filterConditions: state.filter))
+                    // request, so they come from the first group that has been queried.
+                    let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in
+                        (groupKey, GroupedChannelsGroupRequest(filterConditions: states[groupKey]?.filter))
                     })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,
-                        sort: states.lazy.compactMap(\.sort).first,
-                        watch: states.lazy.compactMap(\.watch).first ?? false,
-                        presence: states.lazy.compactMap(\.presence).first ?? false
+                        sort: groupKeys.lazy.compactMap { states[$0]?.sort }.first,
+                        watch: groupKeys.lazy.compactMap { states[$0]?.watch }.first ?? false,
+                        presence: groupKeys.lazy.compactMap { states[$0]?.presence }.first ?? false
                     )
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)

@@ -45,7 +45,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveGroup(filterJSON: nil)
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(30), isLinked: false)
 
-        process(messageNewEvent(cid: cid, group: "expired", messageCreatedAt: daysBeforeNow(30)))
+        process(messageNewEvent(cid: cid))
 
         AssertAsync.willBeTrue(isLinked(cid))
     }
@@ -56,7 +56,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         // The event's message is already saved when observers are notified.
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(0), isLinked: false)
 
-        process(messageNewEvent(cid: cid, group: "expired", messageCreatedAt: daysBeforeNow(0)))
+        process(messageNewEvent(cid: cid))
 
         AssertAsync.willBeTrue(isLinked(cid))
     }
@@ -66,7 +66,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveGroup(filterJSON: cutoffFilterJSON)
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(30), isLinked: true)
 
-        process(messageNewEvent(cid: cid, group: "expired", messageCreatedAt: daysBeforeNow(30)))
+        process(messageNewEvent(cid: cid))
 
         AssertAsync.willBeTrue(isLinked(cid) == false)
     }
@@ -89,8 +89,8 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveChannel(cid: newCid, group: "new", lastMessageAt: daysBeforeNow(30), isLinked: false, query: allQuery)
         try saveChannel(cid: endedCid, group: "ended", lastMessageAt: daysBeforeNow(30), isLinked: true, query: allQuery)
 
-        process(messageNewEvent(cid: newCid, group: "new", messageCreatedAt: daysBeforeNow(30)))
-        process(messageNewEvent(cid: endedCid, group: "ended", messageCreatedAt: daysBeforeNow(30)))
+        process(messageNewEvent(cid: newCid))
+        process(messageNewEvent(cid: endedCid))
 
         AssertAsync {
             Assert.willBeEqual(self.isLinked(newCid, query: allQuery), true)
@@ -106,12 +106,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         // The updated channel is already saved when observers are notified.
         try saveChannel(cid: cid, group: "new", lastMessageAt: daysBeforeNow(1), isLinked: true)
 
-        process(ChannelUpdatedEvent(
-            channel: .mock(cid: cid, lastMessageAt: daysBeforeNow(1), createdAt: daysBeforeNow(1), extraData: [GroupedChannelKey.group: .string("new")]),
-            user: nil,
-            message: nil,
-            createdAt: daysBeforeNow(0)
-        ))
+        process(ChannelUpdatedEvent(channel: .mock(cid: cid), user: nil, message: nil, createdAt: .unique))
 
         AssertAsync.willBeTrue(isLinked(cid) == false)
     }
@@ -276,17 +271,12 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         }
     }
 
-    private func messageNewEvent(cid: ChannelId, group: String, messageCreatedAt: Date) -> MessageNewEvent {
+    private func messageNewEvent(cid: ChannelId) -> MessageNewEvent {
         MessageNewEvent(
             user: .unique,
-            message: .mock(cid: cid, createdAt: messageCreatedAt),
-            channel: .mock(
-                cid: cid,
-                lastMessageAt: daysBeforeNow(30),
-                createdAt: daysBeforeNow(30),
-                extraData: [GroupedChannelKey.group: .string(group)]
-            ),
-            createdAt: messageCreatedAt,
+            message: .mock(cid: cid),
+            channel: .mock(cid: cid),
+            createdAt: .unique,
             watcherCount: nil,
             unreadCount: nil
         )
