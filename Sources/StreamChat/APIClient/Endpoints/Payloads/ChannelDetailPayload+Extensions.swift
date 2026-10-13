@@ -19,15 +19,15 @@ extension ChannelCustomCommonFields {
         ChannelCodingKeys.imageURL.rawValue
     ] }
 
-    var extraData: [String: RawJSON] { custom.removingValues(forKeys: Self.nameAndImageKeys) }
+    var extraData: [String: RawJSON] { (custom ?? [:]).removingValues(forKeys: Self.nameAndImageKeys) }
 
     var group: String? { custom[GroupedChannelKey.group]?.stringValue.flatMap { $0.isEmpty ? nil : $0 } }
 
     var imageURL: URL? {
-        custom[ChannelCodingKeys.imageURL.rawValue]?.stringValue.flatMap(URL.init(string:))
+        custom?[ChannelCodingKeys.imageURL.rawValue]?.stringValue.flatMap(URL.init(string:))
     }
 
-    var name: String? { custom[ChannelCodingKeys.name.rawValue]?.stringValue }
+    var name: String? { custom?[ChannelCodingKeys.name.rawValue]?.stringValue }
 
     var touchedAt: Date? {
         custom[GroupedChannelKey.touchedAt]?.stringValue.flatMap(RFC3339DateFormatter.date(from:))

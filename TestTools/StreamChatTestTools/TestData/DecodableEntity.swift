@@ -10,7 +10,7 @@ protocol DecodableEntity: Decodable {
 }
 
 extension MessagePayload: DecodableEntity {
-    var extraData: [String: RawJSON] { custom }
+    var extraData: [String: RawJSON] { custom ?? [:] }
 }
 
 extension MessageReactionPayload: DecodableEntity {}

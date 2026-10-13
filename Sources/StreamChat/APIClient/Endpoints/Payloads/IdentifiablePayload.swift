@@ -137,7 +137,7 @@ extension ChannelPayload: IdentifiablePayloadProxy {
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
         read?.fillIds(cache: &cache, channelCid: channel.cid)
-        threads.fillIds(cache: &cache)
+        threads?.fillIds(cache: &cache)
     }
 }
 
@@ -165,7 +165,7 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
         thread.parentMessage?.fillIds(cache: &cache)
         thread.channel?.fillIds(cache: &cache)
         thread.createdBy?.fillIds(cache: &cache)
-        latestReplies.fillIds(cache: &cache)
+        latestReplies?.fillIds(cache: &cache)
         thread.threadParticipants?.fillIds(cache: &cache)
         read?.fillIds(cache: &cache)
     }

@@ -612,7 +612,7 @@ final class MessageDTO_Tests: XCTestCase {
             (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
         )
         XCTAssertEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-        XCTAssertEqual(messagePayload.custom, loadedMessage.map {
+        XCTAssertEqual(messagePayload.custom ?? [:], loadedMessage.map {
             try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
         })
         XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
@@ -764,7 +764,7 @@ final class MessageDTO_Tests: XCTestCase {
                 (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-            Assert.willBeEqual(messagePayload.custom, loadedMessage.map {
+            Assert.willBeEqual(messagePayload.custom ?? [:], loadedMessage.map {
                 try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)

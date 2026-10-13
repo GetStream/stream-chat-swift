@@ -252,7 +252,7 @@ extension NSManagedObjectContext {
             cache: cache
         )
 
-        let latestRepliesDTO: [MessageDTO] = try payload.latestReplies.map { replyPayload in
+        let latestRepliesDTO: [MessageDTO] = try (payload.latestReplies ?? []).map { replyPayload in
             let replyDTO = try saveMessage(
                 payload: replyPayload,
                 channelDTO: channelDTO,
@@ -285,7 +285,7 @@ extension NSManagedObjectContext {
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(payload.thread.custom)
+            extraData = try JSONEncoder.default.encode(payload.thread.custom ?? [:])
         } catch {
             extraData = Data()
         }
@@ -312,7 +312,7 @@ extension NSManagedObjectContext {
             title: payload.thread.title,
             replyCount: Int64(payload.thread.replyCount),
             participantCount: Int64(payload.thread.participantCount),
-            activeParticipantCount: Int64(payload.thread.activeParticipantCount),
+            activeParticipantCount: Int64(payload.thread.activeParticipantCount ?? 0),
             createdAt: payload.thread.createdAt.bridgeDate,
             lastMessageAt: payload.thread.lastMessageAt?.bridgeDate,
             updatedAt: payload.thread.updatedAt.bridgeDate,
@@ -347,7 +347,7 @@ extension NSManagedObjectContext {
                 title: partialPayload.title,
                 replyCount: Int64(partialPayload.replyCount),
                 participantCount: Int64(partialPayload.participantCount),
-                activeParticipantCount: Int64(partialPayload.activeParticipantCount),
+                activeParticipantCount: Int64(partialPayload.activeParticipantCount ?? 0),
                 createdAt: partialPayload.createdAt.bridgeDate,
                 lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
                 updatedAt: partialPayload.updatedAt.bridgeDate,
@@ -382,7 +382,7 @@ extension NSManagedObjectContext {
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(partialPayload.custom)
+            extraData = try JSONEncoder.default.encode(partialPayload.custom ?? [:])
         } catch {
             extraData = Data()
         }
@@ -392,7 +392,7 @@ extension NSManagedObjectContext {
             title: partialPayload.title,
             replyCount: Int64(partialPayload.replyCount),
             participantCount: Int64(partialPayload.participantCount),
-            activeParticipantCount: Int64(partialPayload.activeParticipantCount),
+            activeParticipantCount: Int64(partialPayload.activeParticipantCount ?? 0),
             createdAt: partialPayload.createdAt.bridgeDate,
             lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
             updatedAt: partialPayload.updatedAt.bridgeDate,
