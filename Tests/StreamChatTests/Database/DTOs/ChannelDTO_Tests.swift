@@ -613,7 +613,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Members
             Assert.willBeEqual(
-                MemberRole(rawChannelValue: payload.members[0].channelRole),
+                MemberRole(rawChannelValue: payload.members[0].channelRole ?? "channel_member"),
                 loadedChannel.lastActiveMembers.first?.memberRole
             )
             Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)

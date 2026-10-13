@@ -34,9 +34,9 @@ final class ThreadListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.thread.createdAt, "2024-03-26T12:14:10.87779Z".toDate())
         XCTAssertEqual(payload.thread.updatedAt, "2024-03-26T12:25:07.25741Z".toDate())
         XCTAssertEqual(payload.thread.title, "msg: 24")
-        XCTAssertEqual(payload.latestReplies.count, 2)
+        XCTAssertEqual(payload.latestReplies?.count, 2)
         XCTAssertEqual(payload.read?.count, 3)
-        XCTAssertEqual(payload.thread.custom["custom_test"]?.numberValue, 10)
+        XCTAssertEqual(payload.thread.custom?["custom_test"]?.numberValue, 10)
     }
 
     func test_thread_dropsArrayElementsThatFailDecoding() throws {
@@ -52,12 +52,12 @@ final class ThreadListPayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: data)
 
-        XCTAssertEqual(payload.latestReplies.count, latestReplies.count)
+        XCTAssertEqual(payload.latestReplies?.count, latestReplies.count)
         XCTAssertEqual(payload.read?.count, read.count)
         XCTAssertEqual(payload.thread.threadParticipants?.count, threadParticipants.count)
     }
 
-    func test_thread_latestRepliesDefaultToEmptyWhenMissing() throws {
+    func test_thread_latestRepliesAreNilWhenMissing() throws {
         let url = XCTestCase.mockData(fromJSONFile: "Thread")
         var thread = try XCTUnwrap(JSONSerialization.jsonObject(with: url) as? [String: Any])
         thread.removeValue(forKey: "latest_replies")
@@ -65,7 +65,7 @@ final class ThreadListPayload_Tests: XCTestCase {
 
         let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: data)
 
-        XCTAssertEqual(payload.latestReplies.count, 0)
+        XCTAssertNil(payload.latestReplies)
     }
 
     func test_threadList_shouldReturnThreadsIfOneThreadFailsParsing() throws {

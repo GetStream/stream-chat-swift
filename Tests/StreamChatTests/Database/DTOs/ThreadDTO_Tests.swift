@@ -338,10 +338,10 @@ final class ThreadDTO_Tests: XCTestCase {
             createdAt: payloadWithDraft.thread.createdAt,
             updatedAt: payloadWithDraft.thread.updatedAt,
             title: payloadWithDraft.thread.title,
-            latestReplies: payloadWithDraft.latestReplies,
+            latestReplies: payloadWithDraft.latestReplies ?? [],
             read: payloadWithDraft.read ?? [],
             draft: nil,
-            extraData: payloadWithDraft.thread.custom
+            extraData: payloadWithDraft.thread.custom ?? [:]
         )
 
         let updatedDto = try database.viewContext.saveThread(

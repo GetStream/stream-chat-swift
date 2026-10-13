@@ -102,7 +102,7 @@ extension MemberPayload {
             teams: user.teams,
             language: user.language,
             extraData: user.extraData,
-            memberRole: MemberRole(rawChannelValue: channelRole),
+            memberRole: MemberRole(rawChannelValue: channelRole ?? "channel_member"),
             memberStatus: status.map(MemberStatus.init(rawValue:)),
             memberCreatedAt: createdAt,
             memberUpdatedAt: updatedAt,
@@ -112,12 +112,12 @@ extension MemberPayload {
             inviteRejectedAt: inviteRejectedAt,
             archivedAt: archivedAt,
             pinnedAt: pinnedAt,
-            isBannedFromChannel: banned,
+            isBannedFromChannel: banned ?? false,
             banExpiresAt: banExpires,
-            isShadowBannedFromChannel: shadowBanned,
-            notificationsMuted: notificationsMuted,
+            isShadowBannedFromChannel: shadowBanned ?? false,
+            notificationsMuted: notificationsMuted ?? false,
             avgResponseTime: user.avgResponseTime,
-            memberExtraData: custom
+            memberExtraData: custom ?? [:]
         )
     }
 }
