@@ -15,7 +15,6 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
-    // The channel's stored group from `extraData["group"]`, normalized. Grouped list membership is `queries`.
     @NSManaged var group: String?
     @NSManaged var config: ChannelConfigDTO
     @NSManaged var filterTags: Set<ChannelFilterTagDTO>

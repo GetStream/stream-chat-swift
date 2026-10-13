@@ -46,7 +46,6 @@ public enum GroupedChannelsTimestamp: FilterValue, Hashable {
 }
 
 extension GroupedChannelsTimestamp {
-    // A decoded filter value: a `Date`, or a `"now-7d"` / `"7d"` string.
     init?(filterValue: FilterValue) {
         if let date = filterValue as? Date {
             self = .date(date)
@@ -89,13 +88,11 @@ extension GroupedChannelsFilterScope {
 }
 
 extension Filter where Scope == GroupedChannelsFilterScope {
-    // Decodes a persisted grouped channels filter and re-attaches its Core Data wiring. `nil` when any
-    // condition can't be evaluated locally: dropping a single leaf would change `$or` / `$nor` results,
-    // so the backend decides instead.
     static func groupedFilter(fromJSONData data: Data) throws -> Filter? {
         guard !data.isEmpty else { return nil }
         let decoded = try JSONDecoder.default.decode(Filter.self, from: data)
         let wired = decoded.applyingCoreDataFilteringKeys(GroupedChannelsFilterScope.keyMapping)
+        // Dropping a single unsupported leaf would change `$or` / `$nor` results, so the backend decides instead.
         return wired.hasCoreDataWiringOnEveryLeaf ? wired : nil
     }
 

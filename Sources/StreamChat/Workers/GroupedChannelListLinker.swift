@@ -12,18 +12,15 @@ import Foundation
 /// - Channel is updated: We re-evaluate membership — the channel's `"group"` extra-data may have
 ///   changed, which can move it into or out of this query.
 ///
-/// Membership is decided purely from the channel's `"group"` extra-data value:
-/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel carrying any non-empty group
-///   value links into it.
-/// - Any other `groupKey` links a channel only when its `"group"` value (whitespace-trimmed and
-///   lowercased) equals the query's `groupKey`; otherwise the channel is unlinked.
+/// Membership is decided from the channel's stored group (`ChannelDTO.group`, the normalized `"group"` extra-data):
+/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel with a group links into it.
+/// - Any other `groupKey` links a channel only when its group equals the query's `groupKey`; otherwise
+///   the channel is unlinked. A channel without a group is unlinked.
 ///
 /// When the group was queried with a filter, the channel must also match it, evaluated as a Core Data predicate.
 /// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are
 /// re-checked periodically and unlinked once they no longer match.
 final class GroupedChannelListLinker: Sendable, ChannelListLinking {
-    // The decoded filter of the group, keyed by the persisted JSON it was decoded from. Only accessed
-    // from the serialized database write queue.
     private nonisolated(unsafe) var cachedFilter: (data: Data, filter: Filter<GroupedChannelsFilterScope>?)?
     private let channelWatcherHandler: ChannelWatcherHandling
     private let databaseContainer: DatabaseContainer
@@ -81,8 +78,6 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
         expirySweepTimer?.resume()
     }
 
-    // Unlinks the channels that no longer match the group's filter, for example after passing its
-    // `query_timestamp` cutoff.
     private func removeExpiredChannels() {
         databaseContainer.write({ [query] session in
             guard let queryDTO = session.channelListQuery(query),
@@ -128,10 +123,9 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
         })
     }
 
-    // The predicate of the `filter_conditions` the group was queried with, `nil` when it has none. The
-    // predicate is rebuilt on every call so relative cutoffs keep rolling; the decoded filter is cached.
     private func filterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
         guard let data = queryDTO.groupFilterJSONData else { return nil }
+        // Only called from the serialized database write queue. The predicate is rebuilt so relative cutoffs keep rolling.
         if cachedFilter?.data != data {
             cachedFilter = (data, try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: data))
         }
