@@ -289,12 +289,7 @@ public struct MemberInfo {
     /// The role of the member in the channel. When `nil`, the backend applies the default role.
     public var channelRole: MemberRole?
 
-    public init(userId: UserId, extraData: [String: RawJSON]? = nil) {
-        self.userId = userId
-        self.extraData = extraData
-    }
-
-    public init(userId: UserId, channelRole: MemberRole, extraData: [String: RawJSON]? = nil) {
+    public init(userId: UserId, channelRole: MemberRole? = nil, extraData: [String: RawJSON]? = nil) {
         self.userId = userId
         self.channelRole = channelRole
         self.extraData = extraData
