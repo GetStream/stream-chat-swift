@@ -247,9 +247,9 @@ public extension MemberRole {
 extension MemberRole {
     /// The role as the backend expects it in channel member requests.
     var channelRoleValue: String {
-        switch self {
-        case .member: "channel_member"
-        case .moderator: "channel_moderator"
+        switch rawValue {
+        case Self.member.rawValue: "channel_member"
+        case Self.moderator.rawValue: "channel_moderator"
         default: rawValue
         }
     }

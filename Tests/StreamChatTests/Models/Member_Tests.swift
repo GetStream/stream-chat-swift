@@ -40,6 +40,26 @@ final class MemberRole_Tests: XCTestCase {
         XCTAssertEqual((try? decoder.decode(RoleContainer.self, from: json))?.role, "some_unknown_role")
     }
 
+    func test_channelRoleValue_mapsDecodedAndPredefinedRoles() throws {
+        struct RoleContainer: Decodable {
+            let role: MemberRole
+        }
+
+        func decodedRole(_ value: String) throws -> MemberRole {
+            let json = try JSONEncoder().encode(["role": value])
+            return try JSONDecoder().decode(RoleContainer.self, from: json).role
+        }
+
+        XCTAssertEqual(MemberRole.member.channelRoleValue, "channel_member")
+        XCTAssertEqual(MemberRole.moderator.channelRoleValue, "channel_moderator")
+        XCTAssertEqual(try decodedRole("member").channelRoleValue, "channel_member")
+        XCTAssertEqual(try decodedRole("channel_member").channelRoleValue, "channel_member")
+        XCTAssertEqual(try decodedRole("moderator").channelRoleValue, "channel_moderator")
+        XCTAssertEqual(try decodedRole("channel_moderator").channelRoleValue, "channel_moderator")
+        XCTAssertEqual(MemberRole.admin.channelRoleValue, "admin")
+        XCTAssertEqual(try decodedRole("some_unknown_role").channelRoleValue, "some_unknown_role")
+    }
+
     func test_replacing_correctlyUpdatesFields() {
         // GIVEN
         let originalMember = ChatChannelMember.mock(
