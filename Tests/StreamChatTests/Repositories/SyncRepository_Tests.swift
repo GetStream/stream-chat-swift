@@ -280,6 +280,49 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual([true], channelListUpdater.queryGroupedChannels_presenceValues)
     }
 
+    func test_syncLocalState_groupedChannelLists_passesPersistedFiltersAndSortToQueryGroupedChannels() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        var expiredQuery = ChannelListQuery(filter: .exists(.cid))
+        expiredQuery.groupKey = "expired"
+        var newQuery = ChannelListQuery(filter: .exists(.cid))
+        newQuery.groupKey = "new"
+        let expiredList = ChannelList_Mock.mock(query: expiredQuery, client: client)
+        let newList = ChannelList_Mock.mock(query: newQuery, client: client)
+        repository.startTrackingChannelList(expiredList)
+        repository.startTrackingChannelList(newList)
+
+        try database.writeSynchronously { session in
+            let expiredDTO = session.saveQuery(query: ChannelListQuery(groupKey: "expired"))
+            expiredDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            expiredDTO.groupSortJSONData = Data(#"[{"field":"query_timestamp","direction":-1}]"#.utf8)
+            _ = session.saveQuery(query: ChannelListQuery(groupKey: "new"))
+        }
+        channelListUpdater.queryGroupedChannels_result = .success([
+            ChannelGroup(groupKey: "expired", channels: [.mock(cid: cid)], unreadChannels: 0)
+        ])
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        let groups = try XCTUnwrap(channelListUpdater.queryGroupedChannels_groups.last ?? nil)
+        XCTAssertEqual(["expired", "new"], groups.keys.sorted())
+        XCTAssertEqual(
+            .dictionary(["query_timestamp": .dictionary(["$gte": .string("now-14d")])]),
+            groups["expired"]?.filterConditions as? RawJSON
+        )
+        XCTAssertNil(groups["new"]?.filterConditions)
+        let sort = channelListUpdater.queryGroupedChannels_sorts.last ?? nil
+        XCTAssertEqual(["query_timestamp"], sort?.map(\.field))
+        XCTAssertEqual([-1], sort?.map(\.direction))
+    }
+
     func test_syncLocalState_mixedChannelLists_callsGroupedOnceAndRefreshesOnlyStandard() throws {
         let groupedCid = ChannelId.unique
         let standardCid = ChannelId.unique

@@ -121,25 +121,32 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
 /// returned channel ids in `context.synchedChannelIds` so the subsequent `/sync` step skips them.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
-        let groupKeys = Set(groupedChannelLists.compactMap(\.groupKey))
+        let groupKeys = Set(groupedChannelLists.compactMap(\.groupKey)).sorted()
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
-            // All grouped lists share the same persisted flags (set together by the initial
-            // `queryGroupedChannels` call), so any one of them is a valid source. `sorted().first`
-            // keeps the choice deterministic across runs.
-            guard let channelListUpdater, let sampleGroupKey = groupKeys.sorted().first else {
+            guard let channelListUpdater, !groupKeys.isEmpty else {
                 done(.continue)
                 return
             }
 
             Task {
                 do {
-                    let state = try await channelListUpdater.paginationState(for: sampleGroupKey)
-                    let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { ($0, GroupedChannelsGroupRequest(limit: nil, next: nil)) })
+                    var states: [ChannelListUpdater.GroupedQueryPaginationState] = []
+                    for groupKey in groupKeys {
+                        states.append(try await channelListUpdater.paginationState(for: groupKey))
+                    }
+                    // All grouped lists share the same persisted flags (set together by the initial
+                    // `queryGroupedChannels` call), so any one of them is a valid source. The sorted
+                    // first key keeps the choice deterministic across runs. Each group keeps its own
+                    // filter, while the sort is shared by the whole request.
+                    let groups = Dictionary(uniqueKeysWithValues: zip(groupKeys, states).map { groupKey, state in
+                        (groupKey, GroupedChannelsGroupRequest(filterConditions: state.filter))
+                    })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,
-                        watch: state.watch ?? false,
-                        presence: state.presence ?? false
+                        sort: states.lazy.compactMap(\.sort).first,
+                        watch: states[0].watch ?? false,
+                        presence: states[0].presence ?? false
                     )
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)

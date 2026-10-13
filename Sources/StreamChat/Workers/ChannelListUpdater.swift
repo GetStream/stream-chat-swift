@@ -205,22 +205,24 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    /// The persisted pagination state for a grouped query: the next-page cursor and the
-    /// `watch` / `presence` flags that the original `queryGroupedChannels` call used.
+    /// The persisted pagination state for a grouped query: the next-page cursor, the
+    /// `watch` / `presence` flags, and the filter and sort that the original `queryGroupedChannels` call used.
     ///
     /// The `watch` and `presence` fields are `nil` when no DTO exists for the group yet — i.e.
     /// `queryGroupedChannels` has not been called for this `groupKey` in this session. Callers
     /// can use `state.watch != nil` as the sentinel for "has the group been initialized?".
     ///
     /// `ChannelList` (pagination) and `SyncRepository` (reconnect refetch) read this to reuse
-    /// the original flags instead of hardcoding `false`; `ChatClient`'s grouped factory uses
+    /// the original flags, filter and sort instead of hardcoding them; `ChatClient`'s grouped factory uses
     /// the nil-ness of `watch` to decide whether to auto-register the new list for sync tracking.
     struct GroupedQueryPaginationState: Sendable {
         let next: String?
         let watch: Bool?
         let presence: Bool?
+        let filter: RawJSON?
+        let sort: [SortParamRequest]?
 
-        static let empty = GroupedQueryPaginationState(next: nil, watch: nil, presence: nil)
+        static let empty = GroupedQueryPaginationState(next: nil, watch: nil, presence: nil, filter: nil, sort: nil)
     }
 
     func paginationState(for groupKey: String) async throws -> GroupedQueryPaginationState {
@@ -228,7 +230,13 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else {
                 return GroupedQueryPaginationState.empty
             }
-            return GroupedQueryPaginationState(next: dto.next, watch: dto.watch, presence: dto.presence)
+            return GroupedQueryPaginationState(
+                next: dto.next,
+                watch: dto.watch,
+                presence: dto.presence,
+                filter: try dto.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) },
+                sort: try dto.groupSortJSONData.map { try JSONDecoder.stream.decode([SortParamRequest].self, from: $0) }
+            )
         }
     }
 
@@ -236,14 +244,16 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
+        sort: [SortParamRequest]?,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         let request = GroupedQueryChannelsRequest(
             groups: groups,
-            limit: groups == nil ? limit : nil,
+            limit: limit,
             presence: presence,
+            sort: sort,
             watch: watch
         )
         let endpoint: Endpoint<GroupedQueryChannelsResponse> = .groupedQueryChannels(
@@ -258,6 +268,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 database.write(converting: { session in
                     let unreadChannelCountsByGroup = payload.groups.mapValues { $0.unreadChannels ?? 0 }
                     try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+                    let sortJSONData = try request.sort.map { try JSONEncoder.stream.encode($0) }
                     var channelGroups: [ChannelGroup] = []
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
@@ -268,6 +279,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         queryDTO.next = groupPayload.next
                         queryDTO.watch = watch
                         queryDTO.presence = presence
+                        queryDTO.groupFilterJSONData = try request.groups?[groupKey]?.filterConditions.map {
+                            try JSONEncoder.stream.encode($0)
+                        }
+                        queryDTO.groupSortJSONData = sortJSONData
                         let channels: [ChatChannel] = groupPayload.channels.compactMapLoggingError { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)
                             queryDTO.channels.insert(dto)
@@ -291,6 +306,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
+        sort: [SortParamRequest]?,
         watch: Bool,
         presence: Bool
     ) async throws -> [ChannelGroup] {
@@ -298,6 +314,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             queryGroupedChannels(
                 groups: groups,
                 limit: limit,
+                sort: sort,
                 watch: watch,
                 presence: presence
             ) { result in

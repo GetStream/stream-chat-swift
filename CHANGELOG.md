@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `GroupedChannelsQuery` and `ChatClient.queryGroupedChannels(with:)` to fetch grouped channels with per-group filters and `query_timestamp` sorting [#4329](https://github.com/GetStream/stream-chat-swift/pull/4329)
 
 # [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
 _October 09, 2026_

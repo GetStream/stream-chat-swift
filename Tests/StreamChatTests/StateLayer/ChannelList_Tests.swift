@@ -241,6 +241,38 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual([true], env.channelListUpdaterMock.queryGroupedChannels_presenceValues)
     }
 
+    func test_loadMoreChannels_whenQueryHasGroupKey_propagatesPersistedFilterAndSort() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "expired")
+        let environment = env.channelListEnvironment(usesMockedUpdater: true)
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: environment
+        )
+        _ = await channelList.state
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.next = "cursor-1"
+            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            queryDTO.groupSortJSONData = Data(#"[{"field":"query_timestamp","direction":-1}]"#.utf8)
+        }
+        env.channelListUpdaterMock.queryGroupedChannels_result = .success([
+            ChannelGroup(groupKey: "expired", channels: [], unreadChannels: 0, next: nil)
+        ])
+
+        _ = try await channelList.loadMoreChannels(limit: 5)
+
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual(
+            .dictionary(["query_timestamp": .dictionary(["$gte": .string("now-14d")])]),
+            groups?["expired"]?.filterConditions as? RawJSON
+        )
+        let sort = env.channelListUpdaterMock.queryGroupedChannels_sorts.first ?? nil
+        XCTAssertEqual(["query_timestamp"], sort?.map(\.field))
+        XCTAssertEqual([-1], sort?.map(\.direction))
+    }
+
     func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_marksAsFullyLoaded() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)

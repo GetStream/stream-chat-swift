@@ -120,6 +120,8 @@
     <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="groupFilterJSONData" optional="YES" attributeType="Binary"/>
+        <attribute name="groupSortJSONData" optional="YES" attributeType="Binary"/>
         <attribute name="next" optional="YES" attributeType="String"/>
         <attribute name="presence" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="sortJSONData" optional="YES" attributeType="Binary"/>

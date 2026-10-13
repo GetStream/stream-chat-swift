@@ -26,6 +26,14 @@ class ChannelListQueryDTO: NSManagedObject {
     /// and sync refetches. Grouped queries only.
     @NSManaged var presence: Bool
 
+    /// Serialized `filter_conditions` from the original grouped-channels request, reused on pagination
+    /// and sync refetches, and for local linking. `nil` when the group has no filter. Grouped queries only.
+    @NSManaged var groupFilterJSONData: Data?
+
+    /// Serialized `sort` from the original grouped-channels request, reused on pagination
+    /// and sync refetches. `nil` when the request has no sort. Grouped queries only.
+    @NSManaged var groupSortJSONData: Data?
+
     // MARK: - Relationships
 
     @NSManaged var channels: Set<ChannelDTO>

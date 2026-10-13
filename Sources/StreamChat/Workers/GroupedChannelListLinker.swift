@@ -17,20 +17,28 @@ import Foundation
 ///   value links into it.
 /// - Any other `groupKey` links a channel only when its `"group"` value (whitespace-trimmed and
 ///   lowercased) equals the query's `groupKey`; otherwise the channel is unlinked.
+///
+/// When the group was queried with a filter, the channel must also match it (see ``GroupedChannelsFilterMatcher``).
+/// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are
+/// re-checked periodically and unlinked once they no longer match.
 final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private let channelWatcherHandler: ChannelWatcherHandling
     private let databaseContainer: DatabaseContainer
     private nonisolated(unsafe) var eventObservers = [EventObserver]()
+    private nonisolated(unsafe) var expirySweepTimer: RepeatingTimerControl?
     private let query: ChannelListQuery
+    private nonisolated(unsafe) let timerType: TimerScheduling.Type
 
     init(
         query: ChannelListQuery,
         databaseContainer: DatabaseContainer,
-        channelWatcherHandler: ChannelWatcherHandling
+        channelWatcherHandler: ChannelWatcherHandling,
+        timerType: TimerScheduling.Type = DefaultTimer.self
     ) {
         self.channelWatcherHandler = channelWatcherHandler
         self.databaseContainer = databaseContainer
         self.query = query
+        self.timerType = timerType
     }
 
     func start(with nc: EventNotificationCenter) {
@@ -44,12 +52,16 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in self?.updateLinking(for: event.channel) }
+                callback: { [weak self] event in
+                    self?.updateLinking(for: event.channel, latestActivity: event.message.createdAt)
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in self?.updateLinking(for: event.channel) }
+                callback: { [weak self] event in
+                    self?.updateLinking(for: event.channel, latestActivity: event.message.createdAt)
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -68,16 +80,53 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 }
             )
         ]
+        expirySweepTimer = timerType.scheduleRepeating(
+            timeInterval: 60,
+            queue: .global(qos: .utility),
+            onFire: { [weak self] in self?.removeExpiredChannels() }
+        )
+        expirySweepTimer?.resume()
+    }
+
+    /// Unlinks the channels that no longer match the group's filter, for example after passing its
+    /// `query_timestamp` cutoff.
+    private func removeExpiredChannels() {
+        let now = timerType.currentTime()
+        databaseContainer.write({ [query] session in
+            guard let queryDTO = session.channelListQuery(query), let filter = try Self.filter(of: queryDTO) else { return }
+            for channelDTO in queryDTO.channels {
+                let extraData = try JSONDecoder.stream.decodeRawJSON(from: channelDTO.extraData)
+                let matcher = GroupedChannelsFilterMatcher(
+                    group: extraData[GroupedChannelKey.group]?.stringValue,
+                    queryTimestamp: channelDTO.defaultSortingAt.bridgeDate,
+                    now: now
+                )
+                if !matcher.matches(filter) {
+                    queryDTO.channels.remove(channelDTO)
+                }
+            }
+        }, completion: { error in
+            guard let error else { return }
+            log.error(error)
+        })
     }
 
     /// Links or unlinks the channel for the current grouped query in a single DB write, based on
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    private func updateLinking(for channel: ChatChannel) {
-        let shouldBelong = shouldChannelBelongToCurrentQuery(channel)
+    ///
+    /// - Parameter latestActivity: The time of activity the channel may not reflect yet, such as a new message.
+    private func updateLinking(for channel: ChatChannel, latestActivity: Date? = nil) {
+        let isInGroup = shouldChannelBelongToCurrentQuery(channel)
+        let matcher = GroupedChannelsFilterMatcher(
+            group: channel.extraData[GroupedChannelKey.group]?.stringValue,
+            queryTimestamp: [channel.createdAt, channel.lastMessageAt, latestActivity].compactMap { $0 }.max() ?? channel.createdAt,
+            now: timerType.currentTime()
+        )
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else { return false }
+            let shouldBelong = try isInGroup && (Self.filter(of: queryDTO).map(matcher.matches) ?? true)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
@@ -112,5 +161,10 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             .lowercased()
         guard let currentGroupKey, !currentGroupKey.isEmpty else { return false }
         return query.groupKey == currentGroupKey || query.groupKey == GroupedChannelKey.all
+    }
+
+    /// The `filter_conditions` the group was queried with, `nil` when it has none.
+    private static func filter(of queryDTO: ChannelListQueryDTO) throws -> RawJSON? {
+        try queryDTO.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) }
     }
 }
