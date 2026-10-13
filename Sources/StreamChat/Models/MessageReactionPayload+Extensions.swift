@@ -8,7 +8,7 @@ import Foundation
 // under `custom` and orders its init differently from the previously hand-written
 // MessageReactionPayload. Keep for now and clean up gradually.
 extension MessageReactionPayload {
-    var extraData: [String: RawJSON] { custom }
+    var extraData: [String: RawJSON] { custom ?? [:] }
 
     convenience init(
         type: MessageReactionType,

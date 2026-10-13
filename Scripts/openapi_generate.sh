@@ -4,7 +4,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
-SOURCERY_CONFIG="$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
 CHAT_DIR="$REPO_ROOT/../chat"
 
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
@@ -760,6 +759,42 @@ optionalize_property MemberUpdatedEventDTO channel
 optionalize_property ThreadResponse createdByUserId
 optionalize_property UserPayload blockedUserIds
 
+# Missing or null in some payloads; the call sites fall back to the default.
+optionalize_property ChannelDetailPayload custom
+optionalize_property ChannelStateResponseFields threads
+optionalize_property DraftMessagePayload custom
+optionalize_property MemberInfoPayload notificationsMuted
+optionalize_property MemberPayload banned
+optionalize_property MemberPayload channelRole
+optionalize_property MemberPayload custom
+optionalize_property MemberPayload notificationsMuted
+optionalize_property MemberPayload shadowBanned
+optionalize_property MessageAttachmentPayload custom
+optionalize_property MessageReactionPayload custom
+optionalize_property MessageResponse custom
+optionalize_property MessageResponse mentionedChannel
+optionalize_property MessageResponse mentionedHere
+optionalize_property MessageResponse pinned
+optionalize_property MessageResponse reactionCounts
+optionalize_property MessageResponse reactionScores
+optionalize_property MessageResponse restrictedVisibility
+optionalize_property MessageResponse shadowed
+optionalize_property MessageResponse silent
+optionalize_property OwnUserResponse banned
+optionalize_property OwnUserResponse custom
+optionalize_property OwnUserResponse invisible
+optionalize_property OwnUserResponse language
+optionalize_property OwnUserResponse teams
+optionalize_property OwnUserResponse unreadThreads
+optionalize_property ThreadParticipantPayload custom
+optionalize_property ThreadResponse activeParticipantCount
+optionalize_property ThreadResponse custom
+optionalize_property ThreadStateResponse latestReplies
+optionalize_property UserPayload banned
+optionalize_property UserPayload custom
+optionalize_property UserPayload language
+optionalize_property UserPayload teams
+
 # Will be changed on the generation side later
 # CHA-4621
 require_property ChannelDetailPayload config
@@ -918,6 +953,18 @@ remove_type BanRequest BanRequestDeleteMessages
 remove_type PushPreferenceInput PushPreferenceInputCallLevel
 remove_type PushPreferenceInput PushPreferenceInputFeedsLevel
 
+# After the property fixes above: their regexes match only decode( and decodeIfPresent(.
+lossy_array_property ChannelDetailPayload members
+lossy_array_property ChannelStateResponseFields activeLiveLocations members messages pendingMessages pinnedMessages read threads watchers
+lossy_array_property GroupedChannelsBucket channels
+lossy_array_property MessageResponse attachments latestReactions mentionedGroups mentionedRoles mentionedUsers ownReactions restrictedVisibility
+lossy_array_property OwnUserResponse channelMutes devices
+lossy_array_property QueryChannelsResponse channels
+lossy_array_property QueryThreadsResponse threads
+lossy_array_property SyncResponse events
+lossy_array_property ThreadResponse threadParticipants
+lossy_array_property ThreadStateResponse latestReplies read
+
 # 6. Expose selected generated models as public API.
 publicize_model AppSettings
 publicize_model CurrentUserUnreads
@@ -943,24 +990,8 @@ apply_directional_coding_conformances
 strip_hashable_conformance
 strip_streamcore_imports
 
-# 8. Format, splice the generated decoders, prune unused StringCodingKey lets and wrap
-#    long declarations.
+# 8. Format, prune unused StringCodingKey lets and wrap long declarations.
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
-
-sourcery --config "$SOURCERY_CONFIG"
-splice_generated_decoders
-
-# After the splice, which replaces init(from:) of the models in the Sourcery sources.
-lossy_array_property ChannelDetailPayload members
-lossy_array_property ChannelStateResponseFields activeLiveLocations members messages pendingMessages pinnedMessages read threads watchers
-lossy_array_property GroupedChannelsBucket channels
-lossy_array_property MessageResponse attachments latestReactions mentionedGroups mentionedRoles mentionedUsers ownReactions restrictedVisibility
-lossy_array_property OwnUserResponse channelMutes devices
-lossy_array_property QueryChannelsResponse channels
-lossy_array_property QueryThreadsResponse threads
-lossy_array_property SyncResponse events
-lossy_array_property ThreadResponse threadParticipants
-lossy_array_property ThreadStateResponse latestReplies read
 
 prune_string_coding_keys
 

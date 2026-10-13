@@ -701,7 +701,7 @@ extension MessageDTO {
     func updateMemberInfo(from member: MemberInfoPayload) {
         updateMemberInfo(
             channelRole: MemberRole(rawChannelValue: member.channelRole),
-            notificationsMuted: member.notificationsMuted,
+            notificationsMuted: member.notificationsMuted ?? false,
             extraData: member.custom ?? [:]
         )
     }
@@ -1012,7 +1012,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.custom)
+            dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
@@ -1021,8 +1021,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.extraData = Data()
         }
 
-        dto.isSilent = payload.silent
-        dto.isShadowed = payload.shadowed
+        dto.isSilent = payload.silent ?? false
+        dto.isShadowed = payload.shadowed ?? false
         if let deletedForMe = payload.deletedForMe {
             dto.deletedForMe = deletedForMe
         }
@@ -1036,7 +1036,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.isShadowed = false
         }
 
-        dto.pinned = payload.pinned
+        dto.pinned = payload.pinned ?? false
         dto.pinExpires = payload.pinExpires?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
         if let pinnedByUser = payload.pinnedBy {
@@ -1084,8 +1084,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let user = try saveUser(payload: payload.user)
         dto.user = user
 
-        dto.reactionScores = payload.reactionScores
-        dto.reactionCounts = payload.reactionCounts
+        dto.reactionScores = payload.reactionScores ?? [:]
+        dto.reactionCounts = payload.reactionCounts ?? [:]
         dto.reactionGroups = Set((payload.reactionGroups ?? [:]).compactMap { (type, groupPayload) in
             groupPayload.map {
                 MessageReactionGroupDTO(
@@ -1106,8 +1106,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         if let mentionedChannelMembers = payload.mentionedChannelMembers {
             dto.updateMentionedChannelMembers(mentionedChannelMembers)
         }
-        dto.mentionedHere = payload.mentionedHere
-        dto.mentionedChannel = payload.mentionedChannel
+        dto.mentionedHere = payload.mentionedHere ?? false
+        dto.mentionedChannel = payload.mentionedChannel ?? false
         let mentionedGroups = payload.mentionedGroups ?? []
         dto.mentionedGroupIds = mentionedGroups.map(\.id)
         dto.mentionedGroups = try Set(mentionedGroups.map { try saveUserGroup(payload: $0) })
@@ -1117,7 +1117,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.threadParticipants = try NSOrderedSet(
             array: (payload.threadParticipants ?? []).map { try saveUser(payload: $0) }
         )
-        let restrictedVisibility = Set(payload.restrictedVisibility)
+        let restrictedVisibility = Set(payload.restrictedVisibility ?? [])
         dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
 
         let isSystemMessage = dto.type == MessageType.system.rawValue
@@ -1320,7 +1320,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         do {
             dto.extraData = try JSONEncoder.default.encode(
-                draftDetailsPayload.custom.removingValues(
+                (draftDetailsPayload.custom ?? [:]).removingValues(
                     forKeys: [MessageResponse.argsKey, StringCodingKey.command.stringValue]
                 )
             )

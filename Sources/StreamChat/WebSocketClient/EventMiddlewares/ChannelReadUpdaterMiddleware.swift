@@ -272,7 +272,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return .authorIsMuted
         }
 
-        if message.silent {
+        if message.silent == true {
             return .messageIsSilent
         }
 

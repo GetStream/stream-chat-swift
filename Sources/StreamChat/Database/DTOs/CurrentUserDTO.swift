@@ -108,12 +108,12 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             channelMutes: payload.channelMutes,
             devices: payload.devices,
             dto: dto,
-            isInvisible: payload.invisible,
+            isInvisible: payload.invisible ?? false,
             mutes: payload.mutes,
             privacySettings: payload.privacySettings,
             totalUnreadCount: payload.totalUnreadCount,
             unreadChannels: payload.unreadChannels,
-            unreadThreads: payload.unreadThreads
+            unreadThreads: payload.unreadThreads ?? 0
         )
 
         return dto

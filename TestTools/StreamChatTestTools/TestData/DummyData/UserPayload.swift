@@ -12,11 +12,11 @@ typealias UserListPayload = QueryUsersResponse
 // hand-written UserPayload. These wrappers keep the existing tests compiling
 // without rewriting them.
 extension UserPayload {
-    var extraData: [String: RawJSON] { custom }
+    var extraData: [String: RawJSON] { custom ?? [:] }
 
     var imageURL: URL? { image.flatMap(URL.init(string:)) }
 
-    var isBanned: Bool { banned }
+    var isBanned: Bool { banned ?? false }
 
     var isOnline: Bool { online }
 

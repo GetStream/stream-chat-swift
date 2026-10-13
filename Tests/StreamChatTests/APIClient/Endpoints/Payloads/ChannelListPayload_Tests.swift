@@ -92,7 +92,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels[0].messages.count, 24)
     }
 
-    func test_decode_threadsDefaultToEmptyWhenMissing() throws {
+    func test_decode_threadsAreNilWhenMissing() throws {
         var root = try channelsQueryJSONObject()
         var channels = try XCTUnwrap(root["channels"] as? [[String: Any]])
         channels[0].removeValue(forKey: "threads")
@@ -102,7 +102,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: data)
 
         XCTAssertEqual(payload.channels.count, 20)
-        XCTAssertEqual(payload.channels[0].threads.count, 0)
+        XCTAssertNil(payload.channels[0].threads)
     }
 
     func test_groupedQueryChannelsPayload_shouldReturnChannelsIfOneChannelFailsParsing() throws {
@@ -575,9 +575,9 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertNil(firstMessage.parentId)
         XCTAssertNotEqual(firstMessage.showInChannel, true)
         XCTAssert(firstMessage.mentionedUsers.isEmpty)
-        XCTAssert(firstMessage.reactionScores.isEmpty)
+        XCTAssertEqual(firstMessage.reactionScores, [:])
         XCTAssertEqual(firstMessage.replyCount, 0)
-        XCTAssertFalse(firstMessage.silent)
+        XCTAssertEqual(firstMessage.silent, false)
 
         XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
         let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first?.message)
