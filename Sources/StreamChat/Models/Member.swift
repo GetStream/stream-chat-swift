@@ -240,13 +240,17 @@ public extension MemberRole {
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
-        switch self {
-        case .member:
-            try container.encode("channel_member")
-        case .moderator:
-            try container.encode("channel_moderator")
-        default:
-            try container.encode(rawValue)
+        try container.encode(channelRoleValue)
+    }
+}
+
+extension MemberRole {
+    /// The role as the backend expects it in channel member requests.
+    var channelRoleValue: String {
+        switch rawValue {
+        case Self.member.rawValue: "channel_member"
+        case Self.moderator.rawValue: "channel_moderator"
+        default: rawValue
         }
     }
 }
@@ -282,9 +286,12 @@ public extension MemberStatus {
 public struct MemberInfo {
     public var userId: UserId
     public var extraData: [String: RawJSON]?
+    /// The role of the member in the channel. When `nil`, the backend applies the default role.
+    public var channelRole: MemberRole?
 
-    public init(userId: UserId, extraData: [String: RawJSON]? = nil) {
+    public init(userId: UserId, channelRole: MemberRole? = nil, extraData: [String: RawJSON]? = nil) {
         self.userId = userId
+        self.channelRole = channelRole
         self.extraData = extraData
     }
 }
