@@ -484,7 +484,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_addDevice_whenDeviceIsAlreadyRegistered_doesNotMakeAPICall() throws {
         let userId = UserId.unique
-        let device = Device(id: "test", pushProvider: "apn", pushProviderName: "APN Configuration", userId: userId)
+        let device = Device(createdAt: .unique, id: "test", pushProvider: "apn", pushProviderName: "APN Configuration", userId: userId)
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user, devices: [device]))
         }
@@ -507,7 +507,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_addDevice_whenDeviceIsRegisteredWithDifferentProviderName_makesAPICall() throws {
         let userId = UserId.unique
-        let device = Device(id: "test", pushProvider: "apn", pushProviderName: "Old Configuration", userId: userId)
+        let device = Device(createdAt: .unique, id: "test", pushProvider: "apn", pushProviderName: "Old Configuration", userId: userId)
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user, devices: [device]))
         }
@@ -531,7 +531,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_addDevice_whenDeviceIsRegisteredForAnotherUser_makesAPICall() throws {
         let storedUserId = UserId.unique
-        let device = Device(id: "test", pushProvider: "apn", userId: storedUserId)
+        let device = Device(createdAt: .unique, id: "test", pushProvider: "apn", userId: storedUserId)
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: storedUserId, role: .user, devices: [device]))
         }
@@ -547,7 +547,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_addDevice_whenForceRegistration_makesAPICallForRegisteredDevice() throws {
         let userId = UserId.unique
-        let device = Device(id: "test", pushProvider: "apn", userId: userId)
+        let device = Device(createdAt: .unique, id: "test", pushProvider: "apn", userId: userId)
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user, devices: [device]))
         }

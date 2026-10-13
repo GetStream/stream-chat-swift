@@ -107,6 +107,9 @@ jobs:
     - name: Build Common UI
       run: bundle exec fastlane test_common_ui device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
+    - name: Build AI
+      run: bundle exec fastlane test_ai device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
+      timeout-minutes: 25
 
   test-llc-debug:
     name: Test LLC (Debug)
@@ -214,6 +217,33 @@ jobs:
       if: failure()
       with:
         name: Test Data Common UI
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+
+  test-ai-debug:
+    name: Test AI (Debug)
+    runs-on: macos-15
+    if: ${{ github.event.inputs.record_snapshots != 'true' }}
+    needs: guard
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
+        SKIP_SWIFT_BOOTSTRAP: true
+    - name: Run AI Tests (Debug)
+      run: bundle exec fastlane test_ai device:"${{ env.IOS_SIMULATOR_DEVICE }}" ${{ env.VERBOSE }}
+      timeout-minutes: 60
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        brew install chargepoint/xcparse/xcparse
+        xcparse logs fastlane/test_output/StreamChatAI.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: Test Data AI
         path: |
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
