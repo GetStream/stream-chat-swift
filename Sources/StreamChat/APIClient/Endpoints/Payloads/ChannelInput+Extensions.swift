@@ -53,7 +53,7 @@ extension ChannelInput {
         var addedUserIds = Set<UserId>()
         return (members + invitedMembers).compactMap { member in
             guard addedUserIds.insert(member.userId).inserted else { return nil }
-            return ChannelMemberRequest(custom: member.extraData, userId: member.userId)
+            return ChannelMemberRequest(memberInfo: member)
         }
     }
 
@@ -66,5 +66,15 @@ extension ChannelInput {
             custom[ChannelCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
         }
         return custom
+    }
+}
+
+extension ChannelMemberRequest {
+    convenience init(memberInfo: MemberInfo) {
+        self.init(
+            channelRole: memberInfo.channelRole?.channelRoleValue,
+            custom: memberInfo.extraData,
+            userId: memberInfo.userId
+        )
     }
 }

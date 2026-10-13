@@ -142,7 +142,7 @@ final class Chat_Tests: XCTestCase {
     
     // MARK: - Creating a Chat
 
-    @MainActor func test_makeChat_whenMembersHaveExtraData_thenChannelInputForwardsIt() async throws {
+    @MainActor func test_makeChat_whenMembersHaveRoleAndExtraData_thenChannelInputForwardsThem() async throws {
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         let moderatorId: UserId = .unique
         let memberId: UserId = .unique
@@ -150,18 +150,19 @@ final class Chat_Tests: XCTestCase {
         let chat = try env.client.makeChat(
             with: .unique,
             memberInfos: [
-                MemberInfo(userId: moderatorId, extraData: ["channel_role": .string("channel_moderator")]),
+                MemberInfo(userId: moderatorId, channelRole: .moderator, extraData: ["department": .string("support")]),
                 MemberInfo(userId: memberId)
             ]
         )
 
         let members = try XCTUnwrap(chat.state.channelQuery.channelInput?.members)
         XCTAssertEqual(Set(members.compactMap(\.userId)), [moderatorId, memberId, currentUserId])
-        XCTAssertEqual(
-            members.first(where: { $0.userId == moderatorId })?.custom,
-            ["channel_role": .string("channel_moderator")]
-        )
-        XCTAssertNil(members.first(where: { $0.userId == memberId })?.custom)
+        let moderator = members.first(where: { $0.userId == moderatorId })
+        XCTAssertEqual(moderator?.channelRole, "channel_moderator")
+        XCTAssertEqual(moderator?.custom, ["department": .string("support")])
+        let member = members.first(where: { $0.userId == memberId })
+        XCTAssertNil(member?.channelRole)
+        XCTAssertNil(member?.custom)
     }
 
     // MARK: - Archiving and Unarchiving the Channel
