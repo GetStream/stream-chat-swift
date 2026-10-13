@@ -512,7 +512,11 @@ desc 'Picks the e2e tests the pull request can affect and exposes how many CI ba
 lane :select_e2e_tests do |options|
   all_tests = all_e2e_tests
   tests = []
-  if is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  if ENV['GITHUB_HEAD_REF'].to_s.start_with?('release/') || ENV['GITHUB_BASE_REF'] == 'main'
+    UI.important("Running all #{all_tests.size} tests on a release pull request")
+    tests = all_tests
+    File.write(e2e_selection_path, JSON.generate(run_all: true, tests: tests, reasons: ['release pull request']))
+  elsif is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
     selection = select_impacted_tests(
       all_tests: all_tests,
       coverage_map: options[:coverage_map],
