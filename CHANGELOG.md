@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `MemberInfo.channelRole` and `MemberInfo` overloads for creating a channel with member role and extra data [#4322](https://github.com/GetStream/stream-chat-swift/pull/4322)
 
 # [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
 _October 09, 2026_
@@ -12,7 +14,6 @@ _October 09, 2026_
 ### ✅ Added
 - Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add `autoTranslationLanguages` to `ChatChannelController.updateChannel` and `Chat.update` [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
-- Add `MemberInfo.channelRole` and `MemberInfo` overloads for creating a channel with member role and extra data [#4322](https://github.com/GetStream/stream-chat-swift/pull/4322)
 ### 🐞 Fixed
 - Fix `addDevice` sending a registration request when the device is already registered [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)
