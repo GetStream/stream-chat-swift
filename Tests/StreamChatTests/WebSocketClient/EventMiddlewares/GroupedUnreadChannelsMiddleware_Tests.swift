@@ -51,6 +51,19 @@ final class GroupedUnreadChannelsMiddleware_Tests: XCTestCase {
         XCTAssertEqual(["expired": 2], try unreadChannelCountsByGroup())
     }
 
+    func test_handle_whenEventDoesNotAffectUnreadState_keepsFilteredGroupCount() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup(linking: cid, unreadMessages: 0, groupNotLoadedUnreadCount: 1)
+        let event = TypingStartEventDTO(cid: cid, createdAt: .unique, user: .dummy(userId: .unique))
+
+        try database.writeSynchronously { session in
+            session.loadChannelRead(cid: cid, userId: self.currentUserId)?.unreadMessageCount = 1
+            _ = self.middleware.handle(event: event, wsEvent: .typeTypingStartEvent(event), session: session)
+        }
+
+        XCTAssertNil(try unreadChannelCountsByGroup()?["expired"])
+    }
+
     func test_handle_whenLinkedChannelIsHidden_updatesFilteredGroupCount() throws {
         let cid = ChannelId.unique
         try saveFilteredGroup(linking: cid, unreadMessages: 2, groupNotLoadedUnreadCount: 1)

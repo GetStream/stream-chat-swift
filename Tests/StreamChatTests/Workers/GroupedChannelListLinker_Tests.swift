@@ -194,6 +194,20 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(["expired": 1], unreadChannelCountsByGroup())
     }
 
+    func test_messageNew_whenNotLoadedUnreadChannelIsLinked_movesItOutOfTheNotLoadedCount() throws {
+        let cid = ChannelId.unique
+        try saveCurrentUser()
+        try saveGroup(filterJSON: cutoffFilterJSON)
+        try database.writeSynchronously { session in
+            session.channelListQuery(self.query)?.groupNotLoadedUnreadCount = 2
+        }
+        try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(0), unreadMessages: 1, isLinked: false)
+
+        try process(messageNewEvent(cid: cid))
+
+        XCTAssertEqual(["expired": 2], unreadChannelCountsByGroup())
+    }
+
     func test_expirySweep_whenUnreadChannelExpires_removesItFromFilteredGroupUnreadCount() throws {
         let cid = ChannelId.unique
         try saveCurrentUser()

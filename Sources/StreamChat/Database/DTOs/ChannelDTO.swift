@@ -143,10 +143,15 @@ class ChannelDTO: NSManagedObject {
         if lastDate.bridgeDate <= .distantPast {
             lastDate = createdAt
         }
-        if lastDate != defaultSortingAt {
-            defaultSortingAt = lastDate
+        if lastDate != defaultSortingAt || queryTimestamp.bridgeDate.timeIntervalSinceReferenceDate <= 0 {
+            if lastDate != defaultSortingAt {
+                defaultSortingAt = lastDate
+            }
             let touchedAt = (try? JSONDecoder.stream.decodeRawJSON(from: extraData)).flatMap(GroupedChannelKey.touchedAt(in:))
-            queryTimestamp = max(lastDate.bridgeDate, touchedAt ?? .distantPast).bridgeDate
+            let newQueryTimestamp = max(lastDate.bridgeDate, touchedAt ?? .distantPast).bridgeDate
+            if newQueryTimestamp != queryTimestamp {
+                queryTimestamp = newQueryTimestamp
+            }
         }
     }
 
@@ -508,6 +513,9 @@ extension ChannelDTO {
 
         // Fetch results controller requires at least one sorting descriptor.
         var sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        if query.groupKey != nil, sortDescriptors.isEmpty {
+            sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.queryTimestamp, ascending: false)]
+        }
         
         // For consistent order we need to have a sort descriptor which breaks ties
         if !sortDescriptors.isEmpty, !sortDescriptors.contains(where: { $0.key == ChannelListSortingKey.updatedAt.localKey }) {
@@ -516,9 +524,6 @@ extension ChannelDTO {
             }
         }
         
-        if query.groupKey != nil {
-            sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.queryTimestamp, ascending: false)]
-        }
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)

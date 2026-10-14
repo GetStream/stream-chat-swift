@@ -230,7 +230,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
 
         // Server counts have no group filter cutoffs, so filtered groups are counted locally.
-        let unfilteredCounts = unreadChannelCountsByGroup.filter { !isFilteredGroup($0.key) }
+        let filteredGroupKeys = Set(loadAllChannelListQueries().filter { $0.groupFilterJSONData != nil }.map(\.filterHash))
+        let unfilteredCounts = unreadChannelCountsByGroup.filter { !filteredGroupKeys.contains($0.key) }
         dto.unreadChannelCountsByGroup = (dto.unreadChannelCountsByGroup ?? [:]).merging(unfilteredCounts) { _, new in new }
     }
 

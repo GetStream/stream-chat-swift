@@ -106,6 +106,10 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
                 let shouldStartWatching = queryDTO.watch && channelDTO.queries.isEmpty
                 queryDTO.channels.insert(channelDTO)
+                if queryDTO.groupFilterJSONData != nil, let currentUserId = session.currentUser?.user.id,
+                   ChannelListQueryDTO.isUnread(channelDTO, currentUserId: currentUserId) {
+                    queryDTO.groupNotLoadedUnreadCount = max(0, queryDTO.groupNotLoadedUnreadCount - 1)
+                }
                 session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
                 return shouldStartWatching
             } else if !shouldBelong, isInList {

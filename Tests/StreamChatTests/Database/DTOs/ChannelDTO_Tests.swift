@@ -781,6 +781,21 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(dates.queryTimestamp, dates.lastMessageAt)
     }
 
+    func test_queryTimestamp_whenMigratedDefault_isRecomputedOnNextSave() throws {
+        let channelId: ChannelId = .unique
+        try database.createChannel(cid: channelId)
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.queryTimestamp = Date(timeIntervalSinceReferenceDate: 0).bridgeDate
+        }
+
+        let dates = try database.readSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: channelId))
+            return (queryTimestamp: channel.queryTimestamp.bridgeDate, defaultSortingAt: channel.defaultSortingAt.bridgeDate)
+        }
+        XCTAssertEqual(dates.queryTimestamp, dates.defaultSortingAt)
+    }
+
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
         try XCTSkipIf(
             ProcessInfo().operatingSystemVersion.majorVersion < 15,

@@ -324,6 +324,28 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual([touchedCid, quietCid], await channelList.state.channels.map(\.cid))
     }
 
+    func test_restoringState_whenQueryHasGroupKey_breaksEqualQueryTimestampsByUpdatedAt() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "expired")
+        let olderCid = ChannelId.unique
+        let newerCid = ChannelId.unique
+        let createdAt = Date().addingTimeInterval(-3600)
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            for (cid, updatedAt) in [(olderCid, createdAt), (newerCid, createdAt.addingTimeInterval(60))] {
+                queryDTO.channels.insert(try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, createdAt: createdAt, updatedAt: updatedAt))))
+            }
+        }
+
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: env.channelListEnvironment(usesMockedUpdater: true)
+        )
+
+        XCTAssertEqual([newerCid, olderCid], await channelList.state.channels.map(\.cid))
+    }
+
     func test_expirySweep_whenQueryHasGroupKeyWithFilter_unlinksChannelsPastTheCutoff() async throws {
         let time = VirtualTime()
         VirtualTimeTimer.time = time
