@@ -535,7 +535,7 @@ lane :select_e2e_tests do |options|
       test_paths: ['StreamChatUITestsAppUITests/Tests'],
       ignore_paths: ['**/*.md', '**/*.stencil', '**/*.yml', 'Sources/*/Info.plist'],
       run_all_paths: [
-        'StreamChatUITestsAppUITests/Tests/Base TestCase',
+        'StreamChatUITestsAppUITests/Tests/BaseTestCase',
         'StreamChatUITestsAppUITests/Extensions',
         'StreamChatUITestsAppUITests/Pages',
         'StreamChatUITestsAppUITests/Robots',
