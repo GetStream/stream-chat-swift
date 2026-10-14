@@ -41,9 +41,16 @@ enum GroupedChannelKey {
     static let all = "all"
     /// `ChatChannel.extraData` field that carries the channel's group membership.
     static let group = "group"
+    /// `ChatChannel.extraData` field with the channel's customer-owned activity date, RFC3339 formatted.
+    static let touchedAt = "touched_at"
 
     static func normalizedGroup(_ group: String) -> String? {
         let normalized = group.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         return normalized.isEmpty ? nil : normalized
+    }
+
+    static func touchedAt(in extraData: [String: RawJSON]) -> Date? {
+        guard let value = extraData[touchedAt] else { return nil }
+        return try? JSONDecoder.default.decode(Date.self, from: JSONEncoder.default.encode(value))
     }
 }

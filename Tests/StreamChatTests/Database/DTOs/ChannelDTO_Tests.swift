@@ -31,9 +31,10 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: ungroupedCid)))
         }
 
-        XCTAssertEqual("expired", database.viewContext.channel(cid: groupedCid)?.group)
-        XCTAssertNil(database.viewContext.channel(cid: emptyGroupCid)?.group)
-        XCTAssertNil(database.viewContext.channel(cid: ungroupedCid)?.group)
+        let groups = try database.readSynchronously { session in
+            [groupedCid, emptyGroupCid, ungroupedCid].map { session.channel(cid: $0)?.group }
+        }
+        XCTAssertEqual(["expired", nil, nil], groups)
     }
 
     func test_saveChannel_latestMessagesFirstReturnsNewestMessage() throws {
@@ -738,6 +739,46 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
         XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
+    }
+
+    func test_queryTimestamp_isLatestOfActivityAndTouchedAt() throws {
+        let lastMessageAt = Date(timeIntervalSince1970: 1_760_000_000)
+        let newerTouchedAt = lastMessageAt.addingTimeInterval(3600)
+        let newerCid = ChannelId.unique
+        let olderCid = ChannelId.unique
+        let missingCid = ChannelId.unique
+        let invalidCid = ChannelId.unique
+
+        try database.writeSynchronously { session in
+            for (cid, touchedAt) in [
+                (newerCid, RawJSON.string(try self.rfc3339String(from: newerTouchedAt))),
+                (olderCid, .string(try self.rfc3339String(from: lastMessageAt.addingTimeInterval(-3600)))),
+                (invalidCid, .string("yesterday"))
+            ] {
+                try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: [GroupedChannelKey.touchedAt: touchedAt], lastMessageAt: lastMessageAt)))
+            }
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: missingCid, lastMessageAt: lastMessageAt)))
+        }
+
+        let queryTimestamps = try database.readSynchronously { session in
+            [newerCid, olderCid, missingCid, invalidCid].map { session.channel(cid: $0)?.queryTimestamp.bridgeDate }
+        }
+        XCTAssertEqual([newerTouchedAt, lastMessageAt, lastMessageAt, lastMessageAt], queryTimestamps)
+    }
+
+    func test_queryTimestamp_whenNewerMessageArrives_followsDefaultSortingAt() throws {
+        let channelId: ChannelId = .unique
+        try database.createChannel(cid: channelId)
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.lastMessageAt = .unique
+        }
+
+        let dates = try database.readSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: channelId))
+            return (queryTimestamp: channel.queryTimestamp.bridgeDate, lastMessageAt: channel.lastMessageAt?.bridgeDate)
+        }
+        XCTAssertEqual(dates.queryTimestamp, dates.lastMessageAt)
     }
 
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
@@ -2070,6 +2111,10 @@ private extension ChannelDTO_Tests {
 
     func channel(with cid: ChannelId) throws -> ChatChannel {
         try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
+    }
+
+    func rfc3339String(from date: Date) throws -> String {
+        try XCTUnwrap(String(data: JSONEncoder.stream.encode(date), encoding: .utf8)).trimmingCharacters(in: ["\""])
     }
 }
 

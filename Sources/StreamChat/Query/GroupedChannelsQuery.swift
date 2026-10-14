@@ -18,11 +18,12 @@ public extension FilterKey where Scope == GroupedChannelsFilterScope {
         valueMapper: { GroupedChannelKey.normalizedGroup($0) }
     ) }
 
-    /// A filter key for matching the channel's latest activity time.
+    /// A filter key for matching the channel's latest activity time: the last message, the creation date,
+    /// or the `touched_at` custom field, whichever is latest.
     /// Supported operators: `greaterOrEqual`
     static var queryTimestamp: FilterKey<Scope, GroupedChannelsTimestamp> { .init(
         rawValue: "query_timestamp",
-        keyPathString: #keyPath(ChannelDTO.defaultSortingAt),
+        keyPathString: #keyPath(ChannelDTO.queryTimestamp),
         valueMapper: { $0.cutoffDate }
     ) }
 }

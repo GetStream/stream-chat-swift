@@ -96,7 +96,7 @@ final class GroupedChannelsQuery_Tests: XCTestCase {
     }
 
     private func channel(group: String?, queryTimestamp: Date) -> NSDictionary {
-        var values: [String: Any] = [#keyPath(ChannelDTO.defaultSortingAt): queryTimestamp]
+        var values: [String: Any] = [#keyPath(ChannelDTO.queryTimestamp): queryTimestamp]
         values[#keyPath(ChannelDTO.group)] = group
         return values as NSDictionary
     }

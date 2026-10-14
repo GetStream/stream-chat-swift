@@ -61,6 +61,16 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(true, isLinked(cid))
     }
 
+    func test_messageNew_whenTouchedAtIsWithinCutoff_linksChannel() throws {
+        let cid = ChannelId.unique
+        try saveGroup(filterJSON: cutoffFilterJSON)
+        try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(30), touchedAt: daysBeforeNow(0), isLinked: false)
+
+        try process(messageNewEvent(cid: cid))
+
+        XCTAssertEqual(true, isLinked(cid))
+    }
+
     func test_messageNew_whenChannelActivityIsOutsideCutoff_unlinksChannel() throws {
         let cid = ChannelId.unique
         try saveGroup(filterJSON: cutoffFilterJSON)
@@ -126,11 +136,11 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
             linker.start(with: eventNotificationCenter)
             return linker
         }
-        let ended = channelPayload(cid: .unique, group: "ended", lastMessageAt: daysBeforeNow(6))
-        let campaign = channelPayload(cid: .unique, group: "campaign", lastMessageAt: daysBeforeNow(400))
-        let new = channelPayload(cid: .unique, group: "new", lastMessageAt: daysBeforeNow(400))
-        let current = channelPayload(cid: .unique, group: "current", lastMessageAt: daysBeforeNow(364))
-        let expired = channelPayload(cid: .unique, group: "expired", lastMessageAt: daysBeforeNow(13))
+        let ended = try channelPayload(cid: .unique, group: "ended", lastMessageAt: daysBeforeNow(6))
+        let campaign = try channelPayload(cid: .unique, group: "campaign", lastMessageAt: daysBeforeNow(400))
+        let new = try channelPayload(cid: .unique, group: "new", lastMessageAt: daysBeforeNow(400))
+        let current = try channelPayload(cid: .unique, group: "current", lastMessageAt: daysBeforeNow(364))
+        let expired = try channelPayload(cid: .unique, group: "expired", lastMessageAt: daysBeforeNow(13))
         let expectedLinks: [String: Set<String>] = [
             "all": Set([ended, campaign, new, current, expired].map(\.channel.cid.rawValue)),
             "current": [current.channel.cid.rawValue],
@@ -188,9 +198,10 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         cid: ChannelId,
         group: String,
         lastMessageAt: Date,
+        touchedAt: Date? = nil,
         isLinked: Bool
     ) throws {
-        let payload = channelPayload(cid: cid, group: group, lastMessageAt: lastMessageAt)
+        let payload = try channelPayload(cid: cid, group: group, lastMessageAt: lastMessageAt, touchedAt: touchedAt)
         try database.writeSynchronously { session in
             let channelDTO = try session.saveChannel(payload: payload)
             if isLinked {
@@ -199,10 +210,15 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         }
     }
 
-    private func channelPayload(cid: ChannelId, group: String, lastMessageAt: Date) -> ChannelPayload {
-        .dummy(channel: .dummy(
+    private func channelPayload(cid: ChannelId, group: String, lastMessageAt: Date, touchedAt: Date? = nil) throws -> ChannelPayload {
+        var extraData: [String: RawJSON] = [GroupedChannelKey.group: .string(group)]
+        if let touchedAt {
+            let touchedAtString = try XCTUnwrap(String(data: JSONEncoder.stream.encode(touchedAt), encoding: .utf8))
+            extraData[GroupedChannelKey.touchedAt] = .string(touchedAtString.trimmingCharacters(in: ["\""]))
+        }
+        return .dummy(channel: .dummy(
             cid: cid,
-            extraData: [GroupedChannelKey.group: .string(group)],
+            extraData: extraData,
             lastMessageAt: lastMessageAt,
             createdAt: lastMessageAt
         ))

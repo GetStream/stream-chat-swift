@@ -295,6 +295,35 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertTrue(fullyLoaded)
     }
 
+    func test_restoringState_whenQueryHasGroupKey_sortsByQueryTimestamp() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "expired")
+        let quietCid = ChannelId.unique
+        let touchedCid = ChannelId.unique
+        let now = Date()
+        let touchedAtString = try XCTUnwrap(String(data: JSONEncoder.stream.encode(now), encoding: .utf8)).trimmingCharacters(in: ["\""])
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy(channel: .dummy(
+                cid: quietCid,
+                lastMessageAt: now.addingTimeInterval(-60)
+            ))))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy(channel: .dummy(
+                cid: touchedCid,
+                extraData: [GroupedChannelKey.touchedAt: .string(touchedAtString)],
+                lastMessageAt: now.addingTimeInterval(-3600)
+            ))))
+        }
+
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: env.channelListEnvironment(usesMockedUpdater: true)
+        )
+
+        XCTAssertEqual([touchedCid, quietCid], await channelList.state.channels.map(\.cid))
+    }
+
     func test_expirySweep_whenQueryHasGroupKeyWithFilter_unlinksChannelsPastTheCutoff() async throws {
         let time = VirtualTime()
         VirtualTimeTimer.time = time
