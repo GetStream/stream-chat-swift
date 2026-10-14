@@ -385,6 +385,8 @@ protocol ChannelDatabaseSession {
     /// - Returns: The array of channel list queries.
     func loadAllChannelListQueries() -> [ChannelListQueryDTO]
 
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO]
+
     @discardableResult
     func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO
 

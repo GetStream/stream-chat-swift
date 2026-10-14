@@ -54,7 +54,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
 
     /// See `ChannelDatabaseSession.loadPredefinedFilter(for:)` for return semantics.
     func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
-        guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty else { return nil }
+        guard query.groupKey != nil || query.predefinedFilter?.isEmpty == false else { return nil }
         do {
             return try database.readAndWait { $0.loadPredefinedFilter(for: query) }
         } catch {
@@ -205,15 +205,15 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    /// The persisted pagination state for a grouped query: the next-page cursor, the
-    /// `watch` / `presence` flags, and the filter and sort that the original `queryGroupedChannels` call used.
+    /// The persisted pagination state for a grouped query: the next-page cursor and the
+    /// `watch` / `presence` flags that the original `queryGroupedChannels` call used.
     ///
     /// The `watch` and `presence` fields are `nil` when no DTO exists for the group yet — i.e.
     /// `queryGroupedChannels` has not been called for this `groupKey` in this session. Callers
     /// can use `state.watch != nil` as the sentinel for "has the group been initialized?".
     ///
     /// `ChannelList` (pagination) and `SyncRepository` (reconnect refetch) read this to reuse
-    /// the original flags, filter and sort instead of hardcoding them; `ChatClient`'s grouped factory uses
+    /// the original flags instead of hardcoding `false`; `ChatClient`'s grouped factory uses
     /// the nil-ness of `watch` to decide whether to auto-register the new list for sync tracking.
     struct GroupedQueryPaginationState: Sendable {
         let next: String?
@@ -226,21 +226,17 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     }
 
     func paginationState(for groupKey: String) async throws -> GroupedQueryPaginationState {
-        try await paginationStates(for: [groupKey])[groupKey] ?? .empty
-    }
-
-    func paginationStates(for groupKeys: [String]) async throws -> [String: GroupedQueryPaginationState] {
         try await database.read { session in
-            try groupKeys.reduce(into: [:]) { states, groupKey in
-                guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
-                states[groupKey] = GroupedQueryPaginationState(
-                    next: dto.next,
-                    watch: dto.watch,
-                    presence: dto.presence,
-                    filter: try dto.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) },
-                    sort: try dto.groupSortJSONData.map { try JSONDecoder.stream.decode([SortParamRequest].self, from: $0) }
-                )
+            guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else {
+                return GroupedQueryPaginationState.empty
             }
+            return GroupedQueryPaginationState(
+                next: dto.next,
+                watch: dto.watch,
+                presence: dto.presence,
+                filter: try dto.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) },
+                sort: try dto.groupSortJSONData.map { try JSONDecoder.stream.decode([SortParamRequest].self, from: $0) }
+            )
         }
     }
 
@@ -283,9 +279,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         queryDTO.next = groupPayload.next
                         queryDTO.watch = watch
                         queryDTO.presence = presence
-                        queryDTO.groupFilterJSONData = try request.groups?[groupKey]?.filterConditions.map {
-                            try JSONEncoder.stream.encode($0)
-                        }
+                        queryDTO.groupFilterJSONData = try request.groups?[groupKey]?.filterConditions.map { try JSONEncoder.stream.encode($0) }
                         queryDTO.groupSortJSONData = sortJSONData
                         let channels: [ChatChannel] = groupPayload.channels.compactMapLoggingError { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)

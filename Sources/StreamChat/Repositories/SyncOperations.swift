@@ -130,7 +130,10 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
 
             Task {
                 do {
-                    let states = try await channelListUpdater.paginationStates(for: groupKeys)
+                    var states: [String: ChannelListUpdater.GroupedQueryPaginationState] = [:]
+                    for groupKey in groupKeys {
+                        states[groupKey] = try await channelListUpdater.paginationState(for: groupKey)
+                    }
                     // Each group keeps its own filter. The flags and the sort are shared by the whole
                     // request, so they come from the first group that has been queried.
                     let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in

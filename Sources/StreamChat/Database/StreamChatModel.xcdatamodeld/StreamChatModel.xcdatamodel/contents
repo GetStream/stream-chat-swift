@@ -66,6 +66,7 @@
         <attribute name="oldestMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="ownCapabilities" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="team" optional="YES" attributeType="String"/>
+        <attribute name="touchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="truncatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="typeRawValue" attributeType="String" defaultValueString=""/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>

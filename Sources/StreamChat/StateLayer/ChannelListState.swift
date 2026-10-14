@@ -19,8 +19,7 @@ import Foundation
         channelListUpdater: ChannelListUpdater,
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
-        channelWatcherHandler: ChannelWatcherHandling,
-        timerType: TimerScheduling.Type
+        channelWatcherHandler: ChannelWatcherHandling
     ) {
         let query = channelListUpdater.loadPredefinedFilter(for: query) ?? query
         self.query = query
@@ -31,8 +30,7 @@ import Foundation
             channelListUpdater: channelListUpdater,
             database: database,
             eventNotificationCenter: eventNotificationCenter,
-            channelWatcherHandler: channelWatcherHandler,
-            timerType: timerType
+            channelWatcherHandler: channelWatcherHandler
         )
         channels = observer.start(with: handlers)
     }

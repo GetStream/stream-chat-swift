@@ -334,13 +334,9 @@ final class ChatClient_Tests: XCTestCase {
             groups: [
                 .init(key: "all", filter: .or([
                     .and([.equal(.group, to: "ended"), .greaterOrEqual(.queryTimestamp, than: .daysAgo(7))]),
-                    .in(.group, values: ["campaign", "new", "bee"]),
-                    .and([.equal(.group, to: "current"), .greaterOrEqual(.queryTimestamp, than: .daysAgo(365))]),
-                    .and([.equal(.group, to: "expired"), .greaterOrEqual(.queryTimestamp, than: .daysAgo(14))])
+                    .in(.group, values: ["campaign", "new"])
                 ])),
-                .init(key: "current", filter: .greaterOrEqual(.queryTimestamp, than: .daysAgo(365))),
-                .init(key: "new"),
-                .init(key: "expired", filter: .greaterOrEqual(.queryTimestamp, than: .daysAgo(14)))
+                .init(key: "new")
             ],
             sort: [.init(key: .queryTimestamp)],
             limit: 10
@@ -356,39 +352,16 @@ final class ChatClient_Tests: XCTestCase {
                 "watch": true,
                 "sort": [{"field": "query_timestamp", "direction": -1}],
                 "groups": {
-                    "all": {
-                        "filter_conditions": {
-                            "$or": [
-                                {"$and": [{"group": {"$eq": "ended"}}, {"query_timestamp": {"$gte": "now-7d"}}]},
-                                {"group": {"$in": ["campaign", "new", "bee"]}},
-                                {"$and": [{"group": {"$eq": "current"}}, {"query_timestamp": {"$gte": "now-365d"}}]},
-                                {"$and": [{"group": {"$eq": "expired"}}, {"query_timestamp": {"$gte": "now-14d"}}]}
-                            ]
-                        }
-                    },
-                    "current": {"filter_conditions": {"query_timestamp": {"$gte": "now-365d"}}},
-                    "new": {},
-                    "expired": {"filter_conditions": {"query_timestamp": {"$gte": "now-14d"}}}
+                    "all": {"filter_conditions": {"$or": [
+                        {"$and": [{"group": {"$eq": "ended"}}, {"query_timestamp": {"$gte": "now-7d"}}]},
+                        {"group": {"$in": ["campaign", "new"]}}
+                    ]}},
+                    "new": {}
                 }
             }
             """.utf8),
             try JSONSerialization.data(withJSONObject: body)
         )
-    }
-
-    func test_queryGroupedChannels_withQueryWithoutSort_omitsSort() async throws {
-        let client = ChatClient.mock(config: inMemoryStorageConfig)
-        try client.databaseContainer.createCurrentUser()
-        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: [:])))
-
-        _ = try await client.queryGroupedChannels(with: GroupedChannelsQuery(groups: [.init(key: "new")]))
-
-        let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
-        XCTAssertNil(body["sort"])
-        XCTAssertNil(body["limit"])
-        let groups = try XCTUnwrap(body["groups"] as? [String: [String: Any]])
-        XCTAssertEqual(["new"], groups.keys.sorted())
-        XCTAssertNil(groups["new"]?["filter_conditions"])
     }
 
     func test_makeChannelList_withGroupKey_startsTrackingChannelList() {

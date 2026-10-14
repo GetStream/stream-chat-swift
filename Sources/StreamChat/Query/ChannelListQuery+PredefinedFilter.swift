@@ -14,14 +14,14 @@ extension Filter where Scope == ChannelListFilterScope {
     static func predefinedFilter(fromJSONData data: Data) throws -> Filter? {
         guard !data.isEmpty else { return nil }
         let decoded = try JSONDecoder.default.decode(Filter.self, from: data)
-        return decoded.applyingCoreDataFilteringKeys(ChannelListFilterScope.predefinedFilterKeyMapping)
+        return decoded.applyCoreDataFilteringKeys(ChannelListFilterScope.predefinedFilterKeyMapping)
     }
 }
 
 extension Filter {
     /// Walks the filter tree and replaces each leaf with an enriched copy that carries
     /// the Core Data wiring for its key. Group operators (`$and` / `$or` / `$nor`) recurse.
-    func applyingCoreDataFilteringKeys(_ mapping: [String: @Sendable (Filter) -> Filter]) -> Filter {
+    func applyCoreDataFilteringKeys(_ mapping: [String: @Sendable (Filter) -> Filter]) -> Filter {
         if `operator`.isGroupOperator {
             guard let children = value as? [Filter] else {
                 return self
@@ -29,13 +29,13 @@ extension Filter {
             return Filter(
                 operator: `operator`,
                 key: key,
-                value: children.map { $0.applyingCoreDataFilteringKeys(mapping) },
+                value: children.map { $0.applyCoreDataFilteringKeys(mapping) },
                 isCollectionFilter: isCollectionFilter
             )
         }
         guard let key else { return self }
         guard let mapFilter = mapping[key] else {
-            StreamCore.log.error("Can't apply CoreData keyPath for filtering key '\(key)'.")
+            StreamCore.log.error("Can't apply CoreData keyPath for channel list filtering key '\(key)'.")
             return self
         }
         return mapFilter(self)

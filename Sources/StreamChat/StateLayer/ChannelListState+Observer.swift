@@ -23,8 +23,7 @@ extension ChannelListState {
             channelListUpdater: ChannelListUpdater,
             database: DatabaseContainer,
             eventNotificationCenter: EventNotificationCenter,
-            channelWatcherHandler: ChannelWatcherHandling,
-            timerType: TimerScheduling.Type
+            channelWatcherHandler: ChannelWatcherHandling
         ) {
             self.clientConfig = clientConfig
             self.channelListUpdater = channelListUpdater
@@ -51,8 +50,7 @@ extension ChannelListState {
                 channelListLinker = GroupedChannelListLinker(
                     query: query,
                     databaseContainer: database,
-                    channelWatcherHandler: channelWatcherHandler,
-                    timerType: timerType
+                    channelWatcherHandler: channelWatcherHandler
                 )
             }
         }

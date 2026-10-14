@@ -15,6 +15,12 @@ extension ChannelListSortingKey {
         remoteKey: "last_updated"
     )
 
+    static let queryTimestamp = Self(
+        keyPath: nil,
+        localKey: #keyPath(ChannelDTO.queryTimestamp),
+        remoteKey: GroupedChannelsSortingKey.queryTimestamp.rawValue
+    )
+
     /// Sort channels by date they were created.
     public static let createdAt = Self(
         keyPath: \.createdAt,

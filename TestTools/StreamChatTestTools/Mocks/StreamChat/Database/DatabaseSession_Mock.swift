@@ -434,6 +434,10 @@ class DatabaseSession_Mock: DatabaseSession {
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
         underlyingSession.loadAllChannelListQueries()
     }
+
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO] {
+        underlyingSession.loadFilteredGroupChannelListQueries()
+    }
     
     func saveChannel(
         payload: ChannelPayload,

@@ -24,6 +24,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var deletedAt: DBDate?
     @NSManaged var defaultSortingAt: DBDate
     @NSManaged var queryTimestamp: DBDate
+    @NSManaged var touchedAt: DBDate?
     @NSManaged var updatedAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
 
@@ -143,15 +144,12 @@ class ChannelDTO: NSManagedObject {
         if lastDate.bridgeDate <= .distantPast {
             lastDate = createdAt
         }
-        if lastDate != defaultSortingAt || queryTimestamp.bridgeDate.timeIntervalSinceReferenceDate <= 0 {
-            if lastDate != defaultSortingAt {
-                defaultSortingAt = lastDate
-            }
-            let touchedAt = (try? JSONDecoder.stream.decodeRawJSON(from: extraData)).flatMap(GroupedChannelKey.touchedAt(in:))
-            let newQueryTimestamp = max(lastDate.bridgeDate, touchedAt ?? .distantPast).bridgeDate
-            if newQueryTimestamp != queryTimestamp {
-                queryTimestamp = newQueryTimestamp
-            }
+        if lastDate != defaultSortingAt {
+            defaultSortingAt = lastDate
+        }
+        let newQueryTimestamp = max(lastDate.bridgeDate, touchedAt?.bridgeDate ?? .distantPast).bridgeDate
+        if newQueryTimestamp != queryTimestamp {
+            queryTimestamp = newQueryTimestamp
         }
     }
 
@@ -312,7 +310,7 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
-        dto.queryTimestamp = max(dto.defaultSortingAt.bridgeDate, GroupedChannelKey.touchedAt(in: payload.extraData) ?? .distantPast).bridgeDate
+        dto.touchedAt = payload.extraData[GroupedChannelKey.touchedAt].flatMap { try? JSONDecoder.default.decode(Date.self, from: JSONEncoder.default.encode($0)) }?.bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
@@ -513,9 +511,6 @@ extension ChannelDTO {
 
         // Fetch results controller requires at least one sorting descriptor.
         var sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
-        if query.groupKey != nil, sortDescriptors.isEmpty {
-            sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.queryTimestamp, ascending: false)]
-        }
         
         // For consistent order we need to have a sort descriptor which breaks ties
         if !sortDescriptors.isEmpty, !sortDescriptors.contains(where: { $0.key == ChannelListSortingKey.updatedAt.localKey }) {

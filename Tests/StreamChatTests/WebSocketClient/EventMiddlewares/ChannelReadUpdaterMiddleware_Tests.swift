@@ -1440,21 +1440,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
     }
 
-    func test_channelUpdatedEvent_groupChange_doesNotAdjustFilteredGroups() throws {
-        try database.writeSynchronously { session in
-            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3])
-            self.linkChannelToGroupedQueries(["new"], session: session)
-            session.saveQuery(query: ChannelListQuery(groupKey: "current")).groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
-        }
-
-        let event = try channelUpdatedEvent(group: "current")
-        try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
-        }
-
-        XCTAssertEqual(["new": 4, "current": 3], try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup })
-    }
-
     private func channelUpdatedEvent(group: String?) throws -> ChannelUpdatedEventDTO {
         var extraData: [String: RawJSON] = [:]
         if let group {

@@ -12,16 +12,16 @@ import Foundation
 /// - Channel is updated: We re-evaluate membership — the channel's `"group"` extra-data may have
 ///   changed, which can move it into or out of this query.
 ///
-/// Membership is decided from the channel's stored group (`ChannelDTO.group`, the normalized `"group"` extra-data):
-/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel with a group links into it.
-/// - Any other `groupKey` links a channel only when its group equals the query's `groupKey`; otherwise
-///   the channel is unlinked. A channel without a group is unlinked.
+/// Membership is decided from the channel's `"group"` extra-data value:
+/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel carrying any non-empty group
+///   value links into it.
+/// - Any other `groupKey` links a channel only when its `"group"` value (whitespace-trimmed and
+///   lowercased) equals the query's `groupKey`; otherwise the channel is unlinked.
 ///
 /// When the group was queried with a filter, the channel must also match it, evaluated as a Core Data predicate.
 /// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are
 /// re-checked periodically and unlinked once they no longer match.
 final class GroupedChannelListLinker: Sendable, ChannelListLinking {
-    private nonisolated(unsafe) var cachedFilter: (data: Data, filter: Filter<GroupedChannelsFilterScope>?)?
     private let channelWatcherHandler: ChannelWatcherHandling
     private let databaseContainer: DatabaseContainer
     private nonisolated(unsafe) var eventObservers = [EventObserver]()
@@ -52,12 +52,12 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in self?.updateLinking(for: event.channel.cid) }
+                callback: { [weak self] event in self?.updateLinking(for: event.channel.cid, isNewMessage: true) }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in self?.updateLinking(for: event.channel.cid) }
+                callback: { [weak self] event in self?.updateLinking(for: event.channel.cid, isNewMessage: true) }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -96,7 +96,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    private func updateLinking(for cid: ChannelId) {
+    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false) {
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
             let isInGroup = channelDTO.group != nil && (query.groupKey == GroupedChannelKey.all || query.groupKey == channelDTO.group)
@@ -106,8 +106,9 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
                 let shouldStartWatching = queryDTO.watch && channelDTO.queries.isEmpty
                 queryDTO.channels.insert(channelDTO)
-                if queryDTO.groupFilterJSONData != nil, let currentUserId = session.currentUser?.user.id,
-                   ChannelListQueryDTO.isUnread(channelDTO, currentUserId: currentUserId) {
+                // A channel that was already unread before this message was counted as not loaded.
+                if isNewMessage, queryDTO.groupFilterJSONData != nil, let currentUserId = session.currentUser?.user.id,
+                   ChannelListQueryDTO.unreadMessageCount(of: channelDTO, currentUserId: currentUserId) > 1 {
                     queryDTO.groupNotLoadedUnreadCount = max(0, queryDTO.groupNotLoadedUnreadCount - 1)
                 }
                 session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
@@ -132,11 +133,6 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     }
 
     private func filterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
-        guard let data = queryDTO.groupFilterJSONData else { return nil }
-        // Only called from the serialized database write queue. The predicate is rebuilt so relative cutoffs keep rolling.
-        if cachedFilter?.data != data {
-            cachedFilter = (data, try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: data))
-        }
-        return cachedFilter?.filter?.predicate
+        try queryDTO.groupFilterJSONData.flatMap { try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: $0)?.predicate }
     }
 }

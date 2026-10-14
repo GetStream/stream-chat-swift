@@ -230,14 +230,14 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
 
         // Server counts have no group filter cutoffs, so filtered groups are counted locally.
-        let filteredGroupKeys = Set(loadAllChannelListQueries().filter { $0.groupFilterJSONData != nil }.map(\.filterHash))
+        let filteredGroupKeys = Set(loadFilteredGroupChannelListQueries().map(\.filterHash))
         let unfilteredCounts = unreadChannelCountsByGroup.filter { !filteredGroupKeys.contains($0.key) }
         dto.unreadChannelCountsByGroup = (dto.unreadChannelCountsByGroup ?? [:]).merging(unfilteredCounts) { _, new in new }
     }
 
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
         invalidateCurrentUserCache()
-        guard !isFilteredGroup(groupKey),
+        guard channelListQuery(ChannelListQuery(groupKey: groupKey))?.groupFilterJSONData == nil,
               let dto = currentUser, var counts = dto.unreadChannelCountsByGroup, let existing = counts[groupKey] else {
             return
         }
@@ -256,10 +256,6 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         // Assigning always marks the current user as changed, which notifies its observers.
         guard counts != currentCounts else { return }
         dto.unreadChannelCountsByGroup = counts
-    }
-
-    private func isFilteredGroup(_ groupKey: String) -> Bool {
-        channelListQuery(ChannelListQuery(groupKey: groupKey))?.groupFilterJSONData != nil
     }
 
     func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {

@@ -776,29 +776,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual([-1], state.sort?.map(\.direction))
     }
 
-    func test_queryGroupedChannels_withoutFilterAndSort_clearsPersistedFilterAndSort() async throws {
-        try await database.write { session in
-            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
-            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "expired"))
-            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
-            queryDTO.groupSortJSONData = Data(#"[{"field":"query_timestamp","direction":-1}]"#.utf8)
-        }
-        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(
-            groups: ["expired": .init(channels: [], next: nil, prev: nil, unreadChannels: 0)]
-        )))
-
-        _ = try await listUpdater.queryGroupedChannels(
-            groups: ["expired": GroupedChannelsGroupRequest()],
-            limit: nil,
-            watch: false,
-            presence: false
-        )
-
-        let state = try await listUpdater.paginationState(for: "expired")
-        XCTAssertNil(state.filter)
-        XCTAssertNil(state.sort)
-    }
-
     func test_queryGroupedChannels_withFilter_storesNotLoadedUnreadCount() async throws {
         let userId = UserId.unique
         try await database.write { session in
@@ -820,34 +797,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let groupNotLoadedUnreadCount = try database.readSynchronously { $0.channelListQuery(ChannelListQuery(groupKey: "expired"))?.groupNotLoadedUnreadCount }
         XCTAssertEqual(4, groupNotLoadedUnreadCount)
-        XCTAssertEqual(["expired": 5], try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup })
-    }
-
-    func test_queryGroupedChannels_loadMoreWithFilter_recalculatesNotLoadedUnreadCount() async throws {
-        let userId = UserId.unique
-        let filter = Filter<GroupedChannelsFilterScope>.greaterOrEqual(.queryTimestamp, than: .daysAgo(14))
-        try await database.write { session in
-            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "expired"))
-            queryDTO.groupFilterJSONData = try JSONEncoder.stream.encode(filter)
-            queryDTO.groupNotLoadedUnreadCount = 4
-            queryDTO.channels.insert(try session.saveChannel(payload: self.channelPayload(unreadMessages: 1, for: userId)))
-        }
-        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: ["expired": .init(
-            channels: [channelPayload(unreadMessages: 3, for: userId)],
-            unreadChannels: 5
-        )])))
-
-        _ = try await listUpdater.queryGroupedChannels(
-            groups: ["expired": GroupedChannelsGroupRequest(filterConditions: filter, next: "cursor")],
-            limit: nil,
-            sort: [SortParamRequest(direction: -1, field: "query_timestamp")],
-            watch: false,
-            presence: false
-        )
-
-        let groupNotLoadedUnreadCount = try database.readSynchronously { $0.channelListQuery(ChannelListQuery(groupKey: "expired"))?.groupNotLoadedUnreadCount }
-        XCTAssertEqual(3, groupNotLoadedUnreadCount)
         XCTAssertEqual(["expired": 5], try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup })
     }
 

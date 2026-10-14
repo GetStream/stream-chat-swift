@@ -694,15 +694,9 @@ public class ChatClient: @unchecked Sendable {
 
     /// Fetches the first page of channels for the groups in the query in a single request.
     ///
-    /// Groups can have filters, which require sorting by ``GroupedChannelsSortingKey/queryTimestamp``.
     /// A group's filter and the query's sort are reused when its channels are paginated and refreshed.
     ///
-    /// To observe and paginate a group's channels, create a ``ChannelList`` for its
-    /// ``ChannelGroup/groupKey`` via ``ChatClient/makeChannelList(with:)-(String)`` and read
-    /// ``ChannelListState/channels``.
-    ///
     /// - Parameter query: The query describing the groups, their filters, the sort and the limit.
-    ///
     /// - Returns: The fetched ``ChannelGroup`` values.
     /// - Throws: An error while communicating with the Stream API.
     @discardableResult public func queryGroupedChannels(with query: GroupedChannelsQuery) async throws -> [ChannelGroup] {

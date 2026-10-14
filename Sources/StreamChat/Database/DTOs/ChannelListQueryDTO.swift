@@ -27,9 +27,7 @@ class ChannelListQueryDTO: NSManagedObject {
     @NSManaged var presence: Bool
 
     @NSManaged var groupFilterJSONData: Data?
-
     @NSManaged var groupSortJSONData: Data?
-
     @NSManaged var groupNotLoadedUnreadCount: Int64
 
     // MARK: - Relationships
@@ -37,14 +35,13 @@ class ChannelListQueryDTO: NSManagedObject {
     @NSManaged var channels: Set<ChannelDTO>
 
     func loadedUnreadChannelsCount(currentUserId: UserId) -> Int {
-        channels.filter { Self.isUnread($0, currentUserId: currentUserId) }.count
+        channels.filter { Self.unreadMessageCount(of: $0, currentUserId: currentUserId) > 0 }.count
     }
 
-    static func isUnread(_ channel: ChannelDTO, currentUserId: UserId) -> Bool {
+    static func unreadMessageCount(of channel: ChannelDTO, currentUserId: UserId) -> Int {
         // Reads `reads` because `ChannelDTO.currentUserUnreadMessagesCount` is only updated on save.
-        guard !channel.isHidden, !channel.isDisabled, channel.deletedAt == nil else { return false }
-        let unreadMessageCount = channel.reads.first(where: { $0.user.id == currentUserId })?.unreadMessageCount ?? 0
-        return unreadMessageCount > 0
+        guard !channel.isHidden, !channel.isDisabled, channel.deletedAt == nil else { return 0 }
+        return Int(channel.reads.first(where: { $0.user.id == currentUserId })?.unreadMessageCount ?? 0)
     }
 
     static func load(query: ChannelListQuery, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
@@ -75,6 +72,9 @@ extension NSManagedObjectContext {
     /// Callers compare `filter`/`sort` against the input (see `ChannelListQuery.isFilterEqual(to:)`)
     /// to detect whether the cached resolution actually differs from the current query.
     func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
+        if query.groupKey != nil {
+            return loadGroupedSort(for: query)
+        }
         guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty,
               let dto = channelListQuery(query) else {
             return nil
@@ -97,6 +97,13 @@ extension NSManagedObjectContext {
                 log.error("Failed decoding predefined sort from persisted data with error: \(error).")
             }
         }
+        return updated
+    }
+
+    private func loadGroupedSort(for query: ChannelListQuery) -> ChannelListQuery? {
+        guard let dto = channelListQuery(query) else { return nil }
+        var updated = query
+        updated.sort = (try? dto.groupSortJSONData.flatMap { try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: $0) }) ?? []
         return updated
     }
 
@@ -150,5 +157,16 @@ extension NSManagedObjectContext {
         }
 
         return queries
+    }
+
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO] {
+        let request = ChannelListQueryDTO.allQueriesFetchRequest
+        request.predicate = NSPredicate(format: "%K != nil", #keyPath(ChannelListQueryDTO.groupFilterJSONData))
+        do {
+            return try fetch(request)
+        } catch {
+            log.error("Failed to load filtered group channel list queries from the database: \(error).")
+            return []
+        }
     }
 }
