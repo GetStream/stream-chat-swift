@@ -166,6 +166,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.adjustUnreadChannelCount(forGroup: groupKey, by: delta)
     }
 
+    func updateFilteredGroupUnreadChannelCounts(for queries: [ChannelListQueryDTO]) {
+        underlyingSession.updateFilteredGroupUnreadChannelCounts(for: queries)
+    }
+
     func deleteDevice(id: DeviceId) {
         underlyingSession.deleteDevice(id: id)
     }
@@ -429,6 +433,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
         underlyingSession.loadAllChannelListQueries()
+    }
+
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO] {
+        underlyingSession.loadFilteredGroupChannelListQueries()
     }
     
     func saveChannel(

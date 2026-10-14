@@ -21,6 +21,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var queryGroupedChannels_callCount = 0
     @Atomic var queryGroupedChannels_groups: [[String: GroupedChannelsGroupRequest]?] = []
     @Atomic var queryGroupedChannels_limits: [Int?] = []
+    @Atomic var queryGroupedChannels_sorts: [[SortParamRequest]?] = []
     @Atomic var queryGroupedChannels_watchValues: [Bool] = []
     @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
     @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
@@ -54,6 +55,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         queryGroupedChannels_callCount = 0
         queryGroupedChannels_groups.removeAll()
         queryGroupedChannels_limits.removeAll()
+        queryGroupedChannels_sorts.removeAll()
         queryGroupedChannels_watchValues.removeAll()
         queryGroupedChannels_presenceValues.removeAll()
         queryGroupedChannels_result = nil
@@ -109,6 +111,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
+        sort: [SortParamRequest]?,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
@@ -116,6 +119,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
         _queryGroupedChannels_groups.mutate { $0.append(groups) }
         _queryGroupedChannels_limits.mutate { $0.append(limit) }
+        _queryGroupedChannels_sorts.mutate { $0.append(sort) }
         _queryGroupedChannels_watchValues.mutate { $0.append(watch) }
         _queryGroupedChannels_presenceValues.mutate { $0.append(presence) }
         if let result = queryGroupedChannels_result {
@@ -126,6 +130,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
             super.queryGroupedChannels(
                 groups: groups,
                 limit: limit,
+                sort: sort,
                 watch: watch,
                 presence: presence,
                 completion: completion

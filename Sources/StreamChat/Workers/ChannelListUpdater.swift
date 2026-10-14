@@ -54,7 +54,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
 
     /// See `ChannelDatabaseSession.loadPredefinedFilter(for:)` for return semantics.
     func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
-        guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty else { return nil }
+        guard query.groupKey != nil || query.predefinedFilter?.isEmpty == false else { return nil }
         do {
             return try database.readAndWait { $0.loadPredefinedFilter(for: query) }
         } catch {
@@ -219,8 +219,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         let next: String?
         let watch: Bool?
         let presence: Bool?
+        let filter: RawJSON?
+        let sort: [SortParamRequest]?
 
-        static let empty = GroupedQueryPaginationState(next: nil, watch: nil, presence: nil)
+        static let empty = GroupedQueryPaginationState(next: nil, watch: nil, presence: nil, filter: nil, sort: nil)
     }
 
     func paginationState(for groupKey: String) async throws -> GroupedQueryPaginationState {
@@ -228,7 +230,13 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else {
                 return GroupedQueryPaginationState.empty
             }
-            return GroupedQueryPaginationState(next: dto.next, watch: dto.watch, presence: dto.presence)
+            return GroupedQueryPaginationState(
+                next: dto.next,
+                watch: dto.watch,
+                presence: dto.presence,
+                filter: try dto.groupFilterJSONData.map { try JSONDecoder.stream.decode(RawJSON.self, from: $0) },
+                sort: try dto.groupSortJSONData.map { try JSONDecoder.stream.decode([SortParamRequest].self, from: $0) }
+            )
         }
     }
 
@@ -236,14 +244,16 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
+        sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         let request = GroupedQueryChannelsRequest(
             groups: groups,
-            limit: groups == nil ? limit : nil,
+            limit: limit,
             presence: presence,
+            sort: sort,
             watch: watch
         )
         let endpoint: Endpoint<GroupedQueryChannelsResponse> = .groupedQueryChannels(
@@ -256,9 +266,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 completion(.failure(error))
             case let .success(payload):
                 database.write(converting: { session in
-                    let unreadChannelCountsByGroup = payload.groups.mapValues { $0.unreadChannels ?? 0 }
-                    try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+                    let currentUserId = session.currentUser?.user.id
+                    let sortJSONData = try request.sort.map { try JSONEncoder.stream.encode($0) }
                     var channelGroups: [ChannelGroup] = []
+                    var queryDTOs: [ChannelListQueryDTO] = []
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
                         let wasFreshFetch = request.groups?[groupKey]?.next == nil
@@ -268,11 +279,19 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         queryDTO.next = groupPayload.next
                         queryDTO.watch = watch
                         queryDTO.presence = presence
+                        queryDTO.groupFilterJSONData = try request.groups?[groupKey]?.filterConditions.map { try JSONEncoder.stream.encode($0) }
+                        queryDTO.groupSortJSONData = sortJSONData
                         let channels: [ChatChannel] = groupPayload.channels.compactMapLoggingError { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)
                             queryDTO.channels.insert(dto)
                             return try dto.asModel()
                         }
+                        // The server counts the whole filtered group on every page.
+                        if queryDTO.groupFilterJSONData != nil, let currentUserId {
+                            let notLoaded = (groupPayload.unreadChannels ?? 0) - queryDTO.loadedUnreadChannelsCount(currentUserId: currentUserId)
+                            queryDTO.groupNotLoadedUnreadCount = Int64(max(0, notLoaded))
+                        }
+                        queryDTOs.append(queryDTO)
                         channelGroups.append(ChannelGroup(
                             groupKey: groupKey,
                             channels: channels,
@@ -280,6 +299,9 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             next: groupPayload.next
                         ))
                     }
+                    let unreadChannelCountsByGroup = payload.groups.mapValues { $0.unreadChannels ?? 0 }
+                    try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+                    session.updateFilteredGroupUnreadChannelCounts(for: queryDTOs)
                     return channelGroups
                 }, completion: { result in
                     completion(result)
@@ -291,6 +313,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func queryGroupedChannels(
         groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
+        sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool
     ) async throws -> [ChannelGroup] {
@@ -298,6 +321,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             queryGroupedChannels(
                 groups: groups,
                 limit: limit,
+                sort: sort,
                 watch: watch,
                 presence: presence
             ) { result in

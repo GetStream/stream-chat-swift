@@ -69,6 +69,7 @@ extension ChannelListSortingKey {
             map(.lastMessageAt),
             map(.memberCount),
             map(.pinnedAt),
+            map(.queryTimestamp),
             map(.unreadCount),
             map(.updatedAt),
         ])

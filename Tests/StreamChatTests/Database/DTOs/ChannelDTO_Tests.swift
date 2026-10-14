@@ -724,6 +724,23 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
     }
 
+    func test_queryTimestamp_isLatestOfActivityAndTouchedAt() throws {
+        let lastMessageAt = Date(timeIntervalSince1970: 1_760_000_000)
+        let newerCid = ChannelId.unique
+        let olderCid = ChannelId.unique
+
+        try database.writeSynchronously { session in
+            for (cid, touchedAt) in [(newerCid, "2025-10-09T09:53:20Z"), (olderCid, "2025-10-09T07:53:20Z")] {
+                try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: [GroupedChannelKey.touchedAt: .string(touchedAt)], lastMessageAt: lastMessageAt)))
+            }
+        }
+
+        let queryTimestamps = try database.readSynchronously { session in
+            [newerCid, olderCid].map { session.channel(cid: $0)?.queryTimestamp.bridgeDate }
+        }
+        XCTAssertEqual([lastMessageAt.addingTimeInterval(3600), lastMessageAt], queryTimestamps)
+    }
+
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
         try XCTSkipIf(
             ProcessInfo().operatingSystemVersion.majorVersion < 15,
