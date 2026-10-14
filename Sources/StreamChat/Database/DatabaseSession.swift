@@ -781,8 +781,6 @@ extension DatabaseSession {
 
     // Events such as `member.updated` can carry a `channel` snapshotted before a concurrent
     // `channel.updated`, so a snapshot older than the stored channel is skipped to not rewind it.
-    // Responses of API requests are authoritative (they also carry `own_capabilities`, which events
-    // don't) and must use `saveChannel` directly, never this method.
     @discardableResult
     func saveChannelSnapshot(payload: ChannelDetailPayload) throws -> ChannelDTO {
         if let dto = channel(cid: payload.cid), payload.updatedAt < dto.updatedAt.bridgeDate {
