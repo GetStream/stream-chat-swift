@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `MemberInfo.channelRole` and `MemberInfo` overloads for creating a channel with member role and extra data [#4322](https://github.com/GetStream/stream-chat-swift/pull/4322)
 - Add `GroupedChannelsQuery` and `ChatClient.queryGroupedChannels(with:)` to fetch grouped channels with per-group filters and `query_timestamp` sorting [#4329](https://github.com/GetStream/stream-chat-swift/pull/4329)
+### 🐞 Fixed
+- Fix the message composer staying disabled for a channel until logout when its stored `updatedAt` was newer than the server's [#4331](https://github.com/GetStream/stream-chat-swift/pull/4331)
 
 # [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
 _October 09, 2026_
