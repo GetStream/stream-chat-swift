@@ -1089,6 +1089,7 @@
 				StreamChatTests/WebSocketClient/EventMiddlewares/EventDataProcessorMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/EventDTOConverterMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/EventMiddleware_Tests.swift,
+				StreamChatTests/WebSocketClient/EventMiddlewares/GroupedUnreadChannelsMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/MemberEventMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/ReminderUpdaterMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/ThreadUpdaterMiddlware_Tests.swift,

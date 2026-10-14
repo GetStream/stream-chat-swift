@@ -270,10 +270,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 completion(.failure(error))
             case let .success(payload):
                 database.write(converting: { session in
-                    let unreadChannelCountsByGroup = payload.groups.mapValues { $0.unreadChannels ?? 0 }
-                    try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+                    let currentUserId = session.currentUser?.user.id
                     let sortJSONData = try request.sort.map { try JSONEncoder.stream.encode($0) }
                     var channelGroups: [ChannelGroup] = []
+                    var queryDTOs: [ChannelListQueryDTO] = []
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
                         let wasFreshFetch = request.groups?[groupKey]?.next == nil
@@ -292,6 +292,12 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             queryDTO.channels.insert(dto)
                             return try dto.asModel()
                         }
+                        // The server counts the whole filtered group on every page.
+                        if queryDTO.groupFilterJSONData != nil, let currentUserId {
+                            let notLoaded = (groupPayload.unreadChannels ?? 0) - queryDTO.loadedUnreadChannelsCount(currentUserId: currentUserId)
+                            queryDTO.groupNotLoadedUnreadCount = Int64(max(0, notLoaded))
+                        }
+                        queryDTOs.append(queryDTO)
                         channelGroups.append(ChannelGroup(
                             groupKey: groupKey,
                             channels: channels,
@@ -299,6 +305,9 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             next: groupPayload.next
                         ))
                     }
+                    let unreadChannelCountsByGroup = payload.groups.mapValues { $0.unreadChannels ?? 0 }
+                    try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+                    session.updateFilteredGroupUnreadChannelCounts(for: queryDTOs)
                     return channelGroups
                 }, completion: { result in
                     completion(result)

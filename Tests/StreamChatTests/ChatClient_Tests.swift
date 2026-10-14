@@ -241,6 +241,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware }))
         // Assert `ChannelVisibilityEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware }))
+        // Assert `GroupedUnreadChannelsMiddleware` is just before the last one
+        XCTAssertTrue(middlewares.dropLast().last is GroupedUnreadChannelsMiddleware)
         // Assert `EventDTOConverterMiddleware` is the last one
         XCTAssertTrue(middlewares.last is EventDTOConverterMiddleware)
     }

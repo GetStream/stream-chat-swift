@@ -83,7 +83,9 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             guard let queryDTO = session.channelListQuery(query),
                   let filterPredicate = try self.filterPredicate(of: queryDTO) else { return }
             let expired = queryDTO.channels.filter { !filterPredicate.evaluate(with: $0) }
+            guard !expired.isEmpty else { return }
             queryDTO.channels.subtract(expired)
+            session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
         }, completion: { error in
             guard let error else { return }
             log.error(error)
@@ -104,9 +106,11 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
                 let shouldStartWatching = queryDTO.watch && channelDTO.queries.isEmpty
                 queryDTO.channels.insert(channelDTO)
+                session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
                 return shouldStartWatching
             } else if !shouldBelong, isInList {
                 queryDTO.channels.remove(channelDTO)
+                session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
             }
             return false
         }, completion: { [channelWatcherHandler] result in

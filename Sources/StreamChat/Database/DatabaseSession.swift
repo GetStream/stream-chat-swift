@@ -80,6 +80,8 @@ protocol CurrentUserDatabaseSession {
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
 
+    func updateFilteredGroupUnreadChannelCounts(for queries: [ChannelListQueryDTO])
+
     /// Adds the provided muted users to `CurrentUserDTO.mutedUsers`.
     /// If there's no current user set, an error will be thrown.
     @discardableResult

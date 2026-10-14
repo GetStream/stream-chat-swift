@@ -242,6 +242,46 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         )
     }
 
+    func test_updateFilteredGroupUnreadChannelCounts_addsNotLoadedCountToShownUnreadChannels() throws {
+        let userId = UserId.unique
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            let filteredQuery = session.saveQuery(query: ChannelListQuery(groupKey: "expired"))
+            filteredQuery.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            filteredQuery.groupNotLoadedUnreadCount = 2
+            let unfilteredQuery = session.saveQuery(query: ChannelListQuery(groupKey: "new"))
+            for (unreadMessages, isHidden, isDisabled) in [(1, false, false), (1, true, false), (1, false, true), (0, false, false)] {
+                let read = ChannelReadPayload(user: .dummy(userId: userId), lastReadAt: .unique, lastReadMessageId: nil, unreadMessagesCount: unreadMessages)
+                let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(isDisabled: isDisabled, isHidden: isHidden), channelReads: [read]))
+                filteredQuery.channels.insert(channelDTO)
+                unfilteredQuery.channels.insert(channelDTO)
+            }
+
+            session.updateFilteredGroupUnreadChannelCounts(for: [filteredQuery, unfilteredQuery])
+        }
+
+        XCTAssertEqual(["expired": 3], try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup })
+    }
+
+    func test_updateFilteredGroupUnreadChannelCounts_whenCountIsUnchanged_leavesCurrentUserUnchanged() throws {
+        let query = ChannelListQuery(groupKey: "expired")
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            queryDTO.groupNotLoadedUnreadCount = 2
+            session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
+        }
+
+        nonisolated(unsafe) var hasChanges: Bool?
+        try database.writeSynchronously { session in
+            session.updateFilteredGroupUnreadChannelCounts(for: [session.channelListQuery(query)].compactMap { $0 })
+            hasChanges = session.currentUser?.hasChanges
+        }
+
+        XCTAssertEqual(false, hasChanges)
+    }
+
     func test_saveCurrentUserMutedUsers_whenThereIsNoCurrentUser_throws() throws {
         XCTAssertThrowsError(
             try database.viewContext.saveCurrentUserMutedUsers([.dummy(userId: .unique)])
