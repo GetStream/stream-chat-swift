@@ -779,6 +779,18 @@ extension DatabaseSession {
         try saveChannel(payload: payload, query: nil, cache: nil)
     }
 
+    // Events such as `member.updated` can carry a `channel` snapshotted before a concurrent
+    // `channel.updated`, so a snapshot older than the stored channel is skipped to not rewind it.
+    // Responses of API requests are authoritative (they also carry `own_capabilities`, which events
+    // don't) and must use `saveChannel` directly, never this method.
+    @discardableResult
+    func saveChannelSnapshot(payload: ChannelDetailPayload) throws -> ChannelDTO {
+        if let dto = channel(cid: payload.cid), payload.updatedAt < dto.updatedAt.bridgeDate {
+            return dto
+        }
+        return try saveChannel(payload: payload, query: nil, cache: nil)
+    }
+
     @discardableResult
     func saveUser(payload: UserPayload) throws -> UserDTO {
         try saveUser(payload: payload, query: nil, cache: nil)
@@ -808,7 +820,11 @@ extension DatabaseSession {
 
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
-            try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+            if case .typeMemberUpdatedEvent = event {
+                try saveChannelSnapshot(payload: channelDetailPayload)
+            } else {
+                try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+            }
         }
 
         if let currentUserPayload = payload.currentUser {
