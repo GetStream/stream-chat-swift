@@ -513,10 +513,17 @@ lane :select_e2e_tests do |options|
   all_tests = all_e2e_tests
   UI.user_error!('No e2e tests found in the built xctestrun') if all_tests.empty?
   tests = []
-  if ENV['GITHUB_HEAD_REF'].to_s.start_with?('release/') || ENV['GITHUB_BASE_REF'] == 'main'
-    UI.important("Running all #{all_tests.size} tests on a release pull request")
+  # A manual run's tip may be a "Merge develop" commit, which the selection would mistake for a pull request merge.
+  run_all_reason =
+    if is_ci && ENV['GITHUB_EVENT_NAME'] != 'pull_request'
+      'not a pull request'
+    elsif ENV['GITHUB_HEAD_REF'].to_s.start_with?('release/') || ENV['GITHUB_BASE_REF'] == 'main'
+      'release pull request'
+    end
+  if run_all_reason
+    UI.important("Running all #{all_tests.size} tests: #{run_all_reason}")
     tests = all_tests
-    File.write(e2e_selection_path, JSON.generate(run_all: true, tests: tests, reasons: ['release pull request']))
+    File.write(e2e_selection_path, JSON.generate(run_all: true, tests: tests, reasons: [run_all_reason]))
   elsif is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
     selection = select_impacted_tests(
       all_tests: all_tests,
