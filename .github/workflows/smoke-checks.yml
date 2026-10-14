@@ -334,6 +334,25 @@ jobs:
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
+  # The number of E2E batches depends on the PR, so branch protection requires this job instead of each batch.
+  test-e2e-debug-result:
+    name: Test E2E UI (Debug) Result
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - guard
+      - build-test-app-and-frameworks
+      - allure_testops_launch
+      - test-e2e-debug
+    steps:
+    - name: Check E2E Results
+      if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+      run: |
+        echo "$NEEDS"
+        exit 1
+      env:
+        NEEDS: ${{ toJson(needs) }}
+
   build-apps:
     name: Build Demo App + Example Apps
     runs-on: macos-15
