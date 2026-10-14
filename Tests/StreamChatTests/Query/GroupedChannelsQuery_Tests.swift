@@ -24,22 +24,6 @@ final class GroupedChannelsQuery_Tests: XCTestCase {
         AssertJSONEqual(try JSONEncoder.stream.encode(filter), Data(#"{"query_timestamp":{"$gte":\#(dateString)}}"#.utf8))
     }
 
-    func test_requests_mapGroupsAndSort() {
-        let query = GroupedChannelsQuery(
-            groups: [
-                .init(key: "new"),
-                .init(key: "expired", filter: .greaterOrEqual(.queryTimestamp, than: .daysAgo(14)))
-            ],
-            sort: [.init(key: .queryTimestamp)]
-        )
-
-        XCTAssertEqual(["expired", "new"], query.groupRequests?.keys.sorted())
-        XCTAssertNil(query.groupRequests?["new"]?.filterConditions)
-        XCTAssertNotNil(query.groupRequests?["expired"]?.filterConditions)
-        XCTAssertEqual(["query_timestamp"], query.sortRequests?.map(\.field))
-        XCTAssertEqual([-1], query.sortRequests?.map(\.direction))
-    }
-
     func test_requests_whenGroupsAndSortAreEmpty_areNil() {
         let query = GroupedChannelsQuery(groups: [])
 

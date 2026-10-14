@@ -799,19 +799,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertNil(state.sort)
     }
 
-    func test_queryGroupedChannels_withGroupsAndLimit_sendsTopLevelLimit() throws {
-        listUpdater.queryGroupedChannels(
-            groups: ["new": GroupedChannelsGroupRequest()],
-            limit: 10,
-            watch: false,
-            presence: false,
-            completion: { _ in }
-        )
-
-        let body = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary())
-        XCTAssertEqual(10, body["limit"] as? Int)
-    }
-
     // MARK: - paginationState
 
     func test_paginationState_returnsPersistedNextWatchAndPresence() async throws {

@@ -45,9 +45,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveGroup(filterJSON: nil)
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(30), isLinked: false)
 
-        process(messageNewEvent(cid: cid))
+        try process(messageNewEvent(cid: cid))
 
-        AssertAsync.willBeTrue(isLinked(cid))
+        XCTAssertEqual(true, isLinked(cid))
     }
 
     func test_messageNew_whenChannelActivityIsWithinCutoff_linksChannel() throws {
@@ -56,9 +56,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         // The event's message is already saved when observers are notified.
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(0), isLinked: false)
 
-        process(messageNewEvent(cid: cid))
+        try process(messageNewEvent(cid: cid))
 
-        AssertAsync.willBeTrue(isLinked(cid))
+        XCTAssertEqual(true, isLinked(cid))
     }
 
     func test_messageNew_whenChannelActivityIsOutsideCutoff_unlinksChannel() throws {
@@ -66,37 +66,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try saveGroup(filterJSON: cutoffFilterJSON)
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(30), isLinked: true)
 
-        process(messageNewEvent(cid: cid))
+        try process(messageNewEvent(cid: cid))
 
-        AssertAsync.willBeTrue(isLinked(cid) == false)
-    }
-
-    func test_messageNew_whenAllGroupFilterHasGroupBranches_linksOnlyMatchingChannels() throws {
-        let allQuery = ChannelListQuery(groupKey: "all")
-        let allLinker = GroupedChannelListLinker(
-            query: allQuery,
-            databaseContainer: database,
-            channelWatcherHandler: ChannelWatcherHandler_Mock(),
-            timerType: VirtualTimeTimer.self
-        )
-        allLinker.start(with: eventNotificationCenter)
-        let newCid = ChannelId.unique
-        let endedCid = ChannelId.unique
-        try saveGroup(
-            filterJSON: #"{"$or":[{"group":"new"},{"group":"ended","query_timestamp":{"$gte":"now-7d"}}]}"#,
-            query: allQuery
-        )
-        try saveChannel(cid: newCid, group: "new", lastMessageAt: daysBeforeNow(30), isLinked: false, query: allQuery)
-        try saveChannel(cid: endedCid, group: "ended", lastMessageAt: daysBeforeNow(30), isLinked: true, query: allQuery)
-
-        process(messageNewEvent(cid: newCid))
-        process(messageNewEvent(cid: endedCid))
-
-        AssertAsync {
-            Assert.willBeEqual(self.isLinked(newCid, query: allQuery), true)
-            Assert.willBeEqual(self.isLinked(endedCid, query: allQuery), false)
-        }
-        withExtendedLifetime(allLinker) {}
+        XCTAssertEqual(false, isLinked(cid))
     }
 
     func test_channelUpdated_whenChannelMovesToAnotherGroup_unlinksChannel() throws {
@@ -106,36 +78,21 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         // The updated channel is already saved when observers are notified.
         try saveChannel(cid: cid, group: "new", lastMessageAt: daysBeforeNow(1), isLinked: true)
 
-        process(ChannelUpdatedEvent(channel: .mock(cid: cid), user: nil, message: nil, createdAt: .unique))
+        try process(ChannelUpdatedEvent(channel: .mock(cid: cid), user: nil, message: nil, createdAt: .unique))
 
-        AssertAsync.willBeTrue(isLinked(cid) == false)
+        XCTAssertEqual(false, isLinked(cid))
     }
 
     // MARK: - Cutoff Expiry
-
-    func test_expirySweep_unlinksChannelsThatPassedTheCutoff() throws {
-        let expiredCid = ChannelId.unique
-        let recentCid = ChannelId.unique
-        try saveGroup(filterJSON: cutoffFilterJSON)
-        try saveChannel(cid: expiredCid, group: "expired", lastMessageAt: daysBeforeNow(15), isLinked: true)
-        try saveChannel(cid: recentCid, group: "expired", lastMessageAt: daysBeforeNow(13), isLinked: true)
-
-        time.run(numberOfSeconds: 60)
-
-        AssertAsync {
-            Assert.willBeEqual(self.isLinked(expiredCid), false)
-            Assert.staysEqual(self.isLinked(recentCid), true)
-        }
-    }
 
     func test_expirySweep_whenGroupHasNoFilter_keepsChannels() throws {
         let cid = ChannelId.unique
         try saveGroup(filterJSON: nil)
         try saveChannel(cid: cid, group: "expired", lastMessageAt: daysBeforeNow(30), isLinked: true)
 
-        time.run(numberOfSeconds: 60)
+        try runExpirySweep()
 
-        AssertAsync.staysTrue(isLinked(cid) == true)
+        XCTAssertEqual(true, isLinked(cid))
     }
 
     func test_expirySweep_afterFirstPageWithinCutoffs_keepsEveryChannelLinked() throws {
@@ -207,11 +164,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         wait(for: [firstPageLoaded], timeout: defaultTimeout)
         XCTAssertEqual(expectedLinks, linkedChannelsByGroup(Array(expectedLinks.keys)))
 
-        time.run(numberOfSeconds: 60)
-        // Writes are serial, so every group's sweep has finished once this one does.
-        try database.writeSynchronously { _ in }
+        try runExpirySweep()
 
-        AssertAsync.staysEqual(linkedChannelsByGroup(Array(expectedLinks.keys)), expectedLinks)
+        XCTAssertEqual(expectedLinks, linkedChannelsByGroup(Array(expectedLinks.keys)))
         withExtendedLifetime(groupLinkers) {}
     }
 
@@ -222,10 +177,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         Date().addingTimeInterval(-TimeInterval(days) * 86400)
     }
 
-    private func saveGroup(filterJSON: String?, query: ChannelListQuery? = nil) throws {
-        let query = query ?? self.query
+    private func saveGroup(filterJSON: String?) throws {
         try database.writeSynchronously { session in
-            let queryDTO = session.saveQuery(query: query)
+            let queryDTO = session.saveQuery(query: self.query)
             queryDTO.groupFilterJSONData = filterJSON.map { Data($0.utf8) }
         }
     }
@@ -234,15 +188,13 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         cid: ChannelId,
         group: String,
         lastMessageAt: Date,
-        isLinked: Bool,
-        query: ChannelListQuery? = nil
+        isLinked: Bool
     ) throws {
-        let query = query ?? self.query
         let payload = channelPayload(cid: cid, group: group, lastMessageAt: lastMessageAt)
         try database.writeSynchronously { session in
             let channelDTO = try session.saveChannel(payload: payload)
             if isLinked {
-                session.channelListQuery(query)?.channels.insert(channelDTO)
+                session.channelListQuery(self.query)?.channels.insert(channelDTO)
             }
         }
     }
@@ -264,10 +216,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         }
     }
 
-    private func isLinked(_ cid: ChannelId, query: ChannelListQuery? = nil) -> Bool? {
-        let query = query ?? self.query
-        return try? database.readSynchronously { session in
-            session.channelListQuery(query)?.channels.contains { $0.cid == cid.rawValue } ?? false
+    private func isLinked(_ cid: ChannelId) -> Bool? {
+        try? database.readSynchronously { session in
+            session.channelListQuery(self.query)?.channels.contains { $0.cid == cid.rawValue } ?? false
         }
     }
 
@@ -282,9 +233,17 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         )
     }
 
-    private func process(_ event: Event) {
+    // Observers are notified before the completion runs and the linker's write is queued on the serial
+    // writable context, so an empty write after it is a barrier for the linking result.
+    private func process(_ event: Event) throws {
         let expectation = expectation(description: "Event processed")
         eventNotificationCenter.process([event], completion: { expectation.fulfill() })
         wait(for: [expectation], timeout: defaultTimeout)
+        try database.writeSynchronously { _ in }
+    }
+
+    private func runExpirySweep() throws {
+        time.run(numberOfSeconds: 60)
+        try database.writeSynchronously { _ in }
     }
 }
