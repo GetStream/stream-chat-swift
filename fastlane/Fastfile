@@ -511,6 +511,7 @@ end
 desc 'Picks the e2e tests the pull request can affect and exposes how many CI batches they need'
 lane :select_e2e_tests do |options|
   all_tests = all_e2e_tests
+  UI.user_error!('No e2e tests found in the built xctestrun') if all_tests.empty?
   tests = []
   if ENV['GITHUB_HEAD_REF'].to_s.start_with?('release/') || ENV['GITHUB_BASE_REF'] == 'main'
     UI.important("Running all #{all_tests.size} tests on a release pull request")
