@@ -5,6 +5,7 @@
 import Foundation
 
 /// A namespace for the `FilterKey`s suitable to be used for ``GroupedChannelsQuery`` group filters.
+/// - Note: Grouped channels aren't enabled by default. Contact Stream support to enable them for your app.
 public struct GroupedChannelsFilterScope: FilterScope {}
 
 /// Filter keys for grouped channels.
@@ -27,6 +28,7 @@ public extension FilterKey where Scope == GroupedChannelsFilterScope {
 }
 
 /// A cutoff value for the `queryTimestamp` filter key of ``GroupedChannelsFilterScope``.
+/// - Note: Grouped channels aren't enabled by default. Contact Stream support to enable them for your app.
 public enum GroupedChannelsTimestamp: FilterValue {
     /// A cutoff relative to the time the request is handled, in whole days. The backend resolves it on every request,
     /// so loading more channels and refreshing after a reconnect keep the cutoff rolling.
@@ -38,7 +40,7 @@ public enum GroupedChannelsTimestamp: FilterValue {
         var container = encoder.singleValueContainer()
         switch self {
         case let .daysAgo(days):
-            try container.encode("now-\(days)d")
+            try container.encode("now-\(abs(days))d")
         case let .date(date):
             try container.encode(date)
         }
@@ -60,7 +62,7 @@ extension GroupedChannelsTimestamp {
     var cutoffDate: Date {
         switch self {
         case let .daysAgo(days):
-            return Date().addingTimeInterval(-TimeInterval(days) * 86400)
+            return Date().addingTimeInterval(-TimeInterval(abs(days)) * 86400)
         case let .date(date):
             return date
         }
@@ -114,6 +116,7 @@ extension Filter where Scope == GroupedChannelsFilterScope {
 }
 
 /// The type describing a value that can be used for sorting when querying grouped channels.
+/// - Note: Grouped channels aren't enabled by default. Contact Stream support to enable them for your app.
 public struct GroupedChannelsSortingKey: RawRepresentable, Hashable, SortingKey {
     public let rawValue: String
 
@@ -146,6 +149,8 @@ public extension GroupedChannelsSortingKey {
 ///     limit: 10
 /// )
 /// ```
+///
+/// - Note: Grouped channels aren't enabled by default. Contact Stream support to enable them for your app.
 public struct GroupedChannelsQuery: Sendable {
     /// A requested channel group.
     public struct Group: Sendable {

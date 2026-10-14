@@ -139,9 +139,9 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,
-                        sort: groupKeys.lazy.compactMap { states[$0]?.sort }.first,
-                        watch: groupKeys.lazy.compactMap { states[$0]?.watch }.first ?? false,
-                        presence: groupKeys.lazy.compactMap { states[$0]?.presence }.first ?? false
+                        sort: groupKeys.compactMap { states[$0]?.sort }.first,
+                        watch: groupKeys.compactMap { states[$0]?.watch }.first ?? false,
+                        presence: groupKeys.compactMap { states[$0]?.presence }.first ?? false
                     )
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)

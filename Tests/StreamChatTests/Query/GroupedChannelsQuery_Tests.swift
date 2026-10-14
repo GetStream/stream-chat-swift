@@ -10,7 +10,10 @@ final class GroupedChannelsQuery_Tests: XCTestCase {
     func test_queryTimestamp_daysAgo_encodesRelativeCutoff() throws {
         let filter = Filter<GroupedChannelsFilterScope>.greaterOrEqual(.queryTimestamp, than: .daysAgo(7))
 
+        let negativeFilter = Filter<GroupedChannelsFilterScope>.greaterOrEqual(.queryTimestamp, than: .daysAgo(-7))
+
         AssertJSONEqual(try JSONEncoder.stream.encode(filter), Data(#"{"query_timestamp":{"$gte":"now-7d"}}"#.utf8))
+        AssertJSONEqual(try JSONEncoder.stream.encode(negativeFilter), Data(#"{"query_timestamp":{"$gte":"now-7d"}}"#.utf8))
     }
 
     func test_queryTimestamp_date_encodesWithEncoderDateStrategy() throws {
