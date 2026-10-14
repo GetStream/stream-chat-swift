@@ -11,7 +11,7 @@ final class GroupedQueryChannelsRequest: Sendable, Encodable, JSONEncodable {
     let limit: Int?
     /// Whether to subscribe to presence events for channel members
     let presence: Bool?
-    /// Optional query_timestamp descending with NULLS LAST. Omitted sort preserves existing last_updated ordering and cursor formats
+    /// Optional query_timestamp descending with NULLS LAST when enabled. Omitted sort preserves existing last_updated ordering and cursor formats
     let sort: [SortParamRequest]?
     /// Whether to start watching found channels or not
     let watch: Bool?
