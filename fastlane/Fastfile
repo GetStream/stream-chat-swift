@@ -831,7 +831,7 @@ end
 
 lane :sources_matrix do
   {
-    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project],
+    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project, 'Package.swift', 'Package.resolved', 'fastlane/Fastfile', 'Gemfile.lock'],
     llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
     common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
