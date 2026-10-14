@@ -691,6 +691,23 @@ public class ChatClient: @unchecked Sendable {
             presence: presence
         )
     }
+
+    /// Fetches the first page of channels for the groups in the query in a single request.
+    ///
+    /// A group's filter and the query's sort are reused when its channels are paginated and refreshed.
+    ///
+    /// - Parameter query: The query describing the groups, their filters, the sort and the limit.
+    /// - Returns: The fetched ``ChannelGroup`` values.
+    /// - Throws: An error while communicating with the Stream API.
+    @discardableResult public func queryGroupedChannels(with query: GroupedChannelsQuery) async throws -> [ChannelGroup] {
+        try await channelListUpdater.queryGroupedChannels(
+            groups: query.groupRequests,
+            limit: query.limit,
+            sort: query.sortRequests,
+            watch: query.watch,
+            presence: query.presence
+        )
+    }
     
     // MARK: - Upload attachments
     

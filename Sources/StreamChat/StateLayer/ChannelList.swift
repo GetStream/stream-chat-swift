@@ -67,13 +67,18 @@ public class ChannelList: @unchecked Sendable {
         if let groupKey {
             let paginationState = try await channelListUpdater.paginationState(for: groupKey)
             let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                groups: [groupKey: .init(limit: pagination.pageSize > 0 ? pagination.pageSize : nil, next: pagination.cursor)],
+                groups: [groupKey: .init(filterConditions: paginationState.filter, limit: pagination.pageSize > 0 ? pagination.pageSize : nil, next: pagination.cursor)],
                 limit: nil,
+                sort: paginationState.sort,
                 watch: paginationState.watch ?? true,
                 presence: paginationState.presence ?? false
             )
             let group = channelGroups.first { $0.groupKey == groupKey }
             await setHasLoadedAllPreviousChannels(group?.next == nil)
+            let query = await state.query
+            if let updatedQuery = channelListUpdater.loadPredefinedFilter(for: query), !updatedQuery.isFilterEqual(to: query) {
+                await state.setQuery(updatedQuery)
+            }
             return group?.channels ?? []
         } else {
             var query = await state.query

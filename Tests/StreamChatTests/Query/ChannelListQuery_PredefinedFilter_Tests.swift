@@ -54,7 +54,8 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
             ChannelListSortingKey.memberCount.remoteKey,
             ChannelListSortingKey.cid.remoteKey,
             ChannelListSortingKey.hasUnread.remoteKey,
-            ChannelListSortingKey.unreadCount.remoteKey
+            ChannelListSortingKey.unreadCount.remoteKey,
+            ChannelListSortingKey.queryTimestamp.remoteKey
         ]
 
         XCTAssertEqual(Set(ChannelListSortingKey.predefinedSortingKeyMapping.keys), expectedKeys)
