@@ -85,6 +85,48 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(["expired": 0], unreadChannelCountsByGroup())
     }
 
+    func test_channelUpdated_whenStoredGroupLeavesTheGroup_unlinksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isLinked: true)
+        try saveChannel(cid: cid, group: "ended", lastMessageAt: daysBeforeNow(0), isLinked: false)
+
+        // The group is read from the stored channel, not from the event payload.
+        let staleChannel = ChatChannel.mock(cid: cid, extraData: [GroupedChannelKey.group: .string("expired")])
+        try process(ChannelUpdatedEvent(channel: staleChannel, user: nil, message: nil, createdAt: .unique))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_messageNew_inFilteredAllGroup_linksChannelsMatchingTheirBranch() throws {
+        let allQuery = ChannelListQuery(groupKey: GroupedChannelKey.all)
+        let allLinker = GroupedChannelListLinker(
+            query: allQuery,
+            databaseContainer: database,
+            channelWatcherHandler: ChannelWatcherHandler_Mock(),
+            timerType: VirtualTimeTimer.self
+        )
+        allLinker.start(with: eventNotificationCenter)
+        try saveFilteredGroup(query: allQuery, filter: .or([
+            .and([.equal(.group, to: "ended"), .greaterOrEqual(.queryTimestamp, than: .daysAgo(7))]),
+            .in(.group, values: ["new"])
+        ]))
+        let recentEndedCid = ChannelId.unique
+        let oldEndedCid = ChannelId.unique
+        let oldNewCid = ChannelId.unique
+        try saveChannel(cid: recentEndedCid, group: "ended", lastMessageAt: daysBeforeNow(3), isLinked: false)
+        try saveChannel(cid: oldEndedCid, group: "ended", lastMessageAt: daysBeforeNow(30), isLinked: false)
+        try saveChannel(cid: oldNewCid, group: "new", lastMessageAt: daysBeforeNow(400), isLinked: false)
+
+        for cid in [recentEndedCid, oldEndedCid, oldNewCid] {
+            try process(messageNewEvent(cid: cid))
+        }
+
+        XCTAssertEqual(true, isLinked(recentEndedCid, in: allQuery))
+        XCTAssertEqual(false, isLinked(oldEndedCid, in: allQuery))
+        XCTAssertEqual(true, isLinked(oldNewCid, in: allQuery))
+    }
+
     // MARK: - Helpers
 
     // The cutoff is resolved when the predicate is built, so dates are relative to the wall clock.
@@ -92,19 +134,24 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         Date().addingTimeInterval(-TimeInterval(days) * 86400)
     }
 
-    private func saveFilteredGroup(groupNotLoadedUnreadCount: Int64 = 0) throws {
+    private func saveFilteredGroup(
+        query: ChannelListQuery? = nil,
+        filter: Filter<GroupedChannelsFilterScope> = .greaterOrEqual(.queryTimestamp, than: .daysAgo(14)),
+        groupNotLoadedUnreadCount: Int64 = 0
+    ) throws {
+        let filterJSONData = try JSONEncoder.stream.encode(filter)
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: self.currentUserId, role: .user))
-            let queryDTO = session.saveQuery(query: self.query)
-            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            let queryDTO = session.saveQuery(query: query ?? self.query)
+            queryDTO.groupFilterJSONData = filterJSONData
             queryDTO.groupNotLoadedUnreadCount = groupNotLoadedUnreadCount
         }
     }
 
-    private func saveChannel(cid: ChannelId, lastMessageAt: Date, unreadMessages: Int = 0, isLinked: Bool) throws {
+    private func saveChannel(cid: ChannelId, group: String = "expired", lastMessageAt: Date, unreadMessages: Int = 0, isLinked: Bool) throws {
         let read = ChannelReadPayload(user: .dummy(userId: currentUserId), lastReadAt: lastMessageAt, lastReadMessageId: nil, unreadMessagesCount: unreadMessages)
         let payload = ChannelPayload.dummy(
-            channel: .dummy(cid: cid, extraData: [GroupedChannelKey.group: .string("expired")], lastMessageAt: lastMessageAt, createdAt: lastMessageAt),
+            channel: .dummy(cid: cid, extraData: [GroupedChannelKey.group: .string(group)], lastMessageAt: lastMessageAt, createdAt: lastMessageAt),
             channelReads: [read]
         )
         try database.writeSynchronously { session in
@@ -119,9 +166,9 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         try? database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup }
     }
 
-    private func isLinked(_ cid: ChannelId) -> Bool? {
+    private func isLinked(_ cid: ChannelId, in query: ChannelListQuery? = nil) -> Bool? {
         try? database.readSynchronously { session in
-            session.channelListQuery(self.query)?.channels.contains { $0.cid == cid.rawValue } ?? false
+            session.channelListQuery(query ?? self.query)?.channels.contains { $0.cid == cid.rawValue } ?? false
         }
     }
 

@@ -13,8 +13,7 @@ public extension FilterKey where Scope == GroupedChannelsFilterScope {
     /// Supported operators: `equal`, `in`
     static var group: FilterKey<Scope, String> { .init(
         rawValue: "group",
-        keyPathString: #keyPath(ChannelDTO.group),
-        valueMapper: { GroupedChannelKey.normalizedGroup($0) }
+        keyPathString: #keyPath(ChannelDTO.group)
     ) }
 
     /// A filter key for matching the channel's latest activity time: the last message, the creation date,
@@ -80,8 +79,7 @@ extension GroupedChannelsFilterScope {
     // The default `$in` predicate (`%@ IN %K`) is a substring match on a string key path.
     private static let groupPredicateMapper: Filter<Self>.PredicateMapper = { op, values in
         guard op == .in, let values = values as? [String] else { return nil }
-        let groups = values.compactMap(GroupedChannelKey.normalizedGroup)
-        return NSPredicate(format: "%K IN %@", argumentArray: [#keyPath(ChannelDTO.group), groups])
+        return NSPredicate(format: "%K IN %@", argumentArray: [#keyPath(ChannelDTO.group), values])
     }
 }
 

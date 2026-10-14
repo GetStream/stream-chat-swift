@@ -15,8 +15,8 @@ import Foundation
 /// Membership is decided from the channel's `"group"` extra-data value:
 /// - The ``GroupedChannelKey/all`` query is a catch-all: every channel carrying any non-empty group
 ///   value links into it.
-/// - Any other `groupKey` links a channel only when its `"group"` value (whitespace-trimmed and
-///   lowercased) equals the query's `groupKey`; otherwise the channel is unlinked.
+/// - Any other `groupKey` links a channel only when its `"group"` value equals the query's `groupKey`;
+///   otherwise the channel is unlinked.
 ///
 /// When the group was queried with a filter, the channel must also match it, evaluated as a Core Data predicate.
 /// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are

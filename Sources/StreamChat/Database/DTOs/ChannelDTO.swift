@@ -288,7 +288,7 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.group = payload.extraData[GroupedChannelKey.group]?.stringValue.flatMap(GroupedChannelKey.normalizedGroup)
+        dto.group = payload.extraData[GroupedChannelKey.group]?.stringValue.flatMap { $0.isEmpty ? nil : $0 }
         dto.typeRawValue = payload.type
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)

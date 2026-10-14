@@ -41,9 +41,4 @@ enum GroupedChannelKey {
     /// `ChatChannel.extraData` field that carries the channel's group membership.
     static let group = "group"
     static let touchedAt = "touched_at"
-
-    static func normalizedGroup(_ group: String) -> String? {
-        let normalized = group.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        return normalized.isEmpty ? nil : normalized
-    }
 }
