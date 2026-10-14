@@ -23,6 +23,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var deletedAt: DBDate?
     @NSManaged var defaultSortingAt: DBDate
+    @NSManaged var queryTimestamp: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
 
@@ -144,6 +145,8 @@ class ChannelDTO: NSManagedObject {
         }
         if lastDate != defaultSortingAt {
             defaultSortingAt = lastDate
+            let touchedAt = (try? JSONDecoder.stream.decodeRawJSON(from: extraData)).flatMap(GroupedChannelKey.touchedAt(in:))
+            queryTimestamp = max(lastDate.bridgeDate, touchedAt ?? .distantPast).bridgeDate
         }
     }
 
@@ -304,6 +307,7 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
+        dto.queryTimestamp = max(dto.defaultSortingAt.bridgeDate, GroupedChannelKey.touchedAt(in: payload.extraData) ?? .distantPast).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
@@ -512,6 +516,9 @@ extension ChannelDTO {
             }
         }
         
+        if query.groupKey != nil {
+            sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.queryTimestamp, ascending: false)]
+        }
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
