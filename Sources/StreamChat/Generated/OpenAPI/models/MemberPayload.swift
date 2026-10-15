@@ -9,12 +9,12 @@ final class MemberPayload: Sendable, Decodable {
     /// Expiration date of the ban
     let banExpires: Date?
     /// Whether member is banned this channel or not
-    let banned: Bool?
+    let banned: Bool
     /// Role of the member in the channel
-    let channelRole: String?
+    let channelRole: String
     /// Date/time of creation
     let createdAt: Date
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     let deletedAt: Date?
     /// Date when invite was accepted
     let inviteAcceptedAt: Date?
@@ -22,10 +22,10 @@ final class MemberPayload: Sendable, Decodable {
     let inviteRejectedAt: Date?
     /// Whether member was invited or not
     let invited: Bool?
-    let notificationsMuted: Bool?
+    let notificationsMuted: Bool
     let pinnedAt: Date?
     /// Whether member is shadow banned in this channel or not
-    let shadowBanned: Bool?
+    let shadowBanned: Bool
     let status: String?
     /// Date/time of the last update
     let updatedAt: Date
@@ -36,17 +36,17 @@ final class MemberPayload: Sendable, Decodable {
     init(
         archivedAt: Date? = nil,
         banExpires: Date? = nil,
-        banned: Bool? = nil,
-        channelRole: String? = nil,
+        banned: Bool,
+        channelRole: String,
         createdAt: Date,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         deletedAt: Date? = nil,
         inviteAcceptedAt: Date? = nil,
         inviteRejectedAt: Date? = nil,
         invited: Bool? = nil,
-        notificationsMuted: Bool? = nil,
+        notificationsMuted: Bool,
         pinnedAt: Date? = nil,
-        shadowBanned: Bool? = nil,
+        shadowBanned: Bool,
         status: String? = nil,
         updatedAt: Date,
         user: UserPayload? = nil,
@@ -75,20 +75,17 @@ final class MemberPayload: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
         self.banExpires = try container.decodeIfPresent(Date.self, forKey: .banExpires)
-        self.banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
-        self.channelRole = try container.decodeIfPresent(String.self, forKey: .channelRole)
+        self.banned = try container.decode(Bool.self, forKey: .banned)
+        self.channelRole = try container.decode(String.self, forKey: .channelRole)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         self.inviteAcceptedAt = try container.decodeIfPresent(Date.self, forKey: .inviteAcceptedAt)
         self.inviteRejectedAt = try container.decodeIfPresent(Date.self, forKey: .inviteRejectedAt)
         self.invited = try container.decodeIfPresent(Bool.self, forKey: .invited)
-        self.notificationsMuted = try container.decodeIfPresent(
-            Bool.self,
-            forKey: .notificationsMuted
-        )
+        self.notificationsMuted = try container.decode(Bool.self, forKey: .notificationsMuted)
         self.pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
-        self.shadowBanned = try container.decodeIfPresent(Bool.self, forKey: .shadowBanned)
+        self.shadowBanned = try container.decode(Bool.self, forKey: .shadowBanned)
         self.status = try container.decodeIfPresent(String.self, forKey: .status)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)

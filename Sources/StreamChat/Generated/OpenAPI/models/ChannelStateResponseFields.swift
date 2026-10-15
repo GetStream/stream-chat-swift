@@ -27,7 +27,7 @@ final class ChannelStateResponseFields: Sendable, Decodable {
     let read: [ReadStateResponse]?
     /// The caller's own scheduled, sending and failed messages in this channel. Set only by a client-side GetOrCreateChannel or QueryChannels with include_scheduled_messages; absent when not requested or not known, in which case use the scheduled messages query
     let scheduledMessages: [ScheduledMessageResponse]?
-    let threads: [ThreadStateResponse]?
+    let threads: [ThreadStateResponse]
     /// Number of channel watchers
     let watcherCount: Int?
     /// List of user who is watching the channel
@@ -46,7 +46,7 @@ final class ChannelStateResponseFields: Sendable, Decodable {
         pushPreferences: PushPreference? = nil,
         read: [ReadStateResponse]? = nil,
         scheduledMessages: [ScheduledMessageResponse]? = nil,
-        threads: [ThreadStateResponse]? = nil,
+        threads: [ThreadStateResponse],
         watcherCount: Int? = nil,
         watchers: [UserPayload]? = nil
     ) {
@@ -105,7 +105,7 @@ final class ChannelStateResponseFields: Sendable, Decodable {
             [ScheduledMessageResponse].self,
             forKey: .scheduledMessages
         )
-        self.threads = try container.decodeArrayIfPresentIgnoringFailures(
+        self.threads = try container.decodeArrayIgnoringFailures(
             [ThreadStateResponse].self,
             forKey: .threads
         )
