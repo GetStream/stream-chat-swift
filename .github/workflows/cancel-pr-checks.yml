@@ -12,12 +12,16 @@ jobs:
     name: Cancel
     runs-on: ubuntu-latest
     steps:
+    # Match on the head repository too: a fork's branch can share its name with another PR's branch.
+    # Not on the PR number: GitHub leaves `pull_requests` empty on runs from forks.
     - run: |
         for status in queued in_progress waiting pending requested; do
-          gh run list --repo "$REPO" --branch "$BRANCH" --event pull_request --status "$status" --json databaseId --jq '.[].databaseId' |
+          gh api --paginate "repos/$REPO/actions/runs?event=pull_request&status=$status&per_page=100" -f branch="$BRANCH" -X GET \
+            --jq '.workflow_runs[] | select(.head_repository.full_name == env.HEAD_REPO) | .id' |
             xargs -r -n1 gh run cancel --repo "$REPO" || true
         done
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         REPO: ${{ github.repository }}
         BRANCH: ${{ github.event.pull_request.head.ref }}
+        HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
