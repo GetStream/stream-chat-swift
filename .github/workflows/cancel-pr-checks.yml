@@ -1,0 +1,23 @@
+name: Cancel PR Checks
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  actions: write
+
+jobs:
+  cancel:
+    name: Cancel
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        for status in queued in_progress waiting pending requested; do
+          gh run list --repo "$REPO" --branch "$BRANCH" --event pull_request --status "$status" --json databaseId --jq '.[].databaseId' |
+            xargs -r -n1 gh run cancel --repo "$REPO" || true
+        done
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO: ${{ github.repository }}
+        BRANCH: ${{ github.event.pull_request.head.ref }}
