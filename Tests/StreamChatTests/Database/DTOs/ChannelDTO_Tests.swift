@@ -435,6 +435,21 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertTrue(channel.isFrozen)
     }
 
+    func test_saveChannelSnapshot_appliesUpdate_whenPayloadIsSameInstantDecodedEarlier() throws {
+        let channelId: ChannelId = .unique
+        let updatedAt = Date(timeIntervalSince1970: 1_791_995_869.351_796)
+
+        try database.writeSynchronously { session in
+            try session.saveChannelSnapshot(payload: .dummy(cid: channelId, name: "Stored", updatedAt: updatedAt.addingTimeInterval(0.000_000_238)))
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannelSnapshot(payload: .dummy(cid: channelId, name: "Snapshot", updatedAt: updatedAt))
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        XCTAssertEqual(channel.name, "Snapshot")
+    }
+
     func test_saveChannel_doesNotUpdateTruncatedAt_whenItsEarlierThanExisting() throws {
         let channelId: ChannelId = .unique
         let originalTruncatedAt = Date().addingTimeInterval(1200)

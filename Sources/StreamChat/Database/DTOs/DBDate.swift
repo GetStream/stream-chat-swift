@@ -53,4 +53,10 @@ extension Date {
     var bridgeDate: DBDate {
         DBDate(timeIntervalSince1970: timeIntervalSince1970)
     }
+
+    // The server stores dates in microseconds, but one instant can decode a few hundred nanoseconds apart
+    // when one copy arrived as an ISO string and the other as integer nanoseconds.
+    func isLaterAtServerPrecision(than other: Date) -> Bool {
+        timeIntervalSince(other) >= 0.000_001
+    }
 }
