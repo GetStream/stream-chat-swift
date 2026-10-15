@@ -6136,7 +6136,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.13.0;
+				minimumVersion = 0.14.0;
 			};
 		};
 		84114A8D3073E3E10035A01F /* XCRemoteSwiftPackageReference "Splash" */ = {
