@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `GroupedChannelsQuery` and `ChatClient.queryGroupedChannels(with:)` to fetch grouped channels with per-group filters and `query_timestamp` sorting [#4329](https://github.com/GetStream/stream-chat-swift/pull/4329)
 ### 🐞 Fixed
 - Only skip outdated channel data from `member.updated` events, so other channel updates are always applied [#4331](https://github.com/GetStream/stream-chat-swift/pull/4331)
+- Fix edited messages disappearing from a channel after re-entering it [#4333](https://github.com/GetStream/stream-chat-swift/pull/4333)
 
 # [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
 _October 09, 2026_

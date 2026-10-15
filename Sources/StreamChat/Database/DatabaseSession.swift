@@ -783,7 +783,7 @@ extension DatabaseSession {
     // `channel.updated`, so a snapshot older than the stored channel is skipped to not rewind it.
     @discardableResult
     func saveChannelSnapshot(payload: ChannelDetailPayload) throws -> ChannelDTO {
-        if let dto = channel(cid: payload.cid), payload.updatedAt < dto.updatedAt.bridgeDate {
+        if let dto = channel(cid: payload.cid), dto.updatedAt.bridgeDate.isLaterAtServerPrecision(than: payload.updatedAt) {
             return dto
         }
         return try saveChannel(payload: payload, query: nil, cache: nil)
