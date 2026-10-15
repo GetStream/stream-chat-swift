@@ -6,17 +6,17 @@ import Foundation
 
 final class OwnUserResponse: Sendable, Decodable {
     let avgResponseTime: Int?
-    let banned: Bool?
+    let banned: Bool
     let blockedUserIds: [String]?
     let channelMutes: [MutedChannelPayload]
     let createdAt: Date
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     let deactivatedAt: Date?
     let devices: [Device]
     let id: String
     let image: String?
-    let invisible: Bool?
-    let language: String?
+    let invisible: Bool
+    let language: String
     let lastActive: Date?
     let mutes: [MutedUserPayload]
     let name: String?
@@ -26,27 +26,27 @@ final class OwnUserResponse: Sendable, Decodable {
     /// The push preference details.
     let pushPreferences: PushPreference?
     let role: String
-    let teams: [String]?
+    let teams: [String]
     let teamsRole: [String: String]?
     let totalUnreadCount: Int
     let totalUnreadCountByTeam: [String: Int]?
     let unreadChannels: Int
-    let unreadThreads: Int?
+    let unreadThreads: Int
     let updatedAt: Date
 
     init(
         avgResponseTime: Int? = nil,
-        banned: Bool? = nil,
+        banned: Bool,
         blockedUserIds: [String]? = nil,
         channelMutes: [MutedChannelPayload],
         createdAt: Date,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         deactivatedAt: Date? = nil,
         devices: [Device],
         id: String,
         image: String? = nil,
-        invisible: Bool? = nil,
-        language: String? = nil,
+        invisible: Bool,
+        language: String,
         lastActive: Date? = nil,
         mutes: [MutedUserPayload],
         name: String? = nil,
@@ -54,12 +54,12 @@ final class OwnUserResponse: Sendable, Decodable {
         privacySettings: UserPrivacySettings? = nil,
         pushPreferences: PushPreference? = nil,
         role: String,
-        teams: [String]? = nil,
+        teams: [String],
         teamsRole: [String: String]? = nil,
         totalUnreadCount: Int,
         totalUnreadCountByTeam: [String: Int]? = nil,
         unreadChannels: Int,
-        unreadThreads: Int? = nil,
+        unreadThreads: Int,
         updatedAt: Date
     ) {
         self.avgResponseTime = avgResponseTime
@@ -93,20 +93,20 @@ final class OwnUserResponse: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
-        self.banned = try container.decodeIfPresent(Bool.self, forKey: .banned)
+        self.banned = try container.decode(Bool.self, forKey: .banned)
         self.blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
         self.channelMutes = try container.decodeArrayIgnoringFailures(
             [MutedChannelPayload].self,
             forKey: .channelMutes
         )
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
         self.devices = try container.decodeArrayIgnoringFailures([Device].self, forKey: .devices)
         self.id = try container.decode(String.self, forKey: .id)
         self.image = try container.decodeIfPresent(String.self, forKey: .image)
-        self.invisible = try container.decodeIfPresent(Bool.self, forKey: .invisible)
-        self.language = try container.decodeIfPresent(String.self, forKey: .language)
+        self.invisible = try container.decode(Bool.self, forKey: .invisible)
+        self.language = try container.decode(String.self, forKey: .language)
         self.lastActive = try container.decodeIfPresent(Date.self, forKey: .lastActive)
         self.mutes = try container.decode([MutedUserPayload].self, forKey: .mutes)
         self.name = try container.decodeIfPresent(String.self, forKey: .name)
@@ -120,7 +120,7 @@ final class OwnUserResponse: Sendable, Decodable {
             forKey: .pushPreferences
         )
         self.role = try container.decode(String.self, forKey: .role)
-        self.teams = try container.decodeIfPresent([String].self, forKey: .teams)
+        self.teams = try container.decode([String].self, forKey: .teams)
         self.teamsRole = try container.decodeIfPresent([String: String].self, forKey: .teamsRole)
         self.totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
         self.totalUnreadCountByTeam = try container.decodeIfPresent(
@@ -128,7 +128,7 @@ final class OwnUserResponse: Sendable, Decodable {
             forKey: .totalUnreadCountByTeam
         )
         self.unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
-        self.unreadThreads = try container.decodeIfPresent(Int.self, forKey: .unreadThreads)
+        self.unreadThreads = try container.decode(Int.self, forKey: .unreadThreads)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
 }

@@ -22,7 +22,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
     /// User response object
     let createdBy: UserPayload?
     /// Custom data for this object
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     /// Date/time of deletion
     let deletedAt: Date?
     let disabled: Bool
@@ -64,7 +64,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         cooldown: Int? = nil,
         createdAt: Date,
         createdBy: UserPayload? = nil,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         deletedAt: Date? = nil,
         disabled: Bool,
         filterTags: [String]? = nil,
@@ -125,7 +125,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         self.cooldown = try container.decodeIfPresent(Int.self, forKey: .cooldown)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
         self.createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         self.disabled = try container.decode(Bool.self, forKey: .disabled)
         self.filterTags = try container.decodeIfPresent([String].self, forKey: .filterTags)

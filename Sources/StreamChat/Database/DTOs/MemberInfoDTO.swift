@@ -70,7 +70,7 @@ extension NSManagedObjectContext {
     ) -> MemberInfoDTO {
         let dto = MemberInfoDTO.loadOrCreate(userId: userId, cid: cid, context: self, cache: cache)
         dto.channelRoleRaw = payload.channelRole
-        dto.notificationsMuted = payload.notificationsMuted ?? false
+        dto.notificationsMuted = payload.notificationsMuted
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
         } catch {

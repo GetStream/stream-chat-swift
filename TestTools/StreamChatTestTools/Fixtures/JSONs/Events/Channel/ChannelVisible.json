@@ -1,5 +1,6 @@
 {
   "channel" : {
+    "custom" : {},
     "id" : "default-channel-6",
     "type" : "messaging",
     "cid" : "messaging:default-channel-6",
@@ -26,6 +27,9 @@
   "channel_id" : "default-channel-6",
   "channel_type" : "messaging",
   "user" : {
+    "custom" : {},
+    "language" : "",
+    "teams" : [],
     "banned" : false,
     "online" : true,
     "id" : "luke_skywalker",

@@ -12,13 +12,13 @@ extension ChannelDetailPayload {
         ChannelCodingKeys.imageURL.rawValue
     ]
 
-    var extraData: [String: RawJSON] { (custom ?? [:]).removingValues(forKeys: Self.nameAndImageKeys) }
+    var extraData: [String: RawJSON] { custom.removingValues(forKeys: Self.nameAndImageKeys) }
 
     var imageURL: URL? {
-        custom?[ChannelCodingKeys.imageURL.rawValue]?.stringValue.flatMap(URL.init(string:))
+        custom[ChannelCodingKeys.imageURL.rawValue]?.stringValue.flatMap(URL.init(string:))
     }
 
-    var name: String? { custom?[ChannelCodingKeys.name.rawValue]?.stringValue }
+    var name: String? { custom[ChannelCodingKeys.name.rawValue]?.stringValue }
 
     convenience init(
         cid: ChannelId,

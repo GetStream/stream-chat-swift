@@ -20,7 +20,7 @@ final class MemberPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.banned, true)
         XCTAssertEqual(payload.shadowBanned, true)
         XCTAssertEqual(payload.notificationsMuted, true)
-        XCTAssertEqual(payload.custom?["is_premium"], true)
+        XCTAssertEqual(payload.custom["is_premium"], true)
 
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user!.id, "broken-waterfall-5")

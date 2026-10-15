@@ -25,7 +25,7 @@ final class ChannelStateResponseFields: Sendable, Decodable {
     let pushPreferences: PushPreference?
     /// List of read states
     let read: [ReadStateResponse]?
-    let threads: [ThreadStateResponse]?
+    let threads: [ThreadStateResponse]
     /// Number of channel watchers
     let watcherCount: Int?
     /// List of user who is watching the channel
@@ -43,7 +43,7 @@ final class ChannelStateResponseFields: Sendable, Decodable {
         pinnedMessages: [MessageResponse],
         pushPreferences: PushPreference? = nil,
         read: [ReadStateResponse]? = nil,
-        threads: [ThreadStateResponse]? = nil,
+        threads: [ThreadStateResponse],
         watcherCount: Int? = nil,
         watchers: [UserPayload]? = nil
     ) {
@@ -97,7 +97,7 @@ final class ChannelStateResponseFields: Sendable, Decodable {
             [ReadStateResponse].self,
             forKey: .read
         )
-        self.threads = try container.decodeArrayIfPresentIgnoringFailures(
+        self.threads = try container.decodeArrayIgnoringFailures(
             [ThreadStateResponse].self,
             forKey: .threads
         )

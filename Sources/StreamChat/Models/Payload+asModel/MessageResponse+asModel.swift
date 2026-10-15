@@ -72,14 +72,14 @@ extension MessageResponse {
             parentMessageId: parentId,
             showReplyInChannel: showInChannel ?? false,
             replyCount: replyCount,
-            extraData: custom ?? [:],
+            extraData: custom,
             quotedMessage: quotedMessage,
             isBounced: moderation?.action == MessageModerationAction.bounce.rawValue,
-            isSilent: silent ?? false,
-            isShadowed: shadowed ?? false,
+            isSilent: silent,
+            isShadowed: shadowed,
             deletedForMe: deletedForMe ?? false,
-            reactionScores: (reactionScores ?? [:]).mapKeys(MessageReactionType.init(rawValue:)),
-            reactionCounts: (reactionCounts ?? [:]).mapKeys(MessageReactionType.init(rawValue:)),
+            reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
+            reactionCounts: reactionCounts.mapKeys(MessageReactionType.init(rawValue:)),
             reactionGroups: (reactionGroups ?? [:]).reduce(into: [:]) { acc, element in
                 guard let group = element.value else { return }
                 let type = MessageReactionType(rawValue: element.key)
@@ -94,8 +94,8 @@ extension MessageResponse {
             author: author,
             mentionedUsers: mentionedUsers,
             mentionedChannelMembers: mentionedChannelMembers,
-            mentionedHere: mentionedHere ?? false,
-            mentionedChannel: mentionedChannel ?? false,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
             mentionedGroups: Set(mentionedGroups ?? []),
             mentionedRoles: mentionedRoles ?? [],
             threadParticipants: threadParticipants,
@@ -106,7 +106,7 @@ extension MessageResponse {
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
             isSentByCurrentUser: user.id == currentUserId,
-            pinDetails: pinned == true ? MessagePinDetails(
+            pinDetails: pinned ? MessagePinDetails(
                 pinnedAt: pinnedAt ?? createdAt,
                 pinnedBy: pinnedBy?.asModel() ?? author,
                 expiresAt: pinExpires
@@ -149,7 +149,7 @@ extension MessageResponse {
             member: member.map {
                 ChatMemberInfo(
                     channelRole: MemberRole(rawChannelValue: $0.channelRole),
-                    notificationsMuted: $0.notificationsMuted ?? false,
+                    notificationsMuted: $0.notificationsMuted,
                     extraData: $0.custom ?? [:]
                 )
             }
@@ -177,7 +177,7 @@ extension MemberInfoPayload {
     func asModel() -> ChatMemberInfo {
         ChatMemberInfo(
             channelRole: MemberRole(rawChannelValue: channelRole),
-            notificationsMuted: notificationsMuted ?? false,
+            notificationsMuted: notificationsMuted,
             extraData: custom ?? [:]
         )
     }

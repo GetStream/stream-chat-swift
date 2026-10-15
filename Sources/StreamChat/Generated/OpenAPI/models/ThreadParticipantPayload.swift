@@ -9,7 +9,7 @@ final class ThreadParticipantPayload: Sendable, Decodable {
     let channelCid: String
     /// Date/time of creation
     let createdAt: Date
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     let lastReadAt: Date
     /// Thead ID is unique string identifier of the thread
     let threadId: String?
@@ -19,7 +19,7 @@ final class ThreadParticipantPayload: Sendable, Decodable {
     init(
         channelCid: String,
         createdAt: Date,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         lastReadAt: Date,
         threadId: String? = nil,
         user: UserPayload? = nil
@@ -36,7 +36,7 @@ final class ThreadParticipantPayload: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.channelCid = try container.decode(String.self, forKey: .channelCid)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.lastReadAt = try container.decode(Date.self, forKey: .lastReadAt)
         self.threadId = try container.decodeIfPresent(String.self, forKey: .threadId)
         self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
