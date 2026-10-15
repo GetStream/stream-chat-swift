@@ -5093,6 +5093,17 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(reloaded.text, "Local text")
         XCTAssertNotNil(reloaded.channel)
     }
+
+    func test_isLaterAtServerPrecision_whenAdjacentMicroseconds_thenDatesAreDistinct() {
+        let seconds: TimeInterval = 1_791_995_869
+        for microseconds in stride(from: 0, to: 999_999, by: 997) {
+            let earlier = Date(timeIntervalSince1970: seconds + TimeInterval(microseconds) / 1_000_000)
+            let later = Date(timeIntervalSince1970: seconds + TimeInterval(microseconds + 1) / 1_000_000)
+            XCTAssertTrue(later.isLaterAtServerPrecision(than: earlier), "\(microseconds)")
+            XCTAssertFalse(earlier.isLaterAtServerPrecision(than: later), "\(microseconds)")
+            XCTAssertFalse(earlier.addingTimeInterval(0.000_000_238).isLaterAtServerPrecision(than: earlier), "\(microseconds)")
+        }
+    }
 }
 
 private extension MessageDTO_Tests {
