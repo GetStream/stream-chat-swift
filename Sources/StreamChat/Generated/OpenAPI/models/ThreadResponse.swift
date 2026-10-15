@@ -6,7 +6,7 @@ import Foundation
 
 final class ThreadResponse: Sendable, Decodable {
     /// Active Participant Count
-    let activeParticipantCount: Int?
+    let activeParticipantCount: Int
     /// Represents channel in chat
     let channel: ChannelDetailPayload?
     /// Channel CID
@@ -18,7 +18,7 @@ final class ThreadResponse: Sendable, Decodable {
     /// Created By User ID
     let createdByUserId: String?
     /// Custom data for this object
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     /// Last Message At
     let lastMessageAt: Date?
     /// Represents any chat message
@@ -37,13 +37,13 @@ final class ThreadResponse: Sendable, Decodable {
     let updatedAt: Date
 
     init(
-        activeParticipantCount: Int? = nil,
+        activeParticipantCount: Int,
         channel: ChannelDetailPayload? = nil,
         channelCid: String,
         createdAt: Date,
         createdBy: UserPayload? = nil,
         createdByUserId: String? = nil,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         lastMessageAt: Date? = nil,
         parentMessage: MessageResponse? = nil,
         parentMessageId: String,
@@ -72,16 +72,13 @@ final class ThreadResponse: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
-        self.activeParticipantCount = try container.decodeIfPresent(
-            Int.self,
-            forKey: .activeParticipantCount
-        )
+        self.activeParticipantCount = try container.decode(Int.self, forKey: .activeParticipantCount)
         self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         self.channelCid = try container.decode(String.self, forKey: .channelCid)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
         self.createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         self.createdByUserId = try container.decodeIfPresent(String.self, forKey: .createdByUserId)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         self.parentMessage = try container.decodeIfPresent(
             MessageResponse.self,

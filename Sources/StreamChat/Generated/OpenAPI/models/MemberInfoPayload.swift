@@ -10,9 +10,9 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
     /// Channel-member custom fields projected via `member_custom_include`
     let custom: [String: RawJSON]?
     /// Whether the user muted notifications for this channel
-    let notificationsMuted: Bool?
+    let notificationsMuted: Bool
 
-    init(channelRole: String, custom: [String: RawJSON]? = nil, notificationsMuted: Bool? = nil) {
+    init(channelRole: String, custom: [String: RawJSON]? = nil, notificationsMuted: Bool) {
         self.channelRole = channelRole
         self.custom = custom
         self.notificationsMuted = notificationsMuted
@@ -22,16 +22,13 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.channelRole = try container.decode(String.self, forKey: .channelRole)
         self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
-        self.notificationsMuted = try container.decodeIfPresent(
-            Bool.self,
-            forKey: .notificationsMuted
-        )
+        self.notificationsMuted = try container.decode(Bool.self, forKey: .notificationsMuted)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encode(channelRole, forKey: .channelRole)
         try container.encodeIfPresent(custom, forKey: .custom)
-        try container.encodeIfPresent(notificationsMuted, forKey: .notificationsMuted)
+        try container.encode(notificationsMuted, forKey: .notificationsMuted)
     }
 }

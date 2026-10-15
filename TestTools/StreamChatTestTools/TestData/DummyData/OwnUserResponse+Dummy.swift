@@ -8,11 +8,11 @@ import Foundation
 typealias CurrentUserPayload = OwnUserResponse
 
 extension OwnUserResponse {
-    var extraData: [String: RawJSON] { custom ?? [:] }
+    var extraData: [String: RawJSON] { custom }
 
     var imageURL: URL? { image.flatMap(URL.init(string:)) }
 
-    var isBanned: Bool { banned ?? false }
+    var isBanned: Bool { banned }
 
     var isOnline: Bool { online }
 
@@ -145,7 +145,7 @@ extension OwnUserResponse {
             isOnline: userPayload.isOnline,
             isInvisible: true,
             isBanned: userPayload.isBanned,
-            teams: userPayload.teams ?? [],
+            teams: userPayload.teams,
             language: userPayload.language,
             extraData: userPayload.extraData,
             devices: devices,

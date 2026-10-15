@@ -8,7 +8,7 @@ import Foundation
 final class DraftMessagePayload: Sendable, Decodable {
     /// Array of message attachments
     let attachments: [MessageAttachmentPayload]?
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     /// Message ID is unique string identifier of the message
     let id: String
     /// List of mentioned users
@@ -29,7 +29,7 @@ final class DraftMessagePayload: Sendable, Decodable {
 
     init(
         attachments: [MessageAttachmentPayload]? = nil,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         id: String,
         mentionedUsers: [UserPayload]? = nil,
         parentId: String? = nil,
@@ -59,7 +59,7 @@ final class DraftMessagePayload: Sendable, Decodable {
             [MessageAttachmentPayload].self,
             forKey: .attachments
         )
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.id = try container.decode(String.self, forKey: .id)
         self.mentionedUsers = try container.decodeIfPresent(
             [UserPayload].self,

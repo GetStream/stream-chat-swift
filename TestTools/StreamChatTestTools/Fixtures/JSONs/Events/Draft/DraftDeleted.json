@@ -8,6 +8,7 @@
         "created_at": "2024-02-11T15:42:21.123Z",
         "parent_id": "thread-123",
         "message": {
+            "custom": {},
             "id": "draft-123",
             "text": "Test draft message",
             "show_reply_in_channel": false,

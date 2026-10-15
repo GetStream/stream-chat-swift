@@ -9,8 +9,8 @@ extension MessageResponse {
     // Messages have no dedicated args field, it is stored as custom data.
     static let argsKey = "args"
 
-    var campaignId: String? { custom?["created_by_campaign_id"]?.stringValue }
-    var args: String? { custom?[Self.argsKey]?.stringValue }
+    var campaignId: String? { custom["created_by_campaign_id"]?.stringValue }
+    var args: String? { custom[Self.argsKey]?.stringValue }
 
     var translations: [TranslationLanguage: String]? {
         guard let i18n, !i18n.isEmpty else { return nil }

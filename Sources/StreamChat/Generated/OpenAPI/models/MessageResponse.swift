@@ -14,7 +14,7 @@ final class MessageResponse: Sendable, Decodable {
     let command: String?
     /// Date/time of creation
     let createdAt: Date
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     /// Date/time of deletion
     let deletedAt: Date?
     let deletedForMe: Bool?
@@ -28,7 +28,7 @@ final class MessageResponse: Sendable, Decodable {
     let latestReactions: [MessageReactionPayload]
     let member: MemberInfoPayload?
     /// Whether the message mentioned the channel tag
-    let mentionedChannel: Bool?
+    let mentionedChannel: Bool
     /// Channel member data for the users mentioned in the message, keyed by user id. Only present when the app has member custom on mentioned users enabled, and only for the first two mentioned users of each message
     let mentionedChannelMembers: [String: MemberInfoPayload]?
     /// List of user group IDs mentioned in the message. Group members who are also channel members will receive push notifications based on their push preferences. Max 10 groups
@@ -36,7 +36,7 @@ final class MessageResponse: Sendable, Decodable {
     /// List of mentioned user group objects.
     let mentionedGroups: [UserGroup]?
     /// Whether the message mentioned online users with @here tag
-    let mentionedHere: Bool?
+    let mentionedHere: Bool
     /// List of roles mentioned in the message (e.g. admin, channel_moderator, custom roles). Members with matching roles will receive push notifications based on their push preferences. Max 10 roles
     let mentionedRoles: [String]?
     /// List of mentioned users
@@ -50,7 +50,7 @@ final class MessageResponse: Sendable, Decodable {
     /// Date when pinned message expires
     let pinExpires: Date?
     /// Whether message is pinned or not
-    let pinned: Bool?
+    let pinned: Bool
     /// Date when message got pinned
     let pinnedAt: Date?
     /// User response object
@@ -62,22 +62,22 @@ final class MessageResponse: Sendable, Decodable {
     let quotedMessage: MessageResponse?
     let quotedMessageId: String?
     /// An object containing number of reactions of each type. Key: reaction type (string), value: number of reactions (int)
-    let reactionCounts: [String: Int]?
+    let reactionCounts: [String: Int]
     let reactionGroups: [String: MessageReactionGroupPayload?]?
     /// An object containing scores of reactions of each type. Key: reaction type (string), value: total score of reactions (int)
-    let reactionScores: [String: Int]?
+    let reactionScores: [String: Int]
     let reminder: ReminderPayload?
     /// Number of replies to this message
     let replyCount: Int
     /// A list of user ids that have restricted visibility to the message, if the list is not empty, the message is only visible to the users in the list
-    let restrictedVisibility: [String]?
+    let restrictedVisibility: [String]
     /// Whether the message was shadowed or not
-    let shadowed: Bool?
+    let shadowed: Bool
     let sharedLocation: SharedLocation?
     /// Whether thread reply should be shown in the channel as well
     let showInChannel: Bool?
     /// Whether message is silent or not
-    let silent: Bool?
+    let silent: Bool
     /// Text of the message. Should be empty if `mml` is provided
     let text: String
     /// List of users who participate in thread
@@ -94,7 +94,7 @@ final class MessageResponse: Sendable, Decodable {
         cid: String,
         command: String? = nil,
         createdAt: Date,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         deletedAt: Date? = nil,
         deletedForMe: Bool? = nil,
         deletedReplyCount: Int,
@@ -103,11 +103,11 @@ final class MessageResponse: Sendable, Decodable {
         id: String,
         latestReactions: [MessageReactionPayload],
         member: MemberInfoPayload? = nil,
-        mentionedChannel: Bool? = nil,
+        mentionedChannel: Bool,
         mentionedChannelMembers: [String: MemberInfoPayload]? = nil,
         mentionedGroupIds: [String]? = nil,
         mentionedGroups: [UserGroup]? = nil,
-        mentionedHere: Bool? = nil,
+        mentionedHere: Bool,
         mentionedRoles: [String]? = nil,
         mentionedUsers: [UserPayload],
         messageTextUpdatedAt: Date? = nil,
@@ -115,23 +115,23 @@ final class MessageResponse: Sendable, Decodable {
         ownReactions: [MessageReactionPayload],
         parentId: String? = nil,
         pinExpires: Date? = nil,
-        pinned: Bool? = nil,
+        pinned: Bool,
         pinnedAt: Date? = nil,
         pinnedBy: UserPayload? = nil,
         poll: PollPayload? = nil,
         pollId: String? = nil,
         quotedMessage: MessageResponse? = nil,
         quotedMessageId: String? = nil,
-        reactionCounts: [String: Int]? = nil,
+        reactionCounts: [String: Int],
         reactionGroups: [String: MessageReactionGroupPayload?]? = nil,
-        reactionScores: [String: Int]? = nil,
+        reactionScores: [String: Int],
         reminder: ReminderPayload? = nil,
         replyCount: Int,
-        restrictedVisibility: [String]? = nil,
-        shadowed: Bool? = nil,
+        restrictedVisibility: [String],
+        shadowed: Bool,
         sharedLocation: SharedLocation? = nil,
         showInChannel: Bool? = nil,
-        silent: Bool? = nil,
+        silent: Bool,
         text: String,
         threadParticipants: [UserPayload]? = nil,
         type: String,
@@ -196,7 +196,7 @@ final class MessageResponse: Sendable, Decodable {
         self.cid = try container.decode(String.self, forKey: .cid)
         self.command = try container.decodeIfPresent(String.self, forKey: .command)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         self.deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
         self.deletedReplyCount = try container.decode(Int.self, forKey: .deletedReplyCount)
@@ -208,7 +208,7 @@ final class MessageResponse: Sendable, Decodable {
             forKey: .latestReactions
         )
         self.member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
-        self.mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel)
+        self.mentionedChannel = try container.decode(Bool.self, forKey: .mentionedChannel)
         self.mentionedChannelMembers = try container.decodeIfPresent(
             [String: MemberInfoPayload].self,
             forKey: .mentionedChannelMembers
@@ -221,7 +221,7 @@ final class MessageResponse: Sendable, Decodable {
             [UserGroup].self,
             forKey: .mentionedGroups
         )
-        self.mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere)
+        self.mentionedHere = try container.decode(Bool.self, forKey: .mentionedHere)
         self.mentionedRoles = try container.decodeArrayIfPresentIgnoringFailures(
             [String].self,
             forKey: .mentionedRoles
@@ -244,7 +244,7 @@ final class MessageResponse: Sendable, Decodable {
         )
         self.parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         self.pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
-        self.pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned)
+        self.pinned = try container.decode(Bool.self, forKey: .pinned)
         self.pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         self.pinnedBy = try container.decodeIfPresent(UserPayload.self, forKey: .pinnedBy)
         self.poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
@@ -254,31 +254,25 @@ final class MessageResponse: Sendable, Decodable {
             forKey: .quotedMessage
         )
         self.quotedMessageId = try container.decodeIfPresent(String.self, forKey: .quotedMessageId)
-        self.reactionCounts = try container.decodeIfPresent(
-            [String: Int].self,
-            forKey: .reactionCounts
-        )
+        self.reactionCounts = try container.decode([String: Int].self, forKey: .reactionCounts)
         self.reactionGroups = try container.decodeIfPresent(
             [String: MessageReactionGroupPayload?].self,
             forKey: .reactionGroups
         )
-        self.reactionScores = try container.decodeIfPresent(
-            [String: Int].self,
-            forKey: .reactionScores
-        )
+        self.reactionScores = try container.decode([String: Int].self, forKey: .reactionScores)
         self.reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         self.replyCount = try container.decode(Int.self, forKey: .replyCount)
-        self.restrictedVisibility = try container.decodeArrayIfPresentIgnoringFailures(
+        self.restrictedVisibility = try container.decodeArrayIgnoringFailures(
             [String].self,
             forKey: .restrictedVisibility
         )
-        self.shadowed = try container.decodeIfPresent(Bool.self, forKey: .shadowed)
+        self.shadowed = try container.decode(Bool.self, forKey: .shadowed)
         self.sharedLocation = try container.decodeIfPresent(
             SharedLocation.self,
             forKey: .sharedLocation
         )
         self.showInChannel = try container.decodeIfPresent(Bool.self, forKey: .showInChannel)
-        self.silent = try container.decodeIfPresent(Bool.self, forKey: .silent)
+        self.silent = try container.decode(Bool.self, forKey: .silent)
         self.text = try container.decode(String.self, forKey: .text)
         self.threadParticipants = try container.decodeIfPresent(
             [UserPayload].self,

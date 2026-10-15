@@ -7,13 +7,13 @@ import Foundation
 final class ThreadStateResponse: Sendable, Decodable {
     let thread: ThreadResponse
     let draft: DraftPayload?
-    let latestReplies: [MessageResponse]?
+    let latestReplies: [MessageResponse]
     let read: [ReadStateResponse]?
 
     init(
         thread: ThreadResponse,
         draft: DraftPayload? = nil,
-        latestReplies: [MessageResponse]? = nil,
+        latestReplies: [MessageResponse],
         read: [ReadStateResponse]? = nil
     ) {
         self.thread = thread
@@ -26,7 +26,7 @@ final class ThreadStateResponse: Sendable, Decodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.thread = try ThreadResponse(from: decoder)
         self.draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        self.latestReplies = try container.decodeArrayIfPresentIgnoringFailures(
+        self.latestReplies = try container.decodeArrayIgnoringFailures(
             [MessageResponse].self,
             forKey: .latestReplies
         )

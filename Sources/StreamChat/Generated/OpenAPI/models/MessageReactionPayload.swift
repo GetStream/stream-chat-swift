@@ -8,7 +8,7 @@ final class MessageReactionPayload: Sendable, Decodable {
     /// Date/time of creation
     let createdAt: Date
     /// Custom data for this object
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     /// Message ID
     let messageId: String
     /// Score of the reaction
@@ -24,7 +24,7 @@ final class MessageReactionPayload: Sendable, Decodable {
 
     init(
         createdAt: Date,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         messageId: String,
         score: Int,
         type: MessageReactionType,
@@ -45,7 +45,7 @@ final class MessageReactionPayload: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.messageId = try container.decode(String.self, forKey: .messageId)
         self.score = try container.decode(Int.self, forKey: .score)
         self.type = try container.decode(MessageReactionType.self, forKey: .type)

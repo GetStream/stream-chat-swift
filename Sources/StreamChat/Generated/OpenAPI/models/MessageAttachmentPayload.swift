@@ -12,7 +12,7 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
     let authorLink: String?
     let authorName: String?
     let color: String?
-    let custom: [String: RawJSON]?
+    let custom: [String: RawJSON]
     let fallback: String?
     let fields: [AttachmentFieldPayload]?
     let footer: String?
@@ -37,7 +37,7 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         authorLink: String? = nil,
         authorName: String? = nil,
         color: String? = nil,
-        custom: [String: RawJSON]? = nil,
+        custom: [String: RawJSON],
         fallback: String? = nil,
         fields: [AttachmentFieldPayload]? = nil,
         footer: String? = nil,
@@ -89,7 +89,7 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         self.authorLink = try container.decodeIfPresent(String.self, forKey: .authorLink)
         self.authorName = try container.decodeIfPresent(String.self, forKey: .authorName)
         self.color = try container.decodeIfPresent(String.self, forKey: .color)
-        self.custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        self.custom = try container.decode([String: RawJSON].self, forKey: .custom)
         self.fallback = try container.decodeIfPresent(String.self, forKey: .fallback)
         self.fields = try container.decodeIfPresent([AttachmentFieldPayload].self, forKey: .fields)
         self.footer = try container.decodeIfPresent(String.self, forKey: .footer)
@@ -115,7 +115,7 @@ final class MessageAttachmentPayload: Sendable, Codable, JSONEncodable {
         try container.encodeIfPresent(authorLink, forKey: .authorLink)
         try container.encodeIfPresent(authorName, forKey: .authorName)
         try container.encodeIfPresent(color, forKey: .color)
-        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encode(custom, forKey: .custom)
         try container.encodeIfPresent(fallback, forKey: .fallback)
         try container.encodeIfPresent(fields, forKey: .fields)
         try container.encodeIfPresent(footer, forKey: .footer)

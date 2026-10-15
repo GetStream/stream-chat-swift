@@ -180,7 +180,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedChannelMembers?.count, 1)
         XCTAssertEqual(member.channelRole, "channel_member")
         XCTAssertEqual(member.custom, ["nickname": .string("Marty")])
-        XCTAssertNil(payload.custom?["mentioned_channel_members"])
+        XCTAssertNil(payload.custom["mentioned_channel_members"])
     }
 
     func test_messagePayload_asModel_convertsMentionedChannelMembers() {
@@ -268,20 +268,6 @@ final class MessagePayload_Tests: XCTestCase {
         )
     }
 
-    func test_memberInfoPayload_notificationsMutedIsNilWhenMissingOrNull() throws {
-        let missing = try JSONDecoder.stream.decode(
-            MemberInfoPayload.self,
-            from: Data(#"{"channel_role":"channel_member"}"#.utf8)
-        )
-        let null = try JSONDecoder.stream.decode(
-            MemberInfoPayload.self,
-            from: Data(#"{"channel_role":"channel_member","notifications_muted":null}"#.utf8)
-        )
-
-        XCTAssertNil(missing.notificationsMuted)
-        XCTAssertNil(null.notificationsMuted)
-    }
-
     func test_messagePayload_requiredFieldsThrowWhenMissing() throws {
         let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
         let message = try XCTUnwrap(root["message"] as? [String: Any])
@@ -300,52 +286,6 @@ final class MessagePayload_Tests: XCTestCase {
                 try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data),
                 "Expected decoding to fail when \(field) is missing"
             )
-        }
-    }
-
-    func test_messagePayload_reactionScoresAreNilWhenNull() throws {
-        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
-        var message = try XCTUnwrap(root["message"] as? [String: Any])
-        var quotedMessage = try XCTUnwrap(message["quoted_message"] as? [String: Any])
-        quotedMessage["reaction_scores"] = NSNull()
-        message["quoted_message"] = quotedMessage
-        message["reaction_scores"] = NSNull()
-        let data = try JSONSerialization.data(withJSONObject: ["message": message])
-
-        let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
-
-        XCTAssertNil(payload.reactionScores)
-        XCTAssertNil(payload.quotedMessage?.reactionScores)
-    }
-
-    func test_messagePayload_optionalFieldsAreNilWhenMissingOrNull() throws {
-        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
-        let message = try XCTUnwrap(root["message"] as? [String: Any])
-        let fields = [
-            "mentioned_channel",
-            "mentioned_here",
-            "pinned",
-            "reaction_scores",
-            "restricted_visibility",
-            "shadowed",
-            "silent"
-        ]
-        for value in [nil, NSNull()] as [NSNull?] {
-            var candidateMessage = message
-            for field in fields {
-                candidateMessage[field] = value
-            }
-            let data = try JSONSerialization.data(withJSONObject: ["message": candidateMessage])
-
-            let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
-
-            XCTAssertNil(payload.mentionedChannel)
-            XCTAssertNil(payload.mentionedHere)
-            XCTAssertNil(payload.pinned)
-            XCTAssertNil(payload.reactionScores)
-            XCTAssertNil(payload.restrictedVisibility)
-            XCTAssertNil(payload.shadowed)
-            XCTAssertNil(payload.silent)
         }
     }
 
@@ -395,7 +335,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.silent, true)
-        XCTAssertEqual(payload.shadowed, false)
+        XCTAssertFalse(payload.shadowed)
         XCTAssertEqual(payload.cid, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.attachments.count, 2)
