@@ -11,7 +11,15 @@ extension UserRobot {
     @discardableResult
     func tapOnMessageReactions(at messageCellIndex: Int? = nil) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        attributes.reactionButton(in: messageCell).wait().safeTap()
+        attributes.reactionButton(in: messageCell).firstMatch.wait().safeTap()
+        return self
+    }
+
+    @discardableResult
+    func closeReactionAuthors() -> Self {
+        // A corner is used because message bubbles are inset from the screen edges, so no message length reaches it.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.02, dy: 0.15)).tap()
+        MessageListPage.Reactions.authors.firstMatch.waitForDisappearance()
         return self
     }
 }
@@ -22,16 +30,21 @@ extension UserRobot {
     @discardableResult
     func assertReactionAuthor(
         _ authorName: String,
+        isPresent: Bool = true,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let author = MessageListPage.Reactions.author(authorName).wait()
-        XCTAssertTrue(author.exists, "Reaction author \(authorName) is not shown", file: file, line: line)
+        let author = MessageListPage.Reactions.author(authorName)
+        _ = isPresent ? author.wait() : author.waitForDisappearance()
+        let errMessage = isPresent ? "Reaction author \(authorName) is not shown" : "Reaction author \(authorName) is shown"
+        XCTAssertEqual(isPresent, author.exists, errMessage, file: file, line: line)
         return self
     }
 }
 
 extension MessageListPage.Reactions {
+    static var authors: XCUIElementQuery { app.cells.matching(identifier: "ChatMessageReactionAuthorViewCell") }
+
     static func author(_ name: String) -> XCUIElement {
         app.staticTexts.matching(NSPredicate(format: "identifier == 'reactionAuthorNameLabel' AND label == %@", name)).firstMatch
     }
