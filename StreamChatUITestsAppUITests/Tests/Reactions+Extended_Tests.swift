@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatCommonUI
 import XCTest
 
 extension Reactions_Tests {
@@ -17,15 +18,33 @@ extension Reactions_Tests {
             participantRobot.sendMessage(message)
             userRobot.assertMessage(message)
         }
+        AND("user adds the reaction") {
+            userRobot
+                .addReaction(type: .wow)
+                .waitForNewReaction()
+        }
         AND("participant adds the reaction") {
             participantRobot.addReaction(type: .love)
-            userRobot.assertReaction(isPresent: true)
         }
         WHEN("user taps on the message reaction") {
             userRobot.tapOnMessageReactions()
         }
-        THEN("the reaction authors sheet shows the participant") {
-            userRobot.assertReactionAuthor(participantRobot.name)
+        THEN("the reaction authors sheet shows the participant and the user") {
+            userRobot
+                .assertReactionAuthor(participantRobot.name)
+                .assertReactionAuthor(L10n.you)
+        }
+        WHEN("participant removes the reaction") {
+            userRobot.closeReactionAuthors()
+            participantRobot.deleteReaction(type: .love)
+        }
+        AND("user taps on the message reaction") {
+            userRobot.tapOnMessageReactions()
+        }
+        THEN("the reaction authors sheet shows only the user") {
+            userRobot
+                .assertReactionAuthor(L10n.you)
+                .assertReactionAuthor(participantRobot.name, isPresent: false)
         }
     }
 

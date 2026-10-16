@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatCommonUI
 import XCTest
 
 final class Reactions_Tests: StreamTestCase {
@@ -35,16 +36,33 @@ final class Reactions_Tests: StreamTestCase {
         WHEN("user sends the message: '\(message)'") {
             userRobot.sendMessage(message)
         }
+        AND("participant adds the reaction") {
+            participantRobot.addReaction(type: .love)
+            userRobot.waitForNewReaction()
+        }
         AND("user adds the reaction") {
+            userRobot.addReaction(type: .wow)
+        }
+        AND("user opens the reaction authors") {
+            userRobot.tapOnMessageReactions()
+        }
+        THEN("the reaction authors show the user and the participant") {
             userRobot
-                .addReaction(type: .wow)
-                .waitForNewReaction()
+                .assertReactionAuthor(L10n.you)
+                .assertReactionAuthor(participantRobot.name)
         }
-        AND("user removes the reaction") {
-            userRobot.deleteReaction(type: .wow)
+        WHEN("user removes the reaction") {
+            userRobot
+                .closeReactionAuthors()
+                .deleteReaction(type: .wow)
         }
-        THEN("the reaction is removed") {
-            userRobot.assertReaction(isPresent: false)
+        AND("user opens the reaction authors") {
+            userRobot.tapOnMessageReactions()
+        }
+        THEN("the reaction authors show only the participant") {
+            userRobot
+                .assertReactionAuthor(participantRobot.name)
+                .assertReactionAuthor(L10n.you, isPresent: false)
         }
     }
 
