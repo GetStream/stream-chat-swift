@@ -3,7 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Keep the loaded pages of grouped channel lists after reconnecting instead of resetting to the first page [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
+- Fix `ChannelList.loadMoreChannels()` returning no channels after the first page of a grouped list is reloaded [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_
