@@ -27,6 +27,11 @@ class ChannelWatcherHandler: ChannelWatcherHandling, @unchecked Sendable {
 
     func attemptToWatch(channelIds: [ChannelId], completion: (@Sendable ((any Error)?) -> Void)?) {
         queue.async { [self] in
+            guard !channelIds.isEmpty else {
+                completion?(nil)
+                return
+            }
+
             if let completion {
                 self.waitingCompletions.append((channelIds, completion))
             }

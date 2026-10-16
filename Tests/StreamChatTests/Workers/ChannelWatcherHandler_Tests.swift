@@ -82,6 +82,17 @@ final class ChannelWatcherHandler_Tests: XCTestCase {
         XCTAssertEqual(Set(channelListUpdater.startWatchingChannels_cids), Set(channelIds))
     }
     
+    func test_attemptToWatch_withNoChannels_completesImmediately() {
+        let expectation = self.expectation(description: "Watch completed")
+
+        handler.attemptToWatch(channelIds: []) { _ in
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
+    }
+
     // MARK: - Duplicate Prevention Tests
     
     func test_attemptToWatch_whenAlreadyWatching_doesNotMakeDuplicateRequest() {
