@@ -3,7 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `ChannelKickedEvent`, sent when the current user loses access to a channel [#4340](https://github.com/GetStream/stream-chat-swift/pull/4340)
+### 🐞 Fixed
+- Fix a channel being marked read repeatedly after the current user lost access to it [#4340](https://github.com/GetStream/stream-chat-swift/pull/4340)
+
+## StreamChatUI
+### ✅ Added
+- Add `ChatChannelVC.handleChannelAccessLost(_:)`, which by default dismisses the channel view when the current user loses access to the channel [#4340](https://github.com/GetStream/stream-chat-swift/pull/4340)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_
