@@ -41,6 +41,7 @@
         "birthland": "Corellia",
         "blocked_user_ids": [],
         "created_at": "2024-07-09T10:25:12.255599Z",
+        "custom": {},
         "id": "han_solo",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "language": "",
@@ -51,6 +52,7 @@
         "teams": [],
         "updated_at": "2024-07-09T10:25:12.260463Z"
       },
+      "custom": {},
       "disabled": false,
       "frozen": false,
       "id": "!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
@@ -62,9 +64,13 @@
     "channel_cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
     "created_at": "2025-02-11T12:27:04.780633395Z",
     "message": {
+      "custom": {},
       "id": "eb8ab3c9-5ade-4b4d-b32d-3d7f037682c0",
       "mentioned_users": [
         {
+            "custom": {},
+            "language": "",
+            "teams": [],
             "id": "leia_organa",
             "role": "user",
             "created_at": "2023-09-27T13:21:25.781323Z",
