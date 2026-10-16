@@ -5,7 +5,7 @@
 import Foundation
 
 final class GroupedQueryChannelsResponse: Sendable, Decodable {
-    /// Predefined channel groups keyed by group name
+    /// Groups keyed by the requested stored group name
     let groups: [String: GroupedChannelsBucket]
 
     init(groups: [String: GroupedChannelsBucket]) {

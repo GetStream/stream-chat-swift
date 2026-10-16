@@ -294,6 +294,28 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(["all": 7, "new": 2, "old": 1], counters)
     }
 
+    func test_saveEvent_doesNotMergeUnreadChannelCountsOfFilteredGroups() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["expired": 3])
+            session.saveQuery(query: ChannelListQuery(groupKey: "expired")).groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+        }
+
+        let eventPayload = MessageNewEventDTO(
+            cid: .unique,
+            createdAt: .unique,
+            groupedUnreadChannels: ["expired": 10, "new": 2],
+            message: .dummy(messageId: .unique, authorUserId: .unique)
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(event: .typeMessageNewEvent(eventPayload))
+        }
+
+        let counters = try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup ?? [:] }
+        XCTAssertEqual(["expired": 3, "new": 2], counters)
+    }
+
     func test_saveCurrentUserUnreadCount_failsIfThereIsNoCurrentUser() throws {
         func saveUnreadCountWithoutUser() throws {
             try database.writeSynchronously {

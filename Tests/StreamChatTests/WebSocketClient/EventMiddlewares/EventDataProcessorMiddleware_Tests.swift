@@ -101,6 +101,31 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         XCTAssertEqual(member.memberExtraData, updatedMemberExtraData)
     }
 
+    func test_channelUpdated_thenOtherEventWithOlderChannel_appliesChannel() throws {
+        let cid: ChannelId = .unique
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
+
+        nonisolated(unsafe) let middlewares: [EventMiddleware] = [EventDataProcessorMiddleware()]
+
+        let channelUpdatedEvent = ChannelUpdatedEventDTO(
+            channel: .dummy(cid: cid, name: "Newer", updatedAt: newerUpdatedAt),
+            createdAt: newerUpdatedAt
+        )
+        let olderChannelUpdatedEvent = ChannelUpdatedEventDTO(
+            channel: .dummy(cid: cid, name: "Older", updatedAt: olderUpdatedAt),
+            createdAt: newerUpdatedAt.addingTimeInterval(0.03)
+        )
+
+        try database.writeSynchronously { session in
+            _ = middlewares.process(event: channelUpdatedEvent, wsEvent: .typeChannelUpdatedEvent(channelUpdatedEvent), session: session)
+            _ = middlewares.process(event: olderChannelUpdatedEvent, wsEvent: .typeChannelUpdatedEvent(olderChannelUpdatedEvent), session: session)
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        XCTAssertEqual(channel.name, "Older")
+    }
+
     func test_middleware_handlesReactionDeletedEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique

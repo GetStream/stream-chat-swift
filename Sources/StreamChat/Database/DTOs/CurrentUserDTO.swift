@@ -229,15 +229,32 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        dto.unreadChannelCountsByGroup = (dto.unreadChannelCountsByGroup ?? [:]).merging(unreadChannelCountsByGroup) { _, new in new }
+        // Server counts have no group filter cutoffs, so filtered groups are counted locally.
+        let filteredGroupKeys = Set(loadFilteredGroupChannelListQueries().map(\.filterHash))
+        let unfilteredCounts = unreadChannelCountsByGroup.filter { !filteredGroupKeys.contains($0.key) }
+        dto.unreadChannelCountsByGroup = (dto.unreadChannelCountsByGroup ?? [:]).merging(unfilteredCounts) { _, new in new }
     }
 
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
         invalidateCurrentUserCache()
-        guard let dto = currentUser, var counts = dto.unreadChannelCountsByGroup, let existing = counts[groupKey] else {
+        guard channelListQuery(ChannelListQuery(groupKey: groupKey))?.groupFilterJSONData == nil,
+              let dto = currentUser, var counts = dto.unreadChannelCountsByGroup, let existing = counts[groupKey] else {
             return
         }
         counts[groupKey] = max(0, existing + delta)
+        dto.unreadChannelCountsByGroup = counts
+    }
+
+    func updateFilteredGroupUnreadChannelCounts(for queries: [ChannelListQueryDTO]) {
+        invalidateCurrentUserCache()
+        guard let dto = currentUser else { return }
+        let currentCounts = dto.unreadChannelCountsByGroup ?? [:]
+        var counts = currentCounts
+        for query in queries where query.groupFilterJSONData != nil {
+            counts[query.filterHash] = Int(query.groupNotLoadedUnreadCount) + query.loadedUnreadChannelsCount(currentUserId: dto.user.id)
+        }
+        // Assigning always marks the current user as changed, which notifies its observers.
+        guard counts != currentCounts else { return }
         dto.unreadChannelCountsByGroup = counts
     }
 
