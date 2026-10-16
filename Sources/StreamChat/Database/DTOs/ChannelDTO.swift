@@ -15,6 +15,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
+    @NSManaged var group: String?
     @NSManaged var config: ChannelConfigDTO
     @NSManaged var filterTags: Set<ChannelFilterTagDTO>
     @NSManaged var ownCapabilities: [String]
@@ -22,6 +23,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var deletedAt: DBDate?
     @NSManaged var defaultSortingAt: DBDate
+    @NSManaged var queryTimestamp: DBDate
+    @NSManaged var touchedAt: DBDate?
     @NSManaged var updatedAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
 
@@ -144,6 +147,10 @@ class ChannelDTO: NSManagedObject {
         if lastDate != defaultSortingAt {
             defaultSortingAt = lastDate
         }
+        let newQueryTimestamp = max(lastDate.bridgeDate, touchedAt?.bridgeDate ?? .distantPast).bridgeDate
+        if newQueryTimestamp != queryTimestamp {
+            queryTimestamp = newQueryTimestamp
+        }
     }
 
     /// The fetch request that returns all existed channels from the database
@@ -258,18 +265,6 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
-        // `updatedAt` is only written from server payloads, never from optimistic local
-        // mutations. Events such as `member.updated` can still carry a full `channel`
-        // object snapshotted before a concurrent `channel.updated`. Skip the stale
-        // snapshot entirely so channel state is not rewound.
-        if payload.updatedAt < dto.updatedAt.bridgeDate {
-            if let query {
-                let queryDTO = saveQuery(query: query)
-                queryDTO.channels.insert(dto)
-            }
-            return dto
-        }
-
         dto.name = payload.name
         dto.imageURL = payload.imageURL
         do {
@@ -281,6 +276,7 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
+        dto.group = payload.extraData[GroupedChannelKey.group]?.stringValue.flatMap { $0.isEmpty ? nil : $0 }
         dto.typeRawValue = payload.type
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
@@ -302,6 +298,7 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
+        dto.touchedAt = payload.extraData[GroupedChannelKey.touchedAt].flatMap { try? JSONDecoder.default.decode(Date.self, from: JSONEncoder.default.encode($0)) }?.bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         

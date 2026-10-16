@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
+_October 15, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `MemberInfo.channelRole` and `MemberInfo` overloads for creating a channel with member role and extra data [#4322](https://github.com/GetStream/stream-chat-swift/pull/4322)
+- Add `GroupedChannelsQuery` and `ChatClient.queryGroupedChannels(with:)` to fetch grouped channels with per-group filters and `query_timestamp` sorting [#4329](https://github.com/GetStream/stream-chat-swift/pull/4329)
+### 🐞 Fixed
+- Only skip outdated channel data from `member.updated` events, so other channel updates are always applied [#4331](https://github.com/GetStream/stream-chat-swift/pull/4331)
+- Fix edited messages disappearing from a channel after re-entering it [#4333](https://github.com/GetStream/stream-chat-swift/pull/4333)
+
 # [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
 _October 09, 2026_
 
