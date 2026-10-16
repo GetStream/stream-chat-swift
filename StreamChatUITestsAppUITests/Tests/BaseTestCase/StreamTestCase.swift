@@ -21,6 +21,7 @@ class StreamTestCase: XCTestCase {
         try super.setUpWithError()
         alertHandler()
         backendHandler()
+        coverageHandler()
         app.launch()
     }
 
@@ -52,6 +53,16 @@ extension StreamTestCase {
         } else if let switchApiKey {
             app.setEnvironmentVariables([.customApiKey: switchApiKey])
         }
+    }
+
+    // Every test launches a fresh app process, so pointing its profile output at a per-test folder
+    // yields the code this test executed. `%c` keeps counters in sync with the file, because XCTest
+    // kills the app without running its exit handlers; `%m` keeps each instrumented image in its own file.
+    private func coverageHandler() {
+        guard let coverageDir = ProcessInfo.processInfo.environment["E2E_COVERAGE_DIR"] else { return }
+
+        let testClass = String(describing: type(of: self))
+        app.launchEnvironment["LLVM_PROFILE_FILE"] = "\(coverageDir)/\(testClass)/\(testName)/%m_%p%c.profraw"
     }
 
     private func attachElementTree() {

@@ -250,7 +250,7 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(["all"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
     }
 
-    func test_syncLocalState_groupedChannelList_passesPersistedWatchAndPresenceToQueryGroupedChannels() throws {
+    func test_syncLocalState_groupedChannelList_passesPersistedRequestOptionsToQueryGroupedChannels() throws {
         let cid = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
@@ -269,6 +269,8 @@ class SyncRepository_Tests: XCTestCase {
             let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "all"))
             queryDTO.watch = true
             queryDTO.presence = true
+            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            queryDTO.groupSortJSONData = Data(#"[{"field":"query_timestamp","direction":-1}]"#.utf8)
         }
         let refreshedGroup = ChannelGroup(groupKey: "all", channels: [.mock(cid: cid)], unreadChannels: 0)
         channelListUpdater.queryGroupedChannels_result = .success([refreshedGroup])
@@ -278,6 +280,9 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
         XCTAssertEqual([true], channelListUpdater.queryGroupedChannels_watchValues)
         XCTAssertEqual([true], channelListUpdater.queryGroupedChannels_presenceValues)
+        let groups = channelListUpdater.queryGroupedChannels_groups.last ?? nil
+        XCTAssertEqual(.dictionary(["query_timestamp": .dictionary(["$gte": .string("now-14d")])]), groups?["all"]?.filterConditions as? RawJSON)
+        XCTAssertEqual(["query_timestamp"], channelListUpdater.queryGroupedChannels_sorts.last??.map(\.field))
     }
 
     func test_syncLocalState_mixedChannelLists_callsGroupedOnceAndRefreshesOnlyStandard() throws {

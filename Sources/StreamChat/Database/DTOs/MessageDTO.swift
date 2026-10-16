@@ -974,7 +974,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         // Local text edit before receiving the WS event
         if let localDate = dto.textUpdatedAt?.bridgeDate,
            let payloadDate = payload.messageTextUpdatedAt,
-           localDate > payloadDate {
+           localDate.isLaterAtServerPrecision(than: payloadDate) {
+            dto.channel = channelDTO
             return dto
         }
 

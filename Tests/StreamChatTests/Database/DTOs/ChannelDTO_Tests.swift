@@ -350,25 +350,18 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, newTruncatedAt.bridgeDate)
     }
 
-    func test_saveChannel_skipsUpdate_whenPayloadUpdatedAtIsOlder() throws {
+    func test_saveChannel_appliesUpdate_whenPayloadUpdatedAtIsOlder() throws {
         let channelId: ChannelId = .unique
         let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
         let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
-        let newerLastMessageAt = Date(timeIntervalSince1970: 1990)
-        let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
-        let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
 
         try database.writeSynchronously { session in
             try session.saveChannel(
                 payload: .dummy(
                     cid: channelId,
                     name: "Conversation",
-                    extraData: newerExtraData,
-                    lastMessageAt: newerLastMessageAt,
                     updatedAt: newerUpdatedAt,
-                    isFrozen: true,
-                    memberCount: 1,
-                    messageCount: 1
+                    ownCapabilities: []
                 ),
                 query: nil,
                 cache: nil
@@ -380,15 +373,55 @@ final class ChannelDTO_Tests: XCTestCase {
                 payload: .dummy(
                     cid: channelId,
                     name: "Initiated",
+                    updatedAt: olderUpdatedAt,
+                    ownCapabilities: [ChannelCapability.sendMessage.rawValue]
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        XCTAssertEqual(channel.name, "Initiated")
+        XCTAssertEqual(channel.updatedAt, olderUpdatedAt)
+        XCTAssertEqual(channel.ownCapabilities, [.sendMessage])
+    }
+
+    func test_saveChannelSnapshot_skipsUpdate_whenPayloadUpdatedAtIsOlder() throws {
+        let channelId: ChannelId = .unique
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
+        let newerLastMessageAt = Date(timeIntervalSince1970: 1990)
+        let newerExtraData: [String: RawJSON] = ["state": .string("conversation"), "revision": .number(2)]
+        let olderExtraData: [String: RawJSON] = ["state": .string("initiated"), "revision": .number(1)]
+
+        try database.writeSynchronously { session in
+            try session.saveChannelSnapshot(
+                payload: .dummy(
+                    cid: channelId,
+                    name: "Conversation",
+                    extraData: newerExtraData,
+                    lastMessageAt: newerLastMessageAt,
+                    updatedAt: newerUpdatedAt,
+                    isFrozen: true,
+                    memberCount: 1,
+                    messageCount: 1
+                )
+            )
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannelSnapshot(
+                payload: .dummy(
+                    cid: channelId,
+                    name: "Initiated",
                     extraData: olderExtraData,
                     lastMessageAt: newerUpdatedAt,
                     updatedAt: olderUpdatedAt,
                     isFrozen: false,
                     memberCount: 2,
                     messageCount: 2
-                ),
-                query: nil,
-                cache: nil
+                )
             )
         }
 
@@ -400,6 +433,21 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.memberCount, 1)
         XCTAssertEqual(channel.messageCount, 1)
         XCTAssertTrue(channel.isFrozen)
+    }
+
+    func test_saveChannelSnapshot_appliesUpdate_whenPayloadIsSameInstantDecodedEarlier() throws {
+        let channelId: ChannelId = .unique
+        let updatedAt = Date(timeIntervalSince1970: 1_791_995_869.351_796)
+
+        try database.writeSynchronously { session in
+            try session.saveChannelSnapshot(payload: .dummy(cid: channelId, name: "Stored", updatedAt: updatedAt.addingTimeInterval(0.000_000_238)))
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannelSnapshot(payload: .dummy(cid: channelId, name: "Snapshot", updatedAt: updatedAt))
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        XCTAssertEqual(channel.name, "Snapshot")
     }
 
     func test_saveChannel_doesNotUpdateTruncatedAt_whenItsEarlierThanExisting() throws {
@@ -722,6 +770,23 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
         XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
+    }
+
+    func test_queryTimestamp_isLatestOfActivityAndTouchedAt() throws {
+        let lastMessageAt = Date(timeIntervalSince1970: 1_760_000_000)
+        let newerCid = ChannelId.unique
+        let olderCid = ChannelId.unique
+
+        try database.writeSynchronously { session in
+            for (cid, touchedAt) in [(newerCid, "2025-10-09T09:53:20Z"), (olderCid, "2025-10-09T07:53:20Z")] {
+                try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: [GroupedChannelKey.touchedAt: .string(touchedAt)], lastMessageAt: lastMessageAt)))
+            }
+        }
+
+        let queryTimestamps = try database.readSynchronously { session in
+            [newerCid, olderCid].map { session.channel(cid: $0)?.queryTimestamp.bridgeDate }
+        }
+        XCTAssertEqual([lastMessageAt.addingTimeInterval(3600), lastMessageAt], queryTimestamps)
     }
 
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {

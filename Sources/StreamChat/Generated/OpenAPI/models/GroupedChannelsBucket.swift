@@ -11,7 +11,7 @@ final class GroupedChannelsBucket: Sendable, Decodable {
     let next: String?
     /// Cursor for the previous page of this group
     let prev: String?
-    /// Unread channels currently classified into this bucket
+    /// Total unread channels matching this bucket and its filters, independent of page size
     let unreadChannels: Int?
 
     init(

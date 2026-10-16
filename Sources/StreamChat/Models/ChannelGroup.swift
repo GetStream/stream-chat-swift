@@ -40,4 +40,5 @@ enum GroupedChannelKey {
     static let all = "all"
     /// `ChatChannel.extraData` field that carries the channel's group membership.
     static let group = "group"
+    static let touchedAt = "touched_at"
 }
