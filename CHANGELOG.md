@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `NotificationChannelPartialUpdatedEvent` and keep grouped channel lists up to date when a channel the user isn't watching is partially updated [#4336](https://github.com/GetStream/stream-chat-swift/pull/4336)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_

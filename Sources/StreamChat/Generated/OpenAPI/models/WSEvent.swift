@@ -33,6 +33,7 @@ enum WSEvent: Decodable {
     case typeNotificationAddedToChannelEvent(NotificationAddedToChannelEventDTO)
     case typeNotificationChannelDeletedEvent(NotificationChannelDeletedEventDTO)
     case typeNotificationChannelMutesUpdatedEvent(NotificationChannelMutesUpdatedEventDTO)
+    case typeNotificationChannelPartialUpdatedEvent(NotificationChannelPartialUpdatedEventDTO)
     case typeNotificationInviteAcceptedEvent(NotificationInviteAcceptedEventDTO)
     case typeNotificationInviteRejectedEvent(NotificationInviteRejectedEventDTO)
     case typeNotificationInvitedEvent(NotificationInvitedEventDTO)
@@ -115,6 +116,8 @@ enum WSEvent: Decodable {
         case .typeNotificationChannelDeletedEvent(let value):
             return value.type
         case .typeNotificationChannelMutesUpdatedEvent(let value):
+            return value.type
+        case .typeNotificationChannelPartialUpdatedEvent(let value):
             return value.type
         case .typeNotificationInviteAcceptedEvent(let value):
             return value.type
@@ -232,6 +235,8 @@ enum WSEvent: Decodable {
         case .typeNotificationChannelDeletedEvent(let value):
             return value
         case .typeNotificationChannelMutesUpdatedEvent(let value):
+            return value
+        case .typeNotificationChannelPartialUpdatedEvent(let value):
             return value
         case .typeNotificationInviteAcceptedEvent(let value):
             return value
@@ -375,6 +380,9 @@ enum WSEvent: Decodable {
         } else if dto.type == "notification.channel_mutes_updated" {
             let value = try container.decode(NotificationChannelMutesUpdatedEventDTO.self)
             self = .typeNotificationChannelMutesUpdatedEvent(value)
+        } else if dto.type == "notification.channel_partial_updated" {
+            let value = try container.decode(NotificationChannelPartialUpdatedEventDTO.self)
+            self = .typeNotificationChannelPartialUpdatedEvent(value)
         } else if dto.type == "notification.invite_accepted" {
             let value = try container.decode(NotificationInviteAcceptedEventDTO.self)
             self = .typeNotificationInviteAcceptedEvent(value)

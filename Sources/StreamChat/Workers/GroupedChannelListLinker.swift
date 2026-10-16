@@ -68,6 +68,31 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? NotificationChannelPartialUpdatedEvent },
+                callback: { [weak self] event in
+                    guard let self else { return }
+                    if event.isChannelStored {
+                        self.updateLinking(for: event.cid)
+                    } else if let group = event.group, self.query.groupKey == GroupedChannelKey.all || self.query.groupKey == group {
+                        // Watching fetches and saves the channel, then it can be linked to the query.
+                        self.databaseContainer.read({ [query = self.query] session in
+                            session.channelListQuery(query)?.watch == true
+                        }, completion: { [weak self, cid = event.cid] result in
+                            if case .success(true) = result {
+                                self?.channelWatcherHandler.attemptToWatch(channelIds: [cid]) { [weak self] error in
+                                    if let error {
+                                        log.warning("Failed to start watching partially updated channel: \(cid), error: \(error.localizedDescription)")
+                                    } else {
+                                        self?.updateLinking(for: cid, startsWatching: false)
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
             )
         ]
         expirySweepTimer = timerType.scheduleRepeating(
@@ -96,7 +121,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false) {
+    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, startsWatching: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
             let isInGroup = channelDTO.group != nil && (query.groupKey == GroupedChannelKey.all || query.groupKey == channelDTO.group)
@@ -104,7 +129,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
-                let shouldStartWatching = queryDTO.watch && channelDTO.queries.isEmpty
+                let shouldStartWatching = startsWatching && queryDTO.watch && channelDTO.queries.isEmpty
                 queryDTO.channels.insert(channelDTO)
                 // A channel that was already unread before this message was counted as not loaded.
                 if isNewMessage, queryDTO.groupFilterJSONData != nil, let currentUserId = session.currentUser?.user.id,
