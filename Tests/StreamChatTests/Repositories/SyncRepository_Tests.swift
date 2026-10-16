@@ -370,6 +370,105 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(["current", "new"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
     }
 
+    func test_syncLocalState_groupedChannelList_refreshesFirstPageWithoutResetAndSyncsTheRestWithWatch() throws {
+        let firstPageCid = ChannelId.unique
+        let secondPageCid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: false
+        )
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        try database.writeSynchronously { session in
+            session.saveQuery(query: groupedQuery).watch = true
+            try session.saveChannel(payload: self.dummyPayload(with: firstPageCid, numberOfMessages: 0), query: groupedQuery, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: secondPageCid, numberOfMessages: 0), query: groupedQuery, cache: nil)
+        }
+        let channelList = ChannelList_Mock.mock(query: groupedQuery, client: client)
+        repository.startTrackingChannelList(channelList)
+        let refreshedGroup = ChannelGroup(groupKey: "all", channels: [.mock(cid: firstPageCid)], unreadChannels: 0)
+        channelListUpdater.queryGroupedChannels_result = .success([refreshedGroup])
+
+        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: secondPageCid, with: [.unique])))
+
+        XCTAssertEqual([false], channelListUpdater.queryGroupedChannels_resetsLoadedValues)
+        let syncRequest = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary())
+        XCTAssertEqual([secondPageCid.rawValue], syncRequest["channel_cids"] as? [String])
+        XCTAssertEqual(true, apiClient.request_endpoint?.requiresConnectionId)
+        XCTAssertEqual(syncEndpointQueryItems(watch: true), apiClient.request_endpoint?.queryItems)
+    }
+
+    func test_syncLocalState_groupedChannelLists_keepsLoadedPagesAndAppliesSyncedEvents() async throws {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = true
+        var environment = ChatClient.Environment.mock
+        environment.syncRepositoryBuilder = {
+            SyncRepository(
+                config: $0,
+                offlineRequestsRepository: $1,
+                eventNotificationCenter: $2,
+                database: $3,
+                apiClient: $4,
+                channelListUpdater: $5
+            )
+        }
+        let chatClient = ChatClient_Mock(config: config, environment: environment)
+        let apiClient = chatClient.mockAPIClient
+        try chatClient.mockDatabaseContainer.createCurrentUser()
+        try chatClient.mockDatabaseContainer.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+        let a1 = groupedChannelPayload(name: "A1", group: "A", order: 1)
+        let a2 = groupedChannelPayload(name: "A2", group: "A", order: 2)
+        let a3 = groupedChannelPayload(name: "A3", group: "A", order: 3)
+        let a4 = groupedChannelPayload(name: "A4", group: "A", order: 4)
+        let b1 = groupedChannelPayload(name: "B1", group: "B", order: 1)
+        let b2 = groupedChannelPayload(name: "B2", group: "B", order: 2)
+        let c1 = groupedChannelPayload(name: "C1", group: "C", order: 1)
+        let c2 = groupedChannelPayload(name: "C2", group: "C", order: 2)
+        let firstPages = GroupedQueryChannelsResponse(groups: [
+            "A": .init(channels: [a1, a2], next: "A-page-2"),
+            "B": .init(channels: [b1, b2]),
+            "C": .init(channels: [c1, c2])
+        ])
+
+        // 1. First pages for A, B and C in one request.
+        apiClient.test_mockResponseResult(.success(firstPages))
+        try await chatClient.queryGroupedChannels(groups: ["A", "B", "C"], limit: 2)
+
+        // 2. Channel lists for all groups; A loads its second page.
+        let listA = chatClient.makeChannelList(with: "A")
+        let listB = chatClient.makeChannelList(with: "B")
+        let listC = chatClient.makeChannelList(with: "C")
+        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: ["A": .init(channels: [a3, a4])])))
+        try await listA.loadMoreChannels()
+        XCTAssertEqual(["A1", "A2", "A3", "A4"], await listA.state.channels.map(\.name))
+
+        // 3. Reconnect sync: first pages are refreshed, A3 arrives renamed through /sync.
+        apiClient.test_mockResponseResult(.success(firstPages))
+        let renamedA3 = ChannelDetailPayload.dummy(
+            cid: a3.channel.cid,
+            name: "A3 renamed",
+            extraData: a3.channel.extraData,
+            createdAt: a3.channel.createdAt
+        )
+        apiClient.test_mockResponseResult(.success(SyncResponse(events: [
+            .typeChannelUpdatedEvent(ChannelUpdatedEventDTO(channel: renamedA3, createdAt: Date()))
+        ])))
+        await withCheckedContinuation { continuation in
+            chatClient.syncRepository.syncLocalState { continuation.resume() }
+        }
+
+        XCTAssertEqual(["A1", "A2", "A3 renamed", "A4"], await listA.state.channels.map(\.name))
+        XCTAssertEqual(["B1", "B2"], await listB.state.channels.map(\.name))
+        XCTAssertEqual(["C1", "C2"], await listC.state.channels.map(\.name))
+        let syncRequest = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary())
+        XCTAssertEqual(
+            Set([a3.channel.cid.rawValue, a4.channel.cid.rawValue]),
+            Set(syncRequest["channel_cids"] as? [String] ?? [])
+        )
+    }
+
     func test_syncLocalState_ignoresTheCooldown() throws {
         let lastSyncDate = Date()
         let cid = ChannelId.unique
@@ -716,7 +815,7 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
     }
 
-    func test_syncChannelsEvents_whenFallbackWithNoWatchedChannels_updatesLastSyncAt() throws {
+    func test_syncChannelsEvents_whenFallbackWithNoWatchedChannels_refreshesRequestedChannelsAndUpdatesLastSyncAt() throws {
         let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
         let policy = SyncEventReplayPolicy(maximumEventCount: 1)
         repository = SyncRepository(
@@ -738,6 +837,8 @@ class SyncRepository_Tests: XCTestCase {
             cid: cid
         )
 
+        channelListUpdater.startWatchingChannels_completion_success = true
+
         let eventDates = [Date.unique, Date.unique]
         let result = waitForSyncChannelsEvents(
             channelIds: [cid],
@@ -745,10 +846,52 @@ class SyncRepository_Tests: XCTestCase {
             requestResult: .success(messageEventPayload(cid: cid, with: eventDates))
         )
 
-        XCTAssertEqual(try XCTUnwrap(result.get()), [])
-        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(try XCTUnwrap(result.get()), [cid])
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_cids, [cid])
         XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
         XCTAssertNearlySameDate(lastSyncAtValue, eventDates.last)
+    }
+
+    func test_syncChannelsEvents_whenWatching_requestsWatchWithConnectionId() throws {
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            watch: true,
+            requestResult: .success(messageEventPayload(cid: cid, with: [.unique]))
+        )
+
+        XCTAssertEqual(true, apiClient.request_endpoint?.requiresConnectionId)
+        XCTAssertEqual(syncEndpointQueryItems(watch: true), apiClient.request_endpoint?.queryItems)
+    }
+
+    func test_syncChannelsEvents_whenNotWatching_requestsWithoutWatchAndConnectionId() throws {
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            requestResult: .success(messageEventPayload(cid: cid, with: [.unique]))
+        )
+
+        XCTAssertEqual(false, apiClient.request_endpoint?.requiresConnectionId)
+        XCTAssertEqual(syncEndpointQueryItems(watch: false), apiClient.request_endpoint?.queryItems)
     }
 
     // MARK: - Queue offline requests
@@ -1039,6 +1182,7 @@ extension SyncRepository_Tests {
     func waitForSyncChannelsEvents(
         channelIds: [ChannelId],
         lastSyncAt: Date,
+        watch: Bool = false,
         alreadySyncedChannelIds: Set<ChannelId> = [],
         requestResult: Result<SyncResponse, Error>
     ) -> Result<[ChannelId], SyncError> {
@@ -1050,6 +1194,7 @@ extension SyncRepository_Tests {
             channelIds: channelIds,
             lastSyncAt: lastSyncAt,
             isRecovery: false,
+            watch: watch,
             alreadySyncedChannelIds: alreadySyncedChannelIds
         ) { result in
             receivedResult = result
@@ -1065,6 +1210,24 @@ extension SyncRepository_Tests {
 
         waitForExpectations(timeout: defaultTimeout)
         return receivedResult
+    }
+
+    private func groupedChannelPayload(name: String, group: String, order: Int) -> ChannelPayload {
+        dummyPayload(
+            with: ChannelId(type: .messaging, id: name),
+            name: name,
+            numberOfMessages: 0,
+            channelExtraData: [GroupedChannelKey.group: .string(group)],
+            createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval(1000 - order))
+        )
+    }
+
+    func syncEndpointQueryItems(watch: Bool) -> AnyEncodable? {
+        AnyEndpoint(Endpoint<SyncResponse>.sync(
+            syncRequest: SyncRequest(channelCids: [], lastSyncAt: Date()),
+            withInaccessibleCids: nil,
+            watch: watch ? true : nil
+        )).queryItems
     }
 
     private class CancelRecoveryFlowTracker: SyncRepository, @unchecked Sendable {

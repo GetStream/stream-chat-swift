@@ -71,10 +71,10 @@ public class ChannelList: @unchecked Sendable {
                 limit: nil,
                 sort: paginationState.sort,
                 watch: paginationState.watch ?? true,
-                presence: paginationState.presence ?? false
+                presence: paginationState.presence ?? false,
+                resetsLoaded: true
             )
             let group = channelGroups.first { $0.groupKey == groupKey }
-            await setHasLoadedAllPreviousChannels(group?.next == nil)
             let query = await state.query
             if let updatedQuery = channelListUpdater.loadPredefinedFilter(for: query), !updatedQuery.isFilterEqual(to: query) {
                 await state.setQuery(updatedQuery)
@@ -87,6 +87,7 @@ public class ChannelList: @unchecked Sendable {
             if let updatedQuery = result.updatedQuery {
                 await state.setQuery(updatedQuery)
             }
+            await setHasLoadedAllPreviousChannels(result.channels.isEmpty || result.channels.count < pagination.pageSize)
             return result.channels
         }
     }
@@ -98,21 +99,16 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
-        guard await !state.hasLoadedAllPreviousChannels else { return [] }
         let pageSize = await state.query.pagination.pageSize
         let limit = limit ?? pageSize
         if let groupKey {
             let paginationState = try await channelListUpdater.paginationState(for: groupKey)
-            guard let cursor = paginationState.next else {
-                await setHasLoadedAllPreviousChannels(true)
-                return []
-            }
+            guard let cursor = paginationState.next else { return [] }
             return try await loadChannels(with: Pagination(pageSize: limit, cursor: cursor))
         } else {
+            guard await !state.hasLoadedAllPreviousChannels else { return [] }
             let count = await state.channels.count
-            let channels = try await loadChannels(with: Pagination(pageSize: limit, offset: count))
-            await setHasLoadedAllPreviousChannels(channels.isEmpty || channels.count < limit)
-            return channels
+            return try await loadChannels(with: Pagination(pageSize: limit, offset: count))
         }
     }
 

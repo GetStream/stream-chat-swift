@@ -11,6 +11,7 @@ final class SyncContext: @unchecked Sendable {
     @Atomic var synchedChannelIds: Set<ChannelId> = Set()
     @Atomic var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
     @Atomic var unwantedChannelIds: Set<ChannelId> = Set()
+    @Atomic var watchesSyncEndpointChannels = false
 
     init(lastSyncAt: Date) {
         self.lastSyncAt = lastSyncAt
@@ -135,17 +136,21 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                         states[groupKey] = try await channelListUpdater.paginationState(for: groupKey)
                     }
                     // Each group keeps its own filter. The flags and the sort are shared by the whole
-                    // request, so they come from the first group that has been queried.
+                    // request: it watches when any group watches, and the rest come from the first group that has been queried.
                     let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in
                         (groupKey, GroupedChannelsGroupRequest(filterConditions: states[groupKey]?.filter))
                     })
+                    let watch = groupKeys.contains { states[$0]?.watch == true }
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,
                         sort: groupKeys.compactMap { states[$0]?.sort }.first,
-                        watch: groupKeys.compactMap { states[$0]?.watch }.first ?? false,
-                        presence: groupKeys.compactMap { states[$0]?.presence }.first ?? false
+                        watch: watch,
+                        presence: groupKeys.compactMap { states[$0]?.presence }.first ?? false,
+                        resetsLoaded: false
                     )
+                    // Pages after the first one are refreshed and watched again by `/sync`.
+                    context.watchesSyncEndpointChannels = watch
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)
                     log.debug(
@@ -190,6 +195,7 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
                 channelIds: channelIdsToSync,
                 lastSyncAt: context.lastSyncAt,
                 isRecovery: recovery,
+                watch: context.watchesSyncEndpointChannels,
                 alreadySyncedChannelIds: context.synchedChannelIds
             ) { result in
                 switch result {

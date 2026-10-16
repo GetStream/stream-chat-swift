@@ -667,6 +667,8 @@ public class ChatClient: @unchecked Sendable {
     /// ``ChannelGroup/groupKey`` via ``ChatClient/makeChannelList(with:)-(String)`` and read
     /// ``ChannelListState/channels``.
     ///
+    /// - Important: Channels loaded in the ``ChannelList`` of each returned group are reset to the first page.
+    ///
     /// - Parameters:
     ///   - groups: The group keys to fetch.
     ///   - limit: The number of channels to return per group. `nil` uses the backend default.
@@ -688,13 +690,16 @@ public class ChatClient: @unchecked Sendable {
             groups: groupRequests,
             limit: groupRequests == nil ? limit : nil,
             watch: watch,
-            presence: presence
+            presence: presence,
+            resetsLoaded: true
         )
     }
 
     /// Fetches the first page of channels for the groups in the query in a single request.
     ///
     /// A group's filter and the query's sort are reused when its channels are paginated and refreshed.
+    ///
+    /// - Important: Channels loaded in the ``ChannelList`` of each returned group are reset to the first page.
     ///
     /// - Parameter query: The query describing the groups, their filters, the sort and the limit.
     /// - Returns: The fetched ``ChannelGroup`` values.
@@ -705,7 +710,8 @@ public class ChatClient: @unchecked Sendable {
             limit: query.limit,
             sort: query.sortRequests,
             watch: query.watch,
-            presence: query.presence
+            presence: query.presence,
+            resetsLoaded: true
         )
     }
     

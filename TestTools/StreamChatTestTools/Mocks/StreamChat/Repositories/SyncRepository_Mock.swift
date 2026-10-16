@@ -13,6 +13,7 @@ final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()
     var syncMissingEventsResult: Result<[ChannelId], SyncError>?
     var syncMissingEvents_syncChannels: [ChannelId]?
+    var syncMissingEvents_watch: Bool?
 
     convenience init() {
         let apiClient = APIClient_Spy()
@@ -59,11 +60,13 @@ final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
+        watch: Bool = false,
         alreadySyncedChannelIds: Set<ChannelId> = [],
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         record()
         syncMissingEvents_syncChannels = channelIds
+        syncMissingEvents_watch = watch
         syncMissingEventsResult.map(completion)
     }
 }
