@@ -169,6 +169,33 @@ final class ChannelRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 2)
     }
 
+    func test_markRead_onUnrecoverableAPIFailure_keepsLocalReadState() throws {
+        let cid = ChannelId.unique
+        let currentUserPayload = UserPayload.dummy(userId: .unique)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserPayload.id, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            let read = try XCTUnwrap(session.loadOrCreateChannelRead(cid: cid, userId: currentUserPayload.id))
+            read.unreadMessageCount = 5
+        }
+        database.writeSessionCounter = 0
+
+        let error = ClientError(with: APIError(code: 17, message: "Not allowed", statusCode: 403, unrecoverable: true))
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
+
+        let receivedError = try waitFor { done in
+            repository.markRead(cid: cid, userId: currentUserPayload.id, completion: done)
+        }
+
+        let unreadMessageCount = try database.readSynchronously { session in
+            try XCTUnwrap(session.loadChannelRead(cid: cid, userId: currentUserPayload.id)).unreadMessageCount
+        }
+        XCTAssertEqual((receivedError as? ClientError)?.apiError?.statusCode, 403)
+        XCTAssertEqual(unreadMessageCount, 0)
+        XCTAssertEqual(database.writeSessionCounter, 1)
+    }
+
     // MARK: - Mark as read locally
 
     func test_markReadLocally_doesNotMakeAPIRequest_writesToDatabase() {

@@ -94,6 +94,8 @@ extension WSEvent: @unchecked Sendable, Event {
             return .init(createdAt: event.createdAt, channel: event.channel, user: event.user)
         case .typeChannelHiddenEvent(let event):
             return .init(createdAt: event.createdAt, channel: event.channel, cid: event.cid, user: event.user)
+        case .typeChannelKickedEvent(let event):
+            return .init(createdAt: event.createdAt, cid: event.cid)
         case .typeChannelTruncatedEvent(let event):
             return .init(createdAt: event.createdAt, channel: event.channel, channelMessageCount: event.channelMessageCount, message: event.message, user: event.user)
         case .typeChannelUpdatedEvent(let event):

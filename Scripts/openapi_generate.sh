@@ -290,6 +290,7 @@ allowed_events=(
   AIIndicatorUpdateEvent
   ChannelDeletedEvent
   ChannelHiddenEvent
+  ChannelKickedEvent
   ChannelTruncatedEvent
   ChannelUpdatedEvent
   ChannelVisibleEvent
@@ -725,6 +726,7 @@ require_property ChannelStateResponse channel
 require_property SearchResult message
 # CHA-5607
 require_property ChannelHiddenEventDTO cid
+require_property ChannelKickedEventDTO cid
 require_property ChannelVisibleEventDTO cid
 require_property DraftDeletedEventDTO cid
 require_property DraftUpdatedEventDTO cid
@@ -758,6 +760,7 @@ remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCoun
 remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
 remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
+remove_property ChannelKickedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
 remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest user

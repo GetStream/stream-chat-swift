@@ -48,6 +48,11 @@ extension Error {
         return false
     }
 
+    /// Returns `true` if the backend marked the error as unrecoverable, e.g. a permission error.
+    var isUnrecoverableBackendError: Bool {
+        (self as? ClientError)?.apiError?.unrecoverable == true
+    }
+
     var isSocketNotConnectedError: Bool {
         has(parameters: (NSPOSIXErrorDomain, 57))
     }

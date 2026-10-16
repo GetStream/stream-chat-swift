@@ -196,3 +196,25 @@ extension ChannelHiddenEventDTO: EventDTO {
         )
     }
 }
+
+/// Triggered when the current user loses access to a channel, for example when removed from it.
+///
+/// The server stops sending events of the channel, and reading it fails until access is granted again.
+public final class ChannelKickedEvent: ChannelSpecificEvent {
+    /// The identifier of the channel the current user lost access to.
+    public let cid: ChannelId
+
+    /// The event timestamp.
+    public let createdAt: Date
+
+    init(cid: ChannelId, createdAt: Date) {
+        self.cid = cid
+        self.createdAt = createdAt
+    }
+}
+
+extension ChannelKickedEventDTO: EventDTO {
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        ChannelKickedEvent(cid: cid, createdAt: createdAt)
+    }
+}

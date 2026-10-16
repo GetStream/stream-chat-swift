@@ -1,0 +1,14 @@
+{
+  "type" : "channel.kicked",
+  "created_at" : "2021-04-23T07:03:54.611Z",
+  "custom" : {
+
+  },
+  "cid" : "messaging:default-channel-6",
+  "channel_id" : "default-channel-6",
+  "channel_type" : "messaging",
+  "channel_member_count" : 2,
+  "channel_custom" : {
+    "name" : "Default Channel"
+  }
+}

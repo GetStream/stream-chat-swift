@@ -68,6 +68,13 @@ final class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.clearHistory, true)
     }
 
+    func test_ChannelKickedEvent_decoding() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelKicked")
+        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelKickedEventDTO)
+        XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
+        XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
+    }
+
     func test_ChannelVisibleEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
@@ -232,6 +239,16 @@ final class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.isHistoryCleared, eventPayload.clearHistory)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+
+    func test_channelKickedEventDTO_toDomainEvent() throws {
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let eventPayload = ChannelKickedEventDTO(cid: .unique, createdAt: .unique)
+
+        // The event does not depend on any data in the database
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? ChannelKickedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

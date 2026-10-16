@@ -14,6 +14,7 @@ enum WSEvent: Decodable {
     case typeAIIndicatorUpdateEvent(AIIndicatorUpdateEventDTO)
     case typeChannelDeletedEvent(ChannelDeletedEventDTO)
     case typeChannelHiddenEvent(ChannelHiddenEventDTO)
+    case typeChannelKickedEvent(ChannelKickedEventDTO)
     case typeChannelTruncatedEvent(ChannelTruncatedEventDTO)
     case typeChannelUpdatedEvent(ChannelUpdatedEventDTO)
     case typeChannelVisibleEvent(ChannelVisibleEventDTO)
@@ -77,6 +78,8 @@ enum WSEvent: Decodable {
         case .typeChannelDeletedEvent(let value):
             return value.type
         case .typeChannelHiddenEvent(let value):
+            return value.type
+        case .typeChannelKickedEvent(let value):
             return value.type
         case .typeChannelTruncatedEvent(let value):
             return value.type
@@ -194,6 +197,8 @@ enum WSEvent: Decodable {
         case .typeChannelDeletedEvent(let value):
             return value
         case .typeChannelHiddenEvent(let value):
+            return value
+        case .typeChannelKickedEvent(let value):
             return value
         case .typeChannelTruncatedEvent(let value):
             return value
@@ -318,6 +323,9 @@ enum WSEvent: Decodable {
         } else if dto.type == "channel.hidden" {
             let value = try container.decode(ChannelHiddenEventDTO.self)
             self = .typeChannelHiddenEvent(value)
+        } else if dto.type == "channel.kicked" {
+            let value = try container.decode(ChannelKickedEventDTO.self)
+            self = .typeChannelKickedEvent(value)
         } else if dto.type == "channel.truncated" {
             let value = try container.decode(ChannelTruncatedEventDTO.self)
             self = .typeChannelTruncatedEvent(value)

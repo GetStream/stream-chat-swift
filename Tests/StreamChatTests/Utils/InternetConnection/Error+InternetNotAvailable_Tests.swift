@@ -110,4 +110,12 @@ final class Error_Tests: XCTestCase {
         let error = ClientError(with: APIError(code: 0, message: "", statusCode: 400))
         XCTAssertTrue(error.isBackendErrorWith400StatusCode)
     }
+
+    func test_isUnrecoverableBackendError() {
+        XCTAssertTrue(ClientError(with: APIError(code: 17, message: "", statusCode: 403, unrecoverable: true)).isUnrecoverableBackendError)
+        XCTAssertFalse(ClientError(with: APIError(code: 17, message: "", statusCode: 403, unrecoverable: false)).isUnrecoverableBackendError)
+        XCTAssertFalse(ClientError(with: APIError(code: 0, message: "", statusCode: 503)).isUnrecoverableBackendError)
+        XCTAssertFalse(ClientError(with: nil).isUnrecoverableBackendError)
+        XCTAssertFalse(NSError(domain: "test", code: 0).isUnrecoverableBackendError)
+    }
 }

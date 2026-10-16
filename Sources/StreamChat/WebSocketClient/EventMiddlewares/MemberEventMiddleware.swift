@@ -76,6 +76,13 @@ struct MemberEventMiddleware: EventMiddleware {
                 // we need to update them too
                 member.queries.removeAll()
 
+            case let event as ChannelKickedEventDTO:
+                guard let channel = session.channel(cid: event.cid) else { break }
+
+                // The current user can't read the channel anymore and no event carries the new
+                // capabilities (fetching the channel fails too), so drop the stale ones.
+                channel.ownCapabilities = []
+
             case let event as NotificationInviteAcceptedEventDTO:
                 let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
                 let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)

@@ -547,6 +547,36 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertFalse(database.viewContext.channel(cid: cid)!.members.contains(where: { $0.user.id == memberId }))
     }
 
+    // MARK: - ChannelKickedEvent
+
+    func test_channelKickedEvent_clearsOwnCapabilities() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    cid: cid,
+                    ownCapabilities: [ChannelCapability.readEvents.rawValue, ChannelCapability.sendMessage.rawValue]
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+        XCTAssertEqual(try database.viewContext.channel(cid: cid)?.asModel().ownCapabilities, [.readEvents, .sendMessage])
+
+        let event = ChannelKickedEventDTO(cid: cid, createdAt: .unique)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        XCTAssertTrue(forwardedEvent is ChannelKickedEventDTO)
+        XCTAssertEqual(try database.viewContext.channel(cid: cid)?.asModel().ownCapabilities, [])
+    }
+
+    func test_channelKickedEvent_whenChannelIsNotInDatabase_forwardsEvent() throws {
+        let event = ChannelKickedEventDTO(cid: .unique, createdAt: .unique)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        XCTAssertTrue(forwardedEvent is ChannelKickedEventDTO)
+    }
+
     // MARK: - NotificationInvitedEvent
 
     func test_middleware_handlesNotificationInvitedEventCorrectly() throws {

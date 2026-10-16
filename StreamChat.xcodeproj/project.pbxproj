@@ -1159,6 +1159,7 @@
 				StreamChatUITests/Mocks/MockVoiceRecordingAttachmentPresentationViewDelegate.swift,
 				StreamChatUITests/Mocks/Navigation/ChatChannelListRouter_Mock.swift,
 				StreamChatUITests/Mocks/Navigation/ChatMessageListRouter_Mock.swift,
+				StreamChatUITests/Mocks/Navigation/UINavigationController_Spy.swift,
 				StreamChatUITests/Mocks/Utils/Calendar_Mock.swift,
 				StreamChatUITests/Mocks/Utils/ChatMessageContentViewDelegate_Mock.swift,
 				StreamChatUITests/Mocks/Utils/CooldownTracker_Mock.swift,

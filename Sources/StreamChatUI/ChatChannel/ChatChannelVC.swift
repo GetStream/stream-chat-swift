@@ -647,6 +647,22 @@ open class ChatChannelVC: _ViewController,
         if let event = event as? NotificationMarkUnreadEvent, let channel = channelController.channel, event.cid == channelController.cid, !messages.isEmpty {
             updateAllUnreadMessagesRelatedComponents(channel: channel, forceUpdateBanner: true)
         }
+
+        if let event = event as? ChannelKickedEvent, event.cid == channelController.cid {
+            handleChannelAccessLost(event)
+        }
+    }
+
+    /// Called when the current user loses access to the channel, for example when removed from it.
+    ///
+    /// The default implementation pops the channel screen, and any screen above it, from the navigation stack.
+    /// Override it to customize the behavior.
+    /// - Parameter event: The event that caused the loss of access, for example ``ChannelKickedEvent``.
+    open func handleChannelAccessLost(_ event: Event) {
+        guard let navigationController,
+              let index = navigationController.viewControllers.firstIndex(of: self),
+              index > 0 else { return }
+        navigationController.popToViewController(navigationController.viewControllers[index - 1], animated: true)
     }
 
     // MARK: - AudioQueuePlayerDatasource

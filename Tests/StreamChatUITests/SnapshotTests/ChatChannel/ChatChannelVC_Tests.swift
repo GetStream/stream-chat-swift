@@ -694,6 +694,25 @@ import XCTest
         )
     }
 
+    func test_didReceiveChannelKickedEvent_whenSameChannel_thenPopsChannelScreen() {
+        let rootVC = UIViewController()
+        let navigationController = UINavigationController_Spy()
+        navigationController.setViewControllers([rootVC, vc], animated: false)
+
+        vc.eventsController(vc.eventsController, didReceiveEvent: ChannelKickedEvent(cid: cid, createdAt: .unique))
+
+        XCTAssertEqual(navigationController.popToViewControllerCalledWith, rootVC)
+    }
+
+    func test_didReceiveChannelKickedEvent_whenOtherChannel_thenKeepsChannelScreen() {
+        let navigationController = UINavigationController_Spy()
+        navigationController.setViewControllers([UIViewController(), vc], animated: false)
+
+        vc.eventsController(vc.eventsController, didReceiveEvent: ChannelKickedEvent(cid: .unique, createdAt: .unique))
+
+        XCTAssertNil(navigationController.popToViewControllerCalledWith)
+    }
+
     func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         let message = ChatMessage.mock(

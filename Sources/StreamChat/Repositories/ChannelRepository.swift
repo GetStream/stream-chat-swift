@@ -41,7 +41,7 @@ class ChannelRepository: @unchecked Sendable {
     ///
     /// Local unread state is cleared optimistically before the network request so the UI does not
     /// briefly show jump-to-unread / unread badges while the mark-read request is in flight.
-    /// If the API call fails, the previous local read state is restored.
+    /// If the API call fails, the previous local read state is restored unless the error is unrecoverable.
     func markRead(
         cid: ChannelId,
         userId: UserId,
@@ -58,6 +58,12 @@ class ChannelRepository: @unchecked Sendable {
             case .success(let previousReadState):
                 self?.apiClient.request(endpoint: .markRead(type: cid.type.rawValue, id: cid.id, markReadRequest: MarkReadRequest())) { [weak self] apiResult in
                     if let error = apiResult.error {
+                        // Retrying can't succeed (e.g. the user lost access to the channel), and restoring the
+                        // unread state would make the UI mark the channel read again in a loop.
+                        guard !error.isUnrecoverableBackendError else {
+                            completion?(error)
+                            return
+                        }
                         self?.rollbackMarkRead(
                             cid: cid,
                             userId: userId,
