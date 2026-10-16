@@ -17,7 +17,14 @@ enum PhotoLibrary {
             XCTFail("Could not write the video: \(error)", file: file, line: line)
             return
         }
-        requestAddAuthorization()
+        guard requestAddAuthorization() == .authorized else {
+            XCTFail(
+                "Photo library access is denied, reset it with `xcrun simctl privacy <udid> reset photos-add io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner`",
+                file: file,
+                line: line
+            )
+            return
+        }
 
         let saved = XCTestExpectation(description: "The video is saved to the photo library")
         nonisolated(unsafe) var saveError: Error?
@@ -31,16 +38,20 @@ enum PhotoLibrary {
         XCTAssertNil(saveError, "Could not save the video: \(String(describing: saveError))", file: file, line: line)
     }
 
-    private static func requestAddAuthorization() {
-        guard PHPhotoLibrary.authorizationStatus(for: .addOnly) != .authorized else { return }
-        let authorized = XCTestExpectation(description: "Photo library access is granted")
-        PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in authorized.fulfill() }
+    // CI grants access up front (`allow_photo_library_access` lane), local runs may get the system prompt.
+    private static func requestAddAuthorization() -> PHAuthorizationStatus {
+        let status = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+        guard status == .notDetermined else { return status }
+
+        let answered = XCTestExpectation(description: "The photo library prompt is answered")
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in answered.fulfill() }
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let allowButton = springboard.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Allow'")).firstMatch
-        if allowButton.waitForExistence(timeout: 5) {
+        if allowButton.waitForExistence(timeout: 15) {
             allowButton.tap()
         }
-        _ = XCTWaiter.wait(for: [authorized], timeout: 10)
+        _ = XCTWaiter.wait(for: [answered], timeout: 10)
+        return PHPhotoLibrary.authorizationStatus(for: .addOnly)
     }
 
     private static func writeVideo(to url: URL) throws {
