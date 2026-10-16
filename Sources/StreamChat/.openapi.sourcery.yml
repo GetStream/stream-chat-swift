@@ -2,16 +2,12 @@ sources:
   - ./Generated/OpenAPI/models/ChannelDetailPayload.swift
   - ./Generated/OpenAPI/models/ChannelStateResponseFields.swift
   - ./Generated/OpenAPI/models/DraftMessagePayload.swift
-  - ./Generated/OpenAPI/models/GroupedChannelsBucket.swift
   - ./Generated/OpenAPI/models/MemberInfoPayload.swift
   - ./Generated/OpenAPI/models/MemberPayload.swift
   - ./Generated/OpenAPI/models/MessageAttachmentPayload.swift
   - ./Generated/OpenAPI/models/MessageReactionPayload.swift
   - ./Generated/OpenAPI/models/MessageResponse.swift
   - ./Generated/OpenAPI/models/OwnUserResponse.swift
-  - ./Generated/OpenAPI/models/QueryChannelsResponse.swift
-  - ./Generated/OpenAPI/models/QueryThreadsResponse.swift
-  - ./Generated/OpenAPI/models/SyncResponse.swift
   - ./Generated/OpenAPI/models/ThreadParticipantPayload.swift
   - ./Generated/OpenAPI/models/ThreadResponse.swift
   - ./Generated/OpenAPI/models/ThreadStateResponse.swift
@@ -75,16 +71,3 @@ args:
   # Nested models, decoded from the same decoder as the model holding them.
   embedded:
     ThreadStateResponse: thread
-  # Arrays where an element that fails to decode is logged and dropped instead of failing the whole payload.
-  lossyArrays:
-    ChannelDetailPayload: [members]
-    ChannelStateResponseFields: [activeLiveLocations, members, messages, pendingMessages, pinnedMessages, read, threads, watchers]
-    GroupedChannelsBucket: [channels]
-    MessageResponse: [attachments, latestReactions, mentionedGroups, mentionedRoles, mentionedUsers, ownReactions, restrictedVisibility]
-    OwnUserResponse: [channelMutes, devices]
-    QueryChannelsResponse: [channels]
-    QueryThreadsResponse: [threads]
-    # Remove when fixed: IOS-2065
-    SyncResponse: [events]
-    ThreadResponse: [threadParticipants]
-    ThreadStateResponse: [latestReplies, read]

@@ -899,6 +899,19 @@ swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
 
 sourcery --config "$SOURCERY_CONFIG"
 splice_generated_decoders
+
+# After the splice, which replaces init(from:) of the models in the Sourcery sources.
+lossy_array_property ChannelDetailPayload members
+lossy_array_property ChannelStateResponseFields activeLiveLocations members messages pendingMessages pinnedMessages read threads watchers
+lossy_array_property GroupedChannelsBucket channels
+lossy_array_property MessageResponse attachments latestReactions mentionedGroups mentionedRoles mentionedUsers ownReactions restrictedVisibility
+lossy_array_property OwnUserResponse channelMutes devices
+lossy_array_property QueryChannelsResponse channels
+lossy_array_property QueryThreadsResponse threads
+lossy_array_property SyncResponse events
+lossy_array_property ThreadResponse threadParticipants
+lossy_array_property ThreadStateResponse latestReplies read
+
 prune_string_coding_keys
 
 swiftformat "$OUTPUT_DIR_CHAT" \
