@@ -36,9 +36,9 @@ final class MessageSearch_Tests: XCTestCase {
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let results = try await messageSearch.search(text: "text")
-        XCTAssertEqual(apiResponse.results.map(\.message.id), results.map(\.id))
+        XCTAssertEqual(apiResponse.results.map(\.message.message.id), results.map(\.id))
         await MainActor.run {
-            XCTAssertEqual(apiResponse.results.map(\.message.id), messageSearch.state.messages.map(\.id))
+            XCTAssertEqual(apiResponse.results.map(\.message.message.id), messageSearch.state.messages.map(\.id))
             XCTAssertEqual(messageSearch.explicitFilterHash, messageSearch.state.query?.filterHash)
             XCTAssertEqual([Sorting(key: .createdAt, isAscending: false)], messageSearch.state.query?.sort)
             XCTAssertEqual(Filter.containMembers(userIds: [currentUserId]), messageSearch.state.query?.channelFilter)
@@ -97,9 +97,9 @@ final class MessageSearch_Tests: XCTestCase {
         let nextMessagesResult = try await messageSearch.loadMoreMessages()
         await MainActor.run {
             XCTAssertEqual(messageSearch.state.nextPageCursor, "B")
-            XCTAssertEqual(apiResponse2.results.map(\.message.id), nextMessagesResult.map(\.id))
+            XCTAssertEqual(apiResponse2.results.map(\.message.message.id), nextMessagesResult.map(\.id))
             let expected = apiResponse2.results + apiResponse.results
-            XCTAssertEqual(expected.map(\.message.id), messageSearch.state.messages.map(\.id))
+            XCTAssertEqual(expected.map(\.message.message.id), messageSearch.state.messages.map(\.id))
         }
     }
     

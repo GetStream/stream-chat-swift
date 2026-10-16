@@ -29,6 +29,8 @@ final class ThreadResponse: Sendable, Decodable {
     let participantCount: Int
     /// Reply Count
     let replyCount: Int
+    /// Thread Participants
+    let threadParticipants: [ThreadParticipantPayload]?
     /// Title
     let title: String
     /// Date/time of the last update
@@ -47,6 +49,7 @@ final class ThreadResponse: Sendable, Decodable {
         parentMessageId: String,
         participantCount: Int,
         replyCount: Int,
+        threadParticipants: [ThreadParticipantPayload]? = nil,
         title: String,
         updatedAt: Date
     ) {
@@ -62,6 +65,7 @@ final class ThreadResponse: Sendable, Decodable {
         self.parentMessageId = parentMessageId
         self.participantCount = participantCount
         self.replyCount = replyCount
+        self.threadParticipants = threadParticipants
         self.title = title
         self.updatedAt = updatedAt
     }
@@ -83,6 +87,10 @@ final class ThreadResponse: Sendable, Decodable {
         parentMessageId = try container.decode(String.self, forKey: .parentMessageId)
         participantCount = try container.decode(Int.self, forKey: .participantCount)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
+        threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
+            [ThreadParticipantPayload].self,
+            forKey: .threadParticipants
+        )
         title = try container.decode(String.self, forKey: .title)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }

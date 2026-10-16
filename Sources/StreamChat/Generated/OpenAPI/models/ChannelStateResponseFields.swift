@@ -4,22 +4,31 @@
 
 import Foundation
 
-final class ChannelStateResponse: Sendable, Decodable {
+final class ChannelStateResponseFields: Sendable, Decodable {
+    /// Active live locations in the channel
     let activeLiveLocations: [SharedLocation]?
     /// Represents channel in chat
     let channel: ChannelDetailPayload
     let draft: DraftPayload?
+    /// Whether this channel is hidden or not
     let hidden: Bool?
+    /// List of channel members
     let members: [MemberPayload]
     let membership: MemberPayload?
+    /// List of channel messages
     let messages: [MessageResponse]
+    /// Pending messages that this user has sent
     let pendingMessages: [PendingMessageResponse]?
+    /// List of pinned messages in the channel
     let pinnedMessages: [MessageResponse]
     /// The push preference details.
     let pushPreferences: PushPreference?
+    /// List of read states
     let read: [ReadStateResponse]?
     let threads: [ThreadStateResponse]
+    /// Number of channel watchers
     let watcherCount: Int?
+    /// List of user who is watching the channel
     let watchers: [UserPayload]?
 
     init(

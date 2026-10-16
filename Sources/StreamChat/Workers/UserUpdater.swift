@@ -132,7 +132,7 @@ class UserUpdater: Worker, @unchecked Sendable {
                     }
 
                     self.database.write({ session in
-                        try session.saveUser(fullResponse: user)
+                        try session.saveUser(payload: user.user)
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")

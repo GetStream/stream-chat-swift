@@ -333,24 +333,24 @@ extension XCTestCase {
         extraData: [String: RawJSON] = [:]
     ) -> ThreadPayload {
         .init(
-            activeParticipantCount: activeParticipantCount,
-            channel: channel,
-            channelCid: channel.cid.rawValue,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            createdByUserId: createdBy.id,
-            custom: extraData,
+            thread: .dummy(
+                parentMessageId: parentMessageId,
+                parentMessage: parentMessage ?? .dummy(cid: channel.cid),
+                channel: channel,
+                createdBy: createdBy,
+                replyCount: replyCount,
+                participantCount: participantCount,
+                activeParticipantCount: activeParticipantCount,
+                threadParticipants: threadParticipants,
+                lastMessageAt: lastMessageAt,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                title: title,
+                extraData: extraData
+            ),
             draft: draft,
-            lastMessageAt: lastMessageAt,
             latestReplies: latestReplies,
-            parentMessage: parentMessage ?? .dummy(cid: channel.cid),
-            parentMessageId: parentMessageId,
-            participantCount: participantCount,
-            read: read,
-            replyCount: replyCount,
-            threadParticipants: threadParticipants,
-            title: title,
-            updatedAt: updatedAt
+            read: read
         )
     }
 

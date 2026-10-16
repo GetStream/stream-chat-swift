@@ -5,7 +5,7 @@
 import Foundation
 
 typealias ChannelListPayload = QueryChannelsResponse
-typealias ChannelPayload = ChannelStateResponse
+typealias ChannelPayload = ChannelStateResponseFields
 typealias ChannelReadPayload = ReadStateResponse
 typealias PredefinedFilterPayload = ParsedPredefinedFilterResponse
 
