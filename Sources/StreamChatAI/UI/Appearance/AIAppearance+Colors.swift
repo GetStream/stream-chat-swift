@@ -103,6 +103,17 @@ extension AIAppearance {
         /// The dimming over the content while the sidebar is open.
         public lazy var sidebarScrim: UIColor = colors.backgroundCoreOverlayDark
 
+        // MARK: - Voice
+
+        /// The palette of ``AIVoiceGlowView`` and ``AIVoiceWaveView``, one to five colors. Their
+        /// full hue, saturation and brightness are kept, and colors past the fifth are ignored.
+        public lazy var voiceVisualization: [UIColor] = [colors.accentPrimary]
+
+        // ``voiceVisualization``, or the accent when it was emptied.
+        var voiceVisualizationPalette: [UIColor] {
+            voiceVisualization.isEmpty ? [colors.accentPrimary] : voiceVisualization
+        }
+
         public nonisolated init(tokens: DesignSystemTokens = DesignSystemTokens()) {
             colors = tokens.colors
         }
