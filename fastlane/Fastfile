@@ -587,7 +587,7 @@ end
 # The test runner saves a video to the photo library. Granting access up front avoids the system prompt,
 # which can be dismissed as "Don't Allow" when it's not answered in time and then stays denied for every retry.
 private_lane :allow_photo_library_access do |options|
-  next unless options[:device]
+  next UI.important('No device is given, photo library access is not granted') unless options[:device]
 
   name, os_version = options[:device].match(/^(.+?)(?: \(([\d.]+)\))?$/).captures
   simulators = FastlaneCore::DeviceManager.simulators('iOS')
