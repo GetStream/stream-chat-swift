@@ -285,6 +285,7 @@ class SyncRepository: @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
+        watch: Bool = false,
         alreadySyncedChannelIds: Set<ChannelId> = [],
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
@@ -307,17 +308,19 @@ class SyncRepository: @unchecked Sendable {
             using: lastSyncAt,
             channelIds: channelIds,
             isRecoveryRequest: isRecovery,
+            watch: watch,
             alreadySyncedChannelIds: alreadySyncedChannelIds,
             completion: completion
         )
     }
 
-    /// Refreshes actively watched channels via `queryChannels`, excluding channels already synced in the reconnect context.
+    /// Refreshes the requested and actively watched channels via `queryChannels`, excluding channels already synced in the reconnect context.
     func refreshActiveWatchedChannels(
+        requestedChannelIds: [ChannelId],
         excluding alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<Set<ChannelId>, SyncError>) -> Void
     ) {
-        var channelIds = Set<ChannelId>()
+        var channelIds = Set(requestedChannelIds)
         channelIds.formUnion(activeChannelControllers.allObjects.compactMap(\.cid))
         channelIds.formUnion(activeLivestreamControllers.allObjects.compactMap(\.cid))
         channelIds.formUnion(activeLivestreamChats.allObjects.compactMap { try? $0.cid })
@@ -359,6 +362,7 @@ class SyncRepository: @unchecked Sendable {
         using date: Date,
         channelIds: [ChannelId],
         isRecoveryRequest: Bool,
+        watch: Bool,
         alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
@@ -375,8 +379,8 @@ class SyncRepository: @unchecked Sendable {
         let endpoint: Endpoint<SyncResponse> = .sync(
             syncRequest: SyncRequest(channelCids: channelIds.map(\.rawValue), lastSyncAt: date),
             withInaccessibleCids: nil,
-            watch: nil,
-            requiresConnectionId: false
+            watch: watch ? true : nil,
+            requiresConnectionId: watch
         )
         let requestCompletion: @Sendable (Result<SyncResponse, Error>) -> Void = { [weak self] result in
             switch result {
@@ -395,6 +399,7 @@ class SyncRepository: @unchecked Sendable {
                     )
                     self.handleSyncEventReplayFallback(
                         lastSyncAt: payload.events.last?.createdAt ?? date,
+                        channelIds: channelIds,
                         alreadySyncedChannelIds: alreadySyncedChannelIds,
                         completion: completion
                     )
@@ -421,6 +426,7 @@ class SyncRepository: @unchecked Sendable {
                 log.info("/sync returned too many events. Refreshing watched channels instead.", subsystems: .offlineSupport)
                 self?.handleSyncEventReplayFallback(
                     lastSyncAt: Date(),
+                    channelIds: channelIds,
                     alreadySyncedChannelIds: alreadySyncedChannelIds,
                     completion: completion
                 )
@@ -436,6 +442,7 @@ class SyncRepository: @unchecked Sendable {
 
     private func handleSyncEventReplayFallback(
         lastSyncAt: Date,
+        channelIds: [ChannelId],
         alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
@@ -443,7 +450,7 @@ class SyncRepository: @unchecked Sendable {
             "Running `/sync` fallback via queryChannels. excludingAlreadySynced=\(alreadySyncedChannelIds.count)",
             subsystems: .offlineSupport
         )
-        refreshActiveWatchedChannels(excluding: alreadySyncedChannelIds) { [weak self] result in
+        refreshActiveWatchedChannels(requestedChannelIds: channelIds, excluding: alreadySyncedChannelIds) { [weak self] result in
             switch result {
             case let .success(refreshedIds):
                 log.info(

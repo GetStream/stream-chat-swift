@@ -43,7 +43,7 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertEqual(context.synchedChannelIds.count, 0)
         XCTAssertNearlySameDate(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, originalDate)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:alreadySyncedChannelIds:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:watch:alreadySyncedChannelIds:completion:)",
             on: syncRepository,
             times: 3
         )
@@ -64,7 +64,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 2)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:alreadySyncedChannelIds:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:watch:alreadySyncedChannelIds:completion:)",
             on: syncRepository,
             times: 1
         )
@@ -85,10 +85,27 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(syncRepository.syncMissingEvents_syncChannels?.count, 100)
         XCTAssertCall(
-            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:alreadySyncedChannelIds:completion:)",
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:watch:alreadySyncedChannelIds:completion:)",
             on: syncRepository,
             times: 1
         )
+    }
+
+    func test_SyncEventsOperation_whenContextWatchesSyncEndpointChannels_syncsWithWatch() throws {
+        let context = SyncContext(lastSyncAt: .init())
+        context.localChannelIds = [ChannelId.unique]
+        context.watchesSyncEndpointChannels = true
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
+        syncRepository.syncMissingEventsResult = .success([.unique])
+
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(syncRepository.syncMissingEvents_watch, true)
     }
 
     // MARK: - WatchChannelOperation
