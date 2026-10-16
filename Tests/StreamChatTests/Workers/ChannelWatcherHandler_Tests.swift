@@ -102,7 +102,35 @@ final class ChannelWatcherHandler_Tests: XCTestCase {
         wait(for: [expectation1, expectation2], timeout: defaultTimeout)
         XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
     }
-    
+
+    func test_attemptToWatch_whenAlreadyWatching_completesAfterInFlightRequestFinishes() {
+        // Given
+        let channelId = ChannelId.unique
+        channelListUpdater.startWatchingChannels_completion_success = false
+        handler.attemptToWatch(channelIds: [channelId], completion: nil)
+
+        let completedEarly = expectation(description: "Completed before the in-flight request finished")
+        completedEarly.isInverted = true
+        let completed = expectation(description: "Completed after the in-flight request finished")
+        nonisolated(unsafe) var isInFlightRequestFinished = false
+
+        // When
+        handler.attemptToWatch(channelIds: [channelId]) { _ in
+            if isInFlightRequestFinished {
+                completed.fulfill()
+            } else {
+                completedEarly.fulfill()
+            }
+        }
+        wait(for: [completedEarly], timeout: 0.1)
+        isInFlightRequestFinished = true
+        channelListUpdater.startWatchingChannels_completion?(nil)
+
+        // Then
+        wait(for: [completed], timeout: defaultTimeout)
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 1)
+    }
+
     func test_attemptToWatch_whenPartiallyWatching_onlyWatchesNewChannels() {
         // Given
         let channelId1 = ChannelId(type: .messaging, id: "1")

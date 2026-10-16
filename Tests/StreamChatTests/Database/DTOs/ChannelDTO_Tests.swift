@@ -789,6 +789,36 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual([lastMessageAt.addingTimeInterval(3600), lastMessageAt], queryTimestamps)
     }
 
+    func test_savePartialChannel_mergesCarriedFields() throws {
+        let cid = ChannelId.unique
+        let updatedAt = Date(timeIntervalSince1970: 1_760_000_000)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: [GroupedChannelKey.group: .string("old")])))
+        }
+
+        let partialPayload = ChannelPartialUpdateResponse(
+            cid: cid,
+            custom: [GroupedChannelKey.group: .string("new")],
+            disabled: true,
+            frozen: true,
+            team: "team",
+            updatedAt: updatedAt
+        )
+        try database.writeSynchronously { session in
+            session.channel(cid: cid)?.savePartialChannel(payload: partialPayload)
+        }
+
+        let (channel, group) = try database.readSynchronously { session in
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            return (try channelDTO.asModel(), channelDTO.group)
+        }
+        XCTAssertEqual("new", group)
+        XCTAssertEqual(true, channel.isDisabled)
+        XCTAssertEqual(true, channel.isFrozen)
+        XCTAssertEqual("team", channel.team)
+        XCTAssertEqual(updatedAt, channel.updatedAt)
+    }
+
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
         try XCTSkipIf(
             ProcessInfo().operatingSystemVersion.majorVersion < 15,

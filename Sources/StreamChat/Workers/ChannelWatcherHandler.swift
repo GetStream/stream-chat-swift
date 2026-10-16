@@ -19,6 +19,7 @@ class ChannelWatcherHandler: ChannelWatcherHandling, @unchecked Sendable {
     private let queue = DispatchQueue(label: "io.getstream.ChannelWatcherHandler")
     private let channelListUpdater: ChannelListUpdater
     private var activeWatchRequests: Set<ChannelId> = []
+    private var waitingCompletions: [(channelIds: [ChannelId], completion: @Sendable ((any Error)?) -> Void)] = []
 
     init(channelListUpdater: ChannelListUpdater) {
         self.channelListUpdater = channelListUpdater
@@ -26,11 +27,14 @@ class ChannelWatcherHandler: ChannelWatcherHandling, @unchecked Sendable {
 
     func attemptToWatch(channelIds: [ChannelId], completion: (@Sendable ((any Error)?) -> Void)?) {
         queue.async { [self] in
+            if let completion {
+                self.waitingCompletions.append((channelIds, completion))
+            }
+
             // Filter out channels that are already being watched
             let channelsToWatch = channelIds.filter { !self.activeWatchRequests.contains($0) }
 
             guard !channelsToWatch.isEmpty else {
-                completion?(nil)
                 return
             }
 
@@ -40,8 +44,11 @@ class ChannelWatcherHandler: ChannelWatcherHandling, @unchecked Sendable {
                 withIds: channelsToWatch
             ) { [weak self] error in
                 self?.queue.async { [weak self] in
-                    self?.activeWatchRequests.subtract(channelsToWatch)
-                    completion?(error)
+                    guard let self else { return }
+                    self.activeWatchRequests.subtract(channelsToWatch)
+                    let finished = self.waitingCompletions.filter { self.activeWatchRequests.isDisjoint(with: $0.channelIds) }
+                    self.waitingCompletions.removeAll { self.activeWatchRequests.isDisjoint(with: $0.channelIds) }
+                    finished.forEach { $0.completion(error) }
                 }
             }
         }
