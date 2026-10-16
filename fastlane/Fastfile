@@ -593,12 +593,12 @@ private_lane :allow_photo_library_access do |options|
   simulators = FastlaneCore::DeviceManager.simulators('iOS')
   simulator =
     if os_version
-      simulators.find { |device| device.name == name && device.os_version == os_version }
+      simulators.find { |device| device.name == name && Gem::Version.new(device.os_version) == Gem::Version.new(os_version) }
     else
       # Same pick as `scan` makes for a device without a version, so both target the same simulator.
       Scan::DetectValues.highest_compatible_simulator(simulators, name)
     end
-  next UI.important("No simulator matches #{options[:device]}, photo library access is not granted") unless simulator
+  UI.user_error!("No simulator matches #{options[:device]}, photo library access cannot be granted") unless simulator
 
   sh("xcrun simctl bootstatus #{simulator.udid} -b")
   sh("xcrun simctl privacy #{simulator.udid} grant photos-add io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner")
