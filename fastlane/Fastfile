@@ -590,9 +590,14 @@ private_lane :allow_photo_library_access do |options|
   next unless options[:device]
 
   name, os_version = options[:device].match(/^(.+?)(?: \(([\d.]+)\))?$/).captures
-  simulator = FastlaneCore::DeviceManager.simulators('iOS').find do |device|
-    device.name == name && (os_version.nil? || device.os_version == os_version)
-  end
+  simulators = FastlaneCore::DeviceManager.simulators('iOS')
+  simulator =
+    if os_version
+      simulators.find { |device| device.name == name && device.os_version == os_version }
+    else
+      # Same pick as `scan` makes for a device without a version, so both target the same simulator.
+      Scan::DetectValues.highest_compatible_simulator(simulators, name)
+    end
   next UI.important("No simulator matches #{options[:device]}, photo library access is not granted") unless simulator
 
   sh("xcrun simctl bootstatus #{simulator.udid} -b")
