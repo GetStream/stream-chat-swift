@@ -2,12 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-#if compiler(>=6.2)
 import Metal
-#else
-// Xcode 16's SDKs do not mark Metal's devices, libraries and pipelines Sendable yet.
-@preconcurrency import Metal
-#endif
 import StreamCore
 
 // Draws a voice visualization's shader over a whole render target. All visualizations share
@@ -76,8 +71,9 @@ final class VoiceVisualizationRenderer {
         return buffer
     }
 
-    // Metal compiles on its own threads; the main actor only waits for the results.
     static func compile(on device: any MTLDevice) async throws -> [VoiceVisualizationStyle: any MTLRenderPipelineState] {
+        #if compiler(>=6.2)
+        // Metal compiles on its own threads; the main actor only waits for the results.
         let library = try await device.makeLibrary(source: VoiceVisualizationShaders.source, options: nil)
         var pipelines: [VoiceVisualizationStyle: any MTLRenderPipelineState] = [:]
         for style in VoiceVisualizationStyle.allCases {
@@ -88,5 +84,25 @@ final class VoiceVisualizationRenderer {
             pipelines[style] = try await device.makeRenderPipelineState(descriptor: descriptor)
         }
         return pipelines
+        #else
+        try compileOnMainActor(on: device)
+        #endif
     }
+
+    #if !compiler(>=6.2)
+    // Xcode 16's SDKs do not mark Metal's devices Sendable yet, so the device cannot go to the
+    // async APIs, which run off the main actor; builds with those SDKs compile here instead.
+    private static func compileOnMainActor(on device: any MTLDevice) throws -> [VoiceVisualizationStyle: any MTLRenderPipelineState] {
+        let library = try device.makeLibrary(source: VoiceVisualizationShaders.source, options: nil)
+        var pipelines: [VoiceVisualizationStyle: any MTLRenderPipelineState] = [:]
+        for style in VoiceVisualizationStyle.allCases {
+            let descriptor = MTLRenderPipelineDescriptor()
+            descriptor.vertexFunction = library.makeFunction(name: "voiceVisualizationVertex")
+            descriptor.fragmentFunction = library.makeFunction(name: style.fragmentFunction)
+            descriptor.colorAttachments[0].pixelFormat = pixelFormat
+            pipelines[style] = try device.makeRenderPipelineState(descriptor: descriptor)
+        }
+        return pipelines
+    }
+    #endif
 }
