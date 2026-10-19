@@ -33,6 +33,12 @@ final class Localization_Tests: XCTestCase {
         XCTAssertEqual(L10n.Charts.category, "Category")
         XCTAssertEqual(L10n.Charts.bin, "Bin")
         XCTAssertEqual(L10n.Charts.count, "Count")
+        XCTAssertEqual(L10n.Voice.agent, "Voice agent")
+        XCTAssertEqual(L10n.Voice.idle, "Ready")
+        XCTAssertEqual(L10n.Voice.connecting, "Connecting")
+        XCTAssertEqual(L10n.Voice.listening, "Listening")
+        XCTAssertEqual(L10n.Voice.thinking, "Thinking")
+        XCTAssertEqual(L10n.Voice.speaking, "Speaking")
     }
 
     func test_formattedStrings_insertTheDuration() {

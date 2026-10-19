@@ -91,4 +91,18 @@ final class AIAppearance_Tests: XCTestCase {
             XCTAssertNotEqual(color.resolvedColor(with: light), color.resolvedColor(with: dark))
         }
     }
+
+    func test_voiceVisualization_isTheAccentUntilChanged() {
+        let tokens = DesignSystemTokens()
+        tokens.colors.accentPrimary = .systemPurple
+        let colors = AIAppearance(tokens: tokens).colors
+
+        XCTAssertEqual(colors.voiceVisualization, [.systemPurple])
+
+        colors.voiceVisualization = [.systemPink, .systemOrange]
+        XCTAssertEqual(colors.voiceVisualizationPalette, [.systemPink, .systemOrange])
+
+        colors.voiceVisualization = []
+        XCTAssertEqual(colors.voiceVisualizationPalette, [.systemPurple])
+    }
 }
