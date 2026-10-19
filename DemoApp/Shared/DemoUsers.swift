@@ -62,7 +62,10 @@ struct UserCredentials {
 
 extension UserCredentials {
     static var builtInUsers: [UserCredentials] {
-        [
+        if apiKeyString == DemoApiKeys.usEastStaging.rawValue {
+            return stagingUsers
+        }
+        return [
             luke,
             leia,
             hanSolo,
@@ -80,6 +83,20 @@ extension UserCredentials {
             countDooku,
             generalGrievous
         ]
+    }
+
+    /// Users of the US East staging app. They use development tokens.
+    static var stagingUsers: [UserCredentials] {
+        ["alice", "bob", "carol", "dave"].map { id in
+            let name = id.capitalized
+            return UserCredentials(
+                id: id,
+                name: name,
+                avatarURL: URL(string: "https://getstream.io/random_png?id=\(id)&name=\(name)&size=200")!,
+                token: .development(userId: id),
+                birthLand: "Staging"
+            )
+        }
     }
 
     static func builtInUsersByID(id: String) -> UserCredentials? {
@@ -259,12 +276,14 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
     static let frankfurtC1: DemoApiKeys = .init(rawValue: "8br4watad788") // UIKit default
     static let frankfurtC2: DemoApiKeys = .init(rawValue: "pd67s34fzpgw") // Frankfurt C2 Staging
     static let usEastC6: DemoApiKeys = .init(rawValue: "zcgvnykxsfm8") // SwiftUI default
+    static let usEastStaging: DemoApiKeys = .init(rawValue: "vfa6gxospjf0") // US East staging, app 1731829
 
     var appName: String? {
         switch self {
         case .frankfurtC1: return "UIKit"
         case .frankfurtC2: return "Frankfurt C2 Staging"
         case .usEastC6: return "SwiftUI"
+        case .usEastStaging: return "US East Staging"
         default: return nil
         }
     }
@@ -274,6 +293,7 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
         case .frankfurtC1: return nil
         case .frankfurtC2: return URL(string: "https://chat-edge-frankfurt-ce1.stream-io-api.com/")
         case .usEastC6: return nil
+        case .usEastStaging: return URL(string: "https://chat-edge-us-east1-ce1.gcp.stream-io-api.com/")
         default: return nil
         }
     }

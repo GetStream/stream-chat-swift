@@ -765,7 +765,7 @@ class AppConfigViewController: UITableViewController {
 
     private func pushEnvironmentSelectorVC() {
         let selectorViewController = OptionsSelectorViewController<DemoApiKeys>(
-            options: [.frankfurtC1, .frankfurtC2, .usEastC6],
+            options: [.frankfurtC1, .frankfurtC2, .usEastC6, .usEastStaging],
             initialSelectedOptions: [DemoApiKeys(rawValue: apiKeyString)],
             allowsMultipleSelection: false,
             optionFormatter: { option in
