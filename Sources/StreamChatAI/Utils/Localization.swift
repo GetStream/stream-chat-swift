@@ -136,6 +136,32 @@ enum L10n {
             localized("transcription.error.recognizer_unavailable", comment: "Error shown when the speech recognizer cannot be used.")
         }
     }
+
+    enum Voice {
+        static var agent: String {
+            localized("voice.accessibility.agent", comment: "Accessibility label of the animation that shows what a voice agent is doing.")
+        }
+
+        static var idle: String {
+            localized("voice.state.idle", comment: "A voice agent waiting to be spoken to.")
+        }
+
+        static var connecting: String {
+            localized("voice.state.connecting", comment: "A voice agent that is not ready to talk yet.")
+        }
+
+        static var listening: String {
+            localized("voice.state.listening", comment: "A voice agent hearing somebody talk.")
+        }
+
+        static var thinking: String {
+            localized("voice.state.thinking", comment: "A voice agent working on its answer.")
+        }
+
+        static var speaking: String {
+            localized("voice.state.speaking", comment: "A voice agent talking.")
+        }
+    }
     
     private static func localized(_ key: String, comment: StaticString) -> String {
         AIAppearance.localizationProvider(key, "Localizable")
