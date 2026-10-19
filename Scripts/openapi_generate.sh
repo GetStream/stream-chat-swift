@@ -229,7 +229,6 @@ allowed_models=(
   Role
   ScheduledMessageChannelResponse
   ScheduledMessageContentResponse
-  ScheduledMessageLocation
   ScheduledMessageResponse
   ScheduledMessagesFilter
   SearchPayload
@@ -524,7 +523,6 @@ decodable_only_models=(
   ReminderPayload
   ScheduledMessageChannelResponse
   ScheduledMessageContentResponse
-  ScheduledMessageLocation
   ScheduledMessageResponse
   SearchResponse
   SearchResult
@@ -863,6 +861,7 @@ remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
 remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
+remove_property ScheduledMessageContentResponse html mml sharedLocation
 remove_property ScheduledMessageCreatedEventDTO cid custom receivedAt user
 remove_property ScheduledMessageDeletedEventDTO cid custom receivedAt user
 remove_property ScheduledMessageFailedEventDTO cid custom receivedAt user

@@ -92,7 +92,6 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.message.pinDetails?.expiresAt == rhs.message.pinDetails?.expiresAt
             && (lhs.message.pinDetails == nil) == (rhs.message.pinDetails == nil)
             && lhs.message.poll?.id == rhs.message.poll?.id
-            && lhs.message.sharedLocation == rhs.message.sharedLocation
             && lhs.scheduledAt == rhs.scheduledAt
             && lhs.status == rhs.status
             && lhs.failureReason == rhs.failureReason

@@ -31,21 +31,6 @@ extension ScheduledMessageResponse {
         }
 
         let poll = message.pollId.flatMap { try? session.poll(id: $0) }.flatMap { try? $0.asModel() }
-        let sharedLocation = message.sharedLocation.flatMap { location -> SharedLocation? in
-            guard let latitude = location.latitude, let longitude = location.longitude else { return nil }
-            return SharedLocation(
-                channelCid: channelId,
-                createdAt: scheduledAt,
-                createdByDeviceId: location.createdByDeviceId,
-                endAt: location.endAt,
-                latitude: latitude,
-                longitude: longitude,
-                messageId: id,
-                updatedAt: updatedAt,
-                userId: user.id
-            )
-        }
-
         let chatMessage = ChatMessage(
             id: id,
             cid: channelId,
@@ -95,7 +80,7 @@ extension ScheduledMessageResponse {
             textUpdatedAt: nil,
             draftReply: nil,
             reminder: nil,
-            sharedLocation: sharedLocation
+            sharedLocation: nil
         )
 
         return ScheduledMessage(
