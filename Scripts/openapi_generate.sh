@@ -229,6 +229,7 @@ allowed_models=(
   Role
   ScheduledMessageChannelResponse
   ScheduledMessageContentResponse
+  ScheduledMessageLocation
   ScheduledMessageResponse
   ScheduledMessagesFilter
   SearchPayload
@@ -523,6 +524,7 @@ decodable_only_models=(
   ReminderPayload
   ScheduledMessageChannelResponse
   ScheduledMessageContentResponse
+  ScheduledMessageLocation
   ScheduledMessageResponse
   SearchResponse
   SearchResult
@@ -785,12 +787,12 @@ remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedA
 remove_property BanRequest banFromFutureChannels deleteMessages deleteReactions ipBan
 remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
-remove_property ChannelGetOrCreateRequest hideForCreator includeScheduledMessages memberCustomInclude threadUnreadCounts
+remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
 remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest channelRole user
-remove_property ChannelStateResponse cooldownRemainingMs hideMessagesBefore scheduledMessages
+remove_property ChannelStateResponse cooldownRemainingMs hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
@@ -861,7 +863,6 @@ remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
 remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
-remove_property ScheduledMessageContentResponse html mentionedChannel mentionedGroupIds mentionedHere mentionedRoles mml pinExpires pinned pollId restrictedVisibility sharedLocation
 remove_property ScheduledMessageCreatedEventDTO cid custom receivedAt user
 remove_property ScheduledMessageDeletedEventDTO cid custom receivedAt user
 remove_property ScheduledMessageFailedEventDTO cid custom receivedAt user

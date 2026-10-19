@@ -6,6 +6,8 @@ import Foundation
 
 final class ChannelGetOrCreateRequest: Sendable, Encodable, JSONEncodable {
     let data: ChannelInput?
+    /// Adds scheduled_messages to the response: the caller's own scheduled, sending and failed messages in this channel. Client-side only. Absent from the response when there are more than 100 or they could not be loaded; use the scheduled messages query then
+    let includeScheduledMessages: Bool?
     let members: PaginationParams?
     let messages: MessagePaginationParams?
     /// Fetch user presence info
@@ -18,6 +20,7 @@ final class ChannelGetOrCreateRequest: Sendable, Encodable, JSONEncodable {
 
     init(
         data: ChannelInput? = nil,
+        includeScheduledMessages: Bool? = nil,
         members: PaginationParams? = nil,
         messages: MessagePaginationParams? = nil,
         presence: Bool? = nil,
@@ -26,6 +29,7 @@ final class ChannelGetOrCreateRequest: Sendable, Encodable, JSONEncodable {
         watchers: PaginationParams? = nil
     ) {
         self.data = data
+        self.includeScheduledMessages = includeScheduledMessages
         self.members = members
         self.messages = messages
         self.presence = presence
@@ -37,6 +41,7 @@ final class ChannelGetOrCreateRequest: Sendable, Encodable, JSONEncodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encodeIfPresent(data, forKey: .data)
+        try container.encodeIfPresent(includeScheduledMessages, forKey: .includeScheduledMessages)
         try container.encodeIfPresent(members, forKey: .members)
         try container.encodeIfPresent(messages, forKey: .messages)
         try container.encodeIfPresent(presence, forKey: .presence)
