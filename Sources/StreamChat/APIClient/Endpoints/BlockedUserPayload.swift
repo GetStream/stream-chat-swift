@@ -39,7 +39,7 @@ struct BlockPayload: Decodable {
     let blockedUserId: String
     let userId: String
     let createdAt: Date
-    let blockedUser: BlockedUserPayload
+    let blockedUser: UserPayload
 }
 
 extension BlockPayload: Equatable {
@@ -48,23 +48,4 @@ extension BlockPayload: Equatable {
             && lhs.userId == rhs.userId
             && lhs.createdAt == rhs.createdAt
     }
-}
-
-/// An object describing the incoming blocked-user JSON payload.
-struct BlockedUserPayload: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case anon
-        case name
-        case role
-        case teams
-        case username
-    }
-
-    let id: String
-    let anon: Bool?
-    let name: String?
-    let role: UserRole
-    let teams: [TeamId]
-    let username: String?
 }

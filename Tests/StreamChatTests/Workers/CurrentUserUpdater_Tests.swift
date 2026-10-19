@@ -1087,4 +1087,34 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+
+    // MARK: - Load Blocked Users
+
+    func test_loadBlockedUsers_successfulResponse_returnsModels() throws {
+        // GIVEN
+        let blockedUserId: UserId = .unique
+        let createdAt: Date = .unique
+        let response = BlocksPayload(
+            blockedUsers: [
+                BlockPayload(
+                    blockedUserId: blockedUserId,
+                    userId: .unique,
+                    createdAt: createdAt,
+                    blockedUser: .dummy(userId: blockedUserId)
+                )
+            ]
+        )
+
+        // WHEN
+        let result: Result<[BlockedUserDetails], Error> = try waitFor { done in
+            currentUserUpdater.loadBlockedUsers(completion: done)
+            apiClient.test_simulateResponse(.success(response))
+        }
+
+        // THEN
+        let blockedUsers = try result.get()
+        XCTAssertEqual(blockedUsers.map(\.userId), [blockedUserId])
+        XCTAssertEqual(blockedUsers.first?.blockedAt, createdAt)
+        XCTAssertEqual(blockedUsers.first?.blockedUser?.id, blockedUserId)
+    }
 }

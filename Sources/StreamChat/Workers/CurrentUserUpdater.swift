@@ -255,7 +255,11 @@ class CurrentUserUpdater: Worker {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
                     }
                     let blockedUsers = payload.blockedUsers.map {
-                        BlockedUserDetails(userId: $0.blockedUserId, blockedAt: $0.createdAt)
+                        BlockedUserDetails(
+                            userId: $0.blockedUserId,
+                            blockedAt: $0.createdAt,
+                            blockedUser: $0.blockedUser.asModel()
+                        )
                     }
                     completion(.success(blockedUsers))
                 })
