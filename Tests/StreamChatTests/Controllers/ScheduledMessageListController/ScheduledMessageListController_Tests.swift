@@ -8,6 +8,7 @@ import XCTest
 
 final class ScheduledMessageListController_Tests: XCTestCase {
     var client: ChatClient_Mock!
+    var apiClient: APIClient_Spy!
     var cid: ChannelId!
     var userId: UserId!
 
@@ -15,15 +16,15 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         super.setUp()
 
         client = ChatClient.mock
+        apiClient = client.mockAPIClient
         cid = .unique
         userId = .unique
         client.currentUserId_mock = userId
-        let simulator = ScheduledMessagesSimulator(client: client, responseDelay: 0, deliveryInterval: 3600)
-        client.scheduledMessagesRepository = ScheduledMessagesRepository(client: client, simulator: simulator)
     }
 
     override func tearDown() {
-        UserDefaults.standard.removeObject(forKey: "io.getstream.chat.simulated-scheduled-messages.\(userId!)")
+        apiClient.cleanUp()
+        apiClient = nil
         client = nil
         cid = nil
         userId = nil
@@ -32,7 +33,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
     }
 
     func test_synchronize_loadsTheScheduledMessages() throws {
-        let message = try schedule()
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(scheduledMessages: [.dummy(id: "scheduled-id", cid: cid)])))
         let controller = client.scheduledMessageListController()
 
         let error = try waitFor { controller.synchronize($0) }
@@ -40,7 +41,45 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertNil(error)
         XCTAssertEqual(controller.state, .remoteDataFetched)
         XCTAssertTrue(controller.hasLoadedAllScheduledMessages)
-        XCTAssertEqual(controller.scheduledMessages, [message])
+        XCTAssertEqual(controller.scheduledMessages.map(\.id), ["scheduled-id"])
+    }
+
+    func test_synchronize_withANextPage_hasNotLoadedAllScheduledMessages() throws {
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(next: "cursor", scheduledMessages: [.dummy(cid: cid)])))
+        let controller = client.scheduledMessageListController()
+
+        _ = try waitFor { controller.synchronize($0) }
+
+        XCTAssertFalse(controller.hasLoadedAllScheduledMessages)
+    }
+
+    func test_loadMoreScheduledMessages_requestsTheNextPage() throws {
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(next: "cursor", scheduledMessages: [.dummy(id: "first", cid: cid)])))
+        let controller = client.scheduledMessageListController(query: .init(pageSize: 1))
+        _ = try waitFor { controller.synchronize($0) }
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(scheduledMessages: [.dummy(id: "second", cid: cid)])))
+
+        let loaded = try waitFor { controller.loadMoreScheduledMessages(completion: $0) }.get()
+
+        let expectedEndpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
+            queryScheduledMessagesRequest: QueryScheduledMessagesRequest(limit: 1, next: "cursor")
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(loaded.map(\.id), ["second"])
+        XCTAssertTrue(controller.hasLoadedAllScheduledMessages)
+        XCTAssertEqual(Set(controller.scheduledMessages.map(\.id)), ["first", "second"])
+    }
+
+    func test_synchronize_whenTheRequestFails_reportsTheError() throws {
+        apiClient.test_mockResponseResult(Result<QueryScheduledMessagesResponse, Error>.failure(ClientError.ConnectionError()))
+        let controller = client.scheduledMessageListController()
+
+        let error = try waitFor { controller.synchronize($0) }
+
+        XCTAssertNotNil(error)
+        guard case .remoteDataFetchFailed = controller.state else {
+            return XCTFail("Expected the remote fetch to fail")
+        }
     }
 
     @MainActor func test_delegate_isNotifiedOfInsertionsAndRemovals() throws {
@@ -59,6 +98,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(index, IndexPath(item: 0, section: 0))
 
         delegate.expectation = expectation(description: "removal")
+        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: "canceled"))))
         _ = try waitFor { controller.deleteScheduledMessage(id: message.id, completion: $0) }
         wait(for: [delegate.expectation!], timeout: defaultTimeout)
 
@@ -81,6 +121,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         let message = try schedule()
         let controller = client.scheduledMessageListController()
         let newDate = Date().addingTimeInterval(7200)
+        apiClient.test_mockResponseResult(.success(UpdateScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, scheduledAt: newDate))))
 
         let rescheduled = try waitFor { controller.rescheduleMessage(id: message.id, scheduledAt: newDate, completion: $0) }.get()
 
@@ -88,10 +129,27 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(controller.scheduledMessages.first?.scheduledAt, newDate)
     }
 
+    func test_sendScheduledMessageNow_requestsToSendIt() throws {
+        let message = try schedule()
+        let controller = client.scheduledMessageListController()
+        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: "sending"))))
+
+        let error = try waitFor { controller.sendScheduledMessageNow(id: message.id, completion: $0) }
+
+        let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: message.id)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertNil(error)
+        XCTAssertEqual(controller.scheduledMessages.first?.status, .sending)
+    }
+
     // MARK: - Helpers
 
     private func schedule(cid: ChannelId? = nil) throws -> ScheduledMessage {
-        let channelController = client.channelController(for: cid ?? self.cid)
+        let cid = cid ?? self.cid!
+        apiClient.test_mockUnmanagedResponseResult(.success(
+            SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(cid: cid))
+        ))
+        let channelController = client.channelController(for: cid)
         return try waitFor {
             channelController.scheduleMessage(text: "Hello", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
         }.get()
