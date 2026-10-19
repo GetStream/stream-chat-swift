@@ -13,12 +13,12 @@ public struct BlockedUserDetails {
     public let blockedAt: Date?
 
     /// The blocked user.
-    public let blockedUser: ChatUser?
+    public let blockedUser: ChatUser
 
     init(
         userId: UserId,
         blockedAt: Date?,
-        blockedUser: ChatUser?
+        blockedUser: ChatUser
     ) {
         self.userId = userId
         self.blockedAt = blockedAt

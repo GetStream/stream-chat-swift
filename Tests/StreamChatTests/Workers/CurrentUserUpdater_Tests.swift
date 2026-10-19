@@ -1115,6 +1115,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let blockedUsers = try result.get()
         XCTAssertEqual(blockedUsers.map(\.userId), [blockedUserId])
         XCTAssertEqual(blockedUsers.first?.blockedAt, createdAt)
-        XCTAssertEqual(blockedUsers.first?.blockedUser?.id, blockedUserId)
+        XCTAssertEqual(blockedUsers.first?.blockedUser.id, blockedUserId)
     }
 }
