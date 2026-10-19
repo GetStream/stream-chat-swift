@@ -30,7 +30,7 @@ extension ChannelCustomCommonFields {
     var name: String? { custom[ChannelCodingKeys.name.rawValue]?.stringValue }
 
     var touchedAt: Date? {
-        custom[GroupedChannelKey.touchedAt].flatMap { try? JSONDecoder.default.decode(Date.self, from: JSONEncoder.default.encode($0)) }
+        custom[GroupedChannelKey.touchedAt]?.stringValue.flatMap(RFC3339DateFormatter.date(from:))
     }
 }
 

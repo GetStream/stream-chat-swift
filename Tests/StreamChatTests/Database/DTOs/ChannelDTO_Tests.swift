@@ -789,6 +789,102 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual([lastMessageAt.addingTimeInterval(3600), lastMessageAt], queryTimestamps)
     }
 
+    func test_saveChannel_touchedAt_acceptsOnlyRFC3339Strings() throws {
+        let cases: [(RawJSON?, TimeInterval?)] = [
+            (.string("2025-10-09T08:53:20Z"), 1_760_000_000),
+            (.string("2025-10-09T10:53:20+02:00"), 1_760_000_000),
+            (.string("2025-10-09T08:53:20.123Z"), 1_760_000_000.123),
+            (.string("2025-10-09T08:53:20.123456Z"), 1_760_000_000.123456),
+            (.string("2025-10-09T08:53:20.123456789Z"), 1_760_000_000.123456789),
+            (.string("2025-10-09T10:53:20.123456+02:00"), 1_760_000_000.123456),
+            (nil, nil),
+            (.string("invalid"), nil),
+            (.number(1_760_000_000_000_000_000), nil),
+            (.bool(true), nil),
+            (RawJSON.nil, nil),
+            (.array([]), nil),
+            (.dictionary([:]), nil)
+        ]
+
+        for (value, expectedTimestamp) in cases {
+            let cid = ChannelId.unique
+            try database.writeSynchronously { session in
+                try session.saveChannel(payload: .dummy(channel: .dummy(
+                    cid: cid,
+                    extraData: [GroupedChannelKey.touchedAt: .string("2025-10-09T08:53:20Z")]
+                )))
+            }
+            let previousTouchedAt = try database.readSynchronously { session in
+                try XCTUnwrap(session.channel(cid: cid)).touchedAt?.bridgeDate
+            }
+            XCTAssertEqual(previousTouchedAt, Date(timeIntervalSince1970: 1_760_000_000))
+
+            var custom: [String: RawJSON] = [:]
+            custom[GroupedChannelKey.touchedAt] = value
+            try database.writeSynchronously { session in
+                try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: custom)))
+            }
+
+            let touchedAt = try database.readSynchronously { session in
+                try XCTUnwrap(session.channel(cid: cid)).touchedAt?.bridgeDate
+            }
+            if let expectedTimestamp {
+                XCTAssertEqual(try XCTUnwrap(touchedAt).timeIntervalSince1970, expectedTimestamp, accuracy: 0.000001)
+            } else {
+                XCTAssertNil(touchedAt, "Unexpected touched_at for \(String(describing: value))")
+            }
+        }
+    }
+
+    func test_savePartialChannel_touchedAt_acceptsOnlyRFC3339Strings() throws {
+        let cases: [(RawJSON?, TimeInterval?)] = [
+            (.string("2025-10-09T08:53:20Z"), 1_760_000_000),
+            (.string("2025-10-09T10:53:20+02:00"), 1_760_000_000),
+            (.string("2025-10-09T08:53:20.123Z"), 1_760_000_000.123),
+            (.string("2025-10-09T08:53:20.123456Z"), 1_760_000_000.123456),
+            (.string("2025-10-09T08:53:20.123456789Z"), 1_760_000_000.123456789),
+            (.string("2025-10-09T10:53:20.123456+02:00"), 1_760_000_000.123456),
+            (nil, nil),
+            (.string("invalid"), nil),
+            (.number(1_760_000_000_000_000_000), nil),
+            (.bool(true), nil),
+            (RawJSON.nil, nil),
+            (.array([]), nil),
+            (.dictionary([:]), nil)
+        ]
+
+        for (value, expectedTimestamp) in cases {
+            let cid = ChannelId.unique
+            try database.writeSynchronously { session in
+                try session.saveChannel(payload: .dummy(channel: .dummy(
+                    cid: cid,
+                    extraData: [GroupedChannelKey.touchedAt: .string("2025-10-09T08:53:20Z")]
+                )))
+            }
+            let previousTouchedAt = try database.readSynchronously { session in
+                try XCTUnwrap(session.channel(cid: cid)).touchedAt?.bridgeDate
+            }
+            XCTAssertEqual(previousTouchedAt, Date(timeIntervalSince1970: 1_760_000_000))
+
+            var custom: [String: RawJSON] = [:]
+            custom[GroupedChannelKey.touchedAt] = value
+            try database.writeSynchronously { session in
+                try XCTUnwrap(session.channel(cid: cid)).savePartialChannel(
+                    payload: ChannelPartialUpdateResponse(cid: cid, custom: custom, disabled: false, frozen: false, updatedAt: .unique)
+                )
+            }
+
+            let touchedAt = try database.readSynchronously { session in
+                try XCTUnwrap(session.channel(cid: cid)).touchedAt?.bridgeDate
+            }
+            if let expectedTimestamp {
+                XCTAssertEqual(try XCTUnwrap(touchedAt).timeIntervalSince1970, expectedTimestamp, accuracy: 0.000001)
+            } else {
+                XCTAssertNil(touchedAt, "Unexpected touched_at for \(String(describing: value))")
+            }
+        }
+    }
+
     func test_savePartialChannel_mergesCarriedFields() throws {
         let cid = ChannelId.unique
         let updatedAt = Date(timeIntervalSince1970: 1_760_000_000)
