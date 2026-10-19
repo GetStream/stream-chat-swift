@@ -85,15 +85,20 @@ extension UserCredentials {
         ]
     }
 
-    /// Users of the US East staging app. They use development tokens.
+    /// Users of the US East staging app. Development tokens are disabled there.
     static var stagingUsers: [UserCredentials] {
-        ["alice", "bob", "carol", "dave"].map { id in
+        [
+            ("alice", DemoUserTokens.stagingAlice),
+            ("bob", DemoUserTokens.stagingBob),
+            ("carol", DemoUserTokens.stagingCarol),
+            ("dave", DemoUserTokens.stagingDave)
+        ].map { id, token in
             let name = id.capitalized
             return UserCredentials(
                 id: id,
                 name: name,
                 avatarURL: URL(string: "https://getstream.io/random_png?id=\(id)&name=\(name)&size=200")!,
-                token: .development(userId: id),
+                token: token,
                 birthLand: "Staging"
             )
         }
@@ -312,6 +317,12 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
 }
 
 enum DemoUserTokens {
+    // US East staging app (1731829)
+    static let stagingAlice: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImFsaWNlIn0.V2Yxh71BEqEAvhmTiCMNjCzgKQ1F1AixFgZuGuv8vqw"
+    static let stagingBob: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImJvYiJ9.0fUnI4398M0CxzmbyIrJ3xRG4H2vMQCXcS_1xu7bsOk"
+    static let stagingCarol: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImNhcm9sIn0._Oe0Ne3nFJ0u_U-xQGhFZ42MwZT2oZl-Cmk08VALE7I"
+    static let stagingDave: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImRhdmUifQ.2eboGhGJVE03meTKfNVOgKsPTZ_QRIB5u-r9cjBQ40E"
+
     static var luke: Token {
         switch apiKeyString {
         case DemoApiKeys.frankfurtC1:
