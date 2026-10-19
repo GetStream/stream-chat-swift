@@ -1277,7 +1277,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Assert the returned details map the generated response
         XCTAssertEqual(result?.map(\.userId), [blockedUserId])
         XCTAssertEqual(result?.first?.blockedAt, createdAt)
-        XCTAssertEqual(result?.first?.blockedUser?.id, blockedUserId)
+        XCTAssertEqual(result?.first?.blockedUser.id, blockedUserId)
     }
 
     func test_loadBlockedUsers_propagatesError() {

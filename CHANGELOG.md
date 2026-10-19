@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `BlockedUserDetails.blockedUser` to show blocked users' names and avatars [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
+- Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
 
 ## StreamChatAI
 ### ✅ Added
