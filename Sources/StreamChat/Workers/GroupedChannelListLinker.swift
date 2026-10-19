@@ -12,9 +12,8 @@ import Foundation
 /// - Channel is updated: We re-evaluate membership — the channel's `"group"` extra-data may have
 ///   changed, which can move it into or out of this query.
 ///
-/// Membership is decided from the channel's `"group"` extra-data value:
-/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel carrying any non-empty group
-///   value links into it.
+/// Only channels the current user is a member of are linked, and the channel's `"group"` extra-data value decides where:
+/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel links into it, including channels without a group.
 /// - Any other `groupKey` links a channel only when its `"group"` value equals the query's `groupKey`;
 ///   otherwise the channel is unlinked.
 ///
@@ -86,7 +85,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
         if event.isChannelStored {
             updateLinking(for: event.cid)
-        } else if let group = event.group, query.groupKey == GroupedChannelKey.all || query.groupKey == group {
+        } else if isInGroup(event.group) {
             // Watching fetches and saves the channel, then it can be linked to the query.
             databaseContainer.read({ [query] session in
                 session.channelListQuery(query)?.watch == true
@@ -125,8 +124,8 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, startsWatching: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
-            let isInGroup = channelDTO.group != nil && (query.groupKey == GroupedChannelKey.all || query.groupKey == channelDTO.group)
-            let shouldBelong = try isInGroup && (self.filterPredicate(of: queryDTO)?.evaluate(with: channelDTO) ?? true)
+            let isMemberInGroup = channelDTO.membership != nil && self.isInGroup(channelDTO.group)
+            let shouldBelong = try isMemberInGroup && (self.filterPredicate(of: queryDTO)?.evaluate(with: channelDTO) ?? true)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
@@ -156,6 +155,10 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 }
             }
         })
+    }
+
+    private func isInGroup(_ group: String?) -> Bool {
+        query.groupKey == GroupedChannelKey.all || (group != nil && query.groupKey == group)
     }
 
     private func filterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {

@@ -130,6 +130,36 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(true, isLinked(oldNewCid, in: allQuery))
     }
 
+    func test_messageNew_whenChannelHasNoGroup_linksItOnlyIntoAllGroup() throws {
+        let allQuery = ChannelListQuery(groupKey: GroupedChannelKey.all)
+        let allLinker = GroupedChannelListLinker(
+            query: allQuery,
+            databaseContainer: database,
+            channelWatcherHandler: ChannelWatcherHandler_Mock(),
+            timerType: VirtualTimeTimer.self
+        )
+        allLinker.start(with: eventNotificationCenter)
+        try saveFilteredGroup()
+        try saveFilteredGroup(query: allQuery)
+        let cid = ChannelId.unique
+        try saveChannel(cid: cid, group: nil, lastMessageAt: daysBeforeNow(0), isLinked: false)
+
+        try process(messageNewEvent(cid: cid))
+
+        XCTAssertEqual(true, isLinked(cid, in: allQuery))
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_messageNew_whenCurrentUserIsNotMember_doesNotLinkChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isMember: false, isLinked: false)
+
+        try process(messageNewEvent(cid: cid))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
     func test_channelPartialUpdated_whenStoredChannelEntersTheGroup_linksChannel() throws {
         let cid = ChannelId.unique
         try saveFilteredGroup()
@@ -198,10 +228,18 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         }
     }
 
-    private func saveChannel(cid: ChannelId, group: String = "expired", lastMessageAt: Date, unreadMessages: Int = 0, isLinked: Bool) throws {
+    private func saveChannel(
+        cid: ChannelId,
+        group: String? = "expired",
+        lastMessageAt: Date,
+        unreadMessages: Int = 0,
+        isMember: Bool = true,
+        isLinked: Bool
+    ) throws {
         let read = ChannelReadPayload(user: .dummy(userId: currentUserId), lastReadAt: lastMessageAt, lastReadMessageId: nil, unreadMessagesCount: unreadMessages)
         let payload = ChannelPayload.dummy(
-            channel: .dummy(cid: cid, extraData: [GroupedChannelKey.group: .string(group)], lastMessageAt: lastMessageAt, createdAt: lastMessageAt),
+            channel: .dummy(cid: cid, extraData: group.map { [GroupedChannelKey.group: .string($0)] } ?? [:], lastMessageAt: lastMessageAt, createdAt: lastMessageAt),
+            membership: isMember ? .dummy(user: .dummy(userId: currentUserId)) : nil,
             channelReads: [read]
         )
         try database.writeSynchronously { session in
