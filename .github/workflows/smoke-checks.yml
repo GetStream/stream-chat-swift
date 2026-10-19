@@ -29,6 +29,9 @@ env:
   IOS_SIMULATOR_DEVICE: "iPhone 17 Pro (26.2)"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+  GITHUB_EVENT_ACTION: ${{ github.event.action }}
+  GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+  GITHUB_EVENT_AFTER: ${{ github.event.after }}
   VERBOSE: ${{ github.event.inputs.verbose == 'true' && '--verbose' || '' }}
 
 permissions:
