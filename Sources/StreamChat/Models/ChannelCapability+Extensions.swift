@@ -18,8 +18,4 @@ public extension ChannelCapability {
     /// Ability to create a call.
     @available(*, deprecated, message: "Calling capabilities are no longer part of channel capabilities.")
     static let createCall: ChannelCapability = "create-call"
-
-    // Remove once the backend spec includes it and it is generated: CHA-5635
-    /// Ability to schedule messages.
-    static let scheduleMessage: ChannelCapability = "schedule-message"
 }

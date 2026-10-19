@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
 SOURCERY_CONFIG="$REPO_ROOT/Sources/StreamChat/.openapi.sourcery.yml"
-CHAT_DIR="$REPO_ROOT/../chat"
+CHAT_DIR="${CHAT_DIR:-$REPO_ROOT/../chat}"
 
 source "$SCRIPT_DIR/openapi_generate_helpers.sh"
 
@@ -39,6 +39,7 @@ allowed_endpoints=(
     deletePollVote
     deleteReaction
     deleteReminder
+    deleteScheduledMessage
     deleteUserGroup
     flag
     getApp
@@ -71,6 +72,7 @@ allowed_endpoints=(
     queryPollVotes
     queryReactions
     queryReminders
+    queryScheduledMessages
     queryThreads
     queryUsers
     removeUserGroupMembers
@@ -81,6 +83,7 @@ allowed_endpoints=(
     sendEvent
     sendMessage
     sendReaction
+    sendScheduledMessageNow
     showChannel
     stopWatchingChannel
     sync
@@ -100,6 +103,7 @@ allowed_endpoints=(
     updatePollPartial
     updatePushNotificationPreferences
     updateReminder
+    updateScheduledMessage
     updateThreadPartial
     updateUserGroup
     updateUsersPartial
@@ -141,6 +145,7 @@ allowed_models=(
   DeleteChannelResponse
   DeleteMessageResponse
   DeleteReactionResponse
+  DeleteScheduledMessageResponse
   DeliveredMessagePayload
   DraftPayloadResponse
   DraftResponse
@@ -209,6 +214,8 @@ allowed_models=(
   QueryReactionsRequest
   QueryRemindersRequest
   QueryRemindersResponse
+  QueryScheduledMessagesRequest
+  QueryScheduledMessagesResponse
   QueryThreadsRequest
   QueryThreadsResponse
   QueryUsersPayload
@@ -220,6 +227,10 @@ allowed_models=(
   ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  ScheduledMessageChannelResponse
+  ScheduledMessageContentResponse
+  ScheduledMessageResponse
+  ScheduledMessagesFilter
   SearchPayload
   SearchResponse
   SearchResult
@@ -230,6 +241,7 @@ allowed_models=(
   SendMessageResponse
   SendReactionRequest
   SendReactionResponse
+  SendScheduledMessageNowResponse
   SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
@@ -265,6 +277,8 @@ allowed_models=(
   UpdatePollPartialRequest
   UpdateReminderRequest
   UpdateReminderResponse
+  UpdateScheduledMessageRequest
+  UpdateScheduledMessageResponse
   UpdateThreadPartialRequest
   UpdateThreadPartialResponse
   UpdateUserGroupRequest
@@ -331,6 +345,11 @@ allowed_events=(
   ReminderDeletedEvent
   ReminderNotificationEvent
   ReminderUpdatedEvent
+  ScheduledMessageCreatedEvent
+  ScheduledMessageDeletedEvent
+  ScheduledMessageFailedEvent
+  ScheduledMessageSentEvent
+  ScheduledMessageUpdatedEvent
   ThreadUpdatedEvent
   TypingStartEvent
   TypingStopEvent
@@ -405,10 +424,12 @@ encodable_only_models=(
   QueryPollVotesRequestBody
   QueryReactionsRequest
   QueryRemindersRequest
+  QueryScheduledMessagesRequest
   QueryThreadsRequest
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  ScheduledMessagesFilter
   SearchPayload
   SendEventRequest
   SendMessageRequest
@@ -427,6 +448,7 @@ encodable_only_models=(
   UpdateMessageRequest
   UpdatePollPartialRequestBody
   UpdateReminderRequest
+  UpdateScheduledMessageRequest
   UpdateThreadPartialRequest
   UpdateUserGroupRequest
   UpdateUserPartialRequest
@@ -450,6 +472,7 @@ decodable_only_models=(
   DeleteChannelResponse
   DeleteMessageResponse
   DeleteReactionResponse
+  DeleteScheduledMessageResponse
   DraftMessagePayload
   DraftPayload
   FileUploadResponse
@@ -493,16 +516,21 @@ decodable_only_models=(
   QueryChannelsResponse
   QueryDraftsResponse
   QueryRemindersResponse
+  QueryScheduledMessagesResponse
   QueryThreadsResponse
   QueryUsersResponse
   ReadStateResponse
   ReminderPayload
+  ScheduledMessageChannelResponse
+  ScheduledMessageContentResponse
+  ScheduledMessageResponse
   SearchResponse
   SearchResult
   SearchResultMessage
   SearchRolesResponse
   SendMessageResponsePayload
   SendReactionResponse
+  SendScheduledMessageNowResponse
   SharedLocation
   SharedLocationsResponse
   SyncResponse
@@ -522,6 +550,7 @@ decodable_only_models=(
   UpdateMessagePartialResponse
   UpdateMessageResponse
   UpdateReminderResponse
+  UpdateScheduledMessageResponse
   UpdateThreadPartialResponse
   UpdateUsersResponse
   UploadChannelFileResponse
@@ -756,12 +785,12 @@ remove_property AIIndicatorUpdateEventDTO channelId channelType custom receivedA
 remove_property BanRequest banFromFutureChannels deleteMessages deleteReactions ipBan
 remove_property ChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property ChannelDetailPayload hideMessagesBefore muteExpiresAt muted
-remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude threadUnreadCounts
+remove_property ChannelGetOrCreateRequest hideForCreator includeScheduledMessages memberCustomInclude threadUnreadCounts
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
 remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest channelRole user
-remove_property ChannelStateResponse hideMessagesBefore
+remove_property ChannelStateResponse cooldownRemainingMs hideMessagesBefore scheduledMessages
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
@@ -832,6 +861,12 @@ remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
 remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
+remove_property ScheduledMessageContentResponse html mentionedChannel mentionedGroupIds mentionedHere mentionedRoles mml pinExpires pinned pollId restrictedVisibility sharedLocation
+remove_property ScheduledMessageCreatedEventDTO cid custom receivedAt user
+remove_property ScheduledMessageDeletedEventDTO cid custom receivedAt user
+remove_property ScheduledMessageFailedEventDTO cid custom receivedAt user
+remove_property ScheduledMessageSentEventDTO cid custom receivedAt user
+remove_property ScheduledMessageUpdatedEventDTO cid custom receivedAt user
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
 remove_property SearchResultMessage html imageLabels mml
