@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Stop sending a typing stop event on message send when the user was not typing [#4347](https://github.com/GetStream/stream-chat-swift/pull/4347)
+
 ## StreamChatAI
 ### ✅ Added
 - Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
