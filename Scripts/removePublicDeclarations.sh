@@ -51,4 +51,37 @@ do
 		
 		replaceDeclaration 'typealias Differentiable =' 'public typealias Differentiable =' $f
 	fi
+
+	# Splash
+	if [[ $directory == *"Splash"* ]]; then
+		# Splash's names would hide SwiftUI's Color and Font, and clash with MarkdownUI's Theme
+		replaceDeclaration '[[:<:]]Color[[:>:]]' 'SplashColor' $f
+		replaceDeclaration '[[:<:]]Font[[:>:]]' 'SplashFont' $f
+		replaceDeclaration '[[:<:]]Theme[[:>:]]' 'SplashTheme' $f
+	fi
+
+	# MarkdownUI
+	if [[ $directory == *"MarkdownUI"* ]]; then
+		replaceDeclaration '@frozen ' '' $f
+		# NetworkImage is embedded in the same module
+		replaceDeclaration '^import NetworkImage$' '' $f
+		replaceDeclaration '@_implementationOnly import cmark_gfm' 'internal import StreamChatAICMark' $f
+		# StreamChatAI has its own CodeBlockView
+		replaceDeclaration '[[:<:]]CodeBlockView[[:>:]]' 'MarkdownCodeBlockView' $f
+	fi
 done
+
+# File names must be unique in a module
+if [[ $directory == *"Splash"* ]]; then
+	for f in `find $directory -name "Color.swift" -o -name "Font.swift" -o -name "Theme*.swift"`
+	do
+		mv $f "$(dirname $f)/Splash$(basename $f)"
+	done
+fi
+
+if [[ $directory == *"MarkdownUI"* ]]; then
+	for f in `find $directory -name "CodeBlockView.swift"`
+	do
+		mv $f "$(dirname $f)/Markdown$(basename $f)"
+	done
+fi

@@ -5,7 +5,6 @@
 import StreamCore
 import SwiftUI
 import UIKit
-internal import MarkdownUI
 
 /// A code block in a message: its language and a copy button over the highlighted code,
 /// which scrolls sideways.
