@@ -59,9 +59,8 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
         return event
     }
 
-    // Campaign messages un-hide only when the campaign has `show_channels`, which the message does not carry.
     private func shouldUnhide(_ channelDTO: ChannelDTO, for message: MessageResponse, session: DatabaseSession) -> Bool {
-        let isUnhidingType = [MessageType.regular.rawValue, MessageType.reply.rawValue].contains(message.type)
+        let isUnhidingType = message.type == MessageType.regular.rawValue || message.type == MessageType.reply.rawValue
         let isSenderBlocked = session.currentUser?.blockedUserIds.contains(message.user.id) == true
         return isUnhidingType && !message.shadowed && message.campaignId == nil && !channelDTO.isBlocked && !isSenderBlocked
     }
