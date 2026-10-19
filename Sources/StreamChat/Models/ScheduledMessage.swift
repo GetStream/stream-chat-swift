@@ -23,7 +23,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The message that will be sent, so it can be rendered like any other message.
     ///
     /// It is authored by the current user, and its `createdAt` is `scheduledAt`. It is not part of the channel,
-    /// and has no reactions, replies or read state. Users and the quoted message are only fully populated
+    /// and has no reactions, replies or read state. Users, the quoted message and the poll are only fully populated
     /// when they are available locally.
     public let message: ChatMessage
 
@@ -85,6 +85,14 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.message.parentMessageId == rhs.message.parentMessageId
             && lhs.message.showReplyInChannel == rhs.message.showReplyInChannel
             && lhs.message.extraData == rhs.message.extraData
+            && lhs.message.mentionedHere == rhs.message.mentionedHere
+            && lhs.message.mentionedChannel == rhs.message.mentionedChannel
+            && lhs.message.mentionedRoles == rhs.message.mentionedRoles
+            && lhs.message.isSilent == rhs.message.isSilent
+            && lhs.message.pinDetails?.expiresAt == rhs.message.pinDetails?.expiresAt
+            && (lhs.message.pinDetails == nil) == (rhs.message.pinDetails == nil)
+            && lhs.message.poll?.id == rhs.message.poll?.id
+            && lhs.message.sharedLocation == rhs.message.sharedLocation
             && lhs.scheduledAt == rhs.scheduledAt
             && lhs.status == rhs.status
             && lhs.failureReason == rhs.failureReason

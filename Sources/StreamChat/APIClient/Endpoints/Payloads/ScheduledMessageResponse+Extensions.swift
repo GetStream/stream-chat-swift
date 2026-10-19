@@ -7,8 +7,8 @@ import Foundation
 extension ScheduledMessageResponse {
     /// Builds the scheduled message model.
     ///
-    /// The backend returns the user ids of the mentions and the id of the quoted message, so they are resolved
-    /// from the database when they are available there.
+    /// The backend returns the user ids of the mentions, the id of the quoted message and the id of the poll,
+    /// so they are resolved from the database when they are available there.
     func asModel(session: DatabaseSession) -> ScheduledMessage? {
         guard let channelId = try? ChannelId(cid: cid) else {
             log.error("Ignoring the scheduled message \(id), its channel id \(cid) is not valid")
@@ -27,6 +27,22 @@ extension ScheduledMessageResponse {
                 payload: (try? JSONEncoder.default.encode(attachment.payload)) ?? Data(),
                 downloadingState: nil,
                 uploadingState: nil
+            )
+        }
+
+        let poll = message.pollId.flatMap { try? session.poll(id: $0) }.flatMap { try? $0.asModel() }
+        let sharedLocation = message.sharedLocation.flatMap { location -> SharedLocation? in
+            guard let latitude = location.latitude, let longitude = location.longitude else { return nil }
+            return SharedLocation(
+                channelCid: channelId,
+                createdAt: scheduledAt,
+                createdByDeviceId: location.createdByDeviceId,
+                endAt: location.endAt,
+                latitude: latitude,
+                longitude: longitude,
+                messageId: id,
+                updatedAt: updatedAt,
+                userId: user.id
             )
         }
 
@@ -55,6 +71,9 @@ extension ScheduledMessageResponse {
             reactionGroups: [:],
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedHere: message.mentionedHere ?? false,
+            mentionedChannel: message.mentionedChannel ?? false,
+            mentionedRoles: message.mentionedRoles ?? [],
             threadParticipants: [],
             attachments: attachments,
             latestReplies: [],
@@ -63,16 +82,20 @@ extension ScheduledMessageResponse {
             latestReactions: [],
             currentUserReactions: [],
             isSentByCurrentUser: true,
-            pinDetails: nil,
+            pinDetails: message.pinned == true ? MessagePinDetails(
+                pinnedAt: scheduledAt,
+                pinnedBy: author,
+                expiresAt: message.pinExpires
+            ) : nil,
             translations: nil,
             originalLanguage: nil,
             moderationDetails: nil,
             readBy: [],
-            poll: nil,
+            poll: poll,
             textUpdatedAt: nil,
             draftReply: nil,
             reminder: nil,
-            sharedLocation: nil
+            sharedLocation: sharedLocation
         )
 
         return ScheduledMessage(

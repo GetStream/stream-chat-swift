@@ -167,6 +167,48 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.message.quotedMessage?.text, "Quoted")
     }
 
+    func test_asModel_exposesTheMentionsPinAndSharedLocation() throws {
+        let scheduledAt = Date().addingTimeInterval(3600)
+        let pinExpires = Date().addingTimeInterval(7200)
+        let response = ScheduledMessageResponse.dummy(
+            cid: cid,
+            user: .dummy(userId: userId),
+            message: .dummy(
+                mentionedChannel: true,
+                mentionedHere: true,
+                mentionedRoles: ["admin"],
+                pinExpires: pinExpires,
+                pinned: true,
+                sharedLocation: ScheduledMessageLocation(createdByDeviceId: "device", latitude: 1.5, longitude: 2.5)
+            ),
+            scheduledAt: scheduledAt
+        )
+
+        let message = try XCTUnwrap(model(from: response)).message
+
+        XCTAssertTrue(message.mentionedChannel)
+        XCTAssertTrue(message.mentionedHere)
+        XCTAssertEqual(message.mentionedRoles, ["admin"])
+        XCTAssertEqual(message.pinDetails?.pinnedAt, scheduledAt)
+        XCTAssertEqual(message.pinDetails?.pinnedBy.id, userId)
+        XCTAssertEqual(message.pinDetails?.expiresAt, pinExpires)
+        XCTAssertEqual(message.sharedLocation?.latitude, 1.5)
+        XCTAssertEqual(message.sharedLocation?.longitude, 2.5)
+        XCTAssertEqual(message.sharedLocation?.createdByDeviceId, "device")
+        XCTAssertEqual(message.sharedLocation?.messageId, response.id)
+    }
+
+    func test_asModel_withoutPinOrSharedLocation_exposesNone() throws {
+        let message = try XCTUnwrap(model(from: .dummy(cid: cid))).message
+
+        XCTAssertNil(message.pinDetails)
+        XCTAssertNil(message.sharedLocation)
+        XCTAssertNil(message.poll)
+        XCTAssertFalse(message.mentionedChannel)
+        XCTAssertFalse(message.mentionedHere)
+        XCTAssertEqual(message.mentionedRoles, [])
+    }
+
     func test_asModel_exposesTheAttachments() throws {
         let response = ScheduledMessageResponse.dummy(
             id: "scheduled-id",
@@ -648,17 +690,29 @@ extension ScheduledMessageContentResponse {
         text: String = "Hello",
         attachments: [MessageAttachmentPayload]? = nil,
         custom: [String: RawJSON] = [:],
+        mentionedChannel: Bool? = nil,
+        mentionedHere: Bool? = nil,
+        mentionedRoles: [String]? = nil,
         mentionedUsers: [String]? = nil,
         parentId: String? = nil,
+        pinExpires: Date? = nil,
+        pinned: Bool? = nil,
         quotedMessageId: String? = nil,
+        sharedLocation: ScheduledMessageLocation? = nil,
         showInChannel: Bool? = nil
     ) -> ScheduledMessageContentResponse {
         .init(
             attachments: attachments,
             custom: custom,
+            mentionedChannel: mentionedChannel,
+            mentionedHere: mentionedHere,
+            mentionedRoles: mentionedRoles,
             mentionedUsers: mentionedUsers,
             parentId: parentId,
+            pinExpires: pinExpires,
+            pinned: pinned,
             quotedMessageId: quotedMessageId,
+            sharedLocation: sharedLocation,
             showInChannel: showInChannel,
             text: text
         )
