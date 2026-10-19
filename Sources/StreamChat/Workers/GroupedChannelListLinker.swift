@@ -72,27 +72,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationChannelPartialUpdatedEvent },
-                callback: { [weak self] event in
-                    guard let self else { return }
-                    if event.isChannelStored {
-                        self.updateLinking(for: event.cid)
-                    } else if let group = event.group, self.query.groupKey == GroupedChannelKey.all || self.query.groupKey == group {
-                        // Watching fetches and saves the channel, then it can be linked to the query.
-                        self.databaseContainer.read({ [query = self.query] session in
-                            session.channelListQuery(query)?.watch == true
-                        }, completion: { [weak self, cid = event.cid] result in
-                            if case .success(true) = result {
-                                self?.channelWatcherHandler.attemptToWatch(channelIds: [cid]) { [weak self] error in
-                                    if let error {
-                                        log.warning("Failed to start watching partially updated channel: \(cid), error: \(error.localizedDescription)")
-                                    } else {
-                                        self?.updateLinking(for: cid, startsWatching: false)
-                                    }
-                                }
-                            }
-                        })
-                    }
-                }
+                callback: { [weak self] event in self?.handlePartialUpdate(event) }
             )
         ]
         expirySweepTimer = timerType.scheduleRepeating(
@@ -101,6 +81,27 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             onFire: { [weak self] in self?.removeExpiredChannels() }
         )
         expirySweepTimer?.resume()
+    }
+
+    private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
+        if event.isChannelStored {
+            updateLinking(for: event.cid)
+        } else if let group = event.group, query.groupKey == GroupedChannelKey.all || query.groupKey == group {
+            // Watching fetches and saves the channel, then it can be linked to the query.
+            databaseContainer.read({ [query] session in
+                session.channelListQuery(query)?.watch == true
+            }, completion: { [weak self, cid = event.cid] result in
+                if case .success(true) = result {
+                    self?.channelWatcherHandler.attemptToWatch(channelIds: [cid]) { [weak self] error in
+                        if let error {
+                            log.warning("Failed to start watching partially updated channel: \(cid), error: \(error.localizedDescription)")
+                        } else {
+                            self?.updateLinking(for: cid, startsWatching: false)
+                        }
+                    }
+                }
+            })
+        }
     }
 
     private func removeExpiredChannels() {
