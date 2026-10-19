@@ -26,3 +26,9 @@
 "charts.category" = "Category";
 "charts.bin" = "Bin";
 "charts.count" = "Count";
+"voice.accessibility.agent" = "Voice agent";
+"voice.state.idle" = "Ready";
+"voice.state.connecting" = "Connecting";
+"voice.state.listening" = "Listening";
+"voice.state.thinking" = "Thinking";
+"voice.state.speaking" = "Speaking";
