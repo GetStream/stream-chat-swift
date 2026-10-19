@@ -26,9 +26,11 @@ e2e_coverage_map_path = File.expand_path('test_output/e2e_coverage_map.json')
 e2e_coverage_map_artifact = 'e2e-coverage-map'
 e2e_selection_path = File.expand_path("../#{derived_data_path}/Build/e2e_selection.json")
 @force_check = false
+@impact = nil
 xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
 before_all do |lane|
+  @impact = impact_analysis
   if is_ci
     setup_ci
     setup_git_config
@@ -177,7 +179,7 @@ end
 
 desc 'Runs tests in Debug config'
 lane :test do |options|
-  next unless is_check_required(sources: sources_matrix[:llc], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:llc][:sources], force_check: @force_check, required_checks: @impact[:llc][:checks])
 
   scheme = 'StreamChat'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}FlakyTests.xctestplan")
@@ -261,7 +263,7 @@ lane :build_test_app_and_frameworks do
 end
 
 lane :xcmetrics do |options|
-  next unless is_check_required(sources: sources_matrix[:xcmetrics], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:xcmetrics][:sources], force_check: @force_check, required_checks: @impact[:xcmetrics][:checks])
 
   ['test_output/', 'metrics/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
@@ -452,7 +454,7 @@ end
 
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
 
   start_mock_server(local_server: options[:local_server], branch: options[:mock_server_branch])
   allow_photo_library_access(device: options[:device])
@@ -525,7 +527,7 @@ lane :select_e2e_tests do |options|
     UI.important("Running all #{all_tests.size} tests: #{run_all_reason}")
     tests = all_tests
     File.write(e2e_selection_path, JSON.generate(run_all: true, tests: tests, reasons: [run_all_reason]))
-  elsif is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  elsif is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
     selection = select_impacted_tests(
       all_tests: all_tests,
       coverage_map: options[:coverage_map],
@@ -633,7 +635,7 @@ end
 
 desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
-  next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ui][:sources], force_check: @force_check, required_checks: @impact[:ui][:checks])
 
   record_mode = options[:record].to_s == 'true'
   scheme = 'StreamChatUI'
@@ -675,7 +677,7 @@ end
 
 desc 'Runs common ui tests in Debug config'
 lane :test_common_ui do |options|
-  next unless is_check_required(sources: sources_matrix[:common_ui], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:common_ui][:sources], force_check: @force_check, required_checks: @impact[:common_ui][:checks])
 
   scheme = 'StreamChatCommonUI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
@@ -698,7 +700,7 @@ end
 
 desc 'Runs AI tests in Debug config'
 lane :test_ai do |options|
-  next unless is_check_required(sources: sources_matrix[:ai], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ai][:sources], force_check: @force_check, required_checks: @impact[:ai][:checks])
 
   scheme = 'StreamChatAI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
@@ -784,7 +786,7 @@ lane :build_youtube_clone do |options|
 end
 
 private_lane :build_example_app do |options|
-  next unless is_check_required(sources: sources_matrix[:sample_apps], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:sample_apps][:sources], force_check: @force_check, required_checks: @impact[:sample_apps][:checks])
 
   scan(
     project: xcode_project,
@@ -800,7 +802,7 @@ end
 
 desc 'Test SPM Integration'
 lane :spm_integration do
-  next unless is_check_required(sources: sources_matrix[:integration], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:integration][:sources], force_check: @force_check, required_checks: @impact[:integration][:checks])
 
   gym(
     project: 'Integration/SPM/SwiftPackageManager.xcodeproj',
@@ -821,7 +823,7 @@ end
 
 desc 'Run fastlane linting'
 lane :rubocop do
-  next unless is_check_required(sources: sources_matrix[:ruby], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ruby][:sources], force_check: @force_check, required_checks: @impact[:ruby][:checks])
 
   sh('bundle exec rubocop')
 end
@@ -857,19 +859,53 @@ private_lane :remove_snapshots do |options|
   end
 end
 
-lane :sources_matrix do
+lane :impact_analysis do
   {
-    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project, 'Package.swift', 'Package.resolved', 'fastlane/Fastfile', 'Gemfile.lock'],
-    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
-    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
-    sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
-    integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
-    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
-    size: ['Sources', '.github/workflows/smoke-checks.yml', xcode_project],
-    xcmetrics: ['Sources', '.github/workflows/smoke-checks.yml'],
-    public_interface: ['Sources', '.github/workflows/smoke-checks.yml']
+    e2e: {
+      sources: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project, 'Package.swift', 'Package.resolved', 'fastlane/Fastfile', 'Gemfile.lock'],
+      checks: ['Test E2E UI (Debug) Result']
+    },
+    llc: {
+      sources: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml'],
+      checks: ['Test LLC (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    ui: {
+      sources: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml'],
+      checks: ['Test UI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    common_ui: {
+      sources: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml'],
+      checks: ['Test Common UI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    ai: {
+      sources: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml'],
+      checks: ['Test AI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    sample_apps: {
+      sources: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml'],
+      checks: ['Build Demo App + Example Apps']
+    },
+    integration: {
+      sources: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml'],
+      checks: ['Test Integration']
+    },
+    ruby: {
+      sources: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
+      checks: ['Automated Code Review']
+    },
+    public_interface: {
+      sources: ['Sources', '.github/workflows/smoke-checks.yml'],
+      checks: ['Automated Code Review']
+    },
+    # Both metrics workflows name their job "Metrics", so a check name can't tell them apart.
+    size: {
+      sources: ['Sources'],
+      checks: []
+    },
+    xcmetrics: {
+      sources: ['Sources'],
+      checks: []
+    }
   }
 end
 
@@ -898,7 +934,7 @@ lane :validate_generated_code do
 end
 
 lane :validate_public_interface do
-  next unless is_check_required(sources: sources_matrix[:public_interface], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:public_interface][:sources], force_check: @force_check, required_checks: @impact[:public_interface][:checks])
 
   # Get branch names
   original_branch = current_branch
@@ -940,7 +976,7 @@ lane :validate_public_interface do
 end
 
 lane :show_frameworks_sizes do |options|
-  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:size][:sources], force_check: @force_check, required_checks: @impact[:size][:checks])
 
   sizes = options[:sizes] || frameworks_sizes
   show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
@@ -1029,7 +1065,7 @@ private_lane :linked_objects_size do |options|
 end
 
 lane :size_analyze do
-  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:size][:sources], force_check: @force_check, required_checks: @impact[:size][:checks])
 
   gym(
     scheme: 'DemoApp',
