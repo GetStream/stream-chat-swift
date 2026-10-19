@@ -54,8 +54,6 @@
 		82F714AB2B078AE800442A74 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 82F714AA2B078AE800442A74 /* StreamSwiftTestHelpers */; };
 		82FF61E82B6AB5B3007185B6 /* StreamChatTestMockServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84114A7D3073E3E10035A01F /* StreamChatAI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; };
-		84114A913073E3E10035A01F /* Splash in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A8F3073E3E10035A01F /* Splash */; };
-		84114A923073E3E10035A01F /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A903073E3E10035A01F /* MarkdownUI */; };
 		84114A933073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		84114A983073E3E10035A01F /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A963073E3E10035A01F /* StreamCore */; };
 		84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A973073E3E10035A01F /* StreamCoreUI */; };
@@ -1324,6 +1322,166 @@
 				StreamChatAI/AI/ToolCalls/AIClientToolRunner.swift,
 				StreamChatAI/AI/ToolCalls/AIToolApprover.swift,
 				StreamChatAI/Info.plist,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Blockquote.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/BulletedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/CodeBlock.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Heading.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/NumberedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Paragraph.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTable.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumn.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnAlignment.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRow.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRowBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ThematicBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Code.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Emphasis.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineImage.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineLink.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/LineBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/SoftBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strikethrough.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strong.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/CodeSyntaxHighlighter.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/ImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/InlineImageProvider.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/BlockNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/BlockNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/HTMLTag.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Collect.swift",
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/InlineNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/MarkdownParser.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/AttributedStringInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/InlineTextStyles.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/TextInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/CodeBlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListBullet.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBackgroundStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBorderStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableCellConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TaskListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/BackgroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/EmptyTextStyle.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/Font+FontProperties.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontCapsVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontDigitVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamily.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamilyVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontProperties.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontPropertiesAttribute.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontSize.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWeight.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWidth.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/ForegroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/StrikethroughStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextKerning.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextTracking.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/UnderlineStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyleBuilder.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+Basic.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+DocC.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+GitHub.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/Theme.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/BlockNode+ColorSchemeImage.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Color+RGBA.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/FlowLayout.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/Indexed.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+PlainText.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+RawImageData.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Int+Roman.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/RelativeSize.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/ResizeToFit.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/String+KebabCase.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockMargin.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockNode+View.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockquoteView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BulletedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ColumnWidthPreference.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/HeadingView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ImageFlow.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/MarkdownCodeBlockView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/NumberedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ParagraphView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBackgroundView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderSelector.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBounds.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableCell.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TextStyleAttributesReader.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ThematicBreakView.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+BaseURL.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+CodeSyntaxHighlighter.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+ImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+InlineImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+List.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+SoftBreakMode.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Table.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+TextStyle.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Theme.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/ImageView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/InlineText.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Markdown.swift,
+				StreamChatAI/StreamNetworkImage/ImageSource.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImage.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageCache.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageLoader.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageModel.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageState.swift,
+				StreamChatAI/StreamNetworkImage/TaskModifier.swift,
+				"StreamChatAI/StreamNetworkImage/URLSession+NetworkImage.swift",
+				"StreamChatAI/StreamNetworkImage/View+NetworkImageLoader.swift",
+				"StreamChatAI/StreamSplash/Extensions/CharacterSet/CharacterSet+Contains.swift",
+				"StreamChatAI/StreamSplash/Extensions/Equatable/Equatable+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Int/Int+IsOdd.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+Occurrences.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+HTMLEntities.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+IsNumber.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+PrefixChecking.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+Removing.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/Substring+HasSuffix.swift",
+				StreamChatAI/StreamSplash/Grammar/Grammar.swift,
+				StreamChatAI/StreamSplash/Grammar/SwiftGrammar.swift,
+				StreamChatAI/StreamSplash/Output/AttributedStringOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/HTMLOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/MarkdownDecorator.swift,
+				StreamChatAI/StreamSplash/Output/OutputBuilder.swift,
+				StreamChatAI/StreamSplash/Output/OutputFormat.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxHighlighter.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxRule.swift,
+				StreamChatAI/StreamSplash/Theming/SplashColor.swift,
+				StreamChatAI/StreamSplash/Theming/SplashFont.swift,
+				"StreamChatAI/StreamSplash/Theming/SplashTheme+Defaults.swift",
+				StreamChatAI/StreamSplash/Theming/SplashTheme.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Segment.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Tokenizer.swift,
+				StreamChatAI/StreamSplash/Tokenizing/TokenType.swift,
 				StreamChatAI/UI/Appearance/AIAppearance.swift,
 				"StreamChatAI/UI/Appearance/AIAppearance+Colors.swift",
 				"StreamChatAI/UI/Appearance/AIAppearance+Fonts.swift",
@@ -1405,6 +1563,75 @@
 				"StreamChatAI/Utils/Bundle+StreamChatAI.swift",
 				StreamChatAI/Utils/ExportedModules.swift,
 				StreamChatAI/Utils/Localization.swift,
+				StreamChatAICMark/arena.c,
+				StreamChatAICMark/autolink.c,
+				StreamChatAICMark/blocks.c,
+				StreamChatAICMark/buffer.c,
+				StreamChatAICMark/case_fold_switch.inc,
+				StreamChatAICMark/cmark.c,
+				StreamChatAICMark/cmark_ctype.c,
+				StreamChatAICMark/commonmark.c,
+				"StreamChatAICMark/core-extensions.c",
+				StreamChatAICMark/entities.inc,
+				StreamChatAICMark/ext_scanners.c,
+				StreamChatAICMark/footnotes.c,
+				StreamChatAICMark/houdini_href_e.c,
+				StreamChatAICMark/houdini_html_e.c,
+				StreamChatAICMark/houdini_html_u.c,
+				StreamChatAICMark/html.c,
+				StreamChatAICMark/include/autolink.h,
+				StreamChatAICMark/include/buffer.h,
+				StreamChatAICMark/include/chunk.h,
+				"StreamChatAICMark/include/cmark-gfm-core-extensions.h",
+				"StreamChatAICMark/include/cmark-gfm-extension_api.h",
+				"StreamChatAICMark/include/cmark-gfm-extensions_export.h",
+				"StreamChatAICMark/include/cmark-gfm.h",
+				"StreamChatAICMark/include/cmark-gfm_export.h",
+				"StreamChatAICMark/include/cmark-gfm_version.h",
+				StreamChatAICMark/include/cmark_ctype.h,
+				StreamChatAICMark/include/cmark_gfm.h,
+				StreamChatAICMark/include/config.h,
+				StreamChatAICMark/include/ext_scanners.h,
+				StreamChatAICMark/include/footnotes.h,
+				StreamChatAICMark/include/houdini.h,
+				StreamChatAICMark/include/html.h,
+				StreamChatAICMark/include/inlines.h,
+				StreamChatAICMark/include/iterator.h,
+				StreamChatAICMark/include/map.h,
+				StreamChatAICMark/include/module.modulemap,
+				StreamChatAICMark/include/node.h,
+				StreamChatAICMark/include/parser.h,
+				StreamChatAICMark/include/plugin.h,
+				StreamChatAICMark/include/references.h,
+				StreamChatAICMark/include/registry.h,
+				StreamChatAICMark/include/render.h,
+				StreamChatAICMark/include/scanners.h,
+				StreamChatAICMark/include/strikethrough.h,
+				StreamChatAICMark/include/syntax_extension.h,
+				StreamChatAICMark/include/table.h,
+				StreamChatAICMark/include/tagfilter.h,
+				StreamChatAICMark/include/tasklist.h,
+				StreamChatAICMark/include/utf8.h,
+				StreamChatAICMark/inlines.c,
+				StreamChatAICMark/iterator.c,
+				StreamChatAICMark/latex.c,
+				StreamChatAICMark/linked_list.c,
+				StreamChatAICMark/man.c,
+				StreamChatAICMark/map.c,
+				StreamChatAICMark/node.c,
+				StreamChatAICMark/plaintext.c,
+				StreamChatAICMark/plugin.c,
+				StreamChatAICMark/references.c,
+				StreamChatAICMark/registry.c,
+				StreamChatAICMark/render.c,
+				StreamChatAICMark/scanners.c,
+				StreamChatAICMark/strikethrough.c,
+				StreamChatAICMark/syntax_extension.c,
+				StreamChatAICMark/table.c,
+				StreamChatAICMark/tagfilter.c,
+				StreamChatAICMark/tasklist.c,
+				StreamChatAICMark/utf8.c,
+				StreamChatAICMark/xml.c,
 				StreamChatCommonUI/.swiftgen.yml,
 				StreamChatCommonUI/Appearance.swift,
 				"StreamChatCommonUI/Appearance+ColorPalette.swift",
@@ -2140,6 +2367,166 @@
 				StreamChatAI/AI/ToolCalls/AIClientToolResult.swift,
 				StreamChatAI/AI/ToolCalls/AIClientToolRunner.swift,
 				StreamChatAI/AI/ToolCalls/AIToolApprover.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Blockquote.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/BulletedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/CodeBlock.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Heading.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/NumberedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Paragraph.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTable.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumn.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnAlignment.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRow.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRowBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ThematicBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Code.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Emphasis.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineImage.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineLink.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/LineBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/SoftBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strikethrough.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strong.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/CodeSyntaxHighlighter.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/ImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/InlineImageProvider.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/BlockNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/BlockNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/HTMLTag.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Collect.swift",
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/InlineNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/MarkdownParser.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/AttributedStringInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/InlineTextStyles.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/TextInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/CodeBlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListBullet.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBackgroundStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBorderStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableCellConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TaskListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/BackgroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/EmptyTextStyle.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/Font+FontProperties.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontCapsVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontDigitVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamily.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamilyVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontProperties.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontPropertiesAttribute.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontSize.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWeight.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWidth.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/ForegroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/StrikethroughStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextKerning.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextTracking.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/UnderlineStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyleBuilder.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+Basic.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+DocC.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+GitHub.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/Theme.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/BlockNode+ColorSchemeImage.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Color+RGBA.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/FlowLayout.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/Indexed.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+PlainText.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+RawImageData.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Int+Roman.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/RelativeSize.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/ResizeToFit.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/String+KebabCase.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockMargin.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockNode+View.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockquoteView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BulletedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ColumnWidthPreference.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/HeadingView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ImageFlow.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/MarkdownCodeBlockView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/NumberedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ParagraphView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBackgroundView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderSelector.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBounds.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableCell.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TextStyleAttributesReader.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ThematicBreakView.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+BaseURL.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+CodeSyntaxHighlighter.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+ImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+InlineImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+List.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+SoftBreakMode.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Table.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+TextStyle.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Theme.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/ImageView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/InlineText.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Markdown.swift,
+				StreamChatAI/StreamNetworkImage/ImageSource.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImage.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageCache.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageLoader.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageModel.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageState.swift,
+				StreamChatAI/StreamNetworkImage/TaskModifier.swift,
+				"StreamChatAI/StreamNetworkImage/URLSession+NetworkImage.swift",
+				"StreamChatAI/StreamNetworkImage/View+NetworkImageLoader.swift",
+				"StreamChatAI/StreamSplash/Extensions/CharacterSet/CharacterSet+Contains.swift",
+				"StreamChatAI/StreamSplash/Extensions/Equatable/Equatable+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Int/Int+IsOdd.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+Occurrences.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+HTMLEntities.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+IsNumber.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+PrefixChecking.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+Removing.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/Substring+HasSuffix.swift",
+				StreamChatAI/StreamSplash/Grammar/Grammar.swift,
+				StreamChatAI/StreamSplash/Grammar/SwiftGrammar.swift,
+				StreamChatAI/StreamSplash/Output/AttributedStringOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/HTMLOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/MarkdownDecorator.swift,
+				StreamChatAI/StreamSplash/Output/OutputBuilder.swift,
+				StreamChatAI/StreamSplash/Output/OutputFormat.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxHighlighter.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxRule.swift,
+				StreamChatAI/StreamSplash/Theming/SplashColor.swift,
+				StreamChatAI/StreamSplash/Theming/SplashFont.swift,
+				"StreamChatAI/StreamSplash/Theming/SplashTheme+Defaults.swift",
+				StreamChatAI/StreamSplash/Theming/SplashTheme.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Segment.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Tokenizer.swift,
+				StreamChatAI/StreamSplash/Tokenizing/TokenType.swift,
 				StreamChatAI/UI/Appearance/AIAppearance.swift,
 				"StreamChatAI/UI/Appearance/AIAppearance+Colors.swift",
 				"StreamChatAI/UI/Appearance/AIAppearance+Fonts.swift",
@@ -2221,6 +2608,40 @@
 				"StreamChatAI/Utils/Bundle+StreamChatAI.swift",
 				StreamChatAI/Utils/ExportedModules.swift,
 				StreamChatAI/Utils/Localization.swift,
+				StreamChatAICMark/arena.c,
+				StreamChatAICMark/autolink.c,
+				StreamChatAICMark/blocks.c,
+				StreamChatAICMark/buffer.c,
+				StreamChatAICMark/cmark.c,
+				StreamChatAICMark/cmark_ctype.c,
+				StreamChatAICMark/commonmark.c,
+				"StreamChatAICMark/core-extensions.c",
+				StreamChatAICMark/ext_scanners.c,
+				StreamChatAICMark/footnotes.c,
+				StreamChatAICMark/houdini_href_e.c,
+				StreamChatAICMark/houdini_html_e.c,
+				StreamChatAICMark/houdini_html_u.c,
+				StreamChatAICMark/html.c,
+				StreamChatAICMark/inlines.c,
+				StreamChatAICMark/iterator.c,
+				StreamChatAICMark/latex.c,
+				StreamChatAICMark/linked_list.c,
+				StreamChatAICMark/man.c,
+				StreamChatAICMark/map.c,
+				StreamChatAICMark/node.c,
+				StreamChatAICMark/plaintext.c,
+				StreamChatAICMark/plugin.c,
+				StreamChatAICMark/references.c,
+				StreamChatAICMark/registry.c,
+				StreamChatAICMark/render.c,
+				StreamChatAICMark/scanners.c,
+				StreamChatAICMark/strikethrough.c,
+				StreamChatAICMark/syntax_extension.c,
+				StreamChatAICMark/table.c,
+				StreamChatAICMark/tagfilter.c,
+				StreamChatAICMark/tasklist.c,
+				StreamChatAICMark/utf8.c,
+				StreamChatAICMark/xml.c,
 			);
 			target = 84114A733073E3E10035A01F /* StreamChatAI */;
 		};
@@ -2437,10 +2858,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84114A923073E3E10035A01F /* MarkdownUI in Frameworks */,
 				84114A983073E3E10035A01F /* StreamCore in Frameworks */,
 				84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */,
-				84114A913073E3E10035A01F /* Splash in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2904,8 +3323,6 @@
 			);
 			name = StreamChatAI;
 			packageProductDependencies = (
-				84114A8F3073E3E10035A01F /* Splash */,
-				84114A903073E3E10035A01F /* MarkdownUI */,
 				84114A963073E3E10035A01F /* StreamCore */,
 				84114A973073E3E10035A01F /* StreamCoreUI */,
 			);
@@ -3274,8 +3691,6 @@
 				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */,
-				84114A8D3073E3E10035A01F /* XCRemoteSwiftPackageReference "Splash" */,
-				84114A8E3073E3E10035A01F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				4F1C0DFF2F7E00AA00C0FFEE /* XCRemoteSwiftPackageReference "stream-logs-ui-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -4535,6 +4950,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatAI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4542,11 +4958,13 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4566,6 +4984,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_TESTABILITY = NO;
 				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatAI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4573,11 +4992,13 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4597,6 +5018,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatAI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4604,11 +5026,13 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4636,6 +5060,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4662,6 +5087,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4688,6 +5114,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6168,22 +6595,6 @@
 				minimumVersion = 0.14.0;
 			};
 		};
-		84114A8D3073E3E10035A01F /* XCRemoteSwiftPackageReference "Splash" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/JohnSundell/Splash";
-			requirement = {
-				kind = exactVersion;
-				version = 0.16.0;
-			};
-		};
-		84114A8E3073E3E10035A01F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
-			requirement = {
-				kind = exactVersion;
-				version = 2.4.0;
-			};
-		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AliSoftware/OHHTTPStubs.git";
@@ -6251,16 +6662,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A3D15D8C27E9D839006B34D7 /* XCRemoteSwiftPackageReference "stream-chat-swift-test-helpers" */;
 			productName = StreamSwiftTestHelpers;
-		};
-		84114A8F3073E3E10035A01F /* Splash */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 84114A8D3073E3E10035A01F /* XCRemoteSwiftPackageReference "Splash" */;
-			productName = Splash;
-		};
-		84114A903073E3E10035A01F /* MarkdownUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 84114A8E3073E3E10035A01F /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
-			productName = MarkdownUI;
 		};
 		84114A963073E3E10035A01F /* StreamCore */ = {
 			isa = XCSwiftPackageProductDependency;
