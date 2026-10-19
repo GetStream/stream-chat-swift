@@ -182,18 +182,19 @@ lane :test do |options|
   scheme = 'StreamChat'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}FlakyTests.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: "#{scheme}FlakyTests",
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    devices: options[:device],
-    number_of_retries: 5,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: "#{scheme}FlakyTests",
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      devices: options[:device],
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      xcodebuild_formatter: xcodebuild_formatter
+    }
   )
 
   next if options[:build_for_testing]
@@ -208,11 +209,10 @@ lane :test do |options|
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
     skip_build: true,
-    number_of_retries: options[:cron] ? 3 : 2,
     xcodebuild_formatter: xcodebuild_formatter
   }
 
-  scan(scan_options)
+  scan_with_retries(scan_options: scan_options, retries: options[:cron] ? 3 : 2)
 
   slather
 end
@@ -437,17 +437,10 @@ lane :test_e2e do |options|
     test_without_building: options[:test_without_building],
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3,
     xcodebuild_formatter: xcodebuild_formatter
   }
 
-  begin
-    scan(scan_options)
-  rescue StandardError
-    failed_tests = retreive_failed_tests
-    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    scan(scan_options.merge(only_testing: failed_tests))
-  end
+  scan_with_retries(scan_options: scan_options)
 end
 
 desc 'Runs e2e ui tests using mock server in Debug config'
@@ -468,7 +461,6 @@ lane :test_e2e_mock do |options|
     test_without_building: options[:test_without_building],
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3,
     xcodebuild_formatter: xcodebuild_formatter
   }
 
@@ -492,18 +484,11 @@ lane :test_e2e_mock do |options|
 
   failed_tests = []
   begin
-    scan(scan_options)
+    scan_with_retries(scan_options: scan_options)
   rescue StandardError
+    # Each retry overwrites the junit report, so only the tests that failed on the last attempt stay failed for the coverage map.
     failed_tests = retreive_failed_tests
-    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    begin
-      scan(scan_options.merge(only_testing: failed_tests))
-      failed_tests = []
-    rescue StandardError
-      # The retry overwrote the junit report, so only the tests that failed again stay failed for the coverage map.
-      failed_tests = retreive_failed_tests
-      raise
-    end
+    raise
   ensure
     build_e2e_coverage_map(failed_tests: failed_tests) if options[:coverage]
   end
@@ -543,12 +528,7 @@ lane :select_e2e_tests do |options|
         'StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan',
         'StreamChatUITestsAppUITests/StreamChatUITests.swift',
         'TestTools/StreamChatTestMockServer',
-        'Package.swift',
-        'Package.resolved',
-        xcode_project,
-        '.github/workflows/smoke-checks.yml',
-        'fastlane/Fastfile',
-        'Gemfile.lock'
+        xcode_project
       ],
       # Changes to code nearly every test runs (launch, login, channel list) take one test per class; the nightly run covers the rest.
       hot_test_ratio: 0.9,
@@ -609,14 +589,41 @@ private_lane :all_e2e_tests do
   retrieve_xctest_names(xctestrun: xctestrun).values.flatten
 end
 
+# Runs scan and re-runs only the tests that failed, up to `retries` times.
+# Every attempt recalculates the failing set from the previous run's junit
+# report, so a shrinking set of flaky tests converges instead of dragging
+# the whole suite along.
+private_lane :scan_with_retries do |options|
+  scan_options = options[:scan_options]
+  attempts_left = options[:retries] || 3
+
+  begin
+    scan(scan_options)
+  rescue StandardError
+    raise if attempts_left.zero?
+
+    failed_tests = retreive_failed_tests
+    raise if failed_tests.empty?
+
+    attempts_left -= 1
+    UI.important("Re-running #{failed_tests.size} failed tests ⌛️ (#{attempts_left} retries left)")
+    scan_options = scan_options.merge(only_testing: failed_tests, clean: false)
+    retry
+  end
+end
+
 private_lane :retreive_failed_tests do
   report_path = 'test_output/report.junit'
-  raise UI.user_error!('There is no junit report to parse') unless File.file?(report_path)
+  next [] unless File.file?(report_path)
 
   junit_report = Nokogiri::XML(File.read(report_path))
   failed_tests = []
   passed_tests = []
-  suite_name = junit_report.xpath('//testsuite').first['name'].split('.').first
+  suite = junit_report.xpath('//testsuite').first
+  suite_name = suite && suite['name']
+  next [] if suite_name.nil? || suite_name.empty?
+
+  suite_name = suite_name.split('.').first
   junit_report.xpath('//testcase').each do |testcase|
     class_name = testcase['classname'].split('.').last
     test_name = testcase['name'].delete('()')
@@ -640,19 +647,21 @@ lane :test_ui do |options|
   remove_snapshots if record_mode
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    result_bundle: true,
-    devices: options[:device],
-    fail_build: !record_mode,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      fail_build: !record_mode,
+      xcodebuild_formatter: xcodebuild_formatter
+    }
   )
 
   if record_mode && is_ci
@@ -680,19 +689,21 @@ lane :test_common_ui do |options|
   scheme = 'StreamChatCommonUI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    result_bundle: true,
-    devices: options[:device],
-    number_of_retries: options[:cron] ? 3 : 2,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: options[:cron] ? 3 : 2
   )
 end
 
@@ -703,19 +714,21 @@ lane :test_ai do |options|
   scheme = 'StreamChatAI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    result_bundle: true,
-    devices: options[:device],
-    number_of_retries: options[:cron] ? 3 : 2,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: options[:cron] ? 3 : 2
   )
 end
 
@@ -859,17 +872,17 @@ end
 
 lane :sources_matrix do
   {
-    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project, 'Package.swift', 'Package.resolved', 'fastlane/Fastfile', 'Gemfile.lock'],
-    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
-    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
-    sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
-    integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
-    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
-    size: ['Sources', '.github/workflows/smoke-checks.yml', xcode_project],
-    xcmetrics: ['Sources', '.github/workflows/smoke-checks.yml'],
-    public_interface: ['Sources', '.github/workflows/smoke-checks.yml']
+    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
+    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
+    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
+    common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', xcode_project],
+    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', xcode_project],
+    sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
+    integration: ['Sources', 'Integration', xcode_project],
+    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
+    size: ['Sources', xcode_project],
+    xcmetrics: ['Sources'],
+    public_interface: ['Sources']
   }
 end
 
