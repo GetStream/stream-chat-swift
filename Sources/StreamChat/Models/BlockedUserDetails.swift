@@ -12,12 +12,17 @@ public struct BlockedUserDetails: Sendable {
     /// The date the user was blocked.
     public let blockedAt: Date?
 
+    /// The blocked user.
+    public let blockedUser: ChatUser?
+
     init(
         userId: UserId,
-        blockedAt: Date?
+        blockedAt: Date?,
+        blockedUser: ChatUser?
     ) {
         self.userId = userId
         self.blockedAt = blockedAt
+        self.blockedUser = blockedUser
     }
 }
 
