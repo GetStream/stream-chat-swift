@@ -598,6 +598,7 @@ end
 private_lane :scan_with_retries do |options|
   scan_options = options[:scan_options]
   attempts_left = options[:retries] || 3
+  retry_number = 0
 
   begin
     # scan raises on a build or launch error before rewriting the report, so a stale one must not drive the retry.
@@ -612,6 +613,12 @@ private_lane :scan_with_retries do |options|
     attempts_left -= 1
     UI.important("Re-running #{failed_tests.size} failed tests ⌛️ (#{attempts_left} retries left)")
     scan_options = scan_options.merge(only_testing: failed_tests, clean: false)
+    if scan_options[:result_bundle]
+      # scan replaces the default result bundle on every run, so each retry keeps its own next to the full first run.
+      retry_bundle = File.expand_path("test_output/#{scan_options[:scheme]}-retry-#{retry_number += 1}.xcresult")
+      FileUtils.rm_rf(retry_bundle)
+      scan_options[:result_bundle_path] = retry_bundle
+    end
     retry
   end
 end
