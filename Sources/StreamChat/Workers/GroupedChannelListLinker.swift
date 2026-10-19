@@ -11,6 +11,8 @@ import Foundation
 ///   so we also analyse if it should be added to the current group.
 /// - Channel is updated: We re-evaluate membership — the channel's `"group"` extra-data may have
 ///   changed, which can move it into or out of this query.
+/// - Channel is hidden, deleted, disabled, or the current user was removed from it: the backend
+///   leaves it out of grouped queries, so it is unlinked. Channel visible re-links it.
 ///
 /// Membership is decided from the channel's `"group"` extra-data value:
 /// - The ``GroupedChannelKey/all`` query is a catch-all: every channel carrying any non-empty group
@@ -66,6 +68,26 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             ),
             EventObserver(
                 notificationCenter: nc,
+                transform: { $0 as? ChannelHiddenEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? ChannelDeletedEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? NotificationChannelDeletedEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? NotificationRemovedFromChannelEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid, isMember: false) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self] event in self?.updateLinking(for: event.cid) }
             )
@@ -96,11 +118,12 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false) {
+    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, isMember: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
+            let canShowChannel = isMember && !channelDTO.isHidden && !channelDTO.isDisabled && channelDTO.deletedAt == nil
             let isInGroup = channelDTO.group != nil && (query.groupKey == GroupedChannelKey.all || query.groupKey == channelDTO.group)
-            let shouldBelong = try isInGroup && (self.filterPredicate(of: queryDTO)?.evaluate(with: channelDTO) ?? true)
+            let shouldBelong = try canShowChannel && isInGroup && (self.filterPredicate(of: queryDTO)?.evaluate(with: channelDTO) ?? true)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
