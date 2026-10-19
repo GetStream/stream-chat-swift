@@ -399,7 +399,7 @@ class SyncRepository: @unchecked Sendable {
                     )
                     self.handleSyncEventReplayFallback(
                         lastSyncAt: payload.events.last?.createdAt ?? date,
-                        channelIds: channelIds,
+                        channelIds: watch ? channelIds : [],
                         alreadySyncedChannelIds: alreadySyncedChannelIds,
                         completion: completion
                     )
@@ -426,7 +426,7 @@ class SyncRepository: @unchecked Sendable {
                 log.info("/sync returned too many events. Refreshing watched channels instead.", subsystems: .offlineSupport)
                 self?.handleSyncEventReplayFallback(
                     lastSyncAt: Date(),
-                    channelIds: channelIds,
+                    channelIds: watch ? channelIds : [],
                     alreadySyncedChannelIds: alreadySyncedChannelIds,
                     completion: completion
                 )

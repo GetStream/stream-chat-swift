@@ -815,7 +815,42 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
     }
 
-    func test_syncChannelsEvents_whenFallbackWithNoWatchedChannels_refreshesRequestedChannelsAndUpdatesLastSyncAt() throws {
+    func test_syncChannelsEvents_whenFallbackWithNoWatchedChannels_updatesLastSyncAt() throws {
+        let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
+        let policy = SyncEventReplayPolicy(maximumEventCount: 1)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater,
+            eventReplayPolicy: policy
+        )
+
+        let cid = ChannelId.unique
+        let lastSyncDate = Date().addingTimeInterval(-3600)
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: lastSyncDate,
+            createChannel: true,
+            cid: cid
+        )
+
+        let eventDates = [Date.unique, Date.unique]
+        let result = waitForSyncChannelsEvents(
+            channelIds: [cid],
+            lastSyncAt: lastSyncDate,
+            requestResult: .success(messageEventPayload(cid: cid, with: eventDates))
+        )
+
+        XCTAssertEqual(try XCTUnwrap(result.get()), [])
+        XCTAssertEqual(channelListUpdater.startWatchingChannels_callCount, 0)
+        XCTAssertTrue(eventNotificationCenter.mock_processCalledWithEvents.isEmpty)
+        XCTAssertNearlySameDate(lastSyncAtValue, eventDates.last)
+    }
+
+    func test_syncChannelsEvents_whenFallbackWhileWatching_refreshesRequestedChannels() throws {
         let eventNotificationCenter = EventNotificationCenter_Mock(database: database)
         let policy = SyncEventReplayPolicy(maximumEventCount: 1)
         repository = SyncRepository(
@@ -843,6 +878,7 @@ class SyncRepository_Tests: XCTestCase {
         let result = waitForSyncChannelsEvents(
             channelIds: [cid],
             lastSyncAt: lastSyncDate,
+            watch: true,
             requestResult: .success(messageEventPayload(cid: cid, with: eventDates))
         )
 
