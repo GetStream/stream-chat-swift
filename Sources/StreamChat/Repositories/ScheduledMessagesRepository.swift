@@ -27,13 +27,15 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     private weak var client: ChatClient?
-    private let simulator: ScheduledMessagesSimulator
+    private let database: DatabaseContainer
+    private let apiClient: APIClient
     private let state = AllocatedUnfairLock(State())
     private var eventsSubscription: AnyCancellable?
 
-    init(client: ChatClient, simulator: ScheduledMessagesSimulator? = nil) {
+    init(client: ChatClient, database: DatabaseContainer, apiClient: APIClient) {
         self.client = client
-        self.simulator = simulator ?? ScheduledMessagesSimulator(client: client)
+        self.database = database
+        self.apiClient = apiClient
         eventsSubscription = client.eventNotificationCenter.subscribe(
             filter: { Self.isScheduledMessageEvent($0) },
             handler: { [weak self] event in
@@ -72,20 +74,30 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     // MARK: - Requests
 
     func load(query: ScheduledMessageListQuery, completion: @escaping @Sendable (Result<Page, Error>) -> Void) {
-        simulator.query(query) { [weak self] result in
+        let endpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
+            queryScheduledMessagesRequest: query.toRequest()
+        )
+        apiClient.request(endpoint: endpoint) { [weak self] result in
             guard let self else { return }
-            completion(result.map { page in
-                let messages = page.messages.map(self.model(from:))
-                let isWholeList = query.filter == nil && query.pagination.cursor == nil && page.next == nil
-                self.update { current in
-                    if isWholeList {
-                        current = messages
-                    } else {
-                        messages.forEach { Self.upsert($0, in: &current) }
-                    }
+            switch result {
+            case let .success(response):
+                models(from: response.scheduledMessages) { result in
+                    completion(result.map { messages in
+                        let next = response.next.flatMap { $0.isEmpty ? nil : $0 }
+                        let isWholeList = query.filter == nil && query.pagination.cursor == nil && next == nil
+                        self.update { current in
+                            if isWholeList {
+                                current = messages
+                            } else {
+                                messages.forEach { Self.upsert($0, in: &current) }
+                            }
+                        }
+                        return (messages, next)
+                    })
                 }
-                return (messages, page.next)
-            })
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
     }
 
@@ -96,12 +108,18 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         scheduledAt: Date,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        makeMessagePayload(content) { [weak self] result in
+        makeMessageRequest(content, id: id) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(message):
-                simulator.create(id: id, cid: cid, message: message, scheduledAt: scheduledAt) { [weak self] result in
-                    self?.complete(completion, with: result)
+                let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    sendMessageRequest: SendMessageRequest(message: message, scheduledAt: scheduledAt)
+                )
+                // Not queued offline: the user is told right away that the message could not be scheduled.
+                apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
+                    self?.complete(completion, with: result.map(\.scheduledMessage))
                 }
             case let .failure(error):
                 completion(.failure(error))
@@ -115,12 +133,16 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         scheduledAt: Date?,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        makeMessagePayload(content) { [weak self] result in
+        makeMessageRequest(content, id: nil) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(message):
-                simulator.update(id: id, message: message, scheduledAt: scheduledAt) { [weak self] result in
-                    self?.complete(completion, with: result)
+                let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
+                    id: id,
+                    updateScheduledMessageRequest: UpdateScheduledMessageRequest(message: message, scheduledAt: scheduledAt)
+                )
+                apiClient.request(endpoint: endpoint) { [weak self] result in
+                    self?.complete(completion, with: result.map(\.scheduledMessage))
                 }
             case let .failure(error):
                 completion(.failure(error))
@@ -133,13 +155,17 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         scheduledAt: Date,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        simulator.update(id: id, message: nil, scheduledAt: scheduledAt) { [weak self] result in
-            self?.complete(completion, with: result)
+        let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
+            id: id,
+            updateScheduledMessageRequest: UpdateScheduledMessageRequest(scheduledAt: scheduledAt)
+        )
+        apiClient.request(endpoint: endpoint) { [weak self] result in
+            self?.complete(completion, with: result.map(\.scheduledMessage))
         }
     }
 
     func delete(id: String, completion: @escaping @Sendable (Error?) -> Void) {
-        simulator.delete(id: id) { [weak self] result in
+        apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
             if result.error == nil {
                 self?.update { $0.removeAll { $0.id == id } }
             }
@@ -148,8 +174,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 
     func sendNow(id: String, completion: @escaping @Sendable (Error?) -> Void) {
-        simulator.sendNow(id: id) { [weak self] result in
-            self?.complete({ completion($0.error) }, with: result)
+        apiClient.request(endpoint: .sendScheduledMessageNow(id: id)) { [weak self] result in
+            self?.complete({ completion($0.error) }, with: result.map(\.scheduledMessage))
         }
     }
 
@@ -182,19 +208,42 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 
     // MARK: - Helpers
 
+    // Converts the response and keeps the local list up to date with it.
     private func complete(
         _ completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void,
-        with result: Result<SimulatedScheduledMessagePayload, Error>
+        with result: Result<ScheduledMessageResponse?, Error>
     ) {
-        let result = result.map(model(from:))
-        if let message = result.value {
-            update { Self.upsert(message, in: &$0) }
+        switch result {
+        case let .success(response):
+            guard let response else {
+                completion(.failure(ClientError.Unexpected("Missing `scheduled_message` in the response.")))
+                return
+            }
+            models(from: [response]) { [weak self] result in
+                switch result {
+                case let .success(messages):
+                    guard let message = messages.first else {
+                        completion(.failure(ClientError.Unexpected("Invalid `scheduled_message` in the response.")))
+                        return
+                    }
+                    self?.update { Self.upsert(message, in: &$0) }
+                    completion(.success(message))
+                case let .failure(error):
+                    completion(.failure(error))
+                }
+            }
+        case let .failure(error):
+            completion(.failure(error))
         }
-        completion(result)
     }
 
-    private func model(from payload: SimulatedScheduledMessagePayload) -> ScheduledMessage {
-        payload.asModel(client: client)
+    private func models(
+        from responses: [ScheduledMessageResponse],
+        completion: @escaping @Sendable (Result<[ScheduledMessage], Error>) -> Void
+    ) {
+        database.read({ session in
+            responses.compactMap { $0.asModel(session: session) }
+        }, completion: completion)
     }
 
     private func currentState() -> State {
@@ -235,20 +284,22 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     // MARK: - Attachments
 
     // Attachments are uploaded when the message is scheduled, so it is sent later with remote URLs.
-    private func makeMessagePayload(
+    private func makeMessageRequest(
         _ content: ScheduledMessageContent,
-        completion: @escaping @Sendable (Result<SimulatedScheduledMessagePayload.Message, Error>) -> Void
+        id: String?,
+        completion: @escaping @Sendable (Result<MessageRequest, Error>) -> Void
     ) {
         uploadAttachments(content.attachments[...], uploaded: []) { result in
             completion(result.map { attachments in
-                SimulatedScheduledMessagePayload.Message(
-                    text: content.text,
+                MessageRequest(
                     attachments: attachments,
-                    mentionedUserIds: content.mentionedUserIds,
-                    quotedMessageId: content.quotedMessageId,
+                    custom: content.extraData,
+                    id: id,
+                    mentionedUsers: content.mentionedUserIds,
                     parentId: content.parentId,
-                    showReplyInChannel: content.showReplyInChannel,
-                    extraData: content.extraData
+                    quotedMessageId: content.quotedMessageId,
+                    showInChannel: content.showReplyInChannel,
+                    text: content.text
                 )
             })
         }
@@ -256,8 +307,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 
     private func uploadAttachments(
         _ remaining: ArraySlice<AnyAttachmentPayload>,
-        uploaded: [SimulatedScheduledMessagePayload.Attachment],
-        completion: @escaping @Sendable (Result<[SimulatedScheduledMessagePayload.Attachment], Error>) -> Void
+        uploaded: [MessageAttachmentPayload],
+        completion: @escaping @Sendable (Result<[MessageAttachmentPayload], Error>) -> Void
     ) {
         guard let attachment = remaining.first else {
             completion(.success(uploaded))
@@ -265,8 +316,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         }
 
         let next: @Sendable (Data) -> Void = { [weak self] payload in
-            let item = SimulatedScheduledMessagePayload.Attachment(type: attachment.type.rawValue, payload: payload)
-            self?.uploadAttachments(remaining.dropFirst(), uploaded: uploaded + [item], completion: completion)
+            do {
+                let item = try MessageAttachmentPayload.fromStoredPayload(payload, type: attachment.type)
+                self?.uploadAttachments(remaining.dropFirst(), uploaded: uploaded + [item], completion: completion)
+            } catch {
+                completion(.failure(error))
+            }
         }
 
         do {
@@ -382,6 +437,44 @@ extension ScheduledMessageListQuery {
             return strings
         default:
             return []
+        }
+    }
+}
+
+// MARK: - Request
+
+extension ScheduledMessageListQuery {
+    /// The backend filters by channel and status only, with exact values.
+    func toRequest() -> QueryScheduledMessagesRequest {
+        var cid: String?
+        var statuses: [String]?
+        if let filter {
+            Self.collect(filter, cid: &cid, statuses: &statuses)
+        }
+        return QueryScheduledMessagesRequest(
+            filter: cid == nil && statuses == nil ? nil : ScheduledMessagesFilter(cid: cid, status: statuses),
+            limit: min(max(pagination.pageSize, 1), 100),
+            next: pagination.cursor
+        )
+    }
+
+    private static func collect(_ filter: Filter<ScheduledMessageListFilterScope>, cid: inout String?, statuses: inout [String]?) {
+        switch filter.operator {
+        case FilterOperator.and.rawValue:
+            let filters = filter.value as? [Filter<ScheduledMessageListFilterScope>] ?? []
+            filters.forEach { collect($0, cid: &cid, statuses: &statuses) }
+        case FilterOperator.equal.rawValue, FilterOperator.in.rawValue:
+            let values = stringValues(of: filter.value)
+            switch filter.key {
+            case FilterKey<ScheduledMessageListFilterScope, ChannelId>.cid.rawValue:
+                cid = values.first
+            case FilterKey<ScheduledMessageListFilterScope, String>.status.rawValue:
+                statuses = values
+            default:
+                log.warning("Scheduled messages can not be filtered by \(filter.key ?? "")")
+            }
+        default:
+            log.warning("Scheduled messages can not be filtered with \(filter.operator)")
         }
     }
 }

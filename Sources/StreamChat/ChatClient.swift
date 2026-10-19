@@ -93,7 +93,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Repository for handling scheduled messages.
     lazy var scheduledMessagesRepository: ScheduledMessagesRepository = {
-        ScheduledMessagesRepository(client: self)
+        ScheduledMessagesRepository(client: self, database: databaseContainer, apiClient: apiClient)
     }()
 
     /// Repository for handling user groups.

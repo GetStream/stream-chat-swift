@@ -23,6 +23,13 @@ public final class ScheduledMessageCreatedEvent: Event {
     }
 }
 
+extension ScheduledMessageCreatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> Event? {
+        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        return ScheduledMessageCreatedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
+    }
+}
+
 /// Triggered when the current user edits or reschedules a scheduled message, or when the server starts sending it.
 public final class ScheduledMessageUpdatedEvent: Event {
     /// The updated scheduled message.
@@ -40,6 +47,13 @@ public final class ScheduledMessageUpdatedEvent: Event {
     }
 }
 
+extension ScheduledMessageUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> Event? {
+        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        return ScheduledMessageUpdatedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
+    }
+}
+
 /// Triggered when the current user deletes a scheduled message.
 public final class ScheduledMessageDeletedEvent: Event {
     /// The deleted scheduled message.
@@ -54,6 +68,13 @@ public final class ScheduledMessageDeletedEvent: Event {
     init(scheduledMessage: ScheduledMessage, createdAt: Date) {
         self.scheduledMessage = scheduledMessage
         self.createdAt = createdAt
+    }
+}
+
+extension ScheduledMessageDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> Event? {
+        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        return ScheduledMessageDeletedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
     }
 }
 
@@ -80,6 +101,13 @@ public final class ScheduledMessageSentEvent: Event {
     }
 }
 
+extension ScheduledMessageSentEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> Event? {
+        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        return ScheduledMessageSentEvent(scheduledMessage: scheduledMessage, messageId: messageId, createdAt: createdAt)
+    }
+}
+
 /// Triggered when the server could not send a scheduled message.
 public final class ScheduledMessageFailedEvent: Event {
     /// The scheduled message that failed, with its `failureReason`.
@@ -94,5 +122,12 @@ public final class ScheduledMessageFailedEvent: Event {
     init(scheduledMessage: ScheduledMessage, createdAt: Date) {
         self.scheduledMessage = scheduledMessage
         self.createdAt = createdAt
+    }
+}
+
+extension ScheduledMessageFailedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> Event? {
+        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        return ScheduledMessageFailedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
     }
 }

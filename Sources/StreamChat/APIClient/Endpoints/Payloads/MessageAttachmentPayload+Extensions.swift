@@ -24,4 +24,29 @@ extension MessageAttachmentPayload {
         }
         return .dictionary(rawJSONDictionary)
     }
+
+    /// Creates a request payload from an attachment payload in the flattened shape used by local storage.
+    ///
+    /// Standard fields stay at the top level, and every other field is moved to `custom`.
+    static func fromStoredPayload(_ data: Data, type: AttachmentType) throws -> MessageAttachmentPayload {
+        let payload = try JSONDecoder.default.decode(RawJSON.self, from: data)
+        let reservedKeys = MessageAttachmentPayload.allKeys
+        var nestedPayload: [String: RawJSON] = [:]
+        var custom: [String: RawJSON] = [:]
+        for (key, value) in payload.dictionaryValue ?? [:] {
+            if key == StringCodingKey.custom.stringValue {
+                if case let .dictionary(nested) = value {
+                    custom.merge(nested) { _, new in new }
+                }
+            } else if reservedKeys.contains(key) {
+                nestedPayload[key] = value
+            } else {
+                custom[key] = value
+            }
+        }
+        nestedPayload[StringCodingKey.custom.stringValue] = .dictionary(custom)
+        nestedPayload[StringCodingKey.type.stringValue] = .string(type.rawValue)
+        let data = try JSONEncoder.default.encode(nestedPayload)
+        return try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: data)
+    }
 }
