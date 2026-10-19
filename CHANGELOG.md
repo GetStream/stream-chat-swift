@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix loaded grouped channel lists keeping channels that get hidden, deleted or disabled, or that the current user is removed from [#4341](https://github.com/GetStream/stream-chat-swift/pull/4341)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_
