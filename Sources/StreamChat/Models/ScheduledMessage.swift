@@ -50,6 +50,14 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         status != .failed
     }
 
+    /// The state of the local changes that are not on the server yet, like for any other message.
+    ///
+    /// A scheduled message is saved locally first, then sent to the server once its attachments are uploaded.
+    /// It is `nil` when the server has the latest changes.
+    public var localState: LocalMessageState? {
+        message.localState
+    }
+
     init(
         id: String,
         cid: ChannelId,
@@ -97,6 +105,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.failureReason == rhs.failureReason
             && lhs.createdAt == rhs.createdAt
             && lhs.updatedAt == rhs.updatedAt
+            && lhs.localState == rhs.localState
     }
 }
 

@@ -19,12 +19,10 @@ struct ScheduledMessageContent: Sendable {
 final class ScheduledMessagesRepository: @unchecked Sendable {
     typealias Page = (messages: [ScheduledMessage], next: String?)
 
-    private weak var client: ChatClient?
     private let database: DatabaseContainer
     private let apiClient: APIClient
 
-    init(client: ChatClient, database: DatabaseContainer, apiClient: APIClient) {
-        self.client = client
+    init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
         self.apiClient = apiClient
     }
@@ -58,8 +56,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                             let ids = Set(response.scheduledMessages.map(\.id))
                             let request = ScheduledMessageDTO.scheduledMessagesFetchRequest(query: .init())
                             ScheduledMessageDTO.load(by: request, context: context)
-                                .filter { !ids.contains($0.id) }
-                                .forEach { context.delete($0) }
+                                .filter { !ids.contains($0.id) && !$0.isLocalOnly }
+                                .forEach { context.deleteScheduledMessage(id: $0.id) }
                         }
                         return (messages, next)
                     },
@@ -71,6 +69,9 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         }
     }
 
+    /// Schedules a message locally.
+    ///
+    /// The message is in the list right away. The `MessageScheduler` sends it to the server once its attachments are uploaded.
     func schedule(
         id: String,
         cid: ChannelId,
@@ -78,26 +79,12 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         scheduledAt: Date,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        makeMessageRequest(content, id: id) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(message):
-                let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
-                    type: cid.type.rawValue,
-                    id: cid.id,
-                    sendMessageRequest: SendMessageRequest(message: message, scheduledAt: scheduledAt)
-                )
-                // Not queued offline: the user is told right away that the message could not be scheduled.
-                apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
-                    self?.save(result.map(\.scheduledMessage), completion: completion)
-                }
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
+        database.write(converting: { session in
+            try session.createNewScheduledMessage(id: id, cid: cid, content: content, scheduledAt: scheduledAt).asModel()
+        }, completion: completion)
     }
 
-    /// Edits a scheduled message.
+    /// Edits a scheduled message locally. The `MessageScheduler` syncs it with the server.
     ///
     /// Without a `parentId` in `content`, the message keeps the thread it was scheduled in.
     func update(
@@ -106,68 +93,157 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         scheduledAt: Date?,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        database.read({ session -> ScheduledMessageContent in
-            guard content.parentId == nil, let existing = session.scheduledMessage(id: id) else { return content }
-            var content = content
-            content.parentId = existing.parentMessageId
-            content.showReplyInChannel = existing.showReplyInChannel
-            return content
-        }, completion: { [weak self] result in
-            guard let self else { return }
-            makeMessageRequest(result.value ?? content, id: nil) { [weak self] result in
-                guard let self else { return }
-                switch result {
-                case let .success(message):
-                    let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
-                        id: id,
-                        updateScheduledMessageRequest: UpdateScheduledMessageRequest(message: message, scheduledAt: scheduledAt)
-                    )
-                    apiClient.request(endpoint: endpoint) { [weak self] result in
-                        self?.save(result.map(\.scheduledMessage), completion: completion)
-                    }
-                case let .failure(error):
-                    completion(.failure(error))
-                }
-            }
-        })
+        database.write(converting: { session in
+            try session.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt).asModel()
+        }, completion: completion)
     }
 
+    /// Changes when a scheduled message is sent, locally. The `MessageScheduler` syncs it with the server.
     func reschedule(
         id: String,
         scheduledAt: Date,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
-            id: id,
-            updateScheduledMessageRequest: UpdateScheduledMessageRequest(scheduledAt: scheduledAt)
-        )
-        apiClient.request(endpoint: endpoint) { [weak self] result in
-            self?.save(result.map(\.scheduledMessage), completion: completion)
-        }
+        database.write(converting: { session in
+            try session.updateScheduledMessage(id: id, content: nil, scheduledAt: scheduledAt).asModel()
+        }, completion: completion)
     }
 
-    func delete(id: String, completion: @escaping @Sendable (Error?) -> Void) {
-        apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
-            if let error = result.error {
-                completion(error)
-                return
+    /// Sends the local changes of a scheduled message that failed to reach the server again.
+    func resend(id: String, completion: @escaping @Sendable (Error?) -> Void) {
+        database.write({ session in
+            guard let dto = session.scheduledMessage(id: id), let message = dto.message else {
+                throw ClientError.ScheduledMessageDoesNotExist(id: id)
             }
-            self?.database.write({ session in
-                session.deleteScheduledMessage(id: id)
-            }, completion: completion)
-        }
+            switch message.localMessageState {
+            case .sendingFailed:
+                message.localMessageState = .pendingSend
+            case .syncingFailed:
+                message.localMessageState = .pendingSync
+            default:
+                break
+            }
+        }, completion: completion)
+    }
+
+    /// Deletes a scheduled message. One that is not on the server yet is only deleted locally.
+    func delete(id: String, completion: @escaping @Sendable (Error?) -> Void) {
+        database.write(converting: { session in
+            guard let dto = session.scheduledMessage(id: id) else { return false }
+            guard dto.isLocalOnly else { return true }
+            session.deleteScheduledMessage(id: id)
+            return false
+        }, completion: { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(true):
+                apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
+                    if let error = result.error {
+                        completion(error)
+                        return
+                    }
+                    self?.database.write({ session in
+                        session.deleteScheduledMessage(id: id)
+                    }, completion: completion)
+                }
+            case .success(false):
+                completion(nil)
+            case let .failure(error):
+                completion(error)
+            }
+        })
     }
 
     func sendNow(id: String, completion: @escaping @Sendable (Error?) -> Void) {
         apiClient.request(endpoint: .sendScheduledMessageNow(id: id)) { [weak self] result in
-            self?.save(result.map(\.scheduledMessage)) { completion($0.error) }
+            self?.save(result.map(\.scheduledMessage), localState: nil) { completion($0.error) }
         }
+    }
+
+    // MARK: - Syncing with the server
+
+    /// Sends the local changes of a scheduled message to the server: schedules a new one, or updates an existing one.
+    ///
+    /// Called by the `MessageScheduler` once the attachments of the message are uploaded.
+    func sendPendingChanges(id: String, completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void) {
+        enum Request {
+            case schedule(cid: ChannelId, request: SendMessageRequest)
+            case update(UpdateScheduledMessageRequest)
+        }
+
+        database.write(converting: { session -> Request in
+            guard let dto = session.scheduledMessage(id: id), let message = dto.message else {
+                throw ClientError.ScheduledMessageDoesNotExist(id: id)
+            }
+            let scheduledAt = dto.scheduledAt.bridgeDate
+            switch message.localMessageState {
+            case .pendingSend:
+                message.localMessageState = .sending
+                let cid = try ChannelId(cid: dto.cid)
+                return .schedule(cid: cid, request: SendMessageRequest(message: message.asMessageRequest(), scheduledAt: scheduledAt))
+            case .pendingSync:
+                message.localMessageState = .syncing
+                // The backend ignores the id of the message.
+                return .update(UpdateScheduledMessageRequest(
+                    message: message.asMessageRequest(),
+                    scheduledAt: dto.hasPendingScheduledAt ? scheduledAt : nil
+                ))
+            default:
+                throw ClientError.ScheduledMessageHasNoPendingChanges(id: id)
+            }
+        }, completion: { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case let .success(.schedule(cid, request)):
+                let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    sendMessageRequest: request
+                )
+                // Not queued offline: the `MessageScheduler` waits for the connection and sends it again.
+                apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
+                    self?.complete(id: id, failedState: .sendingFailed, pendingState: .pendingSend, with: result.map(\.scheduledMessage), completion: completion)
+                }
+            case let .success(.update(request)):
+                let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
+                    id: id,
+                    updateScheduledMessageRequest: request
+                )
+                apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
+                    self?.complete(id: id, failedState: .syncingFailed, pendingState: .pendingSync, with: result.map(\.scheduledMessage), completion: completion)
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        })
     }
 
     // MARK: - Helpers
 
+    private func complete(
+        id: String,
+        failedState: LocalMessageState,
+        pendingState: LocalMessageState,
+        with result: Result<ScheduledMessageResponse?, Error>,
+        completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
+    ) {
+        switch result {
+        case .success:
+            save(result, localState: nil, completion: completion)
+        case let .failure(error):
+            // Without a connection, the changes are sent again once connected.
+            let localState = ClientError.isEphemeral(error: error) ? pendingState : failedState
+            database.write({ session in
+                session.scheduledMessage(id: id)?.message?.localMessageState = localState
+            }, completion: { _ in
+                completion(.failure(error))
+            })
+        }
+    }
+
     private func save(
         _ result: Result<ScheduledMessageResponse?, Error>,
+        localState: LocalMessageState?,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
         switch result {
@@ -177,99 +253,26 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 return
             }
             database.write(converting: { session in
-                try session.saveScheduledMessage(payload: payload).asModel()
+                session.scheduledMessage(id: payload.id)?.message?.localMessageState = localState
+                return try session.saveScheduledMessage(payload: payload).asModel()
             }, completion: completion)
         case let .failure(error):
             completion(.failure(error))
         }
     }
+}
 
-    // MARK: - Attachments
-
-    // Attachments are uploaded when the message is scheduled, so it is sent later with remote URLs.
-    private func makeMessageRequest(
-        _ content: ScheduledMessageContent,
-        id: String?,
-        completion: @escaping @Sendable (Result<MessageRequest, Error>) -> Void
-    ) {
-        uploadAttachments(content.attachments[...], uploaded: []) { result in
-            completion(result.map { attachments in
-                MessageRequest(
-                    attachments: attachments,
-                    custom: content.extraData,
-                    id: id,
-                    mentionedUsers: content.mentionedUserIds,
-                    parentId: content.parentId,
-                    quotedMessageId: content.quotedMessageId,
-                    showInChannel: content.showReplyInChannel,
-                    text: content.text
-                )
-            })
+extension ClientError {
+    final class ScheduledMessageDoesNotExist: ClientError, @unchecked Sendable {
+        init(id: String) {
+            super.init("There is no scheduled message with id: \(id).")
         }
     }
 
-    private func uploadAttachments(
-        _ remaining: ArraySlice<AnyAttachmentPayload>,
-        uploaded: [MessageAttachmentPayload],
-        completion: @escaping @Sendable (Result<[MessageAttachmentPayload], Error>) -> Void
-    ) {
-        guard let attachment = remaining.first else {
-            completion(.success(uploaded))
-            return
+    final class ScheduledMessageHasNoPendingChanges: ClientError, @unchecked Sendable {
+        init(id: String) {
+            super.init("The scheduled message with id: \(id) has no changes to send to the server.")
         }
-
-        let next: @Sendable (Data) -> Void = { [weak self] payload in
-            do {
-                let item = try MessageAttachmentPayload.fromStoredPayload(payload, type: attachment.type)
-                self?.uploadAttachments(remaining.dropFirst(), uploaded: uploaded + [item], completion: completion)
-            } catch {
-                completion(.failure(error))
-            }
-        }
-
-        do {
-            let payload = try JSONEncoder.stream.encode(attachment.payload.asAnyEncodable)
-            guard let localFileURL = attachment.localFileURL else {
-                next(payload)
-                return
-            }
-            guard let client else {
-                completion(.failure(ClientError.ClientHasBeenDeallocated()))
-                return
-            }
-            client.uploadAttachment(localUrl: localFileURL, progress: nil) { result in
-                do {
-                    let file = try result.get()
-                    next(try Self.payload(payload, replacing: localFileURL, with: file))
-                } catch {
-                    completion(.failure(error))
-                }
-            }
-        } catch {
-            completion(.failure(error))
-        }
-    }
-
-    private static func payload(_ payload: Data, replacing localFileURL: URL, with file: UploadedFile) throws -> Data {
-        func replacingLocalURL(in json: RawJSON) -> RawJSON {
-            switch json {
-            case let .string(value) where value == localFileURL.absoluteString:
-                return .string(file.fileURL.absoluteString)
-            case let .dictionary(dictionary):
-                return .dictionary(dictionary.mapValues(replacingLocalURL))
-            case let .array(array):
-                return .array(array.map(replacingLocalURL))
-            default:
-                return json
-            }
-        }
-
-        var json = replacingLocalURL(in: try JSONDecoder.stream.decode(RawJSON.self, from: payload))
-        if case var .dictionary(dictionary) = json, let thumbnailURL = file.thumbnailURL {
-            dictionary["thumb_url"] = .string(thumbnailURL.absoluteString)
-            json = .dictionary(dictionary)
-        }
-        return try JSONEncoder.stream.encode(json)
     }
 }
 

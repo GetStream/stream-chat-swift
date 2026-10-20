@@ -1115,6 +1115,7 @@
 				StreamChatTests/Workers/Background/ActiveLiveLocationsEndTimeTracker_Tests.swift,
 				StreamChatTests/Workers/Background/AttachmentQueueUploader_Tests.swift,
 				StreamChatTests/Workers/Background/MessageEditor_Tests.swift,
+				StreamChatTests/Workers/Background/MessageScheduler_Tests.swift,
 				StreamChatTests/Workers/Background/MessageSender_Tests.swift,
 				StreamChatTests/Workers/ChannelListUpdater_Tests.swift,
 				StreamChatTests/Workers/ChannelMemberListUpdater_Tests.swift,

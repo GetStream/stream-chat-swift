@@ -184,7 +184,8 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
-    ///   - completion: Called when the message is rescheduled, with the scheduled message or an error.
+    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error. The new date
+    ///   is sent to the server right after, see `ScheduledMessage.localState`.
     public func rescheduleMessage(
         id: String,
         scheduledAt: Date,
@@ -202,6 +203,20 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ///   - completion: Called when the message is deleted, with an error if it failed.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         scheduledMessagesRepository.delete(id: id) { error in
+            self.callback { completion?(error) }
+        }
+    }
+
+    /// Sends the changes of a scheduled message that failed to reach the server again.
+    ///
+    /// A scheduled message is saved locally first and its `localState` is `.sendingFailed` or `.syncingFailed`
+    /// when it could not be scheduled or updated on the server.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - completion: Called when the message is queued to be sent again, with an error if it failed.
+    public func resendScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
+        scheduledMessagesRepository.resend(id: id) { error in
             self.callback { completion?(error) }
         }
     }

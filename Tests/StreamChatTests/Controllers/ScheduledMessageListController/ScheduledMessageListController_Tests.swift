@@ -20,6 +20,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         cid = .unique
         userId = .unique
         client.currentUserId_mock = userId
+        try? client.mockDatabaseContainer.createCurrentUser(id: userId)
     }
 
     override func tearDown() {

@@ -289,7 +289,29 @@ extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate
         sendNowAction.backgroundColor = colors.accentPrimary
         sendNowAction.accessibilityLabel = "Send Now"
 
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, rescheduleAction, sendNowAction])
+        let retryAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
+            completion(true)
+            self?.scheduledMessageListController.resendScheduledMessage(id: message.id) { error in
+                self?.handle(error, successMessage: "Scheduling the message again")
+            }
+        }
+        retryAction.image = UIImage(systemName: "arrow.clockwise")?
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
+        retryAction.backgroundColor = colors.accentPrimary
+        retryAction.accessibilityLabel = "Retry"
+
+        var actions = [deleteAction, rescheduleAction]
+        switch message.localState {
+        case .sendingFailed, .syncingFailed:
+            actions.append(retryAction)
+        case .pendingSend, .sending:
+            // It can not be sent now before it is on the server.
+            break
+        default:
+            actions.append(sendNowAction)
+        }
+
+        let configuration = UISwipeActionsConfiguration(actions: actions)
         configuration.performsFirstActionWithFullSwipe = false
         return configuration
     }
@@ -322,6 +344,13 @@ class DemoScheduledMessageCell: UITableViewCell {
         return label
     }()
 
+    /// Shows that the message is not on the server yet, or failed to reach it, like the delivery status of a message.
+    private let localStateImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -331,7 +360,13 @@ class DemoScheduledMessageCell: UITableViewCell {
         self.selectedBackgroundView = selectedBackgroundView
 
         VContainer(spacing: 4) {
-            channelNameLabel
+            HContainer(spacing: 4, alignment: .center) {
+                channelNameLabel
+                localStateImageView
+                    .width(16)
+                    .height(16)
+                Spacer()
+            }
             statusLabel
             messageLabel
         }.embed(
@@ -363,6 +398,29 @@ class DemoScheduledMessageCell: UITableViewCell {
         default:
             statusLabel.text = message.failureReason?.localizedDescription ?? "Failed to send"
             statusLabel.textColor = colors.accentError
+        }
+
+        let images = Appearance.default.images
+        switch message.localState {
+        case .pendingSend, .sending, .pendingSync, .syncing:
+            localStateImageView.image = images.messageDeliveryStatusSending
+            localStateImageView.tintColor = colors.textSecondary
+            localStateImageView.isHidden = false
+        case .sendingFailed:
+            localStateImageView.image = images.messageDeliveryStatusFailed
+            localStateImageView.tintColor = colors.accentError
+            localStateImageView.isHidden = false
+            statusLabel.text = "Could not schedule the message. Swipe to retry."
+            statusLabel.textColor = colors.accentError
+        case .syncingFailed:
+            localStateImageView.image = images.messageDeliveryStatusFailed
+            localStateImageView.tintColor = colors.accentError
+            localStateImageView.isHidden = false
+            statusLabel.text = "Could not save the changes. Swipe to retry."
+            statusLabel.textColor = colors.accentError
+        default:
+            localStateImageView.image = nil
+            localStateImageView.isHidden = true
         }
 
         let attachmentsCount = message.message.allAttachments.count

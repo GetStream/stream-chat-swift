@@ -17,7 +17,8 @@ public extension ChatChannelController {
     ///   - quotedMessageId: An id of the message the new message quotes.
     ///   - extraData: Additional extra data of the message object.
     ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
-    ///   - completion: Called when the message is scheduled, with the scheduled message or an error.
+    ///   - completion: Called when the message is saved locally, with the scheduled message or an error. It is sent
+    ///   to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func scheduleMessage(
         messageId: MessageId? = nil,
         text: String,
@@ -63,7 +64,8 @@ public extension ChatChannelController {
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - extraData: The new extra data of the message.
     ///   - scheduledAt: When to send the message. `nil` keeps the current date.
-    ///   - completion: Called when the message is updated, with the scheduled message or an error.
+    ///   - completion: Called when the message is updated locally, with the scheduled message or an error. The changes are
+    ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func updateScheduledMessage(
         id: String,
         text: String,
@@ -93,7 +95,8 @@ public extension ChatChannelController {
     /// - Parameters:
     ///   - id: The id of the scheduled message.
     ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
-    ///   - completion: Called when the message is rescheduled, with the scheduled message or an error.
+    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error. The new date
+    ///   is sent to the server right after, see `ScheduledMessage.localState`.
     func rescheduleMessage(
         id: String,
         scheduledAt: Date,

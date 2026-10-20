@@ -34,7 +34,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
         _ = middleware.handle(event: event, session: database.viewContext)
 
         let message = try XCTUnwrap(database.viewContext.scheduledMessage(id: "scheduled-id"))
-        XCTAssertEqual(message.text, "Hello")
+        XCTAssertEqual(message.message?.text, "Hello")
         XCTAssertEqual(message.cid, cid.rawValue)
     }
 
@@ -47,7 +47,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
 
         _ = middleware.handle(event: event, session: database.viewContext)
 
-        XCTAssertEqual(database.viewContext.scheduledMessage(id: "scheduled-id")?.text, "Updated")
+        XCTAssertEqual(database.viewContext.scheduledMessage(id: "scheduled-id")?.message?.text, "Updated")
     }
 
     func test_failedEvent_savesTheStatusAndTheFailureReason() throws {

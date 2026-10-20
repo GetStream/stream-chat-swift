@@ -18,7 +18,8 @@ public extension ChatMessageController {
     ///   - quotedMessageId: An id of the message the reply quotes.
     ///   - extraData: Additional extra data of the reply.
     ///   - scheduledAt: When to send the reply. At least 1 minute and at most 120 days from now.
-    ///   - completion: Called when the reply is scheduled, with the scheduled message or an error.
+    ///   - completion: Called when the reply is saved locally, with the scheduled message or an error. It is sent
+    ///   to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func scheduleReply(
         messageId: MessageId? = nil,
         text: String,
@@ -62,7 +63,8 @@ public extension ChatMessageController {
     ///   - quotedMessageId: The new quoted message of the reply.
     ///   - extraData: The new extra data of the reply.
     ///   - scheduledAt: When to send the reply. `nil` keeps the current date.
-    ///   - completion: Called when the reply is updated, with the scheduled message or an error.
+    ///   - completion: Called when the reply is updated locally, with the scheduled message or an error. The changes are
+    ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func updateScheduledReply(
         id: String,
         text: String,

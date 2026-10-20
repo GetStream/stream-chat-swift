@@ -623,7 +623,26 @@ protocol ReminderDatabaseSession {
 }
 
 protocol ScheduledMessageDatabaseSession {
+    /// Creates a scheduled message locally, which is sent to the server once its attachments are uploaded.
+    @discardableResult
+    func createNewScheduledMessage(
+        id: String,
+        cid: ChannelId,
+        content: ScheduledMessageContent,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO
+
+    /// Changes a scheduled message locally, which is synced with the server once its attachments are uploaded.
+    @discardableResult
+    func updateScheduledMessage(
+        id: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date?
+    ) throws -> ScheduledMessageDTO
+
     /// Creates or updates a scheduled message with the provided payload.
+    ///
+    /// The content is kept when it has local changes that are not on the server yet.
     @discardableResult
     func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO
 

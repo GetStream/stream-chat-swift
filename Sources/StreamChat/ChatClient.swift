@@ -93,7 +93,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Repository for handling scheduled messages.
     lazy var scheduledMessagesRepository: ScheduledMessagesRepository = {
-        ScheduledMessagesRepository(client: self, database: databaseContainer, apiClient: apiClient)
+        ScheduledMessagesRepository(database: databaseContainer, apiClient: apiClient)
     }()
 
     /// Repository for handling user groups.
@@ -747,6 +747,11 @@ public class ChatClient: @unchecked Sendable {
                 apiClient: apiClient
             ),
             MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
+            MessageScheduler(
+                scheduledMessagesRepository: scheduledMessagesRepository,
+                database: databaseContainer,
+                apiClient: apiClient
+            ),
             AttachmentQueueUploader(
                 database: databaseContainer,
                 apiClient: apiClient,
@@ -814,6 +819,7 @@ extension ChatClient: ConnectionStateDelegate {
         )
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
         try? backgroundWorker(of: MessageSender.self).didUpdateConnectionState(state)
+        try? backgroundWorker(of: MessageScheduler.self).didUpdateConnectionState(state)
 
         switch state {
         case .connecting:
