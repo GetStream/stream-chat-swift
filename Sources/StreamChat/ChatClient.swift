@@ -690,8 +690,7 @@ public class ChatClient: @unchecked Sendable {
             groups: groupRequests,
             limit: groupRequests == nil ? limit : nil,
             watch: watch,
-            presence: presence,
-            resetsLoaded: true
+            presence: presence
         )
     }
 
@@ -710,8 +709,7 @@ public class ChatClient: @unchecked Sendable {
             limit: query.limit,
             sort: query.sortRequests,
             watch: query.watch,
-            presence: query.presence,
-            resetsLoaded: true
+            presence: query.presence
         )
     }
     

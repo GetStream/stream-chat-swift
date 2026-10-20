@@ -68,21 +68,7 @@ public class ChannelList: @unchecked Sendable {
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
         if let groupKey {
-            let paginationState = try await channelListUpdater.paginationState(for: groupKey)
-            let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                groups: [groupKey: .init(filterConditions: paginationState.filter, limit: pagination.pageSize > 0 ? pagination.pageSize : nil, next: pagination.cursor)],
-                limit: nil,
-                sort: paginationState.sort,
-                watch: paginationState.watch ?? true,
-                presence: paginationState.presence ?? false,
-                resetsLoaded: true
-            )
-            let group = channelGroups.first { $0.groupKey == groupKey }
-            let query = await state.query
-            if let updatedQuery = channelListUpdater.loadPredefinedFilter(for: query), !updatedQuery.isFilterEqual(to: query) {
-                await state.setQuery(updatedQuery)
-            }
-            return group?.channels ?? []
+            return try await loadGroupedChannels(for: groupKey, pagination: pagination)?.channels ?? []
         } else {
             var query = await state.query
             query.pagination = pagination
@@ -104,9 +90,18 @@ public class ChannelList: @unchecked Sendable {
         let pageSize = await state.query.pagination.pageSize
         let limit = limit ?? pageSize
         if let groupKey {
-            let paginationState = try await channelListUpdater.paginationState(for: groupKey)
-            guard let cursor = paginationState.next else { return [] }
-            return try await loadChannels(with: Pagination(pageSize: limit, cursor: cursor))
+            var cursor = try await channelListUpdater.paginationState(for: groupKey).next
+            var channels: [ChatChannel] = []
+            // After a reconnect keeps the loaded pages, the next page can hold only channels that are already loaded.
+            // The list does not grow then, so keep paging until it does or there are no more pages.
+            while let requestedCursor = cursor {
+                let loadedChannelIds = Set(await state.channels.map(\.cid))
+                let group = try await loadGroupedChannels(for: groupKey, pagination: Pagination(pageSize: limit, cursor: requestedCursor))
+                channels = group?.channels ?? []
+                cursor = group?.next
+                guard cursor != requestedCursor, !channels.isEmpty, channels.allSatisfy({ loadedChannelIds.contains($0.cid) }) else { break }
+            }
+            return channels
         } else {
             guard await !state.hasOffsetPaginationLoadedAllPreviousChannels else { return [] }
             let count = await state.channels.count
@@ -122,6 +117,22 @@ public class ChannelList: @unchecked Sendable {
         let count = await state.channels.count
         let query = await state.query
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
+    }
+
+    private func loadGroupedChannels(for groupKey: String, pagination: Pagination) async throws -> ChannelGroup? {
+        let paginationState = try await channelListUpdater.paginationState(for: groupKey)
+        let channelGroups = try await channelListUpdater.queryGroupedChannels(
+            groups: [groupKey: .init(filterConditions: paginationState.filter, limit: pagination.pageSize > 0 ? pagination.pageSize : nil, next: pagination.cursor)],
+            limit: nil,
+            sort: paginationState.sort,
+            watch: paginationState.watch ?? true,
+            presence: paginationState.presence ?? false
+        )
+        let query = await state.query
+        if let updatedQuery = channelListUpdater.loadPredefinedFilter(for: query), !updatedQuery.isFilterEqual(to: query) {
+            await state.setQuery(updatedQuery)
+        }
+        return channelGroups.first { $0.groupKey == groupKey }
     }
 
     @MainActor private func setHasOffsetPaginationLoadedAllPreviousChannels(for channels: [ChatChannel], pageSize: Int) {

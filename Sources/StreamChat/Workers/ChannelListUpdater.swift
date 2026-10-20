@@ -247,7 +247,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool,
-        resetsLoaded: Bool,
+        keepingLoadedPagesOf keepingGroupKeys: Set<String> = [],
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         let request = GroupedQueryChannelsRequest(
@@ -274,9 +274,9 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
                         let wasFreshFetch = request.groups?[groupKey]?.next == nil
-                        // Without a reset, refreshing the first page of a group with more pages loaded keeps those pages.
+                        // Refreshing the first page of a kept group with more pages loaded keeps those pages.
                         // Paging restarts from the fresh cursor so channels added in the meantime stay reachable.
-                        let keepsGroupPages = !resetsLoaded && wasFreshFetch && groupPayload.next != nil
+                        let keepsGroupPages = keepingGroupKeys.contains(groupKey) && wasFreshFetch && groupPayload.next != nil
                             && queryDTO.channels.count > groupPayload.channels.count
                         if wasFreshFetch, !keepsGroupPages {
                             queryDTO.channels.removeAll()
@@ -321,7 +321,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool,
-        resetsLoaded: Bool
+        keepingLoadedPagesOf keepingGroupKeys: Set<String> = []
     ) async throws -> [ChannelGroup] {
         try await withCheckedThrowingContinuation { continuation in
             queryGroupedChannels(
@@ -330,7 +330,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 sort: sort,
                 watch: watch,
                 presence: presence,
-                resetsLoaded: resetsLoaded
+                keepingLoadedPagesOf: keepingGroupKeys
             ) { result in
                 continuation.resume(with: result)
             }

@@ -176,7 +176,7 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(["all"], groups?.keys.sorted())
         XCTAssertNil(groups?["all"]?.limit)
         XCTAssertNil(groups?["all"]?.next)
-        XCTAssertEqual([true], env.channelListUpdaterMock.queryGroupedChannels_resetsLoadedValues)
+        XCTAssertEqual([[]], env.channelListUpdaterMock.queryGroupedChannels_keepingLoadedPagesOfValues)
         XCTAssertTrue(env.channelListUpdaterMock.update_queries.isEmpty)
     }
 
@@ -292,6 +292,47 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
         let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
         XCTAssertEqual("cursor-2", groups?["all"]?.next)
+    }
+
+    func test_loadMoreChannels_whenPageHoldsOnlyLoadedChannels_loadsTheFollowingPage() async throws {
+        let loadedCid = ChannelId.unique
+        let newCid = ChannelId.unique
+        try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
+        env.channelListUpdaterMock.queryGroupedChannels_results = [
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid)], unreadChannels: 0, next: "page-3")]),
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: newCid)], unreadChannels: 0, next: nil)])
+        ]
+
+        let channels = try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual([newCid], channels.map(\.cid))
+        XCTAssertEqual(["page-2", "page-3"], env.channelListUpdaterMock.queryGroupedChannels_groups.map { $0?["all"]?.next })
+    }
+
+    func test_loadMoreChannels_whenPageHoldsOnlyLoadedChannelsAndTheSameCursor_stops() async throws {
+        let loadedCid = ChannelId.unique
+        try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
+        env.channelListUpdaterMock.queryGroupedChannels_results = [
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid)], unreadChannels: 0, next: "page-2")])
+        ]
+
+        try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+    }
+
+    func test_loadMoreChannels_whenPageHoldsANewChannel_stopsAfterOneRequest() async throws {
+        let loadedCid = ChannelId.unique
+        let newCid = ChannelId.unique
+        try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
+        env.channelListUpdaterMock.queryGroupedChannels_results = [
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid), .mock(cid: newCid)], unreadChannels: 0, next: "page-3")])
+        ]
+
+        let channels = try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual([loadedCid, newCid], channels.map(\.cid))
+        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
     }
 
     func test_restoringState_whenQueryHasGroupKeyWithQueryTimestampSort_sortsByQueryTimestamp() async throws {
@@ -847,7 +888,23 @@ final class ChannelList_Tests: XCTestCase {
             _ = channelList.state
         }
     }
-    
+
+    private func setUpGroupedChannelList(loadedCid: ChannelId, next: String) async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.next = next
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy(channel: .dummy(cid: loadedCid))))
+        }
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: env.channelListEnvironment(usesMockedUpdater: true)
+        )
+        _ = await channelList.state
+    }
+
     private func makeChannels(count: Int, createdAtOffset: Int) -> [ChatChannel] {
         (0..<count)
             .map { ChatChannel.mock(cid: .unique, createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))) }

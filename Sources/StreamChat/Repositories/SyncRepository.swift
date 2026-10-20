@@ -213,9 +213,9 @@ class SyncRepository: @unchecked Sendable {
             log.info("Starting to refresh offline state", subsystems: .offlineSupport)
             
             /// 1. Collect all the **active** channel ids
-            operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
+            operations.append(ActiveChannelIdsOperation(syncRepository: self, channelListUpdater: channelListUpdater, context: context))
             
-            // 2. Refresh channel lists (non-grouped lists individually, grouped lists via a single shared request)
+            // 2. Refresh non-grouped channel lists individually
             let allChannelLists = activeChannelLists.allObjects
             operations.append(contentsOf: allChannelLists
                 .filter { $0.groupKey == nil }
@@ -224,6 +224,11 @@ class SyncRepository: @unchecked Sendable {
             operations.append(contentsOf: activeChannelListControllers.allObjects
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
+
+            // 3. /sync (for channels what not part of refreshed channel lists, grouped lists' channels first)
+            operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
+
+            // 4. Refresh grouped lists via a single shared request, keeping the later pages `/sync` covered
             let groupedChannelLists = allChannelLists.filter { $0.groupKey != nil }
             if !groupedChannelLists.isEmpty {
                 operations.append(SyncGroupedChannelsOperation(
@@ -233,10 +238,7 @@ class SyncRepository: @unchecked Sendable {
                 ))
             }
 
-            // 3. /sync (for channels what not part of active channel lists)
-            operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
-            
-            // 4. Re-watch channels what we were watching before disconnect
+            // 5. Re-watch channels what we were watching before disconnect
             // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
             operations.append(contentsOf: activeChannelControllers.allObjects.map {
                 WatchChannelOperation(controller: $0, context: context, recovery: false)
@@ -251,7 +253,7 @@ class SyncRepository: @unchecked Sendable {
                 WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
             })
             
-            // 5. Unlink channels that left their group while offline (synced events are not posted to the linkers)
+            // 6. Unlink channels that left their group while offline (synced events are not posted to the linkers)
             if !groupedChannelLists.isEmpty {
                 operations.append(UnlinkGroupedChannelsOperation(database: database, groupedChannelLists: groupedChannelLists))
             }
@@ -319,13 +321,12 @@ class SyncRepository: @unchecked Sendable {
         )
     }
 
-    /// Refreshes the requested and actively watched channels via `queryChannels`, excluding channels already synced in the reconnect context.
+    /// Refreshes actively watched channels via `queryChannels`, excluding channels already synced in the reconnect context.
     func refreshActiveWatchedChannels(
-        requestedChannelIds: [ChannelId],
         excluding alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<Set<ChannelId>, SyncError>) -> Void
     ) {
-        var channelIds = Set(requestedChannelIds)
+        var channelIds = Set<ChannelId>()
         channelIds.formUnion(activeChannelControllers.allObjects.compactMap(\.cid))
         channelIds.formUnion(activeLivestreamControllers.allObjects.compactMap(\.cid))
         channelIds.formUnion(activeLivestreamChats.allObjects.compactMap { try? $0.cid })
@@ -404,7 +405,6 @@ class SyncRepository: @unchecked Sendable {
                     )
                     self.handleSyncEventReplayFallback(
                         lastSyncAt: payload.events.last?.createdAt ?? date,
-                        channelIds: watch ? channelIds : [],
                         alreadySyncedChannelIds: alreadySyncedChannelIds,
                         completion: completion
                     )
@@ -431,7 +431,6 @@ class SyncRepository: @unchecked Sendable {
                 log.info("/sync returned too many events. Refreshing watched channels instead.", subsystems: .offlineSupport)
                 self?.handleSyncEventReplayFallback(
                     lastSyncAt: Date(),
-                    channelIds: watch ? channelIds : [],
                     alreadySyncedChannelIds: alreadySyncedChannelIds,
                     completion: completion
                 )
@@ -447,7 +446,6 @@ class SyncRepository: @unchecked Sendable {
 
     private func handleSyncEventReplayFallback(
         lastSyncAt: Date,
-        channelIds: [ChannelId],
         alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
@@ -455,7 +453,7 @@ class SyncRepository: @unchecked Sendable {
             "Running `/sync` fallback via queryChannels. excludingAlreadySynced=\(alreadySyncedChannelIds.count)",
             subsystems: .offlineSupport
         )
-        refreshActiveWatchedChannels(requestedChannelIds: channelIds, excluding: alreadySyncedChannelIds) { [weak self] result in
+        refreshActiveWatchedChannels(excluding: alreadySyncedChannelIds) { [weak self] result in
             switch result {
             case let .success(refreshedIds):
                 log.info(

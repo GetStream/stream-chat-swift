@@ -108,6 +108,26 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertEqual(syncRepository.syncMissingEvents_watch, true)
     }
 
+    func test_SyncEventsOperation_whenOverTheLimit_syncsGroupedChannelListsChannelsFirst() throws {
+        let context = SyncContext(lastSyncAt: .init())
+        let groupedChannelIds = Set((0..<10).map { _ in ChannelId.unique })
+        context.localChannelIds = Set((0..<120).map { _ in ChannelId.unique }).union(groupedChannelIds)
+        context.groupedChannelIds = ["all": groupedChannelIds]
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
+        syncRepository.syncMissingEventsResult = .success([])
+
+        operation.startAndWaitForCompletion()
+
+        let syncedChannelIds = Set(syncRepository.syncMissingEvents_syncChannels ?? [])
+        XCTAssertEqual(100, syncedChannelIds.count)
+        XCTAssertTrue(groupedChannelIds.isSubset(of: syncedChannelIds))
+    }
+
     // MARK: - WatchChannelOperation
 
     func test_WatchChannelOperation_notAvailableOnRemote() {
