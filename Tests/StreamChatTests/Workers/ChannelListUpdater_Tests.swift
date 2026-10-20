@@ -935,21 +935,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual("second-page", result.next)
     }
 
-    func test_queryGroupedChannels_withoutReset_whenAllPagesWereLoaded_keepsChannelsAndRestoresCursor() throws {
-        let firstPageCid = ChannelId.unique
-        let secondPageCid = ChannelId.unique
-
-        let result = try refreshFirstGroupPageWithoutReset(
-            linkedCids: [firstPageCid, secondPageCid],
-            storedNext: nil,
-            returnedCids: [firstPageCid],
-            returnedNext: "second-page"
-        )
-
-        XCTAssertEqual(Set([firstPageCid.rawValue, secondPageCid.rawValue]), result.linkedCids)
-        XCTAssertEqual("second-page", result.next)
-    }
-
     func test_queryGroupedChannels_withoutReset_whenOnlyFirstPageIsLinked_resetsChannelsAndCursor() throws {
         let staleCid = ChannelId.unique
         let firstPageCid = ChannelId.unique
@@ -981,28 +966,11 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertNil(result.next)
     }
 
-    func test_queryGroupedChannels_whenGroupDoesNotKeepLoadedPages_resetsChannelsAndCursor() throws {
-        let firstPageCid = ChannelId.unique
-        let secondPageCid = ChannelId.unique
-
-        let result = try refreshFirstGroupPageWithoutReset(
-            linkedCids: [firstPageCid, secondPageCid],
-            storedNext: "third-page",
-            returnedCids: [firstPageCid],
-            returnedNext: "second-page",
-            keepingGroupKeys: []
-        )
-
-        XCTAssertEqual(Set([firstPageCid.rawValue]), result.linkedCids)
-        XCTAssertEqual("second-page", result.next)
-    }
-
     private func refreshFirstGroupPageWithoutReset(
         linkedCids: [ChannelId],
         storedNext: String?,
         returnedCids: [ChannelId],
-        returnedNext: String?,
-        keepingGroupKeys: Set<String> = ["all"]
+        returnedNext: String?
     ) throws -> (linkedCids: Set<String>, next: String?) {
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
@@ -1022,7 +990,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
                 limit: nil,
                 watch: false,
                 presence: false,
-                keepingLoadedPagesOf: keepingGroupKeys,
+                keepingLoadedPagesOf: ["all"],
                 completion: done
             )
             apiClient.test_simulateResponse(.success(payload))

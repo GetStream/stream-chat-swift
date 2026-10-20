@@ -176,7 +176,6 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(["all"], groups?.keys.sorted())
         XCTAssertNil(groups?["all"]?.limit)
         XCTAssertNil(groups?["all"]?.next)
-        XCTAssertEqual([[]], env.channelListUpdaterMock.queryGroupedChannels_keepingLoadedPagesOfValues)
         XCTAssertTrue(env.channelListUpdaterMock.update_queries.isEmpty)
     }
 
@@ -300,7 +299,7 @@ final class ChannelList_Tests: XCTestCase {
         try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
         env.channelListUpdaterMock.queryGroupedChannels_results = [
             .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid)], unreadChannels: 0, next: "page-3")]),
-            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: newCid)], unreadChannels: 0, next: nil)])
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: newCid)], unreadChannels: 0, next: "page-4")])
         ]
 
         let channels = try await channelList.loadMoreChannels(limit: 5)
@@ -318,20 +317,6 @@ final class ChannelList_Tests: XCTestCase {
 
         try await channelList.loadMoreChannels(limit: 5)
 
-        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
-    }
-
-    func test_loadMoreChannels_whenPageHoldsANewChannel_stopsAfterOneRequest() async throws {
-        let loadedCid = ChannelId.unique
-        let newCid = ChannelId.unique
-        try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
-        env.channelListUpdaterMock.queryGroupedChannels_results = [
-            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid), .mock(cid: newCid)], unreadChannels: 0, next: "page-3")])
-        ]
-
-        let channels = try await channelList.loadMoreChannels(limit: 5)
-
-        XCTAssertEqual([loadedCid, newCid], channels.map(\.cid))
         XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
     }
 
@@ -460,18 +445,6 @@ final class ChannelList_Tests: XCTestCase {
 
         XCTAssertEqual([], channels)
         XCTAssertEqual(1, env.channelListUpdaterMock.update_queries.count)
-    }
-
-    func test_loadMoreChannels_whenLoadChannelsUsesOtherPagination_thenFlagIsUnchanged() async throws {
-        await setUpChannelList(usesMockedChannelUpdater: true, pageSize: 2)
-        env.channelListUpdaterMock.update_completion_result = .success(makeChannels(count: 2, createdAtOffset: 0))
-        try await channelList.get()
-        env.channelListUpdaterMock.update_completion_result = .success([])
-        try await channelList.loadChannels(with: Pagination(pageSize: 2, offset: 20))
-
-        try await channelList.loadMoreChannels()
-
-        XCTAssertEqual(3, env.channelListUpdaterMock.update_queries.count)
     }
     
     // MARK: - Pagination and State

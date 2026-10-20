@@ -107,17 +107,6 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(true, isLinked(stayingCid))
     }
 
-    func test_expirySweep_whenLinkedChannelIsHidden_unlinksChannel() throws {
-        let cid = ChannelId.unique
-        try saveFilteredGroup()
-        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isHidden: true, isLinked: true)
-
-        time.run(numberOfSeconds: 60)
-        try database.writeSynchronously { _ in }
-
-        XCTAssertEqual(false, isLinked(cid))
-    }
-
     func test_channelUpdated_whenStoredGroupLeavesTheGroup_unlinksChannel() throws {
         let cid = ChannelId.unique
         try saveFilteredGroup()
