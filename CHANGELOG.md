@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
+
 ## StreamChatAI
 ### ✅ Added
 - Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
