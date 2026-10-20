@@ -28,7 +28,7 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
         context: SyncContext
     ) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository, weak channelListUpdater] _, done in
-            guard let syncRepository else {
+            guard let syncRepository, let channelListUpdater else {
                 done(.continue)
                 return
             }
@@ -59,7 +59,7 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                 // Main actor requirement
                 let chats = syncRepository.activeChats.allObjects
                 let channelLists = syncRepository.activeChannelLists.allObjects
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     context.localChannelIds.formUnion(chats.compactMap { try? $0.cid })
                     context.localChannelIds.formUnion(
                         channelLists
@@ -69,22 +69,13 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                     )
                     for channelList in channelLists {
                         guard let groupKey = channelList.groupKey else { continue }
-                        context.groupedChannelIds[groupKey, default: []].formUnion(channelList.state.channels.map(\.cid))
-                    }
-                    let groupKeys = Array(context.groupedChannelIds.keys)
-                    guard let channelListUpdater, !groupKeys.isEmpty else {
-                        completion()
-                        return
-                    }
-                    // `/sync` watches the channels of the grouped lists again when any of them watches.
-                    Task {
-                        for groupKey in groupKeys {
-                            guard (try? await channelListUpdater.paginationState(for: groupKey))?.watch == true else { continue }
+                        context.groupedChannelIds[groupKey] = Set(channelList.state.channels.map(\.cid))
+                        // `/sync` watches the grouped lists' channels again when any of them was queried with `watch`.
+                        if (try? await channelListUpdater.paginationState(for: groupKey))?.watch == true {
                             context.watchesSyncEndpointChannels = true
-                            break
                         }
-                        completion()
                     }
+                    completion()
                 }
             }
         }
@@ -159,13 +150,15 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                     let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in
                         (groupKey, GroupedChannelsGroupRequest(filterConditions: states[groupKey]?.filter))
                     })
+                    // If /sync synced channels in the group, we can keep loaded pages
+                    let syncedGroups = Set(groupKeys.filter { context.groupedChannelIds[$0]?.isSubset(of: context.synchedChannelIds) ?? false })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,
                         sort: groupKeys.compactMap { states[$0]?.sort }.first,
                         watch: groupKeys.contains { states[$0]?.watch == true },
                         presence: groupKeys.compactMap { states[$0]?.presence }.first ?? false,
-                        keepingLoadedPagesOf: Set(groupKeys.filter { context.groupedChannelIds[$0, default: []].isSubset(of: context.synchedChannelIds) })
+                        keepingLoadedPagesOf: syncedGroups
                     )
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)
