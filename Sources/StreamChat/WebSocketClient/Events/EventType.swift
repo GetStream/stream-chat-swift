@@ -118,6 +118,9 @@ public extension EventType {
 
     /// When a channel was deleted
     static let notificationChannelDeleted: Self = "notification.channel_deleted"
+
+    /// When a channel was partially updated and the user isn't watching it.
+    static let notificationChannelPartialUpdated: Self = "notification.channel_partial_updated"
     
     // MARK: - polls
     

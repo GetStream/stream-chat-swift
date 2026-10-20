@@ -4,7 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
+- Add `NotificationChannelPartialUpdatedEvent` and keep grouped channel lists up to date when a channel the user isn't watching is partially updated [#4336](https://github.com/GetStream/stream-chat-swift/pull/4336)
 ### 🐞 Fixed
+- Fix loaded grouped channel lists keeping channels that get hidden, deleted or disabled, or that the current user is removed from [#4341](https://github.com/GetStream/stream-chat-swift/pull/4341)
+- Keep hidden channels hidden when a system message or a message from a blocked user arrives [#4345](https://github.com/GetStream/stream-chat-swift/pull/4345)
 - Fix `ChannelList.loadMoreChannels()` returning no channels after the first page of a grouped list is reloaded [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
 ### 🔄 Changed
 - Keep the loaded pages of grouped channel lists after reconnecting instead of resetting to the first page [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
@@ -12,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatAI
 ### ✅ Added
 - Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
+### 🔄 Changed
+- StreamChatAI no longer brings Splash and swift-markdown-ui as package dependencies [#4346](https://github.com/GetStream/stream-chat-swift/pull/4346)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_

@@ -4,8 +4,6 @@
 
 import StreamCore
 import SwiftUI
-internal import MarkdownUI
-internal import Splash
 
 public struct StreamingMessageView: View {
     var content: String
@@ -126,8 +124,8 @@ public struct StreamingMessageView: View {
         return try? ChartSpecParser.parse(data)
     }
 
-    private var theme: Splash.Theme {
-        Theme(
+    private var theme: SplashTheme {
+        SplashTheme(
             font: .init(size: 16),
             plainTextColor: colors.codeText,
             tokenColors: [

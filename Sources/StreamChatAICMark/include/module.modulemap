@@ -1,0 +1,4 @@
+module StreamChatAICMark {
+    umbrella header "cmark_gfm.h"
+    export *
+}

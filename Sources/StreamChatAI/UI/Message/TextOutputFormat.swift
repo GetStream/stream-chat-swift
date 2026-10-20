@@ -2,13 +2,12 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-internal import Splash
 import SwiftUI
 
 struct TextOutputFormat: OutputFormat {
-    private let theme: Theme
+    private let theme: SplashTheme
     
-    init(theme: Theme) {
+    init(theme: SplashTheme) {
         self.theme = theme
     }
     
@@ -19,10 +18,10 @@ struct TextOutputFormat: OutputFormat {
 
 extension TextOutputFormat {
     struct Builder: OutputBuilder {
-        private let theme: Theme
+        private let theme: SplashTheme
         private var accumulatedText: [Text]
         
-        fileprivate init(theme: Theme) {
+        fileprivate init(theme: SplashTheme) {
             self.theme = theme
             self.accumulatedText = []
         }
