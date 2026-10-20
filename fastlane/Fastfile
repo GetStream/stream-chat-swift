@@ -658,20 +658,22 @@ lane :test_ui do |options|
   remove_snapshots if record_mode
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    number_of_retries: record_mode ? nil : 1,
-    result_bundle: true,
-    devices: options[:device],
-    fail_build: !record_mode,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      fail_build: !record_mode,
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: record_mode ? 0 : 1
   )
 
   if record_mode && is_ci
