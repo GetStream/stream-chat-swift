@@ -6591,8 +6591,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "fix/rfc3339-date-parsing";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
