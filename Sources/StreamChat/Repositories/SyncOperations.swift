@@ -186,7 +186,7 @@ final class UnlinkGroupedChannelsOperation: AsyncOperation, @unchecked Sendable 
             }
             database.write({ session in
                 for groupKey in groupKeys {
-                    try GroupedChannelListLinker.unlinkChannelsNotBelonging(to: ChannelListQuery(groupKey: groupKey), session: session)
+                    try session.unlinkGroupedChannels(in: groupKey)
                 }
             }, completion: { error in
                 if let error {

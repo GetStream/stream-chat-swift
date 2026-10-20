@@ -169,4 +169,28 @@ extension NSManagedObjectContext {
             return []
         }
     }
+
+    func unlinkGroupedChannels(in groupKey: String) throws {
+        guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
+        let filterPredicate = try groupFilterPredicate(of: queryDTO)
+        let unlinked = queryDTO.channels.filter { !belongsChannelToGroup(groupKey, channel: $0, filterPredicate: filterPredicate) }
+        guard !unlinked.isEmpty else { return }
+        queryDTO.channels.subtract(unlinked)
+        updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
+    }
+
+    func belongsChannelToGroup(_ groupKey: String, channel: ChannelDTO) throws -> Bool {
+        let filterPredicate = try channelListQuery(ChannelListQuery(groupKey: groupKey)).flatMap { try groupFilterPredicate(of: $0) }
+        return belongsChannelToGroup(groupKey, channel: channel, filterPredicate: filterPredicate)
+    }
+
+    private func belongsChannelToGroup(_ groupKey: String, channel: ChannelDTO, filterPredicate: NSPredicate?) -> Bool {
+        let canShowChannel = !channel.isHidden && !channel.isDisabled && channel.deletedAt == nil
+        let isMemberInGroup = channel.membership != nil && (groupKey == GroupedChannelKey.all || channel.group == groupKey)
+        return canShowChannel && isMemberInGroup && (filterPredicate?.evaluate(with: channel) ?? true)
+    }
+
+    private func groupFilterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
+        try queryDTO.groupFilterJSONData.flatMap { try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: $0)?.predicate }
+    }
 }

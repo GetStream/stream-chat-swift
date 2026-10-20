@@ -108,7 +108,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
         if event.isChannelStored {
             updateLinking(for: event.cid)
-        } else if Self.isInGroup(event.group, groupKey: query.groupKey) {
+        } else if let groupKey = query.groupKey, groupKey == GroupedChannelKey.all || event.group == groupKey {
             // Watching fetches and saves the channel, then it can be linked to the query.
             databaseContainer.read({ [query] session in
                 session.channelListQuery(query)?.watch == true
@@ -127,21 +127,13 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     }
 
     private func removeExpiredChannels() {
-        databaseContainer.write({ [query] session in
-            try Self.unlinkChannelsNotBelonging(to: query, session: session)
+        guard let groupKey = query.groupKey else { return }
+        databaseContainer.write({ session in
+            try session.unlinkGroupedChannels(in: groupKey)
         }, completion: { error in
             guard let error else { return }
             log.error(error)
         })
-    }
-
-    static func unlinkChannelsNotBelonging(to query: ChannelListQuery, session: DatabaseSession) throws {
-        guard let queryDTO = session.channelListQuery(query) else { return }
-        let filterPredicate = try filterPredicate(of: queryDTO)
-        let unlinked = queryDTO.channels.filter { !belongs($0, to: query.groupKey, filterPredicate: filterPredicate) }
-        guard !unlinked.isEmpty else { return }
-        queryDTO.channels.subtract(unlinked)
-        session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
     }
 
     /// Links or unlinks the channel for the current grouped query in a single DB write, based on
@@ -150,8 +142,8 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
     private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, isMember: Bool = true, startsWatching: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
-            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
-            let shouldBelong = try isMember && Self.belongs(channelDTO, to: query.groupKey, filterPredicate: Self.filterPredicate(of: queryDTO))
+            guard let groupKey = query.groupKey, let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
+            let shouldBelong = try isMember && session.belongsChannelToGroup(groupKey, channel: channelDTO)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
@@ -181,19 +173,5 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 }
             }
         })
-    }
-
-    private static func belongs(_ channelDTO: ChannelDTO, to groupKey: String?, filterPredicate: NSPredicate?) -> Bool {
-        let canShowChannel = !channelDTO.isHidden && !channelDTO.isDisabled && channelDTO.deletedAt == nil
-        let isMemberInGroup = channelDTO.membership != nil && isInGroup(channelDTO.group, groupKey: groupKey)
-        return canShowChannel && isMemberInGroup && (filterPredicate?.evaluate(with: channelDTO) ?? true)
-    }
-
-    private static func isInGroup(_ group: String?, groupKey: String?) -> Bool {
-        groupKey == GroupedChannelKey.all || (group != nil && groupKey == group)
-    }
-
-    private static func filterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
-        try queryDTO.groupFilterJSONData.flatMap { try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: $0)?.predicate }
     }
 }

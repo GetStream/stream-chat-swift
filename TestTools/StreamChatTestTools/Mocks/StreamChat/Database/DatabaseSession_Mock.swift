@@ -438,6 +438,16 @@ class DatabaseSession_Mock: DatabaseSession {
     func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO] {
         underlyingSession.loadFilteredGroupChannelListQueries()
     }
+
+    func unlinkGroupedChannels(in groupKey: String) throws {
+        try throwErrorIfNeeded()
+        try underlyingSession.unlinkGroupedChannels(in: groupKey)
+    }
+
+    func belongsChannelToGroup(_ groupKey: String, channel: ChannelDTO) throws -> Bool {
+        try throwErrorIfNeeded()
+        return try underlyingSession.belongsChannelToGroup(groupKey, channel: channel)
+    }
     
     func saveChannel(
         payload: ChannelPayload,
