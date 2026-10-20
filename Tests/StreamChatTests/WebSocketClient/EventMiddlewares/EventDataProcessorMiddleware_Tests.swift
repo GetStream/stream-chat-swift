@@ -132,7 +132,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: [GroupedChannelKey.group: .string("old")])))
         }
         let event = NotificationChannelPartialUpdatedEventDTO(
-            channel: .init(cid: cid, custom: [GroupedChannelKey.group: .string("new")], disabled: false, frozen: true, updatedAt: .unique),
+            channel: .init(cid: cid, createdAt: .unique, custom: [GroupedChannelKey.group: .string("new")], disabled: false, frozen: true, updatedAt: .unique),
             createdAt: .unique
         )
 
