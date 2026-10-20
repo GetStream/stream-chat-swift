@@ -420,6 +420,18 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual([], channels)
         XCTAssertEqual(1, env.channelListUpdaterMock.update_queries.count)
     }
+
+    func test_loadMoreChannels_whenLoadChannelsUsesOtherPagination_thenFlagIsUnchanged() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: true, pageSize: 2)
+        env.channelListUpdaterMock.update_completion_result = .success(makeChannels(count: 2, createdAtOffset: 0))
+        try await channelList.get()
+        env.channelListUpdaterMock.update_completion_result = .success([])
+        try await channelList.loadChannels(with: Pagination(pageSize: 2, offset: 20))
+
+        try await channelList.loadMoreChannels()
+
+        XCTAssertEqual(3, env.channelListUpdaterMock.update_queries.count)
+    }
     
     // MARK: - Pagination and State
     

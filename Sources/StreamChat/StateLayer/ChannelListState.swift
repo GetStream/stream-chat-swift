@@ -39,8 +39,7 @@ import Foundation
     public internal(set) var query: ChannelListQuery
 
     /// A Boolean value that returns whether pagination is finished.
-    /// Grouped lists use the persisted cursor instead, which other paths such as reconnect syncing also update.
-    var hasLoadedAllPreviousChannels = false
+    var hasOffsetPaginationLoadedAllPreviousChannels = false
 
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels: [ChatChannel] = []
