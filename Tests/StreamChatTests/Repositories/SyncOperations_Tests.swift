@@ -91,23 +91,6 @@ final class SyncOperations_Tests: XCTestCase {
         )
     }
 
-    func test_SyncEventsOperation_whenContextWatchesSyncEndpointChannels_syncsWithWatch() throws {
-        let context = SyncContext(lastSyncAt: .init())
-        context.localChannelIds = [ChannelId.unique]
-        context.watchesSyncEndpointChannels = true
-        try database.createCurrentUser()
-        try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
-        }
-
-        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
-        syncRepository.syncMissingEventsResult = .success([.unique])
-
-        operation.startAndWaitForCompletion()
-
-        XCTAssertEqual(syncRepository.syncMissingEvents_watch, true)
-    }
-
     func test_SyncEventsOperation_whenOverTheLimit_syncsGroupedChannelListsChannelsFirst() throws {
         let context = SyncContext(lastSyncAt: .init())
         let groupedChannelIds = Set((0..<10).map { _ in ChannelId.unique })

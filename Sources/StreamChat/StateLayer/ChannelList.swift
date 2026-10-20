@@ -51,7 +51,7 @@ public class ChannelList: @unchecked Sendable {
         let pagination = Pagination(pageSize: await state.query.pagination.pageSize)
         let channels = try await loadChannels(with: pagination)
         if groupKey == nil {
-            await setHasOffsetPaginationLoadedAllPreviousChannels(for: channels, pageSize: pagination.pageSize)
+            await setHasLoadedAllPreviousChannels(channels.isEmpty || channels.count < pagination.pageSize)
         }
         client.syncRepository.startTrackingChannelList(self)
     }
@@ -103,10 +103,10 @@ public class ChannelList: @unchecked Sendable {
             }
             return channels
         } else {
-            guard await !state.hasOffsetPaginationLoadedAllPreviousChannels else { return [] }
+            guard await !state.hasLoadedAllPreviousChannels else { return [] }
             let count = await state.channels.count
             let channels = try await loadChannels(with: Pagination(pageSize: limit, offset: count))
-            await setHasOffsetPaginationLoadedAllPreviousChannels(for: channels, pageSize: limit)
+            await setHasLoadedAllPreviousChannels(channels.isEmpty || channels.count < limit)
             return channels
         }
     }
@@ -135,8 +135,8 @@ public class ChannelList: @unchecked Sendable {
         return channelGroups.first { $0.groupKey == groupKey }
     }
 
-    @MainActor private func setHasOffsetPaginationLoadedAllPreviousChannels(for channels: [ChatChannel], pageSize: Int) {
-        state.hasOffsetPaginationLoadedAllPreviousChannels = channels.isEmpty || channels.count < pageSize
+    @MainActor private func setHasLoadedAllPreviousChannels(_ hasLoadedAllPreviousChannels: Bool) {
+        state.hasLoadedAllPreviousChannels = hasLoadedAllPreviousChannels
     }
 }
 

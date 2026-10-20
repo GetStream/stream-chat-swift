@@ -252,11 +252,6 @@ class SyncRepository: @unchecked Sendable {
             operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
                 WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
             })
-            
-            // 6. Unlink channels that left their group while offline (synced events are not posted to the linkers)
-            if !groupedChannelLists.isEmpty {
-                operations.append(UnlinkGroupedChannelsOperation(database: database, groupedChannelLists: groupedChannelLists))
-            }
 
             operations.append(BlockOperation(block: {
                 let duration = CFAbsoluteTimeGetCurrent() - start

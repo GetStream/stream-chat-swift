@@ -1988,11 +1988,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        /// Send stop typing event only if the channel supports typing events.
-        shouldSendTypingEvents { isEnabled in
-            guard isEnabled else { return }
-            self.eventSender.stopTyping(in: cid, parentMessageId: nil)
-        }
+        eventSender.stopTypingIfNeeded()
 
         updater.createNewMessage(
             in: cid,

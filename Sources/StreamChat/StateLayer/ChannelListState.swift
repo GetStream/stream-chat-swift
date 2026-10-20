@@ -39,7 +39,7 @@ import Foundation
     public internal(set) var query: ChannelListQuery
 
     /// A Boolean value that returns whether pagination is finished.
-    var hasOffsetPaginationLoadedAllPreviousChannels = false
+    var hasLoadedAllPreviousChannels = false
 
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels: [ChatChannel] = []

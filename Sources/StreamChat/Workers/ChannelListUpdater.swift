@@ -291,6 +291,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             queryDTO.channels.insert(dto)
                             return try dto.asModel()
                         }
+                        // Kept pages can hold channels that left the group while offline.
+                        if keepsGroupPages {
+                            try session.unlinkGroupedChannels(in: groupKey)
+                        }
                         // The server counts the whole filtered group on every page.
                         if queryDTO.groupFilterJSONData != nil, let currentUserId {
                             let notLoaded = (groupPayload.unreadChannels ?? 0) - queryDTO.loadedUnreadChannelsCount(currentUserId: currentUserId)
