@@ -194,7 +194,7 @@ final class DemoChatChannelInfoVC: UIViewController,
         var sections: [(section: Section, items: [Item])] = []
 
         var optionItems: [Item] = [.pinnedMessages]
-        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled, channel?.canScheduleMessage == true {
+        if AppConfig.shared.isScheduledMessagesEnabled, channel?.canScheduleMessage == true {
             optionItems.append(.scheduledMessages)
         }
         optionItems += [.media, .files]

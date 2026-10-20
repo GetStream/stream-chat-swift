@@ -16,7 +16,7 @@ class DemoComposerVC: ComposerVC {
 
     // Created on first use, once the channel controller is set.
     lazy var scheduledMessageListController: ScheduledMessageListController? = {
-        guard AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled else { return nil }
+        guard AppConfig.shared.isScheduledMessagesEnabled else { return nil }
         let controller = channelController?.client.scheduledMessageListController()
         controller?.delegate = self
         return controller

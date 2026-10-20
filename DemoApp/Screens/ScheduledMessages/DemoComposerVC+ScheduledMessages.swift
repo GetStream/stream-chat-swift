@@ -31,7 +31,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
     }
 
     private var canScheduleMessages: Bool {
-        AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled
+        AppConfig.shared.isScheduledMessagesEnabled
             && channelController?.channel?.canScheduleMessage == true
     }
 
@@ -62,7 +62,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
 
     func updateScheduledMessagesBanner() {
         var count = 0
-        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled,
+        if AppConfig.shared.isScheduledMessagesEnabled,
            editingScheduledMessage == nil,
            !isSchedulingOnly,
            let cid = channelController?.cid,

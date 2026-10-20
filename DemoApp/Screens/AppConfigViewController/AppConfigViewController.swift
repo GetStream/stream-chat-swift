@@ -51,6 +51,14 @@ class AppConfig: @unchecked Sendable {
     /// The Demo App Configuration.
     var demoAppConfig: DemoAppConfig
 
+    /// Whether the scheduled messages features are shown.
+    ///
+    /// The backend does not tell clients whether the app has scheduled messages enabled, and still returns the
+    /// `schedule-message` capability when it is disabled, so only the US East staging app, where it is enabled, shows them.
+    var isScheduledMessagesEnabled: Bool {
+        demoAppConfig.isScheduledMessagesEnabled && apiKeyString == DemoApiKeys.usEastStaging.rawValue
+    }
+
     static let shared = AppConfig()
 
     private init() {

@@ -111,7 +111,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         if AppConfig.shared.demoAppConfig.isRemindersEnabled {
             tabs.append(reminderListVC)
         }
-        if AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled {
+        if AppConfig.shared.isScheduledMessagesEnabled {
             tabs.append(scheduledMessageListVC)
             allScheduledMessagesListController.delegate = self
             allScheduledMessagesListController.synchronize()
