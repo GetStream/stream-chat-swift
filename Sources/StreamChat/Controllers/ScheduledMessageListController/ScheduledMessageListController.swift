@@ -2,7 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Combine
+import CoreData
 import Foundation
 
 public extension ChatClient {
@@ -37,10 +37,11 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
 
     /// The scheduled messages the controller represents.
     ///
-    /// To observe changes of the scheduled messages, set your class as a delegate of this controller.
+    /// To observe changes of the scheduled messages, set your class as a delegate of this controller or use the provided
+    /// `Combine` publishers.
     public var scheduledMessages: [ScheduledMessage] {
-        startObservingIfNeeded()
-        return items.value
+        startScheduledMessagesObserverIfNeeded()
+        return scheduledMessagesObserver.items
     }
 
     /// A Boolean value that returns whether pagination is finished.
@@ -52,41 +53,99 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
         set { multicastDelegate.set(mainDelegate: newValue) }
     }
 
+    /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ScheduledMessageListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-            startObservingIfNeeded()
+
+            // After setting delegate local changes will be fetched and observed.
+            startScheduledMessagesObserverIfNeeded()
         }
     }
 
-    private let repository: ScheduledMessagesRepository
-    private let items = AllocatedUnfairLock<[ScheduledMessage]>([])
-    private var observation: AnyCancellable?
+    /// Used for observing the database for changes.
+    private(set) lazy var scheduledMessagesObserver: BackgroundListDatabaseObserver<ScheduledMessage, ScheduledMessageDTO> = {
+        let request = ScheduledMessageDTO.scheduledMessagesFetchRequest(query: query)
+
+        let observer = self.environment.createScheduledMessageListDatabaseObserver(
+            client.databaseContainer,
+            request,
+            { try $0.asModel() }
+        )
+
+        observer.onDidChange = { [weak self] changes in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
+                $0.controller(self, didChangeScheduledMessages: changes)
+            }
+        }
+
+        return observer
+    }()
+
+    var _basePublishers: Any?
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
+
+    private let scheduledMessagesRepository: ScheduledMessagesRepository
+    private let environment: Environment
     private var nextCursor: String?
 
-    init(query: ScheduledMessageListQuery, client: ChatClient) {
-        self.query = query
+    /// Creates a new `ScheduledMessageListController`.
+    ///
+    /// - Parameters:
+    ///   - query: The query used for filtering the scheduled messages.
+    ///   - client: The `Client` instance this controller belongs to.
+    init(query: ScheduledMessageListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
-        repository = client.scheduledMessagesRepository
+        self.query = query
+        self.environment = environment
+        scheduledMessagesRepository = client.scheduledMessagesRepository
         super.init()
     }
 
     override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        startObservingIfNeeded()
+        startScheduledMessagesObserverIfNeeded()
 
-        repository.load(query: query) { [weak self] result in
+        scheduledMessagesRepository.load(query: query) { [weak self] result in
             guard let self else { return }
             if let value = result.value {
-                nextCursor = value.next
-                hasLoadedAllScheduledMessages = value.next == nil
+                self.nextCursor = value.next
+                self.hasLoadedAllScheduledMessages = value.next == nil
             }
             if let error = result.error {
-                state = .remoteDataFetchFailed(ClientError(with: error))
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
             } else {
-                state = .remoteDataFetched
+                self.state = .remoteDataFetched
             }
-            callback { completion?(result.error) }
+            self.callback { completion?(result.error) }
+        }
+    }
+
+    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
+    /// `scheduledMessagesObserver` to fetch the local data and start observing the changes. It also changes
+    /// `state` based on the result.
+    private func startScheduledMessagesObserverIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try scheduledMessagesObserver.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
 
@@ -101,15 +160,21 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
         limit: Int? = nil,
         completion: (@MainActor (Result<[ScheduledMessage], Error>) -> Void)? = nil
     ) {
+        let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit ?? query.pagination.pageSize, cursor: nextCursor)
-        repository.load(query: updatedQuery) { [weak self] result in
-            self?.callback { [weak self] in
-                if let value = result.value {
+        updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
+        scheduledMessagesRepository.load(query: updatedQuery) { [weak self] result in
+            switch result {
+            case let .success(value):
+                self?.callback { [weak self] in
                     self?.nextCursor = value.next
                     self?.hasLoadedAllScheduledMessages = value.next == nil
+                    completion?(.success(value.messages))
                 }
-                completion?(result.map(\.messages))
+            case let .failure(error):
+                self?.callback {
+                    completion?(.failure(error))
+                }
             }
         }
     }
@@ -125,7 +190,7 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
         scheduledAt: Date,
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
-        repository.reschedule(id: id, scheduledAt: scheduledAt) { result in
+        scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt) { result in
             self.callback { completion?(result) }
         }
     }
@@ -136,7 +201,7 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ///   - id: The id of the scheduled message.
     ///   - completion: Called when the message is deleted, with an error if it failed.
     public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
-        repository.delete(id: id) { error in
+        scheduledMessagesRepository.delete(id: id) { error in
             self.callback { completion?(error) }
         }
     }
@@ -147,54 +212,26 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ///   - id: The id of the scheduled message.
     ///   - completion: Called when sending started, with an error if it failed.
     public func sendScheduledMessageNow(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
-        repository.sendNow(id: id) { error in
+        scheduledMessagesRepository.sendNow(id: id) { error in
             self.callback { completion?(error) }
         }
     }
+}
 
-    // MARK: - Observing
-
-    private func startObservingIfNeeded() {
-        guard state == .initialized else { return }
-        items.value = repository.scheduledMessages(matching: query)
-        observation = repository.observe { [weak self] _ in
-            self?.updateItems()
-        }
-        state = .localDataFetched
-    }
-
-    private func updateItems() {
-        let newItems = repository.scheduledMessages(matching: query)
-        let oldItems = items.withLock { items in
-            defer { items = newItems }
-            return items
-        }
-        let changes = Self.changes(from: oldItems, to: newItems)
-        guard !changes.isEmpty else { return }
-
-        delegateCallback { [weak self] in
-            guard let self else { return }
-            $0.controller(self, didChangeScheduledMessages: changes)
-        }
-    }
-
-    private static func changes(from oldItems: [ScheduledMessage], to newItems: [ScheduledMessage]) -> [ListChange<ScheduledMessage>] {
-        let oldIndices = Dictionary(uniqueKeysWithValues: oldItems.enumerated().map { ($1.id, $0) })
-        let newIds = Set(newItems.map(\.id))
-
-        let removals: [ListChange<ScheduledMessage>] = oldItems.enumerated().compactMap { index, item in
-            newIds.contains(item.id) ? nil : .remove(item, index: IndexPath(item: index, section: 0))
-        }
-        let others: [ListChange<ScheduledMessage>] = newItems.enumerated().compactMap { index, item in
-            let indexPath = IndexPath(item: index, section: 0)
-            guard let oldIndex = oldIndices[item.id] else {
-                return .insert(item, index: indexPath)
+extension ScheduledMessageListController {
+    struct Environment {
+        var createScheduledMessageListDatabaseObserver: (
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<ScheduledMessageDTO>,
+            _ itemCreator: @escaping (ScheduledMessageDTO) throws -> ScheduledMessage
+        )
+            -> BackgroundListDatabaseObserver<ScheduledMessage, ScheduledMessageDTO> = {
+                BackgroundListDatabaseObserver(
+                    database: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
+                    itemReuseKeyPaths: (\ScheduledMessage.id, \ScheduledMessageDTO.id)
+                )
             }
-            if oldIndex != index {
-                return .move(item, fromIndex: IndexPath(item: oldIndex, section: 0), toIndex: indexPath)
-            }
-            return oldItems[oldIndex] == item ? nil : .update(item, index: indexPath)
-        }
-        return removals + others
     }
 }

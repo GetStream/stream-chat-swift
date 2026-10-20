@@ -11,11 +11,13 @@ public struct ScheduledMessageListFilterScope: FilterScope {}
 public extension FilterKey where Scope == ScheduledMessageListFilterScope {
     /// A filter key for matching the `cid` value.
     /// Supported operators: `equal`
-    static var cid: FilterKey<Scope, ChannelId> { .init(rawValue: "cid", keyPathString: "cid", valueMapper: { $0.rawValue }) }
+    static var cid: FilterKey<Scope, ChannelId> {
+        .init(rawValue: "cid", keyPathString: #keyPath(ScheduledMessageDTO.cid), valueMapper: { $0.rawValue })
+    }
 
     /// A filter key for matching the `status` value.
     /// Supported operators: `in`, `equal`
-    static var status: FilterKey<Scope, String> { .init(rawValue: "status", keyPathString: "status") }
+    static var status: FilterKey<Scope, String> { .init(rawValue: "status", keyPathString: #keyPath(ScheduledMessageDTO.status)) }
 }
 
 public extension Filter where Scope == ScheduledMessageListFilterScope {

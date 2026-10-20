@@ -622,6 +622,18 @@ protocol ReminderDatabaseSession {
     func deleteReminder(messageId: MessageId)
 }
 
+protocol ScheduledMessageDatabaseSession {
+    /// Creates or updates a scheduled message with the provided payload.
+    @discardableResult
+    func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO
+
+    /// Returns the scheduled message with the specified id, if it exists.
+    func scheduledMessage(id: String) -> ScheduledMessageDTO?
+
+    /// Deletes the scheduled message with the specified id.
+    func deleteScheduledMessage(id: String)
+}
+
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
@@ -765,6 +777,7 @@ protocol DatabaseSession: UserDatabaseSession,
     ThreadReadDatabaseSession,
     PollDatabaseSession,
     ReminderDatabaseSession,
+    ScheduledMessageDatabaseSession,
     UserGroupDatabaseSession,
     LocationDatabaseSession,
     PollDatabaseSession {}

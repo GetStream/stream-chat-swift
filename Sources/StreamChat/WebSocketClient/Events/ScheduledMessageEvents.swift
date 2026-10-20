@@ -25,7 +25,10 @@ public final class ScheduledMessageCreatedEvent: Event {
 
 extension ScheduledMessageCreatedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        guard
+            let payload = scheduledMessage,
+            let scheduledMessage = try? session.saveScheduledMessage(payload: payload).asModel()
+        else { return nil }
         return ScheduledMessageCreatedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
     }
 }
@@ -49,7 +52,10 @@ public final class ScheduledMessageUpdatedEvent: Event {
 
 extension ScheduledMessageUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        guard
+            let payload = scheduledMessage,
+            let scheduledMessage = try? session.saveScheduledMessage(payload: payload).asModel()
+        else { return nil }
         return ScheduledMessageUpdatedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
     }
 }
@@ -73,7 +79,11 @@ public final class ScheduledMessageDeletedEvent: Event {
 
 extension ScheduledMessageDeletedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        guard
+            let payload = scheduledMessage,
+            let scheduledMessage = try? session.saveScheduledMessage(payload: payload).asModel()
+        else { return nil }
+        session.deleteScheduledMessage(id: payload.id)
         return ScheduledMessageDeletedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
     }
 }
@@ -103,7 +113,11 @@ public final class ScheduledMessageSentEvent: Event {
 
 extension ScheduledMessageSentEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        guard
+            let payload = scheduledMessage,
+            let scheduledMessage = try? session.saveScheduledMessage(payload: payload).asModel()
+        else { return nil }
+        session.deleteScheduledMessage(id: payload.id)
         return ScheduledMessageSentEvent(scheduledMessage: scheduledMessage, messageId: messageId, createdAt: createdAt)
     }
 }
@@ -127,7 +141,10 @@ public final class ScheduledMessageFailedEvent: Event {
 
 extension ScheduledMessageFailedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        guard let scheduledMessage = scheduledMessage?.asModel(session: session) else { return nil }
+        guard
+            let payload = scheduledMessage,
+            let scheduledMessage = try? session.saveScheduledMessage(payload: payload).asModel()
+        else { return nil }
         return ScheduledMessageFailedEvent(scheduledMessage: scheduledMessage, createdAt: createdAt)
     }
 }

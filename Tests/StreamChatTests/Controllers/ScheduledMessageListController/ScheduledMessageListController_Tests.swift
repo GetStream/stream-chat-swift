@@ -87,24 +87,13 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         let delegate = DelegateSpy()
         controller.delegate = delegate
 
-        delegate.expectation = expectation(description: "insertion")
         let message = try schedule()
-        wait(for: [delegate.expectation!], timeout: defaultTimeout)
+        AssertAsync.willBeTrue(delegate.insertions.contains { $0.item == message && $0.index == IndexPath(item: 0, section: 0) })
 
-        guard case let .insert(inserted, index) = delegate.changes.last?.first else {
-            return XCTFail("Expected an insertion")
-        }
-        XCTAssertEqual(inserted, message)
-        XCTAssertEqual(index, IndexPath(item: 0, section: 0))
-
-        delegate.expectation = expectation(description: "removal")
         apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: "canceled"))))
         _ = try waitFor { controller.deleteScheduledMessage(id: message.id, completion: $0) }
-        wait(for: [delegate.expectation!], timeout: defaultTimeout)
 
-        guard case .remove = delegate.changes.last?.first else {
-            return XCTFail("Expected a removal")
-        }
+        AssertAsync.willBeTrue(delegate.removedIds.contains(message.id))
         XCTAssertEqual(controller.scheduledMessages, [])
     }
 
@@ -125,8 +114,9 @@ final class ScheduledMessageListController_Tests: XCTestCase {
 
         let rescheduled = try waitFor { controller.rescheduleMessage(id: message.id, scheduledAt: newDate, completion: $0) }.get()
 
-        XCTAssertEqual(rescheduled.scheduledAt, newDate)
-        XCTAssertEqual(controller.scheduledMessages.first?.scheduledAt, newDate)
+        XCTAssertEqual(rescheduled.scheduledAt.timeIntervalSince1970, newDate.timeIntervalSince1970, accuracy: 0.001)
+        let stored = try XCTUnwrap(controller.scheduledMessages.first)
+        XCTAssertEqual(stored.scheduledAt.timeIntervalSince1970, newDate.timeIntervalSince1970, accuracy: 0.001)
     }
 
     func test_sendScheduledMessageNow_requestsToSendIt() throws {
@@ -156,15 +146,27 @@ final class ScheduledMessageListController_Tests: XCTestCase {
     }
 }
 
-private final class DelegateSpy: ScheduledMessageListControllerDelegate {
-    var changes: [[ListChange<ScheduledMessage>]] = []
-    var expectation: XCTestExpectation?
+private final class DelegateSpy: ScheduledMessageListControllerDelegate, @unchecked Sendable {
+    @Atomic private(set) var changes: [ListChange<ScheduledMessage>] = []
+
+    var insertions: [(item: ScheduledMessage, index: IndexPath)] {
+        changes.compactMap {
+            guard case let .insert(item, index) = $0 else { return nil }
+            return (item, index)
+        }
+    }
+
+    var removedIds: [String] {
+        changes.compactMap {
+            guard case let .remove(item, _) = $0 else { return nil }
+            return item.id
+        }
+    }
 
     func controller(
         _ controller: ScheduledMessageListController,
         didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
     ) {
-        self.changes.append(changes)
-        expectation?.fulfill()
+        _changes.mutate { $0.append(contentsOf: changes) }
     }
 }

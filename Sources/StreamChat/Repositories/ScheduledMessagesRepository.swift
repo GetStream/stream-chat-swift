@@ -2,7 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import Combine
+import CoreData
 import Foundation
 
 struct ScheduledMessageContent: Sendable {
@@ -15,86 +15,56 @@ struct ScheduledMessageContent: Sendable {
     var extraData: [String: RawJSON]
 }
 
-// Keeps the current user's scheduled messages: loaded once, then kept up to date from responses and events.
-// Scheduled messages are not part of channel state, so they are kept in memory instead of the database.
+/// Repository for handling the current user's scheduled messages.
 final class ScheduledMessagesRepository: @unchecked Sendable {
     typealias Page = (messages: [ScheduledMessage], next: String?)
-
-    private struct State {
-        var userId: UserId?
-        var messages: [ScheduledMessage] = []
-        var observers: [UUID: @Sendable ([ScheduledMessage]) -> Void] = [:]
-    }
 
     private weak var client: ChatClient?
     private let database: DatabaseContainer
     private let apiClient: APIClient
-    private let state = AllocatedUnfairLock(State())
-    private var eventsSubscription: AnyCancellable?
 
     init(client: ChatClient, database: DatabaseContainer, apiClient: APIClient) {
         self.client = client
         self.database = database
         self.apiClient = apiClient
-        eventsSubscription = client.eventNotificationCenter.subscribe(
-            filter: { Self.isScheduledMessageEvent($0) },
-            handler: { [weak self] event in
-                self?.handle(event)
-            }
-        )
-    }
-
-    // MARK: - Local list
-
-    var scheduledMessages: [ScheduledMessage] {
-        currentState().messages
-    }
-
-    func scheduledMessage(id: String) -> ScheduledMessage? {
-        scheduledMessages.first { $0.id == id }
-    }
-
-    func scheduledMessages(matching query: ScheduledMessageListQuery) -> [ScheduledMessage] {
-        query.sorted(scheduledMessages.filter(query.matches))
-    }
-
-    // Calls `handler` on the main queue whenever the local list changes.
-    func observe(_ handler: @escaping @Sendable ([ScheduledMessage]) -> Void) -> AnyCancellable {
-        let id = UUID()
-        state.withLock { $0.observers[id] = handler }
-        return AnyCancellable { [weak self] in
-            self?.state.withLock { _ = $0.observers.removeValue(forKey: id) }
-        }
-    }
-
-    func reset() {
-        update { $0 = [] }
     }
 
     // MARK: - Requests
 
+    /// Loads scheduled messages and saves them to the database.
+    ///
+    /// When the whole list is loaded, the scheduled messages missing from it are removed from the database,
+    /// for example the ones that were sent while the app was offline.
     func load(query: ScheduledMessageListQuery, completion: @escaping @Sendable (Result<Page, Error>) -> Void) {
         let endpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
             queryScheduledMessagesRequest: query.toRequest()
         )
         apiClient.request(endpoint: endpoint) { [weak self] result in
-            guard let self else { return }
             switch result {
             case let .success(response):
-                models(from: response.scheduledMessages) { result in
-                    completion(result.map { messages in
-                        let next = response.next.flatMap { $0.isEmpty ? nil : $0 }
-                        let isWholeList = query.filter == nil && query.pagination.cursor == nil && next == nil
-                        self.update { current in
-                            if isWholeList {
-                                current = messages
-                            } else {
-                                messages.forEach { Self.upsert($0, in: &current) }
+                let next = response.next.flatMap { $0.isEmpty ? nil : $0 }
+                let isWholeList = query.filter == nil && query.pagination.cursor == nil && next == nil
+                self?.database.write(
+                    converting: { session in
+                        let messages = response.scheduledMessages.compactMap { payload in
+                            do {
+                                return try session.saveScheduledMessage(payload: payload).asModel()
+                            } catch {
+                                log.error("Failed to save the scheduled message \(payload.id): \(error)")
+                                return nil
                             }
                         }
+                        if isWholeList, let context = session as? NSManagedObjectContext {
+                            let ids = Set(response.scheduledMessages.map(\.id))
+                            let request = ScheduledMessageDTO.scheduledMessagesFetchRequest(query: .init())
+                            ScheduledMessageDTO.load(by: request, context: context)
+                                .filter { !ids.contains($0.id) }
+                                .forEach { context.delete($0) }
+                        }
                         return (messages, next)
-                    })
-                }
+                    },
+                    completion: completion
+                )
             case let .failure(error):
                 completion(.failure(error))
             }
@@ -119,7 +89,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 )
                 // Not queued offline: the user is told right away that the message could not be scheduled.
                 apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
-                    self?.complete(completion, with: result.map(\.scheduledMessage))
+                    self?.save(result.map(\.scheduledMessage), completion: completion)
                 }
             case let .failure(error):
                 completion(.failure(error))
@@ -127,27 +97,39 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         }
     }
 
+    /// Edits a scheduled message.
+    ///
+    /// Without a `parentId` in `content`, the message keeps the thread it was scheduled in.
     func update(
         id: String,
         content: ScheduledMessageContent,
         scheduledAt: Date?,
         completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
-        makeMessageRequest(content, id: nil) { [weak self] result in
+        database.read({ session -> ScheduledMessageContent in
+            guard content.parentId == nil, let existing = session.scheduledMessage(id: id) else { return content }
+            var content = content
+            content.parentId = existing.parentMessageId
+            content.showReplyInChannel = existing.showReplyInChannel
+            return content
+        }, completion: { [weak self] result in
             guard let self else { return }
-            switch result {
-            case let .success(message):
-                let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
-                    id: id,
-                    updateScheduledMessageRequest: UpdateScheduledMessageRequest(message: message, scheduledAt: scheduledAt)
-                )
-                apiClient.request(endpoint: endpoint) { [weak self] result in
-                    self?.complete(completion, with: result.map(\.scheduledMessage))
+            makeMessageRequest(result.value ?? content, id: nil) { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case let .success(message):
+                    let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
+                        id: id,
+                        updateScheduledMessageRequest: UpdateScheduledMessageRequest(message: message, scheduledAt: scheduledAt)
+                    )
+                    apiClient.request(endpoint: endpoint) { [weak self] result in
+                        self?.save(result.map(\.scheduledMessage), completion: completion)
+                    }
+                case let .failure(error):
+                    completion(.failure(error))
                 }
-            case let .failure(error):
-                completion(.failure(error))
             }
-        }
+        })
     }
 
     func reschedule(
@@ -160,124 +142,45 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             updateScheduledMessageRequest: UpdateScheduledMessageRequest(scheduledAt: scheduledAt)
         )
         apiClient.request(endpoint: endpoint) { [weak self] result in
-            self?.complete(completion, with: result.map(\.scheduledMessage))
+            self?.save(result.map(\.scheduledMessage), completion: completion)
         }
     }
 
     func delete(id: String, completion: @escaping @Sendable (Error?) -> Void) {
         apiClient.request(endpoint: .deleteScheduledMessage(id: id)) { [weak self] result in
-            if result.error == nil {
-                self?.update { $0.removeAll { $0.id == id } }
+            if let error = result.error {
+                completion(error)
+                return
             }
-            completion(result.error)
+            self?.database.write({ session in
+                session.deleteScheduledMessage(id: id)
+            }, completion: completion)
         }
     }
 
     func sendNow(id: String, completion: @escaping @Sendable (Error?) -> Void) {
         apiClient.request(endpoint: .sendScheduledMessageNow(id: id)) { [weak self] result in
-            self?.complete({ completion($0.error) }, with: result.map(\.scheduledMessage))
-        }
-    }
-
-    // MARK: - Events
-
-    private static func isScheduledMessageEvent(_ event: Event) -> Bool {
-        event is ScheduledMessageCreatedEvent
-            || event is ScheduledMessageUpdatedEvent
-            || event is ScheduledMessageDeletedEvent
-            || event is ScheduledMessageSentEvent
-            || event is ScheduledMessageFailedEvent
-    }
-
-    private func handle(_ event: Event) {
-        switch event {
-        case let event as ScheduledMessageCreatedEvent:
-            update { Self.upsert(event.scheduledMessage, in: &$0) }
-        case let event as ScheduledMessageUpdatedEvent:
-            update { Self.upsert(event.scheduledMessage, in: &$0) }
-        case let event as ScheduledMessageFailedEvent:
-            update { Self.upsert(event.scheduledMessage, in: &$0) }
-        case let event as ScheduledMessageDeletedEvent:
-            update { $0.removeAll { $0.id == event.scheduledMessage.id } }
-        case let event as ScheduledMessageSentEvent:
-            update { $0.removeAll { $0.id == event.scheduledMessage.id } }
-        default:
-            break
+            self?.save(result.map(\.scheduledMessage)) { completion($0.error) }
         }
     }
 
     // MARK: - Helpers
 
-    // Converts the response and keeps the local list up to date with it.
-    private func complete(
-        _ completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void,
-        with result: Result<ScheduledMessageResponse?, Error>
+    private func save(
+        _ result: Result<ScheduledMessageResponse?, Error>,
+        completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
     ) {
         switch result {
-        case let .success(response):
-            guard let response else {
+        case let .success(payload):
+            guard let payload else {
                 completion(.failure(ClientError.Unexpected("Missing `scheduled_message` in the response.")))
                 return
             }
-            models(from: [response]) { [weak self] result in
-                switch result {
-                case let .success(messages):
-                    guard let message = messages.first else {
-                        completion(.failure(ClientError.Unexpected("Invalid `scheduled_message` in the response.")))
-                        return
-                    }
-                    self?.update { Self.upsert(message, in: &$0) }
-                    completion(.success(message))
-                case let .failure(error):
-                    completion(.failure(error))
-                }
-            }
+            database.write(converting: { session in
+                try session.saveScheduledMessage(payload: payload).asModel()
+            }, completion: completion)
         case let .failure(error):
             completion(.failure(error))
-        }
-    }
-
-    private func models(
-        from responses: [ScheduledMessageResponse],
-        completion: @escaping @Sendable (Result<[ScheduledMessage], Error>) -> Void
-    ) {
-        database.read({ session in
-            responses.compactMap { $0.asModel(session: session) }
-        }, completion: completion)
-    }
-
-    private func currentState() -> State {
-        let userId = client?.currentUserId
-        return state.withLock { state in
-            if state.userId != userId {
-                state.userId = userId
-                state.messages = []
-            }
-            return state
-        }
-    }
-
-    private func update(_ change: (inout [ScheduledMessage]) -> Void) {
-        let userId = client?.currentUserId
-        let (messages, observers) = state.withLock { state in
-            if state.userId != userId {
-                state.userId = userId
-                state.messages = []
-            }
-            change(&state.messages)
-            state.messages = ScheduledMessageListQuery().sorted(state.messages)
-            return (state.messages, Array(state.observers.values))
-        }
-        DispatchQueue.main.async {
-            observers.forEach { $0(messages) }
-        }
-    }
-
-    private static func upsert(_ message: ScheduledMessage, in messages: inout [ScheduledMessage]) {
-        if let index = messages.firstIndex(where: { $0.id == message.id }) {
-            messages[index] = message
-        } else {
-            messages.append(message)
         }
     }
 
@@ -370,77 +273,6 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     }
 }
 
-// MARK: - Local queries
-
-extension ScheduledMessageListQuery {
-    func matches(_ message: ScheduledMessage) -> Bool {
-        filter.map { Self.matches($0, message) } ?? true
-    }
-
-    func sorted(_ messages: [ScheduledMessage]) -> [ScheduledMessage] {
-        guard !sort.isEmpty else {
-            return messages.sorted {
-                if $0.isPending != $1.isPending {
-                    return $0.isPending
-                }
-                return $0.scheduledAt < $1.scheduledAt
-            }
-        }
-
-        return messages.sorted { lhs, rhs in
-            for sorting in sort {
-                let isByCreation = sorting.key == .createdAt
-                let left = isByCreation ? lhs.createdAt : lhs.scheduledAt
-                let right = isByCreation ? rhs.createdAt : rhs.scheduledAt
-                if left != right {
-                    return sorting.isAscending ? left < right : left > right
-                }
-            }
-            return false
-        }
-    }
-
-    private static func matches(_ filter: Filter<ScheduledMessageListFilterScope>, _ message: ScheduledMessage) -> Bool {
-        switch filter.operator {
-        case FilterOperator.and.rawValue:
-            let filters = filter.value as? [Filter<ScheduledMessageListFilterScope>] ?? []
-            return filters.allSatisfy { matches($0, message) }
-        case FilterOperator.or.rawValue:
-            let filters = filter.value as? [Filter<ScheduledMessageListFilterScope>] ?? []
-            return filters.contains { matches($0, message) }
-        case FilterOperator.equal.rawValue, FilterOperator.in.rawValue:
-            let values = stringValues(of: filter.value)
-            switch filter.key {
-            case FilterKey<ScheduledMessageListFilterScope, ChannelId>.cid.rawValue:
-                return values.contains(message.cid.rawValue)
-            case FilterKey<ScheduledMessageListFilterScope, String>.status.rawValue:
-                return values.contains(message.status.rawValue)
-            default:
-                log.warning("Scheduled messages can not be filtered by \(filter.key ?? "")")
-                return true
-            }
-        default:
-            log.warning("Scheduled messages can not be filtered with \(filter.operator)")
-            return true
-        }
-    }
-
-    private static func stringValues(of value: FilterValue) -> [String] {
-        switch value {
-        case let cid as ChannelId:
-            return [cid.rawValue]
-        case let cids as [ChannelId]:
-            return cids.map(\.rawValue)
-        case let string as String:
-            return [string]
-        case let strings as [String]:
-            return strings
-        default:
-            return []
-        }
-    }
-}
-
 // MARK: - Request
 
 extension ScheduledMessageListQuery {
@@ -475,6 +307,21 @@ extension ScheduledMessageListQuery {
             }
         default:
             log.warning("Scheduled messages can not be filtered with \(filter.operator)")
+        }
+    }
+
+    private static func stringValues(of value: FilterValue) -> [String] {
+        switch value {
+        case let cid as ChannelId:
+            return [cid.rawValue]
+        case let cids as [ChannelId]:
+            return cids.map(\.rawValue)
+        case let string as String:
+            return [string]
+        case let strings as [String]:
+            return strings
+        default:
+            return []
         }
     }
 }

@@ -79,6 +79,19 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteReminder(messageId: messageId)
     }
 
+    func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveScheduledMessage(payload: payload)
+    }
+
+    func scheduledMessage(id: String) -> ScheduledMessageDTO? {
+        underlyingSession.scheduledMessage(id: id)
+    }
+
+    func deleteScheduledMessage(id: String) {
+        underlyingSession.deleteScheduledMessage(id: id)
+    }
+
     func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUserGroup(payload: payload)
