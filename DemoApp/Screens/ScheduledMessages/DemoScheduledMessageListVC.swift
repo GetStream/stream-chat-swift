@@ -253,6 +253,7 @@ extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate
         openConversation(editing: message)
     }
 
+    // Styled like the channel list swipe actions: icon only, with the same colors.
     func tableView(
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
@@ -260,22 +261,37 @@ extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate
         let message = message(at: indexPath)
         guard message.status != .sending else { return nil }
 
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
             self?.delete(message)
             completion(true)
         }
-        let sendNowAction = UIContextualAction(style: .normal, title: "Send Now") { [weak self] _, _, completion in
-            self?.confirmSendNow(message)
-            completion(true)
-        }
-        sendNowAction.backgroundColor = colors.accentPrimary
-        let rescheduleAction = UIContextualAction(style: .normal, title: "Reschedule") { [weak self] _, _, completion in
-            self?.reschedule(message, sourceView: tableView.cellForRow(at: indexPath))
-            completion(true)
-        }
-        rescheduleAction.backgroundColor = .systemOrange
+        // Always original, otherwise the swipe actions tint every icon white.
+        deleteAction.image = appearance.images.messageActionDelete
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
+        deleteAction.backgroundColor = colors.accentError
+        deleteAction.accessibilityLabel = "Delete"
 
-        return UISwipeActionsConfiguration(actions: [deleteAction, sendNowAction, rescheduleAction])
+        let rescheduleAction = UIContextualAction(style: .normal, title: nil) { [weak self, weak tableView] _, _, completion in
+            completion(true)
+            self?.reschedule(message, sourceView: tableView?.cellForRow(at: indexPath))
+        }
+        rescheduleAction.image = UIImage(systemName: "clock")?
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
+        rescheduleAction.backgroundColor = .systemYellow
+        rescheduleAction.accessibilityLabel = "Reschedule"
+
+        let sendNowAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
+            completion(true)
+            self?.confirmSendNow(message)
+        }
+        sendNowAction.image = appearance.images.composerSend
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
+        sendNowAction.backgroundColor = colors.accentPrimary
+        sendNowAction.accessibilityLabel = "Send Now"
+
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, rescheduleAction, sendNowAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
     }
 }
 
@@ -310,6 +326,10 @@ class DemoScheduledMessageCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = Appearance.default.colorPalette.backgroundCoreSurfaceStrong
+        self.selectedBackgroundView = selectedBackgroundView
+
         VContainer(spacing: 4) {
             channelNameLabel
             statusLabel
