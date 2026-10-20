@@ -24,6 +24,12 @@ if [[ $dependency_directory == *"SwiftyGif"* ]]; then
 	dependency_url="git@github.com:kirualex/SwiftyGif.git"
 elif [[ $dependency_directory == *"DifferenceKit"* ]]; then
 	dependency_url="git@github.com:ra1028/DifferenceKit.git"
+elif [[ $dependency_directory == *"Splash"* ]]; then
+	dependency_url="git@github.com:JohnSundell/Splash.git"
+elif [[ $dependency_directory == *"MarkdownUI"* ]]; then
+	dependency_url="git@github.com:gonzalezreal/swift-markdown-ui.git"
+elif [[ $dependency_directory == *"NetworkImage"* ]]; then
+	dependency_url="git@github.com:gonzalezreal/NetworkImage.git"
 else
 	echo "→ Unknown dependency at $dependency_directory"
 	exit 1
@@ -53,10 +59,19 @@ mkdir $output_directory
 cp -r "$dependency_directory/$sources_directory/." $output_directory
 
 
-for f in `find $output_directory -type f \( -iname \*.h -o -iname \*.plist \)`
+# A C library needs its headers
+if [[ $output_directory != *"CMark"* ]]; then
+	for f in `find $output_directory -type f \( -iname \*.h -o -iname \*.plist \)`
+	do
+		echo "→ Removing $f"
+		rm $f
+	done
+fi
+
+for f in `find $output_directory \( -name \*.docc -o -name Deprecations.swift \)`
 do
 	echo "→ Removing $f"
-	rm $f
+	rm -rf $f
 done
 
 rm -rf $dependency_directory
@@ -64,4 +79,10 @@ rm -rf $dependency_directory
 if [[ $dependency_directory == *"DifferenceKit"* ]]; then
     # We currently use customized UIKit extensions in Utils/DifferenceKit+Stream.swift
     rm $output_directory/Extensions/UIKitExtension.swift
+fi
+
+if [[ $output_directory == *"CMark"* ]]; then
+    # Swift imports the C library through this module, named after its target
+    module_name=$(basename $output_directory)
+    printf "module $module_name {\n    umbrella header \"cmark_gfm.h\"\n    export *\n}\n" > $output_directory/include/module.modulemap
 fi

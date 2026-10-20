@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
 - Add `NotificationChannelPartialUpdatedEvent` and keep grouped channel lists up to date when a channel the user isn't watching is partially updated [#4336](https://github.com/GetStream/stream-chat-swift/pull/4336)
 
 ## StreamChatAI
 ### ✅ Added
 - Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
+### 🔄 Changed
+- StreamChatAI no longer brings Splash and swift-markdown-ui as package dependencies [#4346](https://github.com/GetStream/stream-chat-swift/pull/4346)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_
