@@ -399,25 +399,8 @@ class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_groupedChannelLists_keepsLoadedPagesAndAppliesSyncedEvents() async throws {
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.isLocalStorageEnabled = true
-        var environment = ChatClient.Environment.mock
-        environment.syncRepositoryBuilder = {
-            SyncRepository(
-                config: $0,
-                offlineRequestsRepository: $1,
-                eventNotificationCenter: $2,
-                database: $3,
-                apiClient: $4,
-                channelListUpdater: $5
-            )
-        }
-        let chatClient = ChatClient_Mock(config: config, environment: environment)
+        let chatClient = try makeChatClientForGroupedSync()
         let apiClient = chatClient.mockAPIClient
-        try chatClient.mockDatabaseContainer.createCurrentUser()
-        try chatClient.mockDatabaseContainer.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
-        }
         let a1 = groupedChannelPayload(name: "A1", group: "A", order: 1)
         let a2 = groupedChannelPayload(name: "A2", group: "A", order: 2)
         let a3 = groupedChannelPayload(name: "A3", group: "A", order: 3)
@@ -467,6 +450,40 @@ class SyncRepository_Tests: XCTestCase {
             Set([a3.channel.cid.rawValue, a4.channel.cid.rawValue]),
             Set(syncRequest["channel_cids"] as? [String] ?? [])
         )
+    }
+
+    func test_syncLocalState_groupedChannelLists_unlinksKeptChannelThatLeftTheGroup() async throws {
+        let chatClient = try makeChatClientForGroupedSync()
+        let apiClient = chatClient.mockAPIClient
+        let a1 = groupedChannelPayload(name: "A1", group: "A", order: 1)
+        let a2 = groupedChannelPayload(name: "A2", group: "A", order: 2)
+        let a3 = groupedChannelPayload(name: "A3", group: "A", order: 3)
+        let a4 = groupedChannelPayload(name: "A4", group: "A", order: 4)
+        let firstPage = GroupedQueryChannelsResponse(groups: ["A": .init(channels: [a1, a2], next: "A-page-2")])
+
+        apiClient.test_mockResponseResult(.success(firstPage))
+        try await chatClient.queryGroupedChannels(groups: ["A"], limit: 2)
+        let listA = chatClient.makeChannelList(with: "A")
+        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: ["A": .init(channels: [a3, a4])])))
+        try await listA.loadMoreChannels()
+        XCTAssertEqual(["A1", "A2", "A3", "A4"], await listA.state.channels.map(\.name))
+
+        // Reconnect sync: A3 moved to group B while offline.
+        apiClient.test_mockResponseResult(.success(firstPage))
+        let movedA3 = ChannelDetailPayload.dummy(
+            cid: a3.channel.cid,
+            name: "A3",
+            extraData: [GroupedChannelKey.group: .string("B")],
+            createdAt: a3.channel.createdAt
+        )
+        apiClient.test_mockResponseResult(.success(SyncResponse(events: [
+            .typeChannelUpdatedEvent(ChannelUpdatedEventDTO(channel: movedA3, createdAt: Date()))
+        ])))
+        await withCheckedContinuation { continuation in
+            chatClient.syncRepository.syncLocalState { continuation.resume() }
+        }
+
+        XCTAssertEqual(["A1", "A2", "A4"], await listA.state.channels.map(\.name))
     }
 
     func test_syncLocalState_ignoresTheCooldown() throws {
@@ -1246,6 +1263,28 @@ extension SyncRepository_Tests {
 
         waitForExpectations(timeout: defaultTimeout)
         return receivedResult
+    }
+
+    private func makeChatClientForGroupedSync() throws -> ChatClient_Mock {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = true
+        var environment = ChatClient.Environment.mock
+        environment.syncRepositoryBuilder = {
+            SyncRepository(
+                config: $0,
+                offlineRequestsRepository: $1,
+                eventNotificationCenter: $2,
+                database: $3,
+                apiClient: $4,
+                channelListUpdater: $5
+            )
+        }
+        let chatClient = ChatClient_Mock(config: config, environment: environment)
+        try chatClient.mockDatabaseContainer.createCurrentUser()
+        try chatClient.mockDatabaseContainer.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+        return chatClient
     }
 
     private func groupedChannelPayload(name: String, group: String, order: Int) -> ChannelPayload {

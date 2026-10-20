@@ -167,6 +167,28 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
+final class UnlinkGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
+    init(database: DatabaseContainer, groupedChannelLists: [ChannelList]) {
+        let groupKeys = Set(groupedChannelLists.compactMap(\.groupKey))
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak database] _, done in
+            guard let database else {
+                done(.continue)
+                return
+            }
+            database.write({ session in
+                for groupKey in groupKeys {
+                    try GroupedChannelListLinker.unlinkChannelsNotBelonging(to: ChannelListQuery(groupKey: groupKey), session: session)
+                }
+            }, completion: { error in
+                if let error {
+                    log.error("Failed to unlink grouped channels during sync: \(error)", subsystems: .offlineSupport)
+                }
+                done(.continue)
+            })
+        }
+    }
+}
+
 final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
     init(syncRepository: SyncRepository, context: SyncContext, recovery: Bool) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
