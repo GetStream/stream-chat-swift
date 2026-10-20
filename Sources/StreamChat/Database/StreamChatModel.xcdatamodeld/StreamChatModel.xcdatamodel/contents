@@ -550,6 +550,8 @@
         <attribute name="hasPendingScheduledAt" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isPending" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="localErrorMessage" optional="YES" attributeType="String"/>
+        <attribute name="localErrorReason" optional="YES" attributeType="String"/>
         <attribute name="quotedMessageId" optional="YES" attributeType="String"/>
         <attribute name="scheduledAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="status" attributeType="String"/>

@@ -122,6 +122,59 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.localState, .sendingFailed)
     }
 
+    func test_sendPendingChanges_whenTheLimitIsReached_keepsTheErrorOfTheServer() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        let apiError = APIError(code: 117, message: "SendMessage failed with error: \"you can schedule at most 2 messages in this channel\"", statusCode: 400)
+        apiError.exceptionFields = ["reason": "scheduled_limit_channel"]
+        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        XCTAssertEqual(message.localState, .sendingFailed)
+        XCTAssertEqual(message.localError?.reason, .scheduledLimitChannel)
+        XCTAssertEqual(message.localError?.message, apiError.message)
+        XCTAssertEqual(message.localError?.isRetryable, false)
+    }
+
+    func test_sendPendingChanges_withoutConnection_keepsNoError() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
+        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        XCTAssertNil(try storedMessage(id: "scheduled-id")?.localError)
+    }
+
+    func test_resend_clearsTheError() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(
+            ClientError(with: APIError(code: 4, message: "Failed", statusCode: 400))
+        ))
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+        XCTAssertNotNil(try storedMessage(id: "scheduled-id")?.localError)
+
+        _ = try waitFor { repository.resend(id: "scheduled-id", completion: $0) }
+
+        XCTAssertNil(try storedMessage(id: "scheduled-id")?.localError)
+    }
+
+    func test_reschedule_clearsTheError() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        let apiError = APIError(code: 115, message: "scheduled_at must be at least 1 minute from now", statusCode: 400)
+        apiError.exceptionFields = ["reason": "scheduled_at_too_soon"]
+        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let rescheduled = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }.get()
+
+        XCTAssertNil(rescheduled.localError)
+        XCTAssertEqual(rescheduled.localState, .pendingSend)
+    }
+
     func test_sendPendingChanges_withoutConnection_keepsTheMessagePending() throws {
         _ = try schedule(id: "scheduled-id").get()
         let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)

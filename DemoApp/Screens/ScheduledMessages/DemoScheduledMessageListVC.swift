@@ -303,7 +303,9 @@ extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate
         var actions = [deleteAction, rescheduleAction]
         switch message.localState {
         case .sendingFailed, .syncingFailed:
-            actions.append(retryAction)
+            if message.localError?.isRetryable ?? true {
+                actions.append(retryAction)
+            }
         case .pendingSend, .sending:
             // It can not be sent now before it is on the server.
             break
@@ -380,6 +382,21 @@ class DemoScheduledMessageCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private static func localErrorText(of message: ScheduledMessage) -> String {
+        let fallback = message.localState == .syncingFailed
+            ? "Could not save the changes."
+            : "Could not schedule the message."
+        guard let error = message.localError else { return "\(fallback) Swipe to retry." }
+
+        // The server wraps the reason, like `SendMessage failed with error: "you can schedule at most 2 messages"`.
+        var reason = error.message
+        if let range = reason.range(of: "failed with error: ") {
+            reason = String(reason[range.upperBound...]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        }
+        reason = reason.prefix(1).uppercased() + reason.dropFirst()
+        return error.isRetryable ? "\(reason). Swipe to retry." : "\(reason)."
+    }
+
     func configure(with message: ScheduledMessage, channelName: String) {
         let colors = Appearance.default.colorPalette
         if message.message.parentMessageId != nil {
@@ -406,17 +423,11 @@ class DemoScheduledMessageCell: UITableViewCell {
             localStateImageView.image = images.messageDeliveryStatusSending
             localStateImageView.tintColor = colors.textSecondary
             localStateImageView.isHidden = false
-        case .sendingFailed:
+        case .sendingFailed, .syncingFailed:
             localStateImageView.image = images.messageDeliveryStatusFailed
             localStateImageView.tintColor = colors.accentError
             localStateImageView.isHidden = false
-            statusLabel.text = "Could not schedule the message. Swipe to retry."
-            statusLabel.textColor = colors.accentError
-        case .syncingFailed:
-            localStateImageView.image = images.messageDeliveryStatusFailed
-            localStateImageView.tintColor = colors.accentError
-            localStateImageView.isHidden = false
-            statusLabel.text = "Could not save the changes. Swipe to retry."
+            statusLabel.text = Self.localErrorText(of: message)
             statusLabel.textColor = colors.accentError
         default:
             localStateImageView.image = nil

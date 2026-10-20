@@ -39,6 +39,11 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// Why the message could not be sent, when `status` is `.failed`.
     public let failureReason: ScheduledMessageFailureReason?
 
+    /// Why the server rejected the latest local changes, when `localState` is `.sendingFailed` or `.syncingFailed`.
+    ///
+    /// For example, the message is not scheduled when the scheduling limit of the channel is reached.
+    public let localError: ScheduledMessageLocalError?
+
     /// The date when the message was scheduled.
     public let createdAt: Date
 
@@ -67,6 +72,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         scheduledAt: Date,
         status: ScheduledMessageStatus,
         failureReason: ScheduledMessageFailureReason?,
+        localError: ScheduledMessageLocalError? = nil,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -78,6 +84,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         self.scheduledAt = scheduledAt
         self.status = status
         self.failureReason = failureReason
+        self.localError = localError
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -106,6 +113,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.createdAt == rhs.createdAt
             && lhs.updatedAt == rhs.updatedAt
             && lhs.localState == rhs.localState
+            && lhs.localError == rhs.localError
     }
 }
 
@@ -200,4 +208,72 @@ public struct ScheduledMessageFailureReason: RawRepresentable, Hashable, Sendabl
 
     /// The server failed to send the message.
     public static let internalError: Self = "internal_error"
+}
+
+/// The error of the server when the local changes of a scheduled message could not be sent to it.
+public struct ScheduledMessageLocalError: Hashable, Sendable {
+    /// The reason of the error, when the server gives one.
+    public let reason: ScheduledMessageErrorReason?
+
+    /// The message of the server, which describes the error, for example with the limit that is reached.
+    public let message: String
+
+    /// Whether sending the same changes again can succeed without changing them.
+    ///
+    /// When a scheduling limit is reached, another scheduled message has to be sent or deleted first.
+    /// When the date is too soon or too far, the message has to be rescheduled.
+    public var isRetryable: Bool {
+        switch reason {
+        case .scheduledAtTooSoon, .scheduledAtTooFar, .scheduledLimitChannel, .scheduledLimitUser,
+             .scheduledMessagesDisabled, .scheduledMessageIdTaken, .scheduledMessageNotEditable:
+            return false
+        default:
+            return true
+        }
+    }
+
+    init(reason: ScheduledMessageErrorReason?, message: String) {
+        self.reason = reason
+        self.message = message
+    }
+}
+
+/// The reason the server rejects a scheduled message.
+public struct ScheduledMessageErrorReason: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+
+    /// Scheduled messages are disabled for the app.
+    public static let scheduledMessagesDisabled: Self = "scheduled_messages_disabled"
+
+    /// The date is less than 1 minute from now.
+    public static let scheduledAtTooSoon: Self = "scheduled_at_too_soon"
+
+    /// The date is further than the maximum lead time of the app.
+    public static let scheduledAtTooFar: Self = "scheduled_at_too_far"
+
+    /// The current user has as many pending scheduled messages in the channel as the app allows.
+    public static let scheduledLimitChannel: Self = "scheduled_limit_channel"
+
+    /// The current user has as many pending scheduled messages as the app allows.
+    public static let scheduledLimitUser: Self = "scheduled_limit_user"
+
+    /// The id of the scheduled message belongs to another user or channel.
+    public static let scheduledMessageIdTaken: Self = "scheduled_message_id_taken"
+
+    /// A failed scheduled message can not be edited.
+    public static let scheduledMessageNotEditable: Self = "scheduled_message_not_editable"
+
+    /// The server is sending the message, or will try again shortly.
+    public static let scheduledMessageSending: Self = "scheduled_message_sending"
+
+    /// Another edit was saved first.
+    public static let scheduledMessageConflict: Self = "scheduled_message_conflict"
 }

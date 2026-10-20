@@ -121,8 +121,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             case .syncingFailed:
                 message.localMessageState = .pendingSync
             default:
-                break
+                return
             }
+            dto.localErrorReason = nil
+            dto.localErrorMessage = nil
         }, completion: completion)
     }
 
@@ -232,9 +234,14 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             save(result, localState: nil, completion: completion)
         case let .failure(error):
             // Without a connection, the changes are sent again once connected.
-            let localState = ClientError.isEphemeral(error: error) ? pendingState : failedState
+            let isEphemeral = ClientError.isEphemeral(error: error)
+            let apiError = (error as? ClientError)?.apiError
             database.write({ session in
-                session.scheduledMessage(id: id)?.message?.localMessageState = localState
+                guard let dto = session.scheduledMessage(id: id) else { return }
+                dto.message?.localMessageState = isEphemeral ? pendingState : failedState
+                // Kept so the user sees why, for example that the scheduling limit of the channel is reached.
+                dto.localErrorReason = isEphemeral ? nil : apiError?.exceptionFields?["reason"]
+                dto.localErrorMessage = isEphemeral ? nil : apiError?.message ?? error.localizedDescription
             }, completion: { _ in
                 completion(.failure(error))
             })

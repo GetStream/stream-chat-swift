@@ -21,6 +21,10 @@ class ScheduledMessageDTO: NSManagedObject {
     // Whether `scheduledAt` was changed locally and is not on the server yet.
     @NSManaged var hasPendingScheduledAt: Bool
 
+    // Why the latest local changes could not be sent to the server, from the error of the server.
+    @NSManaged var localErrorReason: String?
+    @NSManaged var localErrorMessage: String?
+
     // The quoted message is not always available locally, so its id is kept.
     @NSManaged var quotedMessageId: String?
 
@@ -157,6 +161,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         dto.cid = cid.rawValue
         dto.status = ScheduledMessageStatus.scheduled.rawValue
         dto.failureReason = nil
+        dto.localErrorReason = nil
+        dto.localErrorMessage = nil
         dto.scheduledAt = scheduledAt.bridgeDate
         dto.createdAt = now.bridgeDate
         dto.updatedAt = now.bridgeDate
@@ -205,6 +211,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             dto.hasPendingScheduledAt = !dto.isLocalOnly
         }
         dto.updatedAt = Date().bridgeDate
+        dto.localErrorReason = nil
+        dto.localErrorMessage = nil
         message.updatedAt = dto.updatedAt
         // A message that is not on the server yet is scheduled with its latest content.
         message.localMessageState = dto.isLocalOnly ? .pendingSend : .pendingSync
@@ -232,6 +240,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
 
         let content = payload.message
         let user = try saveUser(payload: payload.user)
+        dto.localErrorReason = nil
+        dto.localErrorMessage = nil
         dto.scheduledAt = payload.scheduledAt.bridgeDate
         dto.hasPendingScheduledAt = false
         dto.quotedMessageId = content.quotedMessageId
@@ -353,6 +363,9 @@ extension ScheduledMessageDTO {
             scheduledAt: scheduledAt.bridgeDate,
             status: ScheduledMessageStatus(rawValue: status),
             failureReason: failureReason.map(ScheduledMessageFailureReason.init(rawValue:)),
+            localError: localErrorMessage.map {
+                ScheduledMessageLocalError(reason: localErrorReason.map(ScheduledMessageErrorReason.init(rawValue:)), message: $0)
+            },
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
