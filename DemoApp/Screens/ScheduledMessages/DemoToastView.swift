@@ -3,14 +3,17 @@
 //
 
 import StreamChatUI
+import SwiftUI
 import UIKit
 
-final class DemoToastView: UIView {
-    private let label = UILabel()
-
-    static func show(_ text: String, in view: UIView) {
-        let container = view
-        let toast = DemoToastView(text: text)
+/// A short confirmation shown at the top of a screen, which fades out by itself.
+enum DemoToastView {
+    @MainActor static func show(_ text: String, in container: UIView) {
+        let host = UIHostingController(rootView: DemoToast(text: text))
+        let toast: UIView = host.view
+        toast.backgroundColor = .clear
+        toast.isUserInteractionEnabled = false
+        toast.translatesAutoresizingMaskIntoConstraints = false
         toast.alpha = 0
         container.addSubview(toast)
         NSLayoutConstraint.activate([
@@ -26,38 +29,23 @@ final class DemoToastView: UIView {
             UIView.animate(withDuration: 0.25, delay: 2.5) {
                 toast.alpha = 0
             } completion: { _ in
-                toast.removeFromSuperview()
+                // The hosting controller is kept until the toast is removed.
+                withExtendedLifetime(host) { toast.removeFromSuperview() }
             }
         }
     }
+}
 
-    private init(text: String) {
-        super.init(frame: .zero)
+private struct DemoToast: View {
+    let text: String
 
-        let colors = Appearance.default.colorPalette
-        translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = colors.textPrimary
-        layer.cornerRadius = 18
-        isUserInteractionEnabled = false
-
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = text
-        label.textColor = colors.backgroundCoreApp
-        label.font = .preferredFont(forTextStyle: .subheadline)
-        label.adjustsFontForContentSizeCategory = true
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        addSubview(label)
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
-        ])
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    var body: some View {
+        Text(text)
+            .font(.subheadline)
+            .multilineTextAlignment(.center)
+            .foregroundColor(Color(Appearance.default.colorPalette.backgroundCoreApp))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Color(Appearance.default.colorPalette.textPrimary), in: RoundedRectangle(cornerRadius: 18))
     }
 }

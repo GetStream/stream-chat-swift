@@ -5,78 +5,33 @@
 import StreamChat
 import StreamChatCommonUI
 import StreamChatUI
+import SwiftUI
 import UIKit
 
-class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMessageListControllerDelegate {
+/// The Scheduled tab. The list is SwiftUI; the navigation bar, the conversation screens and the date picker are UIKit.
+final class DemoScheduledMessageListVC: UIHostingController<DemoScheduledMessageList>, ThemeProvider {
     var onLogout: (() -> Void)?
     var onDisconnect: (() -> Void)?
 
-    private enum Section {
-        case scheduled
-        case failed
-
-        var title: String? {
-            switch self {
-            case .scheduled: return nil
-            case .failed: return "Failed to send"
-            }
-        }
-    }
-
     private let currentUserController: CurrentChatUserController
-    private let scheduledMessageListController: ScheduledMessageListController
-    private var sections: [(section: Section, messages: [ScheduledMessage])] = []
-
+    private let model: DemoScheduledMessageListModel
     private var client: ChatClient { currentUserController.client }
-    private var colors: Appearance.ColorPalette { Appearance.default.colorPalette }
 
-    lazy var userAvatarView: CurrentChatUserAvatarView = components
-        .currentUserAvatarView.init()
-
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(DemoScheduledMessageCell.self, forCellReuseIdentifier: DemoScheduledMessageCell.reuseIdentifier)
-        return tableView
-    }()
-
-    private lazy var emptyStateView: UIView = {
-        let imageView = UIImageView(image: UIImage(systemName: "clock"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = colors.textSecondary
-
-        let titleLabel = UILabel()
-        titleLabel.text = "No scheduled messages"
-        titleLabel.textColor = colors.textPrimary
-        titleLabel.font = Appearance.default.fonts.bodyBold
-        titleLabel.textAlignment = .center
-
-        let subtitleLabel = UILabel()
-        subtitleLabel.text = "Long press the send button in a channel to schedule a message."
-        subtitleLabel.textColor = colors.textSecondary
-        subtitleLabel.font = Appearance.default.fonts.footnote
-        subtitleLabel.textAlignment = .center
-        subtitleLabel.numberOfLines = 0
-
-        return VContainer(spacing: 8, alignment: .center) {
-            imageView
-                .width(48)
-                .height(48)
-            titleLabel
-            subtitleLabel
-        }
-    }()
+    lazy var userAvatarView: CurrentChatUserAvatarView = components.currentUserAvatarView.init()
 
     init(currentUserController: CurrentChatUserController, scheduledMessageListController: ScheduledMessageListController) {
         self.currentUserController = currentUserController
-        self.scheduledMessageListController = scheduledMessageListController
-        super.init(nibName: nil, bundle: nil)
+        model = DemoScheduledMessageListModel(controller: scheduledMessageListController)
+        super.init(rootView: DemoScheduledMessageList(model: model, actions: .init()))
+        rootView.actions = .init(
+            open: { [weak self] in self?.openConversation(editing: $0) },
+            reschedule: { [weak self] in self?.reschedule($0) },
+            channelName: { [weak self] in self?.channelName(for: $0) ?? $0.cid.id }
+        )
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    @MainActor dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -84,46 +39,22 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMess
         super.viewDidLoad()
 
         title = "Scheduled"
-
         userAvatarView.controller = currentUserController
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
         userAvatarView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.backButtonTitle = ""
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
 
-        setUpViews()
-
-        scheduledMessageListController.delegate = self
-        update(with: scheduledMessageListController.scheduledMessages)
-        scheduledMessageListController.synchronize()
+        model.onError = { [weak self] in self?.presentAlert(title: "Something went wrong", message: $0.localizedDescription) }
+        model.onSuccess = { [weak self] text in
+            guard let self else { return }
+            DemoToastView.show(text, in: view)
+        }
+        model.synchronize()
     }
 
-    private func setUpViews() {
-        view.backgroundColor = colors.backgroundCoreApp
-        tableView.backgroundColor = colors.backgroundCoreApp
-        view.addSubview(tableView)
-        view.addSubview(emptyStateView)
-        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
-            emptyStateView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-            emptyStateView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 16),
-            emptyStateView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -16)
-        ])
-    }
-
-    private func update(with messages: [ScheduledMessage]) {
-        let pending = messages.filter(\.isPending)
-        let failed = messages.filter { !$0.isPending }
-        sections = [(section: .scheduled, messages: pending), (section: .failed, messages: failed)]
-            .filter { !$0.messages.isEmpty }
-        tableView.reloadData()
-        emptyStateView.isHidden = !messages.isEmpty
+    @objc private func didTapOnCurrentUserAvatar(_ sender: Any) {
+        presentUserOptionsAlert(onLogout: onLogout, onDisconnect: onDisconnect, client: client)
     }
 
     // Channels without a name, like direct messages, are named after their members when they are in the local database.
@@ -135,257 +66,244 @@ class DemoScheduledMessageListVC: UIViewController, ThemeProvider, ScheduledMess
         return localName ?? message.channel.name ?? message.cid.id
     }
 
-    private func message(at indexPath: IndexPath) -> ScheduledMessage {
-        sections[indexPath.section].messages[indexPath.row]
-    }
-
-    @objc private func didTapOnCurrentUserAvatar(_ sender: Any) {
-        presentUserOptionsAlert(
-            onLogout: onLogout,
-            onDisconnect: onDisconnect,
-            client: client
-        )
-    }
-
-    // MARK: - Actions
-
     private func openConversation(editing message: ScheduledMessage) {
         let channelController = client.channelController(for: message.cid, messageOrdering: .topToBottom)
-
         if let parentId = message.message.parentMessageId {
             let threadVC = DemoChatThreadVC()
             threadVC.channelController = channelController
             threadVC.messageController = client.messageController(cid: message.cid, messageId: parentId)
             threadVC.scheduledMessageToEdit = message
             navigationController?.pushViewController(threadVC, animated: true)
-            return
+        } else {
+            let channelVC = DemoChatChannelVC()
+            channelVC.channelController = channelController
+            channelVC.scheduledMessageToEdit = message
+            navigationController?.pushViewController(channelVC, animated: true)
         }
-
-        let channelVC = DemoChatChannelVC()
-        channelVC.channelController = channelController
-        channelVC.scheduledMessageToEdit = message
-        navigationController?.pushViewController(channelVC, animated: true)
     }
 
-    private func confirmSendNow(_ message: ScheduledMessage) {
-        let alert = UIAlertController(
-            title: "Send now?",
-            message: "This message will be sent right away instead of at its scheduled time.",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        let sendNowAction = UIAlertAction(title: "Send Now", style: .default) { [weak self] _ in
-            self?.scheduledMessageListController.sendScheduledMessageNow(id: message.id) { error in
-                self?.handle(error, successMessage: "Message sent")
-            }
-        }
-        alert.addAction(sendNowAction)
-        alert.preferredAction = sendNowAction
-        present(alert, animated: true)
-    }
-
-    private func reschedule(_ message: ScheduledMessage, sourceView: UIView?) {
+    private func reschedule(_ message: ScheduledMessage) {
         DemoScheduleMessagePicker.present(
             from: self,
             title: "Reschedule message",
-            sourceView: sourceView,
+            sourceView: view,
             initialDate: message.scheduledAt
         ) { [weak self] date in
-            self?.scheduledMessageListController.rescheduleMessage(id: message.id, scheduledAt: date) { result in
-                let error: Error? = if case let .failure(error) = result { error } else { nil }
-                self?.handle(error, successMessage: "Message rescheduled for \(DemoScheduledDateFormatter.string(from: date))")
-            }
+            self?.model.reschedule(message, to: date)
         }
-    }
-
-    private func delete(_ message: ScheduledMessage) {
-        scheduledMessageListController.deleteScheduledMessage(id: message.id) { [weak self] error in
-            self?.handle(error, successMessage: "Scheduled message deleted")
-        }
-    }
-
-    private func handle(_ error: Error?, successMessage: String) {
-        if let error {
-            presentAlert(title: "Something went wrong", message: error.localizedDescription)
-        } else {
-            DemoToastView.show(successMessage, in: view)
-        }
-    }
-
-    func controller(
-        _ controller: ScheduledMessageListController,
-        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
-    ) {
-        update(with: controller.scheduledMessages)
     }
 }
 
-// MARK: - UITableViewDataSource & UITableViewDelegate
+// MARK: - Model
 
-extension DemoScheduledMessageListVC: UITableViewDataSource, UITableViewDelegate {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
+@MainActor
+final class DemoScheduledMessageListModel: ObservableObject, ScheduledMessageListControllerDelegate {
+    @Published private(set) var scheduledMessages: [ScheduledMessage] = []
+    var onError: ((Error) -> Void)?
+    var onSuccess: ((String) -> Void)?
+
+    private let controller: ScheduledMessageListController
+
+    init(controller: ScheduledMessageListController) {
+        self.controller = controller
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sections[section].messages.count
+    var pending: [ScheduledMessage] { scheduledMessages.filter(\.isPending) }
+    var failed: [ScheduledMessage] { scheduledMessages.filter { !$0.isPending } }
+
+    func synchronize() {
+        controller.delegate = self
+        scheduledMessages = controller.scheduledMessages
+        controller.synchronize()
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        sections[section].section.title
+    func controller(_ controller: ScheduledMessageListController, didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]) {
+        scheduledMessages = controller.scheduledMessages
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: DemoScheduledMessageCell.reuseIdentifier,
-            for: indexPath
-        ) as? DemoScheduledMessageCell
-        let message = message(at: indexPath)
-        cell?.configure(with: message, channelName: channelName(for: message))
-        return cell ?? .init()
+    func sendNow(_ message: ScheduledMessage) {
+        controller.sendScheduledMessageNow(id: message.id) { [weak self] in self?.handle($0, "Message sent") }
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func reschedule(_ message: ScheduledMessage, to date: Date) {
+        controller.rescheduleMessage(id: message.id, scheduledAt: date) { [weak self] result in
+            let error: Error? = if case let .failure(error) = result { error } else { nil }
+            self?.handle(error, "Message rescheduled for \(DemoScheduledDateFormatter.string(from: date))")
+        }
+    }
 
-        let message = message(at: indexPath)
-        guard message.status != .sending else { return }
-        openConversation(editing: message)
+    func resend(_ message: ScheduledMessage) {
+        controller.resendScheduledMessage(id: message.id) { [weak self] in self?.handle($0, "Scheduling the message again") }
+    }
+
+    func delete(_ message: ScheduledMessage) {
+        controller.deleteScheduledMessage(id: message.id) { [weak self] in self?.handle($0, "Scheduled message deleted") }
+    }
+
+    private func handle(_ error: Error?, _ successMessage: String) {
+        if let error {
+            onError?(error)
+        } else {
+            onSuccess?(successMessage)
+        }
+    }
+}
+
+// MARK: - Views
+
+@MainActor private var colors: Appearance.ColorPalette { Appearance.default.colorPalette }
+@MainActor private var images: Appearance.Images { Appearance.default.images }
+
+struct DemoScheduledMessageList: View {
+    struct Actions {
+        var open: (ScheduledMessage) -> Void = { _ in }
+        var reschedule: (ScheduledMessage) -> Void = { _ in }
+        var channelName: (ScheduledMessage) -> String = { $0.cid.id }
+    }
+
+    @ObservedObject var model: DemoScheduledMessageListModel
+    var actions: Actions
+    @State private var messageToSendNow: ScheduledMessage?
+
+    var body: some View {
+        List {
+            Section { rows(model.pending) }
+            if !model.failed.isEmpty {
+                Section("Failed to send") { rows(model.failed) }
+            }
+        }
+        .listStyle(.plain)
+        .overlay { if model.scheduledMessages.isEmpty { emptyState } }
+        .background(Color(colors.backgroundCoreApp))
+        .alert("Send now?", isPresented: Binding(get: { messageToSendNow != nil }, set: { if !$0 { messageToSendNow = nil } })) {
+            Button("Cancel", role: .cancel) {}
+            Button("Send Now") { messageToSendNow.map(model.sendNow) }
+        } message: {
+            Text("This message will be sent right away instead of at its scheduled time.")
+        }
+    }
+
+    private func rows(_ messages: [ScheduledMessage]) -> some View {
+        ForEach(messages) { message in
+            Button { actions.open(message) } label: {
+                DemoScheduledMessageRow(message: message, channelName: actions.channelName(message))
+            }
+            .disabled(message.status == .sending)
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            .listRowBackground(Color(colors.backgroundCoreApp))
+            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                if message.status != .sending { swipeActions(for: message) }
+            }
+        }
     }
 
     // Styled like the channel list swipe actions: icon only, with the same colors.
-    func tableView(
-        _ tableView: UITableView,
-        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
-    ) -> UISwipeActionsConfiguration? {
-        let message = message(at: indexPath)
-        guard message.status != .sending else { return nil }
-
-        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
-            self?.delete(message)
-            completion(true)
-        }
-        // Always original, otherwise the swipe actions tint every icon white.
-        deleteAction.image = appearance.images.messageActionDelete
-            .withTintColor(.white, renderingMode: .alwaysOriginal)
-        deleteAction.backgroundColor = colors.accentError
-        deleteAction.accessibilityLabel = "Delete"
-
-        let rescheduleAction = UIContextualAction(style: .normal, title: nil) { [weak self, weak tableView] _, _, completion in
-            completion(true)
-            self?.reschedule(message, sourceView: tableView?.cellForRow(at: indexPath))
-        }
-        rescheduleAction.image = UIImage(systemName: "clock")?
-            .withTintColor(.white, renderingMode: .alwaysOriginal)
-        rescheduleAction.backgroundColor = .systemYellow
-        rescheduleAction.accessibilityLabel = "Reschedule"
-
-        let sendNowAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
-            completion(true)
-            self?.confirmSendNow(message)
-        }
-        sendNowAction.image = appearance.images.composerSend
-            .withTintColor(.white, renderingMode: .alwaysOriginal)
-        sendNowAction.backgroundColor = colors.accentPrimary
-        sendNowAction.accessibilityLabel = "Send Now"
-
-        let retryAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
-            completion(true)
-            self?.scheduledMessageListController.resendScheduledMessage(id: message.id) { error in
-                self?.handle(error, successMessage: "Scheduling the message again")
-            }
-        }
-        retryAction.image = UIImage(systemName: "arrow.clockwise")?
-            .withTintColor(.white, renderingMode: .alwaysOriginal)
-        retryAction.backgroundColor = colors.accentPrimary
-        retryAction.accessibilityLabel = "Retry"
-
-        var actions = [deleteAction, rescheduleAction]
+    @ViewBuilder private func swipeActions(for message: ScheduledMessage) -> some View {
+        Button(role: .destructive) { model.delete(message) } label: { actionLabel("Delete", Image(uiImage: images.messageActionDelete)) }
+            .tint(Color(colors.accentError))
+        Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
+            .tint(.yellow)
         switch message.localState {
         case .sendingFailed, .syncingFailed:
             if message.localError?.isRetryable ?? true {
-                actions.append(retryAction)
+                Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
+                    .tint(Color(colors.accentPrimary))
             }
         case .pendingSend, .sending:
             // It can not be sent now before it is on the server.
-            break
+            EmptyView()
         default:
-            actions.append(sendNowAction)
+            Button { messageToSendNow = message } label: { actionLabel("Send Now", Image(uiImage: images.composerSend)) }
+                .tint(Color(colors.accentPrimary))
         }
+    }
 
-        let configuration = UISwipeActionsConfiguration(actions: actions)
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
+    // Icon only, like the UIKit swipe actions. The icons are images, so the swipe actions do not fill the symbols.
+    private func actionLabel(_ title: String, _ icon: Image) -> some View {
+        Label { Text(title) } icon: { icon.renderingMode(.template) }
+            .labelStyle(.iconOnly)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 8) {
+            Image(systemName: "clock")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 48, height: 48)
+                .foregroundColor(Color(colors.textSecondary))
+            Text("No scheduled messages")
+                .font(Font(Appearance.default.fonts.bodyBold))
+                .foregroundColor(Color(colors.textPrimary))
+            Text("Long press the send button in a channel to schedule a message.")
+                .font(Font(Appearance.default.fonts.footnote))
+                .foregroundColor(Color(colors.textSecondary))
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 32)
     }
 }
 
-// MARK: - Scheduled Message Cell
+private struct DemoScheduledMessageRow: View {
+    let message: ScheduledMessage
+    let channelName: String
 
-class DemoScheduledMessageCell: UITableViewCell {
-    static let reuseIdentifier = "DemoScheduledMessageCell"
-
-    private let channelNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = Appearance.default.fonts.bodyBold
-        label.textColor = Appearance.default.colorPalette.textPrimary
-        return label
-    }()
-
-    private let statusLabel: UILabel = {
-        let label = UILabel()
-        label.font = Appearance.default.fonts.footnote
-        label.numberOfLines = 0
-        return label
-    }()
-
-    private let messageLabel: UILabel = {
-        let label = UILabel()
-        label.font = Appearance.default.fonts.footnote
-        label.numberOfLines = 2
-        label.textColor = Appearance.default.colorPalette.textSecondary
-        return label
-    }()
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 4) {
+                Text(message.message.parentMessageId == nil ? "# \(channelName)" : "Thread in # \(channelName)")
+                    .font(Font(Appearance.default.fonts.bodyBold))
+                    .foregroundColor(Color(colors.textPrimary))
+                localStateIcon
+            }
+            Text(status.text)
+                .font(Font(Appearance.default.fonts.footnote))
+                .foregroundColor(Color(status.color))
+            if let preview {
+                Text(preview)
+                    .font(Font(Appearance.default.fonts.footnote))
+                    .foregroundColor(Color(colors.textSecondary))
+                    .lineLimit(2)
+            }
+        }
+    }
 
     /// Shows that the message is not on the server yet, or failed to reach it, like the delivery status of a message.
-    private let localStateImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
-        let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Appearance.default.colorPalette.backgroundCoreSurfaceStrong
-        self.selectedBackgroundView = selectedBackgroundView
-
-        VContainer(spacing: 4) {
-            HContainer(spacing: 4, alignment: .center) {
-                channelNameLabel
-                localStateImageView
-                    .width(16)
-                    .height(16)
-                Spacer()
-            }
-            statusLabel
-            messageLabel
-        }.embed(
-            in: contentView,
-            insets: .init(top: 8, leading: 16, bottom: 8, trailing: 16)
-        )
+    @ViewBuilder private var localStateIcon: some View {
+        switch message.localState {
+        case .pendingSend, .sending, .pendingSync, .syncing:
+            icon(images.messageDeliveryStatusSending, color: colors.textSecondary)
+        case .sendingFailed, .syncingFailed:
+            icon(images.messageDeliveryStatusFailed, color: colors.accentError)
+        default:
+            EmptyView()
+        }
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private func icon(_ image: UIImage, color: UIColor) -> some View {
+        Image(uiImage: image).renderingMode(.template).resizable().scaledToFit()
+            .frame(width: 16, height: 16)
+            .foregroundColor(Color(color))
     }
 
-    private static func localErrorText(of message: ScheduledMessage) -> String {
-        let fallback = message.localState == .syncingFailed
-            ? "Could not save the changes."
-            : "Could not schedule the message."
+    private var status: (text: String, color: UIColor) {
+        switch message.localState {
+        case .sendingFailed, .syncingFailed:
+            return (localErrorText, colors.accentError)
+        default:
+            break
+        }
+        switch message.status {
+        case .scheduled:
+            return ("Send \(DemoScheduledDateFormatter.string(from: message.scheduledAt))", colors.accentPrimary)
+        case .sending:
+            return ("Sending…", colors.textSecondary)
+        default:
+            return (message.failureReason?.localizedDescription ?? "Failed to send", colors.accentError)
+        }
+    }
+
+    private var localErrorText: String {
+        let fallback = message.localState == .syncingFailed ? "Could not save the changes." : "Could not schedule the message."
         guard let error = message.localError else { return "\(fallback) Swipe to retry." }
 
         // The server wraps the reason, like `SendMessage failed with error: "you can schedule at most 2 messages"`.
@@ -397,50 +315,11 @@ class DemoScheduledMessageCell: UITableViewCell {
         return error.isRetryable ? "\(reason). Swipe to retry." : "\(reason)."
     }
 
-    func configure(with message: ScheduledMessage, channelName: String) {
-        let colors = Appearance.default.colorPalette
-        if message.message.parentMessageId != nil {
-            channelNameLabel.text = "Thread in # \(channelName)"
-        } else {
-            channelNameLabel.text = "# \(channelName)"
-        }
-
-        switch message.status {
-        case .scheduled:
-            statusLabel.text = "Send \(DemoScheduledDateFormatter.string(from: message.scheduledAt))"
-            statusLabel.textColor = colors.accentPrimary
-        case .sending:
-            statusLabel.text = "Sending…"
-            statusLabel.textColor = colors.textSecondary
-        default:
-            statusLabel.text = message.failureReason?.localizedDescription ?? "Failed to send"
-            statusLabel.textColor = colors.accentError
-        }
-
-        let images = Appearance.default.images
-        switch message.localState {
-        case .pendingSend, .sending, .pendingSync, .syncing:
-            localStateImageView.image = images.messageDeliveryStatusSending
-            localStateImageView.tintColor = colors.textSecondary
-            localStateImageView.isHidden = false
-        case .sendingFailed, .syncingFailed:
-            localStateImageView.image = images.messageDeliveryStatusFailed
-            localStateImageView.tintColor = colors.accentError
-            localStateImageView.isHidden = false
-            statusLabel.text = Self.localErrorText(of: message)
-            statusLabel.textColor = colors.accentError
-        default:
-            localStateImageView.image = nil
-            localStateImageView.isHidden = true
-        }
-
+    private var preview: String? {
         let attachmentsCount = message.message.allAttachments.count
         if !message.message.text.isEmpty {
-            messageLabel.text = message.message.text
-        } else if attachmentsCount > 0 {
-            messageLabel.text = "📎 \(attachmentsCount) attachment\(attachmentsCount == 1 ? "" : "s")"
-        } else {
-            messageLabel.text = nil
+            return message.message.text
         }
+        return attachmentsCount > 0 ? "📎 \(attachmentsCount) attachment\(attachmentsCount == 1 ? "" : "s")" : nil
     }
 }

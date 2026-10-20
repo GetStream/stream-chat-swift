@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatUI
+import SwiftUI
 import UIKit
 
 @MainActor
@@ -32,12 +33,11 @@ enum DemoScheduleMessagePicker {
         }
         alert.addAction(UIAlertAction(title: "Custom Time", style: .default) { [weak presenter] _ in
             guard let presenter else { return }
-            let datePickerVC = DemoScheduleDatePickerVC(initialDate: initialDate, onSelect: onSelect)
-            let navigationVC = UINavigationController(rootViewController: datePickerVC)
-            navigationVC.modalPresentationStyle = .pageSheet
-            navigationVC.sheetPresentationController?.detents = [.large()]
-            navigationVC.sheetPresentationController?.prefersGrabberVisible = true
-            presenter.present(navigationVC, animated: true)
+            let datePickerVC = UIHostingController(rootView: DemoScheduleDatePicker(initialDate: initialDate) { [weak presenter] date in
+                presenter?.dismiss(animated: true) { date.map(onSelect) }
+            })
+            datePickerVC.sheetPresentationController?.prefersGrabberVisible = true
+            presenter.present(datePickerVC, animated: true)
         })
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         if let sourceView {
@@ -67,79 +67,40 @@ enum DemoScheduleMessagePicker {
     }
 }
 
-final class DemoScheduleDatePickerVC: UIViewController {
-    private let initialDate: Date?
-    private let onSelect: (Date) -> Void
-    private let datePicker = UIDatePicker()
-    private let timeZoneLabel = UILabel()
+/// Picks a custom date, within the scheduling limits. Calls `onFinish` with `nil` when cancelled.
+struct DemoScheduleDatePicker: View {
+    let onFinish: (Date?) -> Void
+    @State private var date: Date
+    private let range: ClosedRange<Date>
 
-    private var colors: Appearance.ColorPalette { Appearance.default.colorPalette }
-
-    init(initialDate: Date?, onSelect: @escaping (Date) -> Void) {
-        self.initialDate = initialDate
-        self.onSelect = onSelect
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = "Custom Time"
-        view.backgroundColor = colors.backgroundCoreApp
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .cancel,
-            target: self,
-            action: #selector(cancelTapped)
-        )
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Schedule",
-            style: .done,
-            target: self,
-            action: #selector(scheduleTapped)
-        )
-
+    init(initialDate: Date?, onFinish: @escaping (Date?) -> Void) {
         let now = Date()
-        let minimumDate = now.addingTimeInterval(DemoScheduledMessageLimits.minimumLeadTime)
-        let maximumDate = now.addingTimeInterval(DemoScheduledMessageLimits.maximumLeadTime)
-        datePicker.datePickerMode = .dateAndTime
-        datePicker.preferredDatePickerStyle = .inline
-        datePicker.minimumDate = minimumDate
-        datePicker.maximumDate = maximumDate
-        datePicker.tintColor = colors.accentPrimary
-        datePicker.date = min(max(initialDate ?? now.addingTimeInterval(60 * 60), minimumDate), maximumDate)
-
-        timeZoneLabel.text = "All times in \(DemoScheduledDateFormatter.timeZoneDescription)"
-        timeZoneLabel.font = .preferredFont(forTextStyle: .footnote)
-        timeZoneLabel.adjustsFontForContentSizeCategory = true
-        timeZoneLabel.textColor = colors.textSecondary
-        timeZoneLabel.numberOfLines = 0
-
-        let stackView = UIStackView(arrangedSubviews: [datePicker, timeZoneLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 12
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            stackView.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor)
-        ])
+        range = now.addingTimeInterval(DemoScheduledMessageLimits.minimumLeadTime)...now
+            .addingTimeInterval(DemoScheduledMessageLimits.maximumLeadTime)
+        _date = State(initialValue: min(max(initialDate ?? now.addingTimeInterval(60 * 60), range.lowerBound), range.upperBound))
+        self.onFinish = onFinish
     }
 
-    @objc private func cancelTapped() {
-        dismiss(animated: true)
-    }
-
-    @objc private func scheduleTapped() {
-        let date = datePicker.date
-        let onSelect = onSelect
-        dismiss(animated: true) {
-            onSelect(date)
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading, spacing: 12) {
+                DatePicker("Custom Time", selection: $date, in: range)
+                    .datePickerStyle(.graphical)
+                    .tint(Color(Appearance.default.colorPalette.accentPrimary))
+                Text("All times in \(DemoScheduledDateFormatter.timeZoneDescription)")
+                    .font(.footnote)
+                    .foregroundColor(Color(Appearance.default.colorPalette.textSecondary))
+                Spacer()
+            }
+            .padding()
+            .background(Color(Appearance.default.colorPalette.backgroundCoreApp))
+            .navigationTitle("Custom Time")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { onFinish(nil) } }
+                ToolbarItem(placement: .confirmationAction) { Button("Schedule") { onFinish(date) } }
+            }
         }
+        .navigationViewStyle(.stack)
     }
 }
