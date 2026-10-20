@@ -101,6 +101,76 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(false, isLinked(cid))
     }
 
+    func test_channelHidden_unlinksChannel_andChannelVisibleLinksItBack() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        // Middlewares update the hidden state before observers are notified.
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isHidden: true, isLinked: true)
+
+        try process(ChannelHiddenEvent(cid: cid, user: .unique, isHistoryCleared: false, createdAt: .unique))
+        XCTAssertEqual(false, isLinked(cid))
+
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isLinked: false)
+        try process(ChannelVisibleEvent(cid: cid, user: .unique, createdAt: .unique))
+        XCTAssertEqual(true, isLinked(cid))
+    }
+
+    func test_messageNew_whenChannelStaysHidden_doesNotLinkChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        // A message from a blocked user does not unhide the channel.
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isHidden: true, isLinked: false)
+
+        try process(messageNewEvent(cid: cid))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_channelDeleted_unlinksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), deletedAt: .unique, isLinked: true)
+
+        try process(ChannelDeletedEvent(channel: .mock(cid: cid), user: nil, createdAt: .unique))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_notificationChannelDeleted_unlinksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), deletedAt: .unique, isLinked: true)
+
+        try process(NotificationChannelDeletedEvent(cid: cid, channel: .mock(cid: cid), createdAt: .unique))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_channelUpdated_whenChannelIsDisabled_unlinksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), isDisabled: true, isLinked: true)
+
+        try process(ChannelUpdatedEvent(channel: .mock(cid: cid), user: nil, message: nil, createdAt: .unique))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_notificationRemovedFromChannel_unlinksChannelAndUpdatesFilteredGroupUnreadCount() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup()
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(0), unreadMessages: 1, isLinked: true)
+        try database.writeSynchronously { session in
+            session.updateFilteredGroupUnreadChannelCounts(for: [session.channelListQuery(self.query)].compactMap { $0 })
+        }
+        XCTAssertEqual(["expired": 1], unreadChannelCountsByGroup())
+
+        try process(NotificationRemovedFromChannelEvent(user: .unique, cid: cid, member: .mock(id: currentUserId), createdAt: .unique))
+
+        XCTAssertEqual(false, isLinked(cid))
+        XCTAssertEqual(["expired": 0], unreadChannelCountsByGroup())
+    }
+
     func test_messageNew_inFilteredAllGroup_linksChannelsMatchingTheirBranch() throws {
         let allQuery = ChannelListQuery(groupKey: GroupedChannelKey.all)
         let allLinker = GroupedChannelListLinker(
@@ -233,12 +303,23 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         group: String? = "expired",
         lastMessageAt: Date,
         unreadMessages: Int = 0,
+        isHidden: Bool = false,
+        isDisabled: Bool = false,
+        deletedAt: Date? = nil,
         isMember: Bool = true,
         isLinked: Bool
     ) throws {
         let read = ChannelReadPayload(user: .dummy(userId: currentUserId), lastReadAt: lastMessageAt, lastReadMessageId: nil, unreadMessagesCount: unreadMessages)
         let payload = ChannelPayload.dummy(
-            channel: .dummy(cid: cid, extraData: group.map { [GroupedChannelKey.group: .string($0)] } ?? [:], lastMessageAt: lastMessageAt, createdAt: lastMessageAt),
+            channel: .dummy(
+                cid: cid,
+                extraData: group.map { [GroupedChannelKey.group: .string($0)] } ?? [:],
+                lastMessageAt: lastMessageAt,
+                createdAt: lastMessageAt,
+                deletedAt: deletedAt,
+                isDisabled: isDisabled,
+                isHidden: isHidden
+            ),
             membership: isMember ? .dummy(user: .dummy(userId: currentUserId)) : nil,
             channelReads: [read]
         )
