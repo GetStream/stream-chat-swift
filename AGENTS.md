@@ -93,6 +93,7 @@ Sources/
       Charts/              # Chart rendering
       CommonViews/         # Sidebar
       Composer/            # Prompt composer, view factory, suggestions, attachments
+      Conversation/        # Conversation view: turns, thinking, each sent message brought to the top
       Message/             # Streaming Markdown message, code blocks, typing indicator
       MessageParts/        # Reasoning and tool call steps, tool approvals
       Reasoning/           # Streaming reasoning view

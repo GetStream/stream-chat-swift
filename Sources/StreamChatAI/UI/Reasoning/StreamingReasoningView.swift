@@ -30,7 +30,12 @@ public struct StreamingReasoningView: View {
     var showsLiveReasoning: Bool
     var maxExpandedHeight: CGFloat
     var font: Font?
+    // The step shown, which a list times when it takes over from a turn's thinking.
+    var stepID: String?
+    // When the thinking began, for a header that counts from earlier than this view appeared.
+    var thinkingStart: Date?
 
+    @Environment(\.aiThinkingTurn) private var turn
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.fonts) private var fonts
@@ -97,6 +102,16 @@ public struct StreamingReasoningView: View {
 
     var isOpen: Bool { open }
 
+    // Whether the reasoning shows. Live reasoning is open before any of it arrives, so it
+    // unfolds as it does, but there is nothing to see until then.
+    private var isExpanded: Bool { open && !text.isEmpty }
+
+    // The list turn whose thinking this step takes over, when it is the turn's first step.
+    private var thinkingTurn: AIThinkingTurn? {
+        guard let stepID, let turn, turn.clock.isFirstStep(stepID, of: turn.key) else { return nil }
+        return turn
+    }
+
     /// Whether the reasoning is open when the reader has not chosen: while the model thinks
     /// if `showsLiveReasoning`, and once it is done if `initiallyExpanded`.
     static func opens(isThinking: Bool, showsLiveReasoning: Bool, initiallyExpanded: Bool) -> Bool {
@@ -104,6 +119,10 @@ public struct StreamingReasoningView: View {
     }
 
     public var body: some View {
+        // A list's first step that arrived done, with the answer, shows its reasoning before it
+        // folds: the model sent none of it while it thought.
+        let showsFinished = !isThinking && !text.isEmpty
+            && (thinkingTurn.map { $0.clock.showsFirstStep(in: $0.key) } ?? false)
         VStack(alignment: .leading, spacing: 0) {
             header
             if mounted && !text.isEmpty {
@@ -132,7 +151,14 @@ public struct StreamingReasoningView: View {
             Capsule().fill(Color(isThinking ? colors.reasoningShimmer : colors.reasoningRule)).frame(width: 2)
         }
         .onAppear {
-            if mounted && !open && choice == nil { setOpen(true, unfolding: true) }
+            if showsFinished && choice == nil {
+                setOpen(true, unfolding: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + Self.finishedReasoningShown) {
+                    if choice == nil && !isThinking { setOpen(false) }
+                }
+            } else if mounted && !open && choice == nil {
+                setOpen(true, unfolding: true)
+            }
         }
         .modifier(OnChange(value: isThinking) {
             if isThinking {
@@ -155,6 +181,10 @@ public struct StreamingReasoningView: View {
     /// answer below it, rather than the two moving against each other.
     public static let foldDuration: TimeInterval = 0.45
 
+    // How long a list's first step that arrived done stays open, showing its reasoning, before
+    // it folds and the answer starts.
+    static let finishedReasoningShown: TimeInterval = 1.6
+
     /// Opens or folds the reasoning in one animated change of the whole layout. An opening
     /// panel first joins the layout at no height, so it unfolds rather than appears.
     private func setOpen(_ value: Bool, unfolding: Bool = false) {
@@ -174,23 +204,30 @@ public struct StreamingReasoningView: View {
     }
 
     private var header: some View {
-        let title = Self.title(isThinking: isThinking, duration: duration ?? thoughtFor)
+        let thinkingTurn = thinkingTurn
+        if isThinking, let thinkingTurn {
+            thinkingTurn.clock.firstStepIsStreaming(in: thinkingTurn.key)
+        }
+        let measured = isThinking ? nil : thinkingTurn.flatMap { $0.clock.durationOfFirstStep(in: $0.key, own: duration) }
+        let title = Self.title(isThinking: isThinking, duration: measured ?? duration ?? thoughtFor)
+        let since = thinkingStart ?? thinkingTurn.flatMap { $0.clock.start(of: $0.key) }
         return Button {
-            choice = !open
-            setOpen(!open)
+            let expands = !isExpanded
+            choice = expands
+            setOpen(expands)
         } label: {
             HStack(spacing: 6) {
                 ThinkingIcon(image: images.reasoning, isActive: isThinking)
                 Group {
                     if isThinking {
-                        ThinkingTitle(duration: duration)
+                        ThinkingTitle(duration: duration, since: since)
                     } else {
                         Text(title)
                     }
                 }
                 .modifier(Shimmer(isActive: isThinking, highlight: Color(colors.reasoningShimmer)))
                 .layoutPriority(1)
-                if let summary, !isThinking, !isOpen {
+                if let summary, !isThinking, !isExpanded {
                     Text(summary)
                         .fontWeight(.regular)
                         .foregroundStyle(Color(colors.reasoningText).opacity(0.8))
@@ -199,7 +236,7 @@ public struct StreamingReasoningView: View {
                 }
                 images.reasoningDisclosure
                     .font(.caption2.weight(.semibold))
-                    .rotationEffect(.degrees(isOpen ? 90 : 0))
+                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
             }
             .font(resolvedFont.weight(.medium))
             .foregroundStyle(Color(colors.reasoningTitle))
@@ -208,7 +245,7 @@ public struct StreamingReasoningView: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel([title, isThinking ? nil : summary].compactMap { $0 }.joined(separator: ". "))
-        .accessibilityHint(isOpen ? L10n.Reasoning.hideHint : L10n.Reasoning.showHint)
+        .accessibilityHint(isExpanded ? L10n.Reasoning.hideHint : L10n.Reasoning.showHint)
         .accessibilityAddTraits(.isButton)
     }
 

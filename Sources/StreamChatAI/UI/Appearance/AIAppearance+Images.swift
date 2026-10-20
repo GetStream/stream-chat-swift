@@ -29,6 +29,34 @@ extension AIAppearance {
 
         public var codeBlockCopy = Image(systemName: "clipboard")
 
+        // MARK: - Message Actions
+
+        public var messageCopy = Image(systemName: "doc.on.doc")
+        /// Shown for a moment once a message is copied.
+        public var messageCopied = Image(systemName: "checkmark")
+        public var messageShare = Image(systemName: "square.and.arrow.up")
+        public var messageRegenerate = Image(systemName: "arrow.clockwise")
+        public var messageRatePositive = Image(systemName: "hand.thumbsup")
+        public var messageRatedPositive = Image(systemName: "hand.thumbsup.fill")
+        public var messageRateNegative = Image(systemName: "hand.thumbsdown")
+        public var messageRatedNegative = Image(systemName: "hand.thumbsdown.fill")
+        public var messageEdit = Image(systemName: "pencil")
+
+        // MARK: - Message Attachments
+
+        /// The icon of a file of a type without one of its own.
+        public var attachmentFile = Image(systemName: "doc")
+        public var attachmentPDF = Image(systemName: "doc.richtext")
+        public var attachmentImage = Image(systemName: "photo")
+        public var attachmentAudio = Image(systemName: "waveform")
+        public var attachmentVideo = Image(systemName: "film")
+        public var attachmentArchive = Image(systemName: "doc.zipper")
+
+        // MARK: - Conversation
+
+        /// The button that scrolls to the end of the conversation.
+        public var conversationScrollToLatest = Image(systemName: "arrow.down")
+
         // MARK: - Reasoning
 
         public var reasoning = Image(systemName: "brain")
