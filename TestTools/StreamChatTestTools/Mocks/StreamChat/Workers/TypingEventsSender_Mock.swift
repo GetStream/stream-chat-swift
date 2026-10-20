@@ -23,6 +23,9 @@ final class TypingEventsSender_Mock: TypingEventsSender, @unchecked Sendable {
     @Atomic var stopTyping_completion: ((Error?) -> Void)?
     @Atomic var stopTyping_completion_result: Result<Void, Error>?
     @Atomic var stopTyping_completion_expectation = XCTestExpectation()
+
+    @Atomic var stopTypingIfNeeded_callCount = 0
+    @Atomic var stopTypingIfNeeded_completion: ((Error?) -> Void)?
         
     override func keystroke(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         keystroke_cid = cid
@@ -46,6 +49,11 @@ final class TypingEventsSender_Mock: TypingEventsSender, @unchecked Sendable {
         stopTyping_completion_expectation.fulfill()
     }
 
+    override func stopTypingIfNeeded(completion: ((Error?) -> Void)? = nil) {
+        stopTypingIfNeeded_callCount += 1
+        stopTypingIfNeeded_completion = completion
+    }
+
     func cleanUp() {
         keystroke_cid = nil
         keystroke_parentMessageId = nil
@@ -62,5 +70,8 @@ final class TypingEventsSender_Mock: TypingEventsSender, @unchecked Sendable {
         stopTyping_completion = nil
         stopTyping_completion_result = nil
         stopTyping_completion_expectation = XCTestExpectation()
+
+        stopTypingIfNeeded_callCount = 0
+        stopTypingIfNeeded_completion = nil
     }
 }
