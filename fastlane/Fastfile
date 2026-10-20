@@ -863,7 +863,7 @@ lane :sources_matrix do
     llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
     common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
+    ai: ['Sources/StreamChatAI', 'Sources/StreamChatAICMark', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
     integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
