@@ -667,6 +667,7 @@ lane :test_ui do |options|
     cloned_source_packages_path: source_packages_path,
     build_for_testing: options[:build_for_testing],
     skip_build: options[:skip_build],
+    number_of_retries: record_mode ? nil : 1,
     result_bundle: true,
     devices: options[:device],
     fail_build: !record_mode,
