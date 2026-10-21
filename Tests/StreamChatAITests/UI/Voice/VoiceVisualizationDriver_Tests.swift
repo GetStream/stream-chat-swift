@@ -142,6 +142,28 @@ final class VoiceVisualizationDriver_Tests: XCTestCase {
         XCTAssertEqual(uniforms(of: driver).react, 0.12, accuracy: 1e-3)
     }
 
+    func test_audioLevel_catchesUpWithALouderLevelWithinAWord() {
+        var driver = VoiceVisualizationDriver(input: input(.idle, audioLevel: 0))
+        advance(&driver, for: 1)
+
+        driver.input.audioLevel = 1
+        advance(&driver, for: 0.1)
+        XCTAssertTrue((0.5...0.8).contains(uniforms(of: driver).mic), "mic was \(uniforms(of: driver).mic)")
+        advance(&driver, for: 0.3)
+        XCTAssertGreaterThan(uniforms(of: driver).mic, 0.95)
+    }
+
+    func test_audioLevel_fallsAwayOverAPauseNotASyllable() {
+        var driver = VoiceVisualizationDriver(input: input(.idle, audioLevel: 1))
+        advance(&driver, for: 1)
+
+        driver.input.audioLevel = 0
+        advance(&driver, for: 0.1)
+        XCTAssertGreaterThan(uniforms(of: driver).mic, 0.7)
+        advance(&driver, for: 0.9)
+        XCTAssertLessThan(uniforms(of: driver).mic, 0.1)
+    }
+
     func test_colors_easeTheirHueTheShortWayRound() {
         var driver = VoiceVisualizationDriver(input: input(.idle, colors: [[0.95, 1, 1]]))
 

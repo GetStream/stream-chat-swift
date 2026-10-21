@@ -106,7 +106,10 @@ struct VoiceVisualizationDriver {
         let gentle = Self.ease(0.12, over: dt)
         hoverAmount += ((isHovering ? 1 : 0) - hoverAmount) * gentle
         voiceAmount += ((input.audioLevel == nil ? 0 : 1) - voiceAmount) * Self.ease(0.1, over: dt)
-        micLevel += ((input.audioLevel ?? 0) - micLevel) * Self.ease(0.35, over: dt)
+        // A meter's level jumps with every syllable, so it is followed like a VU meter: quickly
+        // up to a louder reading, slowly down from it, and the motion swells with the phrase.
+        let level = input.audioLevel ?? 0
+        micLevel += (level - micLevel) * Self.ease(level > micLevel ? 0.16 : 0.05, over: dt)
 
         let targets = Self.slots(for: input.colors)
         for index in colors.indices {
