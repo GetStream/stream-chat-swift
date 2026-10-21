@@ -108,7 +108,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
         if event.isChannelStored {
             updateLinking(for: event.cid, skipsBelowLoadedChannels: true)
-        } else if let groupKey = query.groupKey, groupKey == GroupedChannelKey.all || event.group == groupKey {
+        } else if isInGroup(event.group) {
             // Watching fetches and saves the channel, then it can be linked to the query.
             databaseContainer.read({ [query, queryTimestamp = event.queryTimestamp] session in
                 guard let queryDTO = session.channelListQuery(query) else { return false }
@@ -144,7 +144,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, isMember: Bool = true, skipsBelowLoadedChannels: Bool = false, startsWatching: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
             guard let groupKey = query.groupKey, let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
-            let shouldBelong = try isMember && session.belongsChannelToGroup(groupKey, channel: channelDTO)
+            let shouldBelong = try isMember && session.canLinkChannel(channelDTO, toGroup: groupKey)
             let isInList = queryDTO.channels.contains(channelDTO)
             if shouldBelong, !isInList, !skipsBelowLoadedChannels || Self.isWithinLoadedChannels(channelDTO.queryTimestamp.bridgeDate, of: queryDTO) {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
@@ -174,6 +174,10 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 }
             }
         })
+    }
+
+    private func isInGroup(_ group: String?) -> Bool {
+        query.groupKey == GroupedChannelKey.all || (group != nil && query.groupKey == group)
     }
 
     private static func isWithinLoadedChannels(_ queryTimestamp: Date, of queryDTO: ChannelListQueryDTO) -> Bool {

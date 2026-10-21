@@ -444,9 +444,9 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.unlinkGroupedChannels(in: groupKey)
     }
 
-    func belongsChannelToGroup(_ groupKey: String, channel: ChannelDTO) throws -> Bool {
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool {
         try throwErrorIfNeeded()
-        return try underlyingSession.belongsChannelToGroup(groupKey, channel: channel)
+        return try underlyingSession.canLinkChannel(channel, toGroup: groupKey)
     }
     
     func saveChannel(

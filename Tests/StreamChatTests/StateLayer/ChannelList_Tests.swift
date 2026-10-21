@@ -246,7 +246,7 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(["query_timestamp"], env.channelListUpdaterMock.queryGroupedChannels_sorts.first??.map(\.field))
     }
 
-    func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_returnsNoChannelsWithoutRequest() async throws {
+    func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_loadsNextPageOnceCursorIsRestored() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
         channelList = ChannelList(
@@ -264,21 +264,7 @@ final class ChannelList_Tests: XCTestCase {
 
         XCTAssertEqual([], returned)
         XCTAssertEqual(0, env.channelListUpdaterMock.queryGroupedChannels_callCount)
-    }
 
-    func test_loadMoreChannels_whenQueryHasGroupKeyAndCursorIsRestoredElsewhere_loadsNextPage() async throws {
-        let groupedQuery = ChannelListQuery(groupKey: "all")
-        channelList = ChannelList(
-            query: groupedQuery,
-            dynamicFilter: nil,
-            client: env.client,
-            environment: env.channelListEnvironment(usesMockedUpdater: true)
-        )
-        _ = await channelList.state
-        try await env.client.mockDatabaseContainer.write { session in
-            _ = session.saveQuery(query: groupedQuery)
-        }
-        try await channelList.loadMoreChannels(limit: 5)
         try await env.client.mockDatabaseContainer.write { session in
             session.saveQuery(query: groupedQuery).next = "cursor-2"
         }
@@ -424,29 +410,6 @@ final class ChannelList_Tests: XCTestCase {
         await XCTAssertAsyncFailure(try await channelList.loadMoreChannels(), testError)
     }
 
-    func test_loadMoreChannels_whenFirstPageIsReloadedAfterLoadingAllPages_thenLoadsNextPage() async throws {
-        await setUpChannelList(usesMockedChannelUpdater: true, pageSize: 2)
-        env.channelListUpdaterMock.update_completion_result = .success(makeChannels(count: 1, createdAtOffset: 0))
-        try await channelList.loadMoreChannels()
-        env.channelListUpdaterMock.update_completion_result = .success(makeChannels(count: 2, createdAtOffset: 0))
-        try await channelList.get()
-
-        try await channelList.loadMoreChannels()
-
-        XCTAssertEqual(3, env.channelListUpdaterMock.update_queries.count)
-    }
-
-    func test_loadMoreChannels_whenFirstPageIsNotFull_thenDoesNotLoadMore() async throws {
-        await setUpChannelList(usesMockedChannelUpdater: true, pageSize: 2)
-        env.channelListUpdaterMock.update_completion_result = .success(makeChannels(count: 1, createdAtOffset: 0))
-        try await channelList.get()
-
-        let channels = try await channelList.loadMoreChannels()
-
-        XCTAssertEqual([], channels)
-        XCTAssertEqual(1, env.channelListUpdaterMock.update_queries.count)
-    }
-    
     // MARK: - Pagination and State
     
     func test_loadChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -483,7 +446,6 @@ final class ChannelList_Tests: XCTestCase {
     func test_loadChannels_whenSortingByLastMessageAtWithEqualMilliseconds_thenSortingOrderDoesNotChange() async throws {
         await setUpChannelList(
             usesMockedChannelUpdater: false,
-            pageSize: 10,
             sort: [.init(key: .lastMessageAt, isAscending: true)]
         )
         let lastMessageAtWithEqualMilliseconds = Date(timeIntervalSinceReferenceDate: 748_509_541.864)

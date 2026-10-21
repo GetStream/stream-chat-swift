@@ -111,6 +111,51 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertTrue(groupedChannelIds.isSubset(of: syncedChannelIds))
     }
 
+    func test_SyncEventsOperation_whenGroupExceedsTheLimit_syncsSmallerGroupsAndOtherChannelsFirst() throws {
+        let context = SyncContext(lastSyncAt: .init())
+        let largeGroupChannelIds = Set((0..<130).map { _ in ChannelId.unique })
+        let smallGroupChannelIds = Set((0..<20).map { _ in ChannelId.unique })
+        let controllerChannelId = ChannelId.unique
+        context.localChannelIds = largeGroupChannelIds.union(smallGroupChannelIds).union([controllerChannelId])
+        context.groupedChannelIds = ["large": largeGroupChannelIds, "small": smallGroupChannelIds]
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
+        syncRepository.syncMissingEventsResult = .success([])
+
+        operation.startAndWaitForCompletion()
+
+        let syncedChannelIds = Set(syncRepository.syncMissingEvents_syncChannels ?? [])
+        XCTAssertEqual(100, syncedChannelIds.count)
+        XCTAssertTrue(smallGroupChannelIds.isSubset(of: syncedChannelIds))
+        XCTAssertTrue(syncedChannelIds.contains(controllerChannelId))
+    }
+
+    func test_SyncEventsOperation_whenGroupWasResetToFirstPage_doesNotPrioritizeItsChannels() throws {
+        let context = SyncContext(lastSyncAt: .init())
+        let resetGroupChannelIds = Set((0..<50).map { _ in ChannelId.unique })
+        let keptGroupChannelIds = Set((0..<60).map { _ in ChannelId.unique })
+        context.localChannelIds = Set((0..<120).map { _ in ChannelId.unique }).union(resetGroupChannelIds).union(keptGroupChannelIds)
+        context.groupedChannelIds = ["reset": resetGroupChannelIds, "kept": keptGroupChannelIds]
+        context.refreshedChannelGroups = [ChannelGroup(groupKey: "reset", channels: [], unreadChannels: 0)]
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
+        syncRepository.syncMissingEventsResult = .success([])
+
+        operation.startAndWaitForCompletion()
+
+        let syncedChannelIds = Set(syncRepository.syncMissingEvents_syncChannels ?? [])
+        XCTAssertEqual(100, syncedChannelIds.count)
+        XCTAssertTrue(keptGroupChannelIds.isSubset(of: syncedChannelIds))
+    }
+
     // MARK: - WatchChannelOperation
 
     func test_WatchChannelOperation_notAvailableOnRemote() {

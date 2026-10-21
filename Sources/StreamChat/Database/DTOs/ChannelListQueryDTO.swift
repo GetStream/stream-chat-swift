@@ -38,6 +38,11 @@ class ChannelListQueryDTO: NSManagedObject {
         channels.filter { Self.unreadMessageCount(of: $0, currentUserId: currentUserId) > 0 }.count
     }
 
+    func updateGroupNotLoadedUnreadCount(unreadChannels: Int, currentUserId: UserId) {
+        guard groupFilterJSONData != nil else { return }
+        groupNotLoadedUnreadCount = Int64(max(0, unreadChannels - loadedUnreadChannelsCount(currentUserId: currentUserId)))
+    }
+
     static func unreadMessageCount(of channel: ChannelDTO, currentUserId: UserId) -> Int {
         // Reads `reads` because `ChannelDTO.currentUserUnreadMessagesCount` is only updated on save.
         guard !channel.isHidden, !channel.isDisabled, channel.deletedAt == nil else { return 0 }
@@ -172,25 +177,29 @@ extension NSManagedObjectContext {
 
     func unlinkGroupedChannels(in groupKey: String) throws {
         guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
-        let filterPredicate = try groupFilterPredicate(of: queryDTO)
-        let unlinked = queryDTO.channels.filter { !belongsChannelToGroup(groupKey, channel: $0, filterPredicate: filterPredicate) }
+        let filterClosure = try Self.groupedChannelsFilter(for: queryDTO)
+        let unlinked = queryDTO.channels.filter { !filterClosure($0, groupKey) }
         guard !unlinked.isEmpty else { return }
         queryDTO.channels.subtract(unlinked)
         updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
     }
 
-    func belongsChannelToGroup(_ groupKey: String, channel: ChannelDTO) throws -> Bool {
-        let filterPredicate = try channelListQuery(ChannelListQuery(groupKey: groupKey)).flatMap { try groupFilterPredicate(of: $0) }
-        return belongsChannelToGroup(groupKey, channel: channel, filterPredicate: filterPredicate)
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool {
+        guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return false }
+        let filterClosure = try Self.groupedChannelsFilter(for: queryDTO)
+        return filterClosure(channel, groupKey)
     }
-
-    private func belongsChannelToGroup(_ groupKey: String, channel: ChannelDTO, filterPredicate: NSPredicate?) -> Bool {
-        let canShowChannel = !channel.isHidden && !channel.isDisabled && channel.deletedAt == nil
-        let isMemberInGroup = channel.membership != nil && (groupKey == GroupedChannelKey.all || channel.group == groupKey)
-        return canShowChannel && isMemberInGroup && (filterPredicate?.evaluate(with: channel) ?? true)
-    }
-
-    private func groupFilterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
-        try queryDTO.groupFilterJSONData.flatMap { try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: $0)?.predicate }
+    
+    private static func groupedChannelsFilter(for queryDTO: ChannelListQueryDTO) throws -> (ChannelDTO, String) -> Bool {
+        let groupFilterPredicate: NSPredicate? = try {
+            guard let filterData = queryDTO.groupFilterJSONData else { return nil }
+            let filter = try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: filterData)
+            return filter?.predicate
+        }()
+        return { channel, groupKey in
+            let canShowChannel = !channel.isHidden && !channel.isDisabled && channel.deletedAt == nil
+            let isMemberInGroup = channel.membership != nil && (groupKey == GroupedChannelKey.all || channel.group == groupKey)
+            return canShowChannel && isMemberInGroup && (groupFilterPredicate?.evaluate(with: channel) ?? true)
+        }
     }
 }

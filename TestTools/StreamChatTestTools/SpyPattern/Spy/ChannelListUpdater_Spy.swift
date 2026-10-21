@@ -116,7 +116,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         sort: [SortParamRequest]?,
         watch: Bool,
         presence: Bool,
-        keepingLoadedPagesOf keepingGroupKeys: Set<String>,
+        keepingLoadedPages: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
@@ -141,7 +141,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
                 sort: sort,
                 watch: watch,
                 presence: presence,
-                keepingLoadedPagesOf: keepingGroupKeys,
+                keepingLoadedPages: keepingLoadedPages,
                 completion: completion
             )
         }
