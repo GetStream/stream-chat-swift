@@ -15,14 +15,14 @@ import SwiftUI
 /// ```swift
 /// AIAssistantMessageView(text: reply.text, isGenerating: reply.isGenerating, parts: reply.parts)
 /// ```
-public struct AIAssistantMessageView<AttachmentContent: View>: View {
+public struct AIAssistantMessageView<Factory: AIConversationViewFactory>: View {
+    var viewFactory: Factory
     var text: String
     var isGenerating: Bool
     var parts: [AIMessagePart]
     var attachments: [AIMessageAttachment]
     var approver: AIToolApprover?
     var reasoningText: (AIReasoningPart) -> String?
-    var attachmentContent: (AIMessageAttachment) -> AttachmentContent
 
     // Whether the answer is shown as still being written, which is what types it out. A fast
     // reply's text can arrive in the same update that finishes it, and only what arrives
@@ -32,29 +32,29 @@ public struct AIAssistantMessageView<AttachmentContent: View>: View {
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     /// - Parameters:
+    ///   - viewFactory: The views of the attachments.
     ///   - text: The answer, in Markdown.
     ///   - isGenerating: Whether the agent is still writing it.
     ///   - parts: The steps the agent took, in order.
     ///   - attachments: What the agent sent with it, such as images and files.
     ///   - approver: Who answers tool calls' questions on this device, to ask them.
     ///   - reasoningText: The whole of a reasoning step's thinking, when the app has it.
-    ///   - attachmentContent: The view of each attachment.
     public init(
+        viewFactory: Factory = DefaultAIConversationViewFactory.shared,
         text: String,
         isGenerating: Bool = false,
         parts: [AIMessagePart] = [],
         attachments: [AIMessageAttachment] = [],
         approver: AIToolApprover? = nil,
-        reasoningText: @escaping (AIReasoningPart) -> String? = { _ in nil },
-        @ViewBuilder attachmentContent: @escaping (AIMessageAttachment) -> AttachmentContent
+        reasoningText: @escaping (AIReasoningPart) -> String? = { _ in nil }
     ) {
+        self.viewFactory = viewFactory
         self.text = text
         self.isGenerating = isGenerating
         self.parts = parts
         self.attachments = attachments
         self.approver = approver
         self.reasoningText = reasoningText
-        self.attachmentContent = attachmentContent
         _writing = State(initialValue: isGenerating)
     }
 
@@ -73,7 +73,9 @@ public struct AIAssistantMessageView<AttachmentContent: View>: View {
                 StreamingMessageView(content: text, isGenerating: writing)
             }
             ForEach(attachments.indices, id: \.self) { index in
-                attachmentContent(attachments[index])
+                viewFactory.makeAttachmentView(
+                    options: AIMessageAttachmentViewOptions(attachment: attachments[index], role: .assistant)
+                )
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -88,35 +90,6 @@ public struct AIAssistantMessageView<AttachmentContent: View>: View {
             try? await Task.sleep(nanoseconds: 100_000_000)
             guard !Task.isCancelled else { return }
             writing = false
-        }
-    }
-}
-
-public extension AIAssistantMessageView where AttachmentContent == AIMessageAttachmentView {
-    /// - Parameters:
-    ///   - text: The answer, in Markdown.
-    ///   - isGenerating: Whether the agent is still writing it.
-    ///   - parts: The steps the agent took, in order.
-    ///   - attachments: What the agent sent with it, such as images and files.
-    ///   - approver: Who answers tool calls' questions on this device, to ask them.
-    ///   - reasoningText: The whole of a reasoning step's thinking, when the app has it.
-    init(
-        text: String,
-        isGenerating: Bool = false,
-        parts: [AIMessagePart] = [],
-        attachments: [AIMessageAttachment] = [],
-        approver: AIToolApprover? = nil,
-        reasoningText: @escaping (AIReasoningPart) -> String? = { _ in nil }
-    ) {
-        self.init(
-            text: text,
-            isGenerating: isGenerating,
-            parts: parts,
-            attachments: attachments,
-            approver: approver,
-            reasoningText: reasoningText
-        ) { attachment in
-            AIMessageAttachmentView(attachment: attachment)
         }
     }
 }

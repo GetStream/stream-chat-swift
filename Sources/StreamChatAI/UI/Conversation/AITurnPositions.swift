@@ -40,10 +40,12 @@ final class AITurnPositions {
         self.above = above
     }
 
-    func update(_ frames: [AnyHashable: CGRect]) {
+    // Notes the turns in a list `height` tall, apart from those out of view, which the list may
+    // still have laid out.
+    func update(_ frames: [AnyHashable: CGRect], height: CGFloat) {
         guard !isHolding else { return }
         held = frames
-            .compactMap { $0.value.maxY > 0 ? Held(id: $0.key, frame: $0.value) : nil }
+            .compactMap { $0.value.maxY > 0 && $0.value.minY < height ? Held(id: $0.key, frame: $0.value) : nil }
             .sorted { $0.frame.minY < $1.frame.minY }
     }
 

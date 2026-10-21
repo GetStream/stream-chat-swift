@@ -329,6 +329,10 @@ Security & credentials
 - Example code must use obvious placeholders (e.g., `YOUR_STREAM_KEY`).
 - If you add scripts, ensure they fail closed on missing env vars.
 
+Public API design
+
+- Model a set of values that can grow, such as kinds, roles or statuses, as a `struct` with a `rawValue` and static constants, as `AIMessagePart.Kind` and `AIMessageRole` do, rather than an `enum`: adding a case to a public enum breaks every app that switches over it. Use an `enum` only for a set that cannot grow, such as directions.
+
 Compatibility & distribution
 
 - Maintain compatibility with supported iOS versions listed in `Package.swift`.

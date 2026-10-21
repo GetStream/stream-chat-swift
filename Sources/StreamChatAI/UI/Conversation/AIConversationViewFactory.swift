@@ -61,22 +61,19 @@ public protocol AIConversationViewFactory {
 
 public extension AIConversationViewFactory {
     func makeUserMessageView(options: AIUserMessageViewOptions) -> some View {
-        AIUserMessageView(text: options.text, attachments: options.attachments) { attachment in
-            makeAttachmentView(options: AIMessageAttachmentViewOptions(attachment: attachment, role: .user))
-        }
+        AIUserMessageView(viewFactory: self, text: options.text, attachments: options.attachments)
     }
 
     func makeAssistantMessageView(options: AIAssistantMessageViewOptions) -> some View {
         AIAssistantMessageView(
+            viewFactory: self,
             text: options.text,
             isGenerating: options.isGenerating,
             parts: options.parts,
             attachments: options.attachments,
             approver: options.approver,
             reasoningText: options.reasoningText
-        ) { attachment in
-            makeAttachmentView(options: AIMessageAttachmentViewOptions(attachment: attachment, role: .assistant))
-        }
+        )
     }
 
     func makeReplyActionsView(options: AIReplyActionsViewOptions) -> some View {

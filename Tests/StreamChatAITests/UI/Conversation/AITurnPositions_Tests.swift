@@ -15,8 +15,9 @@ final class AITurnPositions_Tests: XCTestCase {
         positions.update([
             "q0": CGRect(x: 0, y: -500, width: 300, height: 300),
             "q1": CGRect(x: 0, y: -100, width: 300, height: 400),
-            "q2": CGRect(x: 0, y: 300, width: 300, height: 400)
-        ])
+            "q2": CGRect(x: 0, y: 300, width: 300, height: 400),
+            "q3": CGRect(x: 0, y: 900, width: 300, height: 400)
+        ], height: 800)
         positions.expect(above: "older")
     }
 
@@ -31,8 +32,12 @@ final class AITurnPositions_Tests: XCTestCase {
         XCTAssertEqual(held?.frame.minY, 300)
     }
 
+    func test_heldTurn_isNeverATurnOutOfView() {
+        XCTAssertNil(positions.heldTurn(among: ["older", "q3"]), "a list can lay out turns below what is visible")
+    }
+
     func test_update_whileWaitingForTheTurnToGoBack_keepsWhereItWas() {
-        positions.update(["q2": CGRect(x: 0, y: 900, width: 300, height: 400)])
+        positions.update(["q2": CGRect(x: 0, y: 900, width: 300, height: 400)], height: 800)
 
         XCTAssertEqual(positions.heldTurn(among: ["q2"])?.frame.minY, 300)
     }
