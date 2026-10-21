@@ -336,11 +336,11 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func resetGroupedChannelsToFirstPage(in groupKey: String, cids: Set<ChannelId>, next: String?, unreadChannels: Int) async throws {
+    func resetGroupedChannelsToFirstPage(in groupKey: String, unlinking cids: Set<ChannelId>, next: String?, unreadChannels: Int) async throws {
         try await database.write { session in
             guard let queryDTO = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
-            let firstPageCids = Set(cids.map(\.rawValue))
-            queryDTO.channels = queryDTO.channels.filter { firstPageCids.contains($0.cid) }
+            let unlinkedCids = Set(cids.map(\.rawValue))
+            queryDTO.channels = queryDTO.channels.filter { !unlinkedCids.contains($0.cid) }
             queryDTO.next = next
             if let currentUserId = session.currentUser?.user.id {
                 queryDTO.updateGroupNotLoadedUnreadCount(unreadChannels: unreadChannels, currentUserId: currentUserId)

@@ -1008,17 +1008,19 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let userId = UserId.unique
         let firstPageChannel = channelPayload(unreadMessages: 0, for: userId)
         let laterPageChannel = channelPayload(unreadMessages: 2, for: userId)
+        let liveLinkedChannel = channelPayload(unreadMessages: 0, for: userId)
         try await database.write { session in
             try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
             let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "expired"))
             queryDTO.next = "third-page"
             queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
-            queryDTO.channels.insert(try session.saveChannel(payload: firstPageChannel))
-            queryDTO.channels.insert(try session.saveChannel(payload: laterPageChannel))
+            for channelPayload in [firstPageChannel, laterPageChannel, liveLinkedChannel] {
+                queryDTO.channels.insert(try session.saveChannel(payload: channelPayload))
+            }
         }
         try await listUpdater.resetGroupedChannelsToFirstPage(
             in: "expired",
-            cids: [firstPageChannel.channel.cid],
+            unlinking: [laterPageChannel.channel.cid],
             next: "second-page",
             unreadChannels: 3
         )
@@ -1027,7 +1029,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             let queryDTO = try XCTUnwrap(session.channelListQuery(ChannelListQuery(groupKey: "expired")))
             return (Set(queryDTO.channels.map(\.cid)), queryDTO.next, queryDTO.groupNotLoadedUnreadCount)
         }
-        XCTAssertEqual(Set([firstPageChannel.channel.cid.rawValue]), linkedCids)
+        XCTAssertEqual(Set([firstPageChannel.channel.cid.rawValue, liveLinkedChannel.channel.cid.rawValue]), linkedCids)
         XCTAssertEqual("second-page", next)
         XCTAssertEqual(3, groupNotLoadedUnreadCount)
     }

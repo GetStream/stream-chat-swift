@@ -25,11 +25,10 @@ private let syncOperationsMaximumRetries = 2
 final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
     init(
         syncRepository: SyncRepository,
-        channelListUpdater: ChannelListUpdater,
         context: SyncContext
     ) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository, weak channelListUpdater] _, done in
-            guard let syncRepository, let channelListUpdater else {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
+            guard let syncRepository else {
                 done(.continue)
                 return
             }
@@ -60,7 +59,7 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                 // Main actor requirement
                 let chats = syncRepository.activeChats.allObjects
                 let channelLists = syncRepository.activeChannelLists.allObjects
-                Task { @MainActor in
+                DispatchQueue.main.async {
                     context.localChannelIds.formUnion(chats.compactMap { try? $0.cid })
                     context.localChannelIds.formUnion(
                         channelLists
@@ -71,10 +70,6 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                     for channelList in channelLists {
                         guard let groupKey = channelList.groupKey else { continue }
                         context.groupedChannelIds[groupKey] = Set(channelList.state.channels.map(\.cid))
-                        // `/sync` watches the grouped lists' channels again when any of them was queried with `watch`.
-                        if !context.watchesSyncEndpointChannels, let state = try? await channelListUpdater.paginationState(for: groupKey) {
-                            context.watchesSyncEndpointChannels = state.watch ?? false
-                        }
                     }
                     completion()
                 }
@@ -148,6 +143,9 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                     }
                     // Each group keeps its own filter. The flags and the sort are shared by the whole
                     // request: it watches when any group watches, and the rest come from the first group that has been queried.
+                    let watch = groupKeys.contains { states[$0]?.watch == true }
+                    // `/sync` watches the grouped lists' later pages again when any of them was queried with `watch`.
+                    context.watchesSyncEndpointChannels = watch
                     let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in
                         (groupKey, GroupedChannelsGroupRequest(filterConditions: states[groupKey]?.filter))
                     })
@@ -155,7 +153,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                         groups: groups,
                         limit: nil,
                         sort: groupKeys.compactMap { states[$0]?.sort }.first,
-                        watch: groupKeys.contains { states[$0]?.watch == true },
+                        watch: watch,
                         presence: groupKeys.compactMap { states[$0]?.presence }.first ?? false,
                         keepingLoadedPages: true
                     )
@@ -194,10 +192,7 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
                 return
             }
 
-            // Grouped lists keep their loaded pages only when `/sync` covers all their channels, so they go first.
-            let groupedChannelIds = context.groupedChannelIds.values.reduce(into: Set<ChannelId>()) { $0.formUnion($1) }
-            let orderedChannelIds = Array(channelIds.intersection(groupedChannelIds)) + channelIds.subtracting(groupedChannelIds)
-            let channelIdsToSync = Array(orderedChannelIds.prefix(SyncRepository.Constants.maximumChannelIdsPerRequest))
+            let channelIdsToSync = Self.channelIdsToSync(from: channelIds, context: context)
             log.info(
                 "Calling `/sync` for \(channelIdsToSync.count) channel(s) since \(context.lastSyncAt)",
                 subsystems: .offlineSupport
@@ -220,10 +215,35 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
             }
         }
     }
+
+    // A grouped list keeps its loaded pages only when `/sync` covers all of them, so whole groups go first,
+    // smallest first. Groups the first-page refresh already reset have no later pages to keep.
+    private static func channelIdsToSync(from remainingChannelIds: Set<ChannelId>, context: SyncContext) -> [ChannelId] {
+        let limit = SyncRepository.Constants.maximumChannelIdsPerRequest
+        let resetGroupKeys = Set(context.refreshedChannelGroups.filter { $0.next == nil }.map(\.groupKey))
+        let groups = context.groupedChannelIds
+            .filter { !resetGroupKeys.contains($0.key) }
+            .map { (key: $0.key, channelIds: $0.value.intersection(remainingChannelIds)) }
+            .filter { !$0.channelIds.isEmpty }
+            .sorted { ($0.channelIds.count, $0.key) < ($1.channelIds.count, $1.key) }
+        var channelIds: [ChannelId] = []
+        var addedChannelIds = Set<ChannelId>()
+        for group in groups {
+            let groupChannelIds = group.channelIds.subtracting(addedChannelIds)
+            guard channelIds.count + groupChannelIds.count <= limit else { continue }
+            channelIds.append(contentsOf: groupChannelIds)
+            addedChannelIds.formUnion(groupChannelIds)
+        }
+        let groupedChannelIds = groups.reduce(into: Set<ChannelId>()) { $0.formUnion($1.channelIds) }
+        let restChannelIds = remainingChannelIds.subtracting(addedChannelIds)
+        channelIds.append(contentsOf: restChannelIds.subtracting(groupedChannelIds))
+        channelIds.append(contentsOf: restChannelIds.intersection(groupedChannelIds))
+        return Array(channelIds.prefix(limit))
+    }
 }
 
-/// Validates the grouped channel lists `SyncGroupedChannelsOperation` refreshed. A list whose loaded channels `/sync`
-/// covered keeps its pages and unlinks channels that no longer match the group. Any other list is reset to its first page.
+// Validates the grouped channel lists `SyncGroupedChannelsOperation` refreshed. A list whose loaded channels `/sync`
+// covered keeps its pages and unlinks channels that no longer match the group. Any other list is reset to its first page.
 final class GroupedChannelsSyncValidationOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
@@ -241,9 +261,11 @@ final class GroupedChannelsSyncValidationOperation: AsyncOperation, @unchecked S
                             try await channelListUpdater.unlinkGroupedChannels(in: groupKey, unreadChannels: channelGroup.unreadChannels)
                         } else {
                             log.debug("Resetting grouped channel list \(groupKey) to its first page", subsystems: .offlineSupport)
+                            // Channels linked from live events while `/sync` ran stay linked.
+                            let loadedChannelIds = context.groupedChannelIds[groupKey] ?? []
                             try await channelListUpdater.resetGroupedChannelsToFirstPage(
                                 in: groupKey,
-                                cids: Set(channelGroup.channels.map(\.cid)),
+                                unlinking: loadedChannelIds.subtracting(channelGroup.channels.map(\.cid)),
                                 next: channelGroup.next,
                                 unreadChannels: channelGroup.unreadChannels
                             )

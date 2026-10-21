@@ -387,10 +387,8 @@ protocol ChannelDatabaseSession {
 
     func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO]
 
-    /// Unlinks channels in group which don't match with the group filter.
     func unlinkGroupedChannels(in groupKey: String) throws
 
-    /// True, if the channel should be linked to the group.
     func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool
     
     @discardableResult

@@ -214,7 +214,7 @@ class SyncRepository: @unchecked Sendable {
             log.info("Starting to refresh offline state", subsystems: .offlineSupport)
             
             /// 1. Collect all the **active** channel ids
-            operations.append(ActiveChannelIdsOperation(syncRepository: self, channelListUpdater: channelListUpdater, context: context))
+            operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
             
             // 2. Refresh non-grouped channel lists individually
             let allChannelLists = activeChannelLists.allObjects
@@ -258,7 +258,7 @@ class SyncRepository: @unchecked Sendable {
             operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
                 WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
             })
-
+            
             operations.append(BlockOperation(block: {
                 let duration = CFAbsoluteTimeGetCurrent() - start
                 log.info("Finished refreshing offline state (\(context.synchedChannelIds.count) channels in \(String(format: "%.1f", duration)) seconds)", subsystems: .offlineSupport)
