@@ -12,6 +12,7 @@ final class SyncContext: @unchecked Sendable {
     @Atomic var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
     @Atomic var unwantedChannelIds: Set<ChannelId> = Set()
     @Atomic var groupedChannelIds: [String: Set<ChannelId>] = [:]
+    @Atomic var refreshedChannelGroups: [ChannelGroup] = []
     @Atomic var watchesSyncEndpointChannels = false
 
     init(lastSyncAt: Date) {
@@ -128,8 +129,8 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
-/// Refreshes all grouped channel lists with a single batched `queryGroupedChannels` call, recording the
-/// returned channel ids in `context.synchedChannelIds`. A list keeps its later pages only when `/sync` covered all its channels.
+/// Refreshes the first page of all grouped channel lists with a single batched `queryGroupedChannels` call, keeping
+/// their loaded pages and recording the returned channel ids in `context.synchedChannelIds`. `/sync` then covers only the later pages.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
         let groupKeys = Set(groupedChannelLists.compactMap(\.groupKey)).sorted()
@@ -150,17 +151,16 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                     let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in
                         (groupKey, GroupedChannelsGroupRequest(filterConditions: states[groupKey]?.filter))
                     })
-                    // If /sync synced channels in the group, we can keep loaded pages (constraint is that only 1 API call can be made to the grouped channels endpoint)
-                    let syncedGroups = Set(groupKeys.filter { context.groupedChannelIds[$0]?.isSubset(of: context.synchedChannelIds) ?? false })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
                         limit: nil,
                         sort: groupKeys.compactMap { states[$0]?.sort }.first,
                         watch: groupKeys.contains { states[$0]?.watch == true },
                         presence: groupKeys.compactMap { states[$0]?.presence }.first ?? false,
-                        keepingLoadedPagesOf: syncedGroups
+                        keepingLoadedPages: true
                     )
                     let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
+                    context.refreshedChannelGroups = channelGroups
                     context.synchedChannelIds.formUnion(returnedChannelIds)
                     log.debug(
                         "Synced \(returnedChannelIds.count) grouped channels across \(channelGroups.count) group(s)",
@@ -216,6 +216,42 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
                     done(.continue)
                 case let .failure(error):
                     done(error.shouldRetry ? .retry : .continue)
+                }
+            }
+        }
+    }
+}
+
+/// Keeps the loaded pages of the grouped channel lists `/sync` covered and resets the rest to the first page
+/// `SyncGroupedChannelsOperation` refreshed.
+final class ResetUnsyncedGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
+    init(channelListUpdater: ChannelListUpdater, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
+            let channelGroups = context.refreshedChannelGroups
+            guard let channelListUpdater, !channelGroups.isEmpty else {
+                done(.continue)
+                return
+            }
+            Task {
+                do {
+                    for channelGroup in channelGroups {
+                        let groupKey = channelGroup.groupKey
+                        if context.groupedChannelIds[groupKey]?.isSubset(of: context.synchedChannelIds) ?? false {
+                            // Kept pages can hold channels that left the group while offline.
+                            try await channelListUpdater.unlinkGroupedChannels(in: groupKey, unreadChannels: channelGroup.unreadChannels)
+                        } else {
+                            log.debug("Resetting grouped channel list \(groupKey) to its first page", subsystems: .offlineSupport)
+                            try await channelListUpdater.resetGroupedChannelsToFirstPage(
+                                in: groupKey,
+                                cids: Set(channelGroup.channels.map(\.cid)),
+                                unreadChannels: channelGroup.unreadChannels
+                            )
+                        }
+                    }
+                    done(.continue)
+                } catch {
+                    log.error("Failed to reset grouped channels during sync: \(error)", subsystems: .offlineSupport)
+                    done(.retry)
                 }
             }
         }

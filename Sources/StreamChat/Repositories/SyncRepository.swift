@@ -189,6 +189,7 @@ class SyncRepository: @unchecked Sendable {
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
     ///      * oversized payloads skip event replay and refresh active watched channels via queryChannels
+    ///      * later pages of grouped lists, a grouped list `/sync` didn't cover is reset to its first page
     /// 4. Re-watch channels what we were watching before disconnect
     private func syncLocalState(lastSyncAt: Date, completion: @escaping @Sendable () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
@@ -225,10 +226,7 @@ class SyncRepository: @unchecked Sendable {
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
 
-            // 3. /sync (for channels what not part of refreshed channel lists, grouped lists' channels first)
-            operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
-
-            // 4. Refresh grouped lists via a single shared request, keeping the later pages `/sync` covered
+            // 3. Refresh the first page of grouped lists via a single shared request, keeping their loaded pages
             let groupedChannelLists = allChannelLists.filter { $0.groupKey != nil }
             if !groupedChannelLists.isEmpty {
                 operations.append(SyncGroupedChannelsOperation(
@@ -238,7 +236,15 @@ class SyncRepository: @unchecked Sendable {
                 ))
             }
 
-            // 5. Re-watch channels what we were watching before disconnect
+            // 4. /sync (for channels what not part of refreshed channel lists, grouped lists' later pages first)
+            operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
+
+            // 5. Reset grouped lists `/sync` didn't cover to their first page
+            if !groupedChannelLists.isEmpty {
+                operations.append(ResetUnsyncedGroupedChannelsOperation(channelListUpdater: channelListUpdater, context: context))
+            }
+
+            // 6. Re-watch channels what we were watching before disconnect
             // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
             operations.append(contentsOf: activeChannelControllers.allObjects.map {
                 WatchChannelOperation(controller: $0, context: context, recovery: false)

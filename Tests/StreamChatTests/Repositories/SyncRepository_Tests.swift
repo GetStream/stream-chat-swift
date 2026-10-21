@@ -421,11 +421,43 @@ class SyncRepository_Tests: XCTestCase {
             apiClient.request_allRecordedCalls.map(\.endpoint).last { (try? $0.bodyAsDictionary())?["channel_cids"] != nil }
         )
         XCTAssertEqual(
-            Set([a1, a2, a3, a4, b1, b2, c1, c2].map(\.channel.cid.rawValue)),
+            Set([a3, a4].map(\.channel.cid.rawValue)),
             Set(try syncEndpoint.bodyAsDictionary()["channel_cids"] as? [String] ?? [])
         )
         XCTAssertEqual(true, syncEndpoint.requiresConnectionId)
         XCTAssertEqual(syncEndpointQueryItems(watch: true), syncEndpoint.queryItems)
+    }
+
+    func test_syncLocalState_groupedChannelLists_syncsChannelPushedOffTheFirstPage() async throws {
+        let chatClient = try makeChatClientForGroupedSync()
+        let apiClient = chatClient.mockAPIClient
+        let a0 = groupedChannelPayload(name: "A0", group: "A", order: 0)
+        let a1 = groupedChannelPayload(name: "A1", group: "A", order: 1)
+        let a2 = groupedChannelPayload(name: "A2", group: "A", order: 2)
+        let a3 = groupedChannelPayload(name: "A3", group: "A", order: 3)
+        let a4 = groupedChannelPayload(name: "A4", group: "A", order: 4)
+
+        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: ["A": .init(channels: [a1, a2], next: "A-page-2")])))
+        try await chatClient.queryGroupedChannels(groups: ["A"], limit: 2)
+        let listA = chatClient.makeChannelList(with: "A")
+        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: ["A": .init(channels: [a3, a4])])))
+        try await listA.loadMoreChannels()
+
+        // A0 became active while offline and pushed A2 off the first page.
+        apiClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: ["A": .init(channels: [a0, a1], next: "A-page-2")])))
+        apiClient.test_mockResponseResult(.success(SyncResponse(events: [])))
+        await withCheckedContinuation { continuation in
+            chatClient.syncRepository.syncLocalState { continuation.resume() }
+        }
+
+        XCTAssertEqual(["A0", "A1", "A2", "A3", "A4"], await listA.state.channels.map(\.name))
+        let syncEndpoint = try XCTUnwrap(
+            apiClient.request_allRecordedCalls.map(\.endpoint).last { (try? $0.bodyAsDictionary())?["channel_cids"] != nil }
+        )
+        XCTAssertEqual(
+            Set([a2, a3, a4].map(\.channel.cid.rawValue)),
+            Set(try syncEndpoint.bodyAsDictionary()["channel_cids"] as? [String] ?? [])
+        )
     }
 
     func test_syncLocalState_groupedChannelLists_unlinksKeptChannelThatLeftTheGroup() async throws {

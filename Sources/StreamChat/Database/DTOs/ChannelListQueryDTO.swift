@@ -38,6 +38,11 @@ class ChannelListQueryDTO: NSManagedObject {
         channels.filter { Self.unreadMessageCount(of: $0, currentUserId: currentUserId) > 0 }.count
     }
 
+    func updateGroupNotLoadedUnreadCount(unreadChannels: Int, currentUserId: UserId) {
+        guard groupFilterJSONData != nil else { return }
+        groupNotLoadedUnreadCount = Int64(max(0, unreadChannels - loadedUnreadChannelsCount(currentUserId: currentUserId)))
+    }
+
     static func unreadMessageCount(of channel: ChannelDTO, currentUserId: UserId) -> Int {
         // Reads `reads` because `ChannelDTO.currentUserUnreadMessagesCount` is only updated on save.
         guard !channel.isHidden, !channel.isDisabled, channel.deletedAt == nil else { return 0 }
