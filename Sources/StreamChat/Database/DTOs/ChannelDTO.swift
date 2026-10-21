@@ -739,8 +739,8 @@ extension ChannelDTO {
     func savePartialChannel(payload: ChannelPartialUpdateResponse) {
         saveChannelCustomCommonFields(payload: payload)
         updatedAt = payload.updatedAt.bridgeDate
-        if let payloadLastMessageAt = payload.lastMessageAt, payloadLastMessageAt > lastMessageAt?.bridgeDate ?? .distantPast {
-            lastMessageAt = payloadLastMessageAt.bridgeDate
+        if let payloadLastMessageAt = payload.lastMessageAt {
+            lastMessageAt = max(lastMessageAt?.bridgeDate ?? payloadLastMessageAt, payloadLastMessageAt).bridgeDate
         }
         isDisabled = payload.disabled
         isFrozen = payload.frozen
