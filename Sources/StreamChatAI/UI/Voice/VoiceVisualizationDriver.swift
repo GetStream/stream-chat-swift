@@ -20,6 +20,19 @@ struct VoiceVisualizationDriver {
         var reduceMotion: Bool
     }
 
+    // The share of the way `micLevel` moves each frame at 60 Hz, toward a louder or a quieter
+    // level.
+    struct LevelResponse: Equatable {
+        var rise: Float
+        var fall: Float
+
+        // Follows the level closely, both ways.
+        static let steady = LevelResponse(rise: 0.35, fall: 0.35)
+        // Follows the level like a VU meter: about 0.1 s up to a louder reading, about 0.3 s down
+        // from it, so a meter's per-syllable jumps swell with the phrase instead.
+        static let smooth = LevelResponse(rise: 0.16, fall: 0.05)
+    }
+
     var input: Input {
         didSet {
             if input.reduceMotion { isHovering = false }
@@ -47,9 +60,12 @@ struct VoiceVisualizationDriver {
     private var voiceAmount: Float = 0
     private var bounce = VoiceVisualizationBounce()
 
+    private let levelResponse: LevelResponse
+
     // Starts settled on the input, so the first frame shows it rather than easing into it.
-    init(input: Input) {
+    init(input: Input, levelResponse: LevelResponse = .steady) {
         self.input = input
+        self.levelResponse = levelResponse
         let motion = input.state.motion
         let scales = Self.scales(for: input.expressivity)
         speed = motion.speed * scales.speed
@@ -106,10 +122,9 @@ struct VoiceVisualizationDriver {
         let gentle = Self.ease(0.12, over: dt)
         hoverAmount += ((isHovering ? 1 : 0) - hoverAmount) * gentle
         voiceAmount += ((input.audioLevel == nil ? 0 : 1) - voiceAmount) * Self.ease(0.1, over: dt)
-        // A meter's level jumps with every syllable, so it is followed like a VU meter: quickly
-        // up to a louder reading, slowly down from it, and the motion swells with the phrase.
         let level = input.audioLevel ?? 0
-        micLevel += (level - micLevel) * Self.ease(level > micLevel ? 0.16 : 0.05, over: dt)
+        let response = level > micLevel ? levelResponse.rise : levelResponse.fall
+        micLevel += (level - micLevel) * Self.ease(response, over: dt)
 
         let targets = Self.slots(for: input.colors)
         for index in colors.indices {
