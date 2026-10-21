@@ -55,7 +55,7 @@ struct AIConversationScrollView: View {
                 .coordinateSpace(name: AIConversationEnd.space)
                 .modifier(OpensAtEnd())
                 .onPreferenceChange(AITurnFrames.self) { frames in
-                    positions.update(frames)
+                    positions.update(frames, height: height)
                 }
                 .onPreferenceChange(AIConversationEndOffset.self) { end in
                     let inView = end <= height + slack
