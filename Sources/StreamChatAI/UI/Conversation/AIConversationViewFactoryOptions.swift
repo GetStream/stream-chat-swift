@@ -6,12 +6,16 @@ import Foundation
 
 /// What ``AIConversationViewFactory/makeUserMessageView(options:)`` shows.
 public final class AIUserMessageViewOptions {
+    /// The message, which is one of the app's own: cast it to read what else it holds. Nil
+    /// while the message is on its way.
+    public let message: (any AIMessage)?
     /// What the person wrote.
     public let text: String
     /// What they sent with it, such as images and files.
     public let attachments: [AIMessageAttachment]
 
-    public init(text: String, attachments: [AIMessageAttachment]) {
+    public init(message: (any AIMessage)?, text: String, attachments: [AIMessageAttachment]) {
+        self.message = message
         self.text = text
         self.attachments = attachments
     }
@@ -19,6 +23,8 @@ public final class AIUserMessageViewOptions {
 
 /// What ``AIConversationViewFactory/makeAssistantMessageView(options:)`` shows.
 public final class AIAssistantMessageViewOptions {
+    /// The reply, which is one of the app's own messages: cast it to read what else it holds.
+    public let message: any AIMessage
     /// The answer, in Markdown.
     public let text: String
     /// Whether the agent is still writing it.
@@ -33,6 +39,7 @@ public final class AIAssistantMessageViewOptions {
     public let approver: AIToolApprover?
 
     public init(
+        message: any AIMessage,
         text: String,
         isGenerating: Bool,
         parts: [AIMessagePart],
@@ -40,6 +47,7 @@ public final class AIAssistantMessageViewOptions {
         reasoningText: @escaping (AIReasoningPart) -> String?,
         approver: AIToolApprover?
     ) {
+        self.message = message
         self.text = text
         self.isGenerating = isGenerating
         self.parts = parts

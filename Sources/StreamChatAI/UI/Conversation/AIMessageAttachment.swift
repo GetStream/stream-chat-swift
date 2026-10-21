@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import ImageIO
 import StreamCore
 import UIKit
 import UniformTypeIdentifiers
@@ -40,7 +41,8 @@ public final class AIMessageAttachment: Hashable, Sendable {
     /// Where it is: on the web, or in a file on this device.
     public let url: URL?
     /// The image itself when the app holds it, such as a photo the person just took. It shows
-    /// rather than the one at `url`.
+    /// rather than the one at `url`. Pass a small one, the size it shows at: it stays in memory
+    /// while the conversation shows it.
     public let image: UIImage?
     /// Its name, such as the file's.
     public let name: String?
@@ -70,11 +72,12 @@ public final class AIMessageAttachment: Hashable, Sendable {
         self.extraData = extraData
     }
 
-    /// An attachment of the file at `url`, of the kind its type says: an image for an image
-    /// file, and a file otherwise. Such as for the files the person picked in the composer.
+    /// An attachment of the file at `url`, of the kind its type says: an image for an image file
+    /// the system can show, and a file otherwise. Such as for the files the person picked in the
+    /// composer.
     public convenience init(url: URL, name: String? = nil, size: Int64? = nil, mimeType: String? = nil) {
         let type = Self.contentType(mimeType: mimeType, pathExtension: Self.pathExtension(name: name, url: url))
-        let isImage = type.map { $0.conforms(to: .image) && !$0.conforms(to: .svg) } ?? false
+        let isImage = type.map { Self.decodableImageTypes.contains($0.identifier) } ?? false
         self.init(kind: isImage ? .image : .file, url: url, name: name, size: size, mimeType: mimeType)
     }
 
@@ -83,7 +86,8 @@ public final class AIMessageAttachment: Hashable, Sendable {
         AIMessageAttachment(kind: .image, url: url, name: name)
     }
 
-    /// An image the app holds, such as a photo the person just took.
+    /// An image the app holds, such as a photo the person just took. Pass a small one, the size
+    /// it shows at: it stays in memory while the conversation shows it.
     public static func image(_ image: UIImage, name: String? = nil) -> AIMessageAttachment {
         AIMessageAttachment(kind: .image, image: image, name: name)
     }
@@ -130,6 +134,9 @@ extension AIMessageAttachment {
     private var pathExtension: String? {
         Self.pathExtension(name: name, url: url)
     }
+
+    // The image types the system decodes, which SVG, for one, is not.
+    private static let decodableImageTypes = Set(CGImageSourceCopyTypeIdentifiers() as? [String] ?? [])
 
     private static func contentType(mimeType: String?, pathExtension: String?) -> UTType? {
         if let mimeType, let type = UTType(mimeType: mimeType) {

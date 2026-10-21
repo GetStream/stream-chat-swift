@@ -119,7 +119,7 @@ final class AIPendingMessageTracker {
     // its way, it is the copy of the one on its way, or its reply is being written but shows
     // nothing. Call it after `entries`, which matches the copies.
     func isAwaitingReply<Message: AIMessage>(in messages: [Message], pending: AIPendingMessage?) -> Bool {
-        if let last = messages.last, last.role == .assistant, last.isGenerating, last.showsNothing {
+        if let last = messages.last, last.role != .user, last.isGenerating, last.showsNothing {
             return true
         }
         guard let pending else { return false }
