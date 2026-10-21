@@ -36,7 +36,7 @@ public struct AIAssistantMessageView<AttachmentContent: View>: View {
     ///   - isGenerating: Whether the agent is still writing it.
     ///   - parts: The steps the agent took, in order.
     ///   - attachments: What the agent sent with it, such as images and files.
-    ///   - approver: Who answers tool calls' questions on this device, to ask them.
+    ///   - approver: Who answers tool calls' questions and sign-ins on this device, to ask them.
     ///   - reasoningText: The whole of a reasoning step's thinking, when the app has it.
     ///   - attachmentContent: The view of each attachment.
     public init(
@@ -97,7 +97,7 @@ public extension AIAssistantMessageView where AttachmentContent == AIMessageAtta
     ///   - isGenerating: Whether the agent is still writing it.
     ///   - parts: The steps the agent took, in order.
     ///   - attachments: What the agent sent with it, such as images and files.
-    ///   - approver: Who answers tool calls' questions on this device, to ask them.
+    ///   - approver: Who answers tool calls' questions and sign-ins on this device, to ask them.
     ///   - reasoningText: The whole of a reasoning step's thinking, when the app has it.
     init(
         text: String,

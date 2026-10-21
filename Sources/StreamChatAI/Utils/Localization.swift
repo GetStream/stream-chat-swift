@@ -116,6 +116,10 @@ enum L10n {
             localized("tool_call.status.awaiting_approval", comment: "A tool call waiting for a person to allow or decline it.")
         }
         
+        static var awaitingAuthorization: String {
+            localized("tool_call.status.awaiting_authorization", comment: "A tool call waiting for a person to sign in at a provider it needs.")
+        }
+        
         static var declined: String {
             localized("tool_call.status.declined", comment: "A tool call the person declined, so it never ran.")
         }
@@ -144,6 +148,24 @@ enum L10n {
         
         static var notSent: String {
             localized("tool_approval.error.not_sent", comment: "Shown under a tool call's question when the person's answer could not be sent.")
+        }
+    }
+    
+    enum ToolAuthorization {
+        static var connect: String {
+            localized("tool_authorization.button.connect", comment: "Button that opens the sign-in at a provider a tool call of the AI agent needs.")
+        }
+        
+        static var connecting: String {
+            localized("tool_authorization.button.connecting", comment: "The connect button while the sign-in is open or finishing.")
+        }
+        
+        static var decline: String {
+            localized("tool_authorization.button.decline", comment: "Button that declines to sign in, so the tool call never runs.")
+        }
+        
+        static var failed: String {
+            localized("tool_authorization.error.failed", comment: "Shown under a tool call's sign-in when it couldn't be opened, or the answer couldn't be sent.")
         }
     }
     

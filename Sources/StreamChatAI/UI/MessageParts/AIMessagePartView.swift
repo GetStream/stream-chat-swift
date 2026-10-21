@@ -6,8 +6,8 @@ import StreamCore
 import SwiftUI
 
 /// One step of a reply: a round of reasoning with its preview, a tool call (with its
-/// question, when it waits for the approver), or a neutral placeholder for a step this SDK
-/// doesn't know.
+/// question or its sign-in, when it waits for the approver), or a neutral placeholder for a
+/// step this SDK doesn't know.
 public struct AIMessagePartView: View {
     var part: AIMessagePart
     var approver: AIToolApprover?
@@ -31,6 +31,9 @@ public struct AIMessagePartView: View {
                 AIToolCallView(part: call, font: font)
                 if let approver {
                     AIToolApprovalView(call: call, approver: approver, font: font)
+                    if #available(iOS 16.4, macOS 13.3, *) {
+                        AIToolAuthorizationView(call: call, approver: approver, font: font)
+                    }
                 }
             }
         } else {

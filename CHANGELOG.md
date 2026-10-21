@@ -16,10 +16,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
 - Add `AIConversationView`, a conversation view for AI assistants that brings each question to the top and writes its reply out below it, with ready-made message views, reply actions, and image and file attachments [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
+- Add sign-ins to tool calls: a call waiting for the person's account at a provider is `awaiting_authorization` with an `AIToolAuthorization`, and `AIToolAuthorizationView` asks them to connect it in a web authentication session, given an `AIToolAuthorizer` on the `AIToolApprover`
 ### 🔄 Changed
 - StreamChatAI no longer brings Splash and swift-markdown-ui as package dependencies [#4346](https://github.com/GetStream/stream-chat-swift/pull/4346)
 ### 🎭 New Localizations
 - Add `conversation.*`, `message_actions.*` and `attachment.*` keys [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
+- Add `tool_call.status.awaiting_authorization` and `tool_authorization.*` keys
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_

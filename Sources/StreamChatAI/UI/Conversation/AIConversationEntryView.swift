@@ -98,7 +98,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
 
         init(entry: AIConversationEntry<Message>, approver: AIToolApprover?) {
             attachments = entry.sentAttachments
-            self.approver = approver.map { [$0.userID, $0.clientID] } ?? []
+            self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
             isLatestReply = entry.isLatestReply
             switch entry.content {
             case .message(let message):

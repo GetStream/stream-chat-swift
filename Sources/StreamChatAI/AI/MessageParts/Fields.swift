@@ -24,6 +24,16 @@ struct Fields {
         (object[key] as? [String: Any]).map(Fields.init)
     }
 
+    /// An RFC 3339 time, with or without fractional seconds.
+    func date(_ key: String) -> Date? {
+        guard let value = string(key) else { return nil }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: value) { return date }
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter.date(from: value)
+    }
+
     func json(_ key: String) -> Data? {
         guard let value = object[key], !(value is NSNull), JSONSerialization.isValidJSONObject(value) else { return nil }
         return try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
