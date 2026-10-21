@@ -71,8 +71,8 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                         guard let groupKey = channelList.groupKey else { continue }
                         context.groupedChannelIds[groupKey] = Set(channelList.state.channels.map(\.cid))
                         // `/sync` watches the grouped lists' channels again when any of them was queried with `watch`.
-                        if (try? await channelListUpdater.paginationState(for: groupKey))?.watch == true {
-                            context.watchesSyncEndpointChannels = true
+                        if !context.watchesSyncEndpointChannels, let state = try? await channelListUpdater.paginationState(for: groupKey) {
+                            context.watchesSyncEndpointChannels = state.watch ?? false
                         }
                     }
                     completion()
@@ -150,7 +150,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                     let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { groupKey in
                         (groupKey, GroupedChannelsGroupRequest(filterConditions: states[groupKey]?.filter))
                     })
-                    // If /sync synced channels in the group, we can keep loaded pages
+                    // If /sync synced channels in the group, we can keep loaded pages (constraint is that only 1 API call can be made to the grouped channels endpoint)
                     let syncedGroups = Set(groupKeys.filter { context.groupedChannelIds[$0]?.isSubset(of: context.synchedChannelIds) ?? false })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
                         groups: groups,
