@@ -9,6 +9,15 @@ enum VoiceVisualizationStyle: CaseIterable, Hashable, Sendable {
     case glow
     case wave
 
+    // The wave's height tracks the level directly, so it follows it smoothly; per-syllable jumps
+    // would make it jitter. The glow follows it closely.
+    var levelResponse: VoiceVisualizationDriver.LevelResponse {
+        switch self {
+        case .glow: .steady
+        case .wave: .smooth
+        }
+    }
+
     var fragmentFunction: String {
         switch self {
         case .glow: "voiceGlowFragment"

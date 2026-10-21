@@ -24,7 +24,7 @@ final class VoiceVisualizationMetalView: MTKView {
 
     init(style: VoiceVisualizationStyle, input: VoiceVisualizationDriver.Input) {
         self.style = style
-        driver = VoiceVisualizationDriver(input: input)
+        driver = VoiceVisualizationDriver(input: input, levelResponse: style.levelResponse)
         renderer = VoiceVisualizationRenderer.shared
         super.init(frame: .zero, device: renderer?.device)
         colorPixelFormat = VoiceVisualizationRenderer.pixelFormat
