@@ -61,4 +61,37 @@ final class AIToolAuthorization_Tests: XCTestCase {
         let nowhere = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"title":"Connect Linear"}}"#)
         XCTAssertNil(nowhere.authorization)
     }
+
+    func testASignInIsAskedOnlyOfItsPersonWhileTheCallWaitsAndOnlyWhereTheyCanSignIn() throws {
+        let waiting = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"type":"oauth","title":"Connect Linear","url":"https://router.example/launch/a1"}}"#)
+        let authorizer = AIToolAuthorizer(callbackScheme: "com.example.app") { _ in }
+        let approver = AIToolApprover(userID: "u_1", clientID: "ios-1", authorizer: authorizer) { _, _ in }
+
+        XCTAssertEqual(approver.signIn(for: waiting)?.title, "Connect Linear")
+        XCTAssertNil(
+            AIToolApprover(userID: "u_2", clientID: "ios-1", authorizer: authorizer) { _, _ in }.signIn(for: waiting),
+            "another person is not asked"
+        )
+        XCTAssertNil(
+            AIToolApprover(userID: "u_1", clientID: "ios-1") { _, _ in }.signIn(for: waiting),
+            "without an authorizer this device cannot open it"
+        )
+        let connected = try call(#"{"id":"call-1","status":"running","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"https://router.example/launch/a1","status":"connected"}}"#)
+        XCTAssertNil(approver.signIn(for: connected), "a sign-in that is over asks nothing")
+        let passkey = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"type":"passkey","title":"Use your passkey","url":"https://router.example/launch/a1"}}"#)
+        XCTAssertNil(approver.signIn(for: passkey), "a kind this SDK does not open is left to the app")
+    }
+
+    func testAnExpiryThatDoesNotReadLeavesTheSignInAsItIs() throws {
+        let waiting = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"https://router.example/launch/a1","expires_at":"in ten minutes"}}"#)
+        XCTAssertEqual(waiting.authorization?.title, "Connect Linear")
+        XCTAssertNil(waiting.authorization?.expiresAt)
+    }
+
+    func testTheButtonsWaitWhileAnAnswerIsUnderWay() {
+        XCTAssertFalse(AIToolAuthorizationState().isBusy)
+        XCTAssertTrue(AIToolAuthorizationState(isConnecting: true).isBusy)
+        XCTAssertTrue(AIToolAuthorizationState(isDeclining: true).isBusy)
+        XCTAssertFalse(AIToolAuthorizationState(failed: true).isBusy, "a failure lets the person try again")
+    }
 }

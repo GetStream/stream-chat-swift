@@ -59,11 +59,26 @@ final class AIConversationEntryView_Tests: XCTestCase {
         XCTAssertNotEqual(view(Message(id: "a1")), view(Message(id: "a1", isGenerating: false)))
     }
 
-    private func view(_ message: Message) -> AIConversationEntryView<Message, DefaultAIConversationViewFactory> {
+    func test_notEqual_whenThePersonCanSignInAnotherWay() {
+        let approver = AIToolApprover(userID: "u_1", clientID: "ios-1") { _, _ in }
+        var signingIn = approver
+        signingIn.authorizer = AIToolAuthorizer(callbackScheme: "com.example.app") { _ in }
+        var elsewhere = approver
+        elsewhere.authorizer = AIToolAuthorizer(callbackScheme: "com.example.other") { _ in }
+
+        XCTAssertNotEqual(view(Message(id: "a1"), approver: approver), view(Message(id: "a1"), approver: signingIn))
+        XCTAssertNotEqual(view(Message(id: "a1"), approver: signingIn), view(Message(id: "a1"), approver: elsewhere))
+        XCTAssertEqual(view(Message(id: "a1"), approver: signingIn), view(Message(id: "a1"), approver: signingIn))
+    }
+
+    private func view(
+        _ message: Message,
+        approver: AIToolApprover? = nil
+    ) -> AIConversationEntryView<Message, DefaultAIConversationViewFactory> {
         AIConversationEntryView(
             entry: AIConversationEntry(id: AnyHashable(message.id), message: message, sentAttachments: []),
             factory: .shared,
-            approver: nil
+            approver: approver
         )
     }
 }

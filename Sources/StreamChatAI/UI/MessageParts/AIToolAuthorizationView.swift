@@ -54,8 +54,7 @@ public struct AIToolAuthorizationView<Content: View>: View {
     }
 
     public var body: some View {
-        if let authorizer = approver.authorizer, call.isAwaitingAuthorization(userID: approver.userID),
-           let authorization = call.authorization, authorization.kind == .oauth {
+        if let authorizer = approver.authorizer, let authorization = approver.signIn(for: call) {
             content(authorization, state, { connect(authorization, authorizer) }, { decline(authorizer) })
         }
     }
@@ -90,6 +89,16 @@ public struct AIToolAuthorizationView<Content: View>: View {
                 state = AIToolAuthorizationState(failed: true)
             }
         }
+    }
+}
+
+extension AIToolApprover {
+    /// The sign-in this person is asked for on `call` here. It is one the call waits for them
+    /// to finish, of a kind this device opens, and only asked when they can sign in on it.
+    func signIn(for call: AIToolCallPart) -> AIToolAuthorization? {
+        guard authorizer != nil, call.isAwaitingAuthorization(userID: userID),
+              let authorization = call.authorization, authorization.kind == .oauth else { return nil }
+        return authorization
     }
 }
 
