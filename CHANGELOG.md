@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🎭 New Localizations
 - Add `conversation.*`, `message_actions.*` and `attachment.*` keys [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
 - Add `tool_call.status.awaiting_authorization` and `tool_authorization.*` keys
+- `AIVoiceWaveView` follows the audio level smoothly instead of jittering with each syllable [#4351](https://github.com/GetStream/stream-chat-swift/pull/4351)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_

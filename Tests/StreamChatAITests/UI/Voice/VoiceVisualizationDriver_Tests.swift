@@ -142,6 +142,39 @@ final class VoiceVisualizationDriver_Tests: XCTestCase {
         XCTAssertEqual(uniforms(of: driver).react, 0.12, accuracy: 1e-3)
     }
 
+    func test_smoothResponse_catchesUpWithALouderLevelWithinAWord() {
+        var driver = settled(.smooth, audioLevel: 0)
+
+        driver.input.audioLevel = 1
+        advance(&driver, for: 0.1)
+        XCTAssertTrue((0.5...0.8).contains(uniforms(of: driver).mic), "mic was \(uniforms(of: driver).mic)")
+        advance(&driver, for: 0.3)
+        XCTAssertGreaterThan(uniforms(of: driver).mic, 0.95)
+    }
+
+    func test_smoothResponse_fallsAwayOverAPauseNotASyllable() {
+        var driver = settled(.smooth, audioLevel: 1)
+
+        driver.input.audioLevel = 0
+        advance(&driver, for: 0.1)
+        XCTAssertGreaterThan(uniforms(of: driver).mic, 0.7)
+        advance(&driver, for: 0.9)
+        XCTAssertLessThan(uniforms(of: driver).mic, 0.1)
+    }
+
+    func test_steadyResponse_followsAQuieterLevelWithinASyllable() {
+        var driver = settled(.steady, audioLevel: 1)
+
+        driver.input.audioLevel = 0
+        advance(&driver, for: 0.1)
+        XCTAssertLessThan(uniforms(of: driver).mic, 0.1)
+    }
+
+    func test_style_smoothsTheLevelForTheWaveOnly() {
+        XCTAssertEqual(VoiceVisualizationStyle.glow.levelResponse, .steady)
+        XCTAssertEqual(VoiceVisualizationStyle.wave.levelResponse, .smooth)
+    }
+
     func test_colors_easeTheirHueTheShortWayRound() {
         var driver = VoiceVisualizationDriver(input: input(.idle, colors: [[0.95, 1, 1]]))
 
@@ -189,6 +222,15 @@ final class VoiceVisualizationDriver_Tests: XCTestCase {
 
     private func uniforms(of driver: VoiceVisualizationDriver) -> VoiceVisualizationUniforms {
         driver.uniforms(resolution: [100, 100], dark: false)
+    }
+
+    private func settled(
+        _ response: VoiceVisualizationDriver.LevelResponse,
+        audioLevel: Float
+    ) -> VoiceVisualizationDriver {
+        var driver = VoiceVisualizationDriver(input: input(.idle, audioLevel: audioLevel), levelResponse: response)
+        advance(&driver, for: 1)
+        return driver
     }
 
     private func advance(_ driver: inout VoiceVisualizationDriver, for seconds: TimeInterval) {
