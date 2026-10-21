@@ -157,10 +157,13 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     private func turnStack(_ turns: [AIMessageTurn<Message>], isThinking: Bool, height: CGFloat) -> some View {
         LazyVStack(spacing: layout.spacingXs) {
             if let loadOlderMessages {
-                // Loads again whenever the first turn changes while the spinner is in view, so a
-                // short conversation fills the list.
+                // Loads once the spinner has stayed in view a moment, rather than for the frame a
+                // list that opens at its end can show its start, and again whenever the first
+                // turn changes while it is in view.
                 OlderMessagesLoadingView()
                     .task(id: turns.first?.id) {
+                        try? await Task.sleep(nanoseconds: 300_000_000)
+                        guard !Task.isCancelled else { return }
                         await loadOlderMessages()
                     }
             }

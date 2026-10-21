@@ -4,8 +4,8 @@
 
 import SwiftUI
 
-// Where the turn at the top of what is visible is, for keeping it in place when something
-// arrives above it. It is read only then, so scrolling does not lay the list out again.
+// Where the turns in view are, for keeping the top one in place when something arrives above
+// it. They are read only then, so scrolling does not lay the list out again.
 @MainActor
 final class AITurnPositions {
     struct Held {
@@ -22,7 +22,8 @@ final class AITurnPositions {
         }
     }
 
-    private var held: Held?
+    // The turns in view, the one at the top of what is visible first.
+    private var held: [Held] = []
     private var above: AnyHashable?
     // Whether what is above the turns changed and the turn at the top is not back yet. The
     // frames of the layout that follows the change would hold the turn that arrived instead.
@@ -41,17 +42,16 @@ final class AITurnPositions {
 
     func update(_ frames: [AnyHashable: CGRect]) {
         guard !isHolding else { return }
-        var top: Held?
-        for (id, frame) in frames where frame.maxY > 0 && frame.minY < (top?.frame.minY ?? .infinity) {
-            top = Held(id: id, frame: frame)
-        }
-        held = top
+        held = frames
+            .compactMap { $0.value.maxY > 0 ? Held(id: $0.key, frame: $0.value) : nil }
+            .sorted { $0.frame.minY < $1.frame.minY }
     }
 
-    // The turn that was at the top before what is above the turns changed, if it is still in
-    // the list.
+    // The turn nearest the top of what was visible before what is above the turns changed that
+    // is still in the list. The top one can be gone: a turn that starts with a reply joins the
+    // turn of its question when older messages bring it.
     func heldTurn(among ids: Set<AnyHashable>) -> Held? {
-        held.flatMap { ids.contains($0.id) ? $0 : nil }
+        held.first { ids.contains($0.id) }
     }
 
     // The turn at the top is back where it was, or cannot be.

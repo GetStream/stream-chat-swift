@@ -32,18 +32,19 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
 
     public var body: some View {
         if let message = entry.message {
-            switch message.role {
-            case .user:
+            if message.role == .user {
                 factory.makeUserMessageView(
                     options: AIUserMessageViewOptions(
+                        message: message,
                         text: message.text,
                         attachments: entry.sentAttachments.isEmpty ? message.attachments : entry.sentAttachments
                     )
                 )
-            case .assistant:
+            } else {
                 VStack(alignment: .leading, spacing: layout.spacingXs) {
                     factory.makeAssistantMessageView(
                         options: AIAssistantMessageViewOptions(
+                            message: message,
                             text: message.text,
                             isGenerating: message.isGenerating,
                             parts: message.parts,
@@ -72,7 +73,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
             }
         } else if let pending = entry.pending {
             factory.makeUserMessageView(
-                options: AIUserMessageViewOptions(text: pending.text, attachments: pending.attachments)
+                options: AIUserMessageViewOptions(message: nil, text: pending.text, attachments: pending.attachments)
             )
         }
     }
