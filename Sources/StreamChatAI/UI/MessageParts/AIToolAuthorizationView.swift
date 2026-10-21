@@ -5,10 +5,10 @@
 import AuthenticationServices
 import SwiftUI
 
-/// Asks the person a tool call waits for to sign in at the provider it needs: the sign-in its
-/// `ai_tool_call` step carries (status `awaiting_authorization`, with `authorization`). Connect
-/// opens the sign-in page in a web authentication session; once the provider has answered,
-/// your backend updates the step and the call goes on. It shows only to that person, only
+/// Asks the person a tool call waits for to sign in at the provider it needs, with the sign-in
+/// its `ai_tool_call` step carries (status `awaiting_authorization`, with `authorization`).
+/// Connect opens the sign-in page in a web authentication session. Once the provider has
+/// answered, your backend updates the step and the call goes on. It shows only to that person, only
 /// while the call waits, and only with an `AIToolAuthorizer`, so it can sit under every tool
 /// call:
 ///

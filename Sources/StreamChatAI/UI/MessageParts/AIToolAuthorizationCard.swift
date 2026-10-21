@@ -5,8 +5,8 @@
 import StreamCore
 import SwiftUI
 
-/// A tool call's sign-in: which provider it needs and what signing in means, and buttons to
-/// connect or to say not now.
+/// Asks for a tool call's sign-in, saying which provider it needs and what signing in means,
+/// with buttons to connect or to say not now.
 public struct AIToolAuthorizationCard: View {
     var authorization: AIToolAuthorization
     var state: AIToolAuthorizationState

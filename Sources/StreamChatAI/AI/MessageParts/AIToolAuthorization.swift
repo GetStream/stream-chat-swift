@@ -8,11 +8,12 @@ import Foundation
 ///
 /// The agent's backend writes it on the call's `ai_tool_call` step, which waits with status
 /// `awaiting_authorization`, and holds the call until the person signs in at the provider in a
-/// browser. Connected, the call goes on; declined, expired or failed, it is cancelled and never
-/// runs. The step holds no credential: `url` is the agent's own sign-in page, and the provider
-/// hands what it grants to the agent's backend, never to the app.
+/// browser. Once they connect, the call goes on. When the sign-in is declined, expires or fails,
+/// the call is cancelled and never runs. The step holds no credential, since `url` is the
+/// agent's own sign-in page and the provider hands what it grants to the agent's backend, never
+/// to the app.
 public struct AIToolAuthorization: Equatable, Sendable {
-    /// How the person signs in. An open set: compare against the kinds you know.
+    /// How the person signs in. The set is open, so compare against the kinds you know.
     public struct Kind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
         public let rawValue: String
 
@@ -24,7 +25,7 @@ public struct AIToolAuthorization: Equatable, Sendable {
         public static let oauth: Kind = "oauth"
     }
 
-    /// How a sign-in ended. An open set: compare against the statuses you know.
+    /// How a sign-in ended. The set is open, so compare against the statuses you know.
     public struct Status: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
         public let rawValue: String
 
@@ -80,8 +81,8 @@ public struct AIToolAuthorization: Equatable, Sendable {
         self.status = status
     }
 
-    /// The page to open in a web authentication session: `url`, with the handoff token in its
-    /// fragment.
+    /// The page to open in a web authentication session, which is `url` with the handoff token
+    /// in its fragment.
     public var launchURL: URL {
         guard let handoffToken, var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return url

@@ -24,14 +24,15 @@ struct Fields {
         (object[key] as? [String: Any]).map(Fields.init)
     }
 
-    /// An RFC 3339 time, with or without fractional seconds.
+    /// An RFC 3339 time, with or without fractional seconds. Before iOS 15 there is no format
+    /// style to read one with, so it reads as missing.
     func date(_ key: String) -> Date? {
         guard let value = string(key) else { return nil }
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = formatter.date(from: value) { return date }
-        formatter.formatOptions = [.withInternetDateTime]
-        return formatter.date(from: value)
+        // A format style is a value that is cheap to make; Foundation keeps the formatter
+        // behind it, which is what is expensive.
+        guard #available(iOS 15, macOS 12, *) else { return nil }
+        return (try? Date(value, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)))
+            ?? (try? Date(value, strategy: Date.ISO8601FormatStyle()))
     }
 
     func json(_ key: String) -> Data? {

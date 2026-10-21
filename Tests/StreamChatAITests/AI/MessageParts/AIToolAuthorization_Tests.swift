@@ -42,8 +42,9 @@ final class AIToolAuthorization_Tests: XCTestCase {
     }
 
     func testAnEndedSignInSaysHowAndADeclinedOneIsOver() throws {
-        let connected = try call(#"{"id":"call-1","status":"running","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"https://router.example/launch/a1","status":"connected"}}"#)
+        let connected = try call(#"{"id":"call-1","status":"running","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"https://router.example/launch/a1","expires_at":"2026-10-20T12:10:00Z","status":"connected"}}"#)
         XCTAssertEqual(connected.authorization?.status, .connected)
+        XCTAssertEqual(connected.authorization?.expiresAt, Date(timeIntervalSince1970: 1_792_498_200), "a time with no fractional seconds")
         XCTAssertNil(connected.authorization?.handoffToken)
         XCTAssertFalse(connected.isAwaitingAuthorization(userID: "u_1"))
         XCTAssertFalse(connected.isDeclined)
