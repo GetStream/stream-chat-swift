@@ -14,7 +14,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     let factory: Factory
     let approver: AIToolApprover?
     // Compared rather than the row, whose message and factory belong to the main actor.
-    nonisolated let shown: Shown
+    nonisolated let shown: AIConversationEntrySnapshot
 
     // Whether the reply's answer is still being written out, which its actions wait for so they
     // do not move down with it. `nil` when its view does not say.
@@ -27,12 +27,11 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
         self.entry = entry
         self.factory = factory
         self.approver = approver
-        shown = Shown(entry: entry, approver: approver)
+        shown = AIConversationEntrySnapshot(entry: entry, approver: approver)
     }
 
     public var body: some View {
-        switch entry.content {
-        case .message(let message):
+        if let message = entry.message {
             switch message.role {
             case .user:
                 factory.makeUserMessageView(
@@ -71,7 +70,7 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
                     }
                 }
             }
-        case .pending(let pending):
+        } else if let pending = entry.pending {
             factory.makeUserMessageView(
                 options: AIUserMessageViewOptions(text: pending.text, attachments: pending.attachments)
             )
@@ -82,37 +81,52 @@ public struct AIConversationEntryView<Message: AIMessage, Factory: AIConversatio
     public nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.shown == rhs.shown
     }
+}
 
-    // What a row shows, including each reasoning step's whole thinking, which can grow while
-    // the message stays the same.
-    struct Shown: Equatable, Sendable {
-        var isPending = false
-        var role: AIMessageRole = .user
-        var text = ""
-        var isGenerating = false
-        var parts: [AIMessagePart] = []
-        var reasoning: [String?] = []
-        var attachments: [AIMessageAttachment] = []
-        var approver: [String] = []
-        var isLatestReply = false
+// What a row shows, including each reasoning step's whole thinking, which can grow while the
+// message stays the same.
+final class AIConversationEntrySnapshot: Equatable, Sendable {
+    let isPending: Bool
+    let role: AIMessageRole
+    let text: String
+    let isGenerating: Bool
+    let parts: [AIMessagePart]
+    let reasoning: [String?]
+    let attachments: [AIMessageAttachment]
+    let approver: [String]
+    let isLatestReply: Bool
 
-        init(entry: AIConversationEntry<Message>, approver: AIToolApprover?) {
-            attachments = entry.sentAttachments
-            self.approver = approver.map { [$0.userID, $0.clientID] } ?? []
-            isLatestReply = entry.isLatestReply
-            switch entry.content {
-            case .message(let message):
-                role = message.role
-                text = message.text
-                isGenerating = message.isGenerating
-                parts = message.parts
-                reasoning = parts.map { $0.reasoning.flatMap(message.reasoningText(for:)) }
-                attachments += message.attachments
-            case .pending(let pending):
-                isPending = true
-                text = pending.text
-                attachments += pending.attachments
-            }
+    init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?) {
+        self.approver = approver.map { [$0.userID, $0.clientID] } ?? []
+        isLatestReply = entry.isLatestReply
+        if let message = entry.message {
+            isPending = false
+            role = message.role
+            text = message.text
+            isGenerating = message.isGenerating
+            parts = message.parts
+            reasoning = message.parts.map { $0.reasoning.flatMap(message.reasoningText(for:)) }
+            attachments = entry.sentAttachments + message.attachments
+        } else {
+            isPending = true
+            role = .user
+            text = entry.pending?.text ?? ""
+            isGenerating = false
+            parts = []
+            reasoning = []
+            attachments = entry.sentAttachments + (entry.pending?.attachments ?? [])
         }
+    }
+
+    static func == (lhs: AIConversationEntrySnapshot, rhs: AIConversationEntrySnapshot) -> Bool {
+        lhs.isPending == rhs.isPending
+            && lhs.role == rhs.role
+            && lhs.text == rhs.text
+            && lhs.isGenerating == rhs.isGenerating
+            && lhs.parts == rhs.parts
+            && lhs.reasoning == rhs.reasoning
+            && lhs.attachments == rhs.attachments
+            && lhs.approver == rhs.approver
+            && lhs.isLatestReply == rhs.isLatestReply
     }
 }

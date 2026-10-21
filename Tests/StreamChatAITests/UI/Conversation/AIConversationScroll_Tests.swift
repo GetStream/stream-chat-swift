@@ -37,7 +37,7 @@ final class AIConversationScroll_Tests: XCTestCase {
     }
 
     func test_init_whenTheConversationIsCleared_doesNotScroll() {
-        let scroll = AIConversationScroll<String>(previousLastTurnID: "q1", turnIDs: [])
+        let scroll = AIConversationScroll(previousLastTurnID: "q1", turnIDs: [])
 
         XCTAssertEqual(scroll, .none)
     }

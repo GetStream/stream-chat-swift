@@ -20,7 +20,7 @@ import UniformTypeIdentifiers
 ///         + message.fileAttachments.map { .file($0.assetURL, name: $0.title, size: $0.file.size) }
 /// }
 /// ```
-public struct AIMessageAttachment: Hashable, Sendable {
+public final class AIMessageAttachment: Hashable, Sendable {
     /// What kind of attachment it is. It is an open set: compare against the kinds you know
     /// and give the rest a fallback.
     public struct Kind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
@@ -36,21 +36,21 @@ public struct AIMessageAttachment: Hashable, Sendable {
         public static let file: Kind = "file"
     }
 
-    public var kind: Kind
+    public let kind: Kind
     /// Where it is: on the web, or in a file on this device.
-    public var url: URL?
+    public let url: URL?
     /// The image itself when the app holds it, such as a photo the person just took. It shows
     /// rather than the one at `url`.
-    public var image: UIImage?
+    public let image: UIImage?
     /// Its name, such as the file's.
-    public var name: String?
+    public let name: String?
     /// Its size, in bytes.
-    public var size: Int64?
+    public let size: Int64?
     /// Its media type, such as `application/pdf`. Without it, the type comes from the
     /// extension of its name or URL.
-    public var mimeType: String?
+    public let mimeType: String?
     /// Data of its own, such as what an attachment of a kind of your own needs.
-    public var extraData: [String: RawJSON]
+    public let extraData: [String: RawJSON]
 
     public init(
         kind: Kind,
@@ -72,39 +72,73 @@ public struct AIMessageAttachment: Hashable, Sendable {
 
     /// An attachment of the file at `url`, of the kind its type says: an image for an image
     /// file, and a file otherwise. Such as for the files the person picked in the composer.
-    public init(url: URL, name: String? = nil, size: Int64? = nil, mimeType: String? = nil) {
-        self.init(kind: .file, url: url, name: name, size: size, mimeType: mimeType)
-        if let type = contentType, type.conforms(to: .image), !type.conforms(to: .svg) {
-            kind = .image
-        }
+    public convenience init(url: URL, name: String? = nil, size: Int64? = nil, mimeType: String? = nil) {
+        let type = Self.contentType(mimeType: mimeType, pathExtension: Self.pathExtension(name: name, url: url))
+        let isImage = type.map { $0.conforms(to: .image) && !$0.conforms(to: .svg) } ?? false
+        self.init(kind: isImage ? .image : .file, url: url, name: name, size: size, mimeType: mimeType)
     }
 
     /// An image to load, from the web or a file.
-    public static func image(_ url: URL, name: String? = nil) -> Self {
-        Self(kind: .image, url: url, name: name)
+    public static func image(_ url: URL, name: String? = nil) -> AIMessageAttachment {
+        AIMessageAttachment(kind: .image, url: url, name: name)
     }
 
     /// An image the app holds, such as a photo the person just took.
-    public static func image(_ image: UIImage, name: String? = nil) -> Self {
-        Self(kind: .image, image: image, name: name)
+    public static func image(_ image: UIImage, name: String? = nil) -> AIMessageAttachment {
+        AIMessageAttachment(kind: .image, image: image, name: name)
     }
 
     /// A file to open, from the web or this device.
-    public static func file(_ url: URL, name: String? = nil, size: Int64? = nil, mimeType: String? = nil) -> Self {
-        Self(kind: .file, url: url, name: name, size: size, mimeType: mimeType)
+    public static func file(
+        _ url: URL,
+        name: String? = nil,
+        size: Int64? = nil,
+        mimeType: String? = nil
+    ) -> AIMessageAttachment {
+        AIMessageAttachment(kind: .file, url: url, name: name, size: size, mimeType: mimeType)
+    }
+
+    public static func == (lhs: AIMessageAttachment, rhs: AIMessageAttachment) -> Bool {
+        lhs === rhs || (
+            lhs.kind == rhs.kind
+                && lhs.url == rhs.url
+                && lhs.image == rhs.image
+                && lhs.name == rhs.name
+                && lhs.size == rhs.size
+                && lhs.mimeType == rhs.mimeType
+                && lhs.extraData == rhs.extraData
+        )
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(kind)
+        hasher.combine(url)
+        hasher.combine(image)
+        hasher.combine(name)
+        hasher.combine(size)
+        hasher.combine(mimeType)
+        hasher.combine(extraData)
     }
 }
 
 extension AIMessageAttachment {
     // The type of its content, from its media type or else its extension.
     var contentType: UTType? {
+        Self.contentType(mimeType: mimeType, pathExtension: pathExtension)
+    }
+
+    private var pathExtension: String? {
+        Self.pathExtension(name: name, url: url)
+    }
+
+    private static func contentType(mimeType: String?, pathExtension: String?) -> UTType? {
         if let mimeType, let type = UTType(mimeType: mimeType) {
             return type
         }
         return pathExtension.flatMap { UTType(filenameExtension: $0) }
     }
 
-    private var pathExtension: String? {
+    private static func pathExtension(name: String?, url: URL?) -> String? {
         [name, url?.lastPathComponent]
             .compactMap { $0 }
             .map { ($0 as NSString).pathExtension }

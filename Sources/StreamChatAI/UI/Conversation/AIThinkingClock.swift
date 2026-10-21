@@ -10,14 +10,18 @@ import SwiftUI
 // with no time of its own.
 @MainActor
 final class AIThinkingClock {
-    private struct Turn {
-        var start: Date
+    private final class Turn {
+        let start: Date
         var end: Date?
         var firstStep: String?
         var firstStepStreamed = false
         var firstStepDuration: TimeInterval?
         // When a first step that arrived done opened to show its reasoning.
         var firstStepShown: Date?
+
+        init(start: Date) {
+            self.start = start
+        }
     }
 
     // How soon after a turn stops thinking its first step has to arrive, done, to open and show
@@ -41,14 +45,18 @@ final class AIThinkingClock {
     // ending at the pause.
     func update(latest turn: Int?, isThinking: Bool, now: Date = Date()) {
         guard let turn else { return }
-        if isThinking {
-            if turns[turn] == nil {
+        guard let timed = turns[turn] else {
+            if isThinking {
                 turns[turn] = Turn(start: now)
-            } else if turns[turn]?.firstStep == nil {
-                turns[turn]?.end = nil
             }
-        } else if turns[turn] != nil, turns[turn]?.end == nil {
-            turns[turn]?.end = now
+            return
+        }
+        if isThinking {
+            if timed.firstStep == nil {
+                timed.end = nil
+            }
+        } else if timed.end == nil {
+            timed.end = now
         }
     }
 
@@ -59,15 +67,17 @@ final class AIThinkingClock {
     // Whether `step` takes over from a turn's thinking: the first reasoning step to show in a
     // turn that was seen thinking.
     func isFirstStep(_ step: String, of turn: Int) -> Bool {
-        guard turns[turn] != nil else { return false }
-        if turns[turn]?.firstStep == nil {
-            turns[turn]?.firstStep = step
+        guard let timed = turns[turn] else { return false }
+        if timed.firstStep == nil {
+            timed.firstStep = step
         }
-        return turns[turn]?.firstStep == step
+        return timed.firstStep == step
     }
 
     func firstStepIsStreaming(in turn: Int) {
-        turns[turn]?.firstStepStreamed = true
+        if let timed = turns[turn] {
+            timed.firstStepStreamed = true
+        }
     }
 
     // How long a turn's first step thought: from when the turn started thinking until the step
@@ -78,7 +88,7 @@ final class AIThinkingClock {
         if let measured = timed.firstStepDuration { return measured }
         let done = timed.firstStepStreamed ? now : (timed.end ?? now)
         let measured = max(own ?? 0, done.timeIntervalSince(timed.start))
-        turns[turn]?.firstStepDuration = measured
+        timed.firstStepDuration = measured
         return measured
     }
 
@@ -92,7 +102,7 @@ final class AIThinkingClock {
             return now.timeIntervalSince(shown) < Self.arrivalWindow
         }
         guard let end = timed.end, now.timeIntervalSince(end) < Self.arrivalWindow else { return false }
-        turns[turn]?.firstStepShown = now
+        timed.firstStepShown = now
         return true
     }
 

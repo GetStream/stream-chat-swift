@@ -41,10 +41,11 @@ final class AITurnPositions {
 
     func update(_ frames: [AnyHashable: CGRect]) {
         guard !isHolding else { return }
-        held = frames
-            .filter { $0.value.maxY > 0 }
-            .min { $0.value.minY < $1.value.minY }
-            .map { Held(id: $0.key, frame: $0.value) }
+        var top: Held?
+        for (id, frame) in frames where frame.maxY > 0 && frame.minY < (top?.frame.minY ?? .infinity) {
+            top = Held(id: id, frame: frame)
+        }
+        held = top
     }
 
     // The turn that was at the top before what is above the turns changed, if it is still in

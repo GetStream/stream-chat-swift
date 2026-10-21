@@ -6,26 +6,35 @@ import Foundation
 
 /// A row of an ``AIConversationView`` of ``AIMessage``s: a message, or one the person sent that
 /// is on its way.
-public struct AIConversationEntry<Message: AIMessage>: Identifiable {
-    enum Content {
-        case message(Message)
-        case pending(AIPendingMessage)
-    }
-
+public final class AIConversationEntry<Message: AIMessage>: Identifiable {
     /// The message's id, or, for the copy of a message that was on its way, that message's.
     public let id: AnyHashable
-    let content: Content
+    // The message, or nil for a message the person sent that is on its way.
+    let message: Message?
+    // The message the person sent that is on its way, until its copy arrives.
+    let pending: AIPendingMessage?
     // What the person sent with a message on its way, which its copy shows rather than load
     // it again.
     let sentAttachments: [AIMessageAttachment]
     // Whether it is a reply that ends the conversation, which can be asked for again.
     var isLatestReply = false
 
+    init(id: AnyHashable, message: Message, sentAttachments: [AIMessageAttachment]) {
+        self.id = id
+        self.message = message
+        pending = nil
+        self.sentAttachments = sentAttachments
+    }
+
+    init(pending: AIPendingMessage) {
+        id = AnyHashable(pending.id)
+        message = nil
+        self.pending = pending
+        sentAttachments = []
+    }
+
     var isFromUser: Bool {
-        switch content {
-        case .message(let message): message.role == .user
-        case .pending: true
-        }
+        message.map { $0.role == .user } ?? true
     }
 }
 
@@ -68,12 +77,12 @@ final class AIPendingMessageTracker {
             let taken = copies[AnyHashable(message.id)]
             return AIConversationEntry(
                 id: taken.map { AnyHashable($0.id) } ?? AnyHashable(message.id),
-                content: .message(message),
+                message: message,
                 sentAttachments: taken?.attachments ?? []
             )
         }
         if showsPending, let pending {
-            entries.append(AIConversationEntry(id: AnyHashable(pending.id), content: .pending(pending), sentAttachments: []))
+            entries.append(AIConversationEntry(pending: pending))
         }
         if let last = entries.indices.last, !entries[last].isFromUser {
             entries[last].isLatestReply = true

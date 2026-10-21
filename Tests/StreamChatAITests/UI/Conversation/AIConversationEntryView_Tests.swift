@@ -61,7 +61,7 @@ final class AIConversationEntryView_Tests: XCTestCase {
 
     private func view(_ message: Message) -> AIConversationEntryView<Message, DefaultAIConversationViewFactory> {
         AIConversationEntryView(
-            entry: AIConversationEntry(id: AnyHashable(message.id), content: .message(message), sentAttachments: []),
+            entry: AIConversationEntry(id: AnyHashable(message.id), message: message, sentAttachments: []),
             factory: .shared,
             approver: nil
         )

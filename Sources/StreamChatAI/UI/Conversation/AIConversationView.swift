@@ -56,15 +56,11 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     var footer: Footer
     var emptyContent: EmptyContent
 
-    @State private var shownAbove: Above?
-    @State private var lastTurnID: Message.ID?
     // Where the turns in view are, read when what is above them changes.
     @State private var positions = AITurnPositions()
     @State private var clock = AIThinkingClock()
     @State private var tracker = AIPendingMessageTracker()
-    @State private var isEndInView = true
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     /// - Parameters:
@@ -120,121 +116,36 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
     public var body: some View {
         let (messages, isThinking) = content(tracker)
         let turns = AIMessageTurn.turns(of: messages, isSentByCurrentUser: isSentByCurrentUser)
-        let above = Above(firstTurnID: turns.first?.id, loadsOlder: loadOlderMessages != nil)
+        let above = AIConversationScrollView.Above(
+            firstTurnID: turns.first.map { AnyHashable($0.id) },
+            loadsOlder: loadOlderMessages != nil
+        )
         // Both repeat harmlessly on every update: a turn's thinking starts and ends once, and
         // what is above the turns is noted only when it changes.
         clock.update(latest: turns.last.map { clock.key(for: $0.id) }, isThinking: isThinking)
         positions.expect(above: above)
-        let animation: Animation? = reduceMotion ? nil : .default
-        return GeometryReader { geometry in
-            let height = geometry.size.height
-            let slack = layout.spacingXl
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 0) {
-                        if turns.isEmpty {
-                            emptyContent
-                                .frame(maxWidth: .infinity, minHeight: height)
-                        } else {
-                            turnStack(turns, isThinking: isThinking, height: height)
-                        }
-
-                        Color.clear
-                            .frame(height: 0)
-                            .background {
-                                GeometryReader { end in
-                                    Color.clear.preference(
-                                        key: AIConversationEndOffset.self,
-                                        value: end.frame(in: .named(AIConversationEnd.space)).minY
-                                    )
-                                }
-                            }
-                    }
-                }
-                .coordinateSpace(name: AIConversationEnd.space)
-                .modifier(OpensAtEnd())
-                .onPreferenceChange(AITurnFrames.self) { frames in
-                    positions.update(frames)
-                }
-                .onPreferenceChange(AIConversationEndOffset.self) { end in
-                    let inView = end <= height + slack
-                    guard inView != isEndInView else { return }
-                    withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
-                        isEndInView = inView
-                    }
-                }
-                .overlay(alignment: .bottom) {
-                    if !isEndInView {
-                        ScrollToLatestButton {
-                            guard let last = turns.last?.id else { return }
-                            withAnimation(animation) {
-                                proxy.scrollTo(last, anchor: .bottom)
-                            }
-                        }
-                        .padding(.bottom, layout.spacingXs)
-                        .transition(.opacity.combined(with: .scale(scale: 0.8)))
-                    }
-                }
-                .onAppear {
-                    shownAbove = above
-                    lastTurnID = turns.last?.id
-                    if let last = turns.last?.id {
-                        Self.scrollToEnd(at: last, with: proxy)
-                    }
-                }
-                .modifier(OnChange(value: above) {
-                    let previous = shownAbove
-                    shownAbove = above
-                    // Older messages arrived above what is in view, or the spinner came or went:
-                    // the turn at the top goes back to where it was, rather than being pushed.
-                    guard previous?.firstTurnID != nil,
-                          let held = positions.heldTurn(among: Set(turns.map { AnyHashable($0.id) })),
-                          let turnID = turns.first(where: { AnyHashable($0.id) == held.id })?.id else {
-                        positions.release()
-                        return
-                    }
-                    let anchor = held.anchor(in: height)
-                    DispatchQueue.main.async {
-                        proxy.scrollTo(turnID, anchor: anchor)
-                        positions.release()
-                    }
-                })
-                .modifier(OnChange(value: turns.last?.id) {
-                    let scroll = AIConversationScroll(previousLastTurnID: lastTurnID, turnIDs: turns.map(\.id))
-                    lastTurnID = turns.last?.id
-                    // Scrolls once the new turn is laid out, at least as tall as the list.
-                    DispatchQueue.main.async {
-                        switch scroll {
-                        case let .toTop(turnID):
-                            withAnimation(animation) {
-                                proxy.scrollTo(turnID, anchor: .top)
-                            }
-                        case .toEnd:
-                            if let last = turns.last?.id {
-                                Self.scrollToEnd(at: last, with: proxy)
-                            }
-                        case .none:
-                            break
-                        }
-                    }
-                })
+        return AIConversationScrollView(
+            turnIDs: turns.map { AnyHashable($0.id) },
+            above: above,
+            positions: positions,
+            scrollTo: { id, anchor, proxy in
+                guard let turn = turns.first(where: { AnyHashable($0.id) == id }) else { return }
+                proxy.scrollTo(turn.id, anchor: anchor)
+            },
+            content: { height in
+                AnyView(turnList(turns, isThinking: isThinking, height: height))
             }
-        }
+        )
     }
 
-    // Shows the end of the latest turn. The turns above it may have only estimated heights until
-    // it is laid out, which leaves it short of the end, so it scrolls there again once they are.
-    private static func scrollToEnd(at last: Message.ID, with proxy: ScrollViewProxy) {
-        proxy.scrollTo(last, anchor: .bottom)
-        DispatchQueue.main.async {
-            proxy.scrollTo(last, anchor: .bottom)
+    @ViewBuilder
+    private func turnList(_ turns: [AIMessageTurn<Message>], isThinking: Bool, height: CGFloat) -> some View {
+        if turns.isEmpty {
+            emptyContent
+                .frame(maxWidth: .infinity, minHeight: height)
+        } else {
+            turnStack(turns, isThinking: isThinking, height: height)
         }
-    }
-
-    // What sits above the turns in view. When it changes, they would be pushed down or up.
-    private struct Above: Hashable {
-        var firstTurnID: Message.ID?
-        var loadsOlder: Bool
     }
 
     // The turns, the latest at least as tall as the list, after a spinner while older messages
@@ -251,13 +162,18 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
             }
             ForEach(turns) { turn in
                 let isLatest = turn.id == turns.last?.id
-                AIMessageTurnView(
-                    messages: turn.messages,
-                    spacing: layout.spacingMd,
-                    isThinking: isLatest && isThinking,
-                    footer: isLatest ? footer : nil,
-                    messageContent: messageContent
-                )
+                VStack(alignment: .leading, spacing: layout.spacingMd) {
+                    ForEach(turn.messages) { message in
+                        messageContent(message)
+                    }
+                    if isLatest && isThinking {
+                        AIThinkingView()
+                    }
+                    if isLatest {
+                        footer
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .environment(\.aiThinkingTurn, AIThinkingTurn(clock: clock, key: clock.key(for: turn.id)))
                 .padding(.top, layout.spacingMd)
                 .frame(minHeight: isLatest ? height : nil, alignment: .top)
@@ -273,30 +189,5 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
         }
         .padding(.horizontal, layout.spacingMd)
         .padding(.bottom, layout.spacingMd)
-    }
-}
-
-private enum AIConversationEnd {
-    static let space = "AIConversationView.scroll"
-}
-
-// How far down the list's end is, from the top of what is visible.
-private struct AIConversationEndOffset: PreferenceKey {
-    static let defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-
-// Shows a conversation that is already there at its end from the first frame. Earlier
-// systems scroll there as the list appears.
-private struct OpensAtEnd: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
-            content.defaultScrollAnchor(.bottom, for: .initialOffset)
-        } else {
-            content
-        }
     }
 }
