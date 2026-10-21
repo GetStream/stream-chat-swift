@@ -38,6 +38,28 @@ final class AIThinkingClock_Tests: XCTestCase {
         XCTAssertEqual(clock.durationOfFirstStep(in: turn, own: nil, now: asked.addingTimeInterval(9)), 8)
     }
 
+    func test_update_whenTheTurnThinksAgainAfterItsReplyWasTakenAway_startsAfresh() {
+        let turn = thinkingTurn()
+        XCTAssertTrue(clock.isFirstStep("r1", of: turn))
+        clock.update(latest: turn, isThinking: false, hasReplies: true, now: asked.addingTimeInterval(8))
+
+        let again = asked.addingTimeInterval(60)
+        clock.update(latest: turn, isThinking: true, hasReplies: false, now: again)
+        clock.update(latest: turn, isThinking: false, hasReplies: true, now: again.addingTimeInterval(5))
+
+        XCTAssertEqual(clock.start(of: turn), again, "such as when the app asks for the reply again")
+        XCTAssertTrue(clock.isFirstStep("r1", of: turn), "the new reply's first step takes over its thinking")
+        XCTAssertEqual(clock.durationOfFirstStep(in: turn, own: nil, now: again.addingTimeInterval(9)), 5)
+    }
+
+    func test_update_whenThinkingResumesWhileTheReplyShows_carriesOn() {
+        let turn = thinkingTurn()
+        clock.update(latest: turn, isThinking: false, hasReplies: true, now: asked.addingTimeInterval(8))
+        clock.update(latest: turn, isThinking: true, hasReplies: true, now: asked.addingTimeInterval(9))
+
+        XCTAssertEqual(clock.start(of: turn), asked)
+    }
+
     func test_isFirstStep_isTheFirstStepToShowInTheTurn() {
         let turn = thinkingTurn()
 

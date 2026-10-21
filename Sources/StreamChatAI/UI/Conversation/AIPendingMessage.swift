@@ -15,7 +15,8 @@ public struct AIPendingMessage: Identifiable {
     public var attachments: [AIMessageAttachment]
 
     /// - Parameters:
-    ///   - id: The message's id once it arrives, when you know it.
+    ///   - id: The message's id once it arrives, when you know it. Its copy is then found by it
+    ///     rather than by where it lands.
     ///   - text: What the person wrote.
     ///   - attachments: What they sent with it, such as the photos and files they picked.
     public init(id: String = UUID().uuidString, text: String, attachments: [AIMessageAttachment] = []) {

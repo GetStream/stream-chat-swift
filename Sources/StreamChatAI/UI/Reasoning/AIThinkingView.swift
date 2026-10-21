@@ -8,24 +8,19 @@ import SwiftUI
 ///
 /// ``AIConversationView`` shows it under the latest question while `isThinking`, counting from
 /// when the question was asked, and the reply's first reasoning step takes its place as
-/// "Thought for 8s". Anywhere else it counts from `since`, or from when it appears.
+/// "Thought for 8s". Anywhere else it counts from `since`, or from when it appears. Its header
+/// is in `AIAppearance.fonts.messagePart`, as reasoning steps are.
 public struct AIThinkingView: View {
     var since: Date?
-    var font: Font?
 
     @Environment(\.aiThinkingTurn) private var turn
 
-    /// - Parameters:
-    ///   - since: When the thinking began.
-    ///   - font: The font of the header, `AIAppearance.fonts.messagePart` by default.
-    public init(since: Date? = nil, font: Font? = nil) {
+    /// - Parameter since: When the thinking began.
+    public init(since: Date? = nil) {
         self.since = since
-        self.font = font
     }
 
     public var body: some View {
-        var view = StreamingReasoningView(text: "", isThinking: true, font: font)
-        view.thinkingStart = since ?? turn.flatMap { $0.clock.start(of: $0.key) }
-        return view
+        StreamingReasoningView(thinkingSince: since ?? turn.flatMap { $0.clock.start(of: $0.key) })
     }
 }

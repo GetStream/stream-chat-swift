@@ -270,3 +270,11 @@ public struct StreamingReasoningView: View {
         DurationFormatting.minutesAndSeconds(Int(duration.rounded(.down)), locale: locale)
     }
 }
+
+extension StreamingReasoningView {
+    // Thinking that shows nothing of itself yet, counting from `start`.
+    init(thinkingSince start: Date?) {
+        self.init(text: "", isThinking: true)
+        thinkingStart = start
+    }
+}

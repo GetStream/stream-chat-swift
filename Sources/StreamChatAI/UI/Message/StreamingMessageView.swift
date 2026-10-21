@@ -111,9 +111,7 @@ public struct StreamingMessageView: View {
     
     func startTypingTimer() {
         typingTimer?.invalidate()
-        // In a list, an answer waits for the reasoning above it to show and fold first.
-        let start = max(Date(), turn.flatMap { $0.clock.answerStart(in: $0.key) } ?? .distantPast)
-        let timer = Timer(fire: start, interval: letterInterval, repeats: true) { _ in
+        let timer = Timer.scheduledTimer(withTimeInterval: letterInterval, repeats: true) { _ in
             // Scheduled on the main run loop.
             MainActor.assumeIsolated {
                 guard !self.characterQueue.isEmpty else { return }
@@ -121,7 +119,10 @@ public struct StreamingMessageView: View {
                 self.displayedText.append(nextCharacter)
             }
         }
-        RunLoop.main.add(timer, forMode: .default)
+        // In a list, an answer waits for the reasoning above it to show and fold first.
+        if let start = turn.flatMap({ $0.clock.answerStart(in: $0.key) }), start > Date() {
+            timer.fireDate = start
+        }
         typingTimer = timer
     }
 
