@@ -222,9 +222,9 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
-/// Keeps the loaded pages of the grouped channel lists `/sync` covered and resets the rest to the first page
-/// `SyncGroupedChannelsOperation` refreshed.
-final class ResetUnsyncedGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
+/// Validates the grouped channel lists `SyncGroupedChannelsOperation` refreshed. A list whose loaded channels `/sync`
+/// covered keeps its pages and unlinks channels that no longer match the group. Any other list is reset to its first page.
+final class GroupedChannelsSyncValidationOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
             let channelGroups = context.refreshedChannelGroups
@@ -244,13 +244,14 @@ final class ResetUnsyncedGroupedChannelsOperation: AsyncOperation, @unchecked Se
                             try await channelListUpdater.resetGroupedChannelsToFirstPage(
                                 in: groupKey,
                                 cids: Set(channelGroup.channels.map(\.cid)),
+                                next: channelGroup.next,
                                 unreadChannels: channelGroup.unreadChannels
                             )
                         }
                     }
                     done(.continue)
                 } catch {
-                    log.error("Failed to reset grouped channels during sync: \(error)", subsystems: .offlineSupport)
+                    log.error("Failed to validate grouped channels during sync: \(error)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }

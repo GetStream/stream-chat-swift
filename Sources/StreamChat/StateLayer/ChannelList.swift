@@ -49,10 +49,7 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
         let pagination = Pagination(pageSize: await state.query.pagination.pageSize)
-        let channels = try await loadChannels(with: pagination)
-        if groupKey == nil {
-            await setHasLoadedAllPreviousChannels(channels.isEmpty || channels.count < pagination.pageSize)
-        }
+        try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
 

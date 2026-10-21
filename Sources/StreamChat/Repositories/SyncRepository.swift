@@ -239,9 +239,9 @@ class SyncRepository: @unchecked Sendable {
             // 4. /sync (for channels what not part of refreshed channel lists, grouped lists' later pages first)
             operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
 
-            // 5. Reset grouped lists `/sync` didn't cover to their first page
+            // 5. Validate grouped lists and reset the ones `/sync` didn't cover to their first page
             if !groupedChannelLists.isEmpty {
-                operations.append(ResetUnsyncedGroupedChannelsOperation(channelListUpdater: channelListUpdater, context: context))
+                operations.append(GroupedChannelsSyncValidationOperation(channelListUpdater: channelListUpdater, context: context))
             }
 
             // 6. Re-watch channels what we were watching before disconnect

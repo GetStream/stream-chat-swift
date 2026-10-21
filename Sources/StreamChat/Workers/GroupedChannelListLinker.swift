@@ -108,7 +108,7 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
         if event.isChannelStored {
             updateLinking(for: event.cid)
-        } else if let groupKey = query.groupKey, groupKey == GroupedChannelKey.all || event.group == groupKey {
+        } else if isInGroup(event.group) {
             // Watching fetches and saves the channel, then it can be linked to the query.
             databaseContainer.read({ [query] session in
                 session.channelListQuery(query)?.watch == true
@@ -173,5 +173,9 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
                 }
             }
         })
+    }
+
+    private func isInGroup(_ group: String?) -> Bool {
+        query.groupKey == GroupedChannelKey.all || (group != nil && query.groupKey == group)
     }
 }

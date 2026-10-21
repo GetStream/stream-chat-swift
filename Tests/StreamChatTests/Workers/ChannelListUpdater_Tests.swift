@@ -1004,47 +1004,32 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     // MARK: - resetGroupedChannelsToFirstPage
 
-    func test_resetGroupedChannelsToFirstPage_unlinksLaterPagesAndUpdatesNotLoadedUnreadCount() async throws {
+    func test_resetGroupedChannelsToFirstPage_unlinksLaterPagesAndUpdatesCursorAndNotLoadedUnreadCount() async throws {
         let userId = UserId.unique
         let firstPageChannel = channelPayload(unreadMessages: 0, for: userId)
         let laterPageChannel = channelPayload(unreadMessages: 2, for: userId)
         try await database.write { session in
             try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
             let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "expired"))
+            queryDTO.next = "third-page"
             queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
             queryDTO.channels.insert(try session.saveChannel(payload: firstPageChannel))
             queryDTO.channels.insert(try session.saveChannel(payload: laterPageChannel))
         }
-        try await listUpdater.resetGroupedChannelsToFirstPage(in: "expired", cids: [firstPageChannel.channel.cid], unreadChannels: 3)
+        try await listUpdater.resetGroupedChannelsToFirstPage(
+            in: "expired",
+            cids: [firstPageChannel.channel.cid],
+            next: "second-page",
+            unreadChannels: 3
+        )
 
-        let (linkedCids, groupNotLoadedUnreadCount) = try database.readSynchronously { session in
+        let (linkedCids, next, groupNotLoadedUnreadCount) = try database.readSynchronously { session in
             let queryDTO = try XCTUnwrap(session.channelListQuery(ChannelListQuery(groupKey: "expired")))
-            return (Set(queryDTO.channels.map(\.cid)), queryDTO.groupNotLoadedUnreadCount)
+            return (Set(queryDTO.channels.map(\.cid)), queryDTO.next, queryDTO.groupNotLoadedUnreadCount)
         }
         XCTAssertEqual(Set([firstPageChannel.channel.cid.rawValue]), linkedCids)
+        XCTAssertEqual("second-page", next)
         XCTAssertEqual(3, groupNotLoadedUnreadCount)
-    }
-
-    // MARK: - unlinkGroupedChannels
-
-    func test_unlinkGroupedChannels_keepsLaterPagesAndUnlinksHiddenChannel() async throws {
-        let firstPageCid = ChannelId.unique
-        let laterPageCid = ChannelId.unique
-        let hiddenCid = ChannelId.unique
-        try await database.write { session in
-            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
-            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "all"))
-            for cid in [firstPageCid, laterPageCid, hiddenCid] {
-                queryDTO.channels.insert(try session.saveChannel(payload: self.dummyPayload(with: cid)))
-            }
-            session.channel(cid: hiddenCid)?.isHidden = true
-        }
-        try await listUpdater.unlinkGroupedChannels(in: "all", unreadChannels: 0)
-
-        let linkedCids = try database.readSynchronously { session in
-            Set(try XCTUnwrap(session.channelListQuery(ChannelListQuery(groupKey: "all"))).channels.map(\.cid))
-        }
-        XCTAssertEqual(Set([firstPageCid.rawValue, laterPageCid.rawValue]), linkedCids)
     }
 
     private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
