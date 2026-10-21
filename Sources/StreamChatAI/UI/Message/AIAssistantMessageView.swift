@@ -86,6 +86,7 @@ public struct AIAssistantMessageView<AttachmentContent: View>: View {
                 return
             }
             try? await Task.sleep(nanoseconds: 100_000_000)
+            guard !Task.isCancelled else { return }
             writing = false
         }
     }

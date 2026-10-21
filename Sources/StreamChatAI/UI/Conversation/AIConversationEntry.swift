@@ -42,8 +42,9 @@ public final class AIConversationEntry<Message: AIMessage>: Identifiable {
 // arrive, so each copy takes over its row.
 @MainActor
 final class AIPendingMessageTracker {
-    // The person's messages there were when each pending message was first seen.
-    private var before: [String: Set<AnyHashable>] = [:]
+    // The person's messages each pending message's copy cannot be: those there were when it
+    // was first seen, and those that arrived since without being its copy, such as older ones.
+    private var seen: [String: Set<AnyHashable>] = [:]
     // The pending message each copy took over, by the copy's id.
     private var copies: [AnyHashable: AIPendingMessage] = [:]
     // The pending message of the last update, whose copy can arrive in the update that stops
@@ -62,14 +63,17 @@ final class AIPendingMessageTracker {
         // A copy that arrives in the update that stops passing its pending message still
         // takes over its row. Only then: a message sent later is not the copy of one that failed.
         if let awaited = pending ?? lastPending {
-            let sent = messages.filter { $0.role == .user }.map { AnyHashable($0.id) }
-            let known = before[awaited.id] ?? Set(sent)
-            before[awaited.id] = known
-            if let copy = sent.first(where: { !known.contains($0) }) {
+            let sent = messages.filter { $0.role == .user }
+            let ids = Set(sent.map { AnyHashable($0.id) })
+            let known = seen[awaited.id] ?? ids
+            let matched = copies.first { $0.value.id == awaited.id && ids.contains($0.key) }?.key
+            if let copy = matched ?? copy(of: awaited, in: sent, known: known) {
                 if copies[copy] == nil {
                     copies[copy] = awaited
                 }
                 showsPending = false
+            } else {
+                seen[awaited.id] = known.union(ids)
             }
         }
         lastPending = pending
@@ -88,6 +92,27 @@ final class AIPendingMessageTracker {
             entries[last].isLatestReply = true
         }
         return entries
+    }
+
+    // The copy of a message that was on its way: the person's message with its id, when the app
+    // knew it. Otherwise their first after those known, which older messages loading above
+    // cannot be. With none of theirs known, such as when older messages arrive with it, it is
+    // their latest, when that is the only new one or says the same.
+    private func copy<Message: AIMessage>(
+        of pending: AIPendingMessage,
+        in sent: [Message],
+        known: Set<AnyHashable>
+    ) -> AnyHashable? {
+        let ids = sent.map { AnyHashable($0.id) }
+        if let exact = ids.first(where: { $0 == AnyHashable(pending.id) }) {
+            return exact
+        }
+        if let lastKnown = ids.lastIndex(where: known.contains) {
+            return ids.dropFirst(lastKnown + 1).first
+        }
+        let new = sent.filter { !known.contains(AnyHashable($0.id)) }
+        guard let latest = new.last, new.count == 1 || latest.text == pending.text else { return nil }
+        return AnyHashable(latest.id)
     }
 
     // Whether the latest message is surely waiting for a reply that shows nothing yet: it is on

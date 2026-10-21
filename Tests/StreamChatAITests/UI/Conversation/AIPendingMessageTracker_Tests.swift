@@ -65,6 +65,68 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         XCTAssertEqual(entries.map(\.id), ["q1", "a1", "pending"])
     }
 
+    func test_entries_olderMessagesLoadingAboveDoNotTakeOverThePendingRow() {
+        let shown = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant)]
+        _ = tracker.entries(for: shown, pending: pending)
+
+        let older = [Message(id: "q0", role: .user), Message(id: "a0", role: .assistant)]
+        let withOlder = tracker.entries(for: older + shown, pending: pending)
+        XCTAssertEqual(withOlder.map(\.id), ["q0", "a0", "q1", "a1", "pending"])
+
+        let entries = tracker.entries(for: older + shown + [Message(id: "q2", role: .user)], pending: pending)
+        XCTAssertEqual(entries.map(\.id), ["q0", "a0", "q1", "a1", "pending"], "the copy still takes over the row")
+    }
+
+    func test_entries_whenOlderMessagesArriveWithTheCopy_theCopyTakesOverThePendingRow() {
+        _ = tracker.entries(for: [Message](), pending: pending)
+
+        let entries = tracker.entries(
+            for: [
+                Message(id: "q0", role: .user),
+                Message(id: "a0", role: .assistant),
+                Message(id: "q1", role: .user, text: "Plan a trip")
+            ],
+            pending: pending
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q0", "a0", "pending"])
+    }
+
+    func test_entries_whenOnlyOlderMessagesArrive_theyDoNotTakeOverThePendingRow() {
+        _ = tracker.entries(for: [Message](), pending: pending)
+
+        let entries = tracker.entries(
+            for: [Message(id: "q0", role: .user), Message(id: "a0", role: .assistant), Message(id: "q1", role: .user)],
+            pending: pending
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q0", "a0", "q1", "pending"])
+    }
+
+    func test_entries_whenTheCopyHasThePendingMessagesID_itTakesOverWhereverItLands() {
+        let identified = AIPendingMessage(id: "q1", text: "Plan a trip")
+        _ = tracker.entries(for: [Message](), pending: identified)
+
+        let entries = tracker.entries(
+            for: [Message(id: "q1", role: .user), Message(id: "q0", role: .user)],
+            pending: identified
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q1", "q0"])
+    }
+
+    func test_entries_aMessageSentAfterTheCopyDoesNotTakeOverTheRowToo() {
+        _ = tracker.entries(for: [Message(id: "q1", role: .user)], pending: pending)
+        _ = tracker.entries(for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user)], pending: pending)
+
+        let entries = tracker.entries(
+            for: [Message(id: "q1", role: .user), Message(id: "q2", role: .user), Message(id: "q3", role: .user)],
+            pending: pending
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q1", "pending", "q3"])
+    }
+
     func test_isAwaitingReply_whileThePendingMessageWaitsForItsCopy() {
         let messages = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant)]
         _ = tracker.entries(for: messages, pending: pending)

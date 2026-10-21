@@ -18,6 +18,8 @@ final class AIThinkingClock {
         var firstStepDuration: TimeInterval?
         // When a first step that arrived done opened to show its reasoning.
         var firstStepShown: Date?
+        // Whether a reply of the turn showed.
+        var hadReplies = false
 
         init(start: Date) {
             self.start = start
@@ -42,14 +44,18 @@ final class AIThinkingClock {
 
     // A turn's thinking starts the first time it is the latest turn and thinking, and ends when
     // it stops. Thinking that resumes before the first step shows carries on, rather than
-    // ending at the pause.
-    func update(latest turn: Int?, isThinking: Bool, now: Date = Date()) {
+    // ending at the pause. A turn whose replies were taken away, such as to ask for a new one,
+    // starts thinking afresh.
+    func update(latest turn: Int?, isThinking: Bool, hasReplies: Bool = false, now: Date = Date()) {
         guard let turn else { return }
-        guard let timed = turns[turn] else {
+        guard let timed = turns[turn], !(isThinking && timed.hadReplies && !hasReplies) else {
             if isThinking {
                 turns[turn] = Turn(start: now)
             }
             return
+        }
+        if hasReplies {
+            timed.hadReplies = true
         }
         if isThinking {
             if timed.firstStep == nil {

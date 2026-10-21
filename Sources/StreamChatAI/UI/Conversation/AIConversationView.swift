@@ -122,7 +122,11 @@ public struct AIConversationView<Message: Identifiable, MessageContent: View, Fo
         )
         // Both repeat harmlessly on every update: a turn's thinking starts and ends once, and
         // what is above the turns is noted only when it changes.
-        clock.update(latest: turns.last.map { clock.key(for: $0.id) }, isThinking: isThinking)
+        clock.update(
+            latest: turns.last.map { clock.key(for: $0.id) },
+            isThinking: isThinking,
+            hasReplies: (turns.last?.messages.count ?? 0) > 1
+        )
         positions.expect(above: above)
         return AIConversationScrollView(
             turnIDs: turns.map { AnyHashable($0.id) },
