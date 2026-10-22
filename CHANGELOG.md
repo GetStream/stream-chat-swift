@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add `autoTranslationLanguages` to `ChatChannelController.updateChannel` and `Chat.update` [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
 - Add scheduled messages: schedule a message or a thread reply, then edit, reschedule, send it now or delete it, and list them with `ScheduledMessageListController` [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
+- Add `ChatChannel.scheduledMessages`, loaded with the channel when `ChatClientConfig.isScheduledMessagesEnabled` is on [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
 ### 🐞 Fixed
 - Fix `addDevice` sending a registration request when the device is already registered [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)

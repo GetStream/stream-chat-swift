@@ -20,7 +20,7 @@ final class ScheduledMessageResponse: Sendable, Decodable {
     let message: ScheduledMessageContentResponse
     /// Date/time the message is scheduled to be sent
     let scheduledAt: Date
-    /// Status of the scheduled message. One of: scheduled, sending, failed, canceled, sent
+    /// Status of the scheduled message. One of: scheduled, sending, failed, canceled, sent. A message is sending from its first send attempt until it is sent or fails, including while it waits to retry a failed attempt; it cannot be edited, canceled or sent now while sending
     let status: String
     /// Date/time of the last update
     let updatedAt: Date

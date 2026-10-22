@@ -65,10 +65,9 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         if AppConfig.shared.isScheduledMessagesEnabled,
            editingScheduledMessage == nil,
            !isSchedulingOnly,
-           let cid = channelController?.cid,
-           let messages = scheduledMessageListController?.scheduledMessages {
+           let messages = channelController?.channel?.scheduledMessages {
             let parentId = content.threadMessage?.id
-            count = messages.filter { $0.isPending && $0.cid == cid && $0.message.parentMessageId == parentId }.count
+            count = messages.filter { $0.isPending && $0.message.parentMessageId == parentId }.count
             let place = parentId == nil ? "channel" : "thread"
             scheduledMessagesBannerView.title = "\(count) scheduled message\(count == 1 ? "" : "s") in this \(place) · View all"
         }

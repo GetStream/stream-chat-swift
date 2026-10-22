@@ -6,7 +6,7 @@ import Foundation
 
 final class ChannelGetOrCreateRequest: Sendable, Encodable, JSONEncodable {
     let data: ChannelInput?
-    /// Adds scheduled_messages to the response: the caller's own scheduled, sending and failed messages in this channel. Client-side only. Absent from the response when there are more than 100 or they could not be loaded; use the scheduled messages query then
+    /// Adds scheduled_messages to the response: the acting user's own scheduled, sending and failed messages in this channel (server-side requests name the user with data.created_by_id or data.created_by; without one the field is omitted). Absent from the response when there are more than 100 or they could not be loaded; use the scheduled messages query then
     let includeScheduledMessages: Bool?
     let members: PaginationParams?
     let messages: MessagePaginationParams?

@@ -124,8 +124,13 @@ public struct ChannelQuery: Encodable, Sendable {
 
 extension ChannelQuery {
     var endpoint: Endpoint<ChannelStateResponse> {
+        endpoint(includeScheduledMessages: false)
+    }
+
+    func endpoint(includeScheduledMessages: Bool) -> Endpoint<ChannelStateResponse> {
         let request = ChannelGetOrCreateRequest(
             data: channelInput,
+            includeScheduledMessages: includeScheduledMessages ? true : nil,
             members: membersPagination?.toPaginationParams(),
             messages: pagination?.toMessagePaginationParams(),
             presence: options.contains(.presence),

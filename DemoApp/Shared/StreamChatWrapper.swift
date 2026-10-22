@@ -42,6 +42,7 @@ import UserNotifications
         if let baseURL = apiKey.customBaseURL {
             config.baseURL = .init(url: baseURL)
         }
+        config.isScheduledMessagesEnabled = AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled && apiKey == .usEastStaging
         // Uncomment this to test model transformers
         // config.modelsTransformer = CustomStreamModelsTransformer()
         configureUI()

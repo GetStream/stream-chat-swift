@@ -37,12 +37,21 @@ class ScheduledMessageDTO: NSManagedObject {
     // The content of the message, with its local state and attachments, like any other message.
     @NSManaged var message: MessageDTO?
 
+    // The channel of the message, when it is saved locally.
+    @NSManaged var channel: ChannelDTO?
+
     override func willSave() {
         super.willSave()
+
+        guard !isDeleted else { return }
 
         let newIsPending = ScheduledMessageStatus(rawValue: status) != .failed
         if isPending != newIsPending {
             isPending = newIsPending
+        }
+        // The channel observers observe the channels, so changes of its scheduled messages are propagated to them.
+        if let channel, !channel.hasChanges, !channel.isDeleted {
+            channel.cid = channel.cid
         }
     }
 
@@ -50,6 +59,14 @@ class ScheduledMessageDTO: NSManagedObject {
     static func fetchRequest(id: String) -> NSFetchRequest<ScheduledMessageDTO> {
         let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", id)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ScheduledMessageDTO.scheduledAt, ascending: true)]
+        return request
+    }
+
+    /// Returns a fetch request for the scheduled messages of the channel with the provided id.
+    static func fetchRequest(cid: ChannelId) -> NSFetchRequest<ScheduledMessageDTO> {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ScheduledMessageDTO.scheduledAt, ascending: true)]
         return request
     }
@@ -167,7 +184,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         dto.createdAt = now.bridgeDate
         dto.updatedAt = now.bridgeDate
         dto.quotedMessageId = content.quotedMessageId
-        if let channel = channel(cid: cid) {
+        dto.channel = channel(cid: cid)
+        if let channel = dto.channel {
             dto.channelName = channel.name
             dto.channelImageURL = channel.imageURL
         }
@@ -229,6 +247,9 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         dto.failureReason = payload.failureReason
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
+        if dto.channel?.cid != cid.rawValue {
+            dto.channel = channel(cid: cid)
+        }
         if let channel = payload.channel {
             dto.channelName = channel.name
             dto.channelImageURL = channel.image.flatMap(URL.init(string:))
@@ -275,6 +296,26 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.attachments = Set(attachments)
 
         return dto
+    }
+
+    /// Saves the scheduled messages of a channel query, which are all the scheduled messages of the channel.
+    func saveScheduledMessages(payload: [ScheduledMessageResponse], cid: ChannelId) {
+        payload.forEach { payload in
+            do {
+                _ = try saveScheduledMessage(payload: payload)
+            } catch {
+                log.error("Failed to save the scheduled message \(payload.id): \(error)")
+            }
+        }
+        deleteScheduledMessages(notIn: Set(payload.map(\.id)), cid: cid)
+    }
+
+    /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
+    func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {
+        let request = cid.map(ScheduledMessageDTO.fetchRequest(cid:)) ?? ScheduledMessageDTO.scheduledMessagesFetchRequest(query: .init())
+        ScheduledMessageDTO.load(by: request, context: self)
+            .filter { !ids.contains($0.id) && !$0.isLocalOnly }
+            .forEach { deleteScheduledMessage(id: $0.id) }
     }
 
     func scheduledMessage(id: String) -> ScheduledMessageDTO? {

@@ -53,6 +53,16 @@ final class ChannelQuery_Tests: XCTestCase {
         ])
     }
 
+    func test_endpoint_includesScheduledMessages_onlyWhenRequested() throws {
+        let query = ChannelQuery(cid: .unique)
+
+        let body = try AnyEndpoint(query.endpoint(includeScheduledMessages: true)).bodyAsDictionary()
+        let defaultBody = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(body["include_scheduled_messages"] as? Bool, true)
+        XCTAssertNil(defaultBody["include_scheduled_messages"])
+    }
+
     func test_endpoint_channelInput_isSentAsData() throws {
         let cid: ChannelId = .unique
         let member: UserId = .unique

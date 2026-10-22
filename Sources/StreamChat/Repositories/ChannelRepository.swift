@@ -15,7 +15,8 @@ class ChannelRepository: @unchecked Sendable {
     }
     
     func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping @Sendable (Result<ChatChannel, Error>) -> Void) {
-        apiClient.request(endpoint: query.endpoint) { [database] result in
+        let endpoint = query.endpoint(includeScheduledMessages: database.chatClientConfig.isScheduledMessagesEnabled)
+        apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
             case .success(let channelPayload):
                 database.write(converting: { session in

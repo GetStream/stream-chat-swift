@@ -85,6 +85,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var draftMessage: MessageDTO?
     @NSManaged var activeLiveLocations: Set<SharedLocationDTO>
+    @NSManaged var scheduledMessages: Set<ScheduledMessageDTO>
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -186,6 +187,8 @@ class ChannelDTO: NSManagedObject {
 
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.cid = cid.rawValue
+        // The scheduled messages saved before the channel belong to it.
+        new.scheduledMessages = Set(ScheduledMessageDTO.load(by: ScheduledMessageDTO.fetchRequest(cid: cid), context: context))
         return new
     }
 }
@@ -421,6 +424,10 @@ extension NSManagedObjectContext {
             if let draftMessage = dto.draftMessage {
                 deleteDraftMessage(in: payload.channel.cid, threadId: draftMessage.parentMessageId)
             }
+        }
+
+        if let scheduledMessages = payload.scheduledMessages {
+            saveScheduledMessages(payload: scheduledMessages, cid: payload.channel.cid)
         }
 
         dto.activeLiveLocations = Set(try payload.activeLiveLocations?.map {
@@ -693,6 +700,10 @@ extension ChatChannel {
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
         
         let pushPreference = try dto.pushPreference?.asModel()
+        let scheduledMessages = dto.scheduledMessages
+            .filter { !$0.isDeleted }
+            .compactMap { try? $0.asModel() }
+            .sorted { ($0.isPending ? 0 : 1, $0.scheduledAt) < ($1.isPending ? 0 : 1, $1.scheduledAt) }
 
         let channel = try ChatChannel(
             cid: cid,
@@ -733,7 +744,8 @@ extension ChatChannel {
             muteDetails: muteDetails,
             draftMessage: draftMessage.map(DraftMessage.init),
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
 
         if let transformer = clientConfig.modelsTransformer {

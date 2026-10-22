@@ -116,7 +116,9 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             }
         }
 
-        let endpoint = channelQuery.endpoint
+        let endpoint = channelQuery.endpoint(
+            includeScheduledMessages: database.chatClientConfig.isScheduledMessagesEnabled
+        )
 
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)

@@ -53,11 +53,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                             }
                         }
                         if isWholeList, let context = session as? NSManagedObjectContext {
-                            let ids = Set(response.scheduledMessages.map(\.id))
-                            let request = ScheduledMessageDTO.scheduledMessagesFetchRequest(query: .init())
-                            ScheduledMessageDTO.load(by: request, context: context)
-                                .filter { !ids.contains($0.id) && !$0.isLocalOnly }
-                                .forEach { context.deleteScheduledMessage(id: $0.id) }
+                            context.deleteScheduledMessages(notIn: Set(response.scheduledMessages.map(\.id)), cid: nil)
                         }
                         return (messages, next)
                     },

@@ -194,11 +194,16 @@ extension ChannelListQuery {
 
 extension ChannelListQuery {
     var endpoint: Endpoint<ChannelListPayload> {
+        endpoint(includeScheduledMessages: false)
+    }
+
+    func endpoint(includeScheduledMessages: Bool) -> Endpoint<ChannelListPayload> {
         let hasPredefinedFilter = predefinedFilter.map { !$0.isEmpty } ?? false
         let sort = sort.map { SortParamRequest(direction: $0.direction, field: $0.key.remoteKey) }
         let request = QueryChannelsRequest(
             filterConditions: hasPredefinedFilter ? nil : filter,
             filterValues: hasPredefinedFilter ? filterValues.flatMap { $0.isEmpty ? nil : $0 } : nil,
+            includeScheduledMessages: includeScheduledMessages ? true : nil,
             limit: pagination.pageSize != .backendDefaultPageSize ? pagination.pageSize : nil,
             memberLimit: membersLimit,
             messageLimit: messagesLimit,

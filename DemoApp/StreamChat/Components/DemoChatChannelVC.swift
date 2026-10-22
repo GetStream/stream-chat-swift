@@ -104,6 +104,15 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         navigationController?.popViewController(animated: true)
     }
 
+    override func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
+    ) {
+        super.channelController(channelController, didUpdateChannel: channel)
+
+        (messageComposerVC as? DemoComposerVC)?.updateScheduledMessagesBanner()
+    }
+
     // MARK: - Loading previous and next messages state handling.
 
     override func loadPreviousMessages(completion: @escaping @MainActor (Error?) -> Void) {

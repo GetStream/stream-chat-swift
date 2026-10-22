@@ -54,6 +54,26 @@ final class ChannelUpdater_Tests: XCTestCase {
         let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
+        XCTAssertNil(try apiClient.request_endpoint?.bodyAsDictionary()["include_scheduled_messages"])
+    }
+
+    func test_updateChannelQuery_withScheduledMessagesEnabled_includesScheduledMessages() throws {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isScheduledMessagesEnabled = true
+        let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
+        let channelUpdater = ChannelUpdater(
+            channelRepository: channelRepository,
+            messageRepository: messageRepository,
+            paginationStateHandler: paginationStateHandler,
+            database: database,
+            apiClient: apiClient
+        )
+        let query = ChannelQuery(cid: .unique)
+
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
+
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(query.endpoint(includeScheduledMessages: true)))
+        XCTAssertEqual(try apiClient.request_endpoint?.bodyAsDictionary()["include_scheduled_messages"] as? Bool, true)
     }
 
     func test_updateChannelQueryRecovery_makesCorrectAPICall() throws {

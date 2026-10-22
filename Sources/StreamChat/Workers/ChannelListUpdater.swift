@@ -150,7 +150,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         channelListQuery: ChannelListQuery,
         completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
     ) {
-        apiClient.request(endpoint: channelListQuery.endpoint, completion: completion)
+        let endpoint = channelListQuery.endpoint(
+            includeScheduledMessages: database.chatClientConfig.isScheduledMessagesEnabled
+        )
+        apiClient.request(endpoint: endpoint, completion: completion)
     }
 
     /// Marks all channels for a user as read.

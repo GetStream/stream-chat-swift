@@ -41,6 +41,16 @@ final class ChannelListQuery_Tests: XCTestCase {
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
 
+    func test_endpoint_includesScheduledMessages_onlyWhenRequested() throws {
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+
+        let body = try AnyEndpoint(query.endpoint(includeScheduledMessages: true)).bodyAsDictionary()
+        let defaultBody = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(body["include_scheduled_messages"] as? Bool, true)
+        XCTAssertNil(defaultBody["include_scheduled_messages"])
+    }
+
     func test_runtimeSortingValues_returnsEmptyIfNoCustomKey() {
         let sorting = [
             Sorting(key: ChannelListSortingKey.updatedAt),

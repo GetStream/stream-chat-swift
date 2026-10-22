@@ -461,6 +461,136 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel.truncatedBy?.id, truncatedBy.id)
     }
 
+    // MARK: - Scheduled messages
+
+    func test_saveChannel_savesTheScheduledMessages_pendingFirst() throws {
+        let cid: ChannelId = .unique
+        let laterAt = Date().addingTimeInterval(7200)
+        let soonerAt = Date().addingTimeInterval(3600)
+        try database.createCurrentUser()
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), scheduledMessages: [
+                .dummy(id: "failed", cid: cid, scheduledAt: soonerAt, status: "failed"),
+                .dummy(id: "later", cid: cid, scheduledAt: laterAt),
+                .dummy(id: "sooner", cid: cid, scheduledAt: soonerAt)
+            ]))
+        }
+
+        let channel = try loadChannel(cid: cid)
+        XCTAssertEqual(channel.scheduledMessages.map(\.id), ["sooner", "later", "failed"])
+        XCTAssertEqual(channel.scheduledMessages.first?.message.text, "Hello")
+    }
+
+    func test_saveChannel_withScheduledMessages_deletesTheMissingOnesOfTheChannel() throws {
+        let cid: ChannelId = .unique
+        let otherCid: ChannelId = .unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveScheduledMessage(payload: .dummy(id: "sent", cid: cid))
+            try session.saveScheduledMessage(payload: .dummy(id: "other-channel", cid: otherCid))
+            try session.createNewScheduledMessage(
+                id: "local-only",
+                cid: cid,
+                content: ScheduledMessageContent(
+                    text: "Local",
+                    attachments: [],
+                    mentionedUserIds: [],
+                    quotedMessageId: nil,
+                    parentId: nil,
+                    showReplyInChannel: false,
+                    extraData: [:]
+                ),
+                scheduledAt: Date().addingTimeInterval(3600)
+            )
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), scheduledMessages: [.dummy(id: "kept", cid: cid)]))
+        }
+
+        let channel = try loadChannel(cid: cid)
+        XCTAssertEqual(Set(channel.scheduledMessages.map(\.id)), ["kept", "local-only"])
+        XCTAssertFalse(try database.readSynchronously { $0.scheduledMessage(id: "sent") != nil })
+        XCTAssertTrue(try database.readSynchronously { $0.scheduledMessage(id: "other-channel") != nil })
+    }
+
+    func test_saveChannel_withoutScheduledMessages_keepsTheLocalOnes() throws {
+        let cid: ChannelId = .unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), scheduledMessages: [.dummy(id: "scheduled", cid: cid)]))
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+        }
+
+        let channel = try loadChannel(cid: cid)
+        XCTAssertEqual(channel.scheduledMessages.map(\.id), ["scheduled"])
+    }
+
+    func test_saveChannel_linksTheScheduledMessagesSavedBeforeTheChannel() throws {
+        let cid: ChannelId = .unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            try session.saveScheduledMessage(payload: .dummy(id: "scheduled", cid: cid))
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+        }
+
+        let channel = try loadChannel(cid: cid)
+        XCTAssertEqual(channel.scheduledMessages.map(\.id), ["scheduled"])
+    }
+
+    func test_updatingAScheduledMessage_updatesTheChannel_andKeepsItsMessages() throws {
+        // Uniqueness constraints are only enforced by SQLite.
+        database = DatabaseContainer_Spy(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(
+                channel: .dummy(cid: cid),
+                messages: [.dummy(messageId: messageId, cid: cid)],
+                scheduledMessages: [.dummy(id: "scheduled", cid: cid, message: .dummy(text: "Old"))]
+            ))
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveScheduledMessage(payload: .dummy(id: "scheduled", cid: cid, message: .dummy(text: "New")))
+        }
+
+        let channel = try loadChannel(cid: cid)
+        XCTAssertEqual(channel.scheduledMessages.first?.message.text, "New")
+        XCTAssertEqual(channel.latestMessages.map(\.id), [messageId])
+        XCTAssertEqual(try database.readSynchronously { $0.message(id: messageId)?.channel?.cid }, cid.rawValue)
+    }
+
+    func test_deleteScheduledMessage_removesItFromTheChannel() throws {
+        let cid: ChannelId = .unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), scheduledMessages: [.dummy(id: "scheduled", cid: cid)]))
+        }
+
+        try database.writeSynchronously { session in
+            session.deleteScheduledMessage(id: "scheduled")
+        }
+
+        let channel = try loadChannel(cid: cid)
+        XCTAssertEqual(channel.scheduledMessages, [])
+    }
+
+    private func loadChannel(cid: ChannelId) throws -> ChatChannel {
+        try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: cid)?.asModel())
+        }
+    }
+
     func test_saveChannel_keepsUnrecognizedOwnCapability() throws {
         let channelId: ChannelId = .unique
         let payload = ChannelDetailPayload.dummy(
@@ -1689,7 +1819,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        let channel = try loadChannel(cid: cid)
 
         // THEN
         let message1 = try XCTUnwrap(channel.latestMessages.first { $0.id == message1Payload.id })
@@ -1719,7 +1849,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
         
         // WHEN
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        let channel = try loadChannel(cid: cid)
         
         // THEN
         XCTAssertEqual(channel.cid, transformer.mockTransformedChannel.cid)
@@ -1771,7 +1901,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // THEN
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        let channel = try loadChannel(cid: cid)
         let draftMessage = try XCTUnwrap(channel.draftMessage)
         XCTAssertEqual(draftMessage.id, draftMessagePayload.id)
         XCTAssertEqual(draftMessage.text, draftMessagePayload.text)
@@ -1973,7 +2103,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // THEN
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        let channel = try loadChannel(cid: cid)
         let draftMessage = try XCTUnwrap(channel.draftMessage)
         let quotedMessage = try XCTUnwrap(draftMessage.quotedMessage)
         XCTAssertEqual(quotedMessage.id, quotedMessagePayload.id)
@@ -2031,7 +2161,7 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // THEN
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        let channel = try loadChannel(cid: cid)
         let draftMessage = try XCTUnwrap(channel.draftMessage)
         XCTAssertEqual(draftMessage.threadId, parentMessagePayload.id)
         let parentMessageId = try XCTUnwrap(draftMessage.threadId)
