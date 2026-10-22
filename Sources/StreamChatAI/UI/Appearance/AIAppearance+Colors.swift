@@ -97,6 +97,34 @@ extension AIAppearance {
         /// The note when an answer could not be sent.
         public lazy var toolApprovalFailure: UIColor = colors.accentError
 
+        // MARK: - Conversation
+
+        /// The bubble of a message the person sent.
+        public lazy var userMessageBackground: UIColor = colors.backgroundCoreSurfaceDefault
+        public lazy var userMessageText: UIColor = colors.textPrimary
+        /// The buttons under a reply, such as copy and regenerate.
+        public lazy var messageAction: UIColor = colors.textSecondary
+        /// The spinner at the start of the list while older messages load.
+        public lazy var conversationLoadingIndicator: UIColor = colors.textSecondary
+        /// The button that scrolls to the end of the conversation.
+        public lazy var conversationScrollButtonBackground: UIColor = colors.backgroundCoreElevation1
+        public lazy var conversationScrollButtonIcon: UIColor = colors.textPrimary
+        public lazy var conversationScrollButtonBorder: UIColor = colors.borderCoreDefault
+
+        // MARK: - Message Attachments
+
+        /// What shows while an image loads.
+        public lazy var attachmentImagePlaceholder: UIColor = colors.backgroundCoreSurfaceSubtle
+        /// The card of a file.
+        public lazy var attachmentBackground: UIColor = colors.backgroundCoreElevation1
+        public lazy var attachmentBorder: UIColor = colors.borderCoreDefault
+        /// The icon of a file's type, such as PDF.
+        public lazy var attachmentIcon: UIColor = colors.textOnAccent
+        public lazy var attachmentIconBackground: UIColor = colors.accentPrimary
+        public lazy var attachmentName: UIColor = colors.textPrimary
+        /// A file's type and size.
+        public lazy var attachmentDetails: UIColor = colors.textSecondary
+
         // MARK: - Sidebar
 
         public lazy var sidebarBackground: UIColor = colors.backgroundCoreApp

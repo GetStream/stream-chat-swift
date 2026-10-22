@@ -1,6 +1,17 @@
 "composer.placeholder.ask_anything" = "Ask anything";
 "composer.button.all_photos" = "All Photos";
 "streaming.code_block.language_fallback" = "plain text";
+"conversation.button.scroll_to_latest" = "Scroll to latest";
+"attachment.image" = "Image";
+"attachment.file" = "File";
+"attachment.details" = "%1$@ · %2$@";
+"message_actions.copy" = "Copy";
+"message_actions.copied" = "Copied";
+"message_actions.share" = "Share";
+"message_actions.regenerate" = "Regenerate";
+"message_actions.rate_positive" = "Good response";
+"message_actions.rate_negative" = "Bad response";
+"message_actions.edit" = "Edit";
 "transcription.error.recognizer_unavailable" = "Speech recognizer is unavailable.";
 "reasoning.title.thinking" = "Thinking…";
 "reasoning.title.thinking_for" = "Thinking… %@";
