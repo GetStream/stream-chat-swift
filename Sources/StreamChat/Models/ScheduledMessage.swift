@@ -254,7 +254,7 @@ public struct ScheduledMessageErrorReason: RawRepresentable, Hashable, Sendable,
     /// Scheduled messages are disabled for the app.
     public static let scheduledMessagesDisabled: Self = "scheduled_messages_disabled"
 
-    /// The new date of a scheduled message is less than 1 minute from now.
+    /// The new date of a scheduled message is in the past.
     public static let scheduledAtTooSoon: Self = "scheduled_at_too_soon"
 
     /// The date is further than the maximum lead time of the app.

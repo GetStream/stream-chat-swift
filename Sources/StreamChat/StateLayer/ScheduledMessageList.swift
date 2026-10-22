@@ -54,7 +54,8 @@ public final class ScheduledMessageList: Sendable {
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
+    ///   next whole minute, at least 1 minute from now.
     ///
     /// - Throws: An error while rescheduling the message locally.
     /// - Returns: The rescheduled message.

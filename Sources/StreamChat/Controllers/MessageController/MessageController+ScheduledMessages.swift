@@ -17,7 +17,8 @@ public extension ChatMessageController {
     ///   - showReplyInChannel: Set this flag to `true` if you want the reply to be shown in the channel as well.
     ///   - quotedMessageId: An id of the message the reply quotes.
     ///   - extraData: Additional extra data of the reply.
-    ///   - scheduledAt: When to send the reply. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
+    ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///   - completion: Called when the reply is saved locally, with the scheduled message or an error. It is sent
     ///   to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func scheduleReply(
@@ -62,7 +63,8 @@ public extension ChatMessageController {
     ///   - showReplyInChannel: Set this flag to `true` if you want the reply to be shown in the channel as well.
     ///   - quotedMessageId: The new quoted message of the reply.
     ///   - extraData: The new extra data of the reply.
-    ///   - scheduledAt: When to send the reply. `nil` keeps the current date.
+    ///   - scheduledAt: When to send the reply, not in the past. The server rounds it up to the next whole minute.
+    ///   `nil` keeps the current date.
     ///   - completion: Called when the reply is updated locally, with the scheduled message or an error. The changes are
     ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func updateScheduledReply(

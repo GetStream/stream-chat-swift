@@ -1362,7 +1362,8 @@ public class Chat: @unchecked Sendable {
     ///   - mentions: An array of mentioned user ids.
     ///   - extraData: Additional extra data of the message object.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
-    ///   - scheduledAt: When to send the message. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
+    ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the message right away.
     ///
     /// - Throws: An error while saving the scheduled message locally.
     /// - Returns: The scheduled message.
@@ -1408,7 +1409,8 @@ public class Chat: @unchecked Sendable {
     ///   - mentions: An array of mentioned user ids.
     ///   - extraData: Additional extra data of the reply.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
-    ///   - scheduledAt: When to send the reply. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
+    ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///
     /// - Throws: An error while saving the scheduled reply locally.
     /// - Returns: The scheduled reply.
@@ -1454,7 +1456,8 @@ public class Chat: @unchecked Sendable {
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - mentions: The new mentioned user ids of the message.
     ///   - extraData: The new extra data of the message.
-    ///   - scheduledAt: When to send the message. `nil` keeps the current date.
+    ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
+    ///   `nil` keeps the current date.
     ///
     /// - Throws: An error while updating the scheduled message locally.
     /// - Returns: The updated scheduled message.
@@ -1486,7 +1489,8 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
+    ///   next whole minute, at least 1 minute from now.
     ///
     /// - Throws: An error while rescheduling the message locally.
     /// - Returns: The rescheduled message.

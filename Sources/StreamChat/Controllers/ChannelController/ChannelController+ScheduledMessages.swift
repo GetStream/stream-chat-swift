@@ -16,7 +16,8 @@ public extension ChatChannelController {
     ///   - mentionedUserIds: An array of the users mentioned in the message.
     ///   - quotedMessageId: An id of the message the new message quotes.
     ///   - extraData: Additional extra data of the message object.
-    ///   - scheduledAt: When to send the message. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
+    ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - completion: Called when the message is saved locally, with the scheduled message or an error. It is sent
     ///   to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func scheduleMessage(
@@ -63,7 +64,8 @@ public extension ChatChannelController {
     ///   - mentionedUserIds: The new mentioned users of the message.
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - extraData: The new extra data of the message.
-    ///   - scheduledAt: When to send the message. `nil` keeps the current date.
+    ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
+    ///   `nil` keeps the current date.
     ///   - completion: Called when the message is updated locally, with the scheduled message or an error. The changes are
     ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func updateScheduledMessage(
@@ -94,7 +96,8 @@ public extension ChatChannelController {
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
+    ///   next whole minute, at least 1 minute from now.
     ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error. The new date
     ///   is sent to the server right after, see `ScheduledMessage.localState`.
     func rescheduleMessage(

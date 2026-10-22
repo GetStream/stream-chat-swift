@@ -183,7 +183,8 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
+    ///   next whole minute, at least 1 minute from now.
     ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error. The new date
     ///   is sent to the server right after, see `ScheduledMessage.localState`.
     public func rescheduleMessage(
