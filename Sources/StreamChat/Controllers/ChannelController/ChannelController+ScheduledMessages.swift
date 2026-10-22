@@ -54,7 +54,7 @@ public extension ChatChannelController {
 
     /// Updates the content of a scheduled message, and optionally when it is sent.
     ///
-    /// A failed scheduled message is scheduled again when `scheduledAt` is provided.
+    /// A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -90,7 +90,7 @@ public extension ChatChannelController {
         }
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message is scheduled again.
+    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

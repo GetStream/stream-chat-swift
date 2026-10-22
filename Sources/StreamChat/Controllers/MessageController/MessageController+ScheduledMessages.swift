@@ -52,7 +52,7 @@ public extension ChatMessageController {
 
     /// Updates the content of a scheduled reply to the message, and optionally when it is sent.
     ///
-    /// A failed scheduled reply is scheduled again when `scheduledAt` is provided.
+    /// A failed scheduled reply can not be changed: delete it and schedule a new one.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

@@ -179,7 +179,7 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
         }
     }
 
-    /// Changes when a scheduled message is sent. A failed scheduled message is scheduled again.
+    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
