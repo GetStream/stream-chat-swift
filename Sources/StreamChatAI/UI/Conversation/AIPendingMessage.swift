@@ -9,7 +9,7 @@ import Foundation
 ///
 /// ``AIConversationView`` shows it as theirs straight away. The first message of theirs that
 /// arrives after it takes its place, keeping its attachments, and the list does not move.
-public struct AIPendingMessage: Identifiable {
+public struct AIPendingMessage: Identifiable, Sendable {
     public let id: String
     public var text: String
     public var attachments: [AIMessageAttachment]

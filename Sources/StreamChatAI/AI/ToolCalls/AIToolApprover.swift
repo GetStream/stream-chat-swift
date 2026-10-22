@@ -16,14 +16,19 @@ public struct AIToolApprover {
     /// client tool), then updates the call's step; until then the question stays, with its
     /// buttons disabled. A thrown error lets the person answer again.
     public var decide: @MainActor @Sendable (_ call: AIToolCallPart, _ allowed: Bool) async throws -> Void
+    /// How this person signs in when a call waits for their account at a provider. Without one,
+    /// no sign-in is offered here.
+    public var authorizer: AIToolAuthorizer?
 
     public init(
         userID: String,
         clientID: String,
+        authorizer: AIToolAuthorizer? = nil,
         decide: @escaping @MainActor @Sendable (_ call: AIToolCallPart, _ allowed: Bool) async throws -> Void
     ) {
         self.userID = userID
         self.clientID = clientID
+        self.authorizer = authorizer
         self.decide = decide
     }
 }

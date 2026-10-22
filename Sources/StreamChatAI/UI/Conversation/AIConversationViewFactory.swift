@@ -57,6 +57,13 @@ public protocol AIConversationViewFactory {
     ///
     /// The default message views show their attachments with it.
     func makeAttachmentView(options: AIMessageAttachmentViewOptions) -> AttachmentViewType
+
+    /// The view type returned by ``makeToolAuthorizationView(options:)``.
+    associatedtype ToolAuthorizationViewType: View
+    /// Returns what asks the person to sign in when a tool call waits for their account at a
+    /// provider, ``AIToolAuthorizationCard`` by default. A view of your own calls the options'
+    /// `connect` and `decline`, which open the sign-in and send the person's "not now".
+    func makeToolAuthorizationView(options: AIToolAuthorizationViewOptions) -> ToolAuthorizationViewType
 }
 
 public extension AIConversationViewFactory {
@@ -82,6 +89,15 @@ public extension AIConversationViewFactory {
 
     func makeAttachmentView(options: AIMessageAttachmentViewOptions) -> some View {
         AIMessageAttachmentView(attachment: options.attachment)
+    }
+
+    func makeToolAuthorizationView(options: AIToolAuthorizationViewOptions) -> some View {
+        AIToolAuthorizationCard(
+            authorization: options.authorization,
+            state: options.state,
+            connect: options.connect,
+            decline: options.decline
+        )
     }
 }
 

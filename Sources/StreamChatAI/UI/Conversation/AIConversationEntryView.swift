@@ -98,7 +98,7 @@ final class AIConversationEntrySnapshot: Equatable, Sendable {
     let isLatestReply: Bool
 
     init<Message: AIMessage>(entry: AIConversationEntry<Message>, approver: AIToolApprover?) {
-        self.approver = approver.map { [$0.userID, $0.clientID] } ?? []
+        self.approver = approver.map { [$0.userID, $0.clientID, $0.authorizer?.callbackScheme ?? ""] } ?? []
         isLatestReply = entry.isLatestReply
         if let message = entry.message {
             isPending = false

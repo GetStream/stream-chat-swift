@@ -65,6 +65,7 @@ extension AIAppearance {
         // MARK: - Tool Call
 
         public var toolCallAwaitingApproval = Image(systemName: "hand.raised")
+        public var toolCallAwaitingAuthorization = Image(systemName: "person.badge.key")
         public var toolCallAwaitingDevice = Image(systemName: "iphone")
         public var toolCallCompleted = Image(systemName: "checkmark")
         public var toolCallFailed = Image(systemName: "exclamationmark")
