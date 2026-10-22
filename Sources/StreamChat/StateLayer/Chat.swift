@@ -1345,7 +1345,176 @@ public class Chat: @unchecked Sendable {
             try await memberUpdater.pinMemberChannel(false, userId: currentUserId, cid: cid)
         }
     }
-    
+
+    // MARK: - Scheduling Messages
+
+    /// Schedules a new message to be sent to the channel at a later date.
+    ///
+    /// The message is not added to the channel until it is sent. It is saved locally first and sent to the server
+    /// once its attachments are uploaded, see `ScheduledMessage.localState`.
+    ///
+    /// - SeeAlso: Listing scheduled messages: ``ChatClient/makeScheduledMessageList(with:)``.
+    ///
+    /// - Parameters:
+    ///   - text: Text of the message.
+    ///   - attachments: An array of the attachments for the message.
+    ///   - quotedMessageId: An id of the quoted message.
+    ///   - mentions: An array of mentioned user ids.
+    ///   - extraData: Additional extra data of the message object.
+    ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
+    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///
+    /// - Throws: An error while saving the scheduled message locally.
+    /// - Returns: The scheduled message.
+    @discardableResult
+    public func scheduleMessage(
+        with text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        quote quotedMessageId: MessageId? = nil,
+        mentions: [UserId] = [],
+        extraData: [String: RawJSON] = [:],
+        messageId: MessageId? = nil,
+        scheduledAt: Date
+    ) async throws -> ScheduledMessage {
+        let cid = try await self.cid
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentions,
+            quotedMessageId: quotedMessageId,
+            parentId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
+        return try await client.scheduledMessagesRepository.schedule(
+            id: messageId ?? .newUniqueId,
+            cid: cid,
+            content: content,
+            scheduledAt: scheduledAt
+        )
+    }
+
+    /// Schedules a new reply to the specified message, to be sent at a later date.
+    ///
+    /// The reply is not added to the thread until it is sent. It is saved locally first and sent to the server
+    /// once its attachments are uploaded, see `ScheduledMessage.localState`.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: The id of the message to reply to.
+    ///   - text: Text of the reply.
+    ///   - showReplyInChannel: If `true`, the reply is also visible in the channel, not only in the thread.
+    ///   - attachments: An array of the attachments for the reply.
+    ///   - quotedMessageId: An id of the quoted message.
+    ///   - mentions: An array of mentioned user ids.
+    ///   - extraData: Additional extra data of the reply.
+    ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
+    ///   - scheduledAt: When to send the reply. At least 1 minute and at most 120 days from now.
+    ///
+    /// - Throws: An error while saving the scheduled reply locally.
+    /// - Returns: The scheduled reply.
+    @discardableResult
+    public func scheduleReply(
+        to parentMessageId: MessageId,
+        text: String,
+        showReplyInChannel: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        quote quotedMessageId: MessageId? = nil,
+        mentions: [UserId] = [],
+        extraData: [String: RawJSON] = [:],
+        messageId: MessageId? = nil,
+        scheduledAt: Date
+    ) async throws -> ScheduledMessage {
+        let cid = try await self.cid
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentions,
+            quotedMessageId: quotedMessageId,
+            parentId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData
+        )
+        return try await client.scheduledMessagesRepository.schedule(
+            id: messageId ?? .newUniqueId,
+            cid: cid,
+            content: content,
+            scheduledAt: scheduledAt
+        )
+    }
+
+    /// Updates the content of a scheduled message, and optionally when it is sent.
+    ///
+    /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - text: The new text of the message.
+    ///   - attachments: The new attachments of the message.
+    ///   - quotedMessageId: The new quoted message of the message.
+    ///   - mentions: The new mentioned user ids of the message.
+    ///   - extraData: The new extra data of the message.
+    ///   - scheduledAt: When to send the message. `nil` keeps the current date.
+    ///
+    /// - Throws: An error while updating the scheduled message locally.
+    /// - Returns: The updated scheduled message.
+    @discardableResult
+    public func updateScheduledMessage(
+        id: String,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        quote quotedMessageId: MessageId? = nil,
+        mentions: [UserId] = [],
+        extraData: [String: RawJSON] = [:],
+        scheduledAt: Date? = nil
+    ) async throws -> ScheduledMessage {
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentions,
+            quotedMessageId: quotedMessageId,
+            parentId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
+        return try await client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)
+    }
+
+    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    ///
+    /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.localState`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///
+    /// - Throws: An error while rescheduling the message locally.
+    /// - Returns: The rescheduled message.
+    @discardableResult
+    public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
+        try await client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
+    }
+
+    /// Deletes a scheduled message, so it is never sent.
+    ///
+    /// - Parameter id: The id of the scheduled message.
+    ///
+    /// - Throws: An error while deleting the scheduled message.
+    public func deleteScheduledMessage(id: String) async throws {
+        try await client.scheduledMessagesRepository.delete(id: id)
+    }
+
+    /// Sends a scheduled message right away.
+    ///
+    /// The message is added to the channel when it is sent, which is reported by the `ScheduledMessageSentEvent`.
+    ///
+    /// - Parameter id: The id of the scheduled message.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func sendScheduledMessageNow(id: String) async throws {
+        try await client.scheduledMessagesRepository.sendNow(id: id)
+    }
+
     // MARK: - Sending and Listening to Events
     
     /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.
