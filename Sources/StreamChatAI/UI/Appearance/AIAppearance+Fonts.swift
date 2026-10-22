@@ -41,6 +41,23 @@ extension AIAppearance {
         /// The note when an answer could not be sent.
         public lazy var toolApprovalFailure: Font = fonts.caption1
 
+        // MARK: - Conversation
+
+        /// A message the person sent.
+        public lazy var userMessage: Font = fonts.body
+        /// The icons of the buttons under a reply, such as copy and regenerate.
+        public lazy var messageAction: Font = fonts.subheadline
+        /// The arrow of the button that scrolls to the end of the conversation.
+        public lazy var conversationScrollButton: Font = fonts.bodyBold
+
+        // MARK: - Message Attachments
+
+        /// The icon of a file's type, such as PDF.
+        public lazy var attachmentIcon: Font = fonts.subheadline
+        public lazy var attachmentName: Font = fonts.subheadlineBold
+        /// A file's type and size.
+        public lazy var attachmentDetails: Font = fonts.caption1
+
         public nonisolated init(tokens: DesignSystemTokens = DesignSystemTokens()) {
             fonts = tokens.fonts
         }
