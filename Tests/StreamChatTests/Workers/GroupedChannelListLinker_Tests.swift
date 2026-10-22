@@ -294,6 +294,28 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(0, channelWatcherHandler.attemptToWatch_callCount)
     }
 
+    func test_channelPartialUpdated_whenStoredChannelSortsBelowLoadedPages_doesNotLinkChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup(next: "next")
+        try saveChannel(cid: .unique, lastMessageAt: daysBeforeNow(2), isLinked: true)
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(5), isLinked: false)
+
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: true))
+
+        XCTAssertEqual(false, isLinked(cid))
+    }
+
+    func test_channelPartialUpdated_whenStoredChannelSortsWithinLoadedPages_linksChannel() throws {
+        let cid = ChannelId.unique
+        try saveFilteredGroup(next: "next")
+        try saveChannel(cid: .unique, lastMessageAt: daysBeforeNow(2), isLinked: true)
+        try saveChannel(cid: cid, lastMessageAt: daysBeforeNow(1), isLinked: false)
+
+        try process(channelPartialUpdatedEvent(cid: cid, group: "expired", isStored: true))
+
+        XCTAssertEqual(true, isLinked(cid))
+    }
+
     // MARK: - Helpers
 
     // The cutoff is resolved when the predicate is built, so dates are relative to the wall clock.
@@ -305,6 +327,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         query: ChannelListQuery? = nil,
         filter: Filter<GroupedChannelsFilterScope> = .greaterOrEqual(.queryTimestamp, than: .daysAgo(14)),
         groupNotLoadedUnreadCount: Int64 = 0,
+        next: String? = nil,
         watch: Bool = false
     ) throws {
         let filterJSONData = try JSONEncoder.stream.encode(filter)
@@ -313,6 +336,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
             let queryDTO = session.saveQuery(query: query ?? self.query)
             queryDTO.groupFilterJSONData = filterJSONData
             queryDTO.groupNotLoadedUnreadCount = groupNotLoadedUnreadCount
+            queryDTO.next = next
             queryDTO.watch = watch
         }
     }
@@ -376,6 +400,7 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
             cid: cid,
             group: group,
             isChannelStored: isStored,
+            queryTimestamp: .unique,
             createdAt: .unique
         )
     }
