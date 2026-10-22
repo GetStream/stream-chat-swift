@@ -534,7 +534,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let request = UpdateChannelRequest(
-            addMembers: members.map { ChannelMemberRequest(custom: $0.extraData, userId: $0.userId) },
+            addMembers: members.map { ChannelMemberRequest(memberInfo: $0) },
             hideHistory: hideHistoryBefore == nil ? hideHistory : nil,
             hideHistoryBefore: hideHistoryBefore,
             message: systemMessage?.toMessageRequest()

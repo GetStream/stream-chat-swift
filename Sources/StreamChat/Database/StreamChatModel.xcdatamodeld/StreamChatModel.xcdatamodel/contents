@@ -46,8 +46,10 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="currentUserUnreadMessagesCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="defaultSortingAt" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
+        <attribute name="queryTimestamp" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
+        <attribute name="group" optional="YES" attributeType="String"/>
         <attribute name="hasUnreadSorting" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
@@ -64,6 +66,7 @@
         <attribute name="oldestMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="ownCapabilities" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="team" optional="YES" attributeType="String"/>
+        <attribute name="touchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="truncatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="typeRawValue" attributeType="String" defaultValueString=""/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -93,6 +96,9 @@
         <fetchIndex name="defaultSortingIndex">
             <fetchIndexElement property="defaultSortingAt" type="Binary" order="ascending"/>
         </fetchIndex>
+        <fetchIndex name="queryTimestampIndex">
+            <fetchIndexElement property="queryTimestamp" type="Binary" order="ascending"/>
+        </fetchIndex>
         <fetchIndex name="cid">
             <fetchIndexElement property="cid" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -121,6 +127,9 @@
     <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="groupFilterJSONData" optional="YES" attributeType="Binary"/>
+        <attribute name="groupNotLoadedUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="groupSortJSONData" optional="YES" attributeType="Binary"/>
         <attribute name="next" optional="YES" attributeType="String"/>
         <attribute name="presence" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="sortJSONData" optional="YES" attributeType="Binary"/>

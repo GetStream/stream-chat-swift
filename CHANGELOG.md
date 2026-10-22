@@ -5,10 +5,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
-- Add `autoTranslationLanguages` to `ChatChannelController.updateChannel` and `Chat.update` [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
+- Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
+- Add `NotificationChannelPartialUpdatedEvent` and keep grouped channel lists up to date when a channel the user isn't watching is partially updated [#4336](https://github.com/GetStream/stream-chat-swift/pull/4336)
 - Add scheduled messages: schedule a message or a thread reply, then edit, reschedule, send it now or delete it, and list them with `ScheduledMessageListController` or the `ScheduledMessageList` of the State Layer [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
 - Add `ChatChannel.scheduledMessages`, loaded with the channel when `ChatClientConfig.isScheduledMessagesEnabled` is on [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
+### 🐞 Fixed
+- Fix loaded grouped channel lists keeping channels that get hidden, deleted or disabled, or that the current user is removed from [#4341](https://github.com/GetStream/stream-chat-swift/pull/4341)
+- Keep hidden channels hidden when a system message or a message from a blocked user arrives [#4345](https://github.com/GetStream/stream-chat-swift/pull/4345)
+- Stop sending a typing stop event on message send when the user was not typing [#4347](https://github.com/GetStream/stream-chat-swift/pull/4347)
+- Fix `ChannelList.loadMoreChannels()` returning no channels after the first page of a grouped list is reloaded [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
+### 🔄 Changed
+- Keep the loaded pages of grouped channel lists after reconnecting instead of resetting to the first page [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
+
+## StreamChatAI
+### ✅ Added
+- Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
+- Add `AIConversationView`, a conversation view for AI assistants that brings each question to the top and writes its reply out below it, with ready-made message views, reply actions, and image and file attachments [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
+- Add `AIToolAuthorizationView`, which asks the person to sign in at a provider when an AI tool call needs their account [#4352](https://github.com/GetStream/stream-chat-swift/pull/4352)
+### 🔄 Changed
+- StreamChatAI no longer brings Splash and swift-markdown-ui as package dependencies [#4346](https://github.com/GetStream/stream-chat-swift/pull/4346)
+- `AIVoiceWaveView` follows the audio level smoothly instead of jittering with each syllable [#4351](https://github.com/GetStream/stream-chat-swift/pull/4351)
+### 🎭 New Localizations
+- Add `conversation.*`, `message_actions.*` and `attachment.*` keys [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
+- Add `tool_call.status.awaiting_authorization` and `tool_authorization.*` keys [#4352](https://github.com/GetStream/stream-chat-swift/pull/4352)
+
+# [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
+_October 15, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `MemberInfo.channelRole` and `MemberInfo` overloads for creating a channel with member role and extra data [#4322](https://github.com/GetStream/stream-chat-swift/pull/4322)
+- Add `GroupedChannelsQuery` and `ChatClient.queryGroupedChannels(with:)` to fetch grouped channels with per-group filters and `query_timestamp` sorting [#4329](https://github.com/GetStream/stream-chat-swift/pull/4329)
+### 🐞 Fixed
+- Only skip outdated channel data from `member.updated` events, so other channel updates are always applied [#4331](https://github.com/GetStream/stream-chat-swift/pull/4331)
+- Fix edited messages disappearing from a channel after re-entering it [#4333](https://github.com/GetStream/stream-chat-swift/pull/4333)
+
+# [5.13.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.13.0)
+_October 09, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `forceRegistration` parameter to `addDevice` for re-registering an already registered device [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
+- Add `autoTranslationLanguages` to `ChatChannelController.updateChannel` and `Chat.update` [#4312](https://github.com/GetStream/stream-chat-swift/pull/4312)
 ### 🐞 Fixed
 - Fix `addDevice` sending a registration request when the device is already registered [#4316](https://github.com/GetStream/stream-chat-swift/pull/4316)
 - Add the `StreamChatLogsUI` in-app log viewer for browsing SDK logs [#4307](https://github.com/GetStream/stream-chat-swift/pull/4307)

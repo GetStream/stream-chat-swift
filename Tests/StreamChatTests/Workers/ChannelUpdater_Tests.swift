@@ -1834,6 +1834,23 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(channelID.type.rawValue)/\(channelID.id)")
     }
     
+    func test_addMembers_withChannelRoleAndExtraData_forwardsThemInRequest() {
+        let channelID = ChannelId.unique
+        let userId = UserId.unique
+
+        channelUpdater.addMembers(
+            cid: channelID,
+            members: [MemberInfo(userId: userId, channelRole: .moderator, extraData: ["department": .string("support")])],
+            hideHistory: false
+        )
+
+        let body = apiClient.request_endpoint?.body?.encodable as? UpdateChannelRequest
+        XCTAssertEqual(body?.addMembers?.count, 1)
+        XCTAssertEqual(body?.addMembers?.first?.userId, userId)
+        XCTAssertEqual(body?.addMembers?.first?.channelRole, "channel_moderator")
+        XCTAssertEqual(body?.addMembers?.first?.custom, ["department": .string("support")])
+    }
+
     func test_addMembersWithMessage_makesCorrectAPICall() {
         let channelID = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])

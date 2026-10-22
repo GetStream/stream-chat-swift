@@ -80,6 +80,8 @@ protocol CurrentUserDatabaseSession {
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
 
+    func updateFilteredGroupUnreadChannelCounts(for queries: [ChannelListQueryDTO])
+
     /// Adds the provided muted users to `CurrentUserDTO.mutedUsers`.
     /// If there's no current user set, an error will be thrown.
     @discardableResult
@@ -383,6 +385,12 @@ protocol ChannelDatabaseSession {
     /// - Returns: The array of channel list queries.
     func loadAllChannelListQueries() -> [ChannelListQueryDTO]
 
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO]
+
+    func unlinkGroupedChannels(in groupKey: String) throws
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool
+    
     @discardableResult
     func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO
 
@@ -807,6 +815,16 @@ extension DatabaseSession {
         try saveChannel(payload: payload, query: nil, cache: nil)
     }
 
+    // Events such as `member.updated` can carry a `channel` snapshotted before a concurrent
+    // `channel.updated`, so a snapshot older than the stored channel is skipped to not rewind it.
+    @discardableResult
+    func saveChannelSnapshot(payload: ChannelDetailPayload) throws -> ChannelDTO {
+        if let dto = channel(cid: payload.cid), dto.updatedAt.bridgeDate.isLaterAtServerPrecision(than: payload.updatedAt) {
+            return dto
+        }
+        return try saveChannel(payload: payload, query: nil, cache: nil)
+    }
+
     @discardableResult
     func saveUser(payload: UserPayload) throws -> UserDTO {
         try saveUser(payload: payload, query: nil, cache: nil)
@@ -836,7 +854,11 @@ extension DatabaseSession {
 
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
-            try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+            if case .typeMemberUpdatedEvent = event {
+                try saveChannelSnapshot(payload: channelDetailPayload)
+            } else {
+                try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+            }
         }
 
         if let currentUserPayload = payload.currentUser {
@@ -889,6 +911,8 @@ extension DatabaseSession {
         }
         
         switch event {
+        case let .typeNotificationChannelPartialUpdatedEvent(event):
+            handleNotificationChannelPartialUpdatedEvent(channel: event.channel)
         case let .typePollVoteCastedEvent(pollEvent):
             try handlePollVoteCastedEvent(vote: pollEvent.pollVote)
         case let .typePollVoteChangedEvent(pollEvent):
@@ -973,6 +997,10 @@ extension DatabaseSession {
         if let messageCount = payload.channelMessageCount {
             channelDTO.messageCount = NSNumber(value: messageCount)
         }
+    }
+
+    func handleNotificationChannelPartialUpdatedEvent(channel payload: ChannelPartialUpdateResponse) {
+        channel(cid: payload.cid)?.savePartialChannel(payload: payload)
     }
 
     func handlePollVoteChangedEvent(vote: PollVotePayload) throws {

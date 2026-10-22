@@ -842,6 +842,78 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(Set(controller.channelQuery.channelInput?.members?.compactMap(\.userId) ?? []), members.union([currentUserId]))
     }
 
+    func test_channelControllerForNewChannel_withMemberInfo_forwardsMemberRoleAndExtraData() throws {
+        let currentUserId: UserId = .unique
+        client.setToken(token: .unique(userId: currentUserId))
+
+        let moderatorId: UserId = .unique
+        let memberId: UserId = .unique
+        let inviteeId: UserId = .unique
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
+            members: [
+                MemberInfo(userId: moderatorId, channelRole: .moderator, extraData: ["department": .string("support")]),
+                MemberInfo(userId: memberId)
+            ],
+            invites: [inviteeId]
+        )
+
+        let channelInput = try XCTUnwrap(controller.channelQuery.channelInput)
+        let members = try XCTUnwrap(channelInput.members)
+        XCTAssertEqual(Set(members.compactMap(\.userId)), [moderatorId, memberId, inviteeId, currentUserId])
+        XCTAssertEqual(members.count, 4)
+        let moderator = members.first(where: { $0.userId == moderatorId })
+        XCTAssertEqual(moderator?.channelRole, "channel_moderator")
+        XCTAssertEqual(moderator?.custom, ["department": .string("support")])
+        let member = members.first(where: { $0.userId == memberId })
+        XCTAssertNil(member?.channelRole)
+        XCTAssertNil(member?.custom)
+        XCTAssertEqual(channelInput.invites?.compactMap(\.userId), [inviteeId])
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_keepsCurrentUserExtraData() throws {
+        let currentUserId: UserId = .unique
+        client.setToken(token: .unique(userId: currentUserId))
+
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
+            members: [MemberInfo(userId: currentUserId, channelRole: .moderator)]
+        )
+
+        let members = try XCTUnwrap(controller.channelQuery.channelInput?.members)
+        XCTAssertEqual(members.count, 1)
+        XCTAssertEqual(members.first?.userId, currentUserId)
+        XCTAssertEqual(members.first?.channelRole, "channel_moderator")
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_excludesCurrentUser_whenIsCurrentUserMemberIsFalse() throws {
+        let currentUserId: UserId = .unique
+        client.setToken(token: .unique(userId: currentUserId))
+
+        let memberId: UserId = .unique
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
+            members: [MemberInfo(userId: memberId)],
+            isCurrentUserMember: false
+        )
+
+        let members = try XCTUnwrap(controller.channelQuery.channelInput?.members)
+        XCTAssertEqual(members.compactMap(\.userId), [memberId])
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_throwsError_ifCurrentUserDoesNotExist() {
+        let clientWithoutCurrentUser = ChatClient(config: .init(apiKeyString: .unique))
+
+        XCTAssertThrowsError(
+            try clientWithoutCurrentUser.channelController(
+                createChannelWithId: .unique,
+                members: [MemberInfo(userId: .unique)]
+            )
+        ) { error in
+            XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
+        }
+    }
+
     func test_channelControllerForNew1on1Channel_createdCorrectly() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
@@ -3528,18 +3600,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, transformer.mockTransformedMessage.extraData)
     }
 
-    func test_createNewMessage_doesNotSendStopTyping_whenTypingEventsDisabled() {
-        let payload = dummyPayload(with: channelId, ownCapabilities: [])
-        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
-            try session.saveChannel(payload: payload)
-        }
-
-        controller.createNewMessage(text: .unique)
-
-        XCTAssertNil(env.eventSender?.stopTyping_cid)
-    }
-
-    func test_createNewMessage_sendsStopTyping_whenTypingEventsEnabled() throws {
+    func test_createNewMessage_stopsTypingOnlyIfNeeded() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
         writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
@@ -3547,8 +3608,7 @@ final class ChannelController_Tests: XCTestCase {
 
         controller.createNewMessage(text: .unique)
 
-        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
-        XCTAssertEqual(env.eventSender?.stopTyping_cid, channelId)
+        XCTAssertEqual(env.eventSender?.stopTypingIfNeeded_callCount, 1)
     }
 
     // MARK: - Create system message

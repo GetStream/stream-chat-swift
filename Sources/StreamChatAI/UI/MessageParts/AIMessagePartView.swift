@@ -6,9 +6,10 @@ import StreamCore
 import SwiftUI
 
 /// One step of a reply: a round of reasoning with its preview, a tool call (with its
-/// question, when it waits for the approver), or a neutral placeholder for a step this SDK
-/// doesn't know.
-public struct AIMessagePartView: View {
+/// question or its sign-in, when it waits for the approver), or a neutral placeholder for a
+/// step this SDK doesn't know.
+public struct AIMessagePartView<Factory: AIConversationViewFactory>: View {
+    var viewFactory: Factory
     var part: AIMessagePart
     var approver: AIToolApprover?
     var font: Font?
@@ -16,8 +17,16 @@ public struct AIMessagePartView: View {
     @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    /// - Parameter font: The font of the step, `AIAppearance.fonts.messagePart` by default.
-    public init(part: AIMessagePart, approver: AIToolApprover? = nil, font: Font? = nil) {
+    /// - Parameters:
+    ///   - viewFactory: The view that asks for a tool call's sign-in.
+    ///   - font: The font of the step, `AIAppearance.fonts.messagePart` by default.
+    public init(
+        viewFactory: Factory = DefaultAIConversationViewFactory.shared,
+        part: AIMessagePart,
+        approver: AIToolApprover? = nil,
+        font: Font? = nil
+    ) {
+        self.viewFactory = viewFactory
         self.part = part
         self.approver = approver
         self.font = font
@@ -31,6 +40,7 @@ public struct AIMessagePartView: View {
                 AIToolCallView(part: call, font: font)
                 if let approver {
                     AIToolApprovalView(call: call, approver: approver, font: font)
+                    AIToolAuthorizationView(viewFactory: viewFactory, call: call, approver: approver)
                 }
             }
         } else {

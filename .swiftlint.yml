@@ -5,6 +5,9 @@ excluded:
   - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChat/StreamStarscream
   - Sources/StreamChatUI/StreamDifferenceKit
+  - Sources/StreamChatAI/StreamSplash
+  - Sources/StreamChatAI/StreamMarkdownUI
+  - Sources/StreamChatAI/StreamNetworkImage
   - Tests
   - Pods
   - .build

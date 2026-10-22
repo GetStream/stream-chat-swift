@@ -87,6 +87,19 @@ class TypingEventsSender: Worker, @unchecked Sendable {
         }
     }
 
+    func stopTypingIfNeeded(completion: (@Sendable (Error?) -> Void)? = nil) {
+        var activeTypingInfo: TypingInfo?
+        _typingInfo.mutate { typingInfo in
+            activeTypingInfo = typingInfo
+            typingInfo = nil
+        }
+        guard let activeTypingInfo else {
+            completion?(nil)
+            return
+        }
+        stopTyping(in: activeTypingInfo.channelId, parentMessageId: activeTypingInfo.parentMessageId, completion: completion)
+    }
+
     private func cancelScheduledTypingTimerControl() {
         currentUserTypingTimerControl?.cancel()
         currentUserTypingTimerControl = nil

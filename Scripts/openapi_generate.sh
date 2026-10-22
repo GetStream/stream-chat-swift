@@ -131,6 +131,7 @@ allowed_models=(
   ChannelMemberResponse
   ChannelMute
   ChannelOwnCapability
+  ChannelPartialUpdateResponse
   ChannelResponse
   ChannelStateResponse
   CreateDraftRequest
@@ -323,6 +324,7 @@ allowed_events=(
   NotificationAddedToChannelEvent
   NotificationChannelDeletedEvent
   NotificationChannelMutesUpdatedEvent
+  NotificationChannelPartialUpdatedEvent
   NotificationInviteAcceptedEvent
   NotificationInvitedEvent
   NotificationInviteRejectedEvent
@@ -464,6 +466,7 @@ decodable_only_models=(
   BlockUsersResponse
   BlockedUserResponse
   ChannelDetailPayload
+  ChannelPartialUpdateResponse
   ChannelStateResponse
   CreateDraftResponse
   CreateGuestResponse
@@ -716,6 +719,7 @@ rename_generated_type UnbanResponse EmptyResponse
 # 5. Property fixes on the renamed models.
 retype_property ChannelDetailPayload cid String ChannelId
 retype_property ChannelDetailPayload config ChannelConfigWithInfo ChannelConfig
+retype_property ChannelPartialUpdateResponse cid String ChannelId
 retype_property PushPreference chatLevel String PushPreferenceLevel
 for f in "$OUTPUT_DIR_CHAT"/models/*EventDTO.swift; do
   [ -e "$f" ] || continue
@@ -789,7 +793,8 @@ remove_property ChannelGetOrCreateRequest hideForCreator memberCustomInclude thr
 remove_property ChannelHiddenEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
 remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage configOverrides createdBy createdById disabled frozen truncatedById
 remove_property ChannelInputRequest configOverrides createdBy
-remove_property ChannelMemberRequest channelRole user
+remove_property ChannelMemberRequest user
+remove_property ChannelPartialUpdateResponse id type
 remove_property ChannelStateResponse cooldownRemainingMs hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
@@ -825,6 +830,7 @@ remove_property MutedUserPayload user
 remove_property NotificationAddedToChannelEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property NotificationChannelDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team unreadCount
 remove_property NotificationChannelMutesUpdatedEventDTO custom receivedAt
+remove_property NotificationChannelPartialUpdatedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property NotificationInviteAcceptedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property NotificationInviteRejectedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
 remove_property NotificationInvitedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team

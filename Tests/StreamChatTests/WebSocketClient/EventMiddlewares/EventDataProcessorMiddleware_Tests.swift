@@ -101,6 +101,50 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         XCTAssertEqual(member.memberExtraData, updatedMemberExtraData)
     }
 
+    func test_channelUpdated_thenOtherEventWithOlderChannel_appliesChannel() throws {
+        let cid: ChannelId = .unique
+        let newerUpdatedAt = Date(timeIntervalSince1970: 2000)
+        let olderUpdatedAt = Date(timeIntervalSince1970: 1940)
+
+        nonisolated(unsafe) let middlewares: [EventMiddleware] = [EventDataProcessorMiddleware()]
+
+        let channelUpdatedEvent = ChannelUpdatedEventDTO(
+            channel: .dummy(cid: cid, name: "Newer", updatedAt: newerUpdatedAt),
+            createdAt: newerUpdatedAt
+        )
+        let olderChannelUpdatedEvent = ChannelUpdatedEventDTO(
+            channel: .dummy(cid: cid, name: "Older", updatedAt: olderUpdatedAt),
+            createdAt: newerUpdatedAt.addingTimeInterval(0.03)
+        )
+
+        try database.writeSynchronously { session in
+            _ = middlewares.process(event: channelUpdatedEvent, wsEvent: .typeChannelUpdatedEvent(channelUpdatedEvent), session: session)
+            _ = middlewares.process(event: olderChannelUpdatedEvent, wsEvent: .typeChannelUpdatedEvent(olderChannelUpdatedEvent), session: session)
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+        XCTAssertEqual(channel.name, "Older")
+    }
+
+    func test_channelPartialUpdated_whenChannelIsStored_mergesChannel() throws {
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid, extraData: [GroupedChannelKey.group: .string("old")])))
+        }
+        let event = NotificationChannelPartialUpdatedEventDTO(
+            channel: .init(cid: cid, createdAt: .unique, custom: [GroupedChannelKey.group: .string("new")], disabled: false, frozen: true, updatedAt: .unique),
+            createdAt: .unique
+        )
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, wsEvent: .typeNotificationChannelPartialUpdatedEvent(event), session: session)
+        }
+
+        let channel = try database.readSynchronously { try XCTUnwrap($0.channel(cid: cid)).asModel() }
+        XCTAssertEqual("new", channel.extraData[GroupedChannelKey.group]?.stringValue)
+        XCTAssertTrue(channel.isFrozen)
+    }
+
     func test_middleware_handlesReactionDeletedEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique

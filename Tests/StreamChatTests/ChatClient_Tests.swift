@@ -241,6 +241,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware }))
         // Assert `ChannelVisibilityEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware }))
+        // Assert `GroupedUnreadChannelsMiddleware` is just before the last one
+        XCTAssertTrue(middlewares.dropLast().last is GroupedUnreadChannelsMiddleware)
         // Assert `EventDTOConverterMiddleware` is the last one
         XCTAssertTrue(middlewares.last is EventDTOConverterMiddleware)
     }
@@ -321,6 +323,45 @@ final class ChatClient_Tests: XCTestCase {
         let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
         XCTAssertEqual(4, body["limit"] as? Int)
         XCTAssertNil(body["groups"])
+    }
+
+    func test_queryGroupedChannels_withQuery_sendsGroupFiltersSortAndLimit() async throws {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
+        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: [:])))
+
+        let query = GroupedChannelsQuery(
+            groups: [
+                .init(key: "all", filter: .or([
+                    .and([.equal(.group, to: "ended"), .greaterOrEqual(.queryTimestamp, than: .daysAgo(7))]),
+                    .in(.group, values: ["campaign", "new"])
+                ])),
+                .init(key: "new")
+            ],
+            sort: [.init(key: .queryTimestamp)],
+            limit: 10
+        )
+        _ = try await client.queryGroupedChannels(with: query)
+
+        let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
+        AssertJSONEqual(
+            Data("""
+            {
+                "limit": 10,
+                "presence": false,
+                "watch": true,
+                "sort": [{"field": "query_timestamp", "direction": -1}],
+                "groups": {
+                    "all": {"filter_conditions": {"$or": [
+                        {"$and": [{"group": {"$eq": "ended"}}, {"query_timestamp": {"$gte": "now-7d"}}]},
+                        {"group": {"$in": ["campaign", "new"]}}
+                    ]}},
+                    "new": {}
+                }
+            }
+            """.utf8),
+            try JSONSerialization.data(withJSONObject: body)
+        )
     }
 
     func test_makeChannelList_withGroupKey_startsTrackingChannelList() {

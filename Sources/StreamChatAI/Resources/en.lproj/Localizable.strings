@@ -1,6 +1,17 @@
 "composer.placeholder.ask_anything" = "Ask anything";
 "composer.button.all_photos" = "All Photos";
 "streaming.code_block.language_fallback" = "plain text";
+"conversation.button.scroll_to_latest" = "Scroll to latest";
+"attachment.image" = "Image";
+"attachment.file" = "File";
+"attachment.details" = "%1$@ · %2$@";
+"message_actions.copy" = "Copy";
+"message_actions.copied" = "Copied";
+"message_actions.share" = "Share";
+"message_actions.regenerate" = "Regenerate";
+"message_actions.rate_positive" = "Good response";
+"message_actions.rate_negative" = "Bad response";
+"message_actions.edit" = "Edit";
 "transcription.error.recognizer_unavailable" = "Speech recognizer is unavailable.";
 "reasoning.title.thinking" = "Thinking…";
 "reasoning.title.thinking_for" = "Thinking… %@";
@@ -10,6 +21,7 @@
 "reasoning.accessibility.hide" = "Hides the model's reasoning.";
 "tool_call.status.awaiting_client" = "Waiting for the device";
 "tool_call.status.awaiting_approval" = "Waiting for approval";
+"tool_call.status.awaiting_authorization" = "Waiting for you to sign in";
 "tool_call.status.declined" = "Declined";
 "tool_call.status.failed" = "Didn't complete";
 "tool_call.status.cancelled" = "Cancelled";
@@ -17,6 +29,10 @@
 "tool_approval.button.allow" = "Allow";
 "tool_approval.button.decline" = "Don't Allow";
 "tool_approval.error.not_sent" = "Your answer couldn't be sent. Try again.";
+"tool_authorization.button.connect" = "Connect";
+"tool_authorization.button.connecting" = "Connecting…";
+"tool_authorization.button.decline" = "Not now";
+"tool_authorization.error.not_opened" = "The sign-in couldn't be opened. Try again.";
 "charts.series" = "Series";
 "charts.pie" = "Pie";
 "charts.axis.x" = "X";
@@ -26,3 +42,9 @@
 "charts.category" = "Category";
 "charts.bin" = "Bin";
 "charts.count" = "Count";
+"voice.accessibility.agent" = "Voice agent";
+"voice.state.idle" = "Ready";
+"voice.state.connecting" = "Connecting";
+"voice.state.listening" = "Listening";
+"voice.state.thinking" = "Thinking";
+"voice.state.speaking" = "Speaking";

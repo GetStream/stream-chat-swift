@@ -91,7 +91,10 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as ChannelUpdatedEventDTO:
-            adjustUnreadChannelCountsForGroupChange(event: event, session: session)
+            adjustUnreadChannelCountsForGroupChange(cid: event.channel.cid, newGroup: event.channel.group, session: session)
+
+        case let event as NotificationChannelPartialUpdatedEventDTO:
+            adjustUnreadChannelCountsForGroupChange(cid: event.channel.cid, newGroup: event.channel.group, session: session)
 
         default:
             break
@@ -114,10 +117,11 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     ///
     /// Channel updated events are not carrying unread group counts.
     private func adjustUnreadChannelCountsForGroupChange(
-        event: ChannelUpdatedEventDTO,
+        cid: ChannelId,
+        newGroup: String?,
         session: DatabaseSession
     ) {
-        guard let channelDTO = session.channel(cid: event.channel.cid) else { return }
+        guard let channelDTO = session.channel(cid: cid) else { return }
         guard let knownGroupKeys = session.currentUser?.unreadChannelCountsByGroup?.keys,
               !knownGroupKeys.isEmpty else { return }
 
@@ -127,9 +131,6 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         guard !groupedFilterHashes.isEmpty else { return }
 
         let oldGroup = groupedFilterHashes.first { $0 != GroupedChannelKey.all }
-        let newGroup = event.channel.extraData[GroupedChannelKey.group]?.stringValue?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased()
 
         guard oldGroup != newGroup else { return }
         guard channelDTO.currentUserUnreadMessagesCount > 0 else { return }
@@ -137,7 +138,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         if let oldGroup, oldGroup != GroupedChannelKey.all {
             session.adjustUnreadChannelCount(forGroup: oldGroup, by: -1)
         }
-        if let newGroup, !newGroup.isEmpty, newGroup != GroupedChannelKey.all {
+        if let newGroup, newGroup != GroupedChannelKey.all {
             session.adjustUnreadChannelCount(forGroup: newGroup, by: 1)
         }
     }

@@ -4,8 +4,6 @@
 
 import StreamCore
 import SwiftUI
-internal import MarkdownUI
-internal import Splash
 
 public struct StreamingMessageView: View {
     var content: String
@@ -17,6 +15,7 @@ public struct StreamingMessageView: View {
     @State private var characterQueue: [Character] = []
     @State private var typingTimer: Timer?
 
+    @Environment(\.aiThinkingTurn) private var turn
     @Injected(\.aiAppearance.colors) private var colors
     
     private static let supportedChartLanguages = ["json", "chart", "chartjs", "echarts", "highcharts", "vega-lite", "vegalite"]
@@ -44,6 +43,7 @@ public struct StreamingMessageView: View {
             .markdownCodeSyntaxHighlighter(.splash(theme: self.theme))
             .onAppear {
                 if !isGenerating {
+                    self.characterQueue = []
                     self.displayedText = content
                     return
                 }
@@ -55,6 +55,9 @@ public struct StreamingMessageView: View {
             .onDisappear {
                 typingTimer?.invalidate()
                 typingTimer = nil
+            }
+            .transformPreference(AnswerWritingKey.self) { writing in
+                writing = (writing ?? false) || isGenerating || !characterQueue.isEmpty
             }
             .onChange(of: characterQueue, perform: { _ in
                 if characterQueue.isEmpty && !isGenerating {
@@ -108,7 +111,7 @@ public struct StreamingMessageView: View {
     
     func startTypingTimer() {
         typingTimer?.invalidate()
-        typingTimer = Timer.scheduledTimer(withTimeInterval: letterInterval, repeats: true) { _ in
+        let timer = Timer.scheduledTimer(withTimeInterval: letterInterval, repeats: true) { _ in
             // Scheduled on the main run loop.
             MainActor.assumeIsolated {
                 guard !self.characterQueue.isEmpty else { return }
@@ -116,6 +119,11 @@ public struct StreamingMessageView: View {
                 self.displayedText.append(nextCharacter)
             }
         }
+        // In a list, an answer waits for the reasoning above it to show and fold first.
+        if let start = turn.flatMap({ $0.clock.answerStart(in: $0.key) }), start > Date() {
+            timer.fireDate = start
+        }
+        typingTimer = timer
     }
 
     /// The chart a code block describes: its language is one charts are written in, and its
@@ -126,8 +134,8 @@ public struct StreamingMessageView: View {
         return try? ChartSpecParser.parse(data)
     }
 
-    private var theme: Splash.Theme {
-        Theme(
+    private var theme: SplashTheme {
+        SplashTheme(
             font: .init(size: 16),
             plainTextColor: colors.codeText,
             tokenColors: [
