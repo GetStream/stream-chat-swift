@@ -265,18 +265,7 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
-        dto.name = payload.name
-        dto.imageURL = payload.imageURL
-        do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            dto.extraData = Data()
-        }
-        dto.group = payload.extraData[GroupedChannelKey.group]?.stringValue.flatMap { $0.isEmpty ? nil : $0 }
+        dto.saveChannelCustomCommonFields(payload: payload)
         dto.typeRawValue = payload.type
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
@@ -298,7 +287,6 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
-        dto.touchedAt = payload.extraData[GroupedChannelKey.touchedAt].flatMap { try? JSONDecoder.default.decode(Date.self, from: JSONEncoder.default.encode($0)) }?.bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
@@ -746,6 +734,30 @@ extension ChatChannel {
 extension ChannelDTO {
     func cleanAllMessagesExcludingLocalOnly() {
         messages = messages.filter { $0.isLocalOnly }
+    }
+
+    func savePartialChannel(payload: ChannelPartialUpdateResponse) {
+        saveChannelCustomCommonFields(payload: payload)
+        updatedAt = payload.updatedAt.bridgeDate
+        isDisabled = payload.disabled
+        isFrozen = payload.frozen
+        team = payload.team
+    }
+
+    fileprivate func saveChannelCustomCommonFields(payload: some ChannelCustomCommonFields) {
+        name = payload.name
+        imageURL = payload.imageURL
+        do {
+            extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Channel with cid: <\(cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraData = Data()
+        }
+        group = payload.group
+        touchedAt = payload.touchedAt?.bridgeDate
     }
 
     /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.

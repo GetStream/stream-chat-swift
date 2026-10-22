@@ -257,6 +257,63 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(channelDTO.isHidden)
     }
     
+    func test_messageNewEvent_whenReply_resetsIsHidden() throws {
+        let cid: ChannelId = .unique
+        let event = MessageNewEventDTO(
+            cid: cid,
+            createdAt: .unique,
+            message: .dummy(type: .reply, messageId: .unique, authorUserId: .unique),
+            user: .dummy(userId: .unique)
+        )
+
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.isHidden = true
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(false, try database.readSynchronously { $0.channel(cid: cid)?.isHidden })
+    }
+
+    func test_messageNewEvent_whenSystemMessage_doesNotResetIsHidden() throws {
+        let cid: ChannelId = .unique
+        let event = MessageNewEventDTO(
+            cid: cid,
+            createdAt: .unique,
+            message: .dummy(type: .system, messageId: .unique, authorUserId: .unique),
+            user: .dummy(userId: .unique)
+        )
+
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.isHidden = true
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(true, try database.readSynchronously { $0.channel(cid: cid)?.isHidden })
+    }
+
+    func test_messageNewEvent_whenSenderIsBlocked_doesNotResetIsHidden() throws {
+        let cid: ChannelId = .unique
+        let senderId: UserId = .unique
+        let event = MessageNewEventDTO(
+            cid: cid,
+            createdAt: .unique,
+            message: .dummy(messageId: .unique, authorUserId: senderId),
+            user: .dummy(userId: senderId)
+        )
+
+        try database.writeSynchronously { session in
+            let currentUser = try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+            currentUser.blockedUserIds = [senderId]
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.isHidden = true
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(true, try database.readSynchronously { $0.channel(cid: cid)?.isHidden })
+    }
+
     func test_notificationMessageNewEvent_resetsHiddenAtValue() throws {
         let cid: ChannelId = .unique
 

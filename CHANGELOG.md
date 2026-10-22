@@ -3,7 +3,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
+- Add `NotificationChannelPartialUpdatedEvent` and keep grouped channel lists up to date when a channel the user isn't watching is partially updated [#4336](https://github.com/GetStream/stream-chat-swift/pull/4336)
+### 🐞 Fixed
+- Fix loaded grouped channel lists keeping channels that get hidden, deleted or disabled, or that the current user is removed from [#4341](https://github.com/GetStream/stream-chat-swift/pull/4341)
+- Keep hidden channels hidden when a system message or a message from a blocked user arrives [#4345](https://github.com/GetStream/stream-chat-swift/pull/4345)
+- Stop sending a typing stop event on message send when the user was not typing [#4347](https://github.com/GetStream/stream-chat-swift/pull/4347)
+
+## StreamChatAI
+### ✅ Added
+- Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
+- Add `AIConversationView`, a conversation view for AI assistants that brings each question to the top and writes its reply out below it, with ready-made message views, reply actions, and image and file attachments [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
 ### 🔄 Changed
+- StreamChatAI no longer brings Splash and swift-markdown-ui as package dependencies [#4346](https://github.com/GetStream/stream-chat-swift/pull/4346)
+### 🎭 New Localizations
+- Add `conversation.*`, `message_actions.*` and `attachment.*` keys [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
+- `AIVoiceWaveView` follows the audio level smoothly instead of jittering with each syllable [#4351](https://github.com/GetStream/stream-chat-swift/pull/4351)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_

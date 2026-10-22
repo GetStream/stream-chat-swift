@@ -902,6 +902,28 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(nil, stateMessage.localState)
     }
     
+    func test_sendMessage_whenNotTyping_thenStopTypingEventIsNotSent() async throws {
+        try await setUpChatWithLoadedChannel(ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
+
+        let apiResponse = SendMessageResponsePayload.dummy(message: .dummy(messageId: "0", text: "Text", cid: channelId))
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        try await chat.sendMessage(with: apiResponse.message.text, messageId: apiResponse.message.id)
+
+        XCTAssertEqual(recordedEventTypes(), [])
+    }
+
+    func test_sendMessage_whenTyping_thenStopTypingEventIsSent() async throws {
+        try await setUpChatWithLoadedChannel(ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
+        env.client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+        try await chat.keystroke()
+
+        let apiResponse = SendMessageResponsePayload.dummy(message: .dummy(messageId: "0", text: "Text", cid: channelId))
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        try await chat.sendMessage(with: apiResponse.message.text, messageId: apiResponse.message.id)
+
+        XCTAssertEqual(recordedEventTypes(), [EventType.userStartTyping.rawValue, EventType.userStopTyping.rawValue])
+    }
+
     func test_sendMessage_whenAPIRequestFails_thenSendMessageFails() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
@@ -2136,6 +2158,13 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(payload))
         try await chat.get(watch: false)
         env.client.mockAPIClient.cleanUp()
+    }
+
+    private func recordedEventTypes() -> [String] {
+        env.client.mockAPIClient.request_allRecordedCalls.compactMap { call in
+            let event = try? call.endpoint.bodyAsDictionary()["event"] as? [String: Any]
+            return event?["type"] as? String
+        }
     }
 
     private func makeChannelPayload(

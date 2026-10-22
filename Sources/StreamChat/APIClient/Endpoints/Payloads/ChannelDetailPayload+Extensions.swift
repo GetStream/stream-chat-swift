@@ -4,15 +4,24 @@
 
 import Foundation
 
+protocol ChannelCustomCommonFields {
+    var custom: [String: RawJSON] { get }
+}
+
+extension ChannelDetailPayload: ChannelCustomCommonFields {}
+extension ChannelPartialUpdateResponse: ChannelCustomCommonFields {}
+
 // Generated properties are slightly different from the previously hand-written ones.
-extension ChannelDetailPayload {
+extension ChannelCustomCommonFields {
     // `name` and `image` arrive in `custom`, but they are channel fields, not user extra data.
-    private static let nameAndImageKeys = [
+    private static var nameAndImageKeys: [String] { [
         ChannelCodingKeys.name.rawValue,
         ChannelCodingKeys.imageURL.rawValue
-    ]
+    ] }
 
     var extraData: [String: RawJSON] { custom.removingValues(forKeys: Self.nameAndImageKeys) }
+
+    var group: String? { custom[GroupedChannelKey.group]?.stringValue.flatMap { $0.isEmpty ? nil : $0 } }
 
     var imageURL: URL? {
         custom[ChannelCodingKeys.imageURL.rawValue]?.stringValue.flatMap(URL.init(string:))
@@ -20,6 +29,12 @@ extension ChannelDetailPayload {
 
     var name: String? { custom[ChannelCodingKeys.name.rawValue]?.stringValue }
 
+    var touchedAt: Date? {
+        custom[GroupedChannelKey.touchedAt]?.stringValue.flatMap(RFC3339DateFormatter.date(from:))
+    }
+}
+
+extension ChannelDetailPayload {
     convenience init(
         cid: ChannelId,
         name: String?,

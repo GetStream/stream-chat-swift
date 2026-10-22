@@ -227,6 +227,62 @@ final class TypingEventsSender_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
 
+    func test_stopTypingIfNeeded_whenTypingNeverStarted_doesNotMakeAPICall() {
+        eventSender.stopTypingIfNeeded()
+
+        XCTAssertTrue(apiClient.request_allRecordedCalls.isEmpty)
+    }
+
+    func test_stopTypingIfNeeded_afterKeystroke_sendsStopTypingEventOnce() {
+        let cid = ChannelId.unique
+        let parentMessageId = MessageId.unique
+        eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
+
+        eventSender.stopTypingIfNeeded()
+        eventSender.stopTypingIfNeeded()
+
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let calls: [AnyEndpoint] = apiClient.request_allRecordedCalls.map(\.endpoint)
+        XCTAssertEqual(calls, [AnyEndpoint(startTypingEndpoint), AnyEndpoint(stopTypingEndpoint)])
+
+        // The scheduled stop typing timer is cancelled.
+        time.run(numberOfSeconds: .startTypingEventTimeout)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+    }
+
+    func test_stopTypingIfNeeded_afterStartTyping_sendsStopTypingEvent() {
+        let cid = ChannelId.unique
+        eventSender.startTyping(in: cid, parentMessageId: nil)
+
+        eventSender.stopTypingIfNeeded()
+
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: nil)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+    }
+
+    func test_stopTypingIfNeeded_afterTypingTimedOut_doesNotMakeAPICall() {
+        let cid = ChannelId.unique
+        eventSender.keystroke(in: cid, parentMessageId: nil)
+        time.run(numberOfSeconds: .startTypingEventTimeout)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+
+        eventSender.stopTypingIfNeeded()
+
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+    }
+
+    func test_stopTypingIfNeeded_afterExplicitStopTyping_doesNotMakeAPICall() {
+        let cid = ChannelId.unique
+        eventSender.keystroke(in: cid, parentMessageId: nil)
+        eventSender.stopTyping(in: cid, parentMessageId: nil)
+
+        eventSender.stopTypingIfNeeded()
+
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+    }
+
     func test_stopTypingIsNotSentTwice_afterKeystroke_whenDeallocated() {
         let cid = ChannelId.unique
         let parentMessageId = MessageId.unique
