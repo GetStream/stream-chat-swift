@@ -123,7 +123,8 @@ lane :publish_release do |options|
     sdk_names: sdk_names,
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
-    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
+    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip'],
+    make_latest: false
   )
 
   update_spm(version: release_version)
