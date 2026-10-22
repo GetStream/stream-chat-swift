@@ -1464,6 +1464,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let event = NotificationChannelPartialUpdatedEventDTO(
             channel: .init(
                 cid: channelPayload.channel.cid,
+                createdAt: .unique,
                 custom: [GroupedChannelKey.group: .string("current")],
                 disabled: false,
                 frozen: false,

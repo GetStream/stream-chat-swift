@@ -38,6 +38,11 @@ class ChannelListQueryDTO: NSManagedObject {
         channels.filter { Self.unreadMessageCount(of: $0, currentUserId: currentUserId) > 0 }.count
     }
 
+    func updateGroupNotLoadedUnreadCount(unreadChannels: Int, currentUserId: UserId) {
+        guard groupFilterJSONData != nil else { return }
+        groupNotLoadedUnreadCount = Int64(max(0, unreadChannels - loadedUnreadChannelsCount(currentUserId: currentUserId)))
+    }
+
     static func unreadMessageCount(of channel: ChannelDTO, currentUserId: UserId) -> Int {
         // Reads `reads` because `ChannelDTO.currentUserUnreadMessagesCount` is only updated on save.
         guard !channel.isHidden, !channel.isDisabled, channel.deletedAt == nil else { return 0 }
@@ -167,6 +172,37 @@ extension NSManagedObjectContext {
         } catch {
             log.error("Failed to load filtered group channel list queries from the database: \(error).")
             return []
+        }
+    }
+
+    func unlinkGroupedChannels(in groupKey: String) throws {
+        guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
+        let filterClosure = try groupedChannelsFilter(for: queryDTO)
+        let unlinked = queryDTO.channels.filter { !filterClosure($0, groupKey) }
+        guard !unlinked.isEmpty else { return }
+        queryDTO.channels.subtract(unlinked)
+        updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
+    }
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool {
+        guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return false }
+        let filterClosure = try groupedChannelsFilter(for: queryDTO)
+        return filterClosure(channel, groupKey)
+    }
+    
+    private func groupedChannelsFilter(for queryDTO: ChannelListQueryDTO) throws -> (ChannelDTO, String) -> Bool {
+        let groupFilterPredicate: NSPredicate? = try {
+            guard let filterData = queryDTO.groupFilterJSONData else { return nil }
+            let filter = try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: filterData)
+            return filter?.predicate
+        }()
+        let currentUserId = currentUser?.user.id
+        return { channel, groupKey in
+            let canShowChannel = !channel.isHidden && !channel.isDisabled && channel.deletedAt == nil
+            // Channels saved from notification events carry `members` but no `membership`.
+            let isMember = channel.membership != nil || channel.members.contains { $0.user.id == currentUserId }
+            let isMemberInGroup = isMember && (groupKey == GroupedChannelKey.all || channel.group == groupKey)
+            return canShowChannel && isMemberInGroup && (groupFilterPredicate?.evaluate(with: channel) ?? true)
         }
     }
 }
