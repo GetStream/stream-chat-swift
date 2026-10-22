@@ -88,6 +88,25 @@ final class GroupedChannelListLinker_Tests: XCTestCase {
         XCTAssertEqual(["expired": 0], unreadChannelCountsByGroup())
     }
 
+    func test_expirySweep_whenGroupHasNoFilter_unlinksOnlyChannelThatLeftTheGroup() throws {
+        let leftCid = ChannelId.unique
+        let stayingCid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: self.currentUserId, role: .user))
+            _ = session.saveQuery(query: self.query)
+        }
+        try saveChannel(cid: stayingCid, lastMessageAt: daysBeforeNow(30), isLinked: true)
+        try saveChannel(cid: leftCid, lastMessageAt: daysBeforeNow(0), isLinked: true)
+        // Events replayed by reconnect sync are not posted, so only the stored group changes.
+        try saveChannel(cid: leftCid, group: "ended", lastMessageAt: daysBeforeNow(0), isLinked: false)
+
+        time.run(numberOfSeconds: 60)
+        try database.writeSynchronously { _ in }
+
+        XCTAssertEqual(false, isLinked(leftCid))
+        XCTAssertEqual(true, isLinked(stayingCid))
+    }
+
     func test_channelUpdated_whenStoredGroupLeavesTheGroup_unlinksChannel() throws {
         let cid = ChannelId.unique
         try saveFilteredGroup()
