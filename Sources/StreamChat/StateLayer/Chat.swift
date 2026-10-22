@@ -1362,7 +1362,7 @@ public class Chat: @unchecked Sendable {
     ///   - mentions: An array of mentioned user ids.
     ///   - extraData: Additional extra data of the message object.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
-    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the message. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
     ///
     /// - Throws: An error while saving the scheduled message locally.
     /// - Returns: The scheduled message.
@@ -1408,7 +1408,7 @@ public class Chat: @unchecked Sendable {
     ///   - mentions: An array of mentioned user ids.
     ///   - extraData: Additional extra data of the reply.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
-    ///   - scheduledAt: When to send the reply. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the reply. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
     ///
     /// - Throws: An error while saving the scheduled reply locally.
     /// - Returns: The scheduled reply.

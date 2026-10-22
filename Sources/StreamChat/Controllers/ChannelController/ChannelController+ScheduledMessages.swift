@@ -16,7 +16,7 @@ public extension ChatChannelController {
     ///   - mentionedUserIds: An array of the users mentioned in the message.
     ///   - quotedMessageId: An id of the message the new message quotes.
     ///   - extraData: Additional extra data of the message object.
-    ///   - scheduledAt: When to send the message. At least 1 minute and at most 120 days from now.
+    ///   - scheduledAt: When to send the message. At most 120 days from now. A date in the past, or less than 1 minute from now, sends it right away.
     ///   - completion: Called when the message is saved locally, with the scheduled message or an error. It is sent
     ///   to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
     func scheduleMessage(

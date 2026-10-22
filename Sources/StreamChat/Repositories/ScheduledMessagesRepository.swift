@@ -162,8 +162,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 
     /// Sends the local changes of a scheduled message to the server: schedules a new one, or updates an existing one.
     ///
-    /// Called by the `MessageScheduler` once the attachments of the message are uploaded.
-    func sendPendingChanges(id: String, completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void) {
+    /// Called by the `MessageScheduler` once the attachments of the message are uploaded. Completes with `nil` when the
+    /// message is no longer scheduled: the server sent it right away because its date passed while offline, it was
+    /// already sent, or it was deleted on another device.
+    func sendPendingChanges(id: String, completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void) {
         enum Request {
             case schedule(cid: ChannelId, request: SendMessageRequest)
             case update(UpdateScheduledMessageRequest)
@@ -200,6 +202,11 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 )
                 // Not queued offline: the `MessageScheduler` waits for the connection and sends it again.
                 apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
+                    if case let .success(response) = result, response.scheduledMessage == nil {
+                        // A date in the past, or less than 1 minute from now, is sent right away as a normal message.
+                        self?.saveSentMessage(response.message, scheduledMessageId: id, completion: completion)
+                        return
+                    }
                     self?.complete(id: id, failedState: .sendingFailed, pendingState: .pendingSend, with: result.map(\.scheduledMessage), completion: completion)
                 }
             case let .success(.update(request)):
@@ -223,15 +230,25 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         failedState: LocalMessageState,
         pendingState: LocalMessageState,
         with result: Result<ScheduledMessageResponse?, Error>,
-        completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
+        completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
     ) {
         switch result {
         case .success:
-            save(result, localState: nil, completion: completion)
+            save(result, localState: nil) { completion($0.map { $0 }) }
         case let .failure(error):
             // Without a connection, the changes are sent again once connected.
             let isEphemeral = ClientError.isEphemeral(error: error)
             let apiError = (error as? ClientError)?.apiError
+            let reason = apiError?.exceptionFields?["reason"].map(ScheduledMessageErrorReason.init(rawValue:))
+            if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled {
+                // It went out at its date, or was deleted on another device, while this device was offline.
+                database.write({ session in
+                    session.deleteScheduledMessage(id: id)
+                }, completion: { error in
+                    completion(error.map { .failure($0) } ?? .success(nil))
+                })
+                return
+            }
             database.write({ session in
                 guard let dto = session.scheduledMessage(id: id) else { return }
                 dto.message?.localMessageState = isEphemeral ? pendingState : failedState
@@ -242,6 +259,23 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 completion(.failure(error))
             })
         }
+    }
+
+    private func saveSentMessage(
+        _ message: MessageResponse,
+        scheduledMessageId: String,
+        completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
+    ) {
+        database.write({ session in
+            // Saved first: when the sent message has the id of the scheduled one, it keeps its content.
+            let messageDTO = try session.saveMessage(payload: message, syncOwnReactions: false, skipDraftUpdate: false, cache: nil)
+            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
+                messageDTO.markMessageAsSent()
+            }
+            session.deleteScheduledMessage(id: scheduledMessageId)
+        }, completion: { error in
+            completion(error.map { .failure($0) } ?? .success(nil))
+        })
     }
 
     private func save(

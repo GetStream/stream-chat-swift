@@ -225,7 +225,8 @@ public struct ScheduledMessageLocalError: Hashable, Sendable {
     public var isRetryable: Bool {
         switch reason {
         case .scheduledAtTooSoon, .scheduledAtTooFar, .scheduledLimitChannel, .scheduledLimitUser,
-             .scheduledMessagesDisabled, .scheduledMessageIdTaken, .scheduledMessageNotEditable:
+             .scheduledMessagesDisabled, .scheduledMessageIdTaken, .scheduledMessageNotEditable,
+             .scheduledMessageAlreadySent, .scheduledMessageCanceled:
             return false
         default:
             return true
@@ -253,7 +254,7 @@ public struct ScheduledMessageErrorReason: RawRepresentable, Hashable, Sendable,
     /// Scheduled messages are disabled for the app.
     public static let scheduledMessagesDisabled: Self = "scheduled_messages_disabled"
 
-    /// The date is less than 1 minute from now.
+    /// The new date of a scheduled message is less than 1 minute from now.
     public static let scheduledAtTooSoon: Self = "scheduled_at_too_soon"
 
     /// The date is further than the maximum lead time of the app.
@@ -276,4 +277,10 @@ public struct ScheduledMessageErrorReason: RawRepresentable, Hashable, Sendable,
 
     /// Another edit was saved first.
     public static let scheduledMessageConflict: Self = "scheduled_message_conflict"
+
+    /// The message was already sent at its date.
+    public static let scheduledMessageAlreadySent: Self = "scheduled_message_already_sent"
+
+    /// The scheduled message was deleted, for example on another device.
+    public static let scheduledMessageCanceled: Self = "scheduled_message_canceled"
 }
