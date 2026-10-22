@@ -164,8 +164,8 @@ enum L10n {
             localized("tool_authorization.button.decline", comment: "Button that declines to sign in, so the tool call never runs.")
         }
         
-        static var failed: String {
-            localized("tool_authorization.error.failed", comment: "Shown under a tool call's sign-in when it couldn't be opened, or the answer couldn't be sent.")
+        static var notOpened: String {
+            localized("tool_authorization.error.not_opened", comment: "Shown under a tool call's sign-in when the sign-in page couldn't be opened.")
         }
     }
     

@@ -32,7 +32,7 @@
 "tool_authorization.button.connect" = "Connect";
 "tool_authorization.button.connecting" = "Connecting…";
 "tool_authorization.button.decline" = "Not now";
-"tool_authorization.error.failed" = "That didn't go through. Try again.";
+"tool_authorization.error.not_opened" = "The sign-in couldn't be opened. Try again.";
 "charts.series" = "Series";
 "charts.pie" = "Pie";
 "charts.axis.x" = "X";

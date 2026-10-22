@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Lenient reads from a JSON object: a field of the wrong type reads as missing.
 struct Fields {
@@ -24,15 +25,9 @@ struct Fields {
         (object[key] as? [String: Any]).map(Fields.init)
     }
 
-    /// An RFC 3339 time, with or without fractional seconds. Before iOS 15 there is no format
-    /// style to read one with, so it reads as missing.
+    /// An RFC 3339 time, with or without fractional seconds.
     func date(_ key: String) -> Date? {
-        guard let value = string(key) else { return nil }
-        // A format style is a value that is cheap to make; Foundation keeps the formatter
-        // behind it, which is what is expensive.
-        guard #available(iOS 15, macOS 12, *) else { return nil }
-        return (try? Date(value, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)))
-            ?? (try? Date(value, strategy: Date.ISO8601FormatStyle()))
+        string(key).flatMap(RFC3339DateFormatter.date(from:))
     }
 
     func json(_ key: String) -> Data? {

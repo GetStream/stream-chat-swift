@@ -2,77 +2,75 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import AuthenticationServices
 import SwiftUI
 
 /// Asks the person a tool call waits for to sign in at the provider it needs, with the sign-in
 /// its `ai_tool_call` step carries (status `awaiting_authorization`, with `authorization`).
 /// Connect opens the sign-in page in a web authentication session. Once the provider has
-/// answered, your backend updates the step and the call goes on. It shows only to that person, only
-/// while the call waits, and only with an `AIToolAuthorizer`, so it can sit under every tool
-/// call:
+/// answered, your backend updates the step and the call goes on. It shows only to that person,
+/// only while the call waits, and only with an `AIToolAuthorizer`, so it can sit under every
+/// tool call:
 ///
 /// ```swift
 /// AIToolCallView(part: call)
 /// AIToolAuthorizationView(call: call, approver: approver)
 /// ```
 ///
-/// To ask in your own design, pass the content. It gets the sign-in, where it is, and closures
-/// that connect and decline:
-///
-/// ```swift
-/// AIToolAuthorizationView(call: call, approver: approver) { authorization, state, connect, decline in
-///     MySignInCard(title: authorization.title, busy: state.isBusy, onConnect: connect, onDecline: decline)
-/// }
-/// ```
-@available(iOS 16.4, macOS 13.3, *)
-public struct AIToolAuthorizationView<Content: View>: View {
+/// It asks with the view factory's
+/// ``AIConversationViewFactory/makeToolAuthorizationView(options:)``, an
+/// ``AIToolAuthorizationCard`` by default. To ask in your own design, return yours there.
+public struct AIToolAuthorizationView<Factory: AIConversationViewFactory>: View {
+    var viewFactory: Factory
     var call: AIToolCallPart
     var approver: AIToolApprover
-    var content: (
-        AIToolAuthorization,
-        AIToolAuthorizationState,
-        @escaping @MainActor @Sendable () -> Void,
-        @escaping @MainActor @Sendable () -> Void
-    ) -> Content
     @State private var state = AIToolAuthorizationState()
-    @Environment(\.webAuthenticationSession) private var webAuthenticationSession
+    @State private var session = AIWebAuthentication()
 
+    /// - Parameters:
+    ///   - viewFactory: The view that asks for the sign-in.
+    ///   - call: The tool call that may wait for a sign-in.
+    ///   - approver: Who answers on this device, with the `AIToolAuthorizer` the sign-in needs.
     public init(
+        viewFactory: Factory = DefaultAIConversationViewFactory.shared,
         call: AIToolCallPart,
-        approver: AIToolApprover,
-        @ViewBuilder content: @escaping (
-            _ authorization: AIToolAuthorization,
-            _ state: AIToolAuthorizationState,
-            _ connect: @escaping @MainActor @Sendable () -> Void,
-            _ decline: @escaping @MainActor @Sendable () -> Void
-        ) -> Content
+        approver: AIToolApprover
     ) {
+        self.viewFactory = viewFactory
         self.call = call
         self.approver = approver
-        self.content = content
     }
 
     public var body: some View {
         if let authorizer = approver.authorizer, let authorization = approver.signIn(for: call) {
-            content(authorization, state, { connect(authorization, authorizer) }, { decline(authorizer) })
+            viewFactory.makeToolAuthorizationView(
+                options: AIToolAuthorizationViewOptions(
+                    call: call,
+                    authorization: authorization,
+                    state: state,
+                    connect: { connect(authorization, authorizer) },
+                    decline: { decline(authorizer) }
+                )
+            )
         }
     }
 
     private func connect(_ authorization: AIToolAuthorization, _ authorizer: AIToolAuthorizer) {
         guard !state.isBusy else { return }
         state = AIToolAuthorizationState(isConnecting: true)
-        let session = webAuthenticationSession
+        let session = session
         Task { @MainActor in
             do {
-                // The step changes once your backend has the provider's answer, which hides this.
-                _ = try await session.authenticate(
+                let returned = try await session.authenticate(
                     using: authorization.launchURL, callbackURLScheme: authorizer.callbackScheme
                 )
-            } catch ASWebAuthenticationSessionError.canceledLogin {
-                state = AIToolAuthorizationState()
+                // Your backend has the provider's answer before the page comes back, and its
+                // change to the step hides this. Until then it says it is connecting, unless the
+                // person closed the sheet or the provider did not connect them.
+                if returned.map(Self.connected) != true {
+                    state = AIToolAuthorizationState()
+                }
             } catch {
-                state = AIToolAuthorizationState(failed: true)
+                state = AIToolAuthorizationState(connectFailed: true)
             }
         }
     }
@@ -86,9 +84,16 @@ public struct AIToolAuthorizationView<Content: View>: View {
             do {
                 try await decline(call)
             } catch {
-                state = AIToolAuthorizationState(failed: true)
+                state = AIToolAuthorizationState(declineFailed: true)
             }
         }
+    }
+
+    /// Whether the page came back saying the account is connected, with `status=connected` in
+    /// its query.
+    static func connected(_ returned: URL) -> Bool {
+        URLComponents(url: returned, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "status" })?.value == "connected"
     }
 }
 
@@ -99,15 +104,5 @@ extension AIToolApprover {
         guard authorizer != nil, call.isAwaitingAuthorization(userID: userID),
               let authorization = call.authorization, authorization.kind == .oauth else { return nil }
         return authorization
-    }
-}
-
-@available(iOS 16.4, macOS 13.3, *)
-public extension AIToolAuthorizationView where Content == AIToolAuthorizationCard {
-    /// Asks with `AIToolAuthorizationCard`.
-    init(call: AIToolCallPart, approver: AIToolApprover, font: Font? = nil) {
-        self.init(call: call, approver: approver) { authorization, state, connect, decline in
-            AIToolAuthorizationCard(authorization: authorization, state: state, font: font, connect: connect, decline: decline)
-        }
     }
 }

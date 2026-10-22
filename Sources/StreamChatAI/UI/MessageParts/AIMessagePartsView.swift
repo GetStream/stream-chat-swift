@@ -47,7 +47,7 @@ public struct AIMessagePartsView<Content: View>: View {
     }
 }
 
-public extension AIMessagePartsView where Content == AIMessagePartView {
+public extension AIMessagePartsView where Content == AIMessagePartView<DefaultAIConversationViewFactory> {
     /// Shows every step with `AIMessagePartView`.
     /// - Parameter approver: Who answers calls' questions on this device, to ask them.
     init(parts: [AIMessagePart], approver: AIToolApprover? = nil, font: Font? = nil) {

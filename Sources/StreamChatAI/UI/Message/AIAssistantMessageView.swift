@@ -32,7 +32,8 @@ public struct AIAssistantMessageView<Factory: AIConversationViewFactory>: View {
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     /// - Parameters:
-    ///   - viewFactory: The views of the attachments.
+    ///   - viewFactory: The views of the attachments, and the one that asks for a tool call's
+    ///     sign-in.
     ///   - text: The answer, in Markdown.
     ///   - isGenerating: Whether the agent is still writing it.
     ///   - parts: The steps the agent took, in order.
@@ -65,7 +66,7 @@ public struct AIAssistantMessageView<Factory: AIConversationViewFactory>: View {
                     if let step = part.reasoning {
                         StreamingReasoningView(part: step, text: reasoningText(step))
                     } else {
-                        AIMessagePartView(part: part, approver: approver)
+                        AIMessagePartView(viewFactory: viewFactory, part: part, approver: approver)
                     }
                 }
             }

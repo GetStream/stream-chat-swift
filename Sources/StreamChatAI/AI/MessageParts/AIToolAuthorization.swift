@@ -13,7 +13,7 @@ import Foundation
 /// agent's own sign-in page and the provider hands what it grants to the agent's backend, never
 /// to the app.
 public struct AIToolAuthorization: Equatable, Sendable {
-    /// How the person signs in. The set is open, so compare against the kinds you know.
+    /// How the person signs in.
     public struct Kind: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
         public let rawValue: String
 
@@ -25,7 +25,7 @@ public struct AIToolAuthorization: Equatable, Sendable {
         public static let oauth: Kind = "oauth"
     }
 
-    /// How a sign-in ended. The set is open, so compare against the statuses you know.
+    /// How a sign-in ended.
     public struct Status: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral, CustomStringConvertible {
         public let rawValue: String
 
@@ -84,16 +84,23 @@ public struct AIToolAuthorization: Equatable, Sendable {
     /// The page to open in a web authentication session, which is `url` with the handoff token
     /// in its fragment.
     public var launchURL: URL {
-        guard let handoffToken, var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+        guard let handoffToken, var components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let token = handoffToken.addingPercentEncoding(withAllowedCharacters: Self.fragmentValue) else {
             return url
         }
-        components.fragment = "handoff_token=" + handoffToken
+        components.percentEncodedFragment = "handoff_token=" + token
         return components.url ?? url
     }
 
-    /// Reads the step's `authorization`. A sign-in with no title or page asks nothing.
+    // The page reads its fragment as form parameters, where `+` is a space and `&` and `=`
+    // separate them, so a token carrying one of them is percent-encoded.
+    private static let fragmentValue = CharacterSet.urlFragmentAllowed.subtracting(CharacterSet(charactersIn: "+&="))
+
+    /// Reads the step's `authorization`. A sign-in with no title, or no web page to open, asks
+    /// nothing.
     init?(_ fields: Fields) {
-        guard let title = fields.string("title"), let url = fields.string("url").flatMap(URL.init(string:)) else {
+        guard let title = fields.string("title"), let url = fields.string("url").flatMap(URL.init(string:)),
+              ["http", "https"].contains(url.scheme?.lowercased()), url.host != nil else {
             return nil
         }
         self.init(

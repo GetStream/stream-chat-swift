@@ -10,7 +10,6 @@ import SwiftUI
 public struct AIToolAuthorizationCard: View {
     var authorization: AIToolAuthorization
     var state: AIToolAuthorizationState
-    var font: Font?
     var connect: @MainActor @Sendable () -> Void
     var decline: @MainActor @Sendable () -> Void
 
@@ -18,17 +17,14 @@ public struct AIToolAuthorizationCard: View {
     @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
-    /// - Parameter font: The font of the title, `AIAppearance.fonts.messagePart` by default.
     public init(
         authorization: AIToolAuthorization,
         state: AIToolAuthorizationState = AIToolAuthorizationState(),
-        font: Font? = nil,
         connect: @escaping @MainActor @Sendable () -> Void,
         decline: @escaping @MainActor @Sendable () -> Void
     ) {
         self.authorization = authorization
         self.state = state
-        self.font = font
         self.connect = connect
         self.decline = decline
     }
@@ -61,17 +57,25 @@ public struct AIToolAuthorizationCard: View {
             }
             .controlSize(.small)
             .tint(Color(colors.toolApprovalAccent))
-            if state.failed {
-                Text(L10n.ToolAuthorization.failed)
+            if let failure {
+                Text(failure)
                     .font(fonts.toolApprovalFailure)
                     .foregroundStyle(Color(colors.toolApprovalFailure))
             }
         }
-        .font(font ?? fonts.messagePart)
+        .font(fonts.messagePart)
         .padding(layout.spacingSm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(colors.toolApprovalBackground), in: RoundedRectangle(cornerRadius: layout.radiusLg, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: layout.radiusLg, style: .continuous).strokeBorder(Color(colors.toolApprovalBorder)))
         .accessibilityElement(children: .contain)
+    }
+
+    /// What went wrong, such as the sign-in page not opening or the "not now" not reaching your
+    /// backend.
+    private var failure: String? {
+        if state.connectFailed { return L10n.ToolAuthorization.notOpened }
+        if state.declineFailed { return L10n.ToolApproval.notSent }
+        return nil
     }
 }

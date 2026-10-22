@@ -13,7 +13,8 @@ import Foundation
 /// and the call goes on.
 public struct AIToolAuthorizer: Sendable {
     /// Your app's own URL scheme, such as `com.example.app`. It is the scheme of the return URL
-    /// your sessions give their sign-ins, which the sign-in page goes back to.
+    /// your sessions give their sign-ins, which the sign-in page goes back to, with
+    /// `status=connected` in its query once the account is connected.
     public var callbackScheme: String
     /// Tells your backend the person won't sign in now. Your backend ends the call, which never
     /// runs. A thrown error lets the person answer again.

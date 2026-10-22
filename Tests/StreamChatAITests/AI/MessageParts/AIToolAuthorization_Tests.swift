@@ -39,6 +39,14 @@ final class AIToolAuthorization_Tests: XCTestCase {
         var spent = authorization
         spent.handoffToken = nil
         XCTAssertEqual(spent.launchURL, spent.url)
+
+        var odd = authorization
+        odd.handoffToken = "a+b&c=d"
+        XCTAssertEqual(
+            odd.launchURL.absoluteString,
+            "https://router.example/launch/a1#handoff_token=a%2Bb%26c%3Dd",
+            "the page reads its fragment as form parameters"
+        )
     }
 
     func testAnEndedSignInSaysHowAndADeclinedOneIsOver() throws {
@@ -60,6 +68,10 @@ final class AIToolAuthorization_Tests: XCTestCase {
         XCTAssertFalse(untitled.isAwaitingAuthorization(userID: "u_1"))
         let nowhere = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"title":"Connect Linear"}}"#)
         XCTAssertNil(nowhere.authorization)
+        for page in ["/v1/agents/connectors/oauth/launch/a1", "javascript:alert(1)", "com.example.app:/connected", "https:///launch/a1"] {
+            let notAPage = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"\#(page)"}}"#)
+            XCTAssertNil(notAPage.authorization, "\(page) is no web page to open")
+        }
     }
 
     func testASignInIsAskedOnlyOfItsPersonWhileTheCallWaitsAndOnlyWhereTheyCanSignIn() throws {
@@ -92,6 +104,31 @@ final class AIToolAuthorization_Tests: XCTestCase {
         XCTAssertFalse(AIToolAuthorizationState().isBusy)
         XCTAssertTrue(AIToolAuthorizationState(isConnecting: true).isBusy)
         XCTAssertTrue(AIToolAuthorizationState(isDeclining: true).isBusy)
-        XCTAssertFalse(AIToolAuthorizationState(failed: true).isBusy, "a failure lets the person try again")
+        XCTAssertFalse(AIToolAuthorizationState(connectFailed: true).isBusy, "a failure lets the person try again")
+        XCTAssertFalse(AIToolAuthorizationState(declineFailed: true).isBusy)
+    }
+
+    func testThePageThatComesBackSaysWhetherTheAccountIsConnected() throws {
+        let connected = try XCTUnwrap(URL(string: "com.example.app:/connected?connection_id=c1&status=connected"))
+        let denied = try XCTUnwrap(URL(string: "com.example.app:/connected?connection_id=c1&status=denied"))
+        let silent = try XCTUnwrap(URL(string: "com.example.app:/connected"))
+
+        XCTAssertTrue(AIToolAuthorizationView<DefaultAIConversationViewFactory>.connected(connected))
+        XCTAssertFalse(AIToolAuthorizationView<DefaultAIConversationViewFactory>.connected(denied))
+        XCTAssertFalse(AIToolAuthorizationView<DefaultAIConversationViewFactory>.connected(silent))
+    }
+
+    @MainActor
+    func testTheSignInAsksWithTheCardUnlessTheFactorySaysOtherwise() throws {
+        let waiting = try call(#"{"id":"call-1","status":"awaiting_authorization","target_user_id":"u_1","authorization":{"title":"Connect Linear","url":"https://router.example/launch/a1"}}"#)
+        let options = AIToolAuthorizationViewOptions(
+            call: waiting,
+            authorization: try XCTUnwrap(waiting.authorization),
+            state: AIToolAuthorizationState(),
+            connect: {},
+            decline: {}
+        )
+
+        XCTAssertTrue(DefaultAIConversationViewFactory.shared.makeToolAuthorizationView(options: options) is AIToolAuthorizationCard)
     }
 }
