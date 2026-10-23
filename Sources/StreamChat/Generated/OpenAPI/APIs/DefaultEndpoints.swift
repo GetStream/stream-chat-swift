@@ -28,6 +28,7 @@ enum EndpointPath: Codable {
     case deletePollVote(messageId: String, pollId: String, voteId: String)
     case deleteReaction(id: String, type: String)
     case deleteReminder(messageId: String)
+    case deleteScheduledMessage(id: String)
     case deleteUserGroup(id: String)
     case flag
     case getApp
@@ -60,6 +61,7 @@ enum EndpointPath: Codable {
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
     case queryReminders
+    case queryScheduledMessages
     case queryThreads
     case queryUsers
     case removeUserGroupMembers(id: String)
@@ -70,6 +72,7 @@ enum EndpointPath: Codable {
     case sendEvent(type: String, id: String)
     case sendMessage(type: String, id: String)
     case sendReaction(id: String)
+    case sendScheduledMessageNow(id: String)
     case showChannel(type: String, id: String)
     case stopWatchingChannel(type: String, id: String)
     case sync
@@ -89,6 +92,7 @@ enum EndpointPath: Codable {
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
     case updateReminder(messageId: String)
+    case updateScheduledMessage(id: String)
     case updateThreadPartial(messageId: String)
     case updateUserGroup(id: String)
     case updateUsersPartial
@@ -149,6 +153,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction/\(APIHelper.escapedPathItem(type))"
         case let .deleteReminder(messageId: messageId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .deleteScheduledMessage(id: id):
+            return "/api/v2/chat/scheduled_messages/\(APIHelper.escapedPathItem(id))"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .flag:
@@ -213,6 +219,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case .queryReminders:
             return "/api/v2/chat/reminders/query"
+        case .queryScheduledMessages:
+            return "/api/v2/chat/scheduled_messages/query"
         case .queryThreads:
             return "/api/v2/chat/threads"
         case .queryUsers:
@@ -233,6 +241,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
         case let .sendReaction(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction"
+        case let .sendScheduledMessageNow(id: id):
+            return "/api/v2/chat/scheduled_messages/\(APIHelper.escapedPathItem(id))/send_now"
         case let .showChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
         case let .stopWatchingChannel(type: type, id: id):
@@ -271,6 +281,8 @@ enum EndpointPath: Codable {
             return "/api/v2/push_preferences"
         case let .updateReminder(messageId: messageId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .updateScheduledMessage(id: id):
+            return "/api/v2/chat/scheduled_messages/\(APIHelper.escapedPathItem(id))"
         case let .updateThreadPartial(messageId: messageId):
             return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .updateUserGroup(id: id):
@@ -665,6 +677,16 @@ extension Endpoint {
     static func deleteReminder(messageId: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteReminder(messageId: messageId),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
+    static func deleteScheduledMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<DeleteScheduledMessageResponse> {
+        return .init(
+            path: .deleteScheduledMessage(id: id),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
@@ -1161,6 +1183,19 @@ extension Endpoint {
         )
     }
 
+    static func queryScheduledMessages(
+        queryScheduledMessagesRequest: QueryScheduledMessagesRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryScheduledMessagesResponse> {
+        return .init(
+            path: .queryScheduledMessages,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryScheduledMessagesRequest
+        )
+    }
+
     static func queryThreads(
         queryThreadsRequest: QueryThreadsRequest,
         requiresConnectionId: Bool = true
@@ -1319,6 +1354,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: sendReactionRequest
+        )
+    }
+
+    static func sendScheduledMessageNow(id: String, requiresConnectionId: Bool = false) -> Endpoint<SendScheduledMessageNowResponse> {
+        return .init(
+            path: .sendScheduledMessageNow(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 
@@ -1572,6 +1617,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: updateReminderRequest
+        )
+    }
+
+    static func updateScheduledMessage(
+        id: String,
+        updateScheduledMessageRequest: UpdateScheduledMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateScheduledMessageResponse> {
+        return .init(
+            path: .updateScheduledMessage(id: id),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateScheduledMessageRequest
         )
     }
 

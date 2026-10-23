@@ -5,21 +5,32 @@
 import Foundation
 
 final class ChannelStateResponse: Sendable, Decodable {
+    /// Active live locations in the channel
     let activeLiveLocations: [SharedLocation]?
     /// Represents channel in chat
     let channel: ChannelDetailPayload
     let draft: DraftPayload?
+    /// Whether this channel is hidden or not
     let hidden: Bool?
+    /// List of channel members
     let members: [MemberPayload]
     let membership: MemberPayload?
+    /// List of channel messages
     let messages: [MessageResponse]
+    /// Pending messages that this user has sent
     let pendingMessages: [PendingMessageResponse]?
+    /// List of pinned messages in the channel
     let pinnedMessages: [MessageResponse]
     /// The push preference details.
     let pushPreferences: PushPreference?
+    /// List of read states
     let read: [ReadStateResponse]?
+    /// The caller's own scheduled, sending and failed messages in this channel. Set only by a client-side GetOrCreateChannel or QueryChannels with include_scheduled_messages; absent when not requested or not known, in which case use the scheduled messages query
+    let scheduledMessages: [ScheduledMessageResponse]?
     let threads: [ThreadStateResponse]
+    /// Number of channel watchers
     let watcherCount: Int?
+    /// List of user who is watching the channel
     let watchers: [UserPayload]?
 
     init(
@@ -34,6 +45,7 @@ final class ChannelStateResponse: Sendable, Decodable {
         pinnedMessages: [MessageResponse],
         pushPreferences: PushPreference? = nil,
         read: [ReadStateResponse]? = nil,
+        scheduledMessages: [ScheduledMessageResponse]? = nil,
         threads: [ThreadStateResponse],
         watcherCount: Int? = nil,
         watchers: [UserPayload]? = nil
@@ -49,6 +61,7 @@ final class ChannelStateResponse: Sendable, Decodable {
         self.pinnedMessages = pinnedMessages
         self.pushPreferences = pushPreferences
         self.read = read
+        self.scheduledMessages = scheduledMessages
         self.threads = threads
         self.watcherCount = watcherCount
         self.watchers = watchers
@@ -84,6 +97,10 @@ final class ChannelStateResponse: Sendable, Decodable {
         read = try container.decodeArrayIfPresentIgnoringFailures(
             [ReadStateResponse].self,
             forKey: .read
+        )
+        scheduledMessages = try container.decodeIfPresent(
+            [ScheduledMessageResponse].self,
+            forKey: .scheduledMessages
         )
         threads = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadStateResponse].self,
