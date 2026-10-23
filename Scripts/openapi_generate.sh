@@ -39,6 +39,7 @@ allowed_endpoints=(
     deletePollVote
     deleteReaction
     deleteReminder
+    deleteScheduledMessage
     deleteUserGroup
     flag
     getApp
@@ -71,6 +72,7 @@ allowed_endpoints=(
     queryPollVotes
     queryReactions
     queryReminders
+    queryScheduledMessages
     queryThreads
     queryUsers
     removeUserGroupMembers
@@ -81,6 +83,7 @@ allowed_endpoints=(
     sendEvent
     sendMessage
     sendReaction
+    sendScheduledMessageNow
     showChannel
     stopWatchingChannel
     sync
@@ -100,6 +103,7 @@ allowed_endpoints=(
     updatePollPartial
     updatePushNotificationPreferences
     updateReminder
+    updateScheduledMessage
     updateThreadPartial
     updateUserGroup
     updateUsersPartial
@@ -142,6 +146,7 @@ allowed_models=(
   DeleteChannelResponse
   DeleteMessageResponse
   DeleteReactionResponse
+  DeleteScheduledMessageResponse
   DeliveredMessagePayload
   DraftPayloadResponse
   DraftResponse
@@ -210,6 +215,8 @@ allowed_models=(
   QueryReactionsRequest
   QueryRemindersRequest
   QueryRemindersResponse
+  QueryScheduledMessagesRequest
+  QueryScheduledMessagesResponse
   QueryThreadsRequest
   QueryThreadsResponse
   QueryUsersPayload
@@ -221,6 +228,10 @@ allowed_models=(
   ReminderResponseData
   RemoveUserGroupMembersRequest
   Role
+  ScheduledMessageChannelResponse
+  ScheduledMessageContentResponse
+  ScheduledMessageResponse
+  ScheduledMessagesFilter
   SearchPayload
   SearchResponse
   SearchResult
@@ -231,6 +242,7 @@ allowed_models=(
   SendMessageResponse
   SendReactionRequest
   SendReactionResponse
+  SendScheduledMessageNowResponse
   SharedLocation
   SharedLocationResponseData
   SharedLocationsResponse
@@ -266,6 +278,8 @@ allowed_models=(
   UpdatePollPartialRequest
   UpdateReminderRequest
   UpdateReminderResponse
+  UpdateScheduledMessageRequest
+  UpdateScheduledMessageResponse
   UpdateThreadPartialRequest
   UpdateThreadPartialResponse
   UpdateUserGroupRequest
@@ -407,10 +421,12 @@ encodable_only_models=(
   QueryPollVotesRequestBody
   QueryReactionsRequest
   QueryRemindersRequest
+  QueryScheduledMessagesRequest
   QueryThreadsRequest
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  ScheduledMessagesFilter
   SearchPayload
   SendEventRequest
   SendMessageRequest
@@ -429,6 +445,7 @@ encodable_only_models=(
   UpdateMessageRequest
   UpdatePollPartialRequestBody
   UpdateReminderRequest
+  UpdateScheduledMessageRequest
   UpdateThreadPartialRequest
   UpdateUserGroupRequest
   UpdateUserPartialRequest
@@ -453,6 +470,7 @@ decodable_only_models=(
   DeleteChannelResponse
   DeleteMessageResponse
   DeleteReactionResponse
+  DeleteScheduledMessageResponse
   DraftMessagePayload
   DraftPayload
   FileUploadResponse
@@ -496,16 +514,21 @@ decodable_only_models=(
   QueryChannelsResponse
   QueryDraftsResponse
   QueryRemindersResponse
+  QueryScheduledMessagesResponse
   QueryThreadsResponse
   QueryUsersResponse
   ReadStateResponse
   ReminderPayload
+  ScheduledMessageChannelResponse
+  ScheduledMessageContentResponse
+  ScheduledMessageResponse
   SearchResponse
   SearchResult
   SearchResultMessage
   SearchRolesResponse
   SendMessageResponsePayload
   SendReactionResponse
+  SendScheduledMessageNowResponse
   SharedLocation
   SharedLocationsResponse
   SyncResponse
@@ -525,6 +548,7 @@ decodable_only_models=(
   UpdateMessagePartialResponse
   UpdateMessageResponse
   UpdateReminderResponse
+  UpdateScheduledMessageResponse
   UpdateThreadPartialResponse
   UpdateUsersResponse
   UploadChannelFileResponse
@@ -766,7 +790,7 @@ remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage conf
 remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest user
 remove_property ChannelPartialUpdateResponse id type
-remove_property ChannelStateResponse hideMessagesBefore
+remove_property ChannelStateResponse cooldownRemainingMs hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
@@ -826,7 +850,7 @@ remove_property PollVoteRemovedEventDTO activityId cid custom messageId received
 remove_property PushPreference callLevel chatPreferences feedsLevel feedsPreferences
 remove_property PushPreferenceInput callLevel chatPreferences feedsLevel feedsPreferences userId
 remove_property QueryBannedUsersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual
-remove_property QueryChannelsRequest memberCustomInclude
+remove_property QueryChannelsRequest includeActiveMemberCount memberCustomInclude
 remove_property QueryMembersPayload createdAtAfter createdAtAfterOrEqual createdAtBefore createdAtBeforeOrEqual members userIdGt userIdGte userIdLt userIdLte
 remove_property QueryUsersPayload idGt idGte idLt idLte includeDeactivatedUsers
 remove_property ReactionDeletedEventDTO channelCustom channelId channelMemberCount channelType custom messageId receivedAt team threadParticipants
@@ -838,6 +862,7 @@ remove_property ReminderDeletedEventDTO cid custom parentId receivedAt userId
 remove_property ReminderNotificationEventDTO cid custom parentId receivedAt userId
 remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
+remove_property ScheduledMessageContentResponse html mml sharedLocation
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
 remove_property SearchResultMessage html imageLabels mml
