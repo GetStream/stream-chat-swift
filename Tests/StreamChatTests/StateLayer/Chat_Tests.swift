@@ -2102,7 +2102,77 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(hardDelete, env.channelUpdaterMock.truncateChannel_hardDelete)
         XCTAssertEqual(systemMessage, env.channelUpdaterMock.truncateChannel_systemMessage)
     }
-    
+
+    // MARK: - Scheduling Messages
+
+    func test_scheduleMessage_thenTheScheduledMessageIsSavedLocally() async throws {
+        let scheduledAt = Date().addingTimeInterval(3600)
+
+        let scheduledMessage = try await chat.scheduleMessage(with: "Later", messageId: "scheduled-id", scheduledAt: scheduledAt)
+
+        XCTAssertEqual("scheduled-id", scheduledMessage.id)
+        XCTAssertEqual(channelId, scheduledMessage.cid)
+        XCTAssertEqual("Later", scheduledMessage.message.text)
+        XCTAssertEqual(nil, scheduledMessage.message.parentMessageId)
+        XCTAssertEqual(scheduledAt.timeIntervalSince1970, scheduledMessage.scheduledAt.timeIntervalSince1970, accuracy: 0.001)
+        XCTAssertEqual(.preparingToSchedule, scheduledMessage.status)
+        let isStored = try env.client.databaseContainer.readSynchronously { $0.scheduledMessage(id: "scheduled-id") != nil }
+        XCTAssertTrue(isStored)
+    }
+
+    func test_scheduleReply_thenTheScheduledReplyIsInTheThread() async throws {
+        let parentMessageId = MessageId.unique
+
+        let scheduledMessage = try await chat.scheduleReply(
+            to: parentMessageId,
+            text: "Later",
+            showReplyInChannel: true,
+            scheduledAt: Date().addingTimeInterval(3600)
+        )
+
+        XCTAssertEqual(parentMessageId, scheduledMessage.message.parentMessageId)
+        XCTAssertEqual(true, scheduledMessage.message.showReplyInChannel)
+    }
+
+    func test_updateScheduledMessage_thenTheContentIsUpdatedLocally() async throws {
+        let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
+
+        let updated = try await chat.updateScheduledMessage(id: scheduledMessage.id, text: "Edited")
+
+        XCTAssertEqual("Edited", updated.message.text)
+        XCTAssertEqual(scheduledMessage.scheduledAt, updated.scheduledAt)
+    }
+
+    func test_rescheduleMessage_thenTheDateIsUpdatedLocally() async throws {
+        let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
+        let newDate = Date().addingTimeInterval(7200)
+
+        let rescheduled = try await chat.rescheduleMessage(id: scheduledMessage.id, scheduledAt: newDate)
+
+        XCTAssertEqual(newDate.timeIntervalSince1970, rescheduled.scheduledAt.timeIntervalSince1970, accuracy: 0.001)
+    }
+
+    func test_deleteScheduledMessage_whenItIsNotOnTheServer_thenItIsDeletedLocally() async throws {
+        let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
+
+        try await chat.deleteScheduledMessage(id: scheduledMessage.id)
+
+        let isStored = try env.client.databaseContainer.readSynchronously { $0.scheduledMessage(id: scheduledMessage.id) != nil }
+        XCTAssertFalse(isStored)
+    }
+
+    func test_sendScheduledMessageNow_thenItIsRequested() async throws {
+        let id = String.unique
+        env.client.mockAPIClient.test_mockResponseResult(.success(
+            SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: id, cid: channelId, status: "sending"))
+        ))
+
+        try await chat.sendScheduledMessageNow(id: id)
+
+        let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: id)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), env.client.mockAPIClient.request_endpoint)
+    }
+
     // MARK: - Test Data
     
     /// Configures chat for testing.
