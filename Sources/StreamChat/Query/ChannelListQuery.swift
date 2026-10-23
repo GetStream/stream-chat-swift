@@ -34,6 +34,9 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     public let membersLimit: Int?
     /// Query options.
     public var options: QueryOptions = [.watch]
+    /// Whether each channel is loaded with the current user's scheduled messages in it,
+    /// available in ``ChatChannel/scheduledMessages``. Defaults to `false`.
+    public var includeScheduledMessages = false
     /// The name of a server-side predefined filter to apply to this query.
     ///
     /// When set, the filter and sort templates configured for the predefined filter on the server
@@ -199,6 +202,7 @@ extension ChannelListQuery {
         let request = QueryChannelsRequest(
             filterConditions: hasPredefinedFilter ? nil : filter,
             filterValues: hasPredefinedFilter ? filterValues.flatMap { $0.isEmpty ? nil : $0 } : nil,
+            includeScheduledMessages: includeScheduledMessages ? true : nil,
             limit: pagination.pageSize != .backendDefaultPageSize ? pagination.pageSize : nil,
             memberLimit: membersLimit,
             messageLimit: messagesLimit,
