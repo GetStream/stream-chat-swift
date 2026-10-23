@@ -364,6 +364,22 @@ extension ChatClient {
     }
 }
 
+// MARK: - Factory Methods for Creating Scheduled Message Lists
+
+extension ChatClient {
+    /// Creates an instance of ``ScheduledMessageList`` which represents the current user's scheduled messages matching to the specified ``ScheduledMessageListQuery``.
+    ///
+    /// Loaded scheduled messages are stored in ``ScheduledMessageListState/scheduledMessages`` and kept up to date with local changes and events.
+    /// Call ``ScheduledMessageList/get()`` for loading the first page.
+    ///
+    /// - Parameter query: The query which filters the scheduled messages, for example by channel or status.
+    ///
+    /// - Returns: An instance of ``ScheduledMessageList`` which represents actions and the current state of the list.
+    public func makeScheduledMessageList(with query: ScheduledMessageListQuery = .init()) -> ScheduledMessageList {
+        ScheduledMessageList(query: query, client: self)
+    }
+}
+
 // MARK: - Factory Methods for Creating User Lists
 
 extension ChatClient {
