@@ -222,6 +222,16 @@ extension WSEvent: @unchecked Sendable, Event {
             return .init(createdAt: event.createdAt)
         case .typeReminderUpdatedEvent(let event):
             return .init(createdAt: event.createdAt)
+        case .typeScheduledMessageCreatedEvent(let event):
+            return .init(createdAt: event.createdAt)
+        case .typeScheduledMessageDeletedEvent(let event):
+            return .init(createdAt: event.createdAt)
+        case .typeScheduledMessageFailedEvent(let event):
+            return .init(createdAt: event.createdAt)
+        case .typeScheduledMessageSentEvent(let event):
+            return .init(createdAt: event.createdAt)
+        case .typeScheduledMessageUpdatedEvent(let event):
+            return .init(createdAt: event.createdAt)
         case .typeThreadUpdatedEvent(let event):
             return .init(createdAt: event.createdAt, thread: event.thread)
         case .typeTypingStartEvent(let event):

@@ -10,6 +10,19 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertTrue(EndpointPath.sendMessage(type: "messaging", id: .unique).shouldBeQueuedOffline)
     }
 
+    func test_sendMessageEndpoint_withScheduledAt_shouldNotBeQueuedOffline() {
+        let request = SendMessageRequest(message: MessageRequest(id: .unique), scheduledAt: Date())
+        let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(type: "messaging", id: .unique, sendMessageRequest: request)
+        let endpointWithoutDate: Endpoint<SendMessageResponsePayload> = .sendMessage(
+            type: "messaging",
+            id: .unique,
+            sendMessageRequest: SendMessageRequest(message: MessageRequest(id: .unique))
+        )
+
+        XCTAssertFalse(endpoint.withDataResponse.shouldBeQueuedOffline)
+        XCTAssertTrue(endpointWithoutDate.withDataResponse.shouldBeQueuedOffline)
+    }
+
     func test_updateMessage_shouldBeQueuedOffline() {
         XCTAssertTrue(EndpointPath.updateMessage(id: "").shouldBeQueuedOffline)
     }

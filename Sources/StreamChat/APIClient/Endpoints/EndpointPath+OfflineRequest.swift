@@ -112,6 +112,10 @@ extension EndpointPath {
 
 extension Endpoint {
     var shouldBeQueuedOffline: Bool {
-        path.shouldBeQueuedOffline
+        // The `MessageScheduler` sends a scheduled message again once connected, and replaying it would add it to the channel.
+        if (body as? SendMessageRequest)?.scheduledAt != nil {
+            return false
+        }
+        return path.shouldBeQueuedOffline
     }
 }
