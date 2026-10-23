@@ -16,10 +16,11 @@ public enum ScheduledMessageError: Hashable, Sendable {
     /// The message can only be deleted, or scheduled again as a new message.
     case serverFailedPublishing(PublishingFailure)
 
-    /// The local device could not send the changes to the server, for example because an attachment could not be uploaded.
+    /// The local device failed to schedule, edit or reschedule the message, for example because an attachment
+    /// could not be uploaded.
     ///
     /// A lost connection is not an error: the changes stay pending and are sent once the device is online.
-    case localDeviceFailedSending(LocalFailure)
+    case localDeviceFailedScheduling(LocalFailure)
 
     /// Whether sending the same changes again can succeed without changing them.
     public var isRetryable: Bool {
@@ -28,7 +29,7 @@ public enum ScheduledMessageError: Hashable, Sendable {
             return rejection.isRetryable
         case .serverFailedPublishing:
             return false
-        case .localDeviceFailedSending:
+        case .localDeviceFailedScheduling:
             return true
         }
     }

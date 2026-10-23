@@ -151,7 +151,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
         XCTAssertEqual(message.status, .failed)
-        XCTAssertEqual(message.error, .localDeviceFailedSending(.init(reason: .requestFailed, message: ClientError("Encoding failed").localizedDescription)))
+        XCTAssertEqual(message.error, .localDeviceFailedScheduling(.init(reason: .requestFailed, message: ClientError("Encoding failed").localizedDescription)))
         XCTAssertEqual(message.error?.isRetryable, true)
     }
 
@@ -175,7 +175,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             message.localMessageState = .sendingFailed
         }
 
-        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.error, .localDeviceFailedSending(.init(reason: .attachmentUploadFailed)))
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.error, .localDeviceFailedScheduling(.init(reason: .attachmentUploadFailed)))
     }
 
     func test_asModel_whenAnEditIsRejectedAfterThePublishingFailed_reportsTheRejection() throws {

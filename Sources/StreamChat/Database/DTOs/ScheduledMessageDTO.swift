@@ -427,7 +427,7 @@ private extension ScheduledMessageDTO {
                 ))
             }
             let hasFailedUpload = message?.attachments.contains { $0.localState == .uploadingFailed } == true
-            return .localDeviceFailedSending(.init(
+            return .localDeviceFailedScheduling(.init(
                 reason: hasFailedUpload ? .attachmentUploadFailed : .requestFailed,
                 message: hasFailedUpload ? nil : syncErrorMessage
             ))

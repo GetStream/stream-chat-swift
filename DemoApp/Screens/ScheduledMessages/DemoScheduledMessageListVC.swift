@@ -287,7 +287,7 @@ private struct DemoScheduledMessageRow: View {
             return (rejectionText(rejection), colors.accentError)
         case let .serverFailedPublishing(failure):
             return (failure.reason?.localizedDescription ?? "Failed to send", colors.accentError)
-        case let .localDeviceFailedSending(failure):
+        case let .localDeviceFailedScheduling(failure):
             return (localFailureText(failure), colors.accentError)
         case nil:
             break
