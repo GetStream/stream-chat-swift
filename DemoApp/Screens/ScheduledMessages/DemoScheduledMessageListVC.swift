@@ -203,16 +203,12 @@ struct DemoScheduledMessageList: View {
             .tint(Color(colors.accentError))
         Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
             .tint(.yellow)
-        switch message.localState {
-        case .sendingFailed, .syncingFailed:
-            if message.localError?.isRetryable ?? true {
+        if message.syncState == .failed {
+            if message.syncError?.isRetryable ?? true {
                 Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
                     .tint(Color(colors.accentPrimary))
             }
-        case .pendingSend, .sending:
-            // It can not be sent now before it is on the server.
-            EmptyView()
-        default:
+        } else if message.isOnServer {
             Button { messageToSendNow = message } label: { actionLabel("Send Now", Image(uiImage: images.composerSend)) }
                 .tint(Color(colors.accentPrimary))
         }
@@ -253,7 +249,7 @@ private struct DemoScheduledMessageRow: View {
                 Text(message.message.parentMessageId == nil ? "# \(channelName)" : "Thread in # \(channelName)")
                     .font(Font(Appearance.default.fonts.bodyBold))
                     .foregroundColor(Color(colors.textPrimary))
-                localStateIcon
+                syncStateIcon
             }
             Text(status.text)
                 .font(Font(Appearance.default.fonts.footnote))
@@ -268,11 +264,11 @@ private struct DemoScheduledMessageRow: View {
     }
 
     /// Shows that the message is not on the server yet, or failed to reach it, like the delivery status of a message.
-    @ViewBuilder private var localStateIcon: some View {
-        switch message.localState {
-        case .pendingSend, .sending, .pendingSync, .syncing:
+    @ViewBuilder private var syncStateIcon: some View {
+        switch message.syncState {
+        case .pending, .syncing:
             icon(images.messageDeliveryStatusSending, color: colors.textSecondary)
-        case .sendingFailed, .syncingFailed:
+        case .failed:
             icon(images.messageDeliveryStatusFailed, color: colors.accentError)
         default:
             EmptyView()
@@ -286,11 +282,8 @@ private struct DemoScheduledMessageRow: View {
     }
 
     private var status: (text: String, color: UIColor) {
-        switch message.localState {
-        case .sendingFailed, .syncingFailed:
-            return (localErrorText, colors.accentError)
-        default:
-            break
+        if message.syncState == .failed {
+            return (syncErrorText, colors.accentError)
         }
         switch message.status {
         case .scheduled:
@@ -302,9 +295,9 @@ private struct DemoScheduledMessageRow: View {
         }
     }
 
-    private var localErrorText: String {
-        let fallback = message.localState == .syncingFailed ? "Could not save the changes." : "Could not schedule the message."
-        guard let error = message.localError else { return "\(fallback) Swipe to retry." }
+    private var syncErrorText: String {
+        let fallback = message.isOnServer ? "Could not save the changes." : "Could not schedule the message."
+        guard let error = message.syncError else { return "\(fallback) Swipe to retry." }
 
         // The server wraps the reason, like `SendMessage failed with error: "you can schedule at most 2 messages"`.
         var reason = error.message

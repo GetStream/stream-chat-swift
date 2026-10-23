@@ -53,7 +53,7 @@ public final class ScheduledMessageList: Sendable {
 
     /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
-    /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.localState`.
+    /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.syncState`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -86,8 +86,8 @@ public final class ScheduledMessageList: Sendable {
 
     /// Sends the changes of a scheduled message that failed to reach the server again.
     ///
-    /// A scheduled message is saved locally first and its `localState` is `.sendingFailed` or `.syncingFailed`
-    /// when it could not be scheduled or updated on the server.
+    /// A scheduled message is saved locally first and its `syncState` is `.failed` when it could not be scheduled
+    /// or updated on the server.
     ///
     /// - Parameter id: The id of the scheduled message.
     ///

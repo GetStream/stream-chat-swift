@@ -2115,7 +2115,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual("Later", scheduledMessage.message.text)
         XCTAssertEqual(nil, scheduledMessage.message.parentMessageId)
         XCTAssertEqual(scheduledAt.timeIntervalSince1970, scheduledMessage.scheduledAt.timeIntervalSince1970, accuracy: 0.001)
-        XCTAssertEqual(.pendingSend, scheduledMessage.localState)
+        XCTAssertEqual(.pending, scheduledMessage.syncState)
         let isStored = try env.client.databaseContainer.readSynchronously { $0.scheduledMessage(id: "scheduled-id") != nil }
         XCTAssertTrue(isStored)
     }

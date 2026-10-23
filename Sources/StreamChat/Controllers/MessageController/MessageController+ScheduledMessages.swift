@@ -20,7 +20,7 @@ public extension ChatMessageController {
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///   - completion: Called when the reply is saved locally, with the scheduled message or an error. It is sent
-    ///   to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
+    ///   to the server once its attachments are uploaded, see `ScheduledMessage.syncState`.
     func scheduleReply(
         messageId: MessageId? = nil,
         text: String,
@@ -66,7 +66,7 @@ public extension ChatMessageController {
     ///   - scheduledAt: When to send the reply, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///   - completion: Called when the reply is updated locally, with the scheduled message or an error. The changes are
-    ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.localState`.
+    ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.syncState`.
     func updateScheduledReply(
         id: String,
         text: String,

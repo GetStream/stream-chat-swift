@@ -39,10 +39,10 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// Why the message could not be sent, when `status` is `.failed`.
     public let failureReason: ScheduledMessageFailureReason?
 
-    /// Why the server rejected the latest local changes, when `localState` is `.sendingFailed` or `.syncingFailed`.
+    /// Why the server rejected the latest local changes, when `syncState` is `.failed`.
     ///
     /// For example, the message is not scheduled when the scheduling limit of the channel is reached.
-    public let localError: ScheduledMessageLocalError?
+    public let syncError: ScheduledMessageSyncError?
 
     /// The date when the message was scheduled.
     public let createdAt: Date
@@ -55,12 +55,24 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         status != .failed
     }
 
-    /// The state of the local changes that are not on the server yet, like for any other message.
+    /// The state of the local changes that are not on the server yet.
     ///
     /// A scheduled message is saved locally first, then sent to the server once its attachments are uploaded.
     /// It is `nil` when the server has the latest changes.
-    public var localState: LocalMessageState? {
-        message.localState
+    public var syncState: ScheduledMessageSyncState? {
+        ScheduledMessageSyncState(message.localState)
+    }
+
+    /// Whether the server has the scheduled message, which is needed to send it now.
+    ///
+    /// It is `false` until the message is scheduled on the server for the first time.
+    public var isOnServer: Bool {
+        switch message.localState {
+        case .pendingSend, .sending, .sendingFailed:
+            return false
+        default:
+            return true
+        }
     }
 
     init(
@@ -72,7 +84,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         scheduledAt: Date,
         status: ScheduledMessageStatus,
         failureReason: ScheduledMessageFailureReason?,
-        localError: ScheduledMessageLocalError? = nil,
+        syncError: ScheduledMessageSyncError? = nil,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -84,7 +96,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         self.scheduledAt = scheduledAt
         self.status = status
         self.failureReason = failureReason
-        self.localError = localError
+        self.syncError = syncError
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -112,7 +124,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.failureReason == rhs.failureReason
             && lhs.createdAt == rhs.createdAt
             && lhs.updatedAt == rhs.updatedAt
-            && lhs.localState == rhs.localState
-            && lhs.localError == rhs.localError
+            && lhs.message.localState == rhs.message.localState
+            && lhs.syncError == rhs.syncError
     }
 }
