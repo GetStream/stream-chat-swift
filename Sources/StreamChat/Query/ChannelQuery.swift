@@ -25,6 +25,9 @@ public struct ChannelQuery: Encodable, Sendable {
     public let watchersLimit: Int?
     /// A query options.
     public var options: QueryOptions = .all
+    /// Whether the channel is loaded with the current user's scheduled messages in it,
+    /// available in ``ChatChannel/scheduledMessages``. Defaults to `false`.
+    public var includeScheduledMessages = false
     /// Channel data that is needed only when creating channel
     let channelInput: ChannelInput?
     /// A pagination for members for the channel to be retrieved.
@@ -106,6 +109,7 @@ public struct ChannelQuery: Encodable, Sendable {
             membersPagination: channelQuery.membersPagination,
             watchersLimit: channelQuery.watchersLimit
         )
+        includeScheduledMessages = channelQuery.includeScheduledMessages
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -124,10 +128,6 @@ public struct ChannelQuery: Encodable, Sendable {
 
 extension ChannelQuery {
     var endpoint: Endpoint<ChannelStateResponse> {
-        endpoint(includeScheduledMessages: false)
-    }
-
-    func endpoint(includeScheduledMessages: Bool) -> Endpoint<ChannelStateResponse> {
         let request = ChannelGetOrCreateRequest(
             data: channelInput,
             includeScheduledMessages: includeScheduledMessages ? true : nil,

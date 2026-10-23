@@ -136,7 +136,7 @@ extension DemoAppCoordinator {
             Sorting(key: .pinnedAt),
             Sorting(key: .default)
         ]
-        let channelListQuery: ChannelListQuery
+        var channelListQuery: ChannelListQuery
         switch user {
         case let .credentials(userCredentials):
             channelListQuery = .init(
@@ -157,6 +157,8 @@ extension DemoAppCoordinator {
                 sort: sorting
             )
         }
+
+        channelListQuery.includeScheduledMessages = AppConfig.shared.isScheduledMessagesEnabled
 
         let tuple = makeChannelVCs(for: cid)
         let selectedChannel = tuple.channelController?.channel

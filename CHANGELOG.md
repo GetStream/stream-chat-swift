@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
 - Add `NotificationChannelPartialUpdatedEvent` and keep grouped channel lists up to date when a channel the user isn't watching is partially updated [#4336](https://github.com/GetStream/stream-chat-swift/pull/4336)
 - Add scheduled messages: schedule a message or a thread reply, then edit, reschedule, send it now or delete it, and list them with `ScheduledMessageListController` or the `ScheduledMessageList` of the State Layer [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
-- Add `ChatChannel.scheduledMessages`, loaded with the channel when `ChatClientConfig.isScheduledMessagesEnabled` is on [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
+- Add `ChatChannel.scheduledMessages`, loaded when `ChannelQuery` or `ChannelListQuery` has `includeScheduledMessages` [#4350](https://github.com/GetStream/stream-chat-swift/pull/4350)
 ### 🐞 Fixed
 - Fix loaded grouped channel lists keeping channels that get hidden, deleted or disabled, or that the current user is removed from [#4341](https://github.com/GetStream/stream-chat-swift/pull/4341)
 - Keep hidden channels hidden when a system message or a message from a blocked user arrives [#4345](https://github.com/GetStream/stream-chat-swift/pull/4345)

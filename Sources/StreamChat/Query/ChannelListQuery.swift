@@ -34,6 +34,9 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     public let membersLimit: Int?
     /// Query options.
     public var options: QueryOptions = [.watch]
+    /// Whether each channel is loaded with the current user's scheduled messages in it,
+    /// available in ``ChatChannel/scheduledMessages``. Defaults to `false`.
+    public var includeScheduledMessages = false
     /// The name of a server-side predefined filter to apply to this query.
     ///
     /// When set, the filter and sort templates configured for the predefined filter on the server
@@ -194,10 +197,6 @@ extension ChannelListQuery {
 
 extension ChannelListQuery {
     var endpoint: Endpoint<ChannelListPayload> {
-        endpoint(includeScheduledMessages: false)
-    }
-
-    func endpoint(includeScheduledMessages: Bool) -> Endpoint<ChannelListPayload> {
         let hasPredefinedFilter = predefinedFilter.map { !$0.isEmpty } ?? false
         let sort = sort.map { SortParamRequest(direction: $0.direction, field: $0.key.remoteKey) }
         let request = QueryChannelsRequest(

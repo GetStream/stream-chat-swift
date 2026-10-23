@@ -42,7 +42,6 @@ import UserNotifications
         if let baseURL = apiKey.customBaseURL {
             config.baseURL = .init(url: baseURL)
         }
-        config.isScheduledMessagesEnabled = AppConfig.shared.demoAppConfig.isScheduledMessagesEnabled && apiKey == .usEastStaging
         // Uncomment this to test model transformers
         // config.modelsTransformer = CustomStreamModelsTransformer()
         configureUI()
@@ -157,7 +156,11 @@ extension StreamChatWrapper {
             logClientNotInstantiated()
             return nil
         }
-        return channelId.map { client.channelController(for: $0) }
+        return channelId.map {
+            var query = ChannelQuery(cid: $0)
+            query.includeScheduledMessages = AppConfig.shared.isScheduledMessagesEnabled
+            return client.channelController(for: query)
+        }
     }
 
     func channelListController(query: ChannelListQuery) -> ChatChannelListController? {

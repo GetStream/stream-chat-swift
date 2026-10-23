@@ -222,29 +222,13 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     // MARK: - Fetch
 
-    func test_fetch_makesCorrectAPICall() throws {
+    func test_fetch_makesCorrectAPICall() {
         // Simulate `fetch` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         listUpdater.fetch(channelListQuery: query, completion: { _ in })
 
         let referenceEndpoint = query.endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        XCTAssertNil(try apiClient.request_endpoint?.bodyAsDictionary()["include_scheduled_messages"])
-    }
-
-    func test_fetch_withScheduledMessagesEnabled_includesScheduledMessages() throws {
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.isScheduledMessagesEnabled = true
-        let listUpdater = ChannelListUpdater(
-            database: DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config),
-            apiClient: apiClient
-        )
-        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-
-        listUpdater.fetch(channelListQuery: query, completion: { _ in })
-
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(query.endpoint(includeScheduledMessages: true)))
-        XCTAssertEqual(try apiClient.request_endpoint?.bodyAsDictionary()["include_scheduled_messages"] as? Bool, true)
     }
 
     func test_fetch_successfulResponse_isPropagatedToCompletion() {

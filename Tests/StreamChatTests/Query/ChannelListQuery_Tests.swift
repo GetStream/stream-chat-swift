@@ -42,10 +42,11 @@ final class ChannelListQuery_Tests: XCTestCase {
     }
 
     func test_endpoint_includesScheduledMessages_onlyWhenRequested() throws {
-        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-
-        let body = try AnyEndpoint(query.endpoint(includeScheduledMessages: true)).bodyAsDictionary()
+        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         let defaultBody = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        query.includeScheduledMessages = true
+        let body = try AnyEndpoint(query.endpoint).bodyAsDictionary()
 
         XCTAssertEqual(body["include_scheduled_messages"] as? Bool, true)
         XCTAssertNil(defaultBody["include_scheduled_messages"])

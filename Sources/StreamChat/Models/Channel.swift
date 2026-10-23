@@ -193,8 +193,8 @@ public final class ChatChannel: @unchecked Sendable {
 
     /// The current user's scheduled messages in the channel, pending ones first, each sorted by `scheduledAt`.
     ///
-    /// Loaded with the channel when `ChatClientConfig.isScheduledMessagesEnabled` is `true`. Use a
-    /// `ScheduledMessageListController` to load them when the channel has more than 100.
+    /// Loaded with the channel when the channel query or the channel list query has `includeScheduledMessages`.
+    /// Use a `ScheduledMessageListController` to load them when the channel has more than 100.
     public let scheduledMessages: [ScheduledMessage]
 
     // MARK: - Internal

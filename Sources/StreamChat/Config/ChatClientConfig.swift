@@ -207,12 +207,6 @@ public struct ChatClientConfig: Sendable {
     /// Defaults to `false`.
     public var isLocalUnreadCountEnabled: Bool = false
 
-    /// Whether channel queries also load the current user's scheduled messages of each channel,
-    /// available in ``ChatChannel/scheduledMessages``.
-    ///
-    /// Enable it when scheduled messages are enabled for your app. Defaults to `false`.
-    public var isScheduledMessagesEnabled: Bool = false
-
     public init(
         apiKey: APIKey
     ) {
