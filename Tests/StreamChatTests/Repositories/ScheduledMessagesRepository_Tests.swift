@@ -50,7 +50,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.id, "scheduled-id")
         XCTAssertEqual(message.cid, cid)
         XCTAssertEqual(message.message.localState, .pendingSend)
-        XCTAssertEqual(message.status, .waitingToSchedule)
+        XCTAssertEqual(message.status, .preparingToSchedule)
         XCTAssertEqual(message.scheduledAt.timeIntervalSince1970, scheduledAt.timeIntervalSince1970, accuracy: 0.001)
         XCTAssertEqual(message.message.text, "Hello")
         XCTAssertEqual(message.message.parentMessageId, "parent")
@@ -480,10 +480,10 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_status_mergesTheLocalChangesWithTheStatusOfTheServer() {
         let cases: [(LocalMessageState?, String, ScheduledMessageStatus)] = [
-            (.pendingSend, "scheduled", .waitingToSchedule),
-            (.pendingSync, "failed", .waitingToSchedule),
-            (.sending, "scheduled", .scheduling),
-            (.syncing, "sending", .scheduling),
+            (.pendingSend, "scheduled", .preparingToSchedule),
+            (.pendingSync, "failed", .preparingToSchedule),
+            (.sending, "scheduled", .preparingToSchedule),
+            (.syncing, "sending", .preparingToSchedule),
             (.sendingFailed, "scheduled", .failed),
             (.syncingFailed, "scheduled", .failed),
             (nil, "scheduled", .scheduled),

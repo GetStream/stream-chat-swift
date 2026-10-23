@@ -7,7 +7,7 @@ import Foundation
 /// Where a scheduled message is, from the local device until the server publishes it.
 ///
 /// The latest local changes win while they are not on the server yet, so an edit waiting to be sent shows as
-/// `waitingToSchedule` even when the server already has the message.
+/// `preparingToSchedule` even when the server already has the message.
 public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral {
     public let rawValue: String
 
@@ -19,17 +19,15 @@ public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, Expr
         self.init(rawValue: value)
     }
 
-    /// The changes are saved on the device and wait to be sent to the server, for example until the attachments
-    /// are uploaded or the device is online.
-    public static let waitingToSchedule: Self = "waiting_to_schedule"
-
-    /// The changes are being sent to the server, to schedule, edit or reschedule the message.
-    public static let scheduling: Self = "scheduling"
+    /// The latest changes are not on the server yet: the attachments are uploading, the device is offline,
+    /// or the changes are being sent to schedule, edit or reschedule the message.
+    public static let preparingToSchedule: Self = "preparing_to_schedule"
 
     /// The server has the latest changes and publishes the message at `scheduledAt`.
     public static let scheduled: Self = "scheduled"
 
-    /// The server is publishing the message. It can no longer be edited, rescheduled or deleted.
+    /// The server is publishing the message, for example after sending it now, or while it retries a send.
+    /// It can no longer be edited, rescheduled or deleted.
     public static let publishing: Self = "publishing"
 
     /// The message could not be scheduled or published. See `ScheduledMessage.error`.
@@ -46,10 +44,8 @@ enum ScheduledMessageServerStatus: String {
 extension ScheduledMessageStatus {
     init(localState: LocalMessageState?, serverStatus: String) {
         switch localState {
-        case .pendingSend, .pendingSync:
-            self = .waitingToSchedule
-        case .sending, .syncing:
-            self = .scheduling
+        case .pendingSend, .pendingSync, .sending, .syncing:
+            self = .preparingToSchedule
         case .sendingFailed, .syncingFailed:
             self = .failed
         default:

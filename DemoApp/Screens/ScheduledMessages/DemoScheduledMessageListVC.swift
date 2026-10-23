@@ -266,7 +266,7 @@ private struct DemoScheduledMessageRow: View {
     /// Shows that the message is not on the server yet, or failed to reach it, like the delivery status of a message.
     @ViewBuilder private var statusIcon: some View {
         switch message.status {
-        case .waitingToSchedule, .scheduling:
+        case .preparingToSchedule:
             icon(images.messageDeliveryStatusSending, color: colors.textSecondary)
         case .failed:
             icon(images.messageDeliveryStatusFailed, color: colors.accentError)
