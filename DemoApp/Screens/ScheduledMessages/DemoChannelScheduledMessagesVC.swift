@@ -151,7 +151,7 @@ final class DemoChannelScheduledMessagesVC: UIViewController,
     // MARK: - Actions
 
     private func actionItems(for message: ChatMessage) -> [ChatMessageActionItem] {
-        guard let scheduledMessage = scheduledMessages[message.id], scheduledMessage.status != .sending else {
+        guard let scheduledMessage = scheduledMessages[message.id], scheduledMessage.status != .publishing else {
             return []
         }
 
@@ -304,10 +304,15 @@ final class DemoChannelScheduledMessagesVC: UIViewController,
 
         let statusView = DemoScheduledStatusView()
         statusView.isFailure = scheduledMessage.status == .failed
-        if case let .serverFailedPublishing(failure) = scheduledMessage.error {
+        switch (scheduledMessage.status, scheduledMessage.error) {
+        case let (_, .serverFailedPublishing(failure)):
             statusView.content = failure.reason?.localizedDescription ?? "Failed to send"
-        } else {
-            statusView.content = statusView.isFailure ? "Failed to send" : "Sending…"
+        case (.failed, _):
+            statusView.content = "Could not schedule"
+        case (.publishing, _):
+            statusView.content = "Sending…"
+        default:
+            statusView.content = "Scheduling…"
         }
         return statusView
     }

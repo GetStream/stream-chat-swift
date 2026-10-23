@@ -47,7 +47,7 @@ class ScheduledMessageDTO: NSManagedObject {
 
         guard !isDeleted else { return }
 
-        let newIsPending = ScheduledMessageStatus(rawValue: status) != .failed
+        let newIsPending = ScheduledMessageStatus(localState: message?.localMessageState, serverStatus: status) != .failed
         if isPending != newIsPending {
             isPending = newIsPending
         }
@@ -178,7 +178,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         let now = Date()
         let dto = ScheduledMessageDTO.loadOrCreate(id: id, context: self)
         dto.cid = cid.rawValue
-        dto.status = ScheduledMessageStatus.scheduled.rawValue
+        dto.status = ScheduledMessageServerStatus.scheduled.rawValue
         dto.failureReason = nil
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
@@ -408,7 +408,7 @@ extension ScheduledMessageDTO {
             message: chatMessage,
             quotedMessageId: quotedMessageId,
             scheduledAt: scheduledAt.bridgeDate,
-            status: ScheduledMessageStatus(rawValue: status),
+            status: ScheduledMessageStatus(localState: message?.localMessageState, serverStatus: status),
             error: error,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
@@ -419,7 +419,7 @@ extension ScheduledMessageDTO {
 private extension ScheduledMessageDTO {
     // The failure of the latest local changes wins, since it is the most recent.
     var modelError: ScheduledMessageError? {
-        if ScheduledMessageSyncState(message?.localMessageState) == .failed {
+        if [.sendingFailed, .syncingFailed].contains(message?.localMessageState) {
             if let syncErrorMessage, !isSyncErrorLocal {
                 return .serverRejectedScheduling(.init(
                     reason: syncErrorReason.map(ScheduledMessageError.ServerRejection.Reason.init(rawValue:)),
@@ -432,7 +432,7 @@ private extension ScheduledMessageDTO {
                 message: hasFailedUpload ? nil : syncErrorMessage
             ))
         }
-        if ScheduledMessageStatus(rawValue: status) == .failed {
+        if ScheduledMessageServerStatus(rawValue: status) == .failed {
             return .serverFailedPublishing(.init(
                 reason: failureReason.map(ScheduledMessageError.PublishingFailure.Reason.init(rawValue:))
             ))

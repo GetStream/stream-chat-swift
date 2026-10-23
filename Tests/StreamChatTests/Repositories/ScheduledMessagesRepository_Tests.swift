@@ -49,9 +49,8 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         XCTAssertEqual(message.id, "scheduled-id")
         XCTAssertEqual(message.cid, cid)
-        XCTAssertEqual(message.status, .scheduled)
         XCTAssertEqual(message.message.localState, .pendingSend)
-        XCTAssertEqual(message.syncState, .pending)
+        XCTAssertEqual(message.status, .waitingToSchedule)
         XCTAssertEqual(message.scheduledAt.timeIntervalSince1970, scheduledAt.timeIntervalSince1970, accuracy: 0.001)
         XCTAssertEqual(message.message.text, "Hello")
         XCTAssertEqual(message.message.parentMessageId, "parent")
@@ -109,7 +108,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message["mentioned_users"] as? [String], ["mentioned"])
         XCTAssertEqual((message["custom"] as? [String: Any])?["key"] as? String, "value")
         XCTAssertNil(sent.message.localState)
-        XCTAssertNil(sent.syncState)
+        XCTAssertEqual(sent.status, .scheduled)
         XCTAssertNil(try storedMessage(id: "scheduled-id")?.message.localState)
     }
 
@@ -134,7 +133,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
         XCTAssertEqual(message.message.localState, .sendingFailed)
-        XCTAssertEqual(message.syncState, .failed)
+        XCTAssertEqual(message.status, .failed)
         guard case let .serverRejectedScheduling(rejection) = message.error else {
             return XCTFail("Expected a rejection of the server, got \(String(describing: message.error))")
         }
@@ -151,7 +150,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
-        XCTAssertEqual(message.syncState, .failed)
+        XCTAssertEqual(message.status, .failed)
         XCTAssertEqual(message.error, .localDeviceFailedSending(.init(reason: .requestFailed, message: ClientError("Encoding failed").localizedDescription)))
         XCTAssertEqual(message.error?.isRetryable, true)
     }
@@ -479,6 +478,23 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(message.channel.imageURL)
     }
 
+    func test_status_mergesTheLocalChangesWithTheStatusOfTheServer() {
+        let cases: [(LocalMessageState?, String, ScheduledMessageStatus)] = [
+            (.pendingSend, "scheduled", .waitingToSchedule),
+            (.pendingSync, "failed", .waitingToSchedule),
+            (.sending, "scheduled", .scheduling),
+            (.syncing, "sending", .scheduling),
+            (.sendingFailed, "scheduled", .failed),
+            (.syncingFailed, "scheduled", .failed),
+            (nil, "scheduled", .scheduled),
+            (nil, "sending", .publishing),
+            (nil, "failed", .failed)
+        ]
+        for (localState, serverStatus, expected) in cases {
+            XCTAssertEqual(ScheduledMessageStatus(localState: localState, serverStatus: serverStatus), expected, "\(String(describing: localState)), \(serverStatus)")
+        }
+    }
+
     func test_asModel_exposesTheStatusAndTheFailureReason() throws {
         let response = ScheduledMessageResponse.dummy(cid: cid, status: "failed", failureReason: "channel_frozen")
 
@@ -647,7 +663,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: "scheduled-id")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(error)
-        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .sending)
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .publishing)
     }
 
     // MARK: - Load

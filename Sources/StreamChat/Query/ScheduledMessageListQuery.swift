@@ -15,7 +15,9 @@ public extension FilterKey where Scope == ScheduledMessageListFilterScope {
         .init(rawValue: "cid", keyPathString: #keyPath(ScheduledMessageDTO.cid), valueMapper: { $0.rawValue })
     }
 
-    /// A filter key for matching the `status` value.
+    /// A filter key for matching the status on the server: `scheduled`, `sending` or `failed`.
+    ///
+    /// It does not match the local changes that are not on the server yet, see `ScheduledMessage.status`.
     /// Supported operators: `in`, `equal`
     static var status: FilterKey<Scope, String> { .init(rawValue: "status", keyPathString: #keyPath(ScheduledMessageDTO.status)) }
 }
@@ -23,12 +25,12 @@ public extension FilterKey where Scope == ScheduledMessageListFilterScope {
 public extension Filter where Scope == ScheduledMessageListFilterScope {
     /// Returns a filter that matches the scheduled messages waiting to be sent.
     static var pending: Filter<Scope> {
-        .in(.status, values: [ScheduledMessageStatus.scheduled.rawValue, ScheduledMessageStatus.sending.rawValue])
+        .in(.status, values: [ScheduledMessageServerStatus.scheduled.rawValue, ScheduledMessageServerStatus.sending.rawValue])
     }
 
     /// Returns a filter that matches the scheduled messages that could not be sent.
     static var failed: Filter<Scope> {
-        .equal(.status, to: ScheduledMessageStatus.failed.rawValue)
+        .equal(.status, to: ScheduledMessageServerStatus.failed.rawValue)
     }
 }
 

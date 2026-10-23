@@ -1356,7 +1356,7 @@ public class Chat: @unchecked Sendable {
     /// Schedules a new message to be sent to the channel at a later date.
     ///
     /// The message is not added to the channel until it is sent. It is saved locally first and sent to the server
-    /// once its attachments are uploaded, see `ScheduledMessage.syncState`.
+    /// once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
     /// - SeeAlso: Listing scheduled messages: ``ChatClient/makeScheduledMessageList(with:)``.
     ///
@@ -1403,7 +1403,7 @@ public class Chat: @unchecked Sendable {
     /// Schedules a new reply to the specified message, to be sent at a later date.
     ///
     /// The reply is not added to the thread until it is sent. It is saved locally first and sent to the server
-    /// once its attachments are uploaded, see `ScheduledMessage.syncState`.
+    /// once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
     /// - Parameters:
     ///   - parentMessageId: The id of the message to reply to.
@@ -1452,7 +1452,7 @@ public class Chat: @unchecked Sendable {
     /// Updates the content of a scheduled message, and optionally when it is sent.
     ///
     /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
-    /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.syncState`.
+    /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
@@ -1490,7 +1490,7 @@ public class Chat: @unchecked Sendable {
 
     /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
     ///
-    /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.syncState`.
+    /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.status`.
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.

@@ -33,7 +33,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The date when the message is sent.
     public let scheduledAt: Date
 
-    /// The current status of the scheduled message.
+    /// Where the scheduled message is, from the local device until the server publishes it.
     public let status: ScheduledMessageStatus
 
     /// The problem of the scheduled message, telling whether the server or the local device failed.
@@ -48,17 +48,9 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The date when the message was last edited or rescheduled.
     public let updatedAt: Date
 
-    /// Whether the message is still waiting to be sent, which is the case unless it failed.
+    /// Whether the message is still waiting to be published, which is the case unless it failed.
     public var isPending: Bool {
         status != .failed
-    }
-
-    /// The state of the local changes that are not on the server yet.
-    ///
-    /// A scheduled message is saved locally first, then sent to the server once its attachments are uploaded.
-    /// It is `nil` when the server has the latest changes.
-    public var syncState: ScheduledMessageSyncState? {
-        ScheduledMessageSyncState(message.localState)
     }
 
     /// Whether the server has the scheduled message, which is needed to send it now.

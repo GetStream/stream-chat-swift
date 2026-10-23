@@ -188,11 +188,11 @@ struct DemoScheduledMessageList: View {
             Button { actions.open(message) } label: {
                 DemoScheduledMessageRow(message: message, channelName: actions.channelName(message))
             }
-            .disabled(message.status == .sending)
+            .disabled(message.status == .publishing)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             .listRowBackground(Color(colors.backgroundCoreApp))
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                if message.status != .sending { swipeActions(for: message) }
+                if message.status != .publishing { swipeActions(for: message) }
             }
         }
     }
@@ -203,7 +203,7 @@ struct DemoScheduledMessageList: View {
             .tint(Color(colors.accentError))
         Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
             .tint(.yellow)
-        if message.syncState == .failed {
+        if message.status == .failed {
             if message.error?.isRetryable ?? true {
                 Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
                     .tint(Color(colors.accentPrimary))
@@ -249,7 +249,7 @@ private struct DemoScheduledMessageRow: View {
                 Text(message.message.parentMessageId == nil ? "# \(channelName)" : "Thread in # \(channelName)")
                     .font(Font(Appearance.default.fonts.bodyBold))
                     .foregroundColor(Color(colors.textPrimary))
-                syncStateIcon
+                statusIcon
             }
             Text(status.text)
                 .font(Font(Appearance.default.fonts.footnote))
@@ -264,9 +264,9 @@ private struct DemoScheduledMessageRow: View {
     }
 
     /// Shows that the message is not on the server yet, or failed to reach it, like the delivery status of a message.
-    @ViewBuilder private var syncStateIcon: some View {
-        switch message.syncState {
-        case .pending, .syncing:
+    @ViewBuilder private var statusIcon: some View {
+        switch message.status {
+        case .waitingToSchedule, .scheduling:
             icon(images.messageDeliveryStatusSending, color: colors.textSecondary)
         case .failed:
             icon(images.messageDeliveryStatusFailed, color: colors.accentError)
@@ -293,12 +293,12 @@ private struct DemoScheduledMessageRow: View {
             break
         }
         switch message.status {
-        case .scheduled:
-            return ("Send \(DemoScheduledDateFormatter.string(from: message.scheduledAt))", colors.accentPrimary)
-        case .sending:
+        case .publishing:
             return ("Sending…", colors.textSecondary)
-        default:
+        case .failed:
             return ("Failed to send", colors.accentError)
+        default:
+            return ("Send \(DemoScheduledDateFormatter.string(from: message.scheduledAt))", colors.accentPrimary)
         }
     }
 
