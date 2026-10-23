@@ -123,7 +123,7 @@ public struct ChannelQuery: Encodable, Sendable {
 }
 
 extension ChannelQuery {
-    var endpoint: Endpoint<ChannelStateResponse> {
+    var endpoint: Endpoint<ChannelStateResponseFields> {
         let request = ChannelGetOrCreateRequest(
             data: channelInput,
             members: membersPagination?.toPaginationParams(),

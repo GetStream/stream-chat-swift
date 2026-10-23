@@ -9,6 +9,7 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     let avgResponseTime: Int?
     /// Whether a user is banned or not
     let banned: Bool
+    let blockedUserIds: [String]?
     /// Date/time of creation
     let createdAt: Date
     /// Custom data for this object
@@ -37,6 +38,7 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     init(
         avgResponseTime: Int? = nil,
         banned: Bool,
+        blockedUserIds: [String]? = nil,
         createdAt: Date,
         custom: [String: RawJSON],
         deactivatedAt: Date? = nil,
@@ -53,6 +55,7 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
     ) {
         self.avgResponseTime = avgResponseTime
         self.banned = banned
+        self.blockedUserIds = blockedUserIds
         self.createdAt = createdAt
         self.custom = custom
         self.deactivatedAt = deactivatedAt
@@ -72,6 +75,7 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encodeIfPresent(avgResponseTime, forKey: .avgResponseTime)
         try container.encode(banned, forKey: .banned)
+        try container.encodeIfPresent(blockedUserIds, forKey: .blockedUserIds)
         try container.encode(createdAt, forKey: .createdAt)
         try container.encode(custom, forKey: .custom)
         try container.encodeIfPresent(deactivatedAt, forKey: .deactivatedAt)
@@ -91,6 +95,7 @@ final class UserPayload: Sendable, Codable, JSONEncodable {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
         banned = try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false
+        blockedUserIds = try container.decodeIfPresent([String].self, forKey: .blockedUserIds)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
         deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)

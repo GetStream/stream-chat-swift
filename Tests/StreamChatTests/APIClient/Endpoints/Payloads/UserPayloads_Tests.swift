@@ -242,7 +242,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(
             CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
         )
-        let user = try XCTUnwrap(payload.users.first?.value)
+        let user = try XCTUnwrap(payload.users.first?.value).user
         XCTAssertEqual(user.id, "luke_skywalker")
         XCTAssertEqual(user.role, "user")
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())

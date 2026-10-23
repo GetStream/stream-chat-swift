@@ -218,7 +218,7 @@ private extension ChatUserSearchController {
         client.databaseContainer.write(converting: { session in
             page
                 .users
-                .compactMap { try? session.saveUser(fullResponse: $0).asModel() }
+                .compactMap { try? session.saveUser(payload: $0.user).asModel() }
         }, completion: { result in
             completion(result.value ?? [])
         })
