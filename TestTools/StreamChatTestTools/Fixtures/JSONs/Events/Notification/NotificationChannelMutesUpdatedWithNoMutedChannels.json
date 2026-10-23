@@ -1,6 +1,8 @@
 {
     "type": "notification.channel_mutes_updated",
     "me": {
+        "teams": [],
+        "unread_threads": 0,
         "custom": {
             "roles": []
         },

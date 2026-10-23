@@ -108,16 +108,15 @@ contains() {
 }
 
 # Decode generated array properties lossily: an element that fails to decode is logged
-#     and dropped instead of failing the whole payload. Matches the generator's `self.x =`
-#     and the Sourcery decoders' `x =` lines. Fails when a property has no decode line, so
-#     a spec change can't silently make an array strict.
+#     and dropped instead of failing the whole payload. Fails when a property has no decode
+#     line, so a spec change can't silently make an array strict.
 lossy_array_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
   local p
   for p in "${@:2}"; do
     M="$1" P="$p" perl -0777 -pi -e '
       my ($m, $p) = ($ENV{M}, $ENV{P});
-      s/^(\s+(?:self\.)?\Q$p\E = try container\.)decode(IfPresent)?\(/$1 . ($2 ? "decodeArrayIfPresentIgnoringFailures(" : "decodeArrayIgnoringFailures(")/me
+      s/^(\s+self\.\Q$p\E = try container\.)decode(IfPresent)?\(/$1 . ($2 ? "decodeArrayIfPresentIgnoringFailures(" : "decodeArrayIgnoringFailures(")/me
         or die "lossy_array_property: $m.$p has no decode line\n";
     ' "$file"
   done
@@ -382,14 +381,9 @@ rename_generated_type() {
 }
 
 # Rename a generated property. The coders keep `forKey: .old`: StringCodingKey names
-#     follow the wire key, not the property. A Sourcery source is refused: the stencil
-#     keys every property by its name, so `new` would decode the wrong key.
+#     follow the wire key, not the property.
 rename_property() {
   local file="$OUTPUT_DIR_CHAT/models/$1.swift"
-  if grep -q "/$1\.swift$" "$SOURCERY_CONFIG"; then
-    echo "rename_property: $1 is a Sourcery source; its stencil decoder would key $3 by name, not by the wire key" >&2
-    exit 1
-  fi
   O="$2" N="$3" perl -0777 -pi -e '
     my ($o, $n) = ($ENV{O}, $ENV{N});
     s/^(\s*(?:public )?let )\Q$o\E:/$1$n:/mg;
@@ -440,38 +434,6 @@ shape_wsevent() {
   sed -i '' -E 's/^enum WSEvent: Codable, Hashable \{[[:space:]]*$/enum WSEvent: Codable {/' "$file"
   sed -i '' -E 's/^    var rawValue: Event \{[[:space:]]*$/    var rawValue: EventDTO {/' "$file"
   perl -0777 -pi -e 's/\n    func encode\(to encoder: Encoder\) throws \{\n.*?\n    \}\n//s' "$file"
-}
-
-# Generate a lenient `init(from:)` and splice it into the model's class body, where a
-# `required` initializer is allowed. It replaces any `init(from:)` the generator
-# emitted itself (e.g. for models with deprecated fields).
-splice_generated_decoders() {
-  local generated="$OUTPUT_DIR_CHAT/OpenAPIDecoders.generated.swift"
-  python3 - "$generated" "$OUTPUT_DIR_CHAT/models" <<'PY'
-import pathlib
-import re
-import sys
-
-generated = pathlib.Path(sys.argv[1])
-models_dir = pathlib.Path(sys.argv[2])
-blocks = re.split(r"^// sourcery:decoder:(\w+)$", generated.read_text(), flags=re.M)
-
-for name, body in zip(blocks[1::2], blocks[2::2]):
-    path = models_dir / f"{name}.swift"
-    text = re.sub(
-        r"\n?^    (?:public )?(?:required )?init\(from decoder: Decoder\) throws \{\n.*?^    \}\n",
-        "",
-        path.read_text(),
-        count=1,
-        flags=re.M | re.S,
-    )
-    lines = text.splitlines(keepends=True)
-    closing = max(i for i, line in enumerate(lines) if line.rstrip() == "}")
-    lines[closing:closing] = ["\n"] + [f"{line}\n" for line in body.strip("\n").splitlines()]
-    path.write_text("".join(lines))
-
-generated.unlink()
-PY
 }
 
 # Strip the generated Hashable conformance from every model not in

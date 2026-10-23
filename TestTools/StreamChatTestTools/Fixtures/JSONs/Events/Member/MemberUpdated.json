@@ -1,5 +1,8 @@
 {
   "member" : {
+    "channel_role" : "channel_member",
+    "custom" : {},
+    "notifications_muted" : false,
     "banned" : false,
     "shadow_banned" : false,
     "created_at" : "2021-04-23T10:42:21.146483Z",
@@ -7,6 +10,9 @@
     "user_id" : "count_dooku",
     "updated_at" : "2021-04-23T12:16:24.832297Z",
     "user" : {
+      "custom" : {},
+      "language" : "",
+      "teams" : [],
       "banned" : false,
       "online" : false,
       "id" : "count_dooku",
@@ -19,6 +25,9 @@
     }
   },
   "user" : {
+    "custom" : {},
+    "language" : "",
+    "teams" : [],
     "banned" : false,
     "online" : false,
     "id" : "count_dooku",
