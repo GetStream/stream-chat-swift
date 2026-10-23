@@ -191,6 +191,12 @@ public final class ChatChannel: @unchecked Sendable {
     /// Push preference for the channel.
     public let pushPreference: PushPreference?
 
+    /// The current user's scheduled messages in the channel, pending ones first, each sorted by `scheduledAt`.
+    ///
+    /// Loaded with the channel when the channel query or the channel list query has `includeScheduledMessages`.
+    /// Use a `ScheduledMessageListController` to load them when the channel has more than 100.
+    public let scheduledMessages: [ScheduledMessage]
+
     // MARK: - Internal
 
     var hasUnread: Bool {
@@ -236,7 +242,8 @@ public final class ChatChannel: @unchecked Sendable {
         muteDetails: MuteDetails?,
         draftMessage: DraftMessage?,
         activeLiveLocations: [SharedLocation],
-        pushPreference: PushPreference?
+        pushPreference: PushPreference?,
+        scheduledMessages: [ScheduledMessage] = []
     ) {
         self.cid = cid
         self.name = name
@@ -277,6 +284,7 @@ public final class ChatChannel: @unchecked Sendable {
         self.activeLiveLocations = activeLiveLocations
         self.pendingMessages = pendingMessages
         self.pushPreference = pushPreference
+        self.scheduledMessages = scheduledMessages
     }
 
     /// Returns a new `ChatChannel` with the provided data replaced.
@@ -323,7 +331,8 @@ public final class ChatChannel: @unchecked Sendable {
             muteDetails: muteDetails,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
     }
 
@@ -431,7 +440,8 @@ public final class ChatChannel: @unchecked Sendable {
             muteDetails: muteDetails,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
     }
 }
@@ -532,7 +542,7 @@ extension ChatChannel: Hashable {
         guard lhs.draftMessage == rhs.draftMessage else { return false }
         guard lhs.activeLiveLocations.count == rhs.activeLiveLocations.count else { return false }
         guard lhs.pushPreference == rhs.pushPreference else { return false }
-        return true
+        return lhs.scheduledMessages == rhs.scheduledMessages
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -641,6 +651,11 @@ public extension ChatChannel {
     /// Can the current user send a message in this channel.
     var canSendMessage: Bool {
         ownCapabilities.contains(.sendMessage)
+    }
+
+    /// Can the current user schedule messages in this channel.
+    var canScheduleMessage: Bool {
+        ownCapabilities.contains(.scheduleMessage)
     }
 
     /// Can the current user send reactions in this channel.
