@@ -11,16 +11,18 @@ import Foundation
 ///   so we also analyse if it should be added to the current group.
 /// - Channel is updated: We re-evaluate membership — the channel's `"group"` extra-data may have
 ///   changed, which can move it into or out of this query.
+/// - Channel is hidden, deleted, disabled, or the current user was removed from it: the backend
+///   leaves it out of grouped queries, so it is unlinked. Channel visible re-links it.
 ///
-/// Membership is decided from the channel's `"group"` extra-data value:
-/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel carrying any non-empty group
-///   value links into it.
+/// Only channels the current user is a member of are linked, and the channel's `"group"` extra-data value decides where:
+/// - The ``GroupedChannelKey/all`` query is a catch-all: every channel links into it, including channels without a group.
 /// - Any other `groupKey` links a channel only when its `"group"` value equals the query's `groupKey`;
 ///   otherwise the channel is unlinked.
 ///
 /// When the group was queried with a filter, the channel must also match it, evaluated as a Core Data predicate.
 /// The backend sends no event when a channel passes a `query_timestamp` cutoff, so linked channels are
-/// re-checked periodically and unlinked once they no longer match.
+/// re-checked periodically and unlinked once they no longer match. Reconnect sync re-checks them too,
+/// because the events it replays are not posted.
 final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     private let channelWatcherHandler: ChannelWatcherHandling
     private let databaseContainer: DatabaseContainer
@@ -66,8 +68,33 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
             ),
             EventObserver(
                 notificationCenter: nc,
+                transform: { $0 as? ChannelHiddenEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? ChannelDeletedEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? NotificationChannelDeletedEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? NotificationRemovedFromChannelEvent },
+                callback: { [weak self] event in self?.updateLinking(for: event.cid, isMember: false) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self] event in self?.updateLinking(for: event.cid) }
+            ),
+            EventObserver(
+                notificationCenter: nc,
+                transform: { $0 as? NotificationChannelPartialUpdatedEvent },
+                callback: { [weak self] event in self?.handlePartialUpdate(event) }
             )
         ]
         expirySweepTimer = timerType.scheduleRepeating(
@@ -78,14 +105,32 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
         expirySweepTimer?.resume()
     }
 
+    private func handlePartialUpdate(_ event: NotificationChannelPartialUpdatedEvent) {
+        if event.isChannelStored {
+            updateLinking(for: event.cid, skipsBelowLoadedChannels: true)
+        } else if isInGroup(event.group) {
+            // Watching fetches and saves the channel, then it can be linked to the query.
+            databaseContainer.read({ [query, queryTimestamp = event.queryTimestamp] session in
+                guard let queryDTO = session.channelListQuery(query) else { return false }
+                return queryDTO.watch && Self.isWithinLoadedChannels(queryTimestamp, of: queryDTO)
+            }, completion: { [weak self, cid = event.cid] result in
+                if case .success(true) = result {
+                    self?.channelWatcherHandler.attemptToWatch(channelIds: [cid]) { [weak self] error in
+                        if let error {
+                            log.warning("Failed to start watching partially updated channel: \(cid), error: \(error.localizedDescription)")
+                        } else {
+                            self?.updateLinking(for: cid, startsWatching: false)
+                        }
+                    }
+                }
+            })
+        }
+    }
+
     private func removeExpiredChannels() {
-        databaseContainer.write({ [query] session in
-            guard let queryDTO = session.channelListQuery(query),
-                  let filterPredicate = try self.filterPredicate(of: queryDTO) else { return }
-            let expired = queryDTO.channels.filter { !filterPredicate.evaluate(with: $0) }
-            guard !expired.isEmpty else { return }
-            queryDTO.channels.subtract(expired)
-            session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
+        guard let groupKey = query.groupKey else { return }
+        databaseContainer.write({ session in
+            try session.unlinkGroupedChannels(in: groupKey)
         }, completion: { error in
             guard let error else { return }
             log.error(error)
@@ -96,15 +141,14 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
     /// whether it should belong to the query and whether it is already part of the list.
     /// After a fresh link, starts watching the channel when the query was issued with
     /// ``QueryOptions/watch`` and the channel isn't already linked to another query.
-    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false) {
+    private func updateLinking(for cid: ChannelId, isNewMessage: Bool = false, isMember: Bool = true, skipsBelowLoadedChannels: Bool = false, startsWatching: Bool = true) {
         databaseContainer.write(converting: { [query] session -> Bool in
-            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
-            let isInGroup = channelDTO.group != nil && (query.groupKey == GroupedChannelKey.all || query.groupKey == channelDTO.group)
-            let shouldBelong = try isInGroup && (self.filterPredicate(of: queryDTO)?.evaluate(with: channelDTO) ?? true)
+            guard let groupKey = query.groupKey, let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: cid, query: query) else { return false }
+            let shouldBelong = try isMember && session.canLinkChannel(channelDTO, toGroup: groupKey)
             let isInList = queryDTO.channels.contains(channelDTO)
-            if shouldBelong, !isInList {
+            if shouldBelong, !isInList, !skipsBelowLoadedChannels || Self.isWithinLoadedChannels(channelDTO.queryTimestamp.bridgeDate, of: queryDTO) {
                 // Channel isn't linked to any query yet, so it isn't already being watched.
-                let shouldStartWatching = queryDTO.watch && channelDTO.queries.isEmpty
+                let shouldStartWatching = startsWatching && queryDTO.watch && channelDTO.queries.isEmpty
                 queryDTO.channels.insert(channelDTO)
                 // A channel that was already unread before this message was counted as not loaded.
                 if isNewMessage, queryDTO.groupFilterJSONData != nil, let currentUserId = session.currentUser?.user.id,
@@ -132,7 +176,12 @@ final class GroupedChannelListLinker: Sendable, ChannelListLinking {
         })
     }
 
-    private func filterPredicate(of queryDTO: ChannelListQueryDTO) throws -> NSPredicate? {
-        try queryDTO.groupFilterJSONData.flatMap { try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: $0)?.predicate }
+    private func isInGroup(_ group: String?) -> Bool {
+        query.groupKey == GroupedChannelKey.all || (group != nil && query.groupKey == group)
+    }
+
+    private static func isWithinLoadedChannels(_ queryTimestamp: Date, of queryDTO: ChannelListQueryDTO) -> Bool {
+        guard queryDTO.next != nil, let lastLoaded = queryDTO.channels.map(\.queryTimestamp.bridgeDate).min() else { return true }
+        return queryTimestamp >= lastLoaded
     }
 }

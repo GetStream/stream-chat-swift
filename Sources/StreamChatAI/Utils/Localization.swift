@@ -21,6 +21,60 @@ enum L10n {
         }
     }
     
+    enum Conversation {
+        static var scrollToLatest: String {
+            localized("conversation.button.scroll_to_latest", comment: "Accessibility label of the button that scrolls to the end of the conversation.")
+        }
+    }
+
+    enum Attachment {
+        static var image: String {
+            localized("attachment.image", comment: "The name of an image attachment without one of its own.")
+        }
+
+        static var file: String {
+            localized("attachment.file", comment: "The name of a file attachment without one of its own.")
+        }
+
+        static func details(_ type: String, _ size: String) -> String {
+            String(
+                format: localized("attachment.details", comment: "A file's type and size. The arguments are its type, such as PDF, and its size, such as 2.4 MB."),
+                type,
+                size
+            )
+        }
+    }
+
+    enum MessageActions {
+        static var copy: String {
+            localized("message_actions.copy", comment: "Copies a message's text.")
+        }
+
+        static var copied: String {
+            localized("message_actions.copied", comment: "Said for a moment once a message's text is copied.")
+        }
+
+        static var share: String {
+            localized("message_actions.share", comment: "Shares a reply's text.")
+        }
+
+        static var regenerate: String {
+            localized("message_actions.regenerate", comment: "Asks the AI agent for a new reply in place of this one.")
+        }
+
+        static var ratePositive: String {
+            localized("message_actions.rate_positive", comment: "Rates a reply as good.")
+        }
+
+        static var rateNegative: String {
+            localized("message_actions.rate_negative", comment: "Rates a reply as bad.")
+        }
+
+        static var edit: String {
+            localized("message_actions.edit", comment: "Edits a message the person sent.")
+        }
+    }
+
     enum Reasoning {
         static var thinking: String {
             localized("reasoning.title.thinking", comment: "Header of a model's reasoning while the model is still thinking.")
@@ -62,6 +116,10 @@ enum L10n {
             localized("tool_call.status.awaiting_approval", comment: "A tool call waiting for a person to allow or decline it.")
         }
         
+        static var awaitingAuthorization: String {
+            localized("tool_call.status.awaiting_authorization", comment: "A tool call waiting for a person to sign in at a provider it needs.")
+        }
+        
         static var declined: String {
             localized("tool_call.status.declined", comment: "A tool call the person declined, so it never ran.")
         }
@@ -90,6 +148,24 @@ enum L10n {
         
         static var notSent: String {
             localized("tool_approval.error.not_sent", comment: "Shown under a tool call's question when the person's answer could not be sent.")
+        }
+    }
+    
+    enum ToolAuthorization {
+        static var connect: String {
+            localized("tool_authorization.button.connect", comment: "Button that opens the sign-in at a provider a tool call of the AI agent needs.")
+        }
+        
+        static var connecting: String {
+            localized("tool_authorization.button.connecting", comment: "The connect button while the sign-in is open or finishing.")
+        }
+        
+        static var decline: String {
+            localized("tool_authorization.button.decline", comment: "Button that declines to sign in, so the tool call never runs.")
+        }
+        
+        static var notOpened: String {
+            localized("tool_authorization.error.not_opened", comment: "Shown under a tool call's sign-in when the sign-in page couldn't be opened.")
         }
     }
     
@@ -134,6 +210,32 @@ enum L10n {
     enum Transcription {
         static var recognizerUnavailable: String {
             localized("transcription.error.recognizer_unavailable", comment: "Error shown when the speech recognizer cannot be used.")
+        }
+    }
+
+    enum Voice {
+        static var agent: String {
+            localized("voice.accessibility.agent", comment: "Accessibility label of the animation that shows what a voice agent is doing.")
+        }
+
+        static var idle: String {
+            localized("voice.state.idle", comment: "A voice agent waiting to be spoken to.")
+        }
+
+        static var connecting: String {
+            localized("voice.state.connecting", comment: "A voice agent that is not ready to talk yet.")
+        }
+
+        static var listening: String {
+            localized("voice.state.listening", comment: "A voice agent hearing somebody talk.")
+        }
+
+        static var thinking: String {
+            localized("voice.state.thinking", comment: "A voice agent working on its answer.")
+        }
+
+        static var speaking: String {
+            localized("voice.state.speaking", comment: "A voice agent talking.")
         }
     }
     

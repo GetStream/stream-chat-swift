@@ -28,14 +28,17 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 
 - **StreamCore** from [`stream-core-swift`](https://github.com/GetStream/stream-core-swift.git) (exact 0.6.2)
 - **swift-docc-plugin** (exact 1.0.0) — for documentation generation
-- **Splash** (exact 0.16.0) and **swift-markdown-ui** (exact 2.4.0) — used only by StreamChatAI
-- MarkdownUI requires iOS 15 / macOS 12, above the package's iOS 13 / macOS 11 (kept on purpose for existing customers). Xcode 27+ raises the StreamChatAI target to match; Xcode 26 and older reject it. So StreamChatAI is not part of `Integration/SPM`, whose CI lane runs on Xcode 26.2
+- StreamChatAI (with its vendored MarkdownUI) requires iOS 15, above the package's iOS 13 / macOS 11 (kept on purpose for existing customers). Xcode 27+ builds every package target for at least iOS 15; Xcode 26 and older build StreamChatAI for iOS 13 and fail. So StreamChatAI is not part of `Integration/SPM`, whose CI lane runs on Xcode 26.2
 - StreamChatAI must not depend on the Model Context Protocol SDK (it adds a large dependency tree); `AIClientToolDefinition` reads and writes the same JSON as MCP's `Tool`, with schemas as StreamCore's `RawJSON`
 - **Vendored libraries** (do not edit directly):
   - `Sources/StreamChatUI/StreamSwiftyGif/` — vendored SwiftyGif
   - `Sources/StreamChatUI/StreamDifferenceKit/` — vendored DifferenceKit for collection diffing
   - `Sources/StreamChat/StreamStarscream/` — vendored Starscream for WebSocket
-  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z`
+  - `Sources/StreamChatAI/StreamSplash/` — vendored Splash (0.16.0) for code syntax highlighting
+  - `Sources/StreamChatAI/StreamMarkdownUI/` — vendored MarkdownUI (2.4.0), with fixes for Swift 6 that an update overwrites
+  - `Sources/StreamChatAI/StreamNetworkImage/` — vendored NetworkImage (6.0.1), used by MarkdownUI
+  - `Sources/StreamChatAICMark/` — MarkdownUI's cmark-gfm as an internal C target. Every global symbol has a `stream_` prefix, so it links next to an app's own cmark-gfm
+  - Update these via `make update_swiftygif version=X.Y.Z` / `make update_differencekit version=X.Y.Z` / `make update_splash version=X.Y.Z` / `make update_markdownui version=X.Y.Z` / `make update_networkimage version=X.Y.Z`
 
 ### Project layout (high level)
 
@@ -90,6 +93,7 @@ Sources/
       Charts/              # Chart rendering
       CommonViews/         # Sidebar
       Composer/            # Prompt composer, view factory, suggestions, attachments
+      Conversation/        # Conversation view: turns, thinking, each sent message brought to the top
       Message/             # Streaming Markdown message, code blocks, typing indicator
       MessageParts/        # Reasoning and tool call steps, tool approvals
       Reasoning/           # Streaming reasoning view
@@ -97,6 +101,10 @@ Sources/
       Utils/               # Shared modifiers and formatting
     Resources/             # Localization files (en.lproj)
     Utils/                 # Localization accessors, exported modules
+    StreamSplash/          # Vendored — do not edit
+    StreamMarkdownUI/      # Vendored — do not edit
+    StreamNetworkImage/    # Vendored — do not edit
+  StreamChatAICMark/       # Vendored cmark-gfm C target for StreamChatAI — do not edit
 
 DemoApp/                   # Primary demo app (use to validate UI changes)
 DemoAppPush/               # Push notification extension for the demo
@@ -320,6 +328,10 @@ Security & credentials
 - Never commit API keys or customer data.
 - Example code must use obvious placeholders (e.g., `YOUR_STREAM_KEY`).
 - If you add scripts, ensure they fail closed on missing env vars.
+
+Public API design
+
+- Model a set of values that can grow, such as kinds, roles or statuses, as a `struct` with a `rawValue` and static constants, as `AIMessagePart.Kind` and `AIMessageRole` do, rather than an `enum`: adding a case to a public enum breaks every app that switches over it. Use an `enum` only for a set that cannot grow, such as directions.
 
 Compatibility & distribution
 

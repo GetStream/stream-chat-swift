@@ -1440,6 +1440,46 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
     }
 
+    func test_channelUpdatedEvent_groupChange_usesGroupValueAsIs() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "Current": 3, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "Current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        let unreadChannelCountsByGroup = try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup }
+        XCTAssertEqual(["new": 4, "Current": 4, "all": 8], unreadChannelCountsByGroup)
+    }
+
+    func test_channelPartialUpdatedEvent_groupChange_withUnread_adjustsBothCounts() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = NotificationChannelPartialUpdatedEventDTO(
+            channel: .init(
+                cid: channelPayload.channel.cid,
+                createdAt: .unique,
+                custom: [GroupedChannelKey.group: .string("current")],
+                disabled: false,
+                frozen: false,
+                updatedAt: .unique
+            ),
+            createdAt: .unique
+        )
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        let unreadChannelCountsByGroup = try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup }
+        XCTAssertEqual(["new": 4, "current": 4, "all": 8], unreadChannelCountsByGroup)
+    }
+
     private func channelUpdatedEvent(group: String?) throws -> ChannelUpdatedEventDTO {
         var extraData: [String: RawJSON] = [:]
         if let group {

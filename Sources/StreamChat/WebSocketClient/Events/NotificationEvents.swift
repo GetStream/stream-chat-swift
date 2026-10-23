@@ -522,3 +522,37 @@ extension NotificationChannelDeletedEventDTO: EventDTO {
         )
     }
 }
+
+/// Triggered when a channel is partially updated. Only channel members who aren't watching the channel
+/// receive it; watching members receive ``ChannelUpdatedEvent`` instead.
+public final class NotificationChannelPartialUpdatedEvent: ChannelSpecificEvent {
+    /// The cid of the updated channel.
+    public let cid: ChannelId
+
+    /// The event timestamp.
+    public let createdAt: Date
+
+    let group: String?
+    let isChannelStored: Bool
+    let queryTimestamp: Date
+
+    init(cid: ChannelId, group: String?, isChannelStored: Bool, queryTimestamp: Date, createdAt: Date) {
+        self.cid = cid
+        self.group = group
+        self.isChannelStored = isChannelStored
+        self.queryTimestamp = queryTimestamp
+        self.createdAt = createdAt
+    }
+}
+
+extension NotificationChannelPartialUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        NotificationChannelPartialUpdatedEvent(
+            cid: channel.cid,
+            group: channel.group,
+            isChannelStored: session.channel(cid: channel.cid) != nil,
+            queryTimestamp: max(channel.createdAt, channel.lastMessageAt ?? .distantPast, channel.touchedAt ?? .distantPast),
+            createdAt: createdAt
+        )
+    }
+}
