@@ -630,6 +630,37 @@ protocol ReminderDatabaseSession {
     func deleteReminder(messageId: MessageId)
 }
 
+protocol ScheduledMessageDatabaseSession {
+    /// Creates a scheduled message locally, which is sent to the server once its attachments are uploaded.
+    @discardableResult
+    func createNewScheduledMessage(
+        id: String,
+        cid: ChannelId,
+        content: ScheduledMessageContent,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO
+
+    /// Changes a scheduled message locally, which is synced with the server once its attachments are uploaded.
+    @discardableResult
+    func updateScheduledMessage(
+        id: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date?
+    ) throws -> ScheduledMessageDTO
+
+    /// Creates or updates a scheduled message with the provided payload.
+    ///
+    /// The content is kept when it has local changes that are not on the server yet.
+    @discardableResult
+    func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO
+
+    /// Returns the scheduled message with the specified id, if it exists.
+    func scheduledMessage(id: String) -> ScheduledMessageDTO?
+
+    /// Deletes the scheduled message with the specified id.
+    func deleteScheduledMessage(id: String)
+}
+
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
@@ -773,6 +804,7 @@ protocol DatabaseSession: UserDatabaseSession,
     ThreadReadDatabaseSession,
     PollDatabaseSession,
     ReminderDatabaseSession,
+    ScheduledMessageDatabaseSession,
     UserGroupDatabaseSession,
     LocationDatabaseSession,
     PollDatabaseSession {}

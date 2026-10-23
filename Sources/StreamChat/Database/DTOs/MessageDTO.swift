@@ -97,6 +97,10 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
+    // The scheduled message this message is the content of, until it is sent.
+    // It is not part of the channel, so it stays out of the channel and thread messages.
+    @NSManaged var scheduledMessage: ScheduledMessageDTO?
+
     @NSManaged var location: SharedLocationDTO?
     @NSManaged var isActiveLiveLocation: Bool
     
@@ -150,6 +154,11 @@ class MessageDTO: NSManagedObject {
             }
         }
 
+        // The scheduled message list observes the scheduled messages, so changes of their content are propagated to them.
+        if let scheduledMessage, !scheduledMessage.hasChanges, !scheduledMessage.isDeleted {
+            scheduledMessage.id = scheduledMessage.id
+        }
+
         // Refresh messages referencing the current message
         if !quotedBy.isEmpty {
             for message in quotedBy where !message.hasChanges && !message.isDeleted {
@@ -179,7 +188,8 @@ class MessageDTO: NSManagedObject {
         )
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             pendingSendMessage,
-            allAttachmentsAreUploadedOrEmptyPredicate()
+            allAttachmentsAreUploadedOrEmptyPredicate(),
+            notScheduledMessagePredicate()
         ])
 
         return request
@@ -191,7 +201,8 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue),
-            allAttachmentsAreUploadedOrEmptyPredicate()
+            allAttachmentsAreUploadedOrEmptyPredicate(),
+            notScheduledMessagePredicate()
         ])
 
         return request
@@ -242,6 +253,11 @@ class MessageDTO: NSManagedObject {
     /// Returns a predicate that filters out all deleted messages
     private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
+    }
+
+    /// Scheduled messages are sent by the `MessageScheduler`, not by the `MessageSender` or the `MessageEditor`.
+    private static func notScheduledMessagePredicate() -> NSPredicate {
+        .init(format: "scheduledMessage == nil")
     }
 
     private static func ignoreDraftMessagesPredicate() -> NSPredicate {
