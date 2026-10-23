@@ -59,6 +59,7 @@ final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
+        watch: Bool = false,
         alreadySyncedChannelIds: Set<ChannelId> = [],
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {

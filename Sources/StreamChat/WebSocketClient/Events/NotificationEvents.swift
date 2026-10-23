@@ -534,11 +534,13 @@ public final class NotificationChannelPartialUpdatedEvent: ChannelSpecificEvent 
 
     let group: String?
     let isChannelStored: Bool
+    let queryTimestamp: Date
 
-    init(cid: ChannelId, group: String?, isChannelStored: Bool, createdAt: Date) {
+    init(cid: ChannelId, group: String?, isChannelStored: Bool, queryTimestamp: Date, createdAt: Date) {
         self.cid = cid
         self.group = group
         self.isChannelStored = isChannelStored
+        self.queryTimestamp = queryTimestamp
         self.createdAt = createdAt
     }
 }
@@ -549,6 +551,7 @@ extension NotificationChannelPartialUpdatedEventDTO: EventDTO {
             cid: channel.cid,
             group: channel.group,
             isChannelStored: session.channel(cid: channel.cid) != nil,
+            queryTimestamp: max(channel.createdAt, channel.lastMessageAt ?? .distantPast, channel.touchedAt ?? .distantPast),
             createdAt: createdAt
         )
     }

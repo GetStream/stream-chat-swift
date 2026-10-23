@@ -12,7 +12,8 @@ import SwiftUI
 ///
 /// Each step shows through `AIMessagePartView`: reasoning, tool calls, and a neutral
 /// placeholder for kinds this SDK doesn't know. With an `AIToolApprover`, a call waiting
-/// for this person's approval shows its question under it. To show some steps your own way, such as
+/// for this person's approval shows its question under it, and with its `AIToolAuthorizer`, a
+/// call waiting for them to sign in shows the sign-in. To show some steps your own way, such as
 /// reasoning you stream separately or a kind of your own, render each part yourself and
 /// fall back to `AIMessagePartView` for the rest:
 ///
@@ -46,7 +47,7 @@ public struct AIMessagePartsView<Content: View>: View {
     }
 }
 
-public extension AIMessagePartsView where Content == AIMessagePartView {
+public extension AIMessagePartsView where Content == AIMessagePartView<DefaultAIConversationViewFactory> {
     /// Shows every step with `AIMessagePartView`.
     /// - Parameter approver: Who answers calls' questions on this device, to ask them.
     init(parts: [AIMessagePart], approver: AIToolApprover? = nil, font: Font? = nil) {

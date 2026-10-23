@@ -382,6 +382,10 @@ protocol ChannelDatabaseSession {
 
     func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO]
 
+    func unlinkGroupedChannels(in groupKey: String) throws
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool
+    
     @discardableResult
     func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO
 

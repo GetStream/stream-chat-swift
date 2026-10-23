@@ -1312,6 +1312,7 @@
 				StreamChatAI/AI/MessageParts/AIMessagePart.swift,
 				StreamChatAI/AI/MessageParts/AIReasoningPart.swift,
 				StreamChatAI/AI/MessageParts/AIToolApproval.swift,
+				StreamChatAI/AI/MessageParts/AIToolAuthorization.swift,
 				StreamChatAI/AI/MessageParts/AIToolCallPart.swift,
 				StreamChatAI/AI/MessageParts/Fields.swift,
 				StreamChatAI/AI/ToolCalls/AIClientIdentity.swift,
@@ -1321,6 +1322,7 @@
 				StreamChatAI/AI/ToolCalls/AIClientToolResult.swift,
 				StreamChatAI/AI/ToolCalls/AIClientToolRunner.swift,
 				StreamChatAI/AI/ToolCalls/AIToolApprover.swift,
+				StreamChatAI/AI/ToolCalls/AIToolAuthorizer.swift,
 				StreamChatAI/Info.plist,
 				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Blockquote.swift,
 				StreamChatAI/StreamMarkdownUI/DSL/Blocks/BulletedList.swift,
@@ -1555,7 +1557,11 @@
 				StreamChatAI/UI/MessageParts/AIToolApprovalCard.swift,
 				StreamChatAI/UI/MessageParts/AIToolApprovalState.swift,
 				StreamChatAI/UI/MessageParts/AIToolApprovalView.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationCard.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationState.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationView.swift,
 				StreamChatAI/UI/MessageParts/AIToolCallView.swift,
+				StreamChatAI/UI/MessageParts/AIWebAuthentication.swift,
 				StreamChatAI/UI/MessageParts/UnsupportedPartView.swift,
 				StreamChatAI/UI/Reasoning/AIThinkingView.swift,
 				StreamChatAI/UI/Reasoning/ReasoningPanel.swift,
@@ -2382,6 +2388,7 @@
 				StreamChatAI/AI/MessageParts/AIMessagePart.swift,
 				StreamChatAI/AI/MessageParts/AIReasoningPart.swift,
 				StreamChatAI/AI/MessageParts/AIToolApproval.swift,
+				StreamChatAI/AI/MessageParts/AIToolAuthorization.swift,
 				StreamChatAI/AI/MessageParts/AIToolCallPart.swift,
 				StreamChatAI/AI/MessageParts/Fields.swift,
 				StreamChatAI/AI/ToolCalls/AIClientIdentity.swift,
@@ -2391,6 +2398,7 @@
 				StreamChatAI/AI/ToolCalls/AIClientToolResult.swift,
 				StreamChatAI/AI/ToolCalls/AIClientToolRunner.swift,
 				StreamChatAI/AI/ToolCalls/AIToolApprover.swift,
+				StreamChatAI/AI/ToolCalls/AIToolAuthorizer.swift,
 				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Blockquote.swift,
 				StreamChatAI/StreamMarkdownUI/DSL/Blocks/BulletedList.swift,
 				StreamChatAI/StreamMarkdownUI/DSL/Blocks/CodeBlock.swift,
@@ -2624,7 +2632,11 @@
 				StreamChatAI/UI/MessageParts/AIToolApprovalCard.swift,
 				StreamChatAI/UI/MessageParts/AIToolApprovalState.swift,
 				StreamChatAI/UI/MessageParts/AIToolApprovalView.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationCard.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationState.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationView.swift,
 				StreamChatAI/UI/MessageParts/AIToolCallView.swift,
+				StreamChatAI/UI/MessageParts/AIWebAuthentication.swift,
 				StreamChatAI/UI/MessageParts/UnsupportedPartView.swift,
 				StreamChatAI/UI/Reasoning/AIThinkingView.swift,
 				StreamChatAI/UI/Reasoning/ReasoningPanel.swift,
@@ -2700,6 +2712,7 @@
 				StreamChatAITests/AI/LocalModel/AILocalModel_Tests.swift,
 				StreamChatAITests/AI/MessageParts/AIMessagePart_Tests.swift,
 				StreamChatAITests/AI/MessageParts/AIToolApproval_Tests.swift,
+				StreamChatAITests/AI/MessageParts/AIToolAuthorization_Tests.swift,
 				StreamChatAITests/AI/ToolCalls/AIClientToolDefinition_Tests.swift,
 				StreamChatAITests/AI/ToolCalls/AIClientToolResult_Tests.swift,
 				StreamChatAITests/AI/ToolCalls/AIClientToolRunner_Tests.swift,
@@ -4432,6 +4445,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatLogsUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4460,6 +4474,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatLogsUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4488,6 +4503,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 15;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatLogsUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

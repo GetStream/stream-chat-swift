@@ -21,6 +21,7 @@
 "reasoning.accessibility.hide" = "Hides the model's reasoning.";
 "tool_call.status.awaiting_client" = "Waiting for the device";
 "tool_call.status.awaiting_approval" = "Waiting for approval";
+"tool_call.status.awaiting_authorization" = "Waiting for you to sign in";
 "tool_call.status.declined" = "Declined";
 "tool_call.status.failed" = "Didn't complete";
 "tool_call.status.cancelled" = "Cancelled";
@@ -28,6 +29,10 @@
 "tool_approval.button.allow" = "Allow";
 "tool_approval.button.decline" = "Don't Allow";
 "tool_approval.error.not_sent" = "Your answer couldn't be sent. Try again.";
+"tool_authorization.button.connect" = "Connect";
+"tool_authorization.button.connecting" = "Connecting…";
+"tool_authorization.button.decline" = "Not now";
+"tool_authorization.error.not_opened" = "The sign-in couldn't be opened. Try again.";
 "charts.series" = "Series";
 "charts.pie" = "Pie";
 "charts.axis.x" = "X";

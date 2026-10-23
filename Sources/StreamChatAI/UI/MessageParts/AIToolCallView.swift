@@ -56,6 +56,7 @@ public struct AIToolCallView: View {
         }
         return switch part.status {
         case .awaitingApproval: part.summary ?? L10n.ToolCall.awaitingApproval
+        case .awaitingAuthorization: part.summary ?? L10n.ToolCall.awaitingAuthorization
         case .awaitingClient: part.summary ?? L10n.ToolCall.awaitingClient
         case .failed: part.summary ?? L10n.ToolCall.failed
         case .cancelled: part.summary ?? L10n.ToolCall.cancelled
@@ -68,6 +69,10 @@ public struct AIToolCallView: View {
         switch part.status {
         case .awaitingApproval:
             images.toolCallAwaitingApproval
+                .foregroundStyle(Color(colors.toolCallAccent))
+                .modifier(Shimmer(isActive: true, highlight: Color(colors.toolCallTitle)))
+        case .awaitingAuthorization:
+            images.toolCallAwaitingAuthorization
                 .foregroundStyle(Color(colors.toolCallAccent))
                 .modifier(Shimmer(isActive: true, highlight: Color(colors.toolCallTitle)))
         case .awaitingClient:

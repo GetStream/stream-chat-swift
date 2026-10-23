@@ -202,6 +202,8 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? NotificationChannelPartialUpdatedEventDTO
 
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "abc"))
+        XCTAssertEqual(event?.channel.createdAt.description, "2026-10-15 09:31:20 +0000")
+        XCTAssertEqual(event?.channel.lastMessageAt?.description, "2026-10-15 09:31:24 +0000")
         XCTAssertEqual(event?.channel.custom, [GroupedChannelKey.group: .string("new"), "name": .string("unchanged")])
         XCTAssertEqual(event?.channel.disabled, false)
         XCTAssertEqual(event?.channel.frozen, true)
@@ -574,8 +576,9 @@ final class NotificationsEvents_Tests: XCTestCase {
     func test_notificationChannelPartialUpdatedEventDTO_toDomainEvent() throws {
         let database = DatabaseContainer_Spy(kind: .inMemory)
         let cid = ChannelId.unique
+        let lastMessageAt = Date(timeIntervalSince1970: 1_760_000_000)
         let eventPayload = NotificationChannelPartialUpdatedEventDTO(
-            channel: .init(cid: cid, custom: [GroupedChannelKey.group: .string("new")], disabled: false, frozen: false, updatedAt: .unique),
+            channel: .init(cid: cid, createdAt: .unique, custom: [GroupedChannelKey.group: .string("new")], disabled: false, frozen: false, lastMessageAt: lastMessageAt, updatedAt: .unique),
             createdAt: .unique
         )
 
@@ -584,6 +587,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(notStoredEvent.createdAt, eventPayload.createdAt)
         XCTAssertEqual(notStoredEvent.group, "new")
         XCTAssertFalse(notStoredEvent.isChannelStored)
+        XCTAssertEqual(notStoredEvent.queryTimestamp, lastMessageAt)
 
         try database.writeSynchronously { session in
             _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)

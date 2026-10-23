@@ -870,7 +870,7 @@ final class ChannelDTO_Tests: XCTestCase {
             custom[GroupedChannelKey.touchedAt] = value
             try database.writeSynchronously { session in
                 try XCTUnwrap(session.channel(cid: cid)).savePartialChannel(
-                    payload: ChannelPartialUpdateResponse(cid: cid, custom: custom, disabled: false, frozen: false, updatedAt: .unique)
+                    payload: ChannelPartialUpdateResponse(cid: cid, createdAt: .unique, custom: custom, disabled: false, frozen: false, updatedAt: .unique)
                 )
             }
 
@@ -894,9 +894,11 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let partialPayload = ChannelPartialUpdateResponse(
             cid: cid,
+            createdAt: .unique,
             custom: [GroupedChannelKey.group: .string("new")],
             disabled: true,
             frozen: true,
+            lastMessageAt: updatedAt,
             team: "team",
             updatedAt: updatedAt
         )
@@ -913,6 +915,7 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(true, channel.isFrozen)
         XCTAssertEqual("team", channel.team)
         XCTAssertEqual(updatedAt, channel.updatedAt)
+        XCTAssertEqual(updatedAt, channel.lastMessageAt)
     }
 
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {

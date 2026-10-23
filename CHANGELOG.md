@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
+_October 22, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `BlockedUserDetails.blockedUser` that contains the full user payload [#4343](https://github.com/GetStream/stream-chat-swift/pull/4343)
@@ -11,16 +16,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix loaded grouped channel lists keeping channels that get hidden, deleted or disabled, or that the current user is removed from [#4341](https://github.com/GetStream/stream-chat-swift/pull/4341)
 - Keep hidden channels hidden when a system message or a message from a blocked user arrives [#4345](https://github.com/GetStream/stream-chat-swift/pull/4345)
 - Stop sending a typing stop event on message send when the user was not typing [#4347](https://github.com/GetStream/stream-chat-swift/pull/4347)
+- Fix `ChannelList.loadMoreChannels()` returning no channels after the first page of a grouped list is reloaded [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
+### 🔄 Changed
+- Keep the loaded pages of grouped channel lists after reconnecting instead of resetting to the first page [#4339](https://github.com/GetStream/stream-chat-swift/pull/4339)
 
 ## StreamChatAI
 ### ✅ Added
 - Add `AIVoiceGlowView` and `AIVoiceWaveView` to show what a voice agent is doing [#4338](https://github.com/GetStream/stream-chat-swift/pull/4338)
 - Add `AIConversationView`, a conversation view for AI assistants that brings each question to the top and writes its reply out below it, with ready-made message views, reply actions, and image and file attachments [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
+- Add `AIToolAuthorizationView`, which asks the person to sign in at a provider when an AI tool call needs their account [#4352](https://github.com/GetStream/stream-chat-swift/pull/4352)
 ### 🔄 Changed
 - StreamChatAI no longer brings Splash and swift-markdown-ui as package dependencies [#4346](https://github.com/GetStream/stream-chat-swift/pull/4346)
+- `AIVoiceWaveView` follows the audio level smoothly instead of jittering with each syllable [#4351](https://github.com/GetStream/stream-chat-swift/pull/4351)
 ### 🎭 New Localizations
 - Add `conversation.*`, `message_actions.*` and `attachment.*` keys [#4349](https://github.com/GetStream/stream-chat-swift/pull/4349)
-- `AIVoiceWaveView` follows the audio level smoothly instead of jittering with each syllable [#4351](https://github.com/GetStream/stream-chat-swift/pull/4351)
+- Add `tool_call.status.awaiting_authorization` and `tool_authorization.*` keys [#4352](https://github.com/GetStream/stream-chat-swift/pull/4352)
 
 # [5.14.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.14.0)
 _October 15, 2026_

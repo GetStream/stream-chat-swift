@@ -86,3 +86,31 @@ public final class AIMessageAttachmentViewOptions {
         self.role = role
     }
 }
+
+/// What ``AIConversationViewFactory/makeToolAuthorizationView(options:)`` asks the person.
+public final class AIToolAuthorizationViewOptions {
+    /// The tool call that waits for the sign-in.
+    public let call: AIToolCallPart
+    /// The sign-in, such as "Connect Linear".
+    public let authorization: AIToolAuthorization
+    /// Where the person's answer is.
+    public let state: AIToolAuthorizationState
+    /// Opens the sign-in page.
+    public let connect: @MainActor @Sendable () -> Void
+    /// Sends the person's "not now".
+    public let decline: @MainActor @Sendable () -> Void
+
+    public init(
+        call: AIToolCallPart,
+        authorization: AIToolAuthorization,
+        state: AIToolAuthorizationState,
+        connect: @escaping @MainActor @Sendable () -> Void,
+        decline: @escaping @MainActor @Sendable () -> Void
+    ) {
+        self.call = call
+        self.authorization = authorization
+        self.state = state
+        self.connect = connect
+        self.decline = decline
+    }
+}
