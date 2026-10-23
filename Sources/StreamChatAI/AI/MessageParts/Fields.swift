@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamCore
 
 /// Lenient reads from a JSON object: a field of the wrong type reads as missing.
 struct Fields {
@@ -22,6 +23,11 @@ struct Fields {
 
     func fields(_ key: String) -> Fields? {
         (object[key] as? [String: Any]).map(Fields.init)
+    }
+
+    /// An RFC 3339 time, with or without fractional seconds.
+    func date(_ key: String) -> Date? {
+        string(key).flatMap(RFC3339DateFormatter.date(from:))
     }
 
     func json(_ key: String) -> Data? {

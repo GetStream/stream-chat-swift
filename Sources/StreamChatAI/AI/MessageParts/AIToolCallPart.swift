@@ -19,6 +19,9 @@ public struct AIToolCallPart: Identifiable, Equatable, Sendable {
         /// Waiting for the targeted person to allow or decline the call. Its `approval` says
         /// what to ask them.
         public static let awaitingApproval: Status = "awaiting_approval"
+        /// Waiting for the targeted person to sign in at a provider the call needs. Its
+        /// `authorization` says where.
+        public static let awaitingAuthorization: Status = "awaiting_authorization"
         /// Waiting for the targeted device to run the tool and send its result.
         public static let awaitingClient: Status = "awaiting_client"
         public static let completed: Status = "completed"
@@ -66,11 +69,14 @@ public struct AIToolCallPart: Identifiable, Equatable, Sendable {
     /// What the call asks the person it waits for before it runs, and how they answered,
     /// when its tool asks first.
     public var approval: AIToolApproval?
+    /// The sign-in the call waits for the person to finish before it runs, and how it ended,
+    /// when it needs their account at a provider.
+    public var authorization: AIToolAuthorization?
 
     public var duration: TimeInterval? { durationMS.map { TimeInterval($0) / 1000 } }
 
-    /// Whether the person declined the call, so it never ran.
-    public var isDeclined: Bool { approval?.decision == .declined }
+    /// Whether the person declined the call, or the sign-in it waited for, so it never ran.
+    public var isDeclined: Bool { approval?.decision == .declined || authorization?.status == .declined }
 
     public init(
         id: String,
@@ -83,7 +89,8 @@ public struct AIToolCallPart: Identifiable, Equatable, Sendable {
         arguments: Data? = nil,
         summary: String? = nil,
         durationMS: Int? = nil,
-        approval: AIToolApproval? = nil
+        approval: AIToolApproval? = nil,
+        authorization: AIToolAuthorization? = nil
     ) {
         self.id = id
         self.name = name
@@ -96,6 +103,7 @@ public struct AIToolCallPart: Identifiable, Equatable, Sendable {
         self.summary = summary
         self.durationMS = durationMS
         self.approval = approval
+        self.authorization = authorization
     }
 
     init(id: String, _ fields: Fields) {
@@ -110,7 +118,8 @@ public struct AIToolCallPart: Identifiable, Equatable, Sendable {
             arguments: fields.json("arguments"),
             summary: fields.string("summary"),
             durationMS: fields.int("duration_ms"),
-            approval: fields.fields("approval").flatMap(AIToolApproval.init)
+            approval: fields.fields("approval").flatMap(AIToolApproval.init),
+            authorization: fields.fields("authorization").flatMap(AIToolAuthorization.init)
         )
     }
 
@@ -127,6 +136,11 @@ public struct AIToolCallPart: Identifiable, Equatable, Sendable {
     public func isAwaitingApproval(userID: String, clientID: String) -> Bool {
         status == .awaitingApproval && approval != nil && targetUserID == userID
             && (targetClientID == nil || targetClientID == clientID)
+    }
+
+    /// Whether this call is waiting for this person to sign in, from any of their devices.
+    public func isAwaitingAuthorization(userID: String) -> Bool {
+        status == .awaitingAuthorization && authorization != nil && targetUserID == userID
     }
 
     /// Decodes the arguments into a type of your own.

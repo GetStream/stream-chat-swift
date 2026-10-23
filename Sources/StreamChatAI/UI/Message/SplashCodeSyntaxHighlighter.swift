@@ -2,14 +2,12 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-internal import MarkdownUI
-internal import Splash
 import SwiftUI
 
 struct SplashCodeSyntaxHighlighter: CodeSyntaxHighlighter {
     private let syntaxHighlighter: SyntaxHighlighter<TextOutputFormat>
     
-    init(theme: Splash.Theme) {
+    init(theme: SplashTheme) {
         self.syntaxHighlighter = SyntaxHighlighter(format: TextOutputFormat(theme: theme))
     }
     
@@ -23,7 +21,7 @@ struct SplashCodeSyntaxHighlighter: CodeSyntaxHighlighter {
 }
 
 extension CodeSyntaxHighlighter where Self == SplashCodeSyntaxHighlighter {
-    static func splash(theme: Splash.Theme) -> Self {
+    static func splash(theme: SplashTheme) -> Self {
         SplashCodeSyntaxHighlighter(theme: theme)
     }
 }

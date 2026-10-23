@@ -147,6 +147,8 @@ extension WSEvent: @unchecked Sendable, Event {
             )
         case .typeNotificationChannelMutesUpdatedEvent(let event):
             return .init(createdAt: event.createdAt, currentUser: event.me)
+        case .typeNotificationChannelPartialUpdatedEvent(let event):
+            return .init(createdAt: event.createdAt, cid: event.channel.cid)
         case .typeNotificationInviteAcceptedEvent(let event):
             return .init(createdAt: event.createdAt, channel: event.channel, user: event.user)
         case .typeNotificationInviteRejectedEvent(let event):

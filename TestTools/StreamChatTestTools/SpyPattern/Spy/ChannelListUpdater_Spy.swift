@@ -25,6 +25,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var queryGroupedChannels_watchValues: [Bool] = []
     @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
     @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
+    @Atomic var queryGroupedChannels_results: [Result<[ChannelGroup], Error>] = []
 
     @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
 
@@ -59,6 +60,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         queryGroupedChannels_watchValues.removeAll()
         queryGroupedChannels_presenceValues.removeAll()
         queryGroupedChannels_result = nil
+        queryGroupedChannels_results.removeAll()
         markAllRead_completion = nil
 
         startWatchingChannels_callCount = 0
@@ -114,6 +116,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         sort: [SortParamRequest]?,
         watch: Bool,
         presence: Bool,
+        keepingLoadedPages: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
@@ -122,7 +125,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         _queryGroupedChannels_sorts.mutate { $0.append(sort) }
         _queryGroupedChannels_watchValues.mutate { $0.append(watch) }
         _queryGroupedChannels_presenceValues.mutate { $0.append(presence) }
-        if let result = queryGroupedChannels_result {
+        var queuedResult: Result<[ChannelGroup], Error>?
+        _queryGroupedChannels_results.mutate { results in
+            guard !results.isEmpty else { return }
+            queuedResult = results.removeFirst()
+        }
+        if let result = queuedResult ?? queryGroupedChannels_result {
             DispatchQueue.main.async {
                 completion(result)
             }
@@ -133,6 +141,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
                 sort: sort,
                 watch: watch,
                 presence: presence,
+                keepingLoadedPages: keepingLoadedPages,
                 completion: completion
             )
         }

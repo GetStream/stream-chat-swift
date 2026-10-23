@@ -1,0 +1,22 @@
+{
+   "type":"notification.channel_partial_updated",
+   "created_at":"2026-10-15T09:31:26.123456Z",
+   "custom":{},
+   "cid":"messaging:abc",
+   "channel_type":"messaging",
+   "channel_id":"abc",
+   "channel":{
+      "id":"abc",
+      "type":"messaging",
+      "cid":"messaging:abc",
+      "created_at":"2026-10-15T09:31:20Z",
+      "updated_at":"2026-10-15T09:31:26.12Z",
+      "last_message_at":"2026-10-15T09:31:24Z",
+      "frozen":true,
+      "disabled":false,
+      "custom":{
+         "group":"new",
+         "name":"unchanged"
+      }
+   }
+}

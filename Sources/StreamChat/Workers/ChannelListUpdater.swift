@@ -247,6 +247,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         sort: [SortParamRequest]? = nil,
         watch: Bool,
         presence: Bool,
+        keepingLoadedPages: Bool = false,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         let request = GroupedQueryChannelsRequest(
@@ -273,7 +274,11 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
                         let wasFreshFetch = request.groups?[groupKey]?.next == nil
-                        if wasFreshFetch {
+                        // Refreshing the first page of a group with more pages loaded keeps those pages.
+                        // Paging restarts from the fresh cursor so channels added in the meantime stay reachable.
+                        let keepsGroupPages = keepingLoadedPages && wasFreshFetch && groupPayload.next != nil
+                            && queryDTO.channels.count > groupPayload.channels.count
+                        if wasFreshFetch, !keepsGroupPages {
                             queryDTO.channels.removeAll()
                         }
                         queryDTO.next = groupPayload.next
@@ -287,9 +292,8 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             return try dto.asModel()
                         }
                         // The server counts the whole filtered group on every page.
-                        if queryDTO.groupFilterJSONData != nil, let currentUserId {
-                            let notLoaded = (groupPayload.unreadChannels ?? 0) - queryDTO.loadedUnreadChannelsCount(currentUserId: currentUserId)
-                            queryDTO.groupNotLoadedUnreadCount = Int64(max(0, notLoaded))
+                        if let currentUserId {
+                            queryDTO.updateGroupNotLoadedUnreadCount(unreadChannels: groupPayload.unreadChannels ?? 0, currentUserId: currentUserId)
                         }
                         queryDTOs.append(queryDTO)
                         channelGroups.append(ChannelGroup(
@@ -315,7 +319,8 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         limit: Int?,
         sort: [SortParamRequest]? = nil,
         watch: Bool,
-        presence: Bool
+        presence: Bool,
+        keepingLoadedPages: Bool = false
     ) async throws -> [ChannelGroup] {
         try await withCheckedThrowingContinuation { continuation in
             queryGroupedChannels(
@@ -323,10 +328,35 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 limit: limit,
                 sort: sort,
                 watch: watch,
-                presence: presence
+                presence: presence,
+                keepingLoadedPages: keepingLoadedPages
             ) { result in
                 continuation.resume(with: result)
             }
+        }
+    }
+
+    func resetGroupedChannelsToFirstPage(in groupKey: String, unlinking cids: Set<ChannelId>, next: String?, unreadChannels: Int) async throws {
+        try await database.write { session in
+            guard let queryDTO = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
+            let unlinkedCids = Set(cids.map(\.rawValue))
+            queryDTO.channels = queryDTO.channels.filter { !unlinkedCids.contains($0.cid) }
+            queryDTO.next = next
+            if let currentUserId = session.currentUser?.user.id {
+                queryDTO.updateGroupNotLoadedUnreadCount(unreadChannels: unreadChannels, currentUserId: currentUserId)
+            }
+            session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
+        }
+    }
+
+    func unlinkGroupedChannels(in groupKey: String, unreadChannels: Int) async throws {
+        try await database.write { session in
+            guard let queryDTO = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
+            try session.unlinkGroupedChannels(in: groupKey)
+            if let currentUserId = session.currentUser?.user.id {
+                queryDTO.updateGroupNotLoadedUnreadCount(unreadChannels: unreadChannels, currentUserId: currentUserId)
+            }
+            session.updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
         }
     }
 }

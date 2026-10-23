@@ -26,9 +26,11 @@ e2e_coverage_map_path = File.expand_path('test_output/e2e_coverage_map.json')
 e2e_coverage_map_artifact = 'e2e-coverage-map'
 e2e_selection_path = File.expand_path("../#{derived_data_path}/Build/e2e_selection.json")
 @force_check = false
+@impact = nil
 xcodebuild_formatter = FastlaneCore::Globals.verbose? ? '' : nil
 
 before_all do |lane|
+  @impact = impact_analysis
   if is_ci
     setup_ci
     setup_git_config
@@ -177,23 +179,24 @@ end
 
 desc 'Runs tests in Debug config'
 lane :test do |options|
-  next unless is_check_required(sources: sources_matrix[:llc], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:llc][:sources], force_check: @force_check, required_checks: @impact[:llc][:checks])
 
   scheme = 'StreamChat'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}FlakyTests.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: "#{scheme}FlakyTests",
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    devices: options[:device],
-    number_of_retries: 5,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: "#{scheme}FlakyTests",
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      devices: options[:device],
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      xcodebuild_formatter: xcodebuild_formatter
+    }
   )
 
   next if options[:build_for_testing]
@@ -208,11 +211,10 @@ lane :test do |options|
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
     skip_build: true,
-    number_of_retries: options[:cron] ? 3 : 2,
     xcodebuild_formatter: xcodebuild_formatter
   }
 
-  scan(scan_options)
+  scan_with_retries(scan_options: scan_options, retries: options[:cron] ? 3 : 2)
 
   slather
 end
@@ -261,7 +263,7 @@ lane :build_test_app_and_frameworks do
 end
 
 lane :xcmetrics do |options|
-  next unless is_check_required(sources: sources_matrix[:xcmetrics], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:xcmetrics][:sources], force_check: @force_check, required_checks: @impact[:xcmetrics][:checks])
 
   ['test_output/', 'metrics/', "../#{derived_data_path}/Build/Products"].each { |dir| FileUtils.remove_dir(dir, force: true) }
 
@@ -437,24 +439,18 @@ lane :test_e2e do |options|
     test_without_building: options[:test_without_building],
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3,
     xcodebuild_formatter: xcodebuild_formatter
   }
 
-  begin
-    scan(scan_options)
-  rescue StandardError
-    failed_tests = retreive_failed_tests
-    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    scan(scan_options.merge(only_testing: failed_tests))
-  end
+  scan_with_retries(scan_options: scan_options)
 end
 
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
 
   start_mock_server(local_server: options[:local_server], branch: options[:mock_server_branch])
+  allow_photo_library_access(device: options[:device])
 
   scan_options = {
     project: xcode_project,
@@ -467,7 +463,6 @@ lane :test_e2e_mock do |options|
     test_without_building: options[:test_without_building],
     devices: options[:device],
     prelaunch_simulator: is_ci,
-    number_of_retries: 3,
     xcodebuild_formatter: xcodebuild_formatter
   }
 
@@ -491,18 +486,11 @@ lane :test_e2e_mock do |options|
 
   failed_tests = []
   begin
-    scan(scan_options)
+    scan_with_retries(scan_options: scan_options)
   rescue StandardError
+    # Each retry overwrites the junit report, so only the tests that failed on the last attempt stay failed for the coverage map.
     failed_tests = retreive_failed_tests
-    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
-    begin
-      scan(scan_options.merge(only_testing: failed_tests))
-      failed_tests = []
-    rescue StandardError
-      # The retry overwrote the junit report, so only the tests that failed again stay failed for the coverage map.
-      failed_tests = retreive_failed_tests
-      raise
-    end
+    raise
   ensure
     build_e2e_coverage_map(failed_tests: failed_tests) if options[:coverage]
   end
@@ -524,7 +512,7 @@ lane :select_e2e_tests do |options|
     UI.important("Running all #{all_tests.size} tests: #{run_all_reason}")
     tests = all_tests
     File.write(e2e_selection_path, JSON.generate(run_all: true, tests: tests, reasons: [run_all_reason]))
-  elsif is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  elsif is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
     selection = select_impacted_tests(
       all_tests: all_tests,
       coverage_map: options[:coverage_map],
@@ -542,12 +530,7 @@ lane :select_e2e_tests do |options|
         'StreamChatUITestsAppUITests/StreamChatUITestsApp.xctestplan',
         'StreamChatUITestsAppUITests/StreamChatUITests.swift',
         'TestTools/StreamChatTestMockServer',
-        'Package.swift',
-        'Package.resolved',
-        xcode_project,
-        '.github/workflows/smoke-checks.yml',
-        'fastlane/Fastfile',
-        'Gemfile.lock'
+        'Package.swift'
       ],
       # Changes to code nearly every test runs (launch, login, channel list) take one test per class; the nightly run covers the rest.
       hot_test_ratio: 0.9,
@@ -583,19 +566,74 @@ private_lane :build_e2e_coverage_map do |options|
   )
 end
 
+# The test runner saves a video to the photo library. Granting access up front avoids the system prompt,
+# which can be dismissed as "Don't Allow" when it's not answered in time and then stays denied for every retry.
+private_lane :allow_photo_library_access do |options|
+  next UI.important('No device is given, photo library access is not granted') unless options[:device]
+
+  name, os_version = options[:device].match(/^(.+?)(?: \(([\d.]+)\))?$/).captures
+  simulators = FastlaneCore::DeviceManager.simulators('iOS')
+  simulator =
+    if os_version
+      simulators.find { |device| device.name == name && Gem::Version.new(device.os_version) == Gem::Version.new(os_version) }
+    else
+      # Same pick as `scan` makes for a device without a version, so both target the same simulator.
+      Scan::DetectValues.highest_compatible_simulator(simulators, name)
+    end
+  UI.user_error!("No simulator matches #{options[:device]}, photo library access cannot be granted") unless simulator
+
+  sh("xcrun simctl bootstatus #{simulator.udid} -b")
+  sh("xcrun simctl privacy #{simulator.udid} grant photos-add io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner")
+end
+
 private_lane :all_e2e_tests do
   xctestrun = Dir.glob(File.expand_path("../#{derived_data_path}/Build/Products/*.xctestrun")).first
   retrieve_xctest_names(xctestrun: xctestrun).values.flatten
 end
 
+# Runs scan and re-runs only the tests that failed, up to `retries` times.
+# Every attempt recalculates the failing set from the previous run's junit
+# report, so a shrinking set of flaky tests converges instead of dragging
+# the whole suite along.
+private_lane :scan_with_retries do |options|
+  scan_options = options[:scan_options]
+  attempts_left = options[:retries] || 3
+  retry_number = 0
+  Dir.glob(File.expand_path("test_output/#{scan_options[:scheme]}-retry-*.xcresult")).each { |bundle| FileUtils.rm_rf(bundle) }
+
+  begin
+    # scan raises on a build or launch error before rewriting the report, so a stale one must not drive the retry.
+    FileUtils.rm_f('test_output/report.junit')
+    scan(scan_options)
+  rescue StandardError
+    raise if attempts_left.zero?
+
+    failed_tests = retreive_failed_tests
+    raise if failed_tests.empty?
+
+    attempts_left -= 1
+    UI.important("Re-running #{failed_tests.size} failed tests ⌛️ (#{attempts_left} retries left)")
+    scan_options = scan_options.merge(only_testing: failed_tests, clean: false)
+    if scan_options[:result_bundle]
+      # scan replaces the default result bundle on every run, so each retry keeps its own next to the full first run.
+      scan_options[:result_bundle_path] = File.expand_path("test_output/#{scan_options[:scheme]}-retry-#{retry_number += 1}.xcresult")
+    end
+    retry
+  end
+end
+
 private_lane :retreive_failed_tests do
   report_path = 'test_output/report.junit'
-  raise UI.user_error!('There is no junit report to parse') unless File.file?(report_path)
+  next [] unless File.file?(report_path)
 
   junit_report = Nokogiri::XML(File.read(report_path))
   failed_tests = []
   passed_tests = []
-  suite_name = junit_report.xpath('//testsuite').first['name'].split('.').first
+  suite = junit_report.xpath('//testsuite').first
+  suite_name = suite && suite['name']
+  next [] if suite_name.nil? || suite_name.empty?
+
+  suite_name = suite_name.split('.').first
   junit_report.xpath('//testcase').each do |testcase|
     class_name = testcase['classname'].split('.').last
     test_name = testcase['name'].delete('()')
@@ -612,26 +650,29 @@ end
 
 desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
-  next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ui][:sources], force_check: @force_check, required_checks: @impact[:ui][:checks])
 
   record_mode = options[:record].to_s == 'true'
   scheme = 'StreamChatUI'
   remove_snapshots if record_mode
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    result_bundle: true,
-    devices: options[:device],
-    fail_build: !record_mode,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      fail_build: !record_mode,
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: record_mode ? 0 : 1
   )
 
   if record_mode && is_ci
@@ -654,47 +695,51 @@ end
 
 desc 'Runs common ui tests in Debug config'
 lane :test_common_ui do |options|
-  next unless is_check_required(sources: sources_matrix[:common_ui], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:common_ui][:sources], force_check: @force_check, required_checks: @impact[:common_ui][:checks])
 
   scheme = 'StreamChatCommonUI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    result_bundle: true,
-    devices: options[:device],
-    number_of_retries: options[:cron] ? 3 : 2,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: options[:cron] ? 3 : 2
   )
 end
 
 desc 'Runs AI tests in Debug config'
 lane :test_ai do |options|
-  next unless is_check_required(sources: sources_matrix[:ai], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ai][:sources], force_check: @force_check, required_checks: @impact[:ai][:checks])
 
   scheme = 'StreamChatAI'
   update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
-  scan(
-    project: xcode_project,
-    scheme: scheme,
-    testplan: scheme,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    result_bundle: true,
-    devices: options[:device],
-    number_of_retries: options[:cron] ? 3 : 2,
-    xcodebuild_formatter: xcodebuild_formatter
+  scan_with_retries(
+    scan_options: {
+      project: xcode_project,
+      scheme: scheme,
+      testplan: scheme,
+      clean: is_localhost,
+      derived_data_path: derived_data_path,
+      cloned_source_packages_path: source_packages_path,
+      build_for_testing: options[:build_for_testing],
+      skip_build: options[:skip_build],
+      result_bundle: true,
+      devices: options[:device],
+      xcodebuild_formatter: xcodebuild_formatter
+    },
+    retries: options[:cron] ? 3 : 2
   )
 end
 
@@ -763,7 +808,7 @@ lane :build_youtube_clone do |options|
 end
 
 private_lane :build_example_app do |options|
-  next unless is_check_required(sources: sources_matrix[:sample_apps], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:sample_apps][:sources], force_check: @force_check, required_checks: @impact[:sample_apps][:checks])
 
   scan(
     project: xcode_project,
@@ -779,7 +824,7 @@ end
 
 desc 'Test SPM Integration'
 lane :spm_integration do
-  next unless is_check_required(sources: sources_matrix[:integration], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:integration][:sources], force_check: @force_check, required_checks: @impact[:integration][:checks])
 
   gym(
     project: 'Integration/SPM/SwiftPackageManager.xcodeproj',
@@ -800,7 +845,7 @@ end
 
 desc 'Run fastlane linting'
 lane :rubocop do
-  next unless is_check_required(sources: sources_matrix[:ruby], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ruby][:sources], force_check: @force_check, required_checks: @impact[:ruby][:checks])
 
   sh('bundle exec rubocop')
 end
@@ -836,19 +881,52 @@ private_lane :remove_snapshots do |options|
   end
 end
 
-lane :sources_matrix do
+lane :impact_analysis do
   {
-    e2e: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project, 'Package.swift', 'Package.resolved', 'fastlane/Fastfile', 'Gemfile.lock'],
-    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
-    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
-    ai: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', '.github/workflows/smoke-checks.yml', xcode_project],
-    sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
-    integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
-    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
-    size: ['Sources', '.github/workflows/smoke-checks.yml', xcode_project],
-    xcmetrics: ['Sources', '.github/workflows/smoke-checks.yml'],
-    public_interface: ['Sources', '.github/workflows/smoke-checks.yml']
+    e2e: {
+      sources: ['Sources', 'DemoApp', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', 'Package.swift'],
+      checks: ['Test E2E UI (Debug) Result']
+    },
+    llc: {
+      sources: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', 'Package.swift'],
+      checks: ['Test LLC (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    ui: {
+      sources: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', 'Package.swift'],
+      checks: ['Test UI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    common_ui: {
+      sources: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', 'Package.swift'],
+      checks: ['Test Common UI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    ai: {
+      sources: ['Sources/StreamChatAI', 'Tests/StreamChatAITests', 'Package.swift'],
+      checks: ['Test AI (Debug)', 'Build SDKs (Old Xcode)']
+    },
+    sample_apps: {
+      sources: ['Sources', 'Examples', 'DemoApp', 'Package.swift'],
+      checks: ['Build Demo App + Example Apps']
+    },
+    integration: {
+      sources: ['Sources', 'Integration', 'Package.swift'],
+      checks: ['Test Integration']
+    },
+    ruby: {
+      sources: ['fastlane', 'Gemfile', 'Gemfile.lock'],
+      checks: ['Automated Code Review']
+    },
+    public_interface: {
+      sources: ['Sources'],
+      checks: ['Automated Code Review']
+    },
+    size: {
+      sources: ['Sources'],
+      checks: ['Size Metrics']
+    },
+    xcmetrics: {
+      sources: ['Sources', 'Package.swift'],
+      checks: ['Performance Metrics']
+    }
   }
 end
 
@@ -877,7 +955,7 @@ lane :validate_generated_code do
 end
 
 lane :validate_public_interface do
-  next unless is_check_required(sources: sources_matrix[:public_interface], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:public_interface][:sources], force_check: @force_check, required_checks: @impact[:public_interface][:checks])
 
   # Get branch names
   original_branch = current_branch
@@ -919,7 +997,7 @@ lane :validate_public_interface do
 end
 
 lane :show_frameworks_sizes do |options|
-  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:size][:sources], force_check: @force_check, required_checks: @impact[:size][:checks])
 
   sizes = options[:sizes] || frameworks_sizes
   show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
@@ -1008,7 +1086,7 @@ private_lane :linked_objects_size do |options|
 end
 
 lane :size_analyze do
-  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:size][:sources], force_check: @force_check, required_checks: @impact[:size][:checks])
 
   gym(
     scheme: 'DemoApp',

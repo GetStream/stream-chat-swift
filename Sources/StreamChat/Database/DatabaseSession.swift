@@ -382,6 +382,10 @@ protocol ChannelDatabaseSession {
 
     func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO]
 
+    func unlinkGroupedChannels(in groupKey: String) throws
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool
+    
     @discardableResult
     func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO
 
@@ -865,6 +869,8 @@ extension DatabaseSession {
         }
         
         switch event {
+        case let .typeNotificationChannelPartialUpdatedEvent(event):
+            handleNotificationChannelPartialUpdatedEvent(channel: event.channel)
         case let .typePollVoteCastedEvent(pollEvent):
             try handlePollVoteCastedEvent(vote: pollEvent.pollVote)
         case let .typePollVoteChangedEvent(pollEvent):
@@ -949,6 +955,10 @@ extension DatabaseSession {
         if let messageCount = payload.channelMessageCount {
             channelDTO.messageCount = NSNumber(value: messageCount)
         }
+    }
+
+    func handleNotificationChannelPartialUpdatedEvent(channel payload: ChannelPartialUpdateResponse) {
+        channel(cid: payload.cid)?.savePartialChannel(payload: payload)
     }
 
     func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
