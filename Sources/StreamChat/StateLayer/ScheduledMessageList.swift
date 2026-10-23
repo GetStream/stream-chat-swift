@@ -12,7 +12,10 @@ public final class ScheduledMessageList: Sendable {
 
     init(query: ScheduledMessageListQuery, client: ChatClient, environment: Environment = .init()) {
         self.query = query
-        scheduledMessagesRepository = client.scheduledMessagesRepository
+        scheduledMessagesRepository = environment.scheduledMessagesRepositoryBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
         stateBuilder = StateBuilder {
             environment.stateBuilder(
                 query,
@@ -106,6 +109,11 @@ public final class ScheduledMessageList: Sendable {
 
 extension ScheduledMessageList {
     struct Environment: Sendable {
+        var scheduledMessagesRepositoryBuilder: @Sendable (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ScheduledMessagesRepository = { ScheduledMessagesRepository(database: $0, apiClient: $1) }
+
         var stateBuilder: @Sendable @MainActor (
             _ query: ScheduledMessageListQuery,
             _ database: DatabaseContainer

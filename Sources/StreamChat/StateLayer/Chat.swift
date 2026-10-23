@@ -14,6 +14,7 @@ public class Chat: @unchecked Sendable {
     private let eventSender: EventSender
     private let memberUpdater: ChannelMemberUpdater
     private let messageUpdater: MessageUpdater
+    private let scheduledMessagesRepository: ScheduledMessagesRepository
     @MainActor private var stateBuilder: StateBuilder<ChatState>
     private let typingEventsSender: TypingEventsSender
     
@@ -45,6 +46,10 @@ public class Chat: @unchecked Sendable {
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
+            client.databaseContainer,
+            client.apiClient
+        )
+        scheduledMessagesRepository = environment.scheduledMessagesRepositoryBuilder(
             client.databaseContainer,
             client.apiClient
         )
@@ -1387,7 +1392,7 @@ public class Chat: @unchecked Sendable {
             showReplyInChannel: false,
             extraData: extraData
         )
-        return try await client.scheduledMessagesRepository.schedule(
+        return try await scheduledMessagesRepository.schedule(
             id: messageId ?? .newUniqueId,
             cid: cid,
             content: content,
@@ -1436,7 +1441,7 @@ public class Chat: @unchecked Sendable {
             showReplyInChannel: showReplyInChannel,
             extraData: extraData
         )
-        return try await client.scheduledMessagesRepository.schedule(
+        return try await scheduledMessagesRepository.schedule(
             id: messageId ?? .newUniqueId,
             cid: cid,
             content: content,
@@ -1480,7 +1485,7 @@ public class Chat: @unchecked Sendable {
             showReplyInChannel: false,
             extraData: extraData
         )
-        return try await client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)
+        return try await scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)
     }
 
     /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
@@ -1496,7 +1501,7 @@ public class Chat: @unchecked Sendable {
     /// - Returns: The rescheduled message.
     @discardableResult
     public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
-        try await client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
+        try await scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
     }
 
     /// Deletes a scheduled message, so it is never sent.
@@ -1505,7 +1510,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while deleting the scheduled message.
     public func deleteScheduledMessage(id: String) async throws {
-        try await client.scheduledMessagesRepository.delete(id: id)
+        try await scheduledMessagesRepository.delete(id: id)
     }
 
     /// Sends a scheduled message right away.
@@ -1516,7 +1521,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func sendScheduledMessageNow(id: String) async throws {
-        try await client.scheduledMessagesRepository.sendNow(id: id)
+        try await scheduledMessagesRepository.sendNow(id: id)
     }
 
     // MARK: - Sending and Listening to Events
@@ -1943,6 +1948,11 @@ extension Chat {
             )
         }
         
+        var scheduledMessagesRepositoryBuilder: @Sendable (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ScheduledMessagesRepository = { ScheduledMessagesRepository(database: $0, apiClient: $1) }
+
         var typingEventsSenderBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

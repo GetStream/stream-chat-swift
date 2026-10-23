@@ -207,7 +207,13 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                         self?.saveSentMessage(response.message, scheduledMessageId: id, completion: completion)
                         return
                     }
-                    self?.complete(id: id, failedState: .sendingFailed, pendingState: .pendingSend, with: result.map(\.scheduledMessage), completion: completion)
+                    self?.complete(
+                        id: id,
+                        failedState: .sendingFailed,
+                        pendingState: .pendingSend,
+                        with: result.map(\.scheduledMessage),
+                        completion: completion
+                    )
                 }
             case let .success(.update(request)):
                 let endpoint: Endpoint<UpdateScheduledMessageResponse> = .updateScheduledMessage(
@@ -215,7 +221,13 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                     updateScheduledMessageRequest: request
                 )
                 apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
-                    self?.complete(id: id, failedState: .syncingFailed, pendingState: .pendingSync, with: result.map(\.scheduledMessage), completion: completion)
+                    self?.complete(
+                        id: id,
+                        failedState: .syncingFailed,
+                        pendingState: .pendingSync,
+                        with: result.map(\.scheduledMessage),
+                        completion: completion
+                    )
                 }
             case let .failure(error):
                 completion(.failure(error))
