@@ -201,7 +201,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                     sendMessageRequest: request
                 )
                 // Not queued offline: the `MessageScheduler` waits for the connection and sends it again.
-                apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
+                apiClient.request(endpoint: endpoint) { [weak self] result in
                     if case let .success(response) = result, response.scheduledMessage == nil {
                         // A date in the past is sent right away as a normal message.
                         self?.saveSentMessage(response.message, scheduledMessageId: id, completion: completion)
@@ -220,7 +220,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                     id: id,
                     updateScheduledMessageRequest: request
                 )
-                apiClient.unmanagedRequest(endpoint: endpoint) { [weak self] result in
+                apiClient.request(endpoint: endpoint) { [weak self] result in
                     self?.complete(
                         id: id,
                         failedState: .syncingFailed,

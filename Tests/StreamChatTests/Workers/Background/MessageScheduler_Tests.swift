@@ -51,30 +51,30 @@ final class MessageScheduler_Tests: XCTestCase {
     // MARK: - Tests
 
     func test_scheduler_sendsTheMessage_whenItIsScheduledLocally() throws {
-        apiClient.test_mockUnmanagedResponseResult(.success(sendResponse(id: "scheduled-id")))
+        apiClient.test_mockResponseResult(.success(sendResponse(id: "scheduled-id")))
 
         try scheduleLocally(id: "scheduled-id")
 
         AssertAsync.willBeEqual(
-            apiClient.unmanagedRequest_endpoint?.path.value,
+            apiClient.request_endpoint?.path.value,
             EndpointPath.sendMessage(type: cid.type.rawValue, id: cid.id).value
         )
         AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == nil)
     }
 
     func test_scheduler_waitsForTheAttachmentsToBeUploaded() throws {
-        apiClient.test_mockUnmanagedResponseResult(.success(sendResponse(id: "scheduled-id")))
+        apiClient.test_mockResponseResult(.success(sendResponse(id: "scheduled-id")))
 
         try scheduleLocally(id: "scheduled-id", attachments: [.mockFile])
 
-        AssertAsync.staysTrue(apiClient.unmanagedRequest_endpoint == nil)
+        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
 
         try database.writeSynchronously { session in
             session.scheduledMessage(id: "scheduled-id")?.message?.attachments.forEach { $0.localState = .uploaded }
         }
 
         AssertAsync.willBeEqual(
-            apiClient.unmanagedRequest_endpoint?.path.value,
+            apiClient.request_endpoint?.path.value,
             EndpointPath.sendMessage(type: cid.type.rawValue, id: cid.id).value
         )
     }
@@ -83,7 +83,7 @@ final class MessageScheduler_Tests: XCTestCase {
         try database.writeSynchronously { [cid, userId] session in
             try session.saveScheduledMessage(payload: .dummy(id: "scheduled-id", cid: cid!, user: .dummy(userId: userId!)))
         }
-        apiClient.test_mockUnmanagedResponseResult(.success(UpdateScheduledMessageResponse(
+        apiClient.test_mockResponseResult(.success(UpdateScheduledMessageResponse(
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId))
         )))
 
@@ -92,31 +92,31 @@ final class MessageScheduler_Tests: XCTestCase {
         }
 
         AssertAsync.willBeEqual(
-            apiClient.unmanagedRequest_endpoint?.path.value,
+            apiClient.request_endpoint?.path.value,
             EndpointPath.updateScheduledMessage(id: "scheduled-id").value
         )
     }
 
     func test_scheduler_withoutConnection_sendsTheMessageAgainOnceConnected() throws {
         let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
 
         try scheduleLocally(id: "scheduled-id")
 
-        AssertAsync.willBeEqual(apiClient.unmanagedRequest_allRecordedCalls.count, 1)
+        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
         AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == .pendingSend)
-        AssertAsync.staysEqual(apiClient.unmanagedRequest_allRecordedCalls.count, 1)
+        AssertAsync.staysEqual(apiClient.request_allRecordedCalls.count, 1)
 
-        apiClient.test_mockUnmanagedResponseResult(.success(sendResponse(id: "scheduled-id")))
+        apiClient.test_mockResponseResult(.success(sendResponse(id: "scheduled-id")))
         scheduler.didUpdateConnectionState(.connected(healthCheckInfo: .init(connectionId: .unique)))
 
-        AssertAsync.willBeEqual(apiClient.unmanagedRequest_allRecordedCalls.count, 2)
+        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2)
         AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == nil)
     }
 
     func test_scheduler_whenTheRequestFails_marksTheMessageFailed() throws {
         let error = ClientError(with: APIError(code: 4, message: "Pick a time at least 1 minute from now", statusCode: 400))
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
 
         try scheduleLocally(id: "scheduled-id")
 

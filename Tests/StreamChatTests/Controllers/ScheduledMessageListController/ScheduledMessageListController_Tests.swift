@@ -137,7 +137,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
 
     private func schedule(cid: ChannelId? = nil) throws -> ScheduledMessage {
         let cid = cid ?? self.cid!
-        apiClient.test_mockUnmanagedResponseResult(.success(
+        apiClient.test_mockResponseResult(.success(
             SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(cid: cid))
         ))
         let channelController = client.channelController(for: cid)

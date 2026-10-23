@@ -56,7 +56,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.message.parentMessageId, "parent")
         XCTAssertEqual(message.message.author.id, userId)
         XCTAssertEqual(try storedMessages(), [message])
-        XCTAssertNil(apiClient.unmanagedRequest_endpoint)
+        XCTAssertNil(apiClient.request_endpoint)
         XCTAssertNil(apiClient.request_endpoint)
     }
 
@@ -92,11 +92,11 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             extraData: ["key": .string("value")]
         )
         _ = try schedule(id: "scheduled-id", content: content).get()
-        apiClient.test_mockUnmanagedResponseResult(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
 
         let sent = try XCTUnwrap(waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.get())
 
-        let endpoint = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
         let body = try endpoint.bodyAsDictionary()
         let message = try XCTUnwrap(body["message"] as? [String: Any])
         XCTAssertEqual(endpoint.path, .sendMessage(type: cid.type.rawValue, id: cid.id))
@@ -114,7 +114,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_sendPendingChanges_whenTheRequestFails_marksTheMessageFailed() throws {
         _ = try schedule(id: "scheduled-id").get()
         let error = ClientError(with: APIError(code: 4, message: "Pick a time at least 1 minute from now", statusCode: 400))
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
 
         let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -126,7 +126,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         _ = try schedule(id: "scheduled-id").get()
         let apiError = APIError(code: 117, message: "SendMessage failed with error: \"you can schedule at most 2 messages in this channel\"", statusCode: 400)
         apiError.exceptionFields = ["reason": "scheduled_limit_channel"]
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
 
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -140,7 +140,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_sendPendingChanges_withoutConnection_keepsNoError() throws {
         _ = try schedule(id: "scheduled-id").get()
         let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
 
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -150,7 +150,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_sendPendingChanges_whenTheServerSendsItRightAway_savesTheMessageInTheChannel() throws {
         try database.createChannel(cid: cid)
         _ = try schedule(id: "scheduled-id", content: content(text: "Hello")).get()
-        apiClient.test_mockUnmanagedResponseResult(.success(SendMessageResponsePayload(
+        apiClient.test_mockResponseResult(.success(SendMessageResponsePayload(
             message: .dummy(messageId: "scheduled-id", authorUserId: userId, text: "Hello", cid: cid),
             scheduledMessage: nil
         )))
@@ -179,7 +179,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         _ = try schedule(id: "scheduled-id").get()
         let apiError = APIError(code: code, message: reason, statusCode: 400)
         apiError.exceptionFields = ["reason": reason]
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
 
         let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -190,7 +190,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_resend_clearsTheError() throws {
         _ = try schedule(id: "scheduled-id").get()
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(
             ClientError(with: APIError(code: 4, message: "Failed", statusCode: 400))
         ))
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
@@ -205,7 +205,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         _ = try schedule(id: "scheduled-id").get()
         let apiError = APIError(code: 115, message: "scheduled_at must be at least 1 minute from now", statusCode: 400)
         apiError.exceptionFields = ["reason": "scheduled_at_too_soon"]
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
         let rescheduled = try waitFor {
@@ -219,7 +219,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_sendPendingChanges_withoutConnection_keepsTheMessagePending() throws {
         _ = try schedule(id: "scheduled-id").get()
         let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))
 
         let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -229,7 +229,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_sendPendingChanges_withoutScheduledMessageInTheResponse_fails() throws {
         _ = try schedule(id: "scheduled-id").get()
-        apiClient.test_mockUnmanagedResponseResult(.success(sendMessageResponse(nil)))
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(nil)))
 
         let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -242,12 +242,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
         XCTAssertTrue(result.error is ClientError.ScheduledMessageHasNoPendingChanges)
-        XCTAssertNil(apiClient.unmanagedRequest_endpoint)
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_resend_marksTheFailedMessagePendingAgain() throws {
         _ = try schedule(id: "scheduled-id").get()
-        apiClient.test_mockUnmanagedResponseResult(Result<SendMessageResponsePayload, Error>.failure(
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(
             ClientError(with: APIError(code: 4, message: "Failed", statusCode: 400))
         ))
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
@@ -455,12 +455,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(updated.message.text, "Updated")
         XCTAssertEqual(updated.localState, .pendingSync)
 
-        apiClient.test_mockUnmanagedResponseResult(.success(updateResponse(
+        apiClient.test_mockResponseResult(.success(updateResponse(
             .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), message: .dummy(text: "Updated"))
         )))
         let synced = try XCTUnwrap(waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.get())
 
-        let endpoint = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
+        let endpoint = try XCTUnwrap(apiClient.request_endpoint)
         let body = try endpoint.bodyAsDictionary()
         XCTAssertEqual(endpoint.path.value, EndpointPath.updateScheduledMessage(id: "scheduled-id").value)
         XCTAssertEqual((body["message"] as? [String: Any])?["text"] as? String, "Updated")
@@ -473,7 +473,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         try saveOnServer(id: "scheduled-id")
         _ = try waitFor { repository.update(id: "scheduled-id", content: content(text: "Updated"), scheduledAt: nil, completion: $0) }.get()
         let error = ClientError(with: APIError(code: 4, message: "Already sent", statusCode: 409))
-        apiClient.test_mockUnmanagedResponseResult(Result<UpdateScheduledMessageResponse, Error>.failure(error))
+        apiClient.test_mockResponseResult(Result<UpdateScheduledMessageResponse, Error>.failure(error))
 
         let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
@@ -520,12 +520,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(rescheduled.scheduledAt.timeIntervalSince1970, newDate.timeIntervalSince1970, accuracy: 0.001)
         XCTAssertEqual(rescheduled.localState, .pendingSync)
 
-        apiClient.test_mockUnmanagedResponseResult(.success(updateResponse(
+        apiClient.test_mockResponseResult(.success(updateResponse(
             .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), scheduledAt: newDate)
         )))
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }.get()
 
-        let body = try XCTUnwrap(apiClient.unmanagedRequest_endpoint).bodyAsDictionary()
+        let body = try XCTUnwrap(apiClient.request_endpoint).bodyAsDictionary()
         XCTAssertNotNil(body["scheduled_at"])
     }
 
@@ -640,7 +640,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     }
 
     func test_load_withAFilter_keepsTheOtherMessagesOfTheLocalList() throws {
-        apiClient.test_mockUnmanagedResponseResult(.success(sendMessageResponse(.dummy(id: "other", cid: cid))))
+        apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "other", cid: cid))))
         _ = try schedule(id: "other").get()
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "failed", cid: cid, status: "failed")])))
 
