@@ -204,7 +204,7 @@ struct DemoScheduledMessageList: View {
         Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
             .tint(.yellow)
         if message.syncState == .failed {
-            if message.syncError?.isRetryable ?? true {
+            if message.error?.isRetryable ?? true {
                 Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
                     .tint(Color(colors.accentPrimary))
             }
@@ -282,8 +282,15 @@ private struct DemoScheduledMessageRow: View {
     }
 
     private var status: (text: String, color: UIColor) {
-        if message.syncState == .failed {
-            return (syncErrorText, colors.accentError)
+        switch message.error {
+        case let .serverRejectedScheduling(rejection):
+            return (rejectionText(rejection), colors.accentError)
+        case let .serverFailedPublishing(failure):
+            return (failure.reason?.localizedDescription ?? "Failed to send", colors.accentError)
+        case let .localDeviceFailedSending(failure):
+            return (localFailureText(failure), colors.accentError)
+        case nil:
+            break
         }
         switch message.status {
         case .scheduled:
@@ -291,21 +298,26 @@ private struct DemoScheduledMessageRow: View {
         case .sending:
             return ("Sending…", colors.textSecondary)
         default:
-            return (message.failureReason?.localizedDescription ?? "Failed to send", colors.accentError)
+            return ("Failed to send", colors.accentError)
         }
     }
 
-    private var syncErrorText: String {
-        let fallback = message.isOnServer ? "Could not save the changes." : "Could not schedule the message."
-        guard let error = message.syncError else { return "\(fallback) Swipe to retry." }
-
+    private func rejectionText(_ rejection: ScheduledMessageError.ServerRejection) -> String {
         // The server wraps the reason, like `SendMessage failed with error: "you can schedule at most 2 messages"`.
-        var reason = error.message
+        var reason = rejection.message
         if let range = reason.range(of: "failed with error: ") {
             reason = String(reason[range.upperBound...]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
         }
         reason = reason.prefix(1).uppercased() + reason.dropFirst()
-        return error.isRetryable ? "\(reason). Swipe to retry." : "\(reason)."
+        return rejection.isRetryable ? "\(reason). Swipe to retry." : "\(reason)."
+    }
+
+    private func localFailureText(_ failure: ScheduledMessageError.LocalFailure) -> String {
+        if failure.reason == .attachmentUploadFailed {
+            return "An attachment could not be uploaded. Swipe to retry."
+        }
+        let fallback = message.isOnServer ? "Could not save the changes." : "Could not schedule the message."
+        return "\(fallback) Swipe to retry."
     }
 
     private var preview: String? {

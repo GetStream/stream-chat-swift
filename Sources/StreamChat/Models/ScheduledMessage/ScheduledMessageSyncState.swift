@@ -24,7 +24,7 @@ public struct ScheduledMessageSyncState: RawRepresentable, Hashable, Sendable, E
     /// The changes are being sent to the server.
     public static let syncing: Self = "syncing"
 
-    /// The server rejected the changes, see `ScheduledMessage.syncError`, or an attachment could not be uploaded.
+    /// The changes could not be sent to the server, see `ScheduledMessage.error`.
     public static let failed: Self = "failed"
 }
 

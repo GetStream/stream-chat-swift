@@ -24,6 +24,8 @@ class ScheduledMessageDTO: NSManagedObject {
     // Why the latest local changes could not be sent to the server, from the error of the server.
     @NSManaged var syncErrorReason: String?
     @NSManaged var syncErrorMessage: String?
+    // Whether the error comes from the local device, which never got a response from the server.
+    @NSManaged var isSyncErrorLocal: Bool
 
     // The quoted message is not always available locally, so its id is kept.
     @NSManaged var quotedMessageId: String?
@@ -180,6 +182,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         dto.failureReason = nil
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
+        dto.isSyncErrorLocal = false
         dto.scheduledAt = scheduledAt.bridgeDate
         dto.createdAt = now.bridgeDate
         dto.updatedAt = now.bridgeDate
@@ -231,6 +234,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         dto.updatedAt = Date().bridgeDate
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
+        dto.isSyncErrorLocal = false
         message.updatedAt = dto.updatedAt
         // A message that is not on the server yet is scheduled with its latest content.
         message.localMessageState = dto.isLocalOnly ? .pendingSend : .pendingSync
@@ -263,6 +267,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         let user = try saveUser(payload: payload.user)
         dto.syncErrorReason = nil
         dto.syncErrorMessage = nil
+        dto.isSyncErrorLocal = false
         dto.scheduledAt = payload.scheduledAt.bridgeDate
         dto.hasPendingScheduledAt = false
         dto.quotedMessageId = content.quotedMessageId
@@ -390,6 +395,7 @@ extension ScheduledMessageDTO {
             throw InvalidModel(self)
         }
 
+        let error = isDeleted ? nil : modelError
         let localChannel = channelName == nil && channelImageURL == nil ? managedObjectContext?.channel(cid: channelId) : nil
         return ScheduledMessage(
             id: id,
@@ -403,13 +409,35 @@ extension ScheduledMessageDTO {
             quotedMessageId: quotedMessageId,
             scheduledAt: scheduledAt.bridgeDate,
             status: ScheduledMessageStatus(rawValue: status),
-            failureReason: failureReason.map(ScheduledMessageFailureReason.init(rawValue:)),
-            syncError: syncErrorMessage.map {
-                ScheduledMessageSyncError(reason: syncErrorReason.map(ScheduledMessageSyncError.Reason.init(rawValue:)), message: $0)
-            },
+            error: error,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
+    }
+}
+
+private extension ScheduledMessageDTO {
+    // The failure of the latest local changes wins, since it is the most recent.
+    var modelError: ScheduledMessageError? {
+        if ScheduledMessageSyncState(message?.localMessageState) == .failed {
+            if let syncErrorMessage, !isSyncErrorLocal {
+                return .serverRejectedScheduling(.init(
+                    reason: syncErrorReason.map(ScheduledMessageError.ServerRejection.Reason.init(rawValue:)),
+                    message: syncErrorMessage
+                ))
+            }
+            let hasFailedUpload = message?.attachments.contains { $0.localState == .uploadingFailed } == true
+            return .localDeviceFailedSending(.init(
+                reason: hasFailedUpload ? .attachmentUploadFailed : .requestFailed,
+                message: hasFailedUpload ? nil : syncErrorMessage
+            ))
+        }
+        if ScheduledMessageStatus(rawValue: status) == .failed {
+            return .serverFailedPublishing(.init(
+                reason: failureReason.map(ScheduledMessageError.PublishingFailure.Reason.init(rawValue:))
+            ))
+        }
+        return nil
     }
 }
 

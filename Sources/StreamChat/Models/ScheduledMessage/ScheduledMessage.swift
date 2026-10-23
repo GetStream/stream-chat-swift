@@ -36,13 +36,11 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The current status of the scheduled message.
     public let status: ScheduledMessageStatus
 
-    /// Why the message could not be sent, when `status` is `.failed`.
-    public let failureReason: ScheduledMessageFailureReason?
-
-    /// Why the server rejected the latest local changes, when `syncState` is `.failed`.
+    /// The problem of the scheduled message, telling whether the server or the local device failed.
     ///
-    /// For example, the message is not scheduled when the scheduling limit of the channel is reached.
-    public let syncError: ScheduledMessageSyncError?
+    /// When the latest local changes failed, their error is reported even if the server also failed to publish
+    /// the message, and the publishing failure is reported again once the changes are resolved.
+    public let error: ScheduledMessageError?
 
     /// The date when the message was scheduled.
     public let createdAt: Date
@@ -83,8 +81,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         quotedMessageId: MessageId?,
         scheduledAt: Date,
         status: ScheduledMessageStatus,
-        failureReason: ScheduledMessageFailureReason?,
-        syncError: ScheduledMessageSyncError? = nil,
+        error: ScheduledMessageError? = nil,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -95,8 +92,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         self.quotedMessageId = quotedMessageId
         self.scheduledAt = scheduledAt
         self.status = status
-        self.failureReason = failureReason
-        self.syncError = syncError
+        self.error = error
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -121,10 +117,9 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.message.poll?.id == rhs.message.poll?.id
             && lhs.scheduledAt == rhs.scheduledAt
             && lhs.status == rhs.status
-            && lhs.failureReason == rhs.failureReason
             && lhs.createdAt == rhs.createdAt
             && lhs.updatedAt == rhs.updatedAt
             && lhs.message.localState == rhs.message.localState
-            && lhs.syncError == rhs.syncError
+            && lhs.error == rhs.error
     }
 }

@@ -121,6 +121,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             }
             dto.syncErrorReason = nil
             dto.syncErrorMessage = nil
+            dto.isSyncErrorLocal = false
         }, completion: completion)
     }
 
@@ -251,7 +252,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             // Without a connection, the changes are sent again once connected.
             let isEphemeral = ClientError.isEphemeral(error: error)
             let apiError = (error as? ClientError)?.apiError
-            let reason = apiError?.exceptionFields?["reason"].map(ScheduledMessageSyncError.Reason.init(rawValue:))
+            let reason = apiError?.exceptionFields?["reason"].map(ScheduledMessageError.ServerRejection.Reason.init(rawValue:))
             if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled {
                 // It went out at its date, or was deleted on another device, while this device was offline.
                 database.write({ session in
@@ -267,6 +268,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                 // Kept so the user sees why, for example that the scheduling limit of the channel is reached.
                 dto.syncErrorReason = isEphemeral ? nil : apiError?.exceptionFields?["reason"]
                 dto.syncErrorMessage = isEphemeral ? nil : apiError?.message ?? error.localizedDescription
+                dto.isSyncErrorLocal = !isEphemeral && apiError == nil
             }, completion: { _ in
                 completion(.failure(error))
             })

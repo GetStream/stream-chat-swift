@@ -135,9 +135,74 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
         XCTAssertEqual(message.message.localState, .sendingFailed)
         XCTAssertEqual(message.syncState, .failed)
-        XCTAssertEqual(message.syncError?.reason, .scheduledLimitChannel)
-        XCTAssertEqual(message.syncError?.message, apiError.message)
-        XCTAssertEqual(message.syncError?.isRetryable, false)
+        guard case let .serverRejectedScheduling(rejection) = message.error else {
+            return XCTFail("Expected a rejection of the server, got \(String(describing: message.error))")
+        }
+        XCTAssertEqual(rejection.reason, .scheduledLimitChannel)
+        XCTAssertEqual(rejection.message, apiError.message)
+        XCTAssertEqual(rejection.isRetryable, false)
+        XCTAssertEqual(message.error?.isRetryable, false)
+    }
+
+    func test_sendPendingChanges_whenTheRequestFailsWithoutAResponse_isAFailureOfTheLocalDevice() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError("Encoding failed")))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        XCTAssertEqual(message.syncState, .failed)
+        XCTAssertEqual(message.error, .localDeviceFailedSending(.init(reason: .requestFailed, message: ClientError("Encoding failed").localizedDescription)))
+        XCTAssertEqual(message.error?.isRetryable, true)
+    }
+
+    func test_asModel_whenAnAttachmentFailedToUpload_isAFailureOfTheLocalDevice() throws {
+        _ = try schedule(
+            id: "scheduled-id",
+            content: ScheduledMessageContent(
+                text: "Photo",
+                attachments: [.mockImage],
+                mentionedUserIds: [],
+                quotedMessageId: nil,
+                parentId: nil,
+                showReplyInChannel: false,
+                extraData: [:]
+            )
+        ).get()
+
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.scheduledMessage(id: "scheduled-id")?.message)
+            message.attachments.forEach { $0.localState = .uploadingFailed }
+            message.localMessageState = .sendingFailed
+        }
+
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.error, .localDeviceFailedSending(.init(reason: .attachmentUploadFailed)))
+    }
+
+    func test_asModel_whenAnEditIsRejectedAfterThePublishingFailed_reportsTheRejection() throws {
+        try saveOnServer(id: "scheduled-id")
+        try database.writeSynchronously { session in
+            try session.saveScheduledMessage(payload: .dummy(
+                id: "scheduled-id",
+                cid: self.cid,
+                user: .dummy(userId: self.userId),
+                status: "failed",
+                failureReason: "banned"
+            ))
+            let dto = try XCTUnwrap(session.scheduledMessage(id: "scheduled-id"))
+            dto.message?.localMessageState = .syncingFailed
+            dto.syncErrorReason = "scheduled_message_not_editable"
+            dto.syncErrorMessage = "Failed messages can't be edited"
+        }
+        XCTAssertEqual(
+            try storedMessage(id: "scheduled-id")?.error,
+            .serverRejectedScheduling(.init(reason: .scheduledMessageNotEditable, message: "Failed messages can't be edited"))
+        )
+
+        try database.writeSynchronously { session in
+            session.scheduledMessage(id: "scheduled-id")?.message?.localMessageState = nil
+        }
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.error, .serverFailedPublishing(.init(reason: .banned)))
     }
 
     func test_sendPendingChanges_withoutConnection_keepsNoError() throws {
@@ -147,7 +212,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
-        XCTAssertNil(try storedMessage(id: "scheduled-id")?.syncError)
+        XCTAssertNil(try storedMessage(id: "scheduled-id")?.error)
     }
 
     func test_sendPendingChanges_whenTheServerSendsItRightAway_savesTheMessageInTheChannel() throws {
@@ -197,11 +262,11 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             ClientError(with: APIError(code: 4, message: "Failed", statusCode: 400))
         ))
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
-        XCTAssertNotNil(try storedMessage(id: "scheduled-id")?.syncError)
+        XCTAssertNotNil(try storedMessage(id: "scheduled-id")?.error)
 
         _ = try waitFor { repository.resend(id: "scheduled-id", completion: $0) }
 
-        XCTAssertNil(try storedMessage(id: "scheduled-id")?.syncError)
+        XCTAssertNil(try storedMessage(id: "scheduled-id")?.error)
     }
 
     func test_reschedule_clearsTheError() throws {
@@ -215,7 +280,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
         }.get()
 
-        XCTAssertNil(rescheduled.syncError)
+        XCTAssertNil(rescheduled.error)
         XCTAssertEqual(rescheduled.message.localState, .pendingSend)
     }
 
@@ -420,7 +485,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let message = try XCTUnwrap(model(from: response))
 
         XCTAssertEqual(message.status, .failed)
-        XCTAssertEqual(message.failureReason, .channelFrozen)
+        XCTAssertEqual(message.error, .serverFailedPublishing(.init(reason: .channelFrozen)))
         XCTAssertFalse(message.isPending)
     }
 

@@ -304,9 +304,11 @@ final class DemoChannelScheduledMessagesVC: UIViewController,
 
         let statusView = DemoScheduledStatusView()
         statusView.isFailure = scheduledMessage.status == .failed
-        statusView.content = statusView.isFailure
-            ? scheduledMessage.failureReason?.localizedDescription ?? "Failed to send"
-            : "Sending…"
+        if case let .serverFailedPublishing(failure) = scheduledMessage.error {
+            statusView.content = failure.reason?.localizedDescription ?? "Failed to send"
+        } else {
+            statusView.content = statusView.isFailure ? "Failed to send" : "Sending…"
+        }
         return statusView
     }
 }

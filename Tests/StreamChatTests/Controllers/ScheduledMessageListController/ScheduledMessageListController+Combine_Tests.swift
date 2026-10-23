@@ -73,7 +73,6 @@ final class ScheduledMessageListController_Combine_Tests: iOS13TestCase {
             quotedMessageId: nil,
             scheduledAt: .unique,
             status: .scheduled,
-            failureReason: nil,
             createdAt: .unique,
             updatedAt: .unique
         )

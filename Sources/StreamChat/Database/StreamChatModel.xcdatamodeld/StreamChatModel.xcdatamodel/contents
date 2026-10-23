@@ -560,6 +560,7 @@
         <attribute name="hasPendingScheduledAt" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isPending" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="isSyncErrorLocal" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="syncErrorMessage" optional="YES" attributeType="String"/>
         <attribute name="syncErrorReason" optional="YES" attributeType="String"/>
         <attribute name="quotedMessageId" optional="YES" attributeType="String"/>
