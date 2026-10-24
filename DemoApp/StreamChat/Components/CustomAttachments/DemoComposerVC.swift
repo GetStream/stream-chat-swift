@@ -31,6 +31,9 @@ class DemoComposerVC: ComposerVC {
         composerView.sendButton.addGestureRecognizer(longPress)
 
         scheduledMessagesBannerView.isHidden = true
+        scheduledMessagesBannerView.onTap = { [weak self] in
+            (self?.tabBarController as? DemoAppTabBarController)?.showScheduledMessages()
+        }
 
         scheduledEditingBannerView.isHidden = true
         scheduledEditingBannerView.onDismiss = { [weak self] in

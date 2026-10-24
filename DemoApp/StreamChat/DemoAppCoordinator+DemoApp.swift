@@ -69,13 +69,26 @@ extension DemoAppCoordinator {
             self?.disconnect()
         }
 
+        let scheduledMessageListVC = DemoScheduledMessageListVC(
+            currentUserController: client.currentUserController(),
+            scheduledMessageListController: client.scheduledMessageListController()
+        )
+        scheduledMessageListVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        scheduledMessageListVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
+
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
             threadListVC: UINavigationController(rootViewController: threadListVC),
             draftListVC: UINavigationController(rootViewController: draftsVC),
             reminderListVC: UINavigationController(rootViewController: reminderListVC),
+            scheduledMessageListVC: UINavigationController(rootViewController: scheduledMessageListVC),
             currentUserController: client.currentUserController(),
-            allRemindersListController: client.messageReminderListController()
+            allRemindersListController: client.messageReminderListController(),
+            allScheduledMessagesListController: client.scheduledMessageListController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
