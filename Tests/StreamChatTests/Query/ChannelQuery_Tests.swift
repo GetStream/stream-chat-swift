@@ -90,4 +90,22 @@ final class ChannelQuery_Tests: XCTestCase {
         XCTAssertNil(query.cid)
         XCTAssertEqual(query.type, .messaging)
     }
+
+    func test_endpoint_includesScheduledMessages_onlyWhenRequested() throws {
+        var query = ChannelQuery(cid: .unique)
+        let defaultBody = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        query.includeScheduledMessages = true
+        let body = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(body["include_scheduled_messages"] as? Bool, true)
+        XCTAssertNil(defaultBody["include_scheduled_messages"])
+    }
+
+    func test_initWithNewCid_keepsIncludeScheduledMessages() {
+        var query = ChannelQuery(cid: .unique)
+        query.includeScheduledMessages = true
+
+        XCTAssertTrue(ChannelQuery(cid: .unique, channelQuery: query).includeScheduledMessages)
+    }
 }

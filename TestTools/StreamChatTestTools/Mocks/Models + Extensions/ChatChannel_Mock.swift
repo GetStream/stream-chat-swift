@@ -113,7 +113,8 @@ public extension ChatChannel {
         muteDetails: MuteDetails? = nil,
         draftMessage: DraftMessage? = nil,
         activeLiveLocations: [SharedLocation] = [],
-        pushPreference: PushPreference? = nil
+        pushPreference: PushPreference? = nil,
+        scheduledMessages: [ScheduledMessage] = []
     ) -> Self {
         self.init(
             cid: cid,
@@ -153,7 +154,8 @@ public extension ChatChannel {
             muteDetails: muteDetails,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
     }
 
