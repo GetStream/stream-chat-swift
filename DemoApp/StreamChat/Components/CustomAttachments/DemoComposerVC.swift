@@ -8,6 +8,74 @@ import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
+    var editingScheduledMessage: ScheduledMessage?
+    var editingScheduledContent: DemoScheduledMessageContent?
+    var componentsBeforeScheduledEditing: Components?
+    var isSubmittingScheduledMessage = false
+
+    // Created on first use, once the channel controller is set.
+    lazy var scheduledMessageListController: ScheduledMessageListController? = {
+        guard AppConfig.shared.isScheduledMessagesEnabled else { return nil }
+        let controller = channelController?.client.scheduledMessageListController()
+        controller?.delegate = self
+        return controller
+    }()
+
+    lazy var scheduledMessagesBannerView = DemoComposerBannerView()
+    lazy var scheduledEditingBannerView = DemoComposerBannerView()
+
+    override func setUp() {
+        super.setUp()
+
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(sendButtonLongPressed(_:)))
+        composerView.sendButton.addGestureRecognizer(longPress)
+
+        scheduledMessagesBannerView.isHidden = true
+
+        scheduledEditingBannerView.isHidden = true
+        scheduledEditingBannerView.onDismiss = { [weak self] in
+            self?.endScheduledMessageEditing()
+        }
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+
+        attachScheduledBanners()
+    }
+
+    override func showSuggestions() {
+        super.showSuggestions()
+
+        updateScheduledMessagesBanner()
+    }
+
+    override func dismissSuggestions() {
+        super.dismissSuggestions()
+
+        updateScheduledMessagesBanner()
+    }
+
+    override func updateContent() {
+        super.updateContent()
+
+        updateScheduledMessagesBanner()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        saveEditedScheduledMessageIfNeeded()
+
+        super.viewWillDisappear(animated)
+    }
+
+    override func publishMessage(sender: UIButton) {
+        if editingScheduledMessage != nil {
+            confirmSendingEditedScheduledMessage()
+        } else {
+            super.publishMessage(sender: sender)
+        }
+    }
+
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
 
@@ -33,6 +101,16 @@ class DemoComposerVC: ComposerVC {
         let navigationController = UINavigationController(rootViewController: locationSelectionVC)
         
         present(navigationController, animated: true)
+    }
+
+    @objc private func sendButtonLongPressed(_ recognizer: UILongPressGestureRecognizer) {
+        guard recognizer.state == .began else { return }
+
+        if editingScheduledMessage != nil {
+            presentRescheduleSheet()
+        } else {
+            presentScheduleSheet()
+        }
     }
 }
 
