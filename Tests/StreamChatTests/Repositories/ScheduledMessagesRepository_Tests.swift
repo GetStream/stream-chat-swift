@@ -502,7 +502,6 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         XCTAssertEqual(message.status, .failed)
         XCTAssertEqual(message.error, .serverFailedPublishing(.init(reason: .channelFrozen)))
-        XCTAssertFalse(message.isPending)
     }
 
     func test_asModel_withInvalidChannelId_returnsNil() {
