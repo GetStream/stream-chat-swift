@@ -12,6 +12,7 @@ class DemoComposerVC: ComposerVC {
     var editingScheduledContent: DemoScheduledMessageContent?
     var componentsBeforeScheduledEditing: Components?
     var isSubmittingScheduledMessage = false
+    var isSchedulingOnly = false
 
     // Created on first use, once the channel controller is set.
     lazy var scheduledMessageListController: ScheduledMessageListController? = {
@@ -72,7 +73,9 @@ class DemoComposerVC: ComposerVC {
     }
 
     override func publishMessage(sender: UIButton) {
-        if editingScheduledMessage != nil {
+        if isSchedulingOnly {
+            publishScheduledMessageOnly()
+        } else if editingScheduledMessage != nil {
             confirmSendingEditedScheduledMessage()
         } else {
             super.publishMessage(sender: sender)
