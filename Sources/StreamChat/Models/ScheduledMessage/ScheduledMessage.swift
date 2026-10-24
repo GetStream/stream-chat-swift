@@ -48,23 +48,6 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
     /// The date when the message was last edited or rescheduled.
     public let updatedAt: Date
 
-    /// Whether the message is still waiting to be published, which is the case unless it failed.
-    public var isPending: Bool {
-        status != .failed
-    }
-
-    /// Whether the server has the scheduled message, which is needed to send it now.
-    ///
-    /// It is `false` until the message is scheduled on the server for the first time.
-    public var isOnServer: Bool {
-        switch message.localState {
-        case .pendingSend, .sending, .sendingFailed:
-            return false
-        default:
-            return true
-        }
-    }
-
     init(
         id: String,
         cid: ChannelId,
