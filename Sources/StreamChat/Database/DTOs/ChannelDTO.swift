@@ -688,7 +688,7 @@ extension ChatChannel {
         let scheduledMessages = dto.scheduledMessages
             .filter { !$0.isDeleted }
             .compactMap { try? $0.asModel() }
-            .sorted { ($0.isPending ? 0 : 1, $0.scheduledAt) < ($1.isPending ? 0 : 1, $1.scheduledAt) }
+            .sorted { ($0.status == .failed ? 1 : 0, $0.scheduledAt) < ($1.status == .failed ? 1 : 0, $1.scheduledAt) }
 
         let channel = try ChatChannel(
             cid: cid,
