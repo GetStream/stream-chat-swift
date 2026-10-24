@@ -108,8 +108,8 @@ final class DemoScheduledMessageListModel: ObservableObject, ScheduledMessageLis
         self.controller = controller
     }
 
-    var pending: [ScheduledMessage] { scheduledMessages.filter(\.isPending) }
-    var failed: [ScheduledMessage] { scheduledMessages.filter { !$0.isPending } }
+    var pending: [ScheduledMessage] { scheduledMessages.filter { $0.status != .failed } }
+    var failed: [ScheduledMessage] { scheduledMessages.filter { $0.status == .failed } }
 
     func synchronize() {
         controller.delegate = self
@@ -208,7 +208,7 @@ struct DemoScheduledMessageList: View {
                 Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
                     .tint(Color(colors.accentPrimary))
             }
-        } else if message.isOnServer {
+        } else if message.status == .scheduled {
             Button { messageToSendNow = message } label: { actionLabel("Send Now", Image(uiImage: images.composerSend)) }
                 .tint(Color(colors.accentPrimary))
         }
@@ -316,8 +316,7 @@ private struct DemoScheduledMessageRow: View {
         if failure.reason == .attachmentUploadFailed {
             return "An attachment could not be uploaded. Swipe to retry."
         }
-        let fallback = message.isOnServer ? "Could not save the changes." : "Could not schedule the message."
-        return "\(fallback) Swipe to retry."
+        return "Could not schedule the message. Swipe to retry."
     }
 
     private var preview: String? {

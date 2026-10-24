@@ -185,7 +185,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     }
 
     private func updateScheduledMessagesBadge() {
-        let pendingCount = allScheduledMessagesListController.scheduledMessages.filter(\.isPending).count
+        let pendingCount = allScheduledMessagesListController.scheduledMessages.filter { $0.status != .failed }.count
         scheduledMessageListVC.tabBarItem.badgeValue = pendingCount > 0 ? "\(pendingCount)" : nil
     }
 }
