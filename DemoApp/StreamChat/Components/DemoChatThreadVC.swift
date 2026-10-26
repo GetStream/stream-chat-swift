@@ -26,6 +26,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
     }()
 
     var thread: ChatThread?
+    var scheduledMessageToEdit: ScheduledMessage?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +44,8 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
         super.viewWillAppear(animated)
 
         thread = messageController.dataStore.thread(parentMessageId: messageController.messageId)
+        (messageComposerVC as? DemoComposerVC)?.applyScheduledMessageEditing(starting: scheduledMessageToEdit)
+        scheduledMessageToEdit = nil
     }
 
     @objc private func debugTap() {

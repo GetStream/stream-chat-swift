@@ -69,13 +69,26 @@ extension DemoAppCoordinator {
             self?.disconnect()
         }
 
+        let scheduledMessageListVC = DemoScheduledMessageListVC(
+            currentUserController: client.currentUserController(),
+            scheduledMessageListController: client.scheduledMessageListController()
+        )
+        scheduledMessageListVC.onLogout = { [weak self] in
+            self?.logOut()
+        }
+        scheduledMessageListVC.onDisconnect = { [weak self] in
+            self?.disconnect()
+        }
+
         let tabBarViewController = DemoAppTabBarController(
             channelListVC: chatVC,
             threadListVC: UINavigationController(rootViewController: threadListVC),
             draftListVC: UINavigationController(rootViewController: draftsVC),
             reminderListVC: UINavigationController(rootViewController: reminderListVC),
+            scheduledMessageListVC: UINavigationController(rootViewController: scheduledMessageListVC),
             currentUserController: client.currentUserController(),
-            allRemindersListController: client.messageReminderListController()
+            allRemindersListController: client.messageReminderListController(),
+            allScheduledMessagesListController: client.scheduledMessageListController()
         )
         set(rootViewController: tabBarViewController, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
@@ -123,7 +136,7 @@ extension DemoAppCoordinator {
             Sorting(key: .pinnedAt),
             Sorting(key: .default)
         ]
-        let channelListQuery: ChannelListQuery
+        var channelListQuery: ChannelListQuery
         switch user {
         case let .credentials(userCredentials):
             channelListQuery = .init(
@@ -144,6 +157,8 @@ extension DemoAppCoordinator {
                 sort: sorting
             )
         }
+
+        channelListQuery.includeScheduledMessages = AppConfig.shared.isScheduledMessagesEnabled
 
         let tuple = makeChannelVCs(for: cid)
         let selectedChannel = tuple.channelController?.channel

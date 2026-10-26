@@ -11,9 +11,18 @@ class LoginViewController: UIViewController, UIAdaptivePresentationControllerDel
     @IBOutlet var tableView: UITableView!
     var onUserSelection: ((DemoUserType) -> Void)!
 
-    var users: [DemoUserType] {
+    /// The users shown in the table view. They depend on the selected environment, so they are
+    /// only refreshed together with a table view reload, to keep the data source consistent.
+    private(set) var users: [DemoUserType] = LoginViewController.makeUsers()
+
+    private static func makeUsers() -> [DemoUserType] {
         UserCredentials.builtInUsers.map { DemoUserType.credentials($0) }
             + [.guest("guest"), .anonymous, .custom(nil)]
+    }
+
+    private func reloadUsers() {
+        users = LoginViewController.makeUsers()
+        tableView.reloadData()
     }
 
     override func viewDidLoad() {
@@ -32,6 +41,7 @@ class LoginViewController: UIViewController, UIAdaptivePresentationControllerDel
         super.viewWillAppear(animated)
 
         navigationController?.isNavigationBarHidden = true
+        reloadUsers()
         if let selectedRow = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedRow, animated: true)
         }
@@ -45,7 +55,7 @@ class LoginViewController: UIViewController, UIAdaptivePresentationControllerDel
     }
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        tableView.reloadData()
+        reloadUsers()
     }
 }
 

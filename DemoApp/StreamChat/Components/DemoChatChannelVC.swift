@@ -26,7 +26,17 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         return indicator
     }()
 
+    var scheduledMessageToEdit: ScheduledMessage?
+
     // MARK: - Lifecycle
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateBackButton()
+
+        (messageComposerVC as? DemoComposerVC)?.applyScheduledMessageEditing(starting: scheduledMessageToEdit)
+        scheduledMessageToEdit = nil
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,11 +57,6 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         channelAvatarView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(channelAvatarTapped))
         )
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateBackButton()
     }
 
     override func didMove(toParent parent: UIViewController?) {
@@ -116,6 +121,15 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
 
     @objc private func goBack() {
         navigationController?.popViewController(animated: true)
+    }
+
+    override func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
+    ) {
+        super.channelController(channelController, didUpdateChannel: channel)
+
+        (messageComposerVC as? DemoComposerVC)?.updateScheduledMessagesBanner()
     }
 
     // MARK: - Loading previous and next messages state handling.

@@ -156,7 +156,11 @@ extension StreamChatWrapper {
             logClientNotInstantiated()
             return nil
         }
-        return channelId.map { client.channelController(for: $0) }
+        return channelId.map {
+            var query = ChannelQuery(cid: $0)
+            query.includeScheduledMessages = AppConfig.shared.isScheduledMessagesEnabled
+            return client.channelController(for: query)
+        }
     }
 
     func channelListController(query: ChannelListQuery) -> ChatChannelListController? {
