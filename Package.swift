@@ -1,4 +1,5 @@
 // swift-tools-version:6.0
+// Temporary CI validation marker: exercise the full self-hosted E2E suite.
 
 import Foundation
 import PackageDescription
