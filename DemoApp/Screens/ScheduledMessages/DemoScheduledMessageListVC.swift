@@ -117,8 +117,8 @@ final class DemoScheduledMessageListModel: ObservableObject, ScheduledMessageLis
         controller.synchronize()
     }
 
-    func controller(_ controller: ScheduledMessageListController, didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]) {
-        scheduledMessages = controller.scheduledMessages
+    func controller(_ controller: ScheduledMessageListController, didChangeScheduledMessages scheduledMessages: [ScheduledMessage]) {
+        self.scheduledMessages = scheduledMessages
     }
 
     func sendNow(_ message: ScheduledMessage) {
@@ -204,7 +204,7 @@ struct DemoScheduledMessageList: View {
         Button { actions.reschedule(message) } label: { actionLabel("Reschedule", Image(uiImage: UIImage(systemName: "clock") ?? UIImage())) }
             .tint(.yellow)
         if message.status == .failed {
-            if message.error?.isRetryable ?? true {
+            if message.failure?.isRetryable ?? true {
                 Button { model.resend(message) } label: { actionLabel("Retry", Image(uiImage: UIImage(systemName: "arrow.clockwise") ?? UIImage())) }
                     .tint(Color(colors.accentPrimary))
             }
@@ -282,7 +282,7 @@ private struct DemoScheduledMessageRow: View {
     }
 
     private var status: (text: String, color: UIColor) {
-        switch message.error {
+        switch message.failure {
         case let .serverRejectedScheduling(rejection):
             return (rejectionText(rejection), colors.accentError)
         case let .serverFailedPublishing(failure):
@@ -302,7 +302,7 @@ private struct DemoScheduledMessageRow: View {
         }
     }
 
-    private func rejectionText(_ rejection: ScheduledMessageError.ServerRejection) -> String {
+    private func rejectionText(_ rejection: ScheduledMessageFailure.ServerRejection) -> String {
         // The server wraps the reason, like `SendMessage failed with error: "you can schedule at most 2 messages"`.
         var reason = rejection.message
         if let range = reason.range(of: "failed with error: ") {
@@ -312,7 +312,7 @@ private struct DemoScheduledMessageRow: View {
         return rejection.isRetryable ? "\(reason). Swipe to retry." : "\(reason)."
     }
 
-    private func localFailureText(_ failure: ScheduledMessageError.LocalFailure) -> String {
+    private func localFailureText(_ failure: ScheduledMessageFailure.LocalFailure) -> String {
         if failure.reason == .attachmentUploadFailed {
             return "An attachment could not be uploaded. Swipe to retry."
         }

@@ -37,10 +37,10 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
 
     func controller(
         _ controller: ScheduledMessageListController,
-        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+        didChangeScheduledMessages scheduledMessages: [ScheduledMessage]
     ) {
         updateScheduledMessagesBanner()
-        editingScheduledMessageDidChange(in: controller.scheduledMessages)
+        editingScheduledMessageDidChange(in: scheduledMessages)
     }
 
     // MARK: - Banner
@@ -108,8 +108,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
                 mentionedUserIds: content.mentionedUserIds,
                 showReplyInChannel: content.showReplyInChannel,
                 quotedMessageId: content.quotedMessageId,
-                extraData: content.extraData,
                 scheduledAt: date,
+                extraData: content.extraData,
                 completion: completion
             )
         } else {
@@ -118,8 +118,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
                 attachments: content.attachments,
                 mentionedUserIds: content.mentionedUserIds,
                 quotedMessageId: content.quotedMessageId,
-                extraData: content.extraData,
                 scheduledAt: date,
+                extraData: content.extraData,
                 completion: completion
             )
         }
@@ -268,8 +268,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
                 mentionedUserIds: content.mentionedUserIds,
                 showReplyInChannel: content.showReplyInChannel,
                 quotedMessageId: content.quotedMessageId,
-                extraData: content.extraData,
                 scheduledAt: scheduledAt,
+                extraData: content.extraData,
                 completion: completion
             )
         } else {
@@ -279,8 +279,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
                 attachments: content.attachments,
                 mentionedUserIds: content.mentionedUserIds,
                 quotedMessageId: content.quotedMessageId,
-                extraData: content.extraData,
                 scheduledAt: scheduledAt,
+                extraData: content.extraData,
                 completion: completion
             )
         }

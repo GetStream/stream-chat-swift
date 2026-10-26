@@ -179,7 +179,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
 
     func controller(
         _ controller: ScheduledMessageListController,
-        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+        didChangeScheduledMessages scheduledMessages: [ScheduledMessage]
     ) {
         updateScheduledMessagesBadge()
     }
