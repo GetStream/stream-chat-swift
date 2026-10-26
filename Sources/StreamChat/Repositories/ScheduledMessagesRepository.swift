@@ -246,8 +246,29 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
     ) {
         switch result {
-        case .success:
-            save(result, localState: nil) { completion($0.map { $0 }) }
+        case let .success(payload):
+            guard let payload else {
+                completion(.failure(ClientError.Unexpected("Missing `scheduled_message` in the response.")))
+                return
+            }
+            database.write(converting: { session -> ScheduledMessage? in
+                // Deleted locally while the request was in flight: saving the response would bring it back.
+                guard let dto = session.scheduledMessage(id: id) else { return nil }
+                dto.message?.localMessageState = nil
+                return try session.saveScheduledMessage(payload: payload).asModel()
+            }, completion: { [weak self] result in
+                guard case .success(nil) = result, pendingState == .pendingSend, let self else {
+                    completion(result)
+                    return
+                }
+                // It was only deleted locally, since it was not on the server yet.
+                apiClient.request(endpoint: .deleteScheduledMessage(id: payload.id)) { deleteResult in
+                    if let error = deleteResult.error {
+                        log.error("Failed to delete the scheduled message \(payload.id) on the server: \(error)")
+                    }
+                    completion(.success(nil))
+                }
+            })
         case let .failure(error):
             // Without a connection, the changes are sent again once connected.
             let isEphemeral = ClientError.isEphemeral(error: error)

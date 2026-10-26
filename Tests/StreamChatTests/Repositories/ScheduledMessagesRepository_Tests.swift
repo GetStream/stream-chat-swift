@@ -294,6 +294,27 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.localState, .pendingSend)
     }
 
+    func test_sendPendingChanges_whenDeletedWhileScheduling_deletesItOnTheServer() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: .canceled))))
+        let sendCompleted = expectation(description: "sendPendingChanges completes")
+        nonisolated(unsafe) var result: Result<ScheduledMessage?, Error>?
+        repository.sendPendingChanges(id: "scheduled-id") {
+            result = $0
+            sendCompleted.fulfill()
+        }
+        AssertAsync.willBeTrue(apiClient.request_endpoint?.path == .sendMessage(type: cid.type.rawValue, id: cid.id))
+
+        XCTAssertNil(try waitFor { repository.delete(id: "scheduled-id", completion: $0) })
+        apiClient.test_simulateResponse(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))
+        wait(for: [sendCompleted], timeout: defaultTimeout)
+
+        let expectedEndpoint: Endpoint<DeleteScheduledMessageResponse> = .deleteScheduledMessage(id: "scheduled-id")
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertNil(try XCTUnwrap(result).get())
+        XCTAssertEqual(try storedMessages(), [])
+    }
+
     func test_sendPendingChanges_withoutScheduledMessageInTheResponse_fails() throws {
         _ = try schedule(id: "scheduled-id").get()
         apiClient.test_mockResponseResult(.success(sendMessageResponse(nil)))
