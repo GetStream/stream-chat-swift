@@ -111,6 +111,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteScheduledMessage(id: id)
     }
 
+    func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {
+        underlyingSession.deleteScheduledMessages(notIn: ids, cid: cid)
+    }
+
     func rescueScheduledMessagesStuckInSyncing() {
         underlyingSession.rescueScheduledMessagesStuckInSyncing()
     }

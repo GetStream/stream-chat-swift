@@ -315,7 +315,6 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         deleteScheduledMessages(notIn: Set(payload.map(\.id)), cid: cid)
     }
 
-    /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
     func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {
         let request = cid.map(ScheduledMessageDTO.fetchRequest(cid:)) ?? ScheduledMessageDTO.scheduledMessagesFetchRequest(query: .init())
         ScheduledMessageDTO.load(by: request, context: self)

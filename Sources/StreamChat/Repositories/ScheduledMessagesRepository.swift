@@ -59,8 +59,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                                 return nil
                             }
                         }
-                        if isWholeList, let context = session as? NSManagedObjectContext {
-                            context.deleteScheduledMessages(notIn: Set(response.scheduledMessages.map(\.id)), cid: nil)
+                        if isWholeList {
+                            session.deleteScheduledMessages(notIn: Set(response.scheduledMessages.map(\.id)), cid: nil)
                         }
                         return ScheduledMessageListResponse(scheduledMessages: messages, next: next)
                     },

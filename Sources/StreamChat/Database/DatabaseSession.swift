@@ -660,6 +660,9 @@ protocol ScheduledMessageDatabaseSession {
     /// Deletes the scheduled message with the specified id.
     func deleteScheduledMessage(id: String)
 
+    /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
+    func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?)
+
     /// Changes the state to `.pendingSync` for all scheduled messages in `.syncing` state, at the beginning of the session.
     /// They get stuck there when the app is killed while their changes are sent to the server.
     func rescueScheduledMessagesStuckInSyncing()
