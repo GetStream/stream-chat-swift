@@ -32,7 +32,7 @@ struct DemoScheduledMessageContent: Equatable {
     }
 }
 
-extension ScheduledMessageFailure.PublishingFailure.Reason {
+extension ScheduledMessageFailureReason {
     var localizedDescription: String {
         switch self {
         case .banned:
