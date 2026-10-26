@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Where a scheduled message is, from the local device until the server publishes it.
+/// Where a scheduled message is, from the local device until the server sends it.
 ///
 /// The latest local changes win while they are not on the server yet, so an edit waiting to be sent shows as
 /// `preparingToSchedule` even when the server already has the message.
@@ -23,14 +23,17 @@ public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, Expr
     /// or the changes are being sent to schedule, edit or reschedule the message.
     public static let preparingToSchedule: Self = "preparing_to_schedule"
 
-    /// The server has the latest changes and publishes the message at `scheduledAt`.
+    /// The server has the latest changes and sends the message at `scheduledAt`.
     public static let scheduled: Self = "scheduled"
 
-    /// The server is publishing the message, for example after sending it now, or while it retries a send.
-    /// It can no longer be edited, rescheduled or deleted.
-    public static let publishing: Self = "publishing"
+    /// The server started sending the message to the channel, at its scheduled date or after a send now,
+    /// including while it retries a failed attempt.
+    ///
+    /// This happens on the server, not on the device: changes the device has not sent yet are `preparingToSchedule`.
+    /// The message can no longer be edited, rescheduled or deleted, and it leaves the list once it is sent.
+    public static let sending: Self = "sending"
 
-    /// The message could not be scheduled or published. See ``ScheduledMessage/failure``.
+    /// The message could not be scheduled or sent. See ``ScheduledMessage/failure``.
     public static let failed: Self = "failed"
 }
 
@@ -44,7 +47,7 @@ extension ScheduledMessageStatus {
         default:
             switch ScheduledMessageServerStatus(rawValue: serverStatus) {
             case .sending:
-                self = .publishing
+                self = .sending
             case .failed:
                 self = .failed
             default:

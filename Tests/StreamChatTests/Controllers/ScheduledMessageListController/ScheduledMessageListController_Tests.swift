@@ -130,7 +130,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: message.id)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(error)
-        XCTAssertEqual(controller.scheduledMessages.first?.status, .publishing)
+        XCTAssertEqual(controller.scheduledMessages.first?.status, .sending)
     }
 
     // MARK: - Helpers

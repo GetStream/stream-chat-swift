@@ -525,7 +525,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             (.sendingFailed, "scheduled", .failed),
             (.syncingFailed, "scheduled", .failed),
             (nil, "scheduled", .scheduled),
-            (nil, "sending", .publishing),
+            (nil, "sending", .sending),
             (nil, "failed", .failed)
         ]
         for (localState, serverStatus, expected) in cases {
@@ -700,7 +700,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: "scheduled-id")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(error)
-        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .publishing)
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .sending)
     }
 
     // MARK: - Load
