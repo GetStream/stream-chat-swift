@@ -692,7 +692,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         apiClient.test_mockResponseResult(.success(queryResponse([])))
         let query = ScheduledMessageListQuery(filter: .and([.pending, .equal(.cid, to: cid)]), pageSize: 20, next: "cursor")
 
-        _ = try waitFor { repository.load(query: query, completion: $0) }.get()
+        _ = try waitFor { repository.loadScheduledMessages(query: query, completion: $0) }.get()
 
         let expectedEndpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
             queryScheduledMessagesRequest: QueryScheduledMessagesRequest(
@@ -707,7 +707,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_load_withoutFilter_requestsTheWholeList() throws {
         apiClient.test_mockResponseResult(.success(queryResponse([])))
 
-        _ = try waitFor { repository.load(query: .init(), completion: $0) }.get()
+        _ = try waitFor { repository.loadScheduledMessages(query: .init(), completion: $0) }.get()
 
         let expectedEndpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
             queryScheduledMessagesRequest: QueryScheduledMessagesRequest(filter: nil, limit: 100, next: nil)
@@ -719,9 +719,9 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         try saveOnServer(id: "stale")
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "first", cid: cid), .dummy(id: "second", cid: cid)])))
 
-        let page = try waitFor { repository.load(query: .init(), completion: $0) }.get()
+        let page = try waitFor { repository.loadScheduledMessages(query: .init(), completion: $0) }.get()
 
-        XCTAssertEqual(Set(page.messages.map(\.id)), ["first", "second"])
+        XCTAssertEqual(Set(page.scheduledMessages.map(\.id)), ["first", "second"])
         XCTAssertNil(page.next)
         XCTAssertEqual(Set(try storedMessages().map(\.id)), ["first", "second"])
     }
@@ -730,7 +730,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         _ = try schedule(id: "local").get()
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "first", cid: cid)])))
 
-        _ = try waitFor { repository.load(query: .init(), completion: $0) }.get()
+        _ = try waitFor { repository.loadScheduledMessages(query: .init(), completion: $0) }.get()
 
         XCTAssertEqual(Set(try storedMessages().map(\.id)), ["first", "local"])
     }
@@ -738,7 +738,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_load_withAnEmptyCursor_hasNoNextPage() throws {
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(cid: cid)], next: "")))
 
-        let page = try waitFor { repository.load(query: .init(), completion: $0) }.get()
+        let page = try waitFor { repository.loadScheduledMessages(query: .init(), completion: $0) }.get()
 
         XCTAssertNil(page.next)
     }
@@ -748,18 +748,18 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         _ = try schedule(id: "other").get()
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "failed", cid: cid, status: .failed)])))
 
-        let page = try waitFor { repository.load(query: .init(filter: .failed), completion: $0) }.get()
+        let page = try waitFor { repository.loadScheduledMessages(query: .init(filter: .failed), completion: $0) }.get()
 
-        XCTAssertEqual(page.messages.map(\.id), ["failed"])
+        XCTAssertEqual(page.scheduledMessages.map(\.id), ["failed"])
         XCTAssertEqual(Set(try storedMessages().map(\.id)), ["other", "failed"])
     }
 
     func test_load_withANextPage_keepsTheOtherMessagesOfTheLocalList() throws {
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "first", cid: cid)], next: "cursor")))
-        let firstPage = try waitFor { repository.load(query: .init(pageSize: 1), completion: $0) }.get()
+        let firstPage = try waitFor { repository.loadScheduledMessages(query: .init(pageSize: 1), completion: $0) }.get()
         apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "second", cid: cid)])))
 
-        let secondPage = try waitFor { repository.load(query: .init(pageSize: 1, next: firstPage.next), completion: $0) }.get()
+        let secondPage = try waitFor { repository.loadScheduledMessages(query: .init(pageSize: 1, next: firstPage.next), completion: $0) }.get()
 
         XCTAssertEqual(firstPage.next, "cursor")
         XCTAssertNil(secondPage.next)
@@ -769,7 +769,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_load_whenTheRequestFails_fails() throws {
         apiClient.test_mockResponseResult(Result<QueryScheduledMessagesResponse, Error>.failure(ClientError.ConnectionError()))
 
-        let result = try waitFor { repository.load(query: .init(), completion: $0) }
+        let result = try waitFor { repository.loadScheduledMessages(query: .init(), completion: $0) }
 
         XCTAssertNotNil(result.error)
     }

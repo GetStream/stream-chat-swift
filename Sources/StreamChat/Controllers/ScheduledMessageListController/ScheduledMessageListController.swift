@@ -120,7 +120,7 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startScheduledMessagesObserverIfNeeded()
 
-        scheduledMessagesRepository.load(query: query) { [weak self] result in
+        scheduledMessagesRepository.loadScheduledMessages(query: query) { [weak self] result in
             guard let self else { return }
             if let value = result.value {
                 self.nextCursor = value.next
@@ -163,13 +163,13 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextCursor)
-        scheduledMessagesRepository.load(query: updatedQuery) { [weak self] result in
+        scheduledMessagesRepository.loadScheduledMessages(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(value):
                 self?.callback { [weak self] in
                     self?.nextCursor = value.next
                     self?.hasLoadedAllScheduledMessages = value.next == nil
-                    completion?(.success(value.messages))
+                    completion?(.success(value.scheduledMessages))
                 }
             case let .failure(error):
                 self?.callback {

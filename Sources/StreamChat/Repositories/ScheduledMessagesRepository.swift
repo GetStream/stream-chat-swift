@@ -15,10 +15,14 @@ struct ScheduledMessageContent: Sendable {
     var extraData: [String: RawJSON]
 }
 
+/// A response containing a list of scheduled messages and pagination information.
+struct ScheduledMessageListResponse: Sendable {
+    var scheduledMessages: [ScheduledMessage]
+    var next: String?
+}
+
 /// Repository for handling the current user's scheduled messages.
 final class ScheduledMessagesRepository: @unchecked Sendable {
-    typealias Page = (messages: [ScheduledMessage], next: String?)
-
     private let database: DatabaseContainer
     private let apiClient: APIClient
 
@@ -33,7 +37,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
     ///
     /// When the whole list is loaded, the scheduled messages missing from it are removed from the database,
     /// for example the ones that were sent while the app was offline.
-    func load(query: ScheduledMessageListQuery, completion: @escaping @Sendable (Result<Page, Error>) -> Void) {
+    func loadScheduledMessages(
+        query: ScheduledMessageListQuery,
+        completion: @escaping @Sendable (Result<ScheduledMessageListResponse, Error>) -> Void
+    ) {
         let endpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
             queryScheduledMessagesRequest: query.toRequest()
         )
@@ -55,7 +62,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                         if isWholeList, let context = session as? NSManagedObjectContext {
                             context.deleteScheduledMessages(notIn: Set(response.scheduledMessages.map(\.id)), cid: nil)
                         }
-                        return (messages, next)
+                        return ScheduledMessageListResponse(scheduledMessages: messages, next: next)
                     },
                     completion: completion
                 )
