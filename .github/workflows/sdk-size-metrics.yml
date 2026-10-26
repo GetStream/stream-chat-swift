@@ -2,6 +2,11 @@ name: SDK Size
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     paths-ignore:
       - 'README.md'
       - 'CHANGELOG.md'
