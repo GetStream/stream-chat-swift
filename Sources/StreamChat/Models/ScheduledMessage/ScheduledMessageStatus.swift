@@ -30,7 +30,7 @@ public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, Expr
     /// It can no longer be edited, rescheduled or deleted.
     public static let publishing: Self = "publishing"
 
-    /// The message could not be scheduled or published. See `ScheduledMessage.failure`.
+    /// The message could not be scheduled or published. See ``ScheduledMessage/failure``.
     public static let failed: Self = "failed"
 }
 
