@@ -579,21 +579,6 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.scheduledMessages.map(\.id), ["scheduled"])
     }
 
-    func test_saveChannel_linksTheScheduledMessagesSavedBeforeTheChannel() throws {
-        let cid: ChannelId = .unique
-        try database.createCurrentUser()
-        try database.writeSynchronously { session in
-            try session.saveScheduledMessage(payload: .dummy(id: "scheduled", cid: cid))
-        }
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
-        }
-
-        let channel = try loadChannel(cid: cid)
-        XCTAssertEqual(channel.scheduledMessages.map(\.id), ["scheduled"])
-    }
-
     func test_updatingAScheduledMessage_updatesTheChannel_andKeepsItsMessages() throws {
         // Uniqueness constraints are only enforced by SQLite.
         database = DatabaseContainer_Spy(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))

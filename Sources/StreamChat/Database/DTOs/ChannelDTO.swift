@@ -194,8 +194,6 @@ class ChannelDTO: NSManagedObject {
 
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.cid = cid.rawValue
-        // The scheduled messages saved before the channel belong to it.
-        new.scheduledMessages = Set(ScheduledMessageDTO.load(by: ScheduledMessageDTO.fetchRequest(cid: cid), context: context))
         return new
     }
 }
