@@ -4,6 +4,28 @@ runs:
   using: "composite"
   steps:
     - uses: ruby/setup-ruby@v1
+      if: runner.environment != 'self-hosted'
       with:
         ruby-version: 3.1
         bundler-cache: true
+    - name: Use the image Ruby and gem bundle
+      if: runner.environment == 'self-hosted'
+      run: |
+        runtime=$(mise where ruby@3.1.7)
+        export PATH="$runtime/bin:$PATH"
+        [[ $(ruby -e 'print RUBY_VERSION') == 3.1.7 ]]
+        unset GEM_HOME GEM_PATH RUBYOPT BUNDLE_GEMFILE BUNDLE_WITHOUT BUNDLE_WITH
+        GEM_HOME=$(ruby -rrubygems -e 'print Gem.dir')
+        GEM_PATH=$(ruby -rrubygems -e 'print Gem.path.join(":")')
+        export GEM_HOME GEM_PATH
+        export BUNDLE_GEMFILE="$PWD/Gemfile"
+        export BUNDLE_PATH="$HOME/.local/share/stream-macos-image/project-caches/stream-chat-swift/bundle"
+        export BUNDLE_IGNORE_CONFIG=1 BUNDLE_FROZEN=true
+        echo "$runtime/bin" >> "$GITHUB_PATH"
+        printf 'BUNDLE_PATH=%s\nBUNDLE_IGNORE_CONFIG=1\nBUNDLE_FROZEN=true\n' "$BUNDLE_PATH" >> "$GITHUB_ENV"
+        printf 'GEM_HOME=%s\nGEM_PATH=%s\nBUNDLE_GEMFILE=%s\nRUBYOPT=\nBUNDLE_WITHOUT=\nBUNDLE_WITH=\n' "$GEM_HOME" "$GEM_PATH" "$BUNDLE_GEMFILE" >> "$GITHUB_ENV"
+        bundler=$(awk '/^BUNDLED WITH$/ {getline; gsub(/^[[:space:]]+/, ""); print; exit}' Gemfile.lock)
+        [[ "$bundler" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+        gem list --installed --exact bundler --version "$bundler" >/dev/null || gem install bundler --version "$bundler" --no-document
+        bundle "_${bundler}_" check || bundle "_${bundler}_" install --jobs 4 --retry 3
+      shell: bash

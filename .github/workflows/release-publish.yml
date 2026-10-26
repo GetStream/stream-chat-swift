@@ -13,11 +13,11 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Connect Bot
-        uses: webfactory/ssh-agent@v0.7.0
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -42,7 +42,7 @@ jobs:
     runs-on: macos-15
     needs: release
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v7
         with:
           token: ${{ secrets.ADMIN_API_TOKEN }}
           fetch-depth: 0
@@ -53,11 +53,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_API_TOKEN }}
 
-      - uses: 8398a7/action-slack@v3
+      - uses: slackapi/slack-github-action@v4
         if: failure()
         with:
-          status: ${{ job.status }}
-          text: "⚠️ <!subteam^S030AAHLDLN>, the merge of `main` to `develop` failed on CI. Consider using this command locally: `bundle exec fastlane merge_main`"
-          fields: repo,commit,author,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          errors: true
+          payload: |
+            text: ${{ toJSON('⚠️ <!subteam^S030AAHLDLN>, the merge of `main` to `develop` failed on CI. Consider using this command locally: `bundle exec fastlane merge_main`') }}
+            attachments:
+              - color: danger
+                title: ${{ toJSON(format('{0}: {1} ({2})', github.workflow, github.job, job.status)) }}
+                text: ${{ toJSON(format('Repository: {0} | Commit: {1} | Actor: {2}', github.repository, github.sha, github.actor)) }}
+                footer: ${{ toJSON(format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id)) }}

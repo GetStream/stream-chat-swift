@@ -31,10 +31,10 @@ jobs:
     runs-on: macos-15
     steps:
     - name: Connect Bot
-      uses: webfactory/ssh-agent@v0.7.0
+      uses: webfactory/ssh-agent@v0.10.0
       with:
         ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Deploy Demo app
@@ -44,11 +44,16 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
       run: bundle exec fastlane uikit_testflight_build configuration:"${{ github.event.inputs.release }}"
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        fields: repo,commit,author,workflow
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    - uses: slackapi/slack-github-action@v4
       if: failure()
+      with:
+        webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+        webhook-type: incoming-webhook
+        errors: true
+        payload: |
+          text: ${{ toJSON('You shall not pass!') }}
+          attachments:
+            - color: danger
+              title: ${{ toJSON(format('{0}: {1} ({2})', github.workflow, github.job, job.status)) }}
+              text: ${{ toJSON(format('Repository: {0} | Commit: {1} | Actor: {2}', github.repository, github.sha, github.actor)) }}
+              footer: ${{ toJSON(format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id)) }}

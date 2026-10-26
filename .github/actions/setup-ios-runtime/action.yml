@@ -1,21 +1,46 @@
 name: 'Setup iOS Runtime'
-description: 'Download and Install requested iOS Runtime'
+description: 'Reuse or install the requested iOS runtime and simulator'
 runs:
   using: "composite"
   steps:
     - name: Setup iOS Simulator Runtime
       shell: bash
+      env:
+        IOS_VERSION: ${{ inputs.version }}
       run: |
-        sudo rm -rfv ~/Library/Developer/CoreSimulator/* || true
-        bundle exec fastlane install_runtime ios:${{ inputs.version }}
-        sudo rm -rfv *.dmg || true
+        runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-${IOS_VERSION//./-}"
+        runtimes=$(xcrun simctl list runtimes --json)
+        available=$(jq -r --arg id "$runtime_id" \
+          'any(.runtimes[]; .identifier == $id and .isAvailable == true)' <<< "$runtimes")
+        if [[ "$available" == true ]]; then
+          echo "Reuse iOS $IOS_VERSION runtime."
+        else
+          bundle exec fastlane install_runtime "ios:$IOS_VERSION"
+          xcrun simctl list runtimes --json | jq -e --arg id "$runtime_id" \
+            'any(.runtimes[]; .identifier == $id and .isAvailable == true)' >/dev/null || {
+              echo "iOS $IOS_VERSION runtime is unavailable after installation." >&2
+              exit 1
+            }
+        fi
         xcrun simctl list runtimes
-    - name: Create Custom iOS Simulator
+    - name: Reuse or create iOS Simulator
       shell: bash
+      env:
+        IOS_VERSION: ${{ inputs.version }}
+        IOS_DEVICE: ${{ inputs.device }}
       run: |
-        ios_version_dash=$(echo "${{ inputs.version }}" | tr '.' '-') # ex: 16.4 -> 16-4
-        xcrun simctl create custom-test-device "${{ inputs.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-$ios_version_dash"
-        xcrun simctl list devices ${{ inputs.version }}
+        runtime_id="com.apple.CoreSimulator.SimRuntime.iOS-${IOS_VERSION//./-}"
+        device_type=$(xcrun simctl list devicetypes --json | jq -er --arg name "$IOS_DEVICE" \
+          '.devicetypes[] | select(.name == $name) | .identifier')
+        devices=$(xcrun simctl list devices available --json)
+        available=$(jq -r --arg runtime "$runtime_id" --arg type "$device_type" --arg name "$IOS_DEVICE" \
+          'any(.devices[$runtime][]?; .deviceTypeIdentifier == $type and .name == $name and .isAvailable == true)' <<< "$devices")
+        if [[ "$available" == true ]]; then
+          echo "Reuse $IOS_DEVICE simulator for iOS $IOS_VERSION."
+        else
+          xcrun simctl create "$IOS_DEVICE" "$device_type" "$runtime_id"
+        fi
+        xcrun simctl list devices "$IOS_VERSION"
 
 inputs:
   version:
