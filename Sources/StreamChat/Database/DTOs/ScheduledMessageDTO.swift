@@ -194,7 +194,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         }
 
         let message = contentMessage(of: dto)
-        try apply(content, to: message, cid: cid, user: currentUserDTO.user)
+        try saveContent(content, to: message, cid: cid, user: currentUserDTO.user)
         message.locallyCreatedAt = now.bridgeDate
         message.createdAt = scheduledAt.bridgeDate
         message.updatedAt = now.bridgeDate
@@ -223,7 +223,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
                 content.parentId = message.parentMessageId
                 content.showReplyInChannel = message.showReplyInChannel
             }
-            try apply(content, to: message, cid: cid, user: currentUserDTO.user)
+            try saveContent(content, to: message, cid: cid, user: currentUserDTO.user)
             dto.quotedMessageId = content.quotedMessageId
         }
         if let scheduledAt {
@@ -366,7 +366,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return message
     }
 
-    private func apply(_ content: ScheduledMessageContent, to message: MessageDTO, cid: ChannelId, user: UserDTO) throws {
+    private func saveContent(_ content: ScheduledMessageContent, to message: MessageDTO, cid: ChannelId, user: UserDTO) throws {
         message.cid = cid.rawValue
         message.text = content.text
         message.type = content.parentId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
