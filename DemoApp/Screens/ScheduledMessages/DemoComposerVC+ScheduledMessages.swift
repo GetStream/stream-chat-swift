@@ -308,7 +308,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             showToast("This scheduled message no longer exists")
             return
         }
-        if message.status == .publishing {
+        if message.status == .sending {
             endScheduledMessageEditing()
             showToast("Your scheduled message was sent")
             return

@@ -188,11 +188,11 @@ struct DemoScheduledMessageList: View {
             Button { actions.open(message) } label: {
                 DemoScheduledMessageRow(message: message, channelName: actions.channelName(message))
             }
-            .disabled(message.status == .publishing)
+            .disabled(message.status == .sending)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             .listRowBackground(Color(colors.backgroundCoreApp))
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                if message.status != .publishing { swipeActions(for: message) }
+                if message.status != .sending { swipeActions(for: message) }
             }
         }
     }
@@ -293,7 +293,7 @@ private struct DemoScheduledMessageRow: View {
             break
         }
         switch message.status {
-        case .publishing:
+        case .sending:
             return ("Sending…", colors.textSecondary)
         case .failed:
             return ("Failed to send", colors.accentError)
