@@ -355,6 +355,23 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.localState, .pendingSend)
     }
 
+    func test_saveScheduledMessage_keepsTheFailedLocalChanges() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor { repository.update(id: "scheduled-id", content: content(text: "Local"), scheduledAt: nil, completion: $0) }.get()
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.scheduledMessage(id: "scheduled-id"))
+            dto.message?.localMessageState = .syncingFailed
+            dto.syncErrorReason = "scheduled_message_not_editable"
+        }
+
+        _ = model(from: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), message: .dummy(text: "Server")))
+
+        let stored = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        XCTAssertEqual(stored.message.text, "Local")
+        XCTAssertEqual(stored.message.localState, .syncingFailed)
+        XCTAssertNotNil(stored.error)
+    }
+
     // MARK: - Message to render
 
     func test_asModel_exposesTheMessageToRenderAuthoredByTheScheduler() throws {

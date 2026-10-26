@@ -156,7 +156,7 @@ class ScheduledMessageDTO: NSManagedObject {
     /// Whether the scheduled message has local changes the server does not have yet.
     var hasLocalChanges: Bool {
         switch message?.localMessageState {
-        case .pendingSend, .sending, .pendingSync, .syncing:
+        case .pendingSend, .sending, .pendingSync, .syncing, .syncingFailed:
             return true
         default:
             return false
