@@ -458,9 +458,9 @@ extension ScheduledMessageListQuery {
 // MARK: - Async
 
 extension ScheduledMessagesRepository {
-    func load(query: ScheduledMessageListQuery) async throws -> Page {
+    func loadScheduledMessages(query: ScheduledMessageListQuery) async throws -> ScheduledMessageListResponse {
         try await withCheckedThrowingContinuation { continuation in
-            load(query: query) { continuation.resume(with: $0) }
+            loadScheduledMessages(query: query) { continuation.resume(with: $0) }
         }
     }
 

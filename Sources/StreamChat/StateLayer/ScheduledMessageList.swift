@@ -101,9 +101,9 @@ public final class ScheduledMessageList: Sendable {
     @discardableResult private func loadScheduledMessages(cursor: String?, limit: Int) async throws -> [ScheduledMessage] {
         var query = query
         query.pagination = Pagination(pageSize: limit, cursor: cursor)
-        let page = try await scheduledMessagesRepository.load(query: query)
-        await state.setNextCursor(page.next)
-        return page.messages
+        let response = try await scheduledMessagesRepository.loadScheduledMessages(query: query)
+        await state.setNextCursor(response.next)
+        return response.scheduledMessages
     }
 }
 
