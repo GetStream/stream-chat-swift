@@ -73,7 +73,7 @@ public struct ScheduledMessageListQuery: Encodable, Sendable {
     ///   - filter: A scheduled messages filter.
     ///   - sort: A sorting list for scheduled messages.
     ///   - pageSize: A page size for pagination. A user has at most 100 pending messages, so the default page holds all of them.
-    ///   - next: A token for fetching the next page.
+    ///   - next: A cursor for fetching the next page.
     public init(
         filter: Filter<ScheduledMessageListFilterScope>? = nil,
         sort: [Sorting<ScheduledMessageListSortingKey>] = [],
