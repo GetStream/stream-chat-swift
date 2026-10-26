@@ -934,6 +934,7 @@ publicize_model UserGroupMember
 publicize_raw_representable ChannelCapability
 publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
+publicize_raw_representable ScheduledMessageFailureReason
 publicize_raw_representable TranslateMessageRequest TranslationLanguage
 
 # 7. Coding conformances and cleanup.

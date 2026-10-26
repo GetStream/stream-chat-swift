@@ -442,7 +442,7 @@ private extension ScheduledMessageDTO {
         }
         if ScheduledMessageServerStatus(rawValue: status) == .failed {
             return .serverFailedPublishing(.init(
-                reason: failureReason.map(ScheduledMessageFailure.PublishingFailure.Reason.init(rawValue:))
+                reason: failureReason.map(ScheduledMessageFailureReason.init(rawValue:))
             ))
         }
         return nil
