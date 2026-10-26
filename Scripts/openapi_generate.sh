@@ -230,8 +230,11 @@ allowed_models=(
   Role
   ScheduledMessageChannelResponse
   ScheduledMessageContentResponse
+  ScheduledMessageFailureReason
+  ScheduledMessageQueryStatus
   ScheduledMessageResponse
   ScheduledMessagesFilter
+  ScheduledMessageStatus
   SearchPayload
   SearchResponse
   SearchResult
@@ -426,6 +429,7 @@ encodable_only_models=(
   QueryUsersPayload
   ReactionRequest
   RemoveUserGroupMembersRequest
+  ScheduledMessageQueryStatus
   ScheduledMessagesFilter
   SearchPayload
   SendEventRequest
@@ -521,7 +525,9 @@ decodable_only_models=(
   ReminderPayload
   ScheduledMessageChannelResponse
   ScheduledMessageContentResponse
+  ScheduledMessageFailureReason
   ScheduledMessageResponse
+  ScheduledMessageServerStatus
   SearchResponse
   SearchResult
   SearchResultMessage
@@ -661,6 +667,8 @@ rename_generated QueryPollVotesRequest QueryPollVotesRequestBody
 rename_generated ReactionGroupResponse MessageReactionGroupPayload
 rename_generated ReactionResponse MessageReactionPayload
 rename_generated ReminderResponseData ReminderPayload
+# The SDK's ScheduledMessageStatus merges the local and server states.
+rename_generated ScheduledMessageStatus ScheduledMessageServerStatus
 rename_generated SendMessageResponse SendMessageResponsePayload
 rename_generated SharedLocationResponseData SharedLocation
 rename_generated ThreadParticipant ThreadParticipantPayload

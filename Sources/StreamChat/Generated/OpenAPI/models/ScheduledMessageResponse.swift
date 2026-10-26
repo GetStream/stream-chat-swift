@@ -13,7 +13,7 @@ final class ScheduledMessageResponse: Sendable, Decodable {
     /// Date/time of creation
     let createdAt: Date
     /// Why sending the message failed. Only set when status is failed. One of: banned, no_permission, channel_frozen, channel_deleted, user_deleted, moderation_blocked, hook_rejected, expired, internal_error, invalid_message, pending_not_supported
-    let failureReason: String?
+    let failureReason: ScheduledMessageFailureReason?
     /// Unique identifier of the scheduled message
     let id: String
     /// The message a scheduled message will send
@@ -21,7 +21,7 @@ final class ScheduledMessageResponse: Sendable, Decodable {
     /// Date/time the message is scheduled to be sent
     let scheduledAt: Date
     /// Status of the scheduled message. One of: scheduled, sending, failed, canceled, sent. A message is sending from its first send attempt until it is sent or fails, including while it waits to retry a failed attempt; it cannot be edited, canceled or sent now while sending
-    let status: String
+    let status: ScheduledMessageServerStatus
     /// Date/time of the last update
     let updatedAt: Date
     /// User response object
@@ -31,11 +31,11 @@ final class ScheduledMessageResponse: Sendable, Decodable {
         channel: ScheduledMessageChannelResponse? = nil,
         cid: String,
         createdAt: Date,
-        failureReason: String? = nil,
+        failureReason: ScheduledMessageFailureReason? = nil,
         id: String,
         message: ScheduledMessageContentResponse,
         scheduledAt: Date,
-        status: String,
+        status: ScheduledMessageServerStatus,
         updatedAt: Date,
         user: UserPayload
     ) {
@@ -59,11 +59,14 @@ final class ScheduledMessageResponse: Sendable, Decodable {
         )
         self.cid = try container.decode(String.self, forKey: .cid)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
-        self.failureReason = try container.decodeIfPresent(String.self, forKey: .failureReason)
+        self.failureReason = try container.decodeIfPresent(
+            ScheduledMessageFailureReason.self,
+            forKey: .failureReason
+        )
         self.id = try container.decode(String.self, forKey: .id)
         self.message = try container.decode(ScheduledMessageContentResponse.self, forKey: .message)
         self.scheduledAt = try container.decode(Date.self, forKey: .scheduledAt)
-        self.status = try container.decode(String.self, forKey: .status)
+        self.status = try container.decode(ScheduledMessageServerStatus.self, forKey: .status)
         self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         self.user = try container.decode(UserPayload.self, forKey: .user)
     }

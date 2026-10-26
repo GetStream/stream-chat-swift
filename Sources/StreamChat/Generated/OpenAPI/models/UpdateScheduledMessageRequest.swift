@@ -7,7 +7,7 @@ import Foundation
 final class UpdateScheduledMessageRequest: Sendable, Encodable, JSONEncodable {
     /// Message data for creating or updating a message
     let message: MessageRequest?
-    /// New send time (UTC). Must be at least 1 minute and at most the app's maximum lead time from now
+    /// New send time (UTC). Must be in the future and at most the app's maximum lead time from now. Rounded up to the first whole minute that is at least 1 minute from now, never earlier than requested. Resending the stored time leaves it unchanged
     let scheduledAt: Date?
 
     init(message: MessageRequest? = nil, scheduledAt: Date? = nil) {

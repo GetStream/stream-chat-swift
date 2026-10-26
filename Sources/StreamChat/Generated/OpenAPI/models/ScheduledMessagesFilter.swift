@@ -8,10 +8,10 @@ import Foundation
 final class ScheduledMessagesFilter: Sendable, Encodable, JSONEncodable {
     /// Only scheduled messages of this channel
     let cid: String?
-    /// Only these statuses. One or more of: scheduled, sending, failed
-    let status: [String]?
+    /// Only these statuses, as reported in each scheduled message's status. One or more of: scheduled, sending, failed
+    let status: [ScheduledMessageQueryStatus]?
 
-    init(cid: String? = nil, status: [String]? = nil) {
+    init(cid: String? = nil, status: [ScheduledMessageQueryStatus]? = nil) {
         self.cid = cid
         self.status = status
     }
