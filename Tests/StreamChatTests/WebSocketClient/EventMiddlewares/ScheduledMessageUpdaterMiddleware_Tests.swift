@@ -31,7 +31,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid, message: .dummy(text: "Hello"))
         )
 
-        _ = middleware.handle(event: event, session: database.viewContext)
+        _ = middleware.handle(event: event, wsEvent: .typeScheduledMessageCreatedEvent(event), session: database.viewContext)
 
         let message = try XCTUnwrap(database.viewContext.scheduledMessage(id: "scheduled-id"))
         XCTAssertEqual(message.message?.text, "Hello")
@@ -45,7 +45,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid, message: .dummy(text: "Updated"))
         )
 
-        _ = middleware.handle(event: event, session: database.viewContext)
+        _ = middleware.handle(event: event, wsEvent: .typeScheduledMessageUpdatedEvent(event), session: database.viewContext)
 
         XCTAssertEqual(database.viewContext.scheduledMessage(id: "scheduled-id")?.message?.text, "Updated")
     }
@@ -57,7 +57,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: .failed, failureReason: .banned)
         )
 
-        _ = middleware.handle(event: event, session: database.viewContext)
+        _ = middleware.handle(event: event, wsEvent: .typeScheduledMessageFailedEvent(event), session: database.viewContext)
 
         let message = try XCTUnwrap(database.viewContext.scheduledMessage(id: "scheduled-id")?.asModel())
         XCTAssertEqual(message.status, .failed)
@@ -68,7 +68,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
         try save(.dummy(id: "scheduled-id", cid: cid))
         let event = ScheduledMessageDeletedEventDTO(createdAt: .unique, scheduledMessage: .dummy(id: "scheduled-id", cid: cid))
 
-        _ = middleware.handle(event: event, session: database.viewContext)
+        _ = middleware.handle(event: event, wsEvent: .typeScheduledMessageDeletedEvent(event), session: database.viewContext)
 
         XCTAssertNil(database.viewContext.scheduledMessage(id: "scheduled-id"))
     }
@@ -81,7 +81,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid)
         )
 
-        _ = middleware.handle(event: event, session: database.viewContext)
+        _ = middleware.handle(event: event, wsEvent: .typeScheduledMessageSentEvent(event), session: database.viewContext)
 
         XCTAssertNil(database.viewContext.scheduledMessage(id: "scheduled-id"))
     }

@@ -6,21 +6,25 @@ import Foundation
 
 struct ScheduledMessageUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        switch event {
-        case let event as ScheduledMessageCreatedEventDTO:
-            save(event.scheduledMessage, session: session)
+        event
+    }
 
-        case let event as ScheduledMessageUpdatedEventDTO:
-            save(event.scheduledMessage, session: session)
+    func handle(event: Event, wsEvent: WSEvent, session: DatabaseSession) -> Event? {
+        switch wsEvent {
+        case let .typeScheduledMessageCreatedEvent(value):
+            save(value.scheduledMessage, session: session)
 
-        case let event as ScheduledMessageFailedEventDTO:
-            save(event.scheduledMessage, session: session)
+        case let .typeScheduledMessageUpdatedEvent(value):
+            save(value.scheduledMessage, session: session)
 
-        case let event as ScheduledMessageDeletedEventDTO:
-            event.scheduledMessage.map { session.deleteScheduledMessage(id: $0.id) }
+        case let .typeScheduledMessageFailedEvent(value):
+            save(value.scheduledMessage, session: session)
 
-        case let event as ScheduledMessageSentEventDTO:
-            event.scheduledMessage.map { session.deleteScheduledMessage(id: $0.id) }
+        case let .typeScheduledMessageDeletedEvent(value):
+            value.scheduledMessage.map { session.deleteScheduledMessage(id: $0.id) }
+
+        case let .typeScheduledMessageSentEvent(value):
+            value.scheduledMessage.map { session.deleteScheduledMessage(id: $0.id) }
 
         default:
             break
