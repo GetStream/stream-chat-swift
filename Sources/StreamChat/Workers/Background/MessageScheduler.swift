@@ -53,6 +53,10 @@ class MessageScheduler: Worker, @unchecked Sendable {
                 self?.enqueue(changes.pendingIds)
             })
             enqueue(observer.items)
+            // `.sending` messages are rescued with the other messages, by the `MessageSender`.
+            database.write {
+                $0.rescueScheduledMessagesStuckInSyncing()
+            }
         } catch {
             log.error("Failed to start MessageScheduler worker. \(error)")
         }

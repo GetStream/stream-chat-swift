@@ -327,6 +327,14 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         ScheduledMessageDTO.load(id: id, context: self)
     }
 
+    func rescueScheduledMessagesStuckInSyncing() {
+        let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+        request.predicate = NSPredicate(format: "message.localMessageStateRaw == %@", LocalMessageState.syncing.rawValue)
+        ScheduledMessageDTO.load(by: request, context: self).forEach {
+            $0.message?.localMessageState = .pendingSync
+        }
+    }
+
     func deleteScheduledMessage(id: String) {
         guard let dto = scheduledMessage(id: id) else { return }
         // The sent message can have the same id and reuse the content, it is kept then.

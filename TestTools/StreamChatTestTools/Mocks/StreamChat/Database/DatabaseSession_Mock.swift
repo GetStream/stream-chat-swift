@@ -111,6 +111,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteScheduledMessage(id: id)
     }
 
+    func rescueScheduledMessagesStuckInSyncing() {
+        underlyingSession.rescueScheduledMessagesStuckInSyncing()
+    }
+
     func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUserGroup(payload: payload)

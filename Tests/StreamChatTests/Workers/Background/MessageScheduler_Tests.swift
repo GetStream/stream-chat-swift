@@ -97,6 +97,26 @@ final class MessageScheduler_Tests: XCTestCase {
         )
     }
 
+    func test_scheduler_whenStarted_syncsTheChangesStuckInSyncing() throws {
+        scheduler = nil
+        try database.writeSynchronously { [cid, userId] session in
+            try session.saveScheduledMessage(payload: .dummy(id: "scheduled-id", cid: cid!, user: .dummy(userId: userId!)))
+            try session.updateScheduledMessage(id: "scheduled-id", content: nil, scheduledAt: Date().addingTimeInterval(7200))
+            session.scheduledMessage(id: "scheduled-id")?.message?.localMessageState = .syncing
+        }
+        apiClient.test_mockResponseResult(.success(UpdateScheduledMessageResponse(
+            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId))
+        )))
+
+        scheduler = MessageScheduler(scheduledMessagesRepository: repository, database: database, apiClient: apiClient)
+
+        AssertAsync.willBeEqual(
+            apiClient.request_endpoint?.path.value,
+            EndpointPath.updateScheduledMessage(id: "scheduled-id").value
+        )
+        AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == nil)
+    }
+
     func test_scheduler_withoutConnection_sendsTheMessageAgainOnceConnected() throws {
         let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
         apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(error))

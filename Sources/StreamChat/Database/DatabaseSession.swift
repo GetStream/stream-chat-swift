@@ -659,6 +659,10 @@ protocol ScheduledMessageDatabaseSession {
 
     /// Deletes the scheduled message with the specified id.
     func deleteScheduledMessage(id: String)
+
+    /// Changes the state to `.pendingSync` for all scheduled messages in `.syncing` state, at the beginning of the session.
+    /// They get stuck there when the app is killed while their changes are sent to the server.
+    func rescueScheduledMessagesStuckInSyncing()
 }
 
 protocol PollDatabaseSession {
