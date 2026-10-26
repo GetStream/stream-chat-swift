@@ -12,7 +12,7 @@ extension ScheduledMessageListController {
     }
 
     /// A publisher emitting a new value every time the scheduled messages change.
-    public var scheduledMessagesChangesPublisher: AnyPublisher<[ListChange<ScheduledMessage>], Never> {
+    public var scheduledMessagesChangesPublisher: AnyPublisher<[ScheduledMessage], Never> {
         basePublishers.scheduledMessagesChanges.keepAlive(self)
     }
 
@@ -22,7 +22,7 @@ extension ScheduledMessageListController {
         let state: CurrentValueSubject<DataController.State, Never>
 
         /// A backing publisher for `scheduledMessagesChangesPublisher`.
-        let scheduledMessagesChanges: PassthroughSubject<[ListChange<ScheduledMessage>], Never>
+        let scheduledMessagesChanges: PassthroughSubject<[ScheduledMessage], Never>
 
         init(controller: ScheduledMessageListController) {
             state = .init(controller.state)
@@ -40,8 +40,8 @@ extension ScheduledMessageListController.BasePublishers: ScheduledMessageListCon
 
     func controller(
         _ controller: ScheduledMessageListController,
-        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+        didChangeScheduledMessages scheduledMessages: [ScheduledMessage]
     ) {
-        scheduledMessagesChanges.send(changes)
+        scheduledMessagesChanges.send(scheduledMessages)
     }
 }

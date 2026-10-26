@@ -20,10 +20,10 @@ public protocol ScheduledMessageListControllerDelegate: DataControllerStateDeleg
     ///
     /// - Parameters:
     ///   - controller: The controller emitting the change callback.
-    ///   - changes: The change to the list of scheduled messages.
+    ///   - scheduledMessages: The updated list of scheduled messages.
     func controller(
         _ controller: ScheduledMessageListController,
-        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+        didChangeScheduledMessages scheduledMessages: [ScheduledMessage]
     )
 }
 
@@ -74,14 +74,14 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
             { try $0.asModel() }
         )
 
-        observer.onDidChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
+        observer.onDidChange = { [weak self, weak observer] _ in
+            self?.delegateCallback { [weak self, weak observer] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
                     return
                 }
 
-                $0.controller(self, didChangeScheduledMessages: changes)
+                $0.controller(self, didChangeScheduledMessages: Array(observer?.items ?? []))
             }
         }
 

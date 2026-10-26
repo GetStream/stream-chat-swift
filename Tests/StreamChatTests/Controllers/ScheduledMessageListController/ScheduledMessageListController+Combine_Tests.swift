@@ -52,7 +52,7 @@ final class ScheduledMessageListController_Combine_Tests: iOS13TestCase {
 
     func test_scheduledMessagesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<ScheduledMessage>], Never>.Recording()
+        var recording = Record<[ScheduledMessage], Never>.Recording()
 
         // Setup the chain
         scheduledMessageListController
@@ -76,11 +76,10 @@ final class ScheduledMessageListController_Combine_Tests: iOS13TestCase {
             createdAt: .unique,
             updatedAt: .unique
         )
-        let changes: [ListChange<ScheduledMessage>] = .init([.insert(scheduledMessage, index: .init())])
         controller()?.delegateCallback {
-            $0.controller(controller()!, didChangeScheduledMessages: changes)
+            $0.controller(controller()!, didChangeScheduledMessages: [scheduledMessage])
         }
 
-        XCTAssertEqual(recording.output, .init(arrayLiteral: [.insert(scheduledMessage, index: .init())]))
+        XCTAssertEqual(recording.output, [[scheduledMessage]])
     }
 }

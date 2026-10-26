@@ -398,21 +398,12 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
 
 extension ScheduledMessageDTO {
     /// Snapshots the current state of `ScheduledMessageDTO` and returns an immutable model object from it.
-    ///
-    /// It does not fail for a deleted scheduled message, so its removal can be reported, but its content is not available then.
     func asModel() throws -> ScheduledMessage {
+        try isNotDeleted()
+        guard let message, managedObjectContext != nil else { throw InvalidModel(self) }
         let channelId = try ChannelId(cid: cid)
-        let chatMessage: ChatMessage
-        if let message, managedObjectContext != nil, !isDeleted {
-            chatMessage = try message.asModel()
-        } else if isDeleted || managedObjectContext == nil {
-            // The relationships of a deleted scheduled message are cleared.
-            chatMessage = .scheduledMessagePlaceholder(id: id, cid: channelId, scheduledAt: scheduledAt.bridgeDate)
-        } else {
-            throw InvalidModel(self)
-        }
-
-        let failure = isDeleted ? nil : modelFailure
+        let chatMessage = try message.asModel()
+        let failure = modelFailure
         let localChannel = channelName == nil && channelImageURL == nil ? managedObjectContext?.channel(cid: channelId) : nil
         return ScheduledMessage(
             id: id,
@@ -425,7 +416,7 @@ extension ScheduledMessageDTO {
             message: chatMessage,
             quotedMessageId: quotedMessageId,
             scheduledAt: scheduledAt.bridgeDate,
-            status: ScheduledMessageStatus(localState: message?.localMessageState, serverStatus: status),
+            status: ScheduledMessageStatus(localState: message.localMessageState, serverStatus: status),
             failure: failure,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
@@ -455,80 +446,5 @@ private extension ScheduledMessageDTO {
             ))
         }
         return nil
-    }
-}
-
-private extension ChatMessage {
-    static func scheduledMessagePlaceholder(id: String, cid: ChannelId, scheduledAt: Date) -> ChatMessage {
-        ChatMessage(
-            id: id,
-            cid: cid,
-            text: "",
-            type: .regular,
-            command: nil,
-            createdAt: scheduledAt,
-            locallyCreatedAt: nil,
-            updatedAt: scheduledAt,
-            deletedAt: nil,
-            arguments: nil,
-            parentMessageId: nil,
-            showReplyInChannel: false,
-            replyCount: 0,
-            extraData: [:],
-            quotedMessage: nil,
-            isBounced: false,
-            isSilent: false,
-            isShadowed: false,
-            deletedForMe: false,
-            reactionScores: [:],
-            reactionCounts: [:],
-            reactionGroups: [:],
-            author: .placeholder(id: ""),
-            mentionedUsers: [],
-            mentionedHere: false,
-            mentionedChannel: false,
-            mentionedRoles: [],
-            threadParticipants: [],
-            attachments: [],
-            latestReplies: [],
-            localState: nil,
-            isFlaggedByCurrentUser: false,
-            latestReactions: [],
-            currentUserReactions: [],
-            isSentByCurrentUser: true,
-            pinDetails: nil,
-            translations: nil,
-            originalLanguage: nil,
-            moderationDetails: nil,
-            readBy: [],
-            poll: nil,
-            textUpdatedAt: nil,
-            draftReply: nil,
-            reminder: nil,
-            sharedLocation: nil
-        )
-    }
-}
-
-private extension ChatUser {
-    static func placeholder(id: UserId) -> ChatUser {
-        ChatUser(
-            id: id,
-            name: nil,
-            imageURL: nil,
-            isOnline: false,
-            isBanned: false,
-            isFlaggedByCurrentUser: false,
-            userRole: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            teams: [],
-            language: nil,
-            avgResponseTime: nil,
-            extraData: [:]
-        )
     }
 }

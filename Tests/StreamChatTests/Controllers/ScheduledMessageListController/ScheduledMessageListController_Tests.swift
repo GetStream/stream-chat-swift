@@ -83,18 +83,18 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         }
     }
 
-    @MainActor func test_delegate_isNotifiedOfInsertionsAndRemovals() throws {
+    @MainActor func test_delegate_isNotifiedOfTheScheduledMessages() throws {
         let controller = client.scheduledMessageListController()
         let delegate = DelegateSpy()
         controller.delegate = delegate
 
         let message = try schedule()
-        AssertAsync.willBeTrue(delegate.insertions.contains { $0.item == message && $0.index == IndexPath(item: 0, section: 0) })
+        AssertAsync.willBeEqual(delegate.scheduledMessages, [message])
 
         apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .canceled))))
         _ = try waitFor { controller.deleteScheduledMessage(id: message.id, completion: $0) }
 
-        AssertAsync.willBeTrue(delegate.removedIds.contains(message.id))
+        AssertAsync.willBeEqual(delegate.scheduledMessages, [])
         XCTAssertEqual(controller.scheduledMessages, [])
     }
 
@@ -148,26 +148,12 @@ final class ScheduledMessageListController_Tests: XCTestCase {
 }
 
 private final class DelegateSpy: ScheduledMessageListControllerDelegate, @unchecked Sendable {
-    @Atomic private(set) var changes: [ListChange<ScheduledMessage>] = []
-
-    var insertions: [(item: ScheduledMessage, index: IndexPath)] {
-        changes.compactMap {
-            guard case let .insert(item, index) = $0 else { return nil }
-            return (item, index)
-        }
-    }
-
-    var removedIds: [String] {
-        changes.compactMap {
-            guard case let .remove(item, _) = $0 else { return nil }
-            return item.id
-        }
-    }
+    @Atomic private(set) var scheduledMessages: [ScheduledMessage] = []
 
     func controller(
         _ controller: ScheduledMessageListController,
-        didChangeScheduledMessages changes: [ListChange<ScheduledMessage>]
+        didChangeScheduledMessages scheduledMessages: [ScheduledMessage]
     ) {
-        _changes.mutate { $0.append(contentsOf: changes) }
+        self.scheduledMessages = scheduledMessages
     }
 }
