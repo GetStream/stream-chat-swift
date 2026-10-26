@@ -277,7 +277,12 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.type = content.parentId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.parentMessageId = content.parentId
         message.showReplyInChannel = content.showInChannel ?? false
-        message.extraData = try JSONEncoder.default.encode(content.custom)
+        do {
+            message.extraData = try JSONEncoder.default.encode(content.custom)
+        } catch {
+            log.error("Failed to encode scheduled message extra data. Error: \(error)")
+            message.extraData = nil
+        }
         message.isSilent = content.silent ?? false
         message.user = user
         message.mentionedUserIds = content.mentionedUsers ?? []
@@ -367,7 +372,12 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         message.type = content.parentId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.parentMessageId = content.parentId
         message.showReplyInChannel = content.showReplyInChannel
-        message.extraData = try JSONEncoder.default.encode(content.extraData)
+        do {
+            message.extraData = try JSONEncoder.default.encode(content.extraData)
+        } catch {
+            log.error("Failed to encode scheduled message extra data. Error: \(error)")
+            message.extraData = nil
+        }
         message.user = user
         message.mentionedUserIds = content.mentionedUserIds
         message.mentionedUsers = Set(content.mentionedUserIds.compactMap { self.user(id: $0) })
