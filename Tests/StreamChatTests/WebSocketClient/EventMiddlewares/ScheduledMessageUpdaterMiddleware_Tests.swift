@@ -54,7 +54,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
         try save(.dummy(id: "scheduled-id", cid: cid))
         let event = ScheduledMessageFailedEventDTO(
             createdAt: .unique,
-            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: "failed", failureReason: "banned")
+            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: .failed, failureReason: .banned)
         )
 
         _ = middleware.handle(event: event, session: database.viewContext)

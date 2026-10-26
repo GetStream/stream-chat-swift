@@ -247,8 +247,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         let dto = ScheduledMessageDTO.loadOrCreate(id: payload.id, context: self)
 
         dto.cid = cid.rawValue
-        dto.status = payload.status
-        dto.failureReason = payload.failureReason
+        dto.status = payload.status.rawValue
+        dto.failureReason = payload.failureReason?.rawValue
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         if dto.channel?.cid != cid.rawValue {

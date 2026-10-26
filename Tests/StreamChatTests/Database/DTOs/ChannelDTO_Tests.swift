@@ -519,7 +519,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid), scheduledMessages: [
-                .dummy(id: "failed", cid: cid, scheduledAt: soonerAt, status: "failed"),
+                .dummy(id: "failed", cid: cid, scheduledAt: soonerAt, status: .failed),
                 .dummy(id: "later", cid: cid, scheduledAt: laterAt),
                 .dummy(id: "sooner", cid: cid, scheduledAt: soonerAt)
             ]))

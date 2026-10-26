@@ -34,13 +34,6 @@ public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, Expr
     public static let failed: Self = "failed"
 }
 
-/// The status of a scheduled message on the server.
-enum ScheduledMessageServerStatus: String {
-    case scheduled
-    case sending
-    case failed
-}
-
 extension ScheduledMessageStatus {
     init(localState: LocalMessageState?, serverStatus: String) {
         switch localState {
@@ -54,7 +47,7 @@ extension ScheduledMessageStatus {
                 self = .publishing
             case .failed:
                 self = .failed
-            case .scheduled, nil:
+            default:
                 self = .scheduled
             }
         }

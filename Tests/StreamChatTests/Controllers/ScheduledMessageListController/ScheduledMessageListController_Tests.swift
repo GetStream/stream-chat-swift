@@ -91,7 +91,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         let message = try schedule()
         AssertAsync.willBeTrue(delegate.insertions.contains { $0.item == message && $0.index == IndexPath(item: 0, section: 0) })
 
-        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: "canceled"))))
+        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .canceled))))
         _ = try waitFor { controller.deleteScheduledMessage(id: message.id, completion: $0) }
 
         AssertAsync.willBeTrue(delegate.removedIds.contains(message.id))
@@ -123,7 +123,7 @@ final class ScheduledMessageListController_Tests: XCTestCase {
     func test_sendScheduledMessageNow_requestsToSendIt() throws {
         let message = try schedule()
         let controller = client.scheduledMessageListController()
-        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: "sending"))))
+        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .sending))))
 
         let error = try waitFor { controller.sendScheduledMessageNow(id: message.id, completion: $0) }
 
