@@ -148,8 +148,8 @@ final class ScheduledMessageList_Tests: XCTestCase {
 
         let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: message.id)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
-        let stored = try await waitForScheduledMessage(id: message.id) { $0.status == .publishing }
-        XCTAssertEqual(.publishing, stored.status)
+        let stored = try await waitForScheduledMessage(id: message.id) { $0.status == .sending }
+        XCTAssertEqual(.sending, stored.status)
     }
 
     @MainActor func test_resendScheduledMessage_whenItHasNoFailedChanges_thenResendFails() async throws {
