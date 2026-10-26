@@ -61,7 +61,7 @@ final class ScheduledMessageUpdaterMiddleware_Tests: XCTestCase {
 
         let message = try XCTUnwrap(database.viewContext.scheduledMessage(id: "scheduled-id")?.asModel())
         XCTAssertEqual(message.status, .failed)
-        XCTAssertEqual(message.error, .serverFailedPublishing(.init(reason: .banned)))
+        XCTAssertEqual(message.failure, .serverFailedPublishing(.init(reason: .banned)))
     }
 
     func test_deletedEvent_deletesTheScheduledMessage() throws {

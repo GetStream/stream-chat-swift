@@ -280,7 +280,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
             // Without a connection, the changes are sent again once connected.
             let isEphemeral = ClientError.isEphemeral(error: error)
             let apiError = (error as? ClientError)?.apiError
-            let reason = apiError?.exceptionFields?["reason"].map(ScheduledMessageError.ServerRejection.Reason.init(rawValue:))
+            let reason = apiError?.exceptionFields?["reason"].map(ScheduledMessageFailure.ServerRejection.Reason.init(rawValue:))
             if reason == .scheduledMessageAlreadySent || reason == .scheduledMessageCanceled {
                 // It went out at its date, or was deleted on another device, while this device was offline.
                 database.write({ session in

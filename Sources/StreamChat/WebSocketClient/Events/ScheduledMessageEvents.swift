@@ -124,7 +124,7 @@ extension ScheduledMessageSentEventDTO: EventDTO {
 
 /// Triggered when the server could not send a scheduled message.
 public final class ScheduledMessageFailedEvent: Event {
-    /// The scheduled message that failed, with the reason in its `error`.
+    /// The scheduled message that failed, with the reason in its `failure`.
     public let scheduledMessage: ScheduledMessage
 
     /// The channel the message was scheduled for.

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Why a scheduled message has a problem, telling whether the server or the local device failed.
-public enum ScheduledMessageError: Hashable, Sendable {
+public enum ScheduledMessageFailure: Hashable, Sendable {
     /// The server rejected scheduling, editing or rescheduling the message.
     ///
     /// For example, the scheduling limit of the channel is reached. The latest changes are kept locally.
@@ -37,7 +37,7 @@ public enum ScheduledMessageError: Hashable, Sendable {
 
 // MARK: - Server Rejection
 
-public extension ScheduledMessageError {
+public extension ScheduledMessageFailure {
     /// The server rejected scheduling, editing or rescheduling a message.
     struct ServerRejection: Hashable, Sendable {
         /// The reason of the rejection, when the server gives one.
@@ -68,7 +68,7 @@ public extension ScheduledMessageError {
     }
 }
 
-public extension ScheduledMessageError.ServerRejection {
+public extension ScheduledMessageFailure.ServerRejection {
     /// The reason the server rejects scheduling, editing or rescheduling a message.
     struct Reason: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral {
         public let rawValue: String
@@ -118,7 +118,7 @@ public extension ScheduledMessageError.ServerRejection {
 
 // MARK: - Publishing Failure
 
-public extension ScheduledMessageError {
+public extension ScheduledMessageFailure {
     /// The server could not publish a scheduled message at its date.
     struct PublishingFailure: Hashable, Sendable {
         /// The reason of the failure, when the server gives one.
@@ -130,7 +130,7 @@ public extension ScheduledMessageError {
     }
 }
 
-public extension ScheduledMessageError.PublishingFailure {
+public extension ScheduledMessageFailure.PublishingFailure {
     /// The reason the server could not publish a scheduled message.
     struct Reason: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral {
         public let rawValue: String
@@ -177,7 +177,7 @@ public extension ScheduledMessageError.PublishingFailure {
 
 // MARK: - Local Failure
 
-public extension ScheduledMessageError {
+public extension ScheduledMessageFailure {
     /// The local device could not send the changes of a scheduled message to the server.
     struct LocalFailure: Hashable, Sendable {
         /// The reason of the failure.
@@ -193,7 +193,7 @@ public extension ScheduledMessageError {
     }
 }
 
-public extension ScheduledMessageError.LocalFailure {
+public extension ScheduledMessageFailure.LocalFailure {
     /// The reason the local device could not send the changes of a scheduled message.
     struct Reason: RawRepresentable, Hashable, Sendable, ExpressibleByStringLiteral {
         public let rawValue: String

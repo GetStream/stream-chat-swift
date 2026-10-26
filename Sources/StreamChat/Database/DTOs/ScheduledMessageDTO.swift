@@ -412,7 +412,7 @@ extension ScheduledMessageDTO {
             throw InvalidModel(self)
         }
 
-        let error = isDeleted ? nil : modelError
+        let failure = isDeleted ? nil : modelFailure
         let localChannel = channelName == nil && channelImageURL == nil ? managedObjectContext?.channel(cid: channelId) : nil
         return ScheduledMessage(
             id: id,
@@ -426,7 +426,7 @@ extension ScheduledMessageDTO {
             quotedMessageId: quotedMessageId,
             scheduledAt: scheduledAt.bridgeDate,
             status: ScheduledMessageStatus(localState: message?.localMessageState, serverStatus: status),
-            error: error,
+            failure: failure,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
         )
@@ -435,11 +435,11 @@ extension ScheduledMessageDTO {
 
 private extension ScheduledMessageDTO {
     // The failure of the latest local changes wins, since it is the most recent.
-    var modelError: ScheduledMessageError? {
+    var modelFailure: ScheduledMessageFailure? {
         if [.sendingFailed, .syncingFailed].contains(message?.localMessageState) {
             if let syncErrorMessage, !isSyncErrorLocal {
                 return .serverRejectedScheduling(.init(
-                    reason: syncErrorReason.map(ScheduledMessageError.ServerRejection.Reason.init(rawValue:)),
+                    reason: syncErrorReason.map(ScheduledMessageFailure.ServerRejection.Reason.init(rawValue:)),
                     message: syncErrorMessage
                 ))
             }
@@ -451,7 +451,7 @@ private extension ScheduledMessageDTO {
         }
         if ScheduledMessageServerStatus(rawValue: status) == .failed {
             return .serverFailedPublishing(.init(
-                reason: failureReason.map(ScheduledMessageError.PublishingFailure.Reason.init(rawValue:))
+                reason: failureReason.map(ScheduledMessageFailure.PublishingFailure.Reason.init(rawValue:))
             ))
         }
         return nil

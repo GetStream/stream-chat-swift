@@ -38,9 +38,9 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
 
     /// The problem of the scheduled message, telling whether the server or the local device failed.
     ///
-    /// When the latest local changes failed, their error is reported even if the server also failed to publish
+    /// When the latest local changes failed, their failure is reported even if the server also failed to publish
     /// the message, and the publishing failure is reported again once the changes are resolved.
-    public let error: ScheduledMessageError?
+    public let failure: ScheduledMessageFailure?
 
     /// The date when the message was scheduled.
     public let createdAt: Date
@@ -56,7 +56,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         quotedMessageId: MessageId?,
         scheduledAt: Date,
         status: ScheduledMessageStatus,
-        error: ScheduledMessageError? = nil,
+        failure: ScheduledMessageFailure? = nil,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -67,7 +67,7 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
         self.quotedMessageId = quotedMessageId
         self.scheduledAt = scheduledAt
         self.status = status
-        self.error = error
+        self.failure = failure
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -95,6 +95,6 @@ public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendabl
             && lhs.createdAt == rhs.createdAt
             && lhs.updatedAt == rhs.updatedAt
             && lhs.message.localState == rhs.message.localState
-            && lhs.error == rhs.error
+            && lhs.failure == rhs.failure
     }
 }
