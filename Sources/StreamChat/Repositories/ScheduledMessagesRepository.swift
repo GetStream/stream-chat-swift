@@ -338,7 +338,7 @@ extension ScheduledMessageListQuery {
             Self.collect(filter, cid: &cid, statuses: &statuses)
         }
         return QueryScheduledMessagesRequest(
-            filter: cid == nil && statuses == nil ? nil : ScheduledMessagesFilter(cid: cid, status: statuses),
+            filter: cid == nil && statuses == nil ? nil : ScheduledMessagesFilter(cid: cid, status: statuses?.map(ScheduledMessageQueryStatus.init(rawValue:))),
             limit: min(max(pagination.pageSize, 1), 100),
             next: pagination.cursor
         )

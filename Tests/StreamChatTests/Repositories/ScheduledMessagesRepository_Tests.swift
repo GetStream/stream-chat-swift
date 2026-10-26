@@ -185,8 +185,8 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
                 id: "scheduled-id",
                 cid: self.cid,
                 user: .dummy(userId: self.userId),
-                status: "failed",
-                failureReason: "banned"
+                status: .failed,
+                failureReason: .banned
             ))
             let dto = try XCTUnwrap(session.scheduledMessage(id: "scheduled-id"))
             dto.message?.localMessageState = .syncingFailed
@@ -496,7 +496,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     }
 
     func test_asModel_exposesTheStatusAndTheFailureReason() throws {
-        let response = ScheduledMessageResponse.dummy(cid: cid, status: "failed", failureReason: "channel_frozen")
+        let response = ScheduledMessageResponse.dummy(cid: cid, status: .failed, failureReason: .channelFrozen)
 
         let message = try XCTUnwrap(model(from: response))
 
@@ -627,7 +627,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_delete_ofAMessageOnTheServer_deletesItOnTheServer() throws {
         try saveOnServer(id: "scheduled-id")
-        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: "canceled"))))
+        apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: "scheduled-id", cid: cid, status: .canceled))))
 
         let error = try waitFor { repository.delete(id: "scheduled-id", completion: $0) }
 
@@ -654,7 +654,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_sendNow_updatesTheStatusOfTheMessage() throws {
         try saveOnServer(id: "scheduled-id")
         apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(
-            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), status: "sending")
+            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), status: .sending)
         )))
 
         let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
@@ -675,7 +675,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
         let expectedEndpoint: Endpoint<QueryScheduledMessagesResponse> = .queryScheduledMessages(
             queryScheduledMessagesRequest: QueryScheduledMessagesRequest(
-                filter: ScheduledMessagesFilter(cid: cid.rawValue, status: ["scheduled", "sending"]),
+                filter: ScheduledMessagesFilter(cid: cid.rawValue, status: [.scheduled, .sending]),
                 limit: 20,
                 next: "cursor"
             )
@@ -725,7 +725,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_load_withAFilter_keepsTheOtherMessagesOfTheLocalList() throws {
         apiClient.test_mockResponseResult(.success(sendMessageResponse(.dummy(id: "other", cid: cid))))
         _ = try schedule(id: "other").get()
-        apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "failed", cid: cid, status: "failed")])))
+        apiClient.test_mockResponseResult(.success(queryResponse([.dummy(id: "failed", cid: cid, status: .failed)])))
 
         let page = try waitFor { repository.load(query: .init(filter: .failed), completion: $0) }.get()
 
@@ -796,7 +796,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_query_sortsPendingMessagesFirst_thenByScheduledAt() throws {
         let later = try makeMessage(scheduledAt: Date().addingTimeInterval(200))
-        let failed = try makeMessage(scheduledAt: Date().addingTimeInterval(50), status: "failed")
+        let failed = try makeMessage(scheduledAt: Date().addingTimeInterval(50), status: .failed)
         let sooner = try makeMessage(scheduledAt: Date().addingTimeInterval(100))
 
         XCTAssertEqual(try storedMessages().map(\.id), [sooner.id, later.id, failed.id])
@@ -814,8 +814,8 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     func test_query_filtersByStatusAndChannel() throws {
         let otherCid = ChannelId.unique
         let pending = try makeMessage(scheduledAt: Date().addingTimeInterval(100))
-        let failed = try makeMessage(status: "failed")
-        let sending = try makeMessage(scheduledAt: Date().addingTimeInterval(200), status: "sending")
+        let failed = try makeMessage(status: .failed)
+        let sending = try makeMessage(scheduledAt: Date().addingTimeInterval(200), status: .sending)
         let otherChannel = try makeMessage(cid: otherCid)
 
         let pendingQuery = ScheduledMessageListQuery(filter: .and([.pending, .equal(.cid, to: cid)]))
@@ -898,8 +898,8 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         cid: ChannelId? = nil,
         text: String = "Hello",
         scheduledAt: Date = Date().addingTimeInterval(3600),
-        status: String = "scheduled",
-        failureReason: String? = nil
+        status: ScheduledMessageServerStatus = .scheduled,
+        failureReason: ScheduledMessageFailureReason? = nil
     ) throws -> ScheduledMessage {
         let response = ScheduledMessageResponse.dummy(
             id: id,
@@ -922,8 +922,8 @@ extension ScheduledMessageResponse {
         user: UserPayload = .dummy(userId: .unique),
         message: ScheduledMessageContentResponse = .dummy(),
         scheduledAt: Date = Date().addingTimeInterval(3600),
-        status: String = "scheduled",
-        failureReason: String? = nil
+        status: ScheduledMessageServerStatus = .scheduled,
+        failureReason: ScheduledMessageFailureReason? = nil
     ) -> ScheduledMessageResponse {
         .init(
             channel: channel,
