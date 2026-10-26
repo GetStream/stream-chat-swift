@@ -43,8 +43,9 @@ public final class ScheduledMessageList: Sendable {
     /// - Parameter limit: The limit for the page size. The default limit is the page size of the query.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    /// - Returns: An array of loaded scheduled messages.
+    /// - Returns: An array of loaded scheduled messages, empty when all of them are already loaded.
     @discardableResult public func loadMoreScheduledMessages(limit: Int? = nil) async throws -> [ScheduledMessage] {
+        guard await !state.hasLoadedAllScheduledMessages else { return [] }
         let cursor = await state.nextCursor
         return try await loadScheduledMessages(cursor: cursor, limit: limit ?? query.pagination.pageSize)
     }

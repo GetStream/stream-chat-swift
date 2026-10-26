@@ -96,6 +96,18 @@ final class ScheduledMessageList_Tests: XCTestCase {
         XCTAssertEqual(["first", "second"], Set(scheduledMessageList.state.scheduledMessages.map(\.id)))
     }
 
+    @MainActor func test_loadMoreScheduledMessages_whenAllAreLoaded_thenNothingIsRequested() async throws {
+        setUpScheduledMessageList()
+        apiClient.test_mockResponseResult(.success(QueryScheduledMessagesResponse(scheduledMessages: [.dummy(id: "first", cid: cid)])))
+        try await scheduledMessageList.get()
+
+        let loaded = try await scheduledMessageList.loadMoreScheduledMessages()
+
+        XCTAssertEqual([], loaded.map(\.id))
+        XCTAssertEqual(1, apiClient.request_allRecordedCalls.count)
+        XCTAssertEqual(["first"], scheduledMessageList.state.scheduledMessages.map(\.id))
+    }
+
     // MARK: - Managing Scheduled Messages
 
     @MainActor func test_rescheduleMessage_thenTheStateHasTheNewDate() async throws {
