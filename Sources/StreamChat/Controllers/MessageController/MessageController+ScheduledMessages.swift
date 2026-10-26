@@ -16,9 +16,9 @@ public extension ChatMessageController {
     ///   - mentionedUserIds: An array of the users mentioned in the reply.
     ///   - showReplyInChannel: Set this flag to `true` if you want the reply to be shown in the channel as well.
     ///   - quotedMessageId: An id of the message the reply quotes.
-    ///   - extraData: Additional extra data of the reply.
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
+    ///   - extraData: Additional extra data of the reply.
     ///   - completion: Called when the reply is saved locally, with the scheduled message or an error. It is sent
     ///   to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     func scheduleReply(
@@ -28,8 +28,8 @@ public extension ChatMessageController {
         mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
-        extraData: [String: RawJSON] = [:],
         scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
         let content = ScheduledMessageContent(
@@ -62,9 +62,9 @@ public extension ChatMessageController {
     ///   - mentionedUserIds: The new mentioned users of the reply.
     ///   - showReplyInChannel: Set this flag to `true` if you want the reply to be shown in the channel as well.
     ///   - quotedMessageId: The new quoted message of the reply.
-    ///   - extraData: The new extra data of the reply.
     ///   - scheduledAt: When to send the reply, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
+    ///   - extraData: The new extra data of the reply.
     ///   - completion: Called when the reply is updated locally, with the scheduled message or an error. The changes are
     ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     func updateScheduledReply(
@@ -74,8 +74,8 @@ public extension ChatMessageController {
         mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
-        extraData: [String: RawJSON] = [:],
         scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
         let content = ScheduledMessageContent(

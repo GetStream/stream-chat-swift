@@ -15,9 +15,9 @@ public extension ChatChannelController {
     ///   - attachments: An array of the attachments for the message.
     ///   - mentionedUserIds: An array of the users mentioned in the message.
     ///   - quotedMessageId: An id of the message the new message quotes.
-    ///   - extraData: Additional extra data of the message object.
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
+    ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when the message is saved locally, with the scheduled message or an error. It is sent
     ///   to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     func scheduleMessage(
@@ -26,8 +26,8 @@ public extension ChatChannelController {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
-        extraData: [String: RawJSON] = [:],
         scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
         guard let cid else {
@@ -63,9 +63,9 @@ public extension ChatChannelController {
     ///   - attachments: The new attachments of the message.
     ///   - mentionedUserIds: The new mentioned users of the message.
     ///   - quotedMessageId: The new quoted message of the message.
-    ///   - extraData: The new extra data of the message.
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
+    ///   - extraData: The new extra data of the message.
     ///   - completion: Called when the message is updated locally, with the scheduled message or an error. The changes are
     ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
     func updateScheduledMessage(
@@ -74,8 +74,8 @@ public extension ChatChannelController {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
-        extraData: [String: RawJSON] = [:],
         scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
     ) {
         let content = ScheduledMessageContent(
