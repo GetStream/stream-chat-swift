@@ -56,6 +56,8 @@ public final class ChannelCapability: RawRepresentable, Codable, Hashable, Senda
     public static let quoteMessage = ChannelCapability(rawValue: "quote-message")
     /// Ability to receive read events.
     public static let readEvents = ChannelCapability(rawValue: "read-events")
+    /// Ability to schedule a message to be sent later.
+    public static let scheduleMessage = ChannelCapability(rawValue: "schedule-message")
     /// Ability to use message search.
     public static let searchMessages = ChannelCapability(rawValue: "search-messages")
     /// Ability to send custom events.
