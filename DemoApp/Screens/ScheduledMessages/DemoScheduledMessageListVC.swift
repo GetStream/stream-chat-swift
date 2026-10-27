@@ -303,13 +303,9 @@ private struct DemoScheduledMessageRow: View {
     }
 
     private func rejectionText(_ rejection: ScheduledMessageFailure.ServerRejection) -> String {
-        // The server wraps the reason, like `SendMessage failed with error: "you can schedule at most 2 messages"`.
-        var reason = rejection.message
-        if let range = reason.range(of: "failed with error: ") {
-            reason = String(reason[range.upperBound...]).trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-        }
-        reason = reason.prefix(1).uppercased() + reason.dropFirst()
-        return rejection.isRetryable ? "\(reason). Swipe to retry." : "\(reason)."
+        rejection.isRetryable
+            ? "\(rejection.demoDescription). Swipe to retry."
+            : "\(rejection.demoDescription). Tap to edit or swipe to delete."
     }
 
     private func localFailureText(_ failure: ScheduledMessageFailure.LocalFailure) -> String {

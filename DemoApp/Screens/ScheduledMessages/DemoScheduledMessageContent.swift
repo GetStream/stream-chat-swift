@@ -52,9 +52,42 @@ extension ScheduledMessageFailureReason {
         case .expired:
             return "Not sent: the service was delayed by more than an hour"
         case .invalidMessage:
-            return "The message no longer meets the app's limits. Edit it"
+            return "This message can't be sent. Edit it or delete it"
         default:
             return "Something went wrong. Try again"
+        }
+    }
+}
+
+extension ScheduledMessageFailure.ServerRejection {
+    var demoDescription: String {
+        switch reason {
+        case .scheduledMessagesDisabled:
+            return "Scheduling messages is turned off for this app"
+        case .scheduledAtTooSoon:
+            return "This time has already passed. Pick a later one"
+        case .scheduledAtTooFar:
+            return "This time is too far ahead. Pick an earlier one"
+        case .scheduledLimitChannel:
+            return "You've reached the limit of scheduled messages in this channel"
+        case .scheduledLimitUser:
+            return "You've reached the limit of scheduled messages"
+        case .scheduledMessageNotEditable:
+            return "A failed message can't be changed. Delete it and schedule it again"
+        case .scheduledMessageSending:
+            return "This message is being sent"
+        case .scheduledMessageConflict:
+            return "This message was changed on another device"
+        case .scheduledMessageAlreadySent:
+            return "This message was already sent"
+        case .scheduledMessageCanceled:
+            return "This message was deleted on another device"
+        case .rateLimited:
+            return "Too many requests. Try again in a moment"
+        case .serverUnavailable:
+            return "The service is unavailable. Try again later"
+        default:
+            return "The message could not be scheduled"
         }
     }
 }

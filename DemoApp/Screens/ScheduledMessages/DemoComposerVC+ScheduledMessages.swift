@@ -25,7 +25,6 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
 
     private var isContentSchedulable: Bool {
         content.editingMessage == nil
-            && !content.hasCommand
             && !content.isEmpty
             && !hasProcessingAttachments
     }
@@ -41,6 +40,13 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
     ) {
         updateScheduledMessagesBanner()
         editingScheduledMessageDidChange(in: scheduledMessages)
+        if let id = scheduledMessageIdAwaitingConfirmation {
+            if let message = scheduledMessages.first(where: { $0.id == id }) {
+                confirmScheduling(of: message)
+            } else {
+                scheduledMessageIdAwaitingConfirmation = nil
+            }
+        }
     }
 
     // MARK: - Banner
@@ -95,7 +101,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             switch result {
             case let .success(message):
                 clearContent(sender: composerView.sendButton)
-                showToast("Message scheduled for \(DemoScheduledDateFormatter.string(from: message.scheduledAt))")
+                confirmScheduling(of: message)
             case let .failure(error):
                 presentAlert(title: "Couldn't schedule message", message: error.localizedDescription)
             }
@@ -122,6 +128,24 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
                 extraData: content.extraData,
                 completion: completion
             )
+        }
+    }
+
+    // The server can still reject a message that is saved locally, so it is confirmed once the server answers.
+    private func confirmScheduling(of message: ScheduledMessage) {
+        switch message.status {
+        case .scheduled:
+            scheduledMessageIdAwaitingConfirmation = nil
+            showToast("Message scheduled for \(DemoScheduledDateFormatter.string(from: message.scheduledAt))")
+        case .failed:
+            scheduledMessageIdAwaitingConfirmation = nil
+            if case let .serverRejectedScheduling(rejection) = message.failure {
+                showToast("Couldn't schedule the message: \(rejection.demoDescription)", isError: true)
+            } else {
+                showToast("Couldn't schedule the message", isError: true)
+            }
+        default:
+            scheduledMessageIdAwaitingConfirmation = message.id
         }
     }
 
@@ -360,8 +384,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         return false
     }
 
-    private func showToast(_ text: String) {
-        DemoToastView.show(text, in: parent?.view ?? view)
+    private func showToast(_ text: String, isError: Bool = false) {
+        DemoToastView.show(text, isError: isError, in: parent?.view ?? view)
     }
 }
 

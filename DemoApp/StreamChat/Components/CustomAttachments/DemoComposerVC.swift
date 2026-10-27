@@ -12,14 +12,11 @@ class DemoComposerVC: ComposerVC {
     var editingScheduledContent: DemoScheduledMessageContent?
     var componentsBeforeScheduledEditing: Components?
     var isSubmittingScheduledMessage = false
+    // The scheduled message whose confirmation waits for the server to accept or reject it.
+    var scheduledMessageIdAwaitingConfirmation: String?
 
-    // Created on first use, once the channel controller is set.
-    lazy var scheduledMessageListController: ScheduledMessageListController? = {
-        guard AppConfig.shared.isScheduledMessagesEnabled else { return nil }
-        let controller = channelController?.client.scheduledMessageListController()
-        controller?.delegate = self
-        return controller
-    }()
+    // Observes the scheduled messages, to confirm a scheduled message once the server answers.
+    var scheduledMessageListController: ScheduledMessageListController?
 
     lazy var scheduledMessagesBannerView = DemoComposerBannerView()
     lazy var scheduledEditingBannerView = DemoComposerBannerView()
@@ -38,6 +35,12 @@ class DemoComposerVC: ComposerVC {
         scheduledEditingBannerView.isHidden = true
         scheduledEditingBannerView.onDismiss = { [weak self] in
             self?.endScheduledMessageEditing()
+        }
+
+        // The channel and thread screens set the channel controller before setting up the composer.
+        if AppConfig.shared.isScheduledMessagesEnabled {
+            scheduledMessageListController = channelController?.client.scheduledMessageListController()
+            scheduledMessageListController?.delegate = self
         }
     }
 
@@ -63,6 +66,28 @@ class DemoComposerVC: ComposerVC {
         super.updateContent()
 
         updateScheduledMessagesBanner()
+    }
+
+    // While editing a scheduled message, closing the quote removes only the quote, for example one of a deleted message.
+    override func clearContent(sender: UIButton) {
+        guard editingScheduledMessage != nil, sender === composerView.dismissButton, content.quotingMessage != nil else {
+            super.clearContent(sender: sender)
+            return
+        }
+        content = Content(
+            text: content.text,
+            state: .new,
+            editingMessage: nil,
+            quotingMessage: nil,
+            threadMessage: content.threadMessage,
+            attachments: content.attachments,
+            mentionedUsers: content.mentionedUsers,
+            command: content.command,
+            extraData: content.extraData,
+            cooldownTime: content.cooldownTime,
+            skipEnrichUrl: content.skipEnrichUrl,
+            showReplyInChannel: content.showReplyInChannel
+        )
     }
 
     override func viewWillDisappear(_ animated: Bool) {
