@@ -80,9 +80,15 @@ public final class ScheduledMessageList: Sendable {
 
     /// Sends a scheduled message right away.
     ///
+    /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
+    /// with older content. The message is added to the channel when it is sent, which is reported by the
+    /// `ScheduledMessageSentEvent`.
+    ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error while communicating with the Stream API.
+    /// - Throws: An error when the message can't be sent, for example when its quoted message was deleted. It does not
+    /// wait for the server: a rejection sets `ScheduledMessage.status` to `.failed`, with the reason in
+    /// `ScheduledMessage.failure`.
     public func sendScheduledMessageNow(id: String) async throws {
         try await scheduledMessagesRepository.sendNow(id: id)
     }

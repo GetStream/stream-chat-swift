@@ -2161,16 +2161,15 @@ final class Chat_Tests: XCTestCase {
         XCTAssertFalse(isStored)
     }
 
-    func test_sendScheduledMessageNow_thenItIsRequested() async throws {
-        let id = String.unique
-        env.client.mockAPIClient.test_mockResponseResult(.success(
-            SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: id, cid: channelId, status: .sending))
-        ))
+    func test_sendScheduledMessageNow_thenItIsMarkedToBeSent() async throws {
+        let scheduledMessage = try await chat.scheduleMessage(with: "Later", scheduledAt: Date().addingTimeInterval(3600))
 
-        try await chat.sendScheduledMessageNow(id: id)
+        try await chat.sendScheduledMessageNow(id: scheduledMessage.id)
 
-        let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: id)
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), env.client.mockAPIClient.request_endpoint)
+        let isPendingSendNow = try env.client.databaseContainer.readSynchronously {
+            $0.scheduledMessage(id: scheduledMessage.id)?.isPendingSendNow
+        }
+        XCTAssertEqual(true, isPendingSendNow)
     }
 
     // MARK: - Test Data
