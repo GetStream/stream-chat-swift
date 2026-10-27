@@ -1370,7 +1370,9 @@ public class Chat: @unchecked Sendable {
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///
-    /// - Throws: An error while saving the scheduled message locally.
+    /// - Throws: An error while saving the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
+    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
     /// - Returns: The scheduled message.
     @discardableResult
     public func scheduleMessage(
@@ -1417,7 +1419,9 @@ public class Chat: @unchecked Sendable {
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///
-    /// - Throws: An error while saving the scheduled reply locally.
+    /// - Throws: An error while saving the scheduled reply locally, not an error of the server. Unlike `sendMessage`, it
+    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
     /// - Returns: The scheduled reply.
     @discardableResult
     public func scheduleReply(
@@ -1464,7 +1468,9 @@ public class Chat: @unchecked Sendable {
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///
-    /// - Throws: An error while updating the scheduled message locally.
+    /// - Throws: An error while updating the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
+    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
     /// - Returns: The updated scheduled message.
     @discardableResult
     public func updateScheduledMessage(
@@ -1497,7 +1503,9 @@ public class Chat: @unchecked Sendable {
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
     ///
-    /// - Throws: An error while rescheduling the message locally.
+    /// - Throws: An error while rescheduling the message locally, not an error of the server. Unlike `sendMessage`, it does
+    /// not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
     /// - Returns: The rescheduled message.
     @discardableResult
     public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {

@@ -153,6 +153,16 @@ final class ScheduledMessageList_Tests: XCTestCase {
     }
 
     @MainActor func test_resendScheduledMessage_whenItHasNoFailedChanges_thenResendFails() async throws {
+        let message = try await schedule()
+        setUpScheduledMessageList()
+
+        await XCTAssertAsyncFailure(
+            try await scheduledMessageList.resendScheduledMessage(id: message.id),
+            expectedErrorHandler: { $0 is ClientError.ScheduledMessageHasNoPendingChanges }
+        )
+    }
+
+    @MainActor func test_resendScheduledMessage_whenItDoesNotExist_thenResendFails() async throws {
         setUpScheduledMessageList()
 
         await XCTAssertAsyncFailure(
