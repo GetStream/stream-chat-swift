@@ -137,19 +137,15 @@ final class ScheduledMessageList_Tests: XCTestCase {
         XCTAssertEqual([], scheduledMessageList.state.scheduledMessages.map(\.id))
     }
 
-    @MainActor func test_sendScheduledMessageNow_thenItIsRequestedAndTheStateIsUpdated() async throws {
+    @MainActor func test_sendScheduledMessageNow_thenItIsMarkedUntilTheSchedulerSendsIt() async throws {
         let message = try await schedule()
         setUpScheduledMessageList()
-        apiClient.test_mockResponseResult(.success(
-            SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .sending))
-        ))
 
         try await scheduledMessageList.sendScheduledMessageNow(id: message.id)
 
-        let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: message.id)
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
-        let stored = try await waitForScheduledMessage(id: message.id) { $0.status == .sending }
-        XCTAssertEqual(.sending, stored.status)
+        XCTAssertNil(apiClient.request_endpoint)
+        let stored = try await waitForScheduledMessage(id: message.id) { $0.status == .preparingToSchedule }
+        XCTAssertEqual(.preparingToSchedule, stored.status)
     }
 
     @MainActor func test_resendScheduledMessage_whenItHasNoFailedChanges_thenResendFails() async throws {
