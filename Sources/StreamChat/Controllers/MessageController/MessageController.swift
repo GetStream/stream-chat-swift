@@ -1147,8 +1147,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
     ///   - extraData: Additional extra data of the reply.
-    ///   - completion: Called when the reply is saved locally, with the scheduled message or an error. It is sent
-    ///   to the server once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///   - completion: Called when the reply is saved locally, with the scheduled message or an error saving it locally. It
+    ///   is sent to the server once its attachments are uploaded. The server answers later, on the scheduled message: a
+    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
     public func scheduleReply(
         messageId: MessageId? = nil,
         text: String,

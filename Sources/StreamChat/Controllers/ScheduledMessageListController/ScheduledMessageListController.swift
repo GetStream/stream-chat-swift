@@ -185,8 +185,9 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ///   - id: The id of the scheduled message.
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
-    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error. The new date
-    ///   is sent to the server right after, see `ScheduledMessage.status`.
+    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error rescheduling
+    ///   it locally. The new date is sent to the server right after. The server answers later, on the scheduled message: a
+    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
     public func rescheduleMessage(
         id: String,
         scheduledAt: Date,
@@ -215,10 +216,12 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
     ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when the message is queued to be sent again, with an error if it failed.
+    ///   - completion: Called when the message is queued to be sent again, with an error if it could not be queued. The
+    ///   server answers later, on the scheduled message: a rejection sets `ScheduledMessage.status` to `.failed`, and
+    ///   `ScheduledMessage.failure` says why.
     public func resendScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
-        scheduledMessagesRepository.resend(id: id) { error in
-            self.callback { completion?(error) }
+        scheduledMessagesRepository.resend(id: id) { result in
+            self.callback { completion?(result.error) }
         }
     }
 

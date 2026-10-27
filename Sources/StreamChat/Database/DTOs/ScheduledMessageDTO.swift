@@ -174,6 +174,7 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
+        try validateSchedulable(content, cid: cid)
 
         let now = Date()
         let dto = ScheduledMessageDTO.loadOrCreate(id: id, context: self)
@@ -215,6 +216,11 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
         let cid = try ChannelId(cid: dto.cid)
+        if let content {
+            try validateSchedulable(content, cid: cid)
+        } else {
+            try validateQuotedMessage(dto.quotedMessageId)
+        }
 
         if let content {
             // Without a thread, the message keeps the thread it was scheduled in.
@@ -366,6 +372,15 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
         return message
     }
 
+    /// The server never schedules a slash command, which runs side effects or shows ephemeral output when it is sent,
+    /// in a channel with commands. It is refused locally, so it is not saved and sent to fail.
+    private func validateSchedulable(_ content: ScheduledMessageContent, cid: ChannelId) throws {
+        if content.text.hasPrefix("/"), (channel(cid: cid)?.config.commands.count ?? 0) > 0 {
+            throw ClientError.ScheduledMessageHasACommand()
+        }
+        try validateQuotedMessage(content.quotedMessageId)
+    }
+
     private func saveContent(_ content: ScheduledMessageContent, to message: MessageDTO, cid: ChannelId, user: UserDTO) throws {
         message.cid = cid.rawValue
         message.text = content.text
@@ -446,5 +461,14 @@ private extension ScheduledMessageDTO {
             ))
         }
         return nil
+    }
+}
+
+extension DatabaseSession {
+    /// The server sends a scheduled message with the checks of a live send, which can't quote a deleted message. It is
+    /// refused locally when the quoted message is known to be deleted.
+    func validateQuotedMessage(_ id: MessageId?) throws {
+        guard let id, message(id: id)?.deletedAt != nil else { return }
+        throw ClientError.ScheduledMessageQuotesADeletedMessage()
     }
 }

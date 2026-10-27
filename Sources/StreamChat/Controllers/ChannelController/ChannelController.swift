@@ -1965,8 +1965,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
     ///   - extraData: Additional extra data of the message object.
-    ///   - completion: Called when the message is saved locally, with the scheduled message or an error. It is sent
-    ///   to the server once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///   - completion: Called when the message is saved locally, with the scheduled message or an error saving it locally.
+    ///   It is sent to the server once its attachments are uploaded. The server answers later, on the scheduled message: a
+    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
     public func scheduleMessage(
         messageId: MessageId? = nil,
         text: String,
@@ -2013,8 +2014,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
     ///   - extraData: The new extra data of the message.
-    ///   - completion: Called when the message is updated locally, with the scheduled message or an error. The changes are
-    ///   sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///   - completion: Called when the message is updated locally, with the scheduled message or an error updating it
+    ///   locally. The changes are sent to the server once its attachments are uploaded. The server answers later, on the
+    ///   scheduled message: a rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says
+    ///   why.
     public func updateScheduledMessage(
         id: String,
         text: String,
@@ -2045,8 +2048,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - id: The id of the scheduled message.
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
-    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error. The new date
-    ///   is sent to the server right after, see `ScheduledMessage.status`.
+    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error rescheduling
+    ///   it locally. The new date is sent to the server right after. The server answers later, on the scheduled message: a
+    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
     public func rescheduleMessage(
         id: String,
         scheduledAt: Date,

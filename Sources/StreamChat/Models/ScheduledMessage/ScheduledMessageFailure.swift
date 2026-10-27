@@ -48,16 +48,15 @@ public extension ScheduledMessageFailure {
 
         /// Whether sending the same changes again can succeed without changing them.
         ///
-        /// When a scheduling limit is reached, another scheduled message has to be sent or deleted first.
-        /// When the date is in the past or too far, the message has to be rescheduled.
+        /// Only when the server is not available, too many requests were sent, the server is sending the message, or
+        /// another edit was saved first. Otherwise the message has to be changed: for example rescheduled when the date
+        /// is in the past, or deleted when a limit is reached. A rejection without a known reason is not retryable.
         public var isRetryable: Bool {
             switch reason {
-            case .scheduledAtTooSoon, .scheduledAtTooFar, .scheduledLimitChannel, .scheduledLimitUser,
-                 .scheduledMessagesDisabled, .scheduledMessageIdTaken, .scheduledMessageNotEditable,
-                 .scheduledMessageAlreadySent, .scheduledMessageCanceled:
-                return false
-            default:
+            case .serverUnavailable, .rateLimited, .scheduledMessageSending, .scheduledMessageConflict:
                 return true
+            default:
+                return false
             }
         }
 
@@ -113,6 +112,12 @@ public extension ScheduledMessageFailure.ServerRejection {
 
         /// The scheduled message was deleted, for example on another device.
         public static let scheduledMessageCanceled: Self = "scheduled_message_canceled"
+
+        /// The server is not available, for example because of an error of the server.
+        public static let serverUnavailable: Self = "server_unavailable"
+
+        /// Too many requests were sent in a short time.
+        public static let rateLimited: Self = "rate_limited"
     }
 }
 

@@ -143,6 +143,65 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertEqual(message.failure?.isRetryable, false)
     }
 
+    func test_sendPendingChanges_whenTheServerRejectsWithoutAReason_isNotRetryable() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        let apiError = APIError(code: 4, message: "SendMessage failed with error: \"slash commands cannot be scheduled\"", statusCode: 400)
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        guard case let .serverRejectedScheduling(rejection) = message.failure else {
+            return XCTFail("Expected a rejection of the server, got \(String(describing: message.failure))")
+        }
+        XCTAssertNil(rejection.reason)
+        XCTAssertEqual(message.failure?.isRetryable, false)
+    }
+
+    func test_sendPendingChanges_whenTheServerFails_isUnavailableAndRetryable() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        let apiError = APIError(code: -1, message: "Internal error", statusCode: 503)
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        guard case let .serverRejectedScheduling(rejection) = message.failure else {
+            return XCTFail("Expected a rejection of the server, got \(String(describing: message.failure))")
+        }
+        XCTAssertEqual(rejection.reason, .serverUnavailable)
+        XCTAssertEqual(message.failure?.isRetryable, true)
+    }
+
+    func test_sendPendingChanges_whenRateLimited_isRetryable() throws {
+        _ = try schedule(id: "scheduled-id").get()
+        let apiError = APIError(code: 9, message: "Too many requests", statusCode: 429)
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let message = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        guard case let .serverRejectedScheduling(rejection) = message.failure else {
+            return XCTFail("Expected a rejection of the server, got \(String(describing: message.failure))")
+        }
+        XCTAssertEqual(rejection.reason, .rateLimited)
+        XCTAssertEqual(message.failure?.isRetryable, true)
+    }
+
+    func test_serverRejection_isRetryableOnlyForAKnownTemporaryReason() {
+        let retryable: [ScheduledMessageFailure.ServerRejection.Reason?] = [
+            .serverUnavailable, .rateLimited, .scheduledMessageSending, .scheduledMessageConflict
+        ]
+        let notRetryable: [ScheduledMessageFailure.ServerRejection.Reason?] = [nil, "unknown_reason", .scheduledLimitChannel, .scheduledAtTooSoon]
+
+        for reason in retryable {
+            XCTAssertTrue(ScheduledMessageFailure.ServerRejection(reason: reason, message: "").isRetryable, "\(String(describing: reason))")
+        }
+        for reason in notRetryable {
+            XCTAssertFalse(ScheduledMessageFailure.ServerRejection(reason: reason, message: "").isRetryable, "\(String(describing: reason))")
+        }
+    }
+
     func test_sendPendingChanges_whenTheRequestFailsWithoutAResponse_isAFailureOfTheLocalDevice() throws {
         _ = try schedule(id: "scheduled-id").get()
         apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError("Encoding failed")))
@@ -255,6 +314,97 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(try database.readSynchronously { $0.message(id: "scheduled-id")?.id })
     }
 
+    func test_schedule_whenTheTextIsACommandInAChannelWithCommands_failsWithoutSavingTheMessage() throws {
+        try saveChannel(commands: [.init(name: "giphy", description: "", set: "", args: "")])
+
+        let result = schedule(id: "scheduled-id", content: content(text: "/giphy hello"))
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageHasACommand, "\(String(describing: result.error))")
+        XCTAssertNil(try storedMessage(id: "scheduled-id"))
+    }
+
+    func test_schedule_whenTheChannelHasNoCommands_savesATextStartingWithASlash() throws {
+        try saveChannel(commands: [])
+
+        let result = schedule(id: "scheduled-id", content: content(text: "/giphy hello"))
+
+        XCTAssertEqual(try result.get().message.text, "/giphy hello")
+    }
+
+    func test_update_whenTheTextIsACommandInAChannelWithCommands_failsAndKeepsTheContent() throws {
+        try saveChannel(commands: [.init(name: "giphy", description: "", set: "", args: "")])
+        _ = try schedule(id: "scheduled-id").get()
+
+        let result = try waitFor {
+            repository.update(id: "scheduled-id", content: content(text: "/giphy hello"), scheduledAt: nil, completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageHasACommand, "\(String(describing: result.error))")
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.text, "Hello")
+    }
+
+    func test_schedule_whenTheQuotedMessageIsDeleted_failsWithoutSavingTheMessage() throws {
+        try saveMessage(id: "quoted-id")
+        try deleteMessage(id: "quoted-id")
+
+        let result = schedule(id: "scheduled-id", content: content(quotedMessageId: "quoted-id"))
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageQuotesADeletedMessage, "\(String(describing: result.error))")
+        XCTAssertNil(try storedMessage(id: "scheduled-id"))
+    }
+
+    func test_update_whenTheQuotedMessageIsDeleted_failsAndKeepsTheContent() throws {
+        try saveMessage(id: "quoted-id")
+        _ = try schedule(id: "scheduled-id", content: content(quotedMessageId: "quoted-id")).get()
+        try deleteMessage(id: "quoted-id")
+
+        let result = try waitFor {
+            repository.update(
+                id: "scheduled-id",
+                content: content(text: "Edited", quotedMessageId: "quoted-id"),
+                scheduledAt: nil,
+                completion: $0
+            )
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageQuotesADeletedMessage, "\(String(describing: result.error))")
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.text, "Hello")
+    }
+
+    func test_reschedule_whenTheQuotedMessageIsDeleted_fails() throws {
+        try saveMessage(id: "quoted-id")
+        let scheduledAt = Date().addingTimeInterval(3600)
+        _ = try schedule(id: "scheduled-id", content: content(quotedMessageId: "quoted-id"), scheduledAt: scheduledAt).get()
+        try deleteMessage(id: "quoted-id")
+
+        let result = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200), completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageQuotesADeletedMessage, "\(String(describing: result.error))")
+        let stored = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        XCTAssertEqual(stored.scheduledAt.timeIntervalSince1970, scheduledAt.timeIntervalSince1970, accuracy: 0.001)
+    }
+
+    func test_sendNow_whenTheQuotedMessageIsDeleted_failsWithoutARequest() throws {
+        try saveMessage(id: "quoted-id")
+        _ = try schedule(id: "scheduled-id", content: content(quotedMessageId: "quoted-id")).get()
+        try deleteMessage(id: "quoted-id")
+
+        let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+
+        XCTAssertTrue(error is ClientError.ScheduledMessageQuotesADeletedMessage, "\(String(describing: error))")
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
+    func test_schedule_whenTheQuotedMessageIsNotDeleted_savesTheMessage() throws {
+        try saveMessage(id: "quoted-id")
+
+        let result = schedule(id: "scheduled-id", content: content(quotedMessageId: "quoted-id"))
+
+        XCTAssertEqual(try result.get().quotedMessageId, "quoted-id")
+    }
+
     func test_resend_clearsTheError() throws {
         _ = try schedule(id: "scheduled-id").get()
         apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(
@@ -340,9 +490,9 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         ))
         _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
 
-        let error = try waitFor { repository.resend(id: "scheduled-id", completion: $0) }
+        let result = try waitFor { repository.resend(id: "scheduled-id", completion: $0) }
 
-        XCTAssertNil(error)
+        XCTAssertNil(result.error)
         XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.localState, .pendingSend)
     }
 
@@ -867,12 +1017,32 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func content(text: String = "Hello", parentId: MessageId? = nil) -> ScheduledMessageContent {
+    private func saveMessage(id: MessageId) throws {
+        try database.createMessage(id: id, cid: cid)
+    }
+
+    private func deleteMessage(id: MessageId) throws {
+        try database.writeSynchronously { session in
+            session.message(id: id)?.deletedAt = Date().bridgeDate
+        }
+    }
+
+    private func saveChannel(commands: [Command]) throws {
+        try database.writeSynchronously { [cid] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid!, config: .mock(commands: commands))))
+        }
+    }
+
+    private func content(
+        text: String = "Hello",
+        parentId: MessageId? = nil,
+        quotedMessageId: MessageId? = nil
+    ) -> ScheduledMessageContent {
         ScheduledMessageContent(
             text: text,
             attachments: [],
             mentionedUserIds: [],
-            quotedMessageId: nil,
+            quotedMessageId: quotedMessageId,
             parentId: parentId,
             showReplyInChannel: false,
             extraData: [:]
