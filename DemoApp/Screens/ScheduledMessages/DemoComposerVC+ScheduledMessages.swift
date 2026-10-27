@@ -85,13 +85,17 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         messageListBannerInset = bannerInset
         listView.contentInset.top += delta
         listView.verticalScrollIndicatorInsets.top += delta
-        if isAtBottom {
-            listView.contentOffset.y = -listView.adjustedContentInset.top
+        // A banner that appears, as after scheduling, brings the last message into view above it.
+        let scrollsToBottom = isAtBottom || delta > 0
+        UIView.animate(withDuration: 0.25) {
+            if scrollsToBottom {
+                listView.contentOffset.y = -listView.adjustedContentInset.top
+            }
+            // These are pinned to the bottom of the list, behind the banner.
+            let lift = CGAffineTransform(translationX: 0, y: -bannerInset)
+            messageListVC.scrollToBottomButton.transform = lift
+            messageListVC.typingIndicatorView.transform = lift
         }
-        // These are pinned to the bottom of the list, behind the banner.
-        let lift = CGAffineTransform(translationX: 0, y: -bannerInset)
-        messageListVC.scrollToBottomButton.transform = lift
-        messageListVC.typingIndicatorView.transform = lift
     }
 
     func updateScheduledMessagesBanner() {
