@@ -18,6 +18,8 @@ class DemoComposerVC: ComposerVC {
 
     lazy var scheduledMessagesBannerView = DemoComposerBannerView()
     lazy var scheduledEditingBannerView = DemoComposerBannerView()
+    // The part of the message list's inset that makes room for the banners.
+    var messageListBannerInset: CGFloat = 0
 
     override func setUp() {
         super.setUp()

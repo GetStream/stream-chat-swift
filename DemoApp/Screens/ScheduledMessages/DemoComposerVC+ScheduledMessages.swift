@@ -57,6 +57,41 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
                 composerView.topAnchor.constraint(equalTo: banner.bottomAnchor, constant: 8)
             ])
         }
+        updateScheduledMessagesBanner()
+    }
+
+    private var messageListVC: ChatMessageListVC? {
+        (parent as? ChatChannelVC)?.messageListVC ?? (parent as? ChatThreadVC)?.messageListVC
+    }
+
+    // Makes room in the message list for the visible banner, so it does not cover the last message.
+    // The list is inverted, so its top inset is the space above the composer.
+    private func updateMessageListInsetForBanners() {
+        guard let messageListVC, let parentView = parent?.view else { return }
+        let listView = messageListVC.listView
+
+        let visibleBanner = [scheduledMessagesBannerView, scheduledEditingBannerView].first { !$0.isHidden }
+        let bannerInset = visibleBanner.map { banner in
+            banner.systemLayoutSizeFitting(
+                CGSize(width: parentView.bounds.width - 24, height: UIView.layoutFittingCompressedSize.height),
+                withHorizontalFittingPriority: .required,
+                verticalFittingPriority: .fittingSizeLevel
+            ).height + 8
+        } ?? 0
+        let delta = bannerInset - messageListBannerInset
+        guard delta != 0 else { return }
+
+        let isAtBottom = listView.contentOffset.y <= -listView.adjustedContentInset.top + 1
+        messageListBannerInset = bannerInset
+        listView.contentInset.top += delta
+        listView.verticalScrollIndicatorInsets.top += delta
+        if isAtBottom {
+            listView.contentOffset.y = -listView.adjustedContentInset.top
+        }
+        // These are pinned to the bottom of the list, behind the banner.
+        let lift = CGAffineTransform(translationX: 0, y: -bannerInset)
+        messageListVC.scrollToBottomButton.transform = lift
+        messageListVC.typingIndicatorView.transform = lift
     }
 
     func updateScheduledMessagesBanner() {
@@ -72,6 +107,7 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
 
         scheduledMessagesBannerView.isHidden = count == 0 || suggestionsVC.isPresented
         scheduledEditingBannerView.isHidden = editingScheduledMessage == nil || suggestionsVC.isPresented
+        updateMessageListInsetForBanners()
     }
 
     // MARK: - Scheduling
