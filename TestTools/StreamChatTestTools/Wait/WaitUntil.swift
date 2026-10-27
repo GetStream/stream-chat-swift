@@ -28,6 +28,8 @@ extension XCTestCase {
         line: UInt = #line
     ) {
         let expectation = XCTestExpectation(description: "Condition is true")
+        // The timer fires on the main run loop, the same thread the condition comes from.
+        nonisolated(unsafe) let condition = condition
         let timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
             guard condition() else { return }
             timer.invalidate()
@@ -47,6 +49,7 @@ extension XCTestCase {
     ) {
         let expectation = XCTestExpectation(description: "Condition becomes false")
         expectation.isInverted = true
+        nonisolated(unsafe) let condition = condition
         let timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
             guard !condition() else { return }
             timer.invalidate()

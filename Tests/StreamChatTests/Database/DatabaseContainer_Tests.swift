@@ -494,6 +494,8 @@ final class DatabaseContainer_Tests: XCTestCase {
                 cache: nil
             )
             
+            try session.saveScheduledMessage(payload: .dummy(cid: cid))
+
             QueuedRequestDTO.createRequest(date: .unique, endpoint: Data(), context: container.writableContext)
         }
     }
