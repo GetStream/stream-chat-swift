@@ -8,7 +8,7 @@ import Foundation
 ///
 /// Until it is sent, the current user can edit, reschedule, send now or delete it. Other channel members
 /// see nothing until it is sent, and then it arrives as a regular message.
-public final class ScheduledMessage: Identifiable, Equatable, @unchecked Sendable {
+public final class ScheduledMessage: Identifiable, Equatable, Sendable {
     /// The unique identifier of the scheduled message.
     ///
     /// It is also the identifier of `message`, and not necessarily the one of the message created when it is sent.
