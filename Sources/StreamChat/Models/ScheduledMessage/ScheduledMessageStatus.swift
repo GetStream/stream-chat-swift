@@ -20,7 +20,7 @@ public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, Expr
     }
 
     /// The latest changes are not on the server yet: the attachments are uploading, the device is offline,
-    /// or the changes are being sent to schedule, edit or reschedule the message.
+    /// or the changes are being sent to schedule, edit, reschedule or send now the message.
     public static let preparingToSchedule: Self = "preparing_to_schedule"
 
     /// The server has the latest changes and sends the message at `scheduledAt`.
@@ -38,13 +38,18 @@ public struct ScheduledMessageStatus: RawRepresentable, Hashable, Sendable, Expr
 }
 
 extension ScheduledMessageStatus {
-    init(localState: LocalMessageState?, serverStatus: String) {
+    init(localState: LocalMessageState?, serverStatus: String, isPendingSendNow: Bool = false) {
         switch localState {
         case .pendingSend, .pendingSync, .sending, .syncing:
             self = .preparingToSchedule
         case .sendingFailed, .syncingFailed:
             self = .failed
         default:
+            // Sending it now is a change the server does not have yet.
+            if isPendingSendNow {
+                self = .preparingToSchedule
+                return
+            }
             switch ScheduledMessageServerStatus(rawValue: serverStatus) {
             case .sending:
                 self = .sending

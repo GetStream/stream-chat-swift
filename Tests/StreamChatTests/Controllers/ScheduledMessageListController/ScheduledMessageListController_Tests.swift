@@ -120,17 +120,17 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(stored.scheduledAt.timeIntervalSince1970, newDate.timeIntervalSince1970, accuracy: 0.001)
     }
 
-    func test_sendScheduledMessageNow_requestsToSendIt() throws {
+    func test_sendScheduledMessageNow_marksItToBeSentByTheScheduler() throws {
         let message = try schedule()
         let controller = client.scheduledMessageListController()
-        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .sending))))
+        apiClient.cleanUp()
 
         let error = try waitFor { controller.sendScheduledMessageNow(id: message.id, completion: $0) }
 
-        let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: message.id)
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(error)
-        XCTAssertEqual(controller.scheduledMessages.first?.status, .sending)
+        XCTAssertNil(apiClient.request_endpoint)
+        let isPendingSendNow = try client.databaseContainer.readSynchronously { $0.scheduledMessage(id: message.id)?.isPendingSendNow }
+        XCTAssertEqual(isPendingSendNow, true)
     }
 
     // MARK: - Helpers

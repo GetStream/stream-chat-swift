@@ -839,18 +839,67 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     // MARK: - Send now
 
-    func test_sendNow_updatesTheStatusOfTheMessage() throws {
+    func test_sendNow_marksTheMessageWithoutARequest() throws {
         try saveOnServer(id: "scheduled-id")
-        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(
-            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), status: .sending)
-        )))
 
         let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
 
+        XCTAssertNil(error)
+        XCTAssertNil(apiClient.request_endpoint)
+        XCTAssertEqual(try isPendingSendNow(id: "scheduled-id"), true)
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .preparingToSchedule)
+    }
+
+    func test_sendNow_whenTheMessageDoesNotExist_fails() throws {
+        let error = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+
+        XCTAssertTrue(error is ClientError.ScheduledMessageDoesNotExist, "\(String(describing: error))")
+    }
+
+    func test_sendPendingChanges_whenMarkedToSendNow_sendsItNow() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+        apiClient.test_mockResponseResult(.success(sendNowResponse(id: "scheduled-id")))
+
+        let result = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
         let expectedEndpoint: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: "scheduled-id")
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-        XCTAssertNil(error)
-        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .sending)
+        XCTAssertEqual(try result.get()?.status, .sending)
+        XCTAssertEqual(try isPendingSendNow(id: "scheduled-id"), false)
+    }
+
+    func test_sendPendingChanges_whenEditedAndMarkedToSendNow_sendsTheChangesBeforeSendingIt() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor { repository.update(id: "scheduled-id", content: content(text: "Edited"), scheduledAt: nil, completion: $0) }
+        _ = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+        apiClient.test_mockResponseResult(.success(updateResponse(
+            .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), message: .dummy(text: "Edited"))
+        )))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, EndpointPath.updateScheduledMessage(id: "scheduled-id").value)
+        XCTAssertEqual(try isPendingSendNow(id: "scheduled-id"), true, "Sent once the changes are on the server")
+
+        apiClient.test_mockResponseResult(.success(sendNowResponse(id: "scheduled-id")))
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        let expectedSendNow: Endpoint<SendScheduledMessageNowResponse> = .sendScheduledMessageNow(id: "scheduled-id")
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedSendNow))
+    }
+
+    func test_sendPendingChanges_whenSendingNowIsRejected_keepsItMarkedToSendNowOnRetry() throws {
+        try saveOnServer(id: "scheduled-id")
+        _ = try waitFor { repository.sendNow(id: "scheduled-id", completion: $0) }
+        apiClient.test_mockResponseResult(Result<SendScheduledMessageNowResponse, Error>.failure(
+            ClientError(with: APIError(code: 4, message: "Rejected", statusCode: 400))
+        ))
+
+        _ = try waitFor { repository.sendPendingChanges(id: "scheduled-id", completion: $0) }
+
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.status, .failed)
+        XCTAssertEqual(try isPendingSendNow(id: "scheduled-id"), true)
     }
 
     // MARK: - Load
@@ -1062,6 +1111,14 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         } catch {
             return .failure(error)
         }
+    }
+
+    private func isPendingSendNow(id: String) throws -> Bool? {
+        try database.readSynchronously { $0.scheduledMessage(id: id)?.isPendingSendNow }
+    }
+
+    private func sendNowResponse(id: String) -> SendScheduledMessageNowResponse {
+        SendScheduledMessageNowResponse(scheduledMessage: .dummy(id: id, cid: cid, user: .dummy(userId: userId), status: .sending))
     }
 
     private func saveOnServer(id: String) throws {

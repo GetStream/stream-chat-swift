@@ -227,9 +227,15 @@ public class ScheduledMessageListController: DataController, DelegateCallable, D
 
     /// Sends a scheduled message right away.
     ///
+    /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
+    /// with older content. The message is added to the channel when it is sent, which is reported by the
+    /// `ScheduledMessageSentEvent`.
+    ///
     /// - Parameters:
     ///   - id: The id of the scheduled message.
-    ///   - completion: Called when sending started, with an error if it failed.
+    ///   - completion: Called when the message is marked locally, with an error if it can't be sent, for example when
+    ///   its quoted message was deleted. A rejection of the server sets `ScheduledMessage.status` to `.failed`, with the
+    ///   reason in `ScheduledMessage.failure`.
     public func sendScheduledMessageNow(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
         scheduledMessagesRepository.sendNow(id: id) { error in
             self.callback { completion?(error) }

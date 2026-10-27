@@ -143,6 +143,30 @@ final class MessageScheduler_Tests: XCTestCase {
         AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == .sendingFailed)
     }
 
+    func test_scheduler_sendsNow_aMessageMarkedToBeSentNow() throws {
+        try database.writeSynchronously { [cid, userId] session in
+            let dto = try session.saveScheduledMessage(payload: .dummy(id: "scheduled-id", cid: cid!, user: .dummy(userId: userId!)))
+            dto.isPendingSendNow = true
+        }
+        apiClient.test_mockResponseResult(.success(SendScheduledMessageNowResponse(
+            scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), status: .sending)
+        )))
+
+        AssertAsync.willBeEqual(
+            apiClient.request_endpoint?.path.value,
+            EndpointPath.sendScheduledMessageNow(id: "scheduled-id").value
+        )
+    }
+
+    func test_scheduler_waitsForTheAttachmentsBeforeSendingNow() throws {
+        try scheduleLocally(id: "scheduled-id", attachments: [.mockFile])
+        try database.writeSynchronously { session in
+            session.scheduledMessage(id: "scheduled-id")?.isPendingSendNow = true
+        }
+
+        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+    }
+
     // MARK: - Helpers
 
     private func scheduleLocally(id: String, attachments: [AnyAttachmentPayload] = []) throws {

@@ -161,23 +161,22 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         })
     }
 
+    /// Marks a scheduled message to be sent right away. The `MessageScheduler` sends it once its local changes and
+    /// attachments are on the server, so it is never sent with older content.
     func sendNow(id: String, completion: @escaping @Sendable (Error?) -> Void) {
-        database.read({ session in
-            try session.validateQuotedMessage(session.scheduledMessage(id: id)?.quotedMessageId)
-        }, completion: { [weak self] result in
-            if let error = result.error {
-                completion(error)
-                return
+        database.write({ session in
+            guard let dto = session.scheduledMessage(id: id) else {
+                throw ClientError.ScheduledMessageDoesNotExist(id: id)
             }
-            self?.apiClient.request(endpoint: .sendScheduledMessageNow(id: id)) { [weak self] result in
-                self?.save(result.map(\.scheduledMessage), localState: nil) { completion($0.error) }
-            }
-        })
+            try session.validateQuotedMessage(dto.quotedMessageId)
+            dto.isPendingSendNow = true
+        }, completion: completion)
     }
 
     // MARK: - Syncing with the server
 
-    /// Sends the local changes of a scheduled message to the server: schedules a new one, or updates an existing one.
+    /// Sends the local changes of a scheduled message to the server: schedules a new one, updates an existing one, or,
+    /// once they are on the server, sends it right away.
     ///
     /// Called by the `MessageScheduler` once the attachments of the message are uploaded. Completes with `nil` when the
     /// message is no longer scheduled: the server sent it right away because its date passed while offline, it was
@@ -186,6 +185,7 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         enum Request {
             case schedule(cid: ChannelId, request: SendMessageRequest)
             case update(UpdateScheduledMessageRequest)
+            case sendNow
         }
 
         database.write(converting: { session -> Request in
@@ -205,6 +205,8 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                     message: message.asMessageRequest(),
                     scheduledAt: dto.hasPendingScheduledAt ? scheduledAt : nil
                 ))
+            case nil where dto.isPendingSendNow:
+                return .sendNow
             default:
                 throw ClientError.ScheduledMessageHasNoPendingChanges(id: id)
             }
@@ -246,6 +248,10 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
                         completion: completion
                     )
                 }
+            case .success(.sendNow):
+                apiClient.request(endpoint: .sendScheduledMessageNow(id: id)) { [weak self] result in
+                    self?.completeSendNow(id: id, with: result.map(\.scheduledMessage), completion: completion)
+                }
             case let .failure(error):
                 completion(.failure(error))
             }
@@ -254,10 +260,27 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
 
     // MARK: - Helpers
 
+    private func completeSendNow(
+        id: String,
+        with result: Result<ScheduledMessageResponse, Error>,
+        completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
+    ) {
+        guard case let .success(payload) = result else {
+            // Kept to be sent now, after the changes are sent again when it is retried.
+            complete(id: id, failedState: .syncingFailed, pendingState: nil, with: result.map { $0 }, completion: completion)
+            return
+        }
+        database.write(converting: { session -> ScheduledMessage? in
+            session.scheduledMessage(id: id)?.isPendingSendNow = false
+            return try session.saveScheduledMessage(payload: payload).asModel()
+        }, completion: completion)
+    }
+
     private func complete(
         id: String,
         failedState: LocalMessageState,
-        pendingState: LocalMessageState,
+        // The state to send the changes again once connected, `nil` when only sending now is pending.
+        pendingState: LocalMessageState?,
         with result: Result<ScheduledMessageResponse?, Error>,
         completion: @escaping @Sendable (Result<ScheduledMessage?, Error>) -> Void
     ) {
@@ -327,26 +350,6 @@ final class ScheduledMessagesRepository: @unchecked Sendable {
         }, completion: { error in
             completion(error.map { .failure($0) } ?? .success(nil))
         })
-    }
-
-    private func save(
-        _ result: Result<ScheduledMessageResponse?, Error>,
-        localState: LocalMessageState?,
-        completion: @escaping @Sendable (Result<ScheduledMessage, Error>) -> Void
-    ) {
-        switch result {
-        case let .success(payload):
-            guard let payload else {
-                completion(.failure(ClientError.Unexpected("Missing `scheduled_message` in the response.")))
-                return
-            }
-            database.write(converting: { session in
-                session.scheduledMessage(id: payload.id)?.message?.localMessageState = localState
-                return try session.saveScheduledMessage(payload: payload).asModel()
-            }, completion: completion)
-        case let .failure(error):
-            completion(.failure(error))
-        }
     }
 }
 

@@ -21,6 +21,9 @@ class ScheduledMessageDTO: NSManagedObject {
     // Whether `scheduledAt` was changed locally and is not on the server yet.
     @NSManaged var hasPendingScheduledAt: Bool
 
+    // Whether the message is sent right away, once its local changes and attachments are on the server.
+    @NSManaged var isPendingSendNow: Bool
+
     // Why the latest local changes could not be sent to the server, from the error of the server.
     @NSManaged var syncErrorReason: String?
     @NSManaged var syncErrorMessage: String?
@@ -47,7 +50,11 @@ class ScheduledMessageDTO: NSManagedObject {
 
         guard !isDeleted else { return }
 
-        let newIsPending = ScheduledMessageStatus(localState: message?.localMessageState, serverStatus: status) != .failed
+        let newIsPending = ScheduledMessageStatus(
+            localState: message?.localMessageState,
+            serverStatus: status,
+            isPendingSendNow: isPendingSendNow
+        ) != .failed
         if isPending != newIsPending {
             isPending = newIsPending
         }
@@ -105,16 +112,19 @@ class ScheduledMessageDTO: NSManagedObject {
         return request
     }
 
-    /// Returns a fetch request for the scheduled messages with local changes to send to the server,
-    /// once all their attachments are uploaded.
+    /// Returns a fetch request for the scheduled messages with local changes to send to the server, or to send right
+    /// away once their changes are sent, when all their attachments are uploaded.
     static func pendingRequestsFetchRequest() -> NSFetchRequest<ScheduledMessageDTO> {
         let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ScheduledMessageDTO.createdAt, ascending: true)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(
-                format: "message.localMessageStateRaw IN %@",
-                [LocalMessageState.pendingSend.rawValue, LocalMessageState.pendingSync.rawValue]
-            ),
+            NSCompoundPredicate(orPredicateWithSubpredicates: [
+                NSPredicate(
+                    format: "message.localMessageStateRaw IN %@",
+                    [LocalMessageState.pendingSend.rawValue, LocalMessageState.pendingSync.rawValue]
+                ),
+                NSPredicate(format: "isPendingSendNow == YES AND message.localMessageStateRaw == nil")
+            ]),
             NSCompoundPredicate(orPredicateWithSubpredicates: [
                 NSPredicate(
                     format: "SUBQUERY(message.attachments, $a, $a.localStateRaw == %@).@count == message.attachments.@count",
@@ -431,7 +441,7 @@ extension ScheduledMessageDTO {
             message: chatMessage,
             quotedMessageId: quotedMessageId,
             scheduledAt: scheduledAt.bridgeDate,
-            status: ScheduledMessageStatus(localState: message.localMessageState, serverStatus: status),
+            status: ScheduledMessageStatus(localState: message.localMessageState, serverStatus: status, isPendingSendNow: isPendingSendNow),
             failure: failure,
             createdAt: createdAt.bridgeDate,
             updatedAt: updatedAt.bridgeDate
