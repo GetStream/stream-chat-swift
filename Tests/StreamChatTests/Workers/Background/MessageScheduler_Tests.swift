@@ -31,17 +31,15 @@ final class MessageScheduler_Tests: XCTestCase {
     override func tearDown() {
         apiClient.cleanUp()
 
-        AssertAsync {
-            Assert.canBeReleased(&scheduler)
-            Assert.canBeReleased(&repository)
-            Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&database)
-        }
-
+        weak var weakScheduler = scheduler
+        weak var weakRepository = repository
+        weak var weakAPIClient = apiClient
+        weak var weakDatabase = database
         scheduler = nil
         repository = nil
         apiClient = nil
         database = nil
+        wait(until: { weakScheduler == nil && weakRepository == nil && weakAPIClient == nil && weakDatabase == nil })
         cid = nil
         userId = nil
 
@@ -55,11 +53,10 @@ final class MessageScheduler_Tests: XCTestCase {
 
         try scheduleLocally(id: "scheduled-id")
 
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint?.path.value,
-            EndpointPath.sendMessage(type: cid.type.rawValue, id: cid.id).value
-        )
-        AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == nil)
+        wait(until: { [self] in
+            apiClient.request_endpoint?.path.value == EndpointPath.sendMessage(type: cid.type.rawValue, id: cid.id).value
+        })
+        wait(until: { [self] in localState(of: "scheduled-id") == nil })
     }
 
     func test_scheduler_waitsForTheAttachmentsToBeUploaded() throws {
@@ -67,16 +64,15 @@ final class MessageScheduler_Tests: XCTestCase {
 
         try scheduleLocally(id: "scheduled-id", attachments: [.mockFile])
 
-        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+        waitWhile { [self] in apiClient.request_endpoint == nil }
 
         try database.writeSynchronously { session in
             session.scheduledMessage(id: "scheduled-id")?.message?.attachments.forEach { $0.localState = .uploaded }
         }
 
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint?.path.value,
-            EndpointPath.sendMessage(type: cid.type.rawValue, id: cid.id).value
-        )
+        wait(until: { [self] in
+            apiClient.request_endpoint?.path.value == EndpointPath.sendMessage(type: cid.type.rawValue, id: cid.id).value
+        })
     }
 
     func test_scheduler_syncsTheChanges_ofAMessageOnTheServer() throws {
@@ -91,10 +87,9 @@ final class MessageScheduler_Tests: XCTestCase {
             try session.updateScheduledMessage(id: "scheduled-id", content: nil, scheduledAt: Date().addingTimeInterval(7200))
         }
 
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint?.path.value,
-            EndpointPath.updateScheduledMessage(id: "scheduled-id").value
-        )
+        wait(until: { [self] in
+            apiClient.request_endpoint?.path.value == EndpointPath.updateScheduledMessage(id: "scheduled-id").value
+        })
     }
 
     func test_scheduler_whenStarted_syncsTheChangesStuckInSyncing() throws {
@@ -110,11 +105,10 @@ final class MessageScheduler_Tests: XCTestCase {
 
         scheduler = MessageScheduler(scheduledMessagesRepository: repository, database: database, apiClient: apiClient)
 
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint?.path.value,
-            EndpointPath.updateScheduledMessage(id: "scheduled-id").value
-        )
-        AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == nil)
+        wait(until: { [self] in
+            apiClient.request_endpoint?.path.value == EndpointPath.updateScheduledMessage(id: "scheduled-id").value
+        })
+        wait(until: { [self] in localState(of: "scheduled-id") == nil })
     }
 
     func test_scheduler_withoutConnection_sendsTheMessageAgainOnceConnected() throws {
@@ -123,15 +117,15 @@ final class MessageScheduler_Tests: XCTestCase {
 
         try scheduleLocally(id: "scheduled-id")
 
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
-        AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == .pendingSend)
-        AssertAsync.staysEqual(apiClient.request_allRecordedCalls.count, 1)
+        wait(until: { [self] in apiClient.request_allRecordedCalls.count == 1 })
+        wait(until: { [self] in localState(of: "scheduled-id") == .pendingSend })
+        waitWhile { [self] in apiClient.request_allRecordedCalls.count == 1 }
 
         apiClient.test_mockResponseResult(.success(sendResponse(id: "scheduled-id")))
         scheduler.didUpdateConnectionState(.connected(healthCheckInfo: .init(connectionId: .unique)))
 
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2)
-        AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == nil)
+        wait(until: { [self] in apiClient.request_allRecordedCalls.count == 2 })
+        wait(until: { [self] in localState(of: "scheduled-id") == nil })
     }
 
     func test_scheduler_whenTheRequestFails_marksTheMessageFailed() throws {
@@ -140,7 +134,7 @@ final class MessageScheduler_Tests: XCTestCase {
 
         try scheduleLocally(id: "scheduled-id")
 
-        AssertAsync.willBeTrue(self.localState(of: "scheduled-id") == .sendingFailed)
+        wait(until: { [self] in localState(of: "scheduled-id") == .sendingFailed })
     }
 
     func test_scheduler_sendsNow_aMessageMarkedToBeSentNow() throws {
@@ -152,10 +146,9 @@ final class MessageScheduler_Tests: XCTestCase {
             scheduledMessage: .dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId), status: .sending)
         )))
 
-        AssertAsync.willBeEqual(
-            apiClient.request_endpoint?.path.value,
-            EndpointPath.sendScheduledMessageNow(id: "scheduled-id").value
-        )
+        wait(until: { [self] in
+            apiClient.request_endpoint?.path.value == EndpointPath.sendScheduledMessageNow(id: "scheduled-id").value
+        })
     }
 
     func test_scheduler_waitsForTheAttachmentsBeforeSendingNow() throws {
@@ -164,7 +157,7 @@ final class MessageScheduler_Tests: XCTestCase {
             session.scheduledMessage(id: "scheduled-id")?.isPendingSendNow = true
         }
 
-        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+        waitWhile { [self] in apiClient.request_endpoint == nil }
     }
 
     // MARK: - Helpers

@@ -26,8 +26,9 @@ final class ScheduledMessageListController_Combine_Tests: iOS13TestCase {
     override func tearDown() {
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
-        AssertAsync.canBeReleased(&scheduledMessageListController)
+        weak var weakController = scheduledMessageListController
         scheduledMessageListController = nil
+        wait(until: { weakController == nil })
         super.tearDown()
     }
 
@@ -47,7 +48,7 @@ final class ScheduledMessageListController_Combine_Tests: iOS13TestCase {
 
         controller()?.delegateCallback { $0.controller(controller()!, didChangeState: .remoteDataFetched) }
 
-        AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
+        XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
 
     func test_scheduledMessagesChangesPublisher() {

@@ -453,7 +453,7 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
             result = $0
             sendCompleted.fulfill()
         }
-        AssertAsync.willBeTrue(apiClient.request_endpoint?.path == .sendMessage(type: cid.type.rawValue, id: cid.id))
+        wait(until: { [self] in apiClient.request_endpoint?.path == .sendMessage(type: cid.type.rawValue, id: cid.id) })
 
         XCTAssertNil(try waitFor { repository.delete(id: "scheduled-id", completion: $0) })
         apiClient.test_simulateResponse(.success(sendMessageResponse(.dummy(id: "scheduled-id", cid: cid, user: .dummy(userId: userId)))))

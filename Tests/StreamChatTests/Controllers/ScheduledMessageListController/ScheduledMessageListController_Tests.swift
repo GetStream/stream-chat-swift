@@ -89,12 +89,12 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         controller.delegate = delegate
 
         let message = try schedule()
-        AssertAsync.willBeEqual(delegate.scheduledMessages, [message])
+        wait(until: { delegate.scheduledMessages == [message] })
 
         apiClient.test_mockResponseResult(.success(DeleteScheduledMessageResponse(scheduledMessage: .dummy(id: message.id, cid: cid, status: .canceled))))
         _ = try waitFor { controller.deleteScheduledMessage(id: message.id, completion: $0) }
 
-        AssertAsync.willBeEqual(delegate.scheduledMessages, [])
+        wait(until: { delegate.scheduledMessages == [] })
         XCTAssertEqual(controller.scheduledMessages, [])
     }
 
