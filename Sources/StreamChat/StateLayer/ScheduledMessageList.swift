@@ -61,7 +61,9 @@ public final class ScheduledMessageList: Sendable {
     ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
     ///   next whole minute, at least 1 minute from now.
     ///
-    /// - Throws: An error while rescheduling the message locally.
+    /// - Throws: An error while rescheduling the message locally, not an error of the server. Unlike `sendMessage`, it does
+    /// not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
     /// - Returns: The rescheduled message.
     @discardableResult public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
         try await scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
@@ -92,7 +94,9 @@ public final class ScheduledMessageList: Sendable {
     ///
     /// - Parameter id: The id of the scheduled message.
     ///
-    /// - Throws: An error when the scheduled message has no failed changes.
+    /// - Throws: An error when the scheduled message has no failed changes, not an error of the server. It does not wait for
+    /// the server: the server answers later, on the scheduled message, and a rejection sets `ScheduledMessage.status` to
+    /// `.failed` again, with the reason in `ScheduledMessage.failure`.
     public func resendScheduledMessage(id: String) async throws {
         _ = try await scheduledMessagesRepository.resend(id: id)
     }
