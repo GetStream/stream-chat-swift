@@ -12,10 +12,8 @@ class DemoComposerVC: ComposerVC {
     var editingScheduledContent: DemoScheduledMessageContent?
     var componentsBeforeScheduledEditing: Components?
     var isSubmittingScheduledMessage = false
-    // The scheduled message whose confirmation waits for the server to accept or reject it.
-    var scheduledMessageIdAwaitingConfirmation: String?
 
-    // Observes the scheduled messages, to confirm a scheduled message once the server answers.
+    // Observes the scheduled messages, for the message being edited.
     var scheduledMessageListController: ScheduledMessageListController?
 
     lazy var scheduledMessagesBannerView = DemoComposerBannerView()
