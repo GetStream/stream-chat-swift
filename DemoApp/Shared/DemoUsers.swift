@@ -62,7 +62,10 @@ struct UserCredentials {
 
 extension UserCredentials {
     static var builtInUsers: [UserCredentials] {
-        [
+        if apiKeyString == DemoApiKeys.usEastStaging.rawValue {
+            return stagingUsers
+        }
+        return [
             luke,
             leia,
             hanSolo,
@@ -80,6 +83,25 @@ extension UserCredentials {
             countDooku,
             generalGrievous
         ]
+    }
+
+    /// Users of the US East staging app. Development tokens are disabled there.
+    static var stagingUsers: [UserCredentials] {
+        [
+            ("alice", DemoUserTokens.stagingAlice),
+            ("bob", DemoUserTokens.stagingBob),
+            ("carol", DemoUserTokens.stagingCarol),
+            ("dave", DemoUserTokens.stagingDave)
+        ].map { id, token in
+            let name = id.capitalized
+            return UserCredentials(
+                id: id,
+                name: name,
+                avatarURL: URL(string: "https://getstream.io/random_png?id=\(id)&name=\(name)&size=200")!,
+                token: token,
+                birthLand: "Staging"
+            )
+        }
     }
 
     static func builtInUsersByID(id: String) -> UserCredentials? {
@@ -259,12 +281,14 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
     static let frankfurtC1: DemoApiKeys = .init(rawValue: "8br4watad788") // UIKit default
     static let frankfurtC2: DemoApiKeys = .init(rawValue: "pd67s34fzpgw") // Frankfurt C2 Staging
     static let usEastC6: DemoApiKeys = .init(rawValue: "zcgvnykxsfm8") // SwiftUI default
+    static let usEastStaging: DemoApiKeys = .init(rawValue: "vfa6gxospjf0") // US East staging, app 1731829
 
     var appName: String? {
         switch self {
         case .frankfurtC1: return "UIKit"
         case .frankfurtC2: return "Frankfurt C2 Staging"
         case .usEastC6: return "SwiftUI"
+        case .usEastStaging: return "US East Staging"
         default: return nil
         }
     }
@@ -274,6 +298,7 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
         case .frankfurtC1: return nil
         case .frankfurtC2: return URL(string: "https://chat-edge-frankfurt-ce1.stream-io-api.com/")
         case .usEastC6: return nil
+        case .usEastStaging: return URL(string: "https://chat-edge-us-east1-ce1.gcp.stream-io-api.com/")
         default: return nil
         }
     }
@@ -292,6 +317,12 @@ struct DemoApiKeys: RawRepresentable, Equatable, Hashable {
 }
 
 enum DemoUserTokens {
+    // US East staging app (1731829)
+    static let stagingAlice: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImFsaWNlIn0.V2Yxh71BEqEAvhmTiCMNjCzgKQ1F1AixFgZuGuv8vqw"
+    static let stagingBob: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImJvYiJ9.0fUnI4398M0CxzmbyIrJ3xRG4H2vMQCXcS_1xu7bsOk"
+    static let stagingCarol: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImNhcm9sIn0._Oe0Ne3nFJ0u_U-xQGhFZ42MwZT2oZl-Cmk08VALE7I"
+    static let stagingDave: Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjogImRhdmUifQ.2eboGhGJVE03meTKfNVOgKsPTZ_QRIB5u-r9cjBQ40E"
+
     static var luke: Token {
         switch apiKeyString {
         case DemoApiKeys.frankfurtC1:
