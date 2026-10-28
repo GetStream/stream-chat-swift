@@ -87,7 +87,8 @@ final class DemoScheduledMessageListVC: UIHostingController<DemoScheduledMessage
             from: self,
             title: "Reschedule message",
             sourceView: view,
-            initialDate: message.scheduledAt
+            initialDate: message.scheduledAt,
+            channelConfig: client.channelController(for: message.cid).channel?.config
         ) { [weak self] date in
             self?.model.reschedule(message, to: date)
         }

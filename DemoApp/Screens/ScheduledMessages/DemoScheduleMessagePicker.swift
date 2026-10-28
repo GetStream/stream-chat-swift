@@ -19,6 +19,7 @@ enum DemoScheduleMessagePicker {
         title: String = "Schedule message",
         sourceView: UIView?,
         initialDate: Date? = nil,
+        channelConfig: ChannelConfig?,
         onSelect: @escaping (Date) -> Void
     ) {
         let alert = UIAlertController(
@@ -33,7 +34,10 @@ enum DemoScheduleMessagePicker {
         }
         alert.addAction(UIAlertAction(title: "Custom Time", style: .default) { [weak presenter] _ in
             guard let presenter else { return }
-            let datePickerVC = UIHostingController(rootView: DemoScheduleDatePicker(initialDate: initialDate) { [weak presenter] date in
+            let datePickerVC = UIHostingController(rootView: DemoScheduleDatePicker(
+                initialDate: initialDate,
+                channelConfig: channelConfig
+            ) { [weak presenter] date in
                 presenter?.dismiss(animated: true) { date.map(onSelect) }
             })
             datePickerVC.sheetPresentationController?.prefersGrabberVisible = true
@@ -67,16 +71,17 @@ enum DemoScheduleMessagePicker {
     }
 }
 
-/// Picks a custom date, within the scheduling limits. Calls `onFinish` with `nil` when cancelled.
+/// Picks a custom date, within the scheduling limits of the channel config. Calls `onFinish` with `nil` when cancelled.
 struct DemoScheduleDatePicker: View {
     let onFinish: (Date?) -> Void
     @State private var date: Date
     private let range: ClosedRange<Date>
 
-    init(initialDate: Date?, onFinish: @escaping (Date?) -> Void) {
+    init(initialDate: Date?, channelConfig: ChannelConfig?, onFinish: @escaping (Date?) -> Void) {
         let now = Date()
-        range = now.addingTimeInterval(DemoScheduledMessageLimits.minimumLeadTime)...now
-            .addingTimeInterval(DemoScheduledMessageLimits.maximumLeadTime)
+        let minimumLeadTime = channelConfig?.scheduledMessagesMinLeadTime ?? 60
+        let maximumLeadTime = max(channelConfig?.scheduledMessagesMaxLeadTime ?? 120 * 24 * 60 * 60, minimumLeadTime)
+        range = now.addingTimeInterval(minimumLeadTime)...now.addingTimeInterval(maximumLeadTime)
         _date = State(initialValue: min(max(initialDate ?? now.addingTimeInterval(60 * 60), range.lowerBound), range.upperBound))
         self.onFinish = onFinish
     }

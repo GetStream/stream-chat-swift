@@ -120,7 +120,11 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
         guard isContentSchedulable, canScheduleMessages else { return }
 
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        DemoScheduleMessagePicker.present(from: self, sourceView: composerView.sendButton) { [weak self] date in
+        DemoScheduleMessagePicker.present(
+            from: self,
+            sourceView: composerView.sendButton,
+            channelConfig: channelController?.channel?.config
+        ) { [weak self] date in
             self?.scheduleContent(at: date)
         }
     }
@@ -246,7 +250,8 @@ extension DemoComposerVC: ScheduledMessageListControllerDelegate {
             from: self,
             title: "Reschedule message",
             sourceView: composerView.sendButton,
-            initialDate: message.scheduledAt
+            initialDate: message.scheduledAt,
+            channelConfig: channelController?.channel?.config
         ) { [weak self] date in
             self?.rescheduleEditedScheduledMessage(at: date)
         }

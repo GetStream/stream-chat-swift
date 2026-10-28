@@ -5,11 +5,6 @@
 import Foundation
 import StreamChat
 
-enum DemoScheduledMessageLimits {
-    static let minimumLeadTime: TimeInterval = 60
-    static let maximumLeadTime: TimeInterval = 120 * 24 * 60 * 60
-}
-
 // What the composer schedules, compared with what it started editing to save only real changes.
 struct DemoScheduledMessageContent: Equatable {
     var text: String
