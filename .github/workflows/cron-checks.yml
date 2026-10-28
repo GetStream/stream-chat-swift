@@ -87,7 +87,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -143,7 +143,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -197,7 +197,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -251,7 +251,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult

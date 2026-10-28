@@ -153,7 +153,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}
+        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -206,7 +206,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}
+        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -248,7 +248,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}
+        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -285,7 +285,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}
+        name: xcode-logs-${{ github.job }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
@@ -371,7 +371,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v7
       with:
-        name: xcode-logs-${{ github.job }}-${{ strategy.job-index }}
+        name: xcode-logs-${{ github.job }}-${{ strategy.job-index }}-${{ github.run_attempt }}
         path: ~/Library/Logs/scan/*.log
         if-no-files-found: ignore
     - name: Parse xcresult
