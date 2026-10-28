@@ -1365,10 +1365,10 @@ public class Chat: @unchecked Sendable {
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the quoted message.
     ///   - mentions: An array of mentioned user ids.
-    ///   - extraData: Additional extra data of the message object.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the message right away.
+    ///   - extraData: Additional extra data of the message object.
     ///
     /// - Throws: An error while saving the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
     /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
@@ -1380,9 +1380,9 @@ public class Chat: @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
-        extraData: [String: RawJSON] = [:],
         messageId: MessageId? = nil,
-        scheduledAt: Date
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:]
     ) async throws -> ScheduledMessage {
         let cid = try await self.cid
         let content = ScheduledMessageContent(
@@ -1414,10 +1414,10 @@ public class Chat: @unchecked Sendable {
     ///   - attachments: An array of the attachments for the reply.
     ///   - quotedMessageId: An id of the quoted message.
     ///   - mentions: An array of mentioned user ids.
-    ///   - extraData: Additional extra data of the reply.
     ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
     ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
     ///   at least 1 minute from now. A date in the past sends the reply right away.
+    ///   - extraData: Additional extra data of the reply.
     ///
     /// - Throws: An error while saving the scheduled reply locally, not an error of the server. Unlike `sendMessage`, it
     /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
@@ -1431,9 +1431,9 @@ public class Chat: @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
-        extraData: [String: RawJSON] = [:],
         messageId: MessageId? = nil,
-        scheduledAt: Date
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:]
     ) async throws -> ScheduledMessage {
         let cid = try await self.cid
         let content = ScheduledMessageContent(
@@ -1464,9 +1464,9 @@ public class Chat: @unchecked Sendable {
     ///   - attachments: The new attachments of the message.
     ///   - quotedMessageId: The new quoted message of the message.
     ///   - mentions: The new mentioned user ids of the message.
-    ///   - extraData: The new extra data of the message.
     ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
     ///   `nil` keeps the current date.
+    ///   - extraData: The new extra data of the message.
     ///
     /// - Throws: An error while updating the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
     /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
@@ -1479,8 +1479,8 @@ public class Chat: @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
-        extraData: [String: RawJSON] = [:],
-        scheduledAt: Date? = nil
+        scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:]
     ) async throws -> ScheduledMessage {
         let content = ScheduledMessageContent(
             text: text,
