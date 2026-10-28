@@ -3,12 +3,29 @@ description: 'Cache Xcode dependencies'
 runs:
   using: "composite"
   steps:
-    - run: echo "IMAGE=${ImageOS}-${ImageVersion}" >> $GITHUB_ENV
+    - run: echo "IMAGE=${ImageOS:-}-${ImageVersion:-}" >> "$GITHUB_ENV"
       shell: bash
     - name: Cache SPM
-      uses: actions/cache@v4
+      if: runner.environment != 'self-hosted'
+      uses: actions/cache@v6
       id: spm-cache
       with:
         path: spm_cache
         key: ${{ env.IMAGE }}-spm-${{ hashFiles('**/Package.resolved') }}
         restore-keys: ${{ env.IMAGE }}-spm-
+    - name: Use the image SPM cache
+      if: runner.environment == 'self-hosted'
+      shell: bash
+      run: |
+        if [[ -n ${SPM_CACHE_PATH:-} && -d "$SPM_CACHE_PATH" ]]; then
+          if [[ -e spm_cache || -L spm_cache ]]; then
+            [[ $(cd spm_cache && pwd -P) == $(cd "$SPM_CACHE_PATH" && pwd -P) ]] || {
+              echo 'spm_cache already exists and does not point to the image cache.' >&2
+              exit 1
+            }
+          else
+            ln -s "$SPM_CACHE_PATH" spm_cache
+          fi
+        else
+          mkdir -p spm_cache
+        fi

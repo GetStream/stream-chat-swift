@@ -20,14 +20,14 @@ jobs:
   sonar:
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
 
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_SONAR: true
         SKIP_SWIFT_BOOTSTRAP: true
 
-    - uses: actions/github-script@v6
+    - uses: actions/github-script@v9
       id: get_pr_number
       with:
         script: |
@@ -50,7 +50,7 @@ jobs:
           if [[ "$ARTIFACT" == null || "$ARTIFACT" == "" ]]; then
             echo "Artifact not found. Skipping Sonar analysis."
           else
-            gh run download $(echo $ARTIFACT | jq .workflow_run.id) -n "$ARTIFACT_NAME" -D reports
+            gh run download "$(echo "$ARTIFACT" | jq .workflow_run.id)" -n "$ARTIFACT_NAME" -D reports
             bundle exec fastlane sonar_upload
           fi
       env:
