@@ -35,6 +35,7 @@ jobs:
       with:
         name: xcode-logs-${{ github.job }}
         path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |

@@ -1,19 +1,25 @@
 name: 'Ruby Cache'
 description: 'Cache Ruby dependencies'
+inputs:
+  ruby-version:
+    description: 'Ruby version on both GitHub-hosted and self-hosted runners'
+    default: '3.1.7'
 runs:
   using: "composite"
   steps:
     - uses: ruby/setup-ruby@v1
       if: runner.environment != 'self-hosted'
       with:
-        ruby-version: 3.1
+        ruby-version: ${{ inputs.ruby-version }}
         bundler-cache: true
     - name: Use the image Ruby and gem bundle
       if: runner.environment == 'self-hosted'
+      env:
+        RUBY_VERSION: ${{ inputs.ruby-version }}
       run: |
-        runtime=$(mise where ruby@3.1.7)
+        runtime=$(mise where "ruby@$RUBY_VERSION")
         export PATH="$runtime/bin:$PATH"
-        [[ $(ruby -e 'print RUBY_VERSION') == 3.1.7 ]]
+        [[ $(ruby -e 'print RUBY_VERSION') == "$RUBY_VERSION" ]]
         unset GEM_HOME GEM_PATH RUBYOPT BUNDLE_GEMFILE BUNDLE_WITHOUT BUNDLE_WITH
         GEM_HOME=$(ruby -rrubygems -e 'print Gem.dir')
         GEM_PATH=$(ruby -rrubygems -e 'print Gem.path.join(":")')

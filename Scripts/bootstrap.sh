@@ -20,14 +20,15 @@ trap "echo ; echo ❌ The Bootstrap script failed to finish without error. See t
 
 source ./Githubfile
 
+# Usage: reuse_version <name> <version> <version command...>
 reuse_version() {
-  local version=$1 output pattern
-  shift
+  local name=$1 version=$2 output pattern
+  shift 2
   [[ ${RUNNER_ENVIRONMENT:-} == self-hosted ]] || return 1
   output=$("$@" 2>/dev/null) || return 1
   pattern=${version//./\\.}
   grep -Eq "(^|[^[:alnum:].+-])v?${pattern}([^[:alnum:].+-]|$)" <<< "$output" || return 1
-  puts "Reuse $1 v$version"
+  puts "Reuse $name v$version"
 }
 
 # These tools do not expose a version command. Match their pinned binaries.
@@ -51,7 +52,7 @@ if [[ ${GITHUB_ACTIONS:-} == true ]] && ! command -v xcbeautify >/dev/null; then
 fi
 
 if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
-  if ! reuse_version "$SWIFT_LINT_VERSION" swiftlint version; then
+  if ! reuse_version swiftlint "$SWIFT_LINT_VERSION" swiftlint version; then
     puts "Install SwiftLint v${SWIFT_LINT_VERSION}"
     DOWNLOAD_URL="https://github.com/realm/SwiftLint/releases/download/${SWIFT_LINT_VERSION}/SwiftLint.pkg"
     DOWNLOAD_PATH="/tmp/SwiftLint-${SWIFT_LINT_VERSION}.pkg"
@@ -60,7 +61,7 @@ if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
     swiftlint version
   fi
 
-  if ! reuse_version "$SWIFT_FORMAT_VERSION" swiftformat --version; then
+  if ! reuse_version swiftformat "$SWIFT_FORMAT_VERSION" swiftformat --version; then
     puts "Install SwiftFormat v${SWIFT_FORMAT_VERSION}"
     DOWNLOAD_URL="https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFT_FORMAT_VERSION}/swiftformat.zip"
     DOWNLOAD_PATH="/tmp/swiftformat-${SWIFT_FORMAT_VERSION}.zip"
@@ -75,7 +76,7 @@ if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
     swiftformat --version
   fi
 
-  if ! reuse_version "$SWIFT_GEN_VERSION" swiftgen --version; then
+  if ! reuse_version swiftgen "$SWIFT_GEN_VERSION" swiftgen --version; then
     puts "Install SwiftGen v${SWIFT_GEN_VERSION}"
     DOWNLOAD_URL="https://github.com/SwiftGen/SwiftGen/releases/download/${SWIFT_GEN_VERSION}/swiftgen-${SWIFT_GEN_VERSION}.zip"
     DOWNLOAD_PATH="/tmp/swiftgen-${SWIFT_GEN_VERSION}.zip"
@@ -91,7 +92,7 @@ if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
     swiftgen --version
   fi
 
-  if ! reuse_version "$SOURCERY_VERSION" sourcery --version; then
+  if ! reuse_version sourcery "$SOURCERY_VERSION" sourcery --version; then
     puts "Install Sourcery v${SOURCERY_VERSION}"
     DOWNLOAD_URL="https://github.com/krzysztofzablocki/Sourcery/releases/download/${SOURCERY_VERSION}/sourcery-${SOURCERY_VERSION}.zip"
     DOWNLOAD_PATH="/tmp/sourcery-${SOURCERY_VERSION}.zip"
@@ -109,9 +110,9 @@ if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
 fi
 
 if [[ ${INSTALL_SONAR-default} == true ]]; then
-  if reuse_version "$SONAR_VERSION" ./fastlane/sonar/bin/sonar-scanner --version; then
+  if reuse_version sonar-scanner "$SONAR_VERSION" ./fastlane/sonar/bin/sonar-scanner --version; then
     :
-  elif reuse_version "$SONAR_VERSION" sonar-scanner --version; then
+  elif reuse_version sonar-scanner "$SONAR_VERSION" sonar-scanner --version; then
     sonar_home=$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).resolve().parent.parent)' "$(command -v sonar-scanner)")
     rm -rf fastlane/sonar
     ln -sfn "$sonar_home" fastlane/sonar
@@ -133,7 +134,7 @@ puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
 cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
 
 if [[ ${INSTALL_ALLURE-default} == true ]]; then
-  if reuse_version "$ALLURECTL_VERSION" allurectl --version; then
+  if reuse_version allurectl "$ALLURECTL_VERSION" allurectl --version; then
     ln -sf "$(command -v allurectl)" ./fastlane/allurectl
   else
     puts "Install allurectl v${ALLURECTL_VERSION}"
@@ -153,7 +154,7 @@ if [[ ${INSTALL_ALLURE-default} == true ]]; then
 fi
 
 if [[ ${INSTALL_YEETD-default} == true ]]; then
-  if ! command -v yeetd >/dev/null || ! reuse_version "$YEETD_VERSION" pkgutil --pkg-info dev.biscuit.yeetd; then
+  if ! command -v yeetd >/dev/null || ! reuse_version yeetd "$YEETD_VERSION" pkgutil --pkg-info dev.biscuit.yeetd; then
     PACKAGE="yeetd-normal.pkg"
     puts "Install yeetd v${YEETD_VERSION}"
     wget "https://github.com/biscuitehh/yeetd/releases/download/${YEETD_VERSION}/${PACKAGE}" -O "${PACKAGE}"
@@ -178,7 +179,7 @@ if [[ ${INSTALL_GCLOUD-default} == true ]]; then
   gcloud services enable toolresults.googleapis.com
 fi
 
-if [[ ${INSTALL_IPSW-default} == true ]] && ! reuse_version "$IPSW_VERSION" ipsw version; then
+if [[ ${INSTALL_IPSW-default} == true ]] && ! reuse_version ipsw "$IPSW_VERSION" ipsw version; then
   puts "Install ipsw v${IPSW_VERSION}"
   FILE="ipsw_${IPSW_VERSION}_macOS_universal.tar.gz"
   wget "https://github.com/blacktop/ipsw/releases/download/v${IPSW_VERSION}/${FILE}" -O "${FILE}"

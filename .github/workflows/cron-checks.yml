@@ -89,6 +89,7 @@ jobs:
       with:
         name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
         path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
@@ -144,6 +145,7 @@ jobs:
       with:
         name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
         path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
@@ -197,6 +199,7 @@ jobs:
       with:
         name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
         path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
@@ -250,6 +253,7 @@ jobs:
       with:
         name: xcode-logs-${{ github.job }}-${{ matrix.ios }}
         path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
@@ -314,11 +318,10 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}
           webhook-type: incoming-webhook
-          errors: true
           payload: |
             text: ${{ toJSON('You shall not pass!') }}
             attachments:
               - color: danger
-                title: ${{ toJSON(format('{0}: {1} ({2})', github.workflow, github.job, job.status)) }}
+                title: ${{ toJSON(format('{0} failed', github.workflow)) }}
                 text: ${{ toJSON(format('Repository: {0} | Commit: {1} | Actor: {2}', github.repository, github.sha, github.actor)) }}
                 footer: ${{ toJSON(format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id)) }}

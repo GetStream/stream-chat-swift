@@ -58,7 +58,6 @@ jobs:
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
-          errors: true
           payload: |
             text: ${{ toJSON('⚠️ <!subteam^S030AAHLDLN>, the merge of `main` to `develop` failed on CI. Consider using this command locally: `bundle exec fastlane merge_main`') }}
             attachments:
