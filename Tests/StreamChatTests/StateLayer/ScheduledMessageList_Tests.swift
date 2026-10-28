@@ -167,6 +167,39 @@ final class ScheduledMessageList_Tests: XCTestCase {
         )
     }
 
+    // MARK: - Content Changes
+
+    // The list reuses scheduled messages by id, so these check that changes of their content still reach it.
+
+    @MainActor func test_scheduledMessages_whenTheContentChanges_thenTheStateIsUpdated() async throws {
+        let message = try await schedule()
+        setUpScheduledMessageList()
+
+        try await client.databaseContainer.write { session in
+            let content = try XCTUnwrap(session.scheduledMessage(id: message.id)?.message)
+            content.text = "Edited"
+        }
+
+        let stored = try await waitForScheduledMessage(id: message.id) { $0.message.text == "Edited" }
+        XCTAssertEqual("Edited", stored.message.text)
+    }
+
+    @MainActor func test_scheduledMessages_whenAnAttachmentChanges_thenTheStateIsUpdated() async throws {
+        let message = try await scheduleLocally(attachments: [.mockImage])
+        setUpScheduledMessageList()
+
+        // Only the attachment changes, not the content message or the scheduled message.
+        try await client.databaseContainer.write { session in
+            let content = try XCTUnwrap(session.scheduledMessage(id: message.id)?.message)
+            content.attachments.forEach { $0.localState = .uploadingFailed }
+        }
+
+        let stored = try await waitForScheduledMessage(id: message.id) {
+            $0.message.allAttachments.first?.uploadingState?.state == .uploadingFailed
+        }
+        XCTAssertEqual(.uploadingFailed, stored.message.allAttachments.first?.uploadingState?.state)
+    }
+
     // MARK: - Test Data
 
     @MainActor private func setUpScheduledMessageList(query: ScheduledMessageListQuery = .init()) {
@@ -181,6 +214,22 @@ final class ScheduledMessageList_Tests: XCTestCase {
             client.databaseContainer.write(converting: { session in
                 try session.saveScheduledMessage(payload: payload).asModel()
             }, completion: { continuation.resume(with: $0) })
+        }
+    }
+
+    /// Schedules a message on the device, with local attachments.
+    @MainActor private func scheduleLocally(attachments: [AnyAttachmentPayload]) async throws -> ScheduledMessage {
+        apiClient.test_mockResponseResult(.success(
+            SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(cid: cid))
+        ))
+        let channelController = client.channelController(for: cid)
+        return try await withCheckedThrowingContinuation { continuation in
+            channelController.scheduleMessage(
+                text: "Photo",
+                attachments: attachments,
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: { continuation.resume(with: $0) }
+            )
         }
     }
 
