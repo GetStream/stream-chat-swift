@@ -399,6 +399,110 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
         XCTAssertNil(apiClient.request_endpoint)
     }
 
+    func test_schedule_whenTheDateIsFurtherThanTheMaxLeadTime_failsWithoutSavingTheMessage() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 3600))
+
+        let result = schedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(7200))
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageIsTooFarAhead, "\(String(describing: result.error))")
+        XCTAssertNil(try storedMessage(id: "scheduled-id"))
+    }
+
+    func test_schedule_whenTheDateIsWithinTheMaxLeadTime_savesTheMessage() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 7200))
+
+        let result = schedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(3600))
+
+        XCTAssertEqual(try result.get().id, "scheduled-id")
+    }
+
+    func test_reschedule_whenTheDateIsFurtherThanTheMaxLeadTime_failsAndKeepsTheDate() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 7200))
+        let scheduledAt = Date().addingTimeInterval(3600)
+        _ = try schedule(id: "scheduled-id", scheduledAt: scheduledAt).get()
+
+        let result = try waitFor {
+            repository.reschedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(10800), completion: $0)
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageIsTooFarAhead, "\(String(describing: result.error))")
+        let stored = try XCTUnwrap(storedMessage(id: "scheduled-id"))
+        XCTAssertEqual(stored.scheduledAt.timeIntervalSince1970, scheduledAt.timeIntervalSince1970, accuracy: 0.001)
+    }
+
+    func test_update_whenTheDateIsFurtherThanTheMaxLeadTime_failsAndKeepsTheContent() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxLeadTime: 7200))
+        _ = try schedule(id: "scheduled-id").get()
+
+        let result = try waitFor {
+            repository.update(
+                id: "scheduled-id",
+                content: content(text: "Edited"),
+                scheduledAt: Date().addingTimeInterval(10800),
+                completion: $0
+            )
+        }
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessageIsTooFarAhead, "\(String(describing: result.error))")
+        XCTAssertEqual(try storedMessage(id: "scheduled-id")?.message.text, "Hello")
+    }
+
+    func test_schedule_whenTheChannelLimitIsReached_failsWithoutSavingTheMessage() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 2))
+        _ = try schedule().get()
+        _ = try schedule().get()
+
+        let result = schedule(id: "scheduled-id")
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessagesChannelLimitReached, "\(String(describing: result.error))")
+        XCTAssertNil(try storedMessage(id: "scheduled-id"))
+    }
+
+    func test_schedule_whenTheChannelLimitIsReachedWithAFailedMessage_savesTheMessage() throws {
+        try saveChannel(config: .mock(scheduledMessagesMaxPerChannel: 2))
+        _ = try schedule().get()
+        _ = try schedule(id: "failed-id").get()
+        let apiError = APIError(code: 4, message: "banned", statusCode: 403)
+        apiClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(ClientError(with: apiError)))
+        _ = try waitFor { repository.sendPendingChanges(id: "failed-id", completion: $0) }
+        XCTAssertEqual(try storedMessage(id: "failed-id")?.status, .failed)
+
+        let result = schedule(id: "scheduled-id")
+
+        XCTAssertEqual(try result.get().id, "scheduled-id")
+    }
+
+    func test_schedule_whenTheUserLimitIsReachedInAllChannels_failsWithoutSavingTheMessage() throws {
+        let otherCid = ChannelId.unique
+        try saveChannel(config: .mock(scheduledMessagesMaxPerUser: 2))
+        _ = try schedule().get()
+        _ = try waitFor {
+            repository.schedule(
+                id: .unique,
+                cid: otherCid,
+                content: content(),
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
+        }.get()
+
+        let result = schedule(id: "scheduled-id")
+
+        XCTAssertTrue(result.error is ClientError.ScheduledMessagesUserLimitReached, "\(String(describing: result.error))")
+        XCTAssertNil(try storedMessage(id: "scheduled-id"))
+    }
+
+    func test_schedule_whenTheConfigHasNoLimits_savesTheMessage() throws {
+        try saveChannel(config: .mock())
+        for _ in 0..<3 {
+            _ = try schedule().get()
+        }
+
+        let result = schedule(id: "scheduled-id", scheduledAt: Date().addingTimeInterval(365 * 24 * 3600))
+
+        XCTAssertEqual(try result.get().id, "scheduled-id")
+    }
+
     func test_schedule_whenTheQuotedMessageIsNotDeleted_savesTheMessage() throws {
         try saveMessage(id: "quoted-id")
 
@@ -1079,8 +1183,12 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
     }
 
     private func saveChannel(commands: [Command]) throws {
+        try saveChannel(config: .mock(commands: commands))
+    }
+
+    private func saveChannel(config: ChannelConfig) throws {
         try database.writeSynchronously { [cid] session in
-            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid!, config: .mock(commands: commands))))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid!, config: config)))
         }
     }
 

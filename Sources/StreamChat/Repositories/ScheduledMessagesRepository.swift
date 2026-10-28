@@ -372,6 +372,29 @@ extension ClientError {
         }
     }
 
+    final class ScheduledMessageIsTooFarAhead: ClientError, @unchecked Sendable {
+        init(maxLeadTime: TimeInterval) {
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.day, .hour, .minute]
+            formatter.unitsStyle = .full
+            formatter.maximumUnitCount = 1
+            let leadTime = formatter.string(from: maxLeadTime) ?? "\(Int(maxLeadTime)) seconds"
+            super.init("A message can be scheduled at most \(leadTime) ahead. Pick an earlier time.")
+        }
+    }
+
+    final class ScheduledMessagesChannelLimitReached: ClientError, @unchecked Sendable {
+        init(limit: Int) {
+            super.init("You can have at most \(limit) scheduled messages in this channel.")
+        }
+    }
+
+    final class ScheduledMessagesUserLimitReached: ClientError, @unchecked Sendable {
+        init(limit: Int) {
+            super.init("You can have at most \(limit) scheduled messages.")
+        }
+    }
+
     final class ScheduledMessageHasNoPendingChanges: ClientError, @unchecked Sendable {
         init(id: String) {
             super.init("The scheduled message with id: \(id) has no changes to send to the server.")

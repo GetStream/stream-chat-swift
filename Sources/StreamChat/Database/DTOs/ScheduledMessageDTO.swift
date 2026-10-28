@@ -185,6 +185,8 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
         try validateSchedulable(content, cid: cid)
+        try validateScheduledAt(scheduledAt, cid: cid)
+        try validateScheduledMessagesLimits(cid: cid, excludingId: id)
 
         let now = Date()
         let dto = ScheduledMessageDTO.loadOrCreate(id: id, context: self)
@@ -230,6 +232,9 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             try validateSchedulable(content, cid: cid)
         } else {
             try validateQuotedMessage(dto.quotedMessageId)
+        }
+        if let scheduledAt {
+            try validateScheduledAt(scheduledAt, cid: cid)
         }
 
         if let content {
@@ -389,6 +394,39 @@ extension NSManagedObjectContext: ScheduledMessageDatabaseSession {
             throw ClientError.ScheduledMessageHasACommand()
         }
         try validateQuotedMessage(content.quotedMessageId)
+    }
+
+    /// The server rejects a date further ahead than the maximum lead time of the app. It is refused locally when the
+    /// channel config has the limit.
+    private func validateScheduledAt(_ scheduledAt: Date, cid: ChannelId) throws {
+        guard let maxLeadTime = channel(cid: cid)?.config.scheduledMessagesMaxLeadTime?.doubleValue else { return }
+        if scheduledAt.timeIntervalSinceNow > maxLeadTime {
+            throw ClientError.ScheduledMessageIsTooFarAhead(maxLeadTime: maxLeadTime)
+        }
+    }
+
+    /// The server rejects a new scheduled message once the current user has as many pending ones as the app allows,
+    /// in the channel or in all channels. Failed messages don't count. It is refused locally when the channel config has
+    /// the limits, counting the pending messages saved locally.
+    private func validateScheduledMessagesLimits(cid: ChannelId, excludingId id: String) throws {
+        guard let config = channel(cid: cid)?.config else { return }
+        let pending = NSPredicate(format: "isPending == YES AND id != %@", id)
+        if let limit = config.scheduledMessagesMaxPerChannel?.intValue {
+            let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                pending, NSPredicate(format: "cid == %@", cid.rawValue)
+            ])
+            if try count(for: request) >= limit {
+                throw ClientError.ScheduledMessagesChannelLimitReached(limit: limit)
+            }
+        }
+        if let limit = config.scheduledMessagesMaxPerUser?.intValue {
+            let request = NSFetchRequest<ScheduledMessageDTO>(entityName: ScheduledMessageDTO.entityName)
+            request.predicate = pending
+            if try count(for: request) >= limit {
+                throw ClientError.ScheduledMessagesUserLimitReached(limit: limit)
+            }
+        }
     }
 
     private func saveContent(_ content: ScheduledMessageContent, to message: MessageDTO, cid: ChannelId, user: UserDTO) throws {
