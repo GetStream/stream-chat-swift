@@ -455,6 +455,52 @@ extension ScheduledMessageListQuery {
     }
 }
 
+// MARK: - Async
+
+extension ScheduledMessagesRepository {
+    func loadScheduledMessages(query: ScheduledMessageListQuery) async throws -> ScheduledMessageListResponse {
+        try await withCheckedThrowingContinuation { continuation in
+            loadScheduledMessages(query: query) { continuation.resume(with: $0) }
+        }
+    }
+
+    func schedule(id: String, cid: ChannelId, content: ScheduledMessageContent, scheduledAt: Date) async throws -> ScheduledMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            schedule(id: id, cid: cid, content: content, scheduledAt: scheduledAt) { continuation.resume(with: $0) }
+        }
+    }
+
+    func update(id: String, content: ScheduledMessageContent, scheduledAt: Date?) async throws -> ScheduledMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            update(id: id, content: content, scheduledAt: scheduledAt) { continuation.resume(with: $0) }
+        }
+    }
+
+    func reschedule(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            reschedule(id: id, scheduledAt: scheduledAt) { continuation.resume(with: $0) }
+        }
+    }
+
+    func resend(id: String) async throws -> ScheduledMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            resend(id: id) { continuation.resume(with: $0) }
+        }
+    }
+
+    func delete(id: String) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            delete(id: id) { continuation.resume(with: $0) }
+        }
+    }
+
+    func sendNow(id: String) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            sendNow(id: id) { continuation.resume(with: $0) }
+        }
+    }
+}
+
 private extension ScheduledMessageFailure.ServerRejection.Reason {
     /// The reason of the server, or one derived from the status code when the server gives none.
     init?(apiError: APIError) {
