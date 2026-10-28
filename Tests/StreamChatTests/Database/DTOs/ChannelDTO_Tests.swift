@@ -760,6 +760,10 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel.config.updatedAt)
             Assert.willBeEqual(payload.channel.config.messageRemindersEnabled, loadedChannel.config.messageRemindersEnabled)
             Assert.willBeEqual(payload.channel.config.sharedLocationsEnabled, loadedChannel.config.sharedLocationsEnabled)
+            Assert.willBeEqual(payload.channel.config.scheduledMessagesMaxPerChannel, loadedChannel.config.scheduledMessagesMaxPerChannel)
+            Assert.willBeEqual(payload.channel.config.scheduledMessagesMaxPerUser, loadedChannel.config.scheduledMessagesMaxPerUser)
+            Assert.willBeEqual(payload.channel.config.scheduledMessagesMaxLeadTime, loadedChannel.config.scheduledMessagesMaxLeadTime)
+            Assert.willBeEqual(payload.channel.config.scheduledMessagesMinLeadTime, loadedChannel.config.scheduledMessagesMinLeadTime)
 
             // Own Capabilities
             Assert.willBeEqual(payload.channel.ownCapabilities, [.joinChannel, .deleteChannel])

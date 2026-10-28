@@ -29,6 +29,10 @@
         <attribute name="reactionsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="readEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="repliesEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="scheduledMessagesMaxLeadTime" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
+        <attribute name="scheduledMessagesMaxPerChannel" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="scheduledMessagesMaxPerUser" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="scheduledMessagesMinLeadTime" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
         <attribute name="searchEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="sharedLocationsEnabled" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="skipLastMsgAtUpdateForSystemMsg" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>

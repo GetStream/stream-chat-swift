@@ -32,6 +32,10 @@ public final class ChannelConfig: Codable, Sendable {
         case skipLastMsgAtUpdateForSystemMsg = "skip_last_msg_update_for_system_msgs"
         case messageRemindersEnabled = "user_message_reminders"
         case sharedLocationsEnabled = "shared_locations"
+        case scheduledMessagesMaxPerChannel = "scheduled_messages_max_per_channel"
+        case scheduledMessagesMaxPerUser = "scheduled_messages_max_per_user"
+        case scheduledMessagesMaxLeadTime = "scheduled_messages_max_lead_time_seconds"
+        case scheduledMessagesMinLeadTime = "scheduled_messages_min_lead_time_seconds"
     }
 
     /// If users are allowed to add reactions to messages. Enabled by default.
@@ -74,6 +78,23 @@ public final class ChannelConfig: Codable, Sendable {
     public let messageRemindersEnabled: Bool
     /// Determines if shared locations are enabled.
     public let sharedLocationsEnabled: Bool
+    /// How many pending scheduled messages the current user can have in the channel.
+    ///
+    /// `nil` when scheduled messages are disabled for the app.
+    public let scheduledMessagesMaxPerChannel: Int?
+    /// How many pending scheduled messages the current user can have across all channels.
+    ///
+    /// `nil` when scheduled messages are disabled for the app.
+    public let scheduledMessagesMaxPerUser: Int?
+    /// How far ahead, in seconds, a message can be scheduled.
+    ///
+    /// `nil` when scheduled messages are disabled for the app.
+    public let scheduledMessagesMaxLeadTime: TimeInterval?
+    /// The minimum time ahead, in seconds, a message is scheduled for. The server moves an earlier date to the next
+    /// whole minute after it, instead of rejecting it.
+    ///
+    /// `nil` when scheduled messages are disabled for the app.
+    public let scheduledMessagesMinLeadTime: TimeInterval?
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -102,6 +123,10 @@ public final class ChannelConfig: Codable, Sendable {
         skipLastMsgAtUpdateForSystemMsg = try container.decodeIfPresent(Bool.self, forKey: .skipLastMsgAtUpdateForSystemMsg) ?? false
         messageRemindersEnabled = try container.decodeIfPresent(Bool.self, forKey: .messageRemindersEnabled) ?? false
         sharedLocationsEnabled = try container.decodeIfPresent(Bool.self, forKey: .sharedLocationsEnabled) ?? false
+        scheduledMessagesMaxPerChannel = try container.decodeIfPresent(Int.self, forKey: .scheduledMessagesMaxPerChannel)
+        scheduledMessagesMaxPerUser = try container.decodeIfPresent(Int.self, forKey: .scheduledMessagesMaxPerUser)
+        scheduledMessagesMaxLeadTime = try container.decodeIfPresent(TimeInterval.self, forKey: .scheduledMessagesMaxLeadTime)
+        scheduledMessagesMinLeadTime = try container.decodeIfPresent(TimeInterval.self, forKey: .scheduledMessagesMinLeadTime)
     }
 
     internal required init(
@@ -120,6 +145,10 @@ public final class ChannelConfig: Codable, Sendable {
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
         messageRemindersEnabled: Bool = false,
         sharedLocationsEnabled: Bool = false,
+        scheduledMessagesMaxPerChannel: Int? = nil,
+        scheduledMessagesMaxPerUser: Int? = nil,
+        scheduledMessagesMaxLeadTime: TimeInterval? = nil,
+        scheduledMessagesMinLeadTime: TimeInterval? = nil,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [],
@@ -146,5 +175,9 @@ public final class ChannelConfig: Codable, Sendable {
         self.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
         self.messageRemindersEnabled = messageRemindersEnabled
         self.sharedLocationsEnabled = sharedLocationsEnabled
+        self.scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel
+        self.scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser
+        self.scheduledMessagesMaxLeadTime = scheduledMessagesMaxLeadTime
+        self.scheduledMessagesMinLeadTime = scheduledMessagesMinLeadTime
     }
 }
