@@ -190,9 +190,11 @@ final class ScheduledMessagesRepository_Tests: XCTestCase {
 
     func test_serverRejection_isRetryableOnlyForAKnownTemporaryReason() {
         let retryable: [ScheduledMessageFailure.ServerRejection.Reason?] = [
-            .serverUnavailable, .rateLimited, .scheduledMessageSending, .scheduledMessageConflict
+            .serverUnavailable, .rateLimited, .scheduledMessageConflict
         ]
-        let notRetryable: [ScheduledMessageFailure.ServerRejection.Reason?] = [nil, "unknown_reason", .scheduledLimitChannel, .scheduledAtTooSoon]
+        let notRetryable: [ScheduledMessageFailure.ServerRejection.Reason?] = [
+            nil, "unknown_reason", .scheduledMessageSending, .scheduledLimitChannel, .scheduledAtTooSoon
+        ]
 
         for reason in retryable {
             XCTAssertTrue(ScheduledMessageFailure.ServerRejection(reason: reason, message: "").isRetryable, "\(String(describing: reason))")

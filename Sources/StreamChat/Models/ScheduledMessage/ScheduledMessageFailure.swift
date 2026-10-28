@@ -48,12 +48,13 @@ public extension ScheduledMessageFailure {
 
         /// Whether sending the same changes again can succeed without changing them.
         ///
-        /// Only when the server is not available, too many requests were sent, the server is sending the message, or
-        /// another edit was saved first. Otherwise the message has to be changed: for example rescheduled when the date
-        /// is in the past, or deleted when a limit is reached. A rejection without a known reason is not retryable.
+        /// Only when the server is not available, too many requests were sent, or another edit was saved first.
+        /// Otherwise the message has to be changed: for example rescheduled when the date is in the past, or deleted
+        /// when a limit is reached. Once the server is sending the message, it is either sent or fails, so changing it
+        /// again can not succeed. A rejection without a known reason is not retryable.
         public var isRetryable: Bool {
             switch reason {
-            case .serverUnavailable, .rateLimited, .scheduledMessageSending, .scheduledMessageConflict:
+            case .serverUnavailable, .rateLimited, .scheduledMessageConflict:
                 return true
             default:
                 return false
@@ -101,7 +102,7 @@ public extension ScheduledMessageFailure.ServerRejection {
         /// A failed scheduled message can not be edited.
         public static let scheduledMessageNotEditable: Self = "scheduled_message_not_editable"
 
-        /// The server is sending the message, or will try again shortly.
+        /// The server is sending the message, so it can no longer be changed. It is either sent, or it fails.
         public static let scheduledMessageSending: Self = "scheduled_message_sending"
 
         /// Another edit was saved first.
