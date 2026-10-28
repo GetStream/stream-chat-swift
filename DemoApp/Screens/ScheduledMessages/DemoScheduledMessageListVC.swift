@@ -303,7 +303,10 @@ private struct DemoScheduledMessageRow: View {
     }
 
     private func rejectionText(_ rejection: ScheduledMessageFailure.ServerRejection) -> String {
-        rejection.isRetryable
+        if rejection.reason == .scheduledMessageSending {
+            return "\(rejection.demoDescription)."
+        }
+        return rejection.isRetryable
             ? "\(rejection.demoDescription). Swipe to retry."
             : "\(rejection.demoDescription). Tap to edit or swipe to delete."
     }

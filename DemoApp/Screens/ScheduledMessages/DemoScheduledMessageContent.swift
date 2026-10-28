@@ -75,7 +75,7 @@ extension ScheduledMessageFailure.ServerRejection {
         case .scheduledMessageNotEditable:
             return "A failed message can't be changed. Delete it and schedule it again"
         case .scheduledMessageSending:
-            return "This message is being sent"
+            return "This message is already being sent, so it can't be changed"
         case .scheduledMessageConflict:
             return "This message was changed on another device"
         case .scheduledMessageAlreadySent:
