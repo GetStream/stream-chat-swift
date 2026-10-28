@@ -149,6 +149,7 @@ if [[ ${INSTALL_ALLURE-default} == true ]]; then
     puts "Install xcresults v${XCRESULTS_VERSION}"
     DOWNLOAD_URL="https://github.com/eroshenkoam/xcresults/releases/download/${XCRESULTS_VERSION}/xcresults"
     wget "${DOWNLOAD_URL}" -O ./fastlane/xcresults
+    shasum -a 256 -c - <<< "$XCRESULTS_SHA256  ./fastlane/xcresults"
     chmod +x ./fastlane/xcresults
   fi
 fi
@@ -192,6 +193,7 @@ if [[ ${INSTALL_INTERFACE_ANALYZER-default} == true ]] && ! reuse_binary interfa
   puts "Install interface-analyser v${INTERFACE_ANALYZER_VERSION}"
   FILE="interface-analyser"
   wget "https://github.com/GetStream/stream-module-interface-analyser/releases/download/v${INTERFACE_ANALYZER_VERSION}/${FILE}" -O "${FILE}"
+  shasum -a 256 -c - <<< "$INTERFACE_ANALYZER_SHA256  ${FILE}"
   chmod +x ${FILE}
   sudo mv ${FILE} /usr/local/bin/
 fi

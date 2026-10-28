@@ -4,6 +4,10 @@ Smoke Checks uses the `stream-macos` runner group for macOS jobs. Guard and
 E2E result checks use GitHub-hosted Ubuntu runners. Other workflows keep their
 existing runner selection.
 
+If `stream-macos` is unavailable, set the repository variable
+`USE_HOSTED_MACOS` to `true`. Smoke Checks then runs its macOS jobs on the
+GitHub-hosted runners they used before. Delete the variable to switch back.
+
 ## Run PR checks
 
 1. Give this repository access to the `stream-macos` runner group. The group

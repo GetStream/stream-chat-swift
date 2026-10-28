@@ -84,7 +84,7 @@ reports/
 push_payload.json
 sinatra_log.txt
 derived_data/
-spm_cache/
+spm_cache
 .buildcache
 buildcache
 App Thinning Size Report.txt

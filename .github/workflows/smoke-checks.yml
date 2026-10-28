@@ -51,8 +51,7 @@ jobs:
 
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs: guard
     outputs:
       e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
@@ -80,8 +79,7 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-14' || fromJSON('{"group":"stream-macos"}') }}
     needs: guard
     env:
       XCODE_VERSION: "16.1"
@@ -101,8 +99,7 @@ jobs:
 
   build-old-xcode:
     name: Build SDKs (Old Xcode)
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-14' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
     env:
@@ -128,8 +125,7 @@ jobs:
 
   test-llc-debug:
     name: Test LLC (Debug)
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
     steps:
@@ -178,8 +174,7 @@ jobs:
 
   test-ui-debug:
     name: Test UI (Debug)
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs:
       - guard
       - build-test-app-and-frameworks
@@ -226,8 +221,7 @@ jobs:
 
   test-common-ui-debug:
     name: Test Common UI (Debug)
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     needs:
       - guard
       - build-test-app-and-frameworks
@@ -268,8 +262,7 @@ jobs:
 
   test-ai-debug:
     name: Test AI (Debug)
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
     steps:
@@ -305,8 +298,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
@@ -327,8 +319,7 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' && needs.build-test-app-and-frameworks.outputs.e2e_batches != '[]' }}
     needs:
       - guard
@@ -412,8 +403,7 @@ jobs:
 
   build-apps:
     name: Build Demo App + Example Apps
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
     steps:
@@ -438,8 +428,7 @@ jobs:
 
   test-integration:
     name: Test Integration
-    runs-on:
-      group: stream-macos
+    runs-on: ${{ vars.USE_HOSTED_MACOS == 'true' && 'macos-15' || fromJSON('{"group":"stream-macos"}') }}
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     needs: guard
     steps:
