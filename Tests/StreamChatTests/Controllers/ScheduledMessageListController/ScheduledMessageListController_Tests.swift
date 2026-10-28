@@ -133,16 +133,57 @@ final class ScheduledMessageListController_Tests: XCTestCase {
         XCTAssertEqual(isPendingSendNow, true)
     }
 
+    // The list reuses scheduled messages by id, so these check that changes of their content still reach it.
+
+    @MainActor func test_scheduledMessages_whenTheContentChanges_areUpdated() throws {
+        let message = try schedule()
+        let controller = client.scheduledMessageListController()
+        let delegate = DelegateSpy()
+        controller.delegate = delegate
+        wait(until: { delegate.scheduledMessages.map(\.id) == [message.id] })
+
+        try client.databaseContainer.writeSynchronously { session in
+            let content = try XCTUnwrap(session.scheduledMessage(id: message.id)?.message)
+            content.text = "Edited"
+        }
+
+        wait(until: { delegate.scheduledMessages.first?.message.text == "Edited" })
+        XCTAssertEqual(controller.scheduledMessages.first?.message.text, "Edited")
+    }
+
+    @MainActor func test_scheduledMessages_whenAnAttachmentChanges_areUpdated() throws {
+        let message = try schedule(attachments: [.mockImage])
+        let controller = client.scheduledMessageListController()
+        let delegate = DelegateSpy()
+        controller.delegate = delegate
+        wait(until: { delegate.scheduledMessages.map(\.id) == [message.id] })
+
+        // Only the attachment changes, not the content message or the scheduled message.
+        try client.databaseContainer.writeSynchronously { session in
+            let content = try XCTUnwrap(session.scheduledMessage(id: message.id)?.message)
+            content.attachments.forEach { $0.localState = .uploadingFailed }
+        }
+
+        wait(until: {
+            delegate.scheduledMessages.first?.message.allAttachments.first?.uploadingState?.state == .uploadingFailed
+        })
+    }
+
     // MARK: - Helpers
 
-    private func schedule(cid: ChannelId? = nil) throws -> ScheduledMessage {
+    private func schedule(cid: ChannelId? = nil, attachments: [AnyAttachmentPayload] = []) throws -> ScheduledMessage {
         let cid = cid ?? self.cid!
         apiClient.test_mockResponseResult(.success(
             SendMessageResponsePayload(message: .dummy(cid: cid), scheduledMessage: .dummy(cid: cid))
         ))
         let channelController = client.channelController(for: cid)
         return try waitFor {
-            channelController.scheduleMessage(text: "Hello", scheduledAt: Date().addingTimeInterval(3600), completion: $0)
+            channelController.scheduleMessage(
+                text: "Hello",
+                attachments: attachments,
+                scheduledAt: Date().addingTimeInterval(3600),
+                completion: $0
+            )
         }.get()
     }
 }
