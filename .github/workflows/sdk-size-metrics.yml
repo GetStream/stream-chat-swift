@@ -37,7 +37,6 @@ jobs:
   sdk_size:
     name: Size Metrics
     runs-on: macos-15
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
       GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
