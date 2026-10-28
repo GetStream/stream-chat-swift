@@ -56,6 +56,11 @@ enum WSEvent: Decodable {
     case typeReminderCreatedEvent(ReminderCreatedEventDTO)
     case typeReminderDeletedEvent(ReminderDeletedEventDTO)
     case typeReminderUpdatedEvent(ReminderUpdatedEventDTO)
+    case typeScheduledMessageCreatedEvent(ScheduledMessageCreatedEventDTO)
+    case typeScheduledMessageDeletedEvent(ScheduledMessageDeletedEventDTO)
+    case typeScheduledMessageFailedEvent(ScheduledMessageFailedEventDTO)
+    case typeScheduledMessageSentEvent(ScheduledMessageSentEventDTO)
+    case typeScheduledMessageUpdatedEvent(ScheduledMessageUpdatedEventDTO)
     case typeThreadUpdatedEvent(ThreadUpdatedEventDTO)
     case typeTypingStartEvent(TypingStartEventDTO)
     case typeTypingStopEvent(TypingStopEventDTO)
@@ -162,6 +167,16 @@ enum WSEvent: Decodable {
         case .typeReminderDeletedEvent(let value):
             return value.type
         case .typeReminderUpdatedEvent(let value):
+            return value.type
+        case .typeScheduledMessageCreatedEvent(let value):
+            return value.type
+        case .typeScheduledMessageDeletedEvent(let value):
+            return value.type
+        case .typeScheduledMessageFailedEvent(let value):
+            return value.type
+        case .typeScheduledMessageSentEvent(let value):
+            return value.type
+        case .typeScheduledMessageUpdatedEvent(let value):
             return value.type
         case .typeThreadUpdatedEvent(let value):
             return value.type
@@ -281,6 +296,16 @@ enum WSEvent: Decodable {
         case .typeReminderDeletedEvent(let value):
             return value
         case .typeReminderUpdatedEvent(let value):
+            return value
+        case .typeScheduledMessageCreatedEvent(let value):
+            return value
+        case .typeScheduledMessageDeletedEvent(let value):
+            return value
+        case .typeScheduledMessageFailedEvent(let value):
+            return value
+        case .typeScheduledMessageSentEvent(let value):
+            return value
+        case .typeScheduledMessageUpdatedEvent(let value):
             return value
         case .typeThreadUpdatedEvent(let value):
             return value
@@ -449,6 +474,21 @@ enum WSEvent: Decodable {
         } else if dto.type == "reminder.updated" {
             let value = try container.decode(ReminderUpdatedEventDTO.self)
             self = .typeReminderUpdatedEvent(value)
+        } else if dto.type == "scheduled_message.created" {
+            let value = try container.decode(ScheduledMessageCreatedEventDTO.self)
+            self = .typeScheduledMessageCreatedEvent(value)
+        } else if dto.type == "scheduled_message.deleted" {
+            let value = try container.decode(ScheduledMessageDeletedEventDTO.self)
+            self = .typeScheduledMessageDeletedEvent(value)
+        } else if dto.type == "scheduled_message.failed" {
+            let value = try container.decode(ScheduledMessageFailedEventDTO.self)
+            self = .typeScheduledMessageFailedEvent(value)
+        } else if dto.type == "scheduled_message.sent" {
+            let value = try container.decode(ScheduledMessageSentEventDTO.self)
+            self = .typeScheduledMessageSentEvent(value)
+        } else if dto.type == "scheduled_message.updated" {
+            let value = try container.decode(ScheduledMessageUpdatedEventDTO.self)
+            self = .typeScheduledMessageUpdatedEvent(value)
         } else if dto.type == "thread.updated" {
             let value = try container.decode(ThreadUpdatedEventDTO.self)
             self = .typeThreadUpdatedEvent(value)

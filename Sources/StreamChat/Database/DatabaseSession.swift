@@ -630,6 +630,44 @@ protocol ReminderDatabaseSession {
     func deleteReminder(messageId: MessageId)
 }
 
+protocol ScheduledMessageDatabaseSession {
+    /// Creates a scheduled message locally, which is sent to the server once its attachments are uploaded.
+    @discardableResult
+    func createNewScheduledMessage(
+        id: String,
+        cid: ChannelId,
+        content: ScheduledMessageContent,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO
+
+    /// Changes a scheduled message locally, which is synced with the server once its attachments are uploaded.
+    @discardableResult
+    func updateScheduledMessage(
+        id: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date?
+    ) throws -> ScheduledMessageDTO
+
+    /// Creates or updates a scheduled message with the provided payload.
+    ///
+    /// The content is kept when it has local changes that are not on the server yet.
+    @discardableResult
+    func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO
+
+    /// Returns the scheduled message with the specified id, if it exists.
+    func scheduledMessage(id: String) -> ScheduledMessageDTO?
+
+    /// Deletes the scheduled message with the specified id.
+    func deleteScheduledMessage(id: String)
+
+    /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
+    func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?)
+
+    /// Changes the state to `.pendingSync` for all scheduled messages in `.syncing` state, at the beginning of the session.
+    /// They get stuck there when the app is killed while their changes are sent to the server.
+    func rescueScheduledMessagesStuckInSyncing()
+}
+
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
@@ -773,6 +811,7 @@ protocol DatabaseSession: UserDatabaseSession,
     ThreadReadDatabaseSession,
     PollDatabaseSession,
     ReminderDatabaseSession,
+    ScheduledMessageDatabaseSession,
     UserGroupDatabaseSession,
     LocationDatabaseSession,
     PollDatabaseSession {}

@@ -350,6 +350,11 @@ allowed_events=(
   ReminderDeletedEvent
   ReminderNotificationEvent
   ReminderUpdatedEvent
+  ScheduledMessageCreatedEvent
+  ScheduledMessageDeletedEvent
+  ScheduledMessageFailedEvent
+  ScheduledMessageSentEvent
+  ScheduledMessageUpdatedEvent
   ThreadUpdatedEvent
   TypingStartEvent
   TypingStopEvent
@@ -871,6 +876,11 @@ remove_property ReminderNotificationEventDTO cid custom parentId receivedAt user
 remove_property ReminderPayload expiresAt user
 remove_property ReminderUpdatedEventDTO cid custom parentId receivedAt userId
 remove_property ScheduledMessageContentResponse html mml sharedLocation
+remove_property ScheduledMessageCreatedEventDTO cid custom receivedAt user
+remove_property ScheduledMessageDeletedEventDTO cid custom receivedAt user
+remove_property ScheduledMessageFailedEventDTO cid custom receivedAt user
+remove_property ScheduledMessageSentEventDTO cid custom receivedAt user
+remove_property ScheduledMessageUpdatedEventDTO cid custom receivedAt user
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
 remove_property SearchResultMessage html imageLabels mml
@@ -924,6 +934,7 @@ publicize_model UserGroupMember
 publicize_raw_representable ChannelCapability
 publicize_raw_representable CreatePollRequestBody VotingVisibility
 publicize_raw_representable PushPreferenceInput PushPreferenceLevel
+publicize_raw_representable ScheduledMessageFailureReason
 publicize_raw_representable TranslateMessageRequest TranslationLanguage
 
 # 7. Coding conformances and cleanup.

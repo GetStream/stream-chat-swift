@@ -88,6 +88,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var draftMessage: MessageDTO?
     @NSManaged var activeLiveLocations: Set<SharedLocationDTO>
+    @NSManaged var scheduledMessages: Set<ScheduledMessageDTO>
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -408,6 +409,10 @@ extension NSManagedObjectContext {
             }
         }
 
+        if let scheduledMessages = payload.scheduledMessages {
+            saveScheduledMessages(payload: scheduledMessages, cid: payload.channel.cid)
+        }
+
         dto.activeLiveLocations = Set(try payload.activeLiveLocations?.map {
             try saveLocation(payload: $0, cache: cache)
         } ?? [])
@@ -678,6 +683,10 @@ extension ChatChannel {
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
         
         let pushPreference = try dto.pushPreference?.asModel()
+        let scheduledMessages = dto.scheduledMessages
+            .filter { !$0.isDeleted }
+            .compactMap { try? $0.asModel() }
+            .sorted { ($0.status == .failed ? 1 : 0, $0.scheduledAt) < ($1.status == .failed ? 1 : 0, $1.scheduledAt) }
 
         let channel = try ChatChannel(
             cid: cid,
@@ -718,7 +727,8 @@ extension ChatChannel {
             muteDetails: muteDetails,
             draftMessage: draftMessage.map(DraftMessage.init),
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
 
         if let transformer = clientConfig.modelsTransformer {

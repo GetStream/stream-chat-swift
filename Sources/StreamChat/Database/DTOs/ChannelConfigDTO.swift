@@ -27,6 +27,10 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var updatedAt: DBDate
     @NSManaged var commands: NSOrderedSet
     @NSManaged var sharedLocationsEnabled: Bool
+    @NSManaged var scheduledMessagesMaxPerChannel: NSNumber?
+    @NSManaged var scheduledMessagesMaxPerUser: NSNumber?
+    @NSManaged var scheduledMessagesMaxLeadTime: NSNumber?
+    @NSManaged var scheduledMessagesMinLeadTime: NSNumber?
 
     func asModel() throws -> ChannelConfig {
         try isNotDeleted()
@@ -46,6 +50,10 @@ final class ChannelConfigDTO: NSManagedObject {
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
             messageRemindersEnabled: messageRemindersEnabled,
             sharedLocationsEnabled: sharedLocationsEnabled,
+            scheduledMessagesMaxPerChannel: scheduledMessagesMaxPerChannel?.intValue,
+            scheduledMessagesMaxPerUser: scheduledMessagesMaxPerUser?.intValue,
+            scheduledMessagesMaxLeadTime: scheduledMessagesMaxLeadTime?.doubleValue,
+            scheduledMessagesMinLeadTime: scheduledMessagesMinLeadTime?.doubleValue,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
             commands: Array(Set(
@@ -89,6 +97,10 @@ extension ChannelConfig {
         dto.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
         dto.messageRemindersEnabled = messageRemindersEnabled
         dto.sharedLocationsEnabled = sharedLocationsEnabled
+        dto.scheduledMessagesMaxPerChannel = scheduledMessagesMaxPerChannel.map { NSNumber(value: $0) }
+        dto.scheduledMessagesMaxPerUser = scheduledMessagesMaxPerUser.map { NSNumber(value: $0) }
+        dto.scheduledMessagesMaxLeadTime = scheduledMessagesMaxLeadTime.map { NSNumber(value: $0) }
+        dto.scheduledMessagesMinLeadTime = scheduledMessagesMinLeadTime.map { NSNumber(value: $0) }
         return dto
     }
 }

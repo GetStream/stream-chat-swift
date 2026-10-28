@@ -1487,6 +1487,10 @@
       "read_events" : true,
       "skip_last_msg_update_for_system_msgs": true,
       "shared_locations": true,
+      "scheduled_messages_max_per_channel": 10,
+      "scheduled_messages_max_per_user": 100,
+      "scheduled_messages_max_lead_time_seconds": 2592000,
+      "scheduled_messages_min_lead_time_seconds": 60,
       "commands" : [
         {
           "set" : "fun_set",

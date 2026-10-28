@@ -22,6 +22,10 @@ public extension ChannelConfig {
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
         messageRemindersEnabled: Bool = false,
         sharedLocationsEnabled: Bool = false,
+        scheduledMessagesMaxPerChannel: Int? = nil,
+        scheduledMessagesMaxPerUser: Int? = nil,
+        scheduledMessagesMaxLeadTime: TimeInterval? = nil,
+        scheduledMessagesMinLeadTime: TimeInterval? = nil,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [Command(name: "Giphy", description: "", set: "", args: "")],
@@ -43,6 +47,10 @@ public extension ChannelConfig {
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
             messageRemindersEnabled: messageRemindersEnabled,
             sharedLocationsEnabled: sharedLocationsEnabled,
+            scheduledMessagesMaxPerChannel: scheduledMessagesMaxPerChannel,
+            scheduledMessagesMaxPerUser: scheduledMessagesMaxPerUser,
+            scheduledMessagesMaxLeadTime: scheduledMessagesMaxLeadTime,
+            scheduledMessagesMinLeadTime: scheduledMessagesMinLeadTime,
             messageRetention: messageRetention,
             maxMessageLength: maxMessageLength,
             commands: commands,
@@ -113,7 +121,8 @@ public extension ChatChannel {
         muteDetails: MuteDetails? = nil,
         draftMessage: DraftMessage? = nil,
         activeLiveLocations: [SharedLocation] = [],
-        pushPreference: PushPreference? = nil
+        pushPreference: PushPreference? = nil,
+        scheduledMessages: [ScheduledMessage] = []
     ) -> Self {
         self.init(
             cid: cid,
@@ -153,7 +162,8 @@ public extension ChatChannel {
             muteDetails: muteDetails,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
     }
 

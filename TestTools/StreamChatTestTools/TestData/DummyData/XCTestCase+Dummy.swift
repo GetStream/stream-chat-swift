@@ -131,6 +131,10 @@ extension XCTestCase {
             mutesEnabled: true,
             urlEnrichmentEnabled: true,
             messageRemindersEnabled: true,
+            scheduledMessagesMaxPerChannel: 10,
+            scheduledMessagesMaxPerUser: 100,
+            scheduledMessagesMaxLeadTime: 2_592_000,
+            scheduledMessagesMinLeadTime: 60,
             messageRetention: "1000",
             maxMessageLength: 100,
             commands: [

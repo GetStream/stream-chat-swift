@@ -22,6 +22,7 @@ extension ChannelPayload {
         draft: DraftPayload? = nil,
         activeLiveLocations: [SharedLocation] = [],
         pushPreference: PushPreference? = nil,
+        scheduledMessages: [ScheduledMessageResponse]? = nil,
         threads: [ThreadPayload] = []
     ) -> Self {
         .init(
@@ -36,6 +37,7 @@ extension ChannelPayload {
             pinnedMessages: pinnedMessages,
             pushPreferences: pushPreference,
             read: channelReads,
+            scheduledMessages: scheduledMessages,
             threads: threads,
             watcherCount: watcherCount ?? watchers.count,
             watchers: watchers

@@ -625,6 +625,10 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.maxMessageLength, 5000)
         XCTAssertEqual(config.skipLastMsgAtUpdateForSystemMsg, true)
         XCTAssertEqual(config.sharedLocationsEnabled, true)
+        XCTAssertEqual(config.scheduledMessagesMaxPerChannel, 10)
+        XCTAssertEqual(config.scheduledMessagesMaxPerUser, 100)
+        XCTAssertEqual(config.scheduledMessagesMaxLeadTime, 2_592_000)
+        XCTAssertEqual(config.scheduledMessagesMinLeadTime, 60)
         XCTAssertEqual(
             config.commands,
             [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")]
@@ -639,6 +643,16 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertNotNil(payload.pushPreferences)
         XCTAssertEqual(payload.pushPreferences?.level, "all")
         XCTAssertNil(payload.pushPreferences?.disabledUntil)
+    }
+
+    func test_channelConfig_whenScheduledMessagesAreDisabled_hasNoScheduledMessagesLimits() throws {
+        let data = XCTestCase.mockData(fromJSONFile: "ChannelPayload")
+        let config = try JSONDecoder.default.decode(ChannelDetailPayload.self, from: data).config
+
+        XCTAssertNil(config.scheduledMessagesMaxPerChannel)
+        XCTAssertNil(config.scheduledMessagesMaxPerUser)
+        XCTAssertNil(config.scheduledMessagesMaxLeadTime)
+        XCTAssertNil(config.scheduledMessagesMinLeadTime)
     }
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {
