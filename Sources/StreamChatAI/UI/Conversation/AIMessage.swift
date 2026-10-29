@@ -27,6 +27,9 @@ public protocol AIMessage: Identifiable, Sendable {
     var parts: [AIMessagePart] { get }
     /// What it carries besides its text, such as images and files.
     var attachments: [AIMessageAttachment] { get }
+    /// The UI the agent generated for a reply, shown in place of its text when the
+    /// conversation's ``AIUIHost`` can, such as `AIUIDocument(customData: message.extraData)`.
+    var uiDocument: AIUIDocument? { get }
     /// The whole of a reasoning step's thinking when the app has it, such as from live
     /// updates. Without it, the step shows its own excerpt. It is read each time the
     /// conversation updates, so look it up rather than work it out.
@@ -37,6 +40,7 @@ public extension AIMessage {
     var isGenerating: Bool { false }
     var parts: [AIMessagePart] { [] }
     var attachments: [AIMessageAttachment] { [] }
+    var uiDocument: AIUIDocument? { nil }
     func reasoningText(for step: AIReasoningPart) -> String? { nil }
 }
 
@@ -57,6 +61,6 @@ public struct AIMessageRole: RawRepresentable, Hashable, Sendable, ExpressibleBy
 extension AIMessage {
     // A reply the agent has started but that has nothing to show yet.
     var showsNothing: Bool {
-        role != .user && text.isEmpty && parts.isEmpty && attachments.isEmpty
+        role != .user && text.isEmpty && parts.isEmpty && attachments.isEmpty && uiDocument == nil
     }
 }
