@@ -13,7 +13,12 @@ protocol IdentifiablePayload {
 
 extension IdentifiablePayload {
     func addId(cache: inout [String: Set<String>]) {
-        guard let databaseId = databaseId, let modelClassName = Self.modelClass?.className else { return }
+        guard let databaseId = databaseId else { return }
+        addId(databaseId: databaseId, cache: &cache)
+    }
+
+    func addId(databaseId: DatabaseId, cache: inout [DatabaseType: Set<DatabaseId>]) {
+        guard let modelClassName = Self.modelClass?.className else { return }
         var ids = (cache[modelClassName] ?? Set<String>())
         ids.insert(databaseId)
         cache[modelClassName] = ids
@@ -82,7 +87,7 @@ extension IdentifiablePayloadProxy {
     static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 }
 
-extension Array where Element: IdentifiablePayload {
+extension Array: IdentifiablePayload where Element: IdentifiablePayload {
     var databaseId: DatabaseId? { nil }
     static var modelClass: (IdentifiableDatabaseObject).Type? { nil }
 
@@ -99,12 +104,6 @@ extension QueryUsersResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        messages.fillIds(cache: &cache)
-    }
-}
-
 extension MessageReactionsPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         reactions.fillIds(cache: &cache)
@@ -117,21 +116,9 @@ extension SearchResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageResponse.Boxed: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        message.fillIds(cache: &cache)
-    }
-}
-
 extension SearchResult: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message.fillIds(cache: &cache)
-    }
-}
-
-extension ChannelMemberListPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        members.fillIds(cache: &cache)
     }
 }
 
@@ -149,7 +136,8 @@ extension ChannelPayload: IdentifiablePayloadProxy {
         membership?.fillIds(cache: &cache)
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
-        channelReads.fillIds(cache: &cache, channelCid: channel.cid)
+        read?.fillIds(cache: &cache, channelCid: channel.cid)
+        threads.fillIds(cache: &cache)
     }
 }
 
@@ -183,10 +171,21 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension ReadStateResponse: IdentifiablePayloadProxy {
+extension ReadStateResponse: IdentifiablePayload {
+    var databaseId: DatabaseId? { nil } // Cannot build id without channel id
+    static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelReadDTO.self
+
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user.fillIds(cache: &cache)
+    }
+
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], channelCid: ChannelId) {
+        user.fillIds(cache: &cache)
+        addId(
+            databaseId: ChannelReadDTO.createId(cid: channelCid, userId: user.id),
+            cache: &cache
+        )
     }
 }
 
@@ -269,25 +268,6 @@ extension MemberPayload: IdentifiablePayload {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         user?.fillIds(cache: &cache)
-    }
-}
-
-extension ChannelReadPayload: IdentifiablePayload {
-    var databaseId: DatabaseId? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
-    static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelReadDTO.self
-
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        addId(cache: &cache)
-        user.fillIds(cache: &cache)
-    }
-
-    /// Registers the composed read id in the cache. Requires the parent channel cid because reads do not
-    /// carry it on the payload.
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>], channelCid: ChannelId) {
-        user.fillIds(cache: &cache)
-        cache[ChannelReadDTO.className, default: []].insert(
-            ChannelReadDTO.createId(cid: channelCid, userId: user.id)
-        )
     }
 }
 

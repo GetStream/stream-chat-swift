@@ -18,17 +18,7 @@ public final class UserPresenceChangedEvent: Event {
     }
 }
 
-final class UserPresenceChangedEventDTO: EventDTO {
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension UserPresenceChangedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
 
@@ -53,17 +43,7 @@ public final class UserUpdatedEvent: Event {
     }
 }
 
-final class UserUpdatedEventDTO: EventDTO {
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension UserUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
 
@@ -102,23 +82,15 @@ public final class UserWatchingEvent: ChannelSpecificEvent {
     }
 }
 
-final class UserWatchingEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserPayload
-    let createdAt: Date
-    let watcherCount: Int
-    let isStarted: Bool
-    let payload: EventPayload
+protocol UserWatchingEventDTO: EventDTO {
+    var cid: ChannelId { get }
+    var createdAt: Date { get }
+    var user: UserPayload { get }
+    var watcherCount: Int { get }
+    var isStarted: Bool { get }
+}
 
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        watcherCount = try response.value(at: \.watcherCount)
-        isStarted = response.eventType == .userStartWatching
-        payload = response
-    }
-
+extension UserWatchingEventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
 
@@ -130,6 +102,14 @@ final class UserWatchingEventDTO: EventDTO {
             isStarted: isStarted
         )
     }
+}
+
+extension UserWatchingStartEventDTO: UserWatchingEventDTO {
+    var isStarted: Bool { true }
+}
+
+extension UserWatchingStopEventDTO: UserWatchingEventDTO {
+    var isStarted: Bool { false }
 }
 
 // MARK: - User Ban
@@ -145,27 +125,6 @@ public final class UserGloballyBannedEvent: Event {
     init(user: ChatUser, createdAt: Date) {
         self.user = user
         self.createdAt = createdAt
-    }
-}
-
-final class UserGloballyBannedEventDTO: EventDTO {
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
-
-        return try? UserGloballyBannedEvent(
-            user: userDTO.asModel(),
-            createdAt: createdAt
-        )
     }
 }
 
@@ -203,29 +162,16 @@ public final class UserBannedEvent: ChannelSpecificEvent {
     }
 }
 
-final class UserBannedEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserPayload
-    let ownerId: UserId
-    let createdAt: Date
-    let reason: String?
-    let expiredAt: Date?
-    let payload: EventPayload
-    let isShadowBan: Bool?
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        ownerId = try response.value(at: \.createdBy?.id)
-        createdAt = try response.value(at: \.createdAt)
-        reason = response.banReason
-        expiredAt = response.banExpiredAt
-        payload = response
-        isShadowBan = response.shadow
-    }
-
+extension UserBannedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+
+        guard let cid, let ownerId = createdBy?.id else {
+            return try? UserGloballyBannedEvent(
+                user: userDTO.asModel(),
+                createdAt: createdAt
+            )
+        }
 
         return try? UserBannedEvent(
             cid: cid,
@@ -233,8 +179,8 @@ final class UserBannedEventDTO: EventDTO {
             ownerId: ownerId,
             createdAt: createdAt,
             reason: reason,
-            expiredAt: expiredAt,
-            isShadowBan: isShadowBan
+            expiredAt: expiration,
+            isShadowBan: shadow
         )
     }
 }
@@ -250,27 +196,6 @@ public final class UserGloballyUnbannedEvent: Event {
     init(user: ChatUser, createdAt: Date) {
         self.user = user
         self.createdAt = createdAt
-    }
-}
-
-final class UserGloballyUnbannedEventDTO: EventDTO {
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
-
-        return try? UserGloballyUnbannedEvent(
-            user: userDTO.asModel(),
-            createdAt: createdAt
-        )
     }
 }
 
@@ -292,21 +217,16 @@ public final class UserUnbannedEvent: ChannelSpecificEvent {
     }
 }
 
-final class UserUnbannedEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension UserUnbannedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+
+        guard let cid else {
+            return try? UserGloballyUnbannedEvent(
+                user: userDTO.asModel(),
+                createdAt: createdAt
+            )
+        }
 
         return try? UserUnbannedEvent(
             cid: cid,
@@ -334,30 +254,20 @@ public final class UserMessagesDeletedEvent: Event {
     }
 }
 
-final class UserMessagesDeletedEventDTO: EventDTO {
-    let user: UserPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension UserMessagesDeletedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         if let userDTO = session.user(id: user.id),
            let userModel = try? userDTO.asModel() {
             return UserMessagesDeletedEvent(
                 user: userModel,
-                hardDelete: payload.hardDelete,
+                hardDelete: hardDelete ?? false,
                 createdAt: createdAt
             )
         }
 
         return UserMessagesDeletedEvent(
             user: user.asModel(),
-            hardDelete: payload.hardDelete,
+            hardDelete: hardDelete ?? false,
             createdAt: createdAt
         )
     }

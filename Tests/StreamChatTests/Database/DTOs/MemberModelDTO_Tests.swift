@@ -59,7 +59,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         }
 
         AssertAsync {
-            Assert.willBeEqual(payload.channelRole.map(MemberRole.init(rawChannelValue:)), loadedMember?.memberRole)
+            Assert.willBeEqual(MemberRole(rawChannelValue: payload.channelRole), loadedMember?.memberRole)
             Assert.willBeEqual(MemberStatus.pending, loadedMember?.memberStatus)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
@@ -77,7 +77,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user!.updatedAt, loadedMember?.userUpdatedAt)
             Assert.willBeEqual(payload.user!.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payload.user!.teams ?? []), loadedMember?.teams)
+            Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
             Assert.willBeEqual(payload.user!.language, loadedMember?.language?.languageCode)
             Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)
             Assert.willBeEqual(payload.user!.teamsRole, loadedMember?.teamsRole?.mapValues(\.rawValue))
@@ -136,7 +136,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_saveMembers_whenFirstPage_clearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
+        let members: MembersResponse = .init(members: [.dummy(), .dummy()])
         let query = ChannelMemberListQuery(cid: cid, filter: .equal(.isModerator, to: true))
 
         // Save previous members
@@ -146,7 +146,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         // Save new members
         nonisolated(unsafe) var newMembers: [ChatChannelMember] = []
         try database.writeSynchronously { session in
-            newMembers = try session.saveMembers(payload: members, channelId: cid, query: query)
+            newMembers = try session.saveMembers(response: members, channelId: cid, query: query)
                 .map { try $0.asModel() }
         }
 
@@ -157,7 +157,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_saveMembers_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
+        let members: MembersResponse = .init(members: [.dummy(), .dummy()])
         nonisolated(unsafe) var query = ChannelMemberListQuery(cid: cid)
         query.pagination = .init(pageSize: 20, offset: 25)
 
@@ -168,7 +168,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         // Save new members
         nonisolated(unsafe) var newMembers: [ChatChannelMember] = []
         try database.writeSynchronously { session in
-            newMembers = try session.saveMembers(payload: members, channelId: cid, query: query)
+            newMembers = try session.saveMembers(response: members, channelId: cid, query: query)
                 .map { try $0.asModel() }
         }
 
@@ -320,10 +320,10 @@ final class MemberModelDTO_Tests: XCTestCase {
         toQuery query: ChannelMemberListQuery,
         cid: ChannelId
     ) throws -> [ChatChannelMember] {
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy(), .dummy(), .dummy()])
+        let members: MembersResponse = .init(members: [.dummy(), .dummy(), .dummy(), .dummy()])
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid))
-            session.saveMembers(payload: members, channelId: cid, query: query)
+            session.saveMembers(response: members, channelId: cid, query: query)
         }
         let loadedQuery = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.queryHash))
         return try loadedQuery.members.map { try $0.asModel() }

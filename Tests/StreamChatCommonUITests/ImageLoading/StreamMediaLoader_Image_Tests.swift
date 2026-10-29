@@ -181,17 +181,146 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
 
         XCTAssertEqual(downloader.trimmedCosts, [1024])
     }
+
+    // MARK: - loadImageTask
+
+    @MainActor
+    func test_loadImageTask_whenCancelledDuringCDNRequest_doesNotStartTheDownloadAndCompletesWithCancellationError() async {
+        cdnRequester.defersImageRequests = true
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+        let url = URL(string: "https://example.com/image.jpg")!
+        var results: [Result<MediaLoaderImage, Error>] = []
+
+        let task = sut.loadImageTask(url: url, options: ImageLoadOptions()) { results.append($0) }
+        task.cancel()
+        cdnRequester.resolvePendingImageRequests()
+        await drainMainQueue()
+
+        XCTAssertTrue(downloader.downloadTasks.isEmpty)
+        XCTAssertNil(downloader.lastURL)
+        XCTAssertEqual(results.count, 1)
+        XCTAssertThrowsError(try results.first?.get()) { XCTAssertTrue($0 is CancellationError) }
+    }
+
+    @MainActor
+    func test_loadImageTask_whenCancelledDuringDownload_cancelsTheDownloadAndCompletesWithCancellationError() async {
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+        let url = URL(string: "https://example.com/image.jpg")!
+        var results: [Result<MediaLoaderImage, Error>] = []
+
+        let task = sut.loadImageTask(url: url, options: ImageLoadOptions()) { results.append($0) }
+        task.cancel()
+        await drainMainQueue()
+
+        XCTAssertEqual(downloader.downloadTasks.map(\.isCancelled), [true])
+        XCTAssertEqual(results.count, 1)
+        XCTAssertThrowsError(try results.first?.get()) { XCTAssertTrue($0 is CancellationError) }
+    }
+
+    @MainActor
+    func test_loadImage_async_whenSwiftTaskIsCancelled_throwsCancellationError() async {
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+        let url = URL(string: "https://example.com/image.jpg")!
+        let sut = self.sut!
+
+        let loading = Task { try await sut.loadImage(url: url) }
+        loading.cancel()
+
+        do {
+            _ = try await loading.value
+            XCTFail("Should have thrown")
+        } catch {
+            XCTAssertTrue(error is CancellationError)
+        }
+    }
+
+    @MainActor
+    func test_loadImageTask_whenSubclassOverridesItAndCallsSuperLoadImage_completes() {
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+        let sut = SuperLoadImageCallingMediaLoader(downloader: downloader, cdnRequester: cdnRequester)
+        let completion = expectation(description: "completion")
+        var results: [Result<MediaLoaderImage, Error>] = []
+
+        sut.loadImageTask(url: URL(string: "https://example.com/image.jpg")!, options: ImageLoadOptions()) { result in
+            results.append(result)
+            completion.fulfill()
+        }
+
+        wait(for: [completion], timeout: 5)
+        XCTAssertNoThrow(try results.first?.get())
+    }
+
+    @MainActor
+    func test_loadImageTask_whenSubclassOverridesLoadImage_callsTheOverrideAndCancelsTheDownload() async {
+        downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
+        let sut = LoadImageOverridingMediaLoader(downloader: downloader, cdnRequester: cdnRequester)
+        var results: [Result<MediaLoaderImage, Error>] = []
+
+        let task = sut.loadImageTask(url: URL(string: "https://example.com/image.jpg")!, options: ImageLoadOptions()) { results.append($0) }
+        task.cancel()
+        await drainMainQueue()
+
+        XCTAssertEqual(sut.loadImageCallCount, 1)
+        XCTAssertEqual(downloader.downloadTasks.map(\.isCancelled), [true])
+        XCTAssertEqual(results.count, 1)
+        XCTAssertThrowsError(try results.first?.get()) { XCTAssertTrue($0 is CancellationError) }
+    }
+
+    // MARK: - Helpers
+
+    private func drainMainQueue() async {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.main.async { continuation.resume() }
+        }
+    }
 }
 
 // MARK: - Mocks
 
+private final class LoadImageOverridingMediaLoader: StreamMediaLoader, @unchecked Sendable {
+    var loadImageCallCount = 0
+
+    override func loadImage(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) {
+        loadImageCallCount += 1
+        super.loadImage(url: url, options: options, completion: completion)
+    }
+}
+
+private final class SuperLoadImageCallingMediaLoader: StreamMediaLoader, @unchecked Sendable {
+    @discardableResult
+    override func loadImageTask(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        super.loadImage(url: url, options: options, completion: completion)
+        return ImageLoadingTask()
+    }
+}
+
 private final class MockCDNRequester: CDNRequester, @unchecked Sendable {
     var imageRequestResult: Result<CDNRequest, Error>?
     var lastImageRequestOptions: ImageRequestOptions?
+    var defersImageRequests = false
+    private var pendingImageRequests: [() -> Void] = []
 
     func imageRequest(for url: URL, options: ImageRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
         lastImageRequestOptions = options
-        completion(imageRequestResult ?? .success(CDNRequest(url: url)))
+        let result = imageRequestResult ?? .success(CDNRequest(url: url))
+        if defersImageRequests {
+            pendingImageRequests.append { completion(result) }
+        } else {
+            completion(result)
+        }
+    }
+
+    func resolvePendingImageRequests() {
+        pendingImageRequests.forEach { $0() }
+        pendingImageRequests = []
     }
 
     func fileRequest(for url: URL, options: FileRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
@@ -205,6 +334,7 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
     var lastURL: URL?
     var lastOptions: ImageDownloadingOptions?
     var trimmedCosts: [Int] = []
+    var downloadTasks: [ImageLoadingTask] = []
 
     func downloadImage(
         url: URL,
@@ -217,6 +347,17 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
         DispatchQueue.main.async {
             completion(resolvedResult)
         }
+    }
+
+    func downloadImageTask(
+        url: URL,
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        downloadImage(url: url, options: options, completion: completion)
+        let task = ImageLoadingTask()
+        downloadTasks.append(task)
+        return task
     }
 
     func trimMemoryCache(toCost limit: Int) {

@@ -22,6 +22,23 @@ public protocol ImageDownloading: Sendable {
         completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
     )
 
+    /// Downloads an image from the given URL and returns a task that can cancel the download.
+    ///
+    /// Cancelling the task stops the download when no other request needs it. The completion
+    /// is always called once with the download's result, which is `URLError.cancelled` when
+    /// the download was stopped.
+    ///
+    /// - Parameters:
+    ///   - url: The image URL to download.
+    ///   - options: Options controlling headers, caching, and resizing.
+    ///   - completion: Called on the main actor with the downloaded image.
+    /// - Returns: A task for cancelling the download.
+    func downloadImageTask(
+        url: URL,
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+    ) -> ImageLoadingTask
+
     /// Evicts least-recently-used images from the in-memory cache until its
     /// total cost drops to the given limit in bytes.
     func trimMemoryCache(toCost limit: Int)
@@ -30,6 +47,16 @@ public protocol ImageDownloading: Sendable {
 // MARK: - Default Implementations
 
 extension ImageDownloading {
+    /// Calls ``downloadImage(url:options:completion:)`` by default. Implement it to support cancellation by using ``ImageLoadingTask/addCancellationHandler(_:)``.
+    public func downloadImageTask(
+        url: URL,
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        downloadImage(url: url, options: options, completion: completion)
+        return ImageLoadingTask()
+    }
+
     /// Does nothing by default.
     public func trimMemoryCache(toCost limit: Int) {}
 }

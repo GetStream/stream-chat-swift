@@ -39,23 +39,23 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
 
         var set = userExtraData ?? [:]
         if let name = name {
-            set[UserPayloadsCodingKeys.name.rawValue] = .string(name)
+            set[StringCodingKey.name.stringValue] = .string(name)
         }
         if let imageURL = imageURL {
-            set[UserPayloadsCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+            set[StringCodingKey.image.stringValue] = .string(imageURL.absoluteString)
         }
         if let privacySettings = privacySettings {
             guard let rawJSON = privacySettings.rawJSON else {
                 completion?(ClientError.InvalidJSON("Failed to encode privacy settings: \(privacySettings)"))
                 return
             }
-            set[UserPayloadsCodingKeys.privacySettings.rawValue] = rawJSON
+            set[StringCodingKey.privacySettings.stringValue] = rawJSON
         }
         if let role = role {
-            set[UserPayloadsCodingKeys.role.rawValue] = .string(role.rawValue)
+            set[StringCodingKey.role.stringValue] = .string(role.rawValue)
         }
         if let teamsRole = teamsRole {
-            set[UserPayloadsCodingKeys.teamsRole.rawValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
+            set[StringCodingKey.teamsRole.stringValue] = .dictionary(teamsRole.mapValues { .string($0.rawValue) })
         }
 
         let request = UpdateUsersPartialRequest(users: [
@@ -86,40 +86,64 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     ///   - pushProvider: The push provider.
     ///   - providerName: Name of the push configuration in dashboard. If nil, default configuration will be used.
     ///   - currentUserId: The current user identifier.
+    ///   - forceRegistration: Sends the request even when the device is already registered.
     ///   - completion: Called when device is successfully registered, or with error.
     func addDevice(
         deviceId: DeviceId,
         pushProvider: PushProvider,
         providerName: String? = nil,
         currentUserId: UserId,
+        forceRegistration: Bool = false,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        database.write({ session in
+        database.write(converting: { session in
+            let isRegistered = session.currentUser?.devices.contains {
+                $0.id == deviceId
+                    && $0.userId == currentUserId
+                    && $0.pushProvider == pushProvider.rawValue
+                    && $0.pushProviderName == providerName
+            } ?? false
             try session.saveCurrentDevice(deviceId)
-        }, completion: { databaseError in
-            if let databaseError {
+            return isRegistered
+        }, completion: { result in
+            switch result {
+            case let .failure(databaseError):
                 completion?(databaseError)
-                return
-            }
-            self.apiClient
-                .request(
-                    endpoint: .createDevice(
-                        createDeviceRequest: CreateDeviceRequest(
-                            id: deviceId,
-                            pushProvider: .init(rawValue: pushProvider.rawValue),
-                            pushProviderName: providerName
-                        )
-                    ),
-                    completion: { result in
-                        if let error = result.error {
-                            log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
-                            completion?(error)
-                            return
+            case .success(true) where !forceRegistration:
+                log.debug("Device token \(deviceId) is already registered on Stream's backend.")
+                completion?(nil)
+            case .success:
+                self.apiClient
+                    .request(
+                        endpoint: .createDevice(
+                            createDeviceRequest: CreateDeviceRequest(
+                                id: deviceId,
+                                pushProvider: CreateDeviceRequest.PushProvider(rawValue: pushProvider.rawValue) ?? .unknown,
+                                pushProviderName: providerName
+                            )
+                        ),
+                        completion: { result in
+                            if let error = result.error {
+                                log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
+                                completion?(error)
+                                return
+                            }
+                            log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
+                            let device = Device(
+                                createdAt: Date(),
+                                id: deviceId,
+                                pushProvider: pushProvider.rawValue,
+                                pushProviderName: providerName,
+                                userId: currentUserId
+                            )
+                            self.database.write({ session in
+                                _ = try session.saveCurrentUserDevices([device], clearExisting: false)
+                            }, completion: { _ in
+                                completion?(nil)
+                            })
                         }
-                        log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
-                        completion?(nil)
-                    }
-                )
+                    )
+            }
         })
     }
 
@@ -270,7 +294,11 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
                     }
                     let blockedUsers = payload.blocks.map {
-                        BlockedUserDetails(userId: $0.blockedUserId, blockedAt: $0.createdAt)
+                        BlockedUserDetails(
+                            userId: $0.blockedUserId,
+                            blockedAt: $0.createdAt,
+                            blockedUser: $0.blockedUser.asModel()
+                        )
                     }
                     completion(.success(blockedUsers))
                 })
@@ -359,13 +387,14 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
 }
 
 extension CurrentUserUpdater {
-    func addDevice(_ device: PushDevice, currentUserId: UserId) async throws {
+    func addDevice(_ device: PushDevice, currentUserId: UserId, forceRegistration: Bool = false) async throws {
         try await withCheckedThrowingContinuation { continuation in
             addDevice(
                 deviceId: device.deviceId,
                 pushProvider: device.pushProvider,
                 providerName: device.providerName,
-                currentUserId: currentUserId
+                currentUserId: currentUserId,
+                forceRegistration: forceRegistration
             ) { error in
                 continuation.resume(with: error)
             }

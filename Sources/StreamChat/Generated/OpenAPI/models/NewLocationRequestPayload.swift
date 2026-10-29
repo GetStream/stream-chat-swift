@@ -17,10 +17,11 @@ final class NewLocationRequestPayload: Sendable, Encodable, JSONEncodable {
         self.longitude = longitude
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdByDeviceId = "created_by_device_id"
-        case endAt = "end_at"
-        case latitude
-        case longitude
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(createdByDeviceId, forKey: .createdByDeviceId)
+        try container.encodeIfPresent(endAt, forKey: .endAt)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
     }
 }

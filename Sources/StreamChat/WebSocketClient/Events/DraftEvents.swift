@@ -26,21 +26,10 @@ public final class DraftUpdatedEvent: Event {
     }
 }
 
-final class DraftUpdatedEventDTO: EventDTO {
-    let cid: ChannelId
-    let draft: DraftPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        draft = try response.value(at: \.draft)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension DraftUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
         guard
+            let draft,
             let messageDTO = session.message(id: draft.message.id),
             let channelDTO = session.channel(cid: cid) else {
             return nil
@@ -72,21 +61,10 @@ public final class DraftDeletedEvent: Event {
     }
 }
 
-final class DraftDeletedEventDTO: EventDTO {
-    let cid: ChannelId
-    let draft: DraftPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        draft = try response.value(at: \.draft)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension DraftDeletedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> Event? {
-        DraftDeletedEvent(
+        guard let draft else { return nil }
+        return DraftDeletedEvent(
             cid: cid,
             threadId: draft.parentId,
             createdAt: createdAt

@@ -42,20 +42,8 @@ final class QueryThreadsRequest: Sendable, Encodable, JSONEncodable {
         self.watch = watch
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case filter
-        case limit
-        case memberLimit = "member_limit"
-        case next
-        case participantLimit = "participant_limit"
-        case prev
-        case replyLimit = "reply_limit"
-        case sort
-        case watch
-    }
-
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         if let filter {
             try container.encode(filter, forKey: .filter)
         }

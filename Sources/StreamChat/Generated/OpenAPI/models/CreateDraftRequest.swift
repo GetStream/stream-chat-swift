@@ -12,7 +12,8 @@ final class CreateDraftRequest: Sendable, Encodable, JSONEncodable {
         self.message = message
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case message
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(message, forKey: .message)
     }
 }

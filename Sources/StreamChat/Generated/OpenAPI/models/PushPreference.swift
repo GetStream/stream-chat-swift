@@ -4,9 +4,12 @@
 
 import Foundation
 
+/// The push preference details.
 public final class PushPreference: Sendable, Decodable {
+    /// The scope level of the push notifications.
     private let _level: PushPreferenceLevel?
     public var level: PushPreferenceLevel { _level ?? .all }
+    /// If provided the notifications will be disabled until the set date.
     public let disabledUntil: Date?
 
     init(level: PushPreferenceLevel? = nil, disabledUntil: Date? = nil) {
@@ -14,9 +17,10 @@ public final class PushPreference: Sendable, Decodable {
         self.disabledUntil = disabledUntil
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case _level = "chat_level"
-        case disabledUntil = "disabled_until"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self._level = try container.decodeIfPresent(PushPreferenceLevel.self, forKey: .chatLevel)
+        self.disabledUntil = try container.decodeIfPresent(Date.self, forKey: .disabledUntil)
     }
 }
 

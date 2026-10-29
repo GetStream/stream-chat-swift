@@ -10,6 +10,13 @@
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		4A4E184728D06F260062378D /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = 4A4E184528D06CA30062378D /* Documentation.docc */; };
+		4F1C0DE12F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */; };
+		4F1C0DE32F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */; };
+		4F1C0DE62F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4F1C0DE82F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4F1C0DE92F7E00AA00C0FFEE /* StreamLogsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4F1C0DEA2F7E00AA00C0FFEE /* StreamLogsUI */; };
+		4F1C0DFB2F7E00AA00C0FFEE /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		4F1C0E002F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */; };
 		4FFD1FD52EB9FB65009099C5 /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4FFD1FD42EB9FB65009099C5 /* StreamCore */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		793060EF25778897005CF846 /* StreamChatTestTools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793060E625778896005CF846 /* StreamChatTestTools.framework */; };
@@ -46,6 +53,11 @@
 		82E6553C2B06785700D64906 /* StreamChatTestTools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793060E625778896005CF846 /* StreamChatTestTools.framework */; };
 		82F714AB2B078AE800442A74 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 82F714AA2B078AE800442A74 /* StreamSwiftTestHelpers */; };
 		82FF61E82B6AB5B3007185B6 /* StreamChatTestMockServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84114A7D3073E3E10035A01F /* StreamChatAI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; };
+		84114A933073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
+		84114A983073E3E10035A01F /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A963073E3E10035A01F /* StreamCore */; };
+		84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */ = {isa = PBXBuildFile; productRef = 84114A973073E3E10035A01F /* StreamCoreUI */; };
+		84114AA13073E3E10035A01F /* StreamChatAI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84114A743073E3E10035A01F /* StreamChatAI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		84790E9F2AC1D346003AFF1C /* DemoShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 84790E952AC1D346003AFF1C /* DemoShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -102,6 +114,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = StreamChat;
+		};
+		4F1C0DEB2F7E00AA00C0FFEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F1C0DF62F7E00AA00C0FFEE;
+			remoteInfo = StreamChatLogsUI;
+		};
+		4F1C0DEC2F7E00AA00C0FFEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F1C0DF62F7E00AA00C0FFEE;
+			remoteInfo = StreamChatLogsUI;
+		};
+		4F1C0DFD2F7E00AA00C0FFEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		4F1C0E012F7E00AA00C0FFEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F1C0DF62F7E00AA00C0FFEE;
+			remoteInfo = StreamChatLogsUI;
 		};
 		7908820725432B7200896F03 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -179,6 +219,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = A3A0C998283E952900B18DA4;
 			remoteInfo = StreamChatTestMockServer;
+		};
+		84114A7E3073E3E10035A01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84114A733073E3E10035A01F;
+			remoteInfo = StreamChatAI;
+		};
+		84114AA23073E3E10035A01F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84114A733073E3E10035A01F;
+			remoteInfo = StreamChatAI;
 		};
 		84748F8B2AC37F40007E3285 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -419,6 +473,7 @@
 				82DCB3AE2A4AE8FB00738933 /* StreamChatUI.framework in Embed Frameworks */,
 				82DCB3AA2A4AE8FB00738933 /* StreamChat.framework in Embed Frameworks */,
 				AD4C2CA12EF1C200000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */,
+				4F1C0DE82F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -442,9 +497,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				84114AA13073E3E10035A01F /* StreamChatAI.framework in Embed Frameworks */,
 				AD4C2CA72EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */,
 				C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */,
 				C121EC5E2746AC8C00023E4C /* StreamChat.framework in Embed Frameworks */,
+				4F1C0DE62F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -482,6 +539,7 @@
 		437FC9EA26D630860000223C /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		437FCA0426D67BE40000223C /* DemoAppPush.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoAppPush.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A4E184528D06CA30062378D /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
+		4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatLogsUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		792DDA57256FB69E001DB91B /* ChatSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -491,6 +549,8 @@
 		799C941B247D2F80001F1104 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		799C9451247D59B1001F1104 /* StreamChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		84114A743073E3E10035A01F /* StreamChatAI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatAI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		84114A7C3073E3E10035A01F /* StreamChatAITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatAITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84790E952AC1D346003AFF1C /* DemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A34407BA27D8C33F0044F150 /* StreamChatUITestsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StreamChatUITestsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITestsAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -506,6 +566,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4F1C0DF12F7E00AA00C0FFEE /* Exceptions for "Sources" folder in "StreamChatLogsUI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"StreamChatLogsUI/LogViewer+StreamChat.swift",
+				StreamChatLogsUI/LogViewerDestination.swift,
+			);
+			target = 4F1C0DF62F7E00AA00C0FFEE /* StreamChatLogsUI */;
+		};
 		822A92D62F2BB46C0090D2A0 /* Exceptions for "DemoApp" folder in "DemoApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -685,7 +753,14 @@
 				StreamChatTestMockServer/MockServer/LaunchArgument.swift,
 				StreamChatTestMockServer/MockServer/StreamMockServer.swift,
 				StreamChatTestMockServer/Robots/BackendRobot.swift,
+				"StreamChatTestMockServer/Robots/BackendRobot+Channels.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+DirectMessages.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+Reminders.swift",
 				StreamChatTestMockServer/Robots/ParticipantRobot.swift,
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Messages.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Polls.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+ThreadReplies.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Threads.swift",
 				StreamChatTestMockServer/StreamChatTestMockServer.h,
 				StreamChatTestMockServer/StreamChatTestMockServer.swift,
 				StreamChatTestTools/Info.plist,
@@ -712,6 +787,10 @@
 				StreamChatTestMockServer/MockServer/LaunchArgument.swift,
 				StreamChatTestMockServer/MockServer/StreamMockServer.swift,
 				StreamChatTestMockServer/Robots/ParticipantRobot.swift,
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Messages.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Polls.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+ThreadReplies.swift",
+				"StreamChatTestMockServer/Robots/ParticipantRobot+Threads.swift",
 				StreamChatTestMockServer/StreamChatTestMockServer.h,
 				StreamChatTestMockServer/StreamChatTestMockServer.swift,
 			);
@@ -724,6 +803,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				StreamChatTestMockServer/Robots/BackendRobot.swift,
+				"StreamChatTestMockServer/Robots/BackendRobot+Channels.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+DirectMessages.swift",
+				"StreamChatTestMockServer/Robots/BackendRobot+Reminders.swift",
 				StreamChatTestTools/Mocks/StreamChat/MockNetwork/RequestRecorderURLProtocol_Mock.swift,
 				StreamChatTestTools/Mocks/StreamChat/MockNetwork/URLProtocol_Mock.swift,
 			);
@@ -745,7 +827,6 @@
 				StreamChatTests/APIClient/Endpoints/MemberEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/ModerationEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelDeliveredPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/ChannelEditDetailPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelListPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelMemberListPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelReadPayload_Tests.swift,
@@ -773,12 +854,9 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/UserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/PollsEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Requests/CallRequestBody_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/GuestUserTokenRequestPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Requests/MissingEventsRequestBody_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/RoleEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/SyncEndpoint_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/UserGroupEndpoints_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/WebSocketConnectEndpoint_Tests.swift,
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
 				StreamChatTests/APIClient/RequestDecoder_Tests.swift,
 				StreamChatTests/APIClient/RequestEncoder_Tests.swift,
@@ -841,6 +919,8 @@
 				"StreamChatTests/Controllers/PollsControllers/PollVoteListController+Combine_Tests.swift",
 				StreamChatTests/Controllers/RoleSearchController/RoleSearchController_Tests.swift,
 				"StreamChatTests/Controllers/RoleSearchController/RoleSearchController+Combine_Tests.swift",
+				"StreamChatTests/Controllers/ScheduledMessageListController/ScheduledMessageListController+Combine_Tests.swift",
+				StreamChatTests/Controllers/ScheduledMessageListController/ScheduledMessageListController_Tests.swift,
 				StreamChatTests/Controllers/SearchControllers/ChannelSearchController/ChannelSearchController_Tests.swift,
 				StreamChatTests/Controllers/SearchControllers/MessageSearchController/MessageSearchController_Debounce_Tests.swift,
 				StreamChatTests/Controllers/SearchControllers/MessageSearchController/MessageSearchController_Tests.swift,
@@ -882,6 +962,8 @@
 				StreamChatTests/Extensions/URL_EnrichedURL_Tests.swift,
 				StreamChatTests/ListChange_Tests.swift,
 				StreamChatTests/ListChangeAggregator_Tests.swift,
+				StreamChatTests/LogsUI/LogViewerDestination_Tests.swift,
+				StreamChatTests/LogsUI/LogViewerInstall_Tests.swift,
 				StreamChatTests/MentionSuggestions/DefaultMentionSuggestionsProvider_Tests.swift,
 				StreamChatTests/MentionSuggestions/EnhancedMentionSuggestionsProvider_Tests.swift,
 				StreamChatTests/MentionSuggestions/MentionSuggestionsSearch_Tests.swift,
@@ -919,6 +1001,7 @@
 				StreamChatTests/Query/Filter_Tests.swift,
 				StreamChatTests/Query/FilterDecoding_Tests.swift,
 				StreamChatTests/Query/FilterEncoding_Tests.swift,
+				StreamChatTests/Query/GroupedChannelsQuery_Tests.swift,
 				StreamChatTests/Query/MemberListFilterScope_Tests.swift,
 				StreamChatTests/Query/MessageReminderListQuery_Tests.swift,
 				StreamChatTests/Query/MessageSearchQuery_Tests.swift,
@@ -945,6 +1028,7 @@
 				StreamChatTests/Repositories/PollsRepository_Tests.swift,
 				StreamChatTests/Repositories/RemindersRepository_Tests.swift,
 				StreamChatTests/Repositories/RolesRepository_Tests.swift,
+				StreamChatTests/Repositories/ScheduledMessagesRepository_Tests.swift,
 				StreamChatTests/Repositories/SyncOperations_Tests.swift,
 				StreamChatTests/Repositories/SyncRepository_Tests.swift,
 				StreamChatTests/Repositories/UserGroupsRepository_Tests.swift,
@@ -960,6 +1044,7 @@
 				StreamChatTests/StateLayer/ReactionList_Tests.swift,
 				StreamChatTests/StateLayer/RoleSearch_Tests.swift,
 				StreamChatTests/StateLayer/RoleSearchState_Tests.swift,
+				StreamChatTests/StateLayer/ScheduledMessageList_Tests.swift,
 				StreamChatTests/StateLayer/StateLayerDatabaseObserver_Tests.swift,
 				StreamChatTests/StateLayer/UserGroupSearch_Tests.swift,
 				StreamChatTests/StateLayer/UserGroupSearchState_Tests.swift,
@@ -1006,8 +1091,10 @@
 				StreamChatTests/WebSocketClient/EventMiddlewares/EventDataProcessorMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/EventDTOConverterMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/EventMiddleware_Tests.swift,
+				StreamChatTests/WebSocketClient/EventMiddlewares/GroupedUnreadChannelsMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/MemberEventMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/ReminderUpdaterMiddleware_Tests.swift,
+				StreamChatTests/WebSocketClient/EventMiddlewares/ScheduledMessageUpdaterMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/ThreadUpdaterMiddlware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/TypingStartCleanupMiddleware_Tests.swift,
 				StreamChatTests/WebSocketClient/EventMiddlewares/UserChannelBanEventsMiddleware_Tests.swift,
@@ -1018,7 +1105,6 @@
 				StreamChatTests/WebSocketClient/Events/ChannelEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/DraftEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/EventDecoder_Tests.swift,
-				StreamChatTests/WebSocketClient/Events/EventPayload_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/MemberEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/MessageEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/NotificationEvents_Tests.swift,
@@ -1027,10 +1113,10 @@
 				StreamChatTests/WebSocketClient/Events/ThreadEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/TypingEvent_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/UserEvents_Tests.swift,
-				StreamChatTests/WebSocketClient/WebSocketConnectPayload_Tests.swift,
 				StreamChatTests/Workers/Background/ActiveLiveLocationsEndTimeTracker_Tests.swift,
 				StreamChatTests/Workers/Background/AttachmentQueueUploader_Tests.swift,
 				StreamChatTests/Workers/Background/MessageEditor_Tests.swift,
+				StreamChatTests/Workers/Background/MessageScheduler_Tests.swift,
 				StreamChatTests/Workers/Background/MessageSender_Tests.swift,
 				StreamChatTests/Workers/ChannelListUpdater_Tests.swift,
 				StreamChatTests/Workers/ChannelMemberListUpdater_Tests.swift,
@@ -1042,6 +1128,7 @@
 				StreamChatTests/Workers/EventObservers/EventObserver_Tests.swift,
 				StreamChatTests/Workers/EventObservers/MemberEventObserver_Tests.swift,
 				StreamChatTests/Workers/EventSender_Tests.swift,
+				StreamChatTests/Workers/GroupedChannelListLinker_Tests.swift,
 				StreamChatTests/Workers/ManualEventHandler_Tests.swift,
 				StreamChatTests/Workers/MessageUpdater_Tests.swift,
 				StreamChatTests/Workers/ReactionListUpdater_Tests.swift,
@@ -1123,6 +1210,7 @@
 				StreamChatUITests/SnapshotTests/ChatMessageList/Poll/PollResultsVC_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/Poll/PollResultsVoteListVC_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC_Tests.swift,
+				StreamChatUITests/SnapshotTests/ChatMessageList/Reactions/ChatMessageReactionsPickerVC_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/Reactions/ChatMessageReactionsView_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatMessageList/TypingIndicatorView_Tests.swift,
 				StreamChatUITests/SnapshotTests/ChatThread/ChatThreadVC_Tests.swift,
@@ -1218,9 +1306,368 @@
 		8242A4472F2CCB790040192C /* Exceptions for "Sources" folder in "StreamChat" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"/Localized: StreamChatAI/Resources/Localizable.strings",
 				"/Localized: StreamChatCommonUI/Resources/Localizable.strings",
 				"/Localized: StreamChatCommonUI/Resources/Localizable.stringsdict",
 				StreamChat/Info.plist,
+				StreamChatAI/AI/Charts/ChartSpec.swift,
+				StreamChatAI/AI/Charts/ChartSpecParsing.swift,
+				StreamChatAI/AI/LocalModel/AIConversationTurn.swift,
+				StreamChatAI/AI/LocalModel/AILocalModel.swift,
+				StreamChatAI/AI/LocalModel/AIOnDeviceModel.swift,
+				StreamChatAI/AI/MessageParts/AIMessagePart.swift,
+				StreamChatAI/AI/MessageParts/AIReasoningPart.swift,
+				StreamChatAI/AI/MessageParts/AIToolApproval.swift,
+				StreamChatAI/AI/MessageParts/AIToolAuthorization.swift,
+				StreamChatAI/AI/MessageParts/AIToolCallPart.swift,
+				StreamChatAI/AI/MessageParts/Fields.swift,
+				StreamChatAI/AI/ToolCalls/AIClientIdentity.swift,
+				StreamChatAI/AI/ToolCalls/AIClientTool.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolDefinition.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolRegistration.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolResult.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolRunner.swift,
+				StreamChatAI/AI/ToolCalls/AIToolApprover.swift,
+				StreamChatAI/AI/ToolCalls/AIToolAuthorizer.swift,
+				StreamChatAI/Info.plist,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Blockquote.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/BulletedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/CodeBlock.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Heading.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/NumberedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Paragraph.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTable.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumn.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnAlignment.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRow.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRowBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ThematicBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Code.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Emphasis.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineImage.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineLink.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/LineBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/SoftBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strikethrough.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strong.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/CodeSyntaxHighlighter.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/ImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/InlineImageProvider.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/BlockNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/BlockNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/HTMLTag.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Collect.swift",
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/InlineNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/MarkdownParser.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/AttributedStringInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/InlineTextStyles.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/TextInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/CodeBlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListBullet.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBackgroundStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBorderStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableCellConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TaskListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/BackgroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/EmptyTextStyle.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/Font+FontProperties.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontCapsVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontDigitVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamily.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamilyVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontProperties.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontPropertiesAttribute.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontSize.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWeight.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWidth.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/ForegroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/StrikethroughStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextKerning.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextTracking.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/UnderlineStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyleBuilder.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+Basic.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+DocC.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+GitHub.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/Theme.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/BlockNode+ColorSchemeImage.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Color+RGBA.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/FlowLayout.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/Indexed.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+PlainText.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+RawImageData.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Int+Roman.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/RelativeSize.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/ResizeToFit.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/String+KebabCase.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockMargin.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockNode+View.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockquoteView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BulletedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ColumnWidthPreference.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/HeadingView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ImageFlow.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/MarkdownCodeBlockView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/NumberedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ParagraphView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBackgroundView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderSelector.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBounds.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableCell.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TextStyleAttributesReader.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ThematicBreakView.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+BaseURL.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+CodeSyntaxHighlighter.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+ImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+InlineImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+List.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+SoftBreakMode.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Table.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+TextStyle.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Theme.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/ImageView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/InlineText.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Markdown.swift,
+				StreamChatAI/StreamNetworkImage/ImageSource.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImage.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageCache.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageLoader.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageModel.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageState.swift,
+				StreamChatAI/StreamNetworkImage/TaskModifier.swift,
+				"StreamChatAI/StreamNetworkImage/URLSession+NetworkImage.swift",
+				"StreamChatAI/StreamNetworkImage/View+NetworkImageLoader.swift",
+				"StreamChatAI/StreamSplash/Extensions/CharacterSet/CharacterSet+Contains.swift",
+				"StreamChatAI/StreamSplash/Extensions/Equatable/Equatable+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Int/Int+IsOdd.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+Occurrences.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+HTMLEntities.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+IsNumber.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+PrefixChecking.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+Removing.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/Substring+HasSuffix.swift",
+				StreamChatAI/StreamSplash/Grammar/Grammar.swift,
+				StreamChatAI/StreamSplash/Grammar/SwiftGrammar.swift,
+				StreamChatAI/StreamSplash/Output/AttributedStringOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/HTMLOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/MarkdownDecorator.swift,
+				StreamChatAI/StreamSplash/Output/OutputBuilder.swift,
+				StreamChatAI/StreamSplash/Output/OutputFormat.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxHighlighter.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxRule.swift,
+				StreamChatAI/StreamSplash/Theming/SplashColor.swift,
+				StreamChatAI/StreamSplash/Theming/SplashFont.swift,
+				"StreamChatAI/StreamSplash/Theming/SplashTheme+Defaults.swift",
+				StreamChatAI/StreamSplash/Theming/SplashTheme.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Segment.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Tokenizer.swift,
+				StreamChatAI/StreamSplash/Tokenizing/TokenType.swift,
+				StreamChatAI/UI/Appearance/AIAppearance.swift,
+				"StreamChatAI/UI/Appearance/AIAppearance+Colors.swift",
+				"StreamChatAI/UI/Appearance/AIAppearance+Fonts.swift",
+				"StreamChatAI/UI/Appearance/AIAppearance+Images.swift",
+				StreamChatAI/UI/Charts/BubbleChart.swift,
+				StreamChatAI/UI/Charts/CartesianChart.swift,
+				StreamChatAI/UI/Charts/HeatmapChart.swift,
+				StreamChatAI/UI/Charts/HistogramChart.swift,
+				StreamChatAI/UI/Charts/PieChart.swift,
+				StreamChatAI/UI/Charts/USpecChartView.swift,
+				"StreamChatAI/UI/Charts/View+BeginAtZero.swift",
+				StreamChatAI/UI/CommonViews/SidebarView.swift,
+				StreamChatAI/UI/Composer/AddAttachmentsButton.swift,
+				StreamChatAI/UI/Composer/AIComposerInputView.swift,
+				StreamChatAI/UI/Composer/AIComposerView.swift,
+				StreamChatAI/UI/Composer/AIComposerViewFactory.swift,
+				StreamChatAI/UI/Composer/AIComposerViewFactoryOptions.swift,
+				StreamChatAI/UI/Composer/AIComposerViewModel.swift,
+				StreamChatAI/UI/Composer/Attachments/AllPhotosButton.swift,
+				StreamChatAI/UI/Composer/Attachments/AttachmentLocation.swift,
+				StreamChatAI/UI/Composer/Attachments/AttachmentTile.swift,
+				StreamChatAI/UI/Composer/Attachments/CameraPicker.swift,
+				StreamChatAI/UI/Composer/Attachments/ComposerPickerView.swift,
+				StreamChatAI/UI/Composer/Attachments/PhotoLibraryService.swift,
+				StreamChatAI/UI/Composer/Attachments/PhotoRequest.swift,
+				StreamChatAI/UI/Composer/Attachments/RecentPhotosRow.swift,
+				StreamChatAI/UI/Composer/Attachments/RecentPhotoThumbnail.swift,
+				StreamChatAI/UI/Composer/Attachments/SelectedAttachmentsRow.swift,
+				StreamChatAI/UI/Composer/Attachments/SelectedAttachmentThumbnail.swift,
+				StreamChatAI/UI/Composer/Attachments/SelectionBadge.swift,
+				StreamChatAI/UI/Composer/Attachments/TemporaryAttachmentFile.swift,
+				StreamChatAI/UI/Composer/Attachments/ThumbnailTile.swift,
+				StreamChatAI/UI/Composer/Attachments/TileBadge.swift,
+				StreamChatAI/UI/Composer/ChatOption.swift,
+				StreamChatAI/UI/Composer/ChatOptionRow.swift,
+				StreamChatAI/UI/Composer/ChatOptionsList.swift,
+				StreamChatAI/UI/Composer/MessageData.swift,
+				StreamChatAI/UI/Composer/SelectedChatOptionChip.swift,
+				StreamChatAI/UI/Composer/SuggestionsView.swift,
+				StreamChatAI/UI/Conversation/AIConversationEntry.swift,
+				StreamChatAI/UI/Conversation/AIConversationEntryView.swift,
+				StreamChatAI/UI/Conversation/AIConversationScroll.swift,
+				StreamChatAI/UI/Conversation/AIConversationScrollView.swift,
+				StreamChatAI/UI/Conversation/AIConversationView.swift,
+				"StreamChatAI/UI/Conversation/AIConversationView+AIMessage.swift",
+				StreamChatAI/UI/Conversation/AIConversationViewFactory.swift,
+				StreamChatAI/UI/Conversation/AIConversationViewFactoryOptions.swift,
+				StreamChatAI/UI/Conversation/AIMessage.swift,
+				StreamChatAI/UI/Conversation/AIMessageAttachment.swift,
+				StreamChatAI/UI/Conversation/AIMessageTurn.swift,
+				StreamChatAI/UI/Conversation/AIPendingMessage.swift,
+				StreamChatAI/UI/Conversation/AIThinkingClock.swift,
+				StreamChatAI/UI/Conversation/AITurnPositions.swift,
+				StreamChatAI/UI/Conversation/OlderMessagesLoadingView.swift,
+				StreamChatAI/UI/Conversation/ScrollToLatestButton.swift,
+				StreamChatAI/UI/Message/AIAssistantMessageView.swift,
+				StreamChatAI/UI/Message/AIFileAttachmentView.swift,
+				StreamChatAI/UI/Message/AIMessageAttachmentView.swift,
+				StreamChatAI/UI/Message/AIReplyActions.swift,
+				StreamChatAI/UI/Message/AIReplyActionsView.swift,
+				StreamChatAI/UI/Message/AITypingIndicatorView.swift,
+				StreamChatAI/UI/Message/AIUserMessageView.swift,
+				StreamChatAI/UI/Message/AnswerWritingKey.swift,
+				StreamChatAI/UI/Message/CodeBlockView.swift,
+				StreamChatAI/UI/Message/SplashCodeSyntaxHighlighter.swift,
+				StreamChatAI/UI/Message/StreamingMessageView.swift,
+				StreamChatAI/UI/Message/StreamingMessageViewChangeListeners.swift,
+				StreamChatAI/UI/Message/TextOutputFormat.swift,
+				StreamChatAI/UI/MessageParts/AIMessagePartsView.swift,
+				StreamChatAI/UI/MessageParts/AIMessagePartView.swift,
+				StreamChatAI/UI/MessageParts/AIToolApprovalCard.swift,
+				StreamChatAI/UI/MessageParts/AIToolApprovalState.swift,
+				StreamChatAI/UI/MessageParts/AIToolApprovalView.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationCard.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationState.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationView.swift,
+				StreamChatAI/UI/MessageParts/AIToolCallView.swift,
+				StreamChatAI/UI/MessageParts/AIWebAuthentication.swift,
+				StreamChatAI/UI/MessageParts/UnsupportedPartView.swift,
+				StreamChatAI/UI/Reasoning/AIThinkingView.swift,
+				StreamChatAI/UI/Reasoning/ReasoningPanel.swift,
+				StreamChatAI/UI/Reasoning/ReasoningParagraph.swift,
+				StreamChatAI/UI/Reasoning/ReasoningParagraphView.swift,
+				StreamChatAI/UI/Reasoning/StreamingReasoningView.swift,
+				"StreamChatAI/UI/Reasoning/StreamingReasoningView+Part.swift",
+				StreamChatAI/UI/Reasoning/TextReveal.swift,
+				StreamChatAI/UI/Reasoning/ThinkingIcon.swift,
+				StreamChatAI/UI/Reasoning/ThinkingTitle.swift,
+				StreamChatAI/UI/Transcription/SpeechHandler.swift,
+				StreamChatAI/UI/Transcription/SpeechHandlerError.swift,
+				StreamChatAI/UI/Transcription/SpeechToTextButton.swift,
+				StreamChatAI/UI/Utils/DurationFormatting.swift,
+				StreamChatAI/UI/Utils/OnChange.swift,
+				StreamChatAI/UI/Utils/Shimmer.swift,
+				StreamChatAI/UI/Voice/AIVoiceAgentState.swift,
+				StreamChatAI/UI/Voice/AIVoiceGlowView.swift,
+				StreamChatAI/UI/Voice/AIVoiceWaveView.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationBounce.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationDriver.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationMetalView.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationPalette.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationRenderer.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationShaders.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationStyle.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationUniforms.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationView.swift,
+				"StreamChatAI/Utils/Bundle+StreamChatAI.swift",
+				StreamChatAI/Utils/ExportedModules.swift,
+				StreamChatAI/Utils/Localization.swift,
+				StreamChatAICMark/arena.c,
+				StreamChatAICMark/autolink.c,
+				StreamChatAICMark/blocks.c,
+				StreamChatAICMark/buffer.c,
+				StreamChatAICMark/case_fold_switch.inc,
+				StreamChatAICMark/cmark.c,
+				StreamChatAICMark/cmark_ctype.c,
+				StreamChatAICMark/commonmark.c,
+				"StreamChatAICMark/core-extensions.c",
+				StreamChatAICMark/entities.inc,
+				StreamChatAICMark/ext_scanners.c,
+				StreamChatAICMark/footnotes.c,
+				StreamChatAICMark/houdini_href_e.c,
+				StreamChatAICMark/houdini_html_e.c,
+				StreamChatAICMark/houdini_html_u.c,
+				StreamChatAICMark/html.c,
+				StreamChatAICMark/include/autolink.h,
+				StreamChatAICMark/include/buffer.h,
+				StreamChatAICMark/include/chunk.h,
+				"StreamChatAICMark/include/cmark-gfm-core-extensions.h",
+				"StreamChatAICMark/include/cmark-gfm-extension_api.h",
+				"StreamChatAICMark/include/cmark-gfm-extensions_export.h",
+				"StreamChatAICMark/include/cmark-gfm.h",
+				"StreamChatAICMark/include/cmark-gfm_export.h",
+				"StreamChatAICMark/include/cmark-gfm_version.h",
+				StreamChatAICMark/include/cmark_ctype.h,
+				StreamChatAICMark/include/cmark_gfm.h,
+				StreamChatAICMark/include/config.h,
+				StreamChatAICMark/include/ext_scanners.h,
+				StreamChatAICMark/include/footnotes.h,
+				StreamChatAICMark/include/houdini.h,
+				StreamChatAICMark/include/html.h,
+				StreamChatAICMark/include/inlines.h,
+				StreamChatAICMark/include/iterator.h,
+				StreamChatAICMark/include/map.h,
+				StreamChatAICMark/include/module.modulemap,
+				StreamChatAICMark/include/node.h,
+				StreamChatAICMark/include/parser.h,
+				StreamChatAICMark/include/plugin.h,
+				StreamChatAICMark/include/references.h,
+				StreamChatAICMark/include/registry.h,
+				StreamChatAICMark/include/render.h,
+				StreamChatAICMark/include/scanners.h,
+				StreamChatAICMark/include/strikethrough.h,
+				StreamChatAICMark/include/syntax_extension.h,
+				StreamChatAICMark/include/table.h,
+				StreamChatAICMark/include/tagfilter.h,
+				StreamChatAICMark/include/tasklist.h,
+				StreamChatAICMark/include/utf8.h,
+				StreamChatAICMark/inlines.c,
+				StreamChatAICMark/iterator.c,
+				StreamChatAICMark/latex.c,
+				StreamChatAICMark/linked_list.c,
+				StreamChatAICMark/man.c,
+				StreamChatAICMark/map.c,
+				StreamChatAICMark/node.c,
+				StreamChatAICMark/plaintext.c,
+				StreamChatAICMark/plugin.c,
+				StreamChatAICMark/references.c,
+				StreamChatAICMark/registry.c,
+				StreamChatAICMark/render.c,
+				StreamChatAICMark/scanners.c,
+				StreamChatAICMark/strikethrough.c,
+				StreamChatAICMark/syntax_extension.c,
+				StreamChatAICMark/table.c,
+				StreamChatAICMark/tagfilter.c,
+				StreamChatAICMark/tasklist.c,
+				StreamChatAICMark/utf8.c,
+				StreamChatAICMark/xml.c,
 				StreamChatCommonUI/.swiftgen.yml,
 				StreamChatCommonUI/Appearance.swift,
 				"StreamChatCommonUI/Appearance+ColorPalette.swift",
@@ -1252,6 +1699,7 @@
 				StreamChatCommonUI/Generated/L10n_template.stencil,
 				StreamChatCommonUI/Generated/L10n.swift,
 				StreamChatCommonUI/ImageLoading/ImageDownloading.swift,
+				StreamChatCommonUI/ImageLoading/ImageLoadingTask.swift,
 				"StreamChatCommonUI/ImageLoading/ImageRequestOptions+ImageResize.swift",
 				StreamChatCommonUI/ImageLoading/ImageResize.swift,
 				StreamChatCommonUI/ImageLoading/MediaLoader.swift,
@@ -1267,6 +1715,8 @@
 				"StreamChatCommonUI/Utils/UIColor+Extensions.swift",
 				"StreamChatCommonUI/Utils/UIFont+Extensions.swift",
 				"StreamChatCommonUI/Utils/UIImage+Extensions.swift",
+				"StreamChatLogsUI/LogViewer+StreamChat.swift",
+				StreamChatLogsUI/LogViewerDestination.swift,
 				StreamChatUI/AppearanceProvider.swift,
 				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
 				StreamChatUI/ChatChannel/ChatChannelVC.swift,
@@ -1892,6 +2342,7 @@
 				StreamChatCommonUI/Generated/L10n_template.stencil,
 				StreamChatCommonUI/Generated/L10n.swift,
 				StreamChatCommonUI/ImageLoading/ImageDownloading.swift,
+				StreamChatCommonUI/ImageLoading/ImageLoadingTask.swift,
 				"StreamChatCommonUI/ImageLoading/ImageRequestOptions+ImageResize.swift",
 				StreamChatCommonUI/ImageLoading/ImageResize.swift,
 				StreamChatCommonUI/ImageLoading/MediaLoader.swift,
@@ -1930,6 +2381,372 @@
 				Info.plist,
 			);
 			target = 84790E942AC1D346003AFF1C /* DemoShare */;
+		};
+		84114A8B3073E3E10035A01F /* Exceptions for "Sources" folder in "StreamChatAI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: StreamChatAI/Resources/Localizable.strings",
+				StreamChatAI/AI/Charts/ChartSpec.swift,
+				StreamChatAI/AI/Charts/ChartSpecParsing.swift,
+				StreamChatAI/AI/LocalModel/AIConversationTurn.swift,
+				StreamChatAI/AI/LocalModel/AILocalModel.swift,
+				StreamChatAI/AI/LocalModel/AIOnDeviceModel.swift,
+				StreamChatAI/AI/MessageParts/AIMessagePart.swift,
+				StreamChatAI/AI/MessageParts/AIReasoningPart.swift,
+				StreamChatAI/AI/MessageParts/AIToolApproval.swift,
+				StreamChatAI/AI/MessageParts/AIToolAuthorization.swift,
+				StreamChatAI/AI/MessageParts/AIToolCallPart.swift,
+				StreamChatAI/AI/MessageParts/Fields.swift,
+				StreamChatAI/AI/ToolCalls/AIClientIdentity.swift,
+				StreamChatAI/AI/ToolCalls/AIClientTool.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolDefinition.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolRegistration.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolResult.swift,
+				StreamChatAI/AI/ToolCalls/AIClientToolRunner.swift,
+				StreamChatAI/AI/ToolCalls/AIToolApprover.swift,
+				StreamChatAI/AI/ToolCalls/AIToolAuthorizer.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Blockquote.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/BulletedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/CodeBlock.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Heading.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/MarkdownContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/NumberedList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/Paragraph.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskList.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TaskListItem.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTable.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumn.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnAlignment.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableColumnBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRow.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/TextTableRowBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Blocks/ThematicBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Code.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Emphasis.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContent.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineContentBuilder.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineImage.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/InlineLink.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/LineBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/SoftBreak.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strikethrough.swift,
+				StreamChatAI/StreamMarkdownUI/DSL/Inlines/Strong.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/AssetInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/CodeSyntaxHighlighter.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/DefaultInlineImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/ImageProvider.swift,
+				StreamChatAI/StreamMarkdownUI/Extensibility/InlineImageProvider.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/BlockNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/BlockNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/HTMLTag.swift,
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Collect.swift",
+				"StreamChatAI/StreamMarkdownUI/Parser/InlineNode+Rewrite.swift",
+				StreamChatAI/StreamMarkdownUI/Parser/InlineNode.swift,
+				StreamChatAI/StreamMarkdownUI/Parser/MarkdownParser.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/AttributedStringInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/InlineTextStyles.swift,
+				StreamChatAI/StreamMarkdownUI/Renderer/TextInlineRenderer.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/BlockStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/CodeBlockConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListBullet.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/ListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBackgroundStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableBorderStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TableCellConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/BlockStyle/TaskListMarkerConfiguration.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/BackgroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/EmptyTextStyle.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/Font+FontProperties.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontCapsVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontDigitVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamily.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontFamilyVariant.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontProperties.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontPropertiesAttribute.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontSize.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWeight.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/FontWidth.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/ForegroundColor.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/StrikethroughStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextKerning.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/TextTracking.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/Styles/UnderlineStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyle.swift,
+				StreamChatAI/StreamMarkdownUI/Theme/TextStyle/TextStyleBuilder.swift,
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+Basic.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+DocC.swift",
+				"StreamChatAI/StreamMarkdownUI/Theme/Theme+GitHub.swift",
+				StreamChatAI/StreamMarkdownUI/Theme/Theme.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/BlockNode+ColorSchemeImage.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Color+RGBA.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/FlowLayout.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/Indexed.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+PlainText.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/InlineNode+RawImageData.swift",
+				"StreamChatAI/StreamMarkdownUI/Utility/Int+Roman.swift",
+				StreamChatAI/StreamMarkdownUI/Utility/RelativeSize.swift,
+				StreamChatAI/StreamMarkdownUI/Utility/ResizeToFit.swift,
+				"StreamChatAI/StreamMarkdownUI/Utility/String+KebabCase.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockMargin.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockNode+View.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockquoteView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BlockSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/BulletedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ColumnWidthPreference.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/HeadingView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ImageFlow.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemSequence.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/MarkdownCodeBlockView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/NumberedListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ParagraphView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBackgroundView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderSelector.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBorderView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableBounds.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableCell.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TableView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListItemView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TaskListView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/TextStyleAttributesReader.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Blocks/ThematicBreakView.swift,
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+BaseURL.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+CodeSyntaxHighlighter.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+ImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+InlineImageProvider.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+List.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+SoftBreakMode.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Table.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+TextStyle.swift",
+				"StreamChatAI/StreamMarkdownUI/Views/Environment/Environment+Theme.swift",
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/ImageView.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Inlines/InlineText.swift,
+				StreamChatAI/StreamMarkdownUI/Views/Markdown.swift,
+				StreamChatAI/StreamNetworkImage/ImageSource.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImage.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageCache.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageLoader.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageModel.swift,
+				StreamChatAI/StreamNetworkImage/NetworkImageState.swift,
+				StreamChatAI/StreamNetworkImage/TaskModifier.swift,
+				"StreamChatAI/StreamNetworkImage/URLSession+NetworkImage.swift",
+				"StreamChatAI/StreamNetworkImage/View+NetworkImageLoader.swift",
+				"StreamChatAI/StreamSplash/Extensions/CharacterSet/CharacterSet+Contains.swift",
+				"StreamChatAI/StreamSplash/Extensions/Equatable/Equatable+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Int/Int+IsOdd.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+AnyOf.swift",
+				"StreamChatAI/StreamSplash/Extensions/Sequence/Sequence+Occurrences.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+HTMLEntities.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+IsNumber.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+PrefixChecking.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/String+Removing.swift",
+				"StreamChatAI/StreamSplash/Extensions/Strings/Substring+HasSuffix.swift",
+				StreamChatAI/StreamSplash/Grammar/Grammar.swift,
+				StreamChatAI/StreamSplash/Grammar/SwiftGrammar.swift,
+				StreamChatAI/StreamSplash/Output/AttributedStringOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/HTMLOutputFormat.swift,
+				StreamChatAI/StreamSplash/Output/MarkdownDecorator.swift,
+				StreamChatAI/StreamSplash/Output/OutputBuilder.swift,
+				StreamChatAI/StreamSplash/Output/OutputFormat.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxHighlighter.swift,
+				StreamChatAI/StreamSplash/Syntax/SyntaxRule.swift,
+				StreamChatAI/StreamSplash/Theming/SplashColor.swift,
+				StreamChatAI/StreamSplash/Theming/SplashFont.swift,
+				"StreamChatAI/StreamSplash/Theming/SplashTheme+Defaults.swift",
+				StreamChatAI/StreamSplash/Theming/SplashTheme.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Segment.swift,
+				StreamChatAI/StreamSplash/Tokenizing/Tokenizer.swift,
+				StreamChatAI/StreamSplash/Tokenizing/TokenType.swift,
+				StreamChatAI/UI/Appearance/AIAppearance.swift,
+				"StreamChatAI/UI/Appearance/AIAppearance+Colors.swift",
+				"StreamChatAI/UI/Appearance/AIAppearance+Fonts.swift",
+				"StreamChatAI/UI/Appearance/AIAppearance+Images.swift",
+				StreamChatAI/UI/Charts/BubbleChart.swift,
+				StreamChatAI/UI/Charts/CartesianChart.swift,
+				StreamChatAI/UI/Charts/HeatmapChart.swift,
+				StreamChatAI/UI/Charts/HistogramChart.swift,
+				StreamChatAI/UI/Charts/PieChart.swift,
+				StreamChatAI/UI/Charts/USpecChartView.swift,
+				"StreamChatAI/UI/Charts/View+BeginAtZero.swift",
+				StreamChatAI/UI/CommonViews/SidebarView.swift,
+				StreamChatAI/UI/Composer/AddAttachmentsButton.swift,
+				StreamChatAI/UI/Composer/AIComposerInputView.swift,
+				StreamChatAI/UI/Composer/AIComposerView.swift,
+				StreamChatAI/UI/Composer/AIComposerViewFactory.swift,
+				StreamChatAI/UI/Composer/AIComposerViewFactoryOptions.swift,
+				StreamChatAI/UI/Composer/AIComposerViewModel.swift,
+				StreamChatAI/UI/Composer/Attachments/AllPhotosButton.swift,
+				StreamChatAI/UI/Composer/Attachments/AttachmentLocation.swift,
+				StreamChatAI/UI/Composer/Attachments/AttachmentTile.swift,
+				StreamChatAI/UI/Composer/Attachments/CameraPicker.swift,
+				StreamChatAI/UI/Composer/Attachments/ComposerPickerView.swift,
+				StreamChatAI/UI/Composer/Attachments/PhotoLibraryService.swift,
+				StreamChatAI/UI/Composer/Attachments/PhotoRequest.swift,
+				StreamChatAI/UI/Composer/Attachments/RecentPhotosRow.swift,
+				StreamChatAI/UI/Composer/Attachments/RecentPhotoThumbnail.swift,
+				StreamChatAI/UI/Composer/Attachments/SelectedAttachmentsRow.swift,
+				StreamChatAI/UI/Composer/Attachments/SelectedAttachmentThumbnail.swift,
+				StreamChatAI/UI/Composer/Attachments/SelectionBadge.swift,
+				StreamChatAI/UI/Composer/Attachments/TemporaryAttachmentFile.swift,
+				StreamChatAI/UI/Composer/Attachments/ThumbnailTile.swift,
+				StreamChatAI/UI/Composer/Attachments/TileBadge.swift,
+				StreamChatAI/UI/Composer/ChatOption.swift,
+				StreamChatAI/UI/Composer/ChatOptionRow.swift,
+				StreamChatAI/UI/Composer/ChatOptionsList.swift,
+				StreamChatAI/UI/Composer/MessageData.swift,
+				StreamChatAI/UI/Composer/SelectedChatOptionChip.swift,
+				StreamChatAI/UI/Composer/SuggestionsView.swift,
+				StreamChatAI/UI/Conversation/AIConversationEntry.swift,
+				StreamChatAI/UI/Conversation/AIConversationEntryView.swift,
+				StreamChatAI/UI/Conversation/AIConversationScroll.swift,
+				StreamChatAI/UI/Conversation/AIConversationScrollView.swift,
+				StreamChatAI/UI/Conversation/AIConversationView.swift,
+				"StreamChatAI/UI/Conversation/AIConversationView+AIMessage.swift",
+				StreamChatAI/UI/Conversation/AIConversationViewFactory.swift,
+				StreamChatAI/UI/Conversation/AIConversationViewFactoryOptions.swift,
+				StreamChatAI/UI/Conversation/AIMessage.swift,
+				StreamChatAI/UI/Conversation/AIMessageAttachment.swift,
+				StreamChatAI/UI/Conversation/AIMessageTurn.swift,
+				StreamChatAI/UI/Conversation/AIPendingMessage.swift,
+				StreamChatAI/UI/Conversation/AIThinkingClock.swift,
+				StreamChatAI/UI/Conversation/AITurnPositions.swift,
+				StreamChatAI/UI/Conversation/OlderMessagesLoadingView.swift,
+				StreamChatAI/UI/Conversation/ScrollToLatestButton.swift,
+				StreamChatAI/UI/Message/AIAssistantMessageView.swift,
+				StreamChatAI/UI/Message/AIFileAttachmentView.swift,
+				StreamChatAI/UI/Message/AIMessageAttachmentView.swift,
+				StreamChatAI/UI/Message/AIReplyActions.swift,
+				StreamChatAI/UI/Message/AIReplyActionsView.swift,
+				StreamChatAI/UI/Message/AITypingIndicatorView.swift,
+				StreamChatAI/UI/Message/AIUserMessageView.swift,
+				StreamChatAI/UI/Message/AnswerWritingKey.swift,
+				StreamChatAI/UI/Message/CodeBlockView.swift,
+				StreamChatAI/UI/Message/SplashCodeSyntaxHighlighter.swift,
+				StreamChatAI/UI/Message/StreamingMessageView.swift,
+				StreamChatAI/UI/Message/StreamingMessageViewChangeListeners.swift,
+				StreamChatAI/UI/Message/TextOutputFormat.swift,
+				StreamChatAI/UI/MessageParts/AIMessagePartsView.swift,
+				StreamChatAI/UI/MessageParts/AIMessagePartView.swift,
+				StreamChatAI/UI/MessageParts/AIToolApprovalCard.swift,
+				StreamChatAI/UI/MessageParts/AIToolApprovalState.swift,
+				StreamChatAI/UI/MessageParts/AIToolApprovalView.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationCard.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationState.swift,
+				StreamChatAI/UI/MessageParts/AIToolAuthorizationView.swift,
+				StreamChatAI/UI/MessageParts/AIToolCallView.swift,
+				StreamChatAI/UI/MessageParts/AIWebAuthentication.swift,
+				StreamChatAI/UI/MessageParts/UnsupportedPartView.swift,
+				StreamChatAI/UI/Reasoning/AIThinkingView.swift,
+				StreamChatAI/UI/Reasoning/ReasoningPanel.swift,
+				StreamChatAI/UI/Reasoning/ReasoningParagraph.swift,
+				StreamChatAI/UI/Reasoning/ReasoningParagraphView.swift,
+				StreamChatAI/UI/Reasoning/StreamingReasoningView.swift,
+				"StreamChatAI/UI/Reasoning/StreamingReasoningView+Part.swift",
+				StreamChatAI/UI/Reasoning/TextReveal.swift,
+				StreamChatAI/UI/Reasoning/ThinkingIcon.swift,
+				StreamChatAI/UI/Reasoning/ThinkingTitle.swift,
+				StreamChatAI/UI/Transcription/SpeechHandler.swift,
+				StreamChatAI/UI/Transcription/SpeechHandlerError.swift,
+				StreamChatAI/UI/Transcription/SpeechToTextButton.swift,
+				StreamChatAI/UI/Utils/DurationFormatting.swift,
+				StreamChatAI/UI/Utils/OnChange.swift,
+				StreamChatAI/UI/Utils/Shimmer.swift,
+				StreamChatAI/UI/Voice/AIVoiceAgentState.swift,
+				StreamChatAI/UI/Voice/AIVoiceGlowView.swift,
+				StreamChatAI/UI/Voice/AIVoiceWaveView.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationBounce.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationDriver.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationMetalView.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationPalette.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationRenderer.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationShaders.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationStyle.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationUniforms.swift,
+				StreamChatAI/UI/Voice/VoiceVisualizationView.swift,
+				"StreamChatAI/Utils/Bundle+StreamChatAI.swift",
+				StreamChatAI/Utils/ExportedModules.swift,
+				StreamChatAI/Utils/Localization.swift,
+				StreamChatAICMark/arena.c,
+				StreamChatAICMark/autolink.c,
+				StreamChatAICMark/blocks.c,
+				StreamChatAICMark/buffer.c,
+				StreamChatAICMark/cmark.c,
+				StreamChatAICMark/cmark_ctype.c,
+				StreamChatAICMark/commonmark.c,
+				"StreamChatAICMark/core-extensions.c",
+				StreamChatAICMark/ext_scanners.c,
+				StreamChatAICMark/footnotes.c,
+				StreamChatAICMark/houdini_href_e.c,
+				StreamChatAICMark/houdini_html_e.c,
+				StreamChatAICMark/houdini_html_u.c,
+				StreamChatAICMark/html.c,
+				StreamChatAICMark/inlines.c,
+				StreamChatAICMark/iterator.c,
+				StreamChatAICMark/latex.c,
+				StreamChatAICMark/linked_list.c,
+				StreamChatAICMark/man.c,
+				StreamChatAICMark/map.c,
+				StreamChatAICMark/node.c,
+				StreamChatAICMark/plaintext.c,
+				StreamChatAICMark/plugin.c,
+				StreamChatAICMark/references.c,
+				StreamChatAICMark/registry.c,
+				StreamChatAICMark/render.c,
+				StreamChatAICMark/scanners.c,
+				StreamChatAICMark/strikethrough.c,
+				StreamChatAICMark/syntax_extension.c,
+				StreamChatAICMark/table.c,
+				StreamChatAICMark/tagfilter.c,
+				StreamChatAICMark/tasklist.c,
+				StreamChatAICMark/utf8.c,
+				StreamChatAICMark/xml.c,
+			);
+			target = 84114A733073E3E10035A01F /* StreamChatAI */;
+		};
+		84114A8C3073E3E10035A01F /* Exceptions for "Tests" folder in "StreamChatAITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				StreamChatAITests/AI/Charts/ChartSpecParsing_Tests.swift,
+				StreamChatAITests/AI/LocalModel/AILocalModel_Tests.swift,
+				StreamChatAITests/AI/MessageParts/AIMessagePart_Tests.swift,
+				StreamChatAITests/AI/MessageParts/AIToolApproval_Tests.swift,
+				StreamChatAITests/AI/MessageParts/AIToolAuthorization_Tests.swift,
+				StreamChatAITests/AI/ToolCalls/AIClientToolDefinition_Tests.swift,
+				StreamChatAITests/AI/ToolCalls/AIClientToolResult_Tests.swift,
+				StreamChatAITests/AI/ToolCalls/AIClientToolRunner_Tests.swift,
+				StreamChatAITests/UI/Appearance/AIAppearance_Tests.swift,
+				StreamChatAITests/UI/Charts/ChartData_Tests.swift,
+				StreamChatAITests/UI/Composer/AIComposerViewFactory_Tests.swift,
+				StreamChatAITests/UI/Composer/AIComposerViewModel_Tests.swift,
+				StreamChatAITests/UI/Composer/Attachments/PhotoRequest_Tests.swift,
+				StreamChatAITests/UI/Composer/ChatOption_Tests.swift,
+				StreamChatAITests/UI/Conversation/AIConversationEntryView_Tests.swift,
+				StreamChatAITests/UI/Conversation/AIConversationScroll_Tests.swift,
+				StreamChatAITests/UI/Conversation/AIMessageAttachment_Tests.swift,
+				StreamChatAITests/UI/Conversation/AIMessageTurn_Tests.swift,
+				StreamChatAITests/UI/Conversation/AIPendingMessageTracker_Tests.swift,
+				StreamChatAITests/UI/Conversation/AIThinkingClock_Tests.swift,
+				StreamChatAITests/UI/Conversation/AITurnPositions_Tests.swift,
+				StreamChatAITests/UI/Message/StreamingMessageView_Tests.swift,
+				StreamChatAITests/UI/Reasoning/StreamingReasoningView_Tests.swift,
+				StreamChatAITests/UI/Transcription/SpeechToTextButton_Tests.swift,
+				StreamChatAITests/UI/Utils/DurationFormatting_Tests.swift,
+				StreamChatAITests/UI/Voice/VoiceVisualizationBounce_Tests.swift,
+				StreamChatAITests/UI/Voice/VoiceVisualizationDriver_Tests.swift,
+				StreamChatAITests/UI/Voice/VoiceVisualizationPalette_Tests.swift,
+				StreamChatAITests/UI/Voice/VoiceVisualizationRenderer_Tests.swift,
+				StreamChatAITests/UI/Voice/VoiceVisualizationStyle_Tests.swift,
+				StreamChatAITests/Utils/Localization_Tests.swift,
+			);
+			target = 84114A7B3073E3E10035A01F /* StreamChatAITests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -1984,6 +2801,7 @@
 				82425C762F2CC8530040192C /* Exceptions for "Tests" folder in "StreamChatTests" target */,
 				82425C772F2CC8530040192C /* Exceptions for "Tests" folder in "StreamChatUITests" target */,
 				82425C782F2CC8530040192C /* Exceptions for "Tests" folder in "StreamChatCommonUITests" target */,
+				84114A8C3073E3E10035A01F /* Exceptions for "Tests" folder in "StreamChatAITests" target */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1994,6 +2812,8 @@
 				8242A4472F2CCB790040192C /* Exceptions for "Sources" folder in "StreamChat" target */,
 				8242A4482F2CCB790040192C /* Exceptions for "Sources" folder in "StreamChatUI" target */,
 				8242A4492F2CCB790040192C /* Exceptions for "Sources" folder in "StreamChatCommonUI" target */,
+				4F1C0DF12F7E00AA00C0FFEE /* Exceptions for "Sources" folder in "StreamChatLogsUI" target */,
+				84114A8B3073E3E10035A01F /* Exceptions for "Sources" folder in "StreamChatAI" target */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -2033,6 +2853,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F1C0DF42F7E00AA00C0FFEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F1C0DFB2F7E00AA00C0FFEE /* StreamChat.framework in Frameworks */,
+				4F1C0DE92F7E00AA00C0FFEE /* StreamLogsUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		790881FA25432B7200896F03 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2062,6 +2891,7 @@
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
 				ADCB576628A425D500B81AE8 /* Sentry in Frameworks */,
 				AD4C2CA62EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
+				4F1C0DE12F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2094,6 +2924,24 @@
 			files = (
 				F8788F81261DE9B0006019DD /* StreamChatTestTools.framework in Frameworks */,
 				799C9456247D59B1001F1104 /* StreamChat.framework in Frameworks */,
+				4F1C0E002F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A713073E3E10035A01F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84114A983073E3E10035A01F /* StreamCore in Frameworks */,
+				84114A993073E3E10035A01F /* StreamCoreUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A793073E3E10035A01F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84114A7D3073E3E10035A01F /* StreamChatAI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2114,6 +2962,7 @@
 				A3BD486B281FD4500090D511 /* OHHTTPStubs in Frameworks */,
 				82DCB3AD2A4AE8FB00738933 /* StreamChatUI.framework in Frameworks */,
 				AD4C2CA02EF1C200000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
+				4F1C0DE32F7E00AA00C0FFEE /* StreamChatLogsUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2253,7 +3102,10 @@
 				C11B575B29D43FD800D5A248 /* EdgeCases.app */,
 				84790E952AC1D346003AFF1C /* DemoShare.appex */,
 				AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */,
+				4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */,
 				AD5D7BC42EFA26FF004A63E2 /* StreamChatCommonUITests.xctest */,
+				84114A743073E3E10035A01F /* StreamChatAI.framework */,
+				84114A7C3073E3E10035A01F /* StreamChatAITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2270,6 +3122,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		4F1C0DF22F7E00AA00C0FFEE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		790881F825432B7200896F03 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2285,6 +3144,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C9416247D2F80001F1104 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A6F3073E3E10035A01F /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2325,6 +3191,28 @@
 			productName = DemoAppPush;
 			productReference = 437FCA0426D67BE40000223C /* DemoAppPush.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		4F1C0DF62F7E00AA00C0FFEE /* StreamChatLogsUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F1C0DF72F7E00AA00C0FFEE /* Build configuration list for PBXNativeTarget "StreamChatLogsUI" */;
+			buildPhases = (
+				4F1C0DF22F7E00AA00C0FFEE /* Headers */,
+				4F1C0DF32F7E00AA00C0FFEE /* Sources */,
+				4F1C0DF42F7E00AA00C0FFEE /* Frameworks */,
+				4F1C0DF52F7E00AA00C0FFEE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F1C0DFE2F7E00AA00C0FFEE /* PBXTargetDependency */,
+			);
+			name = StreamChatLogsUI;
+			packageProductDependencies = (
+				4F1C0DEA2F7E00AA00C0FFEE /* StreamLogsUI */,
+			);
+			productName = StreamChatLogsUI;
+			productReference = 4F1C0DF02F7E00AA00C0FFEE /* StreamChatLogsUI.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		790881FC25432B7200896F03 /* StreamChatUI */ = {
 			isa = PBXNativeTarget;
@@ -2388,6 +3276,8 @@
 				C121EC642746AC8C00023E4C /* PBXTargetDependency */,
 				84790E9E2AC1D346003AFF1C /* PBXTargetDependency */,
 				AD4C2CA92EF1C1A4000E4FC1 /* PBXTargetDependency */,
+				84114AA33073E3E10035A01F /* PBXTargetDependency */,
+				4F1C0DED2F7E00AA00C0FFEE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				822A92762F2BB46C0090D2A0 /* DemoApp */,
@@ -2483,12 +3373,55 @@
 			dependencies = (
 				A327D4BB27E0D5A000CFEC3F /* PBXTargetDependency */,
 				A327D4BD27E0D5A000CFEC3F /* PBXTargetDependency */,
+				4F1C0E022F7E00AA00C0FFEE /* PBXTargetDependency */,
 			);
 			name = StreamChatTests;
 			packageProductDependencies = (
 			);
 			productName = StreamChatClientTests;
 			productReference = 799C9451247D59B1001F1104 /* StreamChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		84114A733073E3E10035A01F /* StreamChatAI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84114A893073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatAI" */;
+			buildPhases = (
+				84114A6F3073E3E10035A01F /* Headers */,
+				84114A703073E3E10035A01F /* Sources */,
+				84114A713073E3E10035A01F /* Frameworks */,
+				84114A723073E3E10035A01F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StreamChatAI;
+			packageProductDependencies = (
+				84114A963073E3E10035A01F /* StreamCore */,
+				84114A973073E3E10035A01F /* StreamCoreUI */,
+			);
+			productName = StreamChatAI;
+			productReference = 84114A743073E3E10035A01F /* StreamChatAI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		84114A7B3073E3E10035A01F /* StreamChatAITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84114A8A3073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatAITests" */;
+			buildPhases = (
+				84114A783073E3E10035A01F /* Sources */,
+				84114A793073E3E10035A01F /* Frameworks */,
+				84114A7A3073E3E10035A01F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				84114A7F3073E3E10035A01F /* PBXTargetDependency */,
+			);
+			name = StreamChatAITests;
+			packageProductDependencies = (
+			);
+			productName = StreamChatAITests;
+			productReference = 84114A7C3073E3E10035A01F /* StreamChatAITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		84790E942AC1D346003AFF1C /* DemoShare */ = {
@@ -2527,6 +3460,7 @@
 			dependencies = (
 				82120C292B6AB39C00347A35 /* PBXTargetDependency */,
 				82120C2B2B6AB39C00347A35 /* PBXTargetDependency */,
+				4F1C0DEE2F7E00AA00C0FFEE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8242C05F2F2CCC0B0040192C /* StreamChatUITestsApp */,
@@ -2776,6 +3710,12 @@
 					799C9450247D59B1001F1104 = {
 						CreatedOnToolsVersion = 11.4.1;
 					};
+					84114A733073E3E10035A01F = {
+						CreatedOnToolsVersion = 27.1;
+					};
+					84114A7B3073E3E10035A01F = {
+						CreatedOnToolsVersion = 27.1;
+					};
 					84790E942AC1D346003AFF1C = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -2825,6 +3765,7 @@
 				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */,
+				4F1C0DFF2F7E00AA00C0FFEE /* XCRemoteSwiftPackageReference "stream-logs-ui-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
@@ -2838,6 +3779,7 @@
 				790881FC25432B7200896F03 /* StreamChatUI */,
 				7908820425432B7200896F03 /* StreamChatUITests */,
 				AD4C2B0B2EF1BF58000E4FC1 /* StreamChatCommonUI */,
+				4F1C0DF62F7E00AA00C0FFEE /* StreamChatLogsUI */,
 				AD5D7BC32EFA26FF004A63E2 /* StreamChatCommonUITests */,
 				A3A0C998283E952900B18DA4 /* StreamChatTestMockServer */,
 				792DDA56256FB69E001DB91B /* DemoApp */,
@@ -2850,12 +3792,21 @@
 				A34407B927D8C33F0044F150 /* StreamChatUITestsApp */,
 				A34407DB27D8C3400044F150 /* StreamChatUITestsAppUITests */,
 				84790E942AC1D346003AFF1C /* DemoShare */,
+				84114A733073E3E10035A01F /* StreamChatAI */,
+				84114A7B3073E3E10035A01F /* StreamChatAITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		437FCA0226D67BE40000223C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F1C0DF52F7E00AA00C0FFEE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2907,6 +3858,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C944F247D59B1001F1104 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A723073E3E10035A01F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84114A933073E3E10035A01F /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A7A3073E3E10035A01F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3023,6 +3989,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F1C0DF32F7E00AA00C0FFEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		790881F925432B7200896F03 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3067,6 +4040,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C944D247D59B1001F1104 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A703073E3E10035A01F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84114A783073E3E10035A01F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3163,6 +4150,26 @@
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = 437FCA1226D67CB40000223C /* PBXContainerItemProxy */;
 		};
+		4F1C0DED2F7E00AA00C0FFEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F1C0DF62F7E00AA00C0FFEE /* StreamChatLogsUI */;
+			targetProxy = 4F1C0DEB2F7E00AA00C0FFEE /* PBXContainerItemProxy */;
+		};
+		4F1C0DEE2F7E00AA00C0FFEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F1C0DF62F7E00AA00C0FFEE /* StreamChatLogsUI */;
+			targetProxy = 4F1C0DEC2F7E00AA00C0FFEE /* PBXContainerItemProxy */;
+		};
+		4F1C0DFE2F7E00AA00C0FFEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = 4F1C0DFD2F7E00AA00C0FFEE /* PBXContainerItemProxy */;
+		};
+		4F1C0E022F7E00AA00C0FFEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F1C0DF62F7E00AA00C0FFEE /* StreamChatLogsUI */;
+			targetProxy = 4F1C0E012F7E00AA00C0FFEE /* PBXContainerItemProxy */;
+		};
 		7908820825432B7200896F03 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
@@ -3217,6 +4224,16 @@
 			isa = PBXTargetDependency;
 			target = A3A0C998283E952900B18DA4 /* StreamChatTestMockServer */;
 			targetProxy = 82FF61E92B6AB5E4007185B6 /* PBXContainerItemProxy */;
+		};
+		84114A7F3073E3E10035A01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84114A733073E3E10035A01F /* StreamChatAI */;
+			targetProxy = 84114A7E3073E3E10035A01F /* PBXContainerItemProxy */;
+		};
+		84114AA33073E3E10035A01F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84114A733073E3E10035A01F /* StreamChatAI */;
+			targetProxy = 84114AA23073E3E10035A01F /* PBXContainerItemProxy */;
 		};
 		84748F8C2AC37F40007E3285 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3414,6 +4431,92 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
+		4F1C0DF82F7E00AA00C0FFEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatLogsUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4F1C0DF92F7E00AA00C0FFEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatLogsUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4F1C0DFA2F7E00AA00C0FFEE /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatLogsUI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Profile;
@@ -3911,6 +5014,189 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		84114A833073E3E10035A01F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatAI/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		84114A843073E3E10035A01F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatAI/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		84114A853073E3E10035A01F /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatAI/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-fmodule-name=StreamChatAICMark -Wno-strict-prototypes";
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAI;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
+		84114A863073E3E10035A01F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		84114A873073E3E10035A01F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		84114A883073E3E10035A01F /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatAITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/Sources/StreamChatAICMark/include";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
 		};
 		84790EA02AC1D346003AFF1C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -5147,6 +6433,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4F1C0DF72F7E00AA00C0FFEE /* Build configuration list for PBXNativeTarget "StreamChatLogsUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F1C0DF82F7E00AA00C0FFEE /* Debug */,
+				4F1C0DF92F7E00AA00C0FFEE /* Release */,
+				4F1C0DFA2F7E00AA00C0FFEE /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7908821425432B7200896F03 /* Build configuration list for PBXNativeTarget "StreamChatUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -5213,6 +6509,26 @@
 				799C945A247D59B1001F1104 /* Debug */,
 				799C945B247D59B1001F1104 /* Release */,
 				A57E5C7624C6FA3900187DC2 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84114A893073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatAI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84114A833073E3E10035A01F /* Debug */,
+				84114A843073E3E10035A01F /* Release */,
+				84114A853073E3E10035A01F /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84114A8A3073E3E10035A01F /* Build configuration list for PBXNativeTarget "StreamChatAITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84114A863073E3E10035A01F /* Debug */,
+				84114A873073E3E10035A01F /* Release */,
+				84114A883073E3E10035A01F /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5340,12 +6656,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4F1C0DFF2F7E00AA00C0FFEE /* XCRemoteSwiftPackageReference "stream-logs-ui-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/GetStream/stream-logs-ui-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 		4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.10.1;
+				minimumVersion = 0.15.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
@@ -5391,6 +6715,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4F1C0DEA2F7E00AA00C0FFEE /* StreamLogsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4F1C0DFF2F7E00AA00C0FFEE /* XCRemoteSwiftPackageReference "stream-logs-ui-swift" */;
+			productName = StreamLogsUI;
+		};
 		4FFD1FD42EB9FB65009099C5 /* StreamCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
@@ -5410,6 +6739,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A3D15D8C27E9D839006B34D7 /* XCRemoteSwiftPackageReference "stream-chat-swift-test-helpers" */;
 			productName = StreamSwiftTestHelpers;
+		};
+		84114A963073E3E10035A01F /* StreamCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
+			productName = StreamCore;
+		};
+		84114A973073E3E10035A01F /* StreamCoreUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
+			productName = StreamCoreUI;
 		};
 		A3BD486A281FD4500090D511 /* OHHTTPStubs */ = {
 			isa = XCSwiftPackageProductDependency;

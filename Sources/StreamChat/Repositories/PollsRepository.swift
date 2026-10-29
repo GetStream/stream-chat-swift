@@ -284,9 +284,7 @@ class PollsRepository: @unchecked Sendable {
                 case let .success(response):
                     self.database.write { session in
                         for payload in response.votes {
-                            if let payload {
-                                try session.savePollVote(payload: payload, query: nil, cache: nil)
-                            }
+                            try session.savePollVote(payload: payload, query: nil, cache: nil)
                         }
                     } completion: { _ in
                         completion?(result)

@@ -29,6 +29,7 @@ env:
 
 permissions:
   contents: read
+  actions: read # to download the previous e2e coverage map
 
 jobs:
   test-e2e-debug:
@@ -39,9 +40,7 @@ jobs:
           - ios: "26.2"
             device: "iPhone 17 Pro"
             setup_runtime: false
-          - ios: "18.5"
-            device: "iPhone 16 Pro"
-            setup_runtime: false
+            coverage: true # builds the map that selects e2e tests on pull requests
           - ios: "17.5"
             device: "iPhone 15 Pro"
             setup_runtime: true
@@ -54,7 +53,7 @@ jobs:
       XCODE_VERSION: "26.2"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_ALLURE: true
@@ -70,20 +69,35 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" mock_server_branch:${{ inputs.mock_server_branch }} ${{ env.VERBOSE }}
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" mock_server_branch:${{ inputs.mock_server_branch }} coverage:${{ matrix.coverage == true }} ${{ env.VERBOSE }}
       timeout-minutes: 120
+    - uses: actions/upload-artifact@v7
+      if: matrix.coverage && (success() || failure())
+      with:
+        name: e2e-coverage-map
+        path: fastlane/test_output/e2e_coverage_map.json
+        retention-days: 14
     - name: Allure TestOps Upload
       if: success() || failure()
-      run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
+      run: bundle exec fastlane allure_upload launch_id:"$LAUNCH_ID"
     - name: Allure TestOps Launch Removal
       if: cancelled()
-      run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
+      run: bundle exec fastlane allure_launch_removal launch_id:"$LAUNCH_ID"
+    - name: Upload raw Xcode logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
+        path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
-        brew install chargepoint/xcparse/xcparse
+        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
+          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
+        fi
         xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: Test Data E2E (iOS ${{ matrix.ios }})
@@ -102,12 +116,6 @@ jobs:
           - ios: "26.2"
             device: "iPhone 17 Pro"
             setup_runtime: false
-          - ios: "18.5"
-            device: "iPhone 16 Pro"
-            setup_runtime: false
-          - ios: "17.5"
-            device: "iPhone 15 Pro"
-            setup_runtime: true
           - ios: "16.4"
             device: "iPhone 14 Pro"
             setup_runtime: true
@@ -117,7 +125,7 @@ jobs:
       XCODE_VERSION: "26.2"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
@@ -131,12 +139,21 @@ jobs:
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" cron:true ${{ env.VERBOSE }}
       timeout-minutes: 100
+    - name: Upload raw Xcode logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
+        path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
-        brew install chargepoint/xcparse/xcparse
+        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
+          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
+        fi
         xcparse logs fastlane/test_output/StreamChat.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: Test Data LLC (iOS ${{ matrix.ios }})
@@ -150,25 +167,19 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: "26.1"
+          - ios: "26.2"
             device: "iPhone 17 Pro"
             setup_runtime: false
-          - ios: "18.5"
-            device: "iPhone 16 Pro"
-            setup_runtime: false
-          - ios: "17.5"
-            device: "iPhone 15 Pro"
-            setup_runtime: true
           - ios: "16.4"
             device: "iPhone 14 Pro"
             setup_runtime: true
       fail-fast: false
     runs-on: macos-15
     env:
-      XCODE_VERSION: "26.1.1"
+      XCODE_VERSION: "26.2"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_YEETD: true
@@ -182,15 +193,78 @@ jobs:
     - name: Run Common UI Tests (Debug)
       run: bundle exec fastlane test_common_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" cron:true ${{ env.VERBOSE }}
       timeout-minutes: 100
+    - name: Upload raw Xcode logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
+        path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
     - name: Parse xcresult
       if: failure()
       run: |
-        brew install chargepoint/xcparse/xcparse
+        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
+          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
+        fi
         xcparse logs fastlane/test_output/StreamChatCommonUI.xcresult fastlane/test_output/logs/
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: Test Data Common UI (iOS ${{ matrix.ios }})
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+
+  build-and-test-ai-debug:
+    name: Test AI (Debug)
+    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.mock_server_branch == 'main' }}
+    strategy:
+      matrix:
+        include:
+          - ios: "26.2"
+            device: "iPhone 17 Pro"
+            setup_runtime: false
+          - ios: "16.4"
+            device: "iPhone 14 Pro"
+            setup_runtime: true
+      fail-fast: false
+    runs-on: macos-15
+    env:
+      XCODE_VERSION: "26.2"
+      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
+    steps:
+    - uses: actions/checkout@v7
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
+        INSTALL_IPSW: true
+    - uses: ./.github/actions/setup-ios-runtime
+      if: ${{ matrix.setup_runtime }}
+      timeout-minutes: 60
+      with:
+        version: ${{ matrix.ios }}
+        device: ${{ matrix.device }}
+    - name: Run AI Tests (Debug)
+      run: bundle exec fastlane test_ai device:"${{ env.IOS_SIMULATOR_DEVICE }}" cron:true ${{ env.VERBOSE }}
+      timeout-minutes: 100
+    - name: Upload raw Xcode logs
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: xcode-logs-${{ github.job }}-${{ matrix.ios }}-${{ github.run_attempt }}
+        path: ~/Library/Logs/scan/*.log
+        if-no-files-found: ignore
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        if [[ ${RUNNER_ENVIRONMENT:-} != self-hosted ]] || ! command -v xcparse >/dev/null; then
+          CI=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install chargepoint/xcparse/xcparse
+        fi
+        xcparse logs fastlane/test_output/StreamChatAI.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v7
+      if: failure()
+      with:
+        name: Test Data AI (iOS ${{ matrix.ios }})
         path: |
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
@@ -203,10 +277,10 @@ jobs:
       XCODE_VERSION: "16.1"
     steps:
     - name: Connect Bot
-      uses: webfactory/ssh-agent@v0.7.0
+      uses: webfactory/ssh-agent@v0.10.0
       with:
         ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/xcode-cache
     - uses: ./.github/actions/ruby-cache
     - name: List Xcode versions
@@ -219,6 +293,9 @@ jobs:
     - name: Build Common UI
       run: bundle exec fastlane test_common_ui device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
       timeout-minutes: 25
+    - name: Build AI
+      run: bundle exec fastlane test_ai device:"iPhone 16" build_for_testing:true ${{ env.VERBOSE }}
+      timeout-minutes: 25
 
   automated-code-review:
     name: Automated Code Review
@@ -226,7 +303,7 @@ jobs:
     env:
       XCODE_VERSION: "16.1"
     steps:
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v7
     - uses: ./.github/actions/bootstrap
     - run: bundle exec fastlane rubocop
     - run: bundle exec fastlane run_swift_format strict:true
@@ -234,14 +311,17 @@ jobs:
   slack:
     name: Slack Report
     runs-on: ubuntu-latest
-    needs: [build-and-test-llc-debug, build-and-test-common-ui-debug, test-e2e-debug, build-old-xcode, automated-code-review]
+    needs: [build-and-test-llc-debug, build-and-test-common-ui-debug, build-and-test-ai-debug, test-e2e-debug, build-old-xcode, automated-code-review]
     if: failure() && github.event_name == 'schedule'
     steps:
-      - uses: 8398a7/action-slack@v3
+      - uses: slackapi/slack-github-action@v4
         with:
-          status: cancelled
-          text: "You shall not pass!"
-          job_name: "${{ github.workflow }}: ${{ github.job }}"
-          fields: repo,commit,author,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ${{ toJSON('You shall not pass!') }}
+            attachments:
+              - color: danger
+                title: ${{ toJSON(format('{0} failed', github.workflow)) }}
+                text: ${{ toJSON(format('Repository: {0} | Commit: {1} | Actor: {2}', github.repository, github.sha, github.actor)) }}
+                footer: ${{ toJSON(format('{0}/{1}/actions/runs/{2}', github.server_url, github.repository, github.run_id)) }}

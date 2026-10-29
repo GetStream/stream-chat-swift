@@ -1,0 +1,102 @@
+//
+// Copyright © 2026 Stream.io Inc. All rights reserved.
+//
+
+import Foundation
+import XCTest
+
+// MARK: Actions
+
+extension UserRobot {
+    /// The cell of the message with the given text. The text of a quoted message is disabled, so it does not match.
+    func messageCell(withText text: String) -> XCUIElement {
+        MessageListPage.cells
+            .containing(NSPredicate(format: "identifier == 'textView' AND value == %@ AND enabled == true", text))
+            .firstMatch
+    }
+
+    @discardableResult
+    func copyMessageId(_ text: String) -> Self {
+        openContextMenu(forMessageWithText: text)
+        MessageListPage.ContextMenu.copyMessageId.element.wait().safeTap()
+        return self
+    }
+
+    /// Opens the channel from the channel list's swipe actions, at the message id that was copied before.
+    @discardableResult
+    func openChannelWithCopiedMessageId(channelCellIndex: Int = 0) -> Self {
+        let cell = ChannelListPage.cells.allElementsBoundByIndex[channelCellIndex].wait()
+        cell.swipeLeft()
+        ChannelListPage.moreSwipeActionButton.safeTap()
+        ChannelListPage.ChannelActions.showChannelWithMessageId.wait().safeTap()
+
+        let textField = ChannelListPage.ChannelActions.messageIdTextField.wait()
+        let pasteButton = MessageListPage.Composer.pasteButton
+        for _ in 0..<5 {
+            textField.tap()
+            if pasteButton.wait(timeout: XCUIElement.probeTimeout).exists { break }
+        }
+        // The menu is outside the alert, so a regular tap would make XCTest dismiss the alert as an interruption first.
+        let pasteFrame = pasteButton.frame
+        app.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: pasteFrame.midX, dy: pasteFrame.midY))
+            .tap()
+        ChannelListPage.ChannelActions.okButton.wait().safeTap()
+        return self
+    }
+
+    @discardableResult
+    func tapOnThreadReplyButton(at messageCellIndex: Int = 0) -> Self {
+        MessageListPage.Attributes
+            .threadReplyCountButton(in: messageCell(withIndex: messageCellIndex))
+            .wait()
+            .safeTap()
+        return self
+    }
+
+    @discardableResult
+    func scrollMessageListDown(untilMessageIsVisible text: String, maxSwipes: Int = 20) -> Self {
+        let cell = messageCell(withText: text)
+        for _ in 0..<maxSwipes {
+            if cell.exists && cell.isHittable { break }
+            MessageListPage.list.swipeUp()
+        }
+        return self
+    }
+
+    @discardableResult
+    func scrollMessageListUp(untilMessageIsVisible text: String, maxSwipes: Int = 20) -> Self {
+        let cell = messageCell(withText: text)
+        for _ in 0..<maxSwipes {
+            if cell.exists && cell.isHittable { break }
+            MessageListPage.list.swipeDown()
+        }
+        return self
+    }
+}
+
+// MARK: Asserts
+
+extension UserRobot {
+    @discardableResult
+    func assertMessageIsVisible(
+        withText text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let cell = messageCell(withText: text).wait()
+        XCTAssertTrue(cell.exists, "Message '\(text)' is not loaded", file: file, line: line)
+        XCTAssertTrue(cell.waitForHitPoint().isHittable, "Message '\(text)' is not visible", file: file, line: line)
+        return self
+    }
+
+    @discardableResult
+    func assertMessageIsNotLoaded(
+        withText text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        XCTAssertFalse(messageCell(withText: text).exists, "Message '\(text)' is loaded", file: file, line: line)
+        return self
+    }
+}

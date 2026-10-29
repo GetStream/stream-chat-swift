@@ -30,11 +30,12 @@ final class MutedChannelPayload: Sendable, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case createdAt = "created_at"
-        case expires
-        case updatedAt = "updated_at"
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.expires = try container.decodeIfPresent(Date.self, forKey: .expires)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
     }
 }

@@ -20,12 +20,10 @@ extension EndpointPath {
              .ban,
              .blockUsers,
              .castPollVote,
-             .channels,
-             .channelUpdate,
              .connect,
              .custom,
-             .createChannel,
              .createDevice,
+             .createGuest,
              .createPoll,
              .createPollOption,
              .createReminder,
@@ -39,6 +37,7 @@ extension EndpointPath {
              .deletePoll,
              .deletePollVote,
              .deleteReminder,
+             .deleteScheduledMessage,
              .deleteUserGroup,
              .flag,
              .getApp,
@@ -46,14 +45,15 @@ extension EndpointPath {
              .getDraft,
              .getMessage,
              .getOG,
+             .getOrCreateChannel,
+             .getOrCreateDistinctChannel,
              .getPinnedMessages,
              .getReactions,
              .getReplies,
              .getThread,
              .getUserGroup,
              .getUserLiveLocations,
-             .groupedChannels,
-             .guest,
+             .groupedQueryChannels,
              .hideChannel,
              .listDevices,
              .listUserGroups,
@@ -64,11 +64,13 @@ extension EndpointPath {
              .mute,
              .muteChannel,
              .queryBannedUsers,
+             .queryChannels,
              .queryDrafts,
              .queryMembers,
              .queryPollVotes,
              .queryReactions,
              .queryReminders,
+             .queryScheduledMessages,
              .queryThreads,
              .queryUsers,
              .removeUserGroupMembers,
@@ -77,6 +79,7 @@ extension EndpointPath {
              .searchRoles,
              .searchUserGroups,
              .sendEvent,
+             .sendScheduledMessageNow,
              .showChannel,
              .stopWatchingChannel,
              .sync,
@@ -88,11 +91,13 @@ extension EndpointPath {
              .unmuteChannel,
              .unreadCounts,
              .updateChannel,
+             .updateChannelPartial,
              .updateLiveLocation,
              .updateMemberPartial,
              .updatePollPartial,
              .updatePushNotificationPreferences,
              .updateReminder,
+             .updateScheduledMessage,
              .updateThreadPartial,
              .updateUserGroup,
              .updateUsersPartial,
@@ -107,6 +112,10 @@ extension EndpointPath {
 
 extension Endpoint {
     var shouldBeQueuedOffline: Bool {
-        path.shouldBeQueuedOffline
+        // The `MessageScheduler` sends a scheduled message again once connected, and replaying it would add it to the channel.
+        if (body as? SendMessageRequest)?.scheduledAt != nil {
+            return false
+        }
+        return path.shouldBeQueuedOffline
     }
 }

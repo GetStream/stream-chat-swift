@@ -5071,4 +5071,68 @@ final class MessageDTO_Tests: XCTestCase {
         let message = try XCTUnwrap(messageDTO.asModel())
         XCTAssertEqual(message.deletedForMe, false)
     }
+
+    func test_saveMessage_whenStoredTextUpdatedAtIsSameInstantDecodedLater_thenAppliesPayload() throws {
+        let textUpdatedAt = Date(timeIntervalSince1970: 1_791_995_869.351_796)
+        let reloaded = try saveMessageAfterChannelReset(
+            storedTextUpdatedAt: textUpdatedAt.addingTimeInterval(0.000_000_238),
+            payloadTextUpdatedAt: textUpdatedAt
+        )
+
+        XCTAssertEqual(reloaded.text, "Server text")
+        XCTAssertNotNil(reloaded.channel)
+    }
+
+    func test_saveMessage_whenStoredTextUpdatedAtIsLater_thenKeepsLocalTextAndLinksChannel() throws {
+        let textUpdatedAt = Date(timeIntervalSince1970: 1_791_995_869.351_796)
+        let reloaded = try saveMessageAfterChannelReset(
+            storedTextUpdatedAt: textUpdatedAt.addingTimeInterval(1),
+            payloadTextUpdatedAt: textUpdatedAt
+        )
+
+        XCTAssertEqual(reloaded.text, "Local text")
+        XCTAssertNotNil(reloaded.channel)
+    }
+
+    func test_isLaterAtServerPrecision_whenAdjacentMicroseconds_thenDatesAreDistinct() {
+        let seconds: TimeInterval = 1_791_995_869
+        for microseconds in stride(from: 0, to: 999_999, by: 997) {
+            let earlier = Date(timeIntervalSince1970: seconds + TimeInterval(microseconds) / 1_000_000)
+            let later = Date(timeIntervalSince1970: seconds + TimeInterval(microseconds + 1) / 1_000_000)
+            XCTAssertTrue(later.isLaterAtServerPrecision(than: earlier), "\(microseconds)")
+            XCTAssertFalse(earlier.isLaterAtServerPrecision(than: later), "\(microseconds)")
+            XCTAssertFalse(earlier.addingTimeInterval(0.000_000_238).isLaterAtServerPrecision(than: earlier), "\(microseconds)")
+        }
+    }
+}
+
+private extension MessageDTO_Tests {
+    func saveMessageAfterChannelReset(storedTextUpdatedAt: Date, payloadTextUpdatedAt: Date) throws -> MessageDTO {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: cid))
+
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, text: "Local text", cid: cid, messageTextUpdatedAt: storedTextUpdatedAt),
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: cid))
+            channel.cleanAllMessagesExcludingLocalOnly()
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, text: "Server text", cid: cid, messageTextUpdatedAt: payloadTextUpdatedAt),
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        return try XCTUnwrap(database.viewContext.message(id: messageId))
+    }
 }

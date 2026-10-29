@@ -14,9 +14,15 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_decodesEnhancedMentions() throws {
         let json = """
         {
+            "custom": {},
+            "reaction_counts": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
+                "custom": {},
+                "language": "",
+                "teams": [],
+                "banned": false,
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -58,9 +64,15 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_optionalMentionsAreNilWhenMissing() throws {
         let json = """
         {
+            "custom": {},
+            "reaction_counts": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
+                "custom": {},
+                "language": "",
+                "teams": [],
+                "banned": false,
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -104,9 +116,15 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_decodesMentionedChannelMembersMap() throws {
         let json = """
         {
+            "custom": {},
+            "reaction_counts": {},
             "id": "msg-1",
             "type": "regular",
             "user": {
+                "custom": {},
+                "language": "",
+                "teams": [],
+                "banned": false,
                 "id": "user-1",
                 "role": "user",
                 "online": false,
@@ -132,6 +150,10 @@ final class MessagePayload_Tests: XCTestCase {
             "own_reactions": [],
             "mentioned_users": [
                 {
+                    "custom": {},
+                    "language": "",
+                    "teams": [],
+                    "banned": false,
                     "id": "u2",
                     "role": "user",
                     "online": false,
@@ -144,7 +166,9 @@ final class MessagePayload_Tests: XCTestCase {
                 "u2": {
                     "channel_role": "channel_member",
                     "notifications_muted": false,
-                    "nickname": "Marty"
+                    "custom": {
+                        "nickname": "Marty"
+                    }
                 }
             }
         }
@@ -234,52 +258,28 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.deletedForMe, true)
         XCTAssertEqual(payload.member?.channelRole, "moderator")
         XCTAssertEqual(payload.member?.notificationsMuted, false)
-        XCTAssertEqual(payload.member?.custom, [String: RawJSON]())
-    }
-
-    func test_memberInfoPayload_decodesInlineExtraData() throws {
-        let json = """
-        {
-            "channel_role": "channel_member",
-            "notifications_muted": false,
-            "badge": { "tier": "gold" }
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
-
-        XCTAssertEqual(payload.channelRole, "channel_member")
-        XCTAssertEqual(payload.notificationsMuted, false)
-        XCTAssertEqual(payload.custom, ["badge": .dictionary(["tier": .string("gold")])])
-    }
-
-    func test_memberInfoPayload_knownFieldsAreNotInExtraData() throws {
-        let json = """
-        {
-            "channel_role": "moderator",
-            "notifications_muted": true
-        }
-        """.data(using: .utf8)!
-
-        let payload = try JSONDecoder.stream.decode(MemberInfoPayload.self, from: json)
-
-        XCTAssertEqual(payload.channelRole, "moderator")
-        XCTAssertEqual(payload.notificationsMuted, true)
-        XCTAssertEqual(payload.custom, [String: RawJSON]())
+        XCTAssertNil(payload.member?.custom)
     }
 
     func test_memberInfoPayload_requiredFieldsThrowWhenMissing() throws {
-        let fields: [(key: String, json: String)] = [
-            ("channel_role", #"{"notifications_muted":false}"#),
-            ("notifications_muted", #"{"channel_role":"channel_member"}"#)
-        ]
+        XCTAssertThrowsError(
+            try JSONDecoder.stream.decode(MemberInfoPayload.self, from: Data(#"{"notifications_muted":false}"#.utf8)),
+            "Expected decoding to fail when channel_role is missing"
+        )
+    }
 
-        for field in fields {
-            XCTAssertThrowsError(
-                try JSONDecoder.stream.decode(MemberInfoPayload.self, from: Data(field.json.utf8)),
-                "Expected decoding to fail when \(field.key) is missing"
-            )
-        }
+    func test_memberInfoPayload_notificationsMutedDefaultsToFalse() throws {
+        let missing = try JSONDecoder.stream.decode(
+            MemberInfoPayload.self,
+            from: Data(#"{"channel_role":"channel_member"}"#.utf8)
+        )
+        let null = try JSONDecoder.stream.decode(
+            MemberInfoPayload.self,
+            from: Data(#"{"channel_role":"channel_member","notifications_muted":null}"#.utf8)
+        )
+
+        XCTAssertEqual(missing.notificationsMuted, false)
+        XCTAssertEqual(null.notificationsMuted, false)
     }
 
     func test_messagePayload_requiredFieldsThrowWhenMissing() throws {
@@ -287,15 +287,7 @@ final class MessagePayload_Tests: XCTestCase {
         let message = try XCTUnwrap(root["message"] as? [String: Any])
 
         let fields = [
-            "cid",
-            "deleted_reply_count",
-            "mentioned_channel",
-            "mentioned_here",
-            "pinned",
-            "reaction_scores",
-            "restricted_visibility",
-            "shadowed",
-            "silent"
+            "cid"
         ]
         for field in fields {
             var candidateRoot = root
@@ -309,6 +301,72 @@ final class MessagePayload_Tests: XCTestCase {
                 "Expected decoding to fail when \(field) is missing"
             )
         }
+    }
+
+    func test_messagePayload_reactionScoresDefaultToEmptyWhenNull() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        var message = try XCTUnwrap(root["message"] as? [String: Any])
+        var quotedMessage = try XCTUnwrap(message["quoted_message"] as? [String: Any])
+        quotedMessage["reaction_scores"] = NSNull()
+        message["quoted_message"] = quotedMessage
+        message["reaction_scores"] = NSNull()
+        let data = try JSONSerialization.data(withJSONObject: ["message": message])
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
+
+        XCTAssertEqual(payload.reactionScores, [:])
+        XCTAssertEqual(payload.quotedMessage?.reactionScores, [:])
+    }
+
+    func test_messagePayload_defaultedFieldsWhenMissingOrNull() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        let message = try XCTUnwrap(root["message"] as? [String: Any])
+        let fields = [
+            "mentioned_channel",
+            "mentioned_here",
+            "pinned",
+            "reaction_scores",
+            "restricted_visibility",
+            "shadowed",
+            "silent"
+        ]
+        for value in [nil, NSNull()] as [NSNull?] {
+            var candidateMessage = message
+            for field in fields {
+                candidateMessage[field] = value
+            }
+            let data = try JSONSerialization.data(withJSONObject: ["message": candidateMessage])
+
+            let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
+
+            XCTAssertEqual(payload.mentionedChannel, false)
+            XCTAssertEqual(payload.mentionedHere, false)
+            XCTAssertEqual(payload.pinned, false)
+            XCTAssertEqual(payload.reactionScores, [:])
+            XCTAssertEqual(payload.restrictedVisibility, [])
+            XCTAssertEqual(payload.shadowed, false)
+            XCTAssertEqual(payload.silent, false)
+        }
+    }
+
+    func test_messagePayload_dropsArrayElementsThatFailDecoding() throws {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: messageJSON) as? [String: Any])
+        var message = try XCTUnwrap(root["message"] as? [String: Any])
+        let attachments = try XCTUnwrap(message["attachments"] as? [Any])
+        let latestReactions = try XCTUnwrap(message["latest_reactions"] as? [Any])
+        let ownReactions = try XCTUnwrap(message["own_reactions"] as? [Any])
+        message["attachments"] = attachments + [["original_height": "tall"]]
+        message["latest_reactions"] = latestReactions + [["type": "like"]]
+        message["mentioned_users"] = [["role": "user"]]
+        message["own_reactions"] = ownReactions + [["type": "like"]]
+        let data = try JSONSerialization.data(withJSONObject: ["message": message])
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: data).message
+
+        XCTAssertEqual(payload.attachments.count, attachments.count)
+        XCTAssertEqual(payload.latestReactions.count, latestReactions.count)
+        XCTAssertEqual(payload.mentionedUsers.count, 0)
+        XCTAssertEqual(payload.ownReactions.count, ownReactions.count)
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
@@ -611,163 +669,6 @@ final class MessagePayload_Tests: XCTestCase {
         )
 
         XCTAssertEqual(message.deletedForMe, false)
-    }
-}
-
-final class MessageRequestBody_Tests: XCTestCase {
-    func test_isSerialized() throws {
-        let payload: MessageRequestBody = .init(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            command: .unique,
-            args: .unique,
-            parentId: .unique,
-            showReplyInChannel: true,
-            isSilent: true,
-            quotedMessageId: "quoted-message-id",
-            mentionedUserIds: [.unique],
-            pinned: true,
-            pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
-            restrictedVisibility: ["test"],
-            extraData: ["secret_note": .string("Anakin is Vader ;-)")]
-        )
-
-        let serializedJSON = try JSONEncoder.stream.encode(payload)
-        let expected: [String: Any] = [
-            "id": payload.id,
-            "text": payload.text,
-            "parent_id": payload.parentId!,
-            "show_in_channel": true,
-            "silent": true,
-            "args": payload.args!,
-            "quoted_message_id": "quoted-message-id",
-            "mentioned_users": payload.mentionedUserIds,
-            "secret_note": "Anakin is Vader ;-)",
-            "command": payload.command!,
-            "pinned": true,
-            "pin_expires": "2021-05-15T06:43:08.776Z",
-            "restricted_visibility": ["test"]
-        ]
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        AssertJSONEqual(serializedJSON, expectedJSON)
-    }
-
-    func test_isSerialized_withEnhancedMentions() throws {
-        let payload: MessageRequestBody = .init(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            showReplyInChannel: false,
-            isSilent: false,
-            mentionedUserIds: ["user-1"],
-            mentionedHere: true,
-            mentionedChannel: true,
-            mentionedGroupIds: ["backendsupport"],
-            mentionedRoles: ["admin"],
-            extraData: [:]
-        )
-
-        let serializedJSON = try JSONEncoder.stream.encode(payload)
-        let expected: [String: Any] = [
-            "id": payload.id,
-            "text": payload.text,
-            "show_in_channel": false,
-            "silent": false,
-            "pinned": false,
-            "mentioned_users": ["user-1"],
-            "mentioned_here": true,
-            "mentioned_channel": true,
-            "mentioned_group_ids": ["backendsupport"],
-            "mentioned_roles": ["admin"]
-        ]
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        AssertJSONEqual(serializedJSON, expectedJSON)
-    }
-
-    func test_isSerialized_enhancedMentionsOmittedWhenEmpty() throws {
-        let payload: MessageRequestBody = .init(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            showReplyInChannel: false,
-            isSilent: false,
-            extraData: [:]
-        )
-
-        let serializedJSON = try JSONEncoder.stream.encode(payload)
-        let expected: [String: Any] = [
-            "id": payload.id,
-            "text": payload.text,
-            "show_in_channel": false,
-            "silent": false,
-            "pinned": false
-        ]
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        AssertJSONEqual(serializedJSON, expectedJSON)
-    }
-
-    func test_isSerialized_whenSystemMessage() throws {
-        let payload: MessageRequestBody = .init(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: "Announcement: The Death Star will be operational in 2 weeks.",
-            type: MessageType.system.rawValue,
-            extraData: [:]
-        )
-
-        let serializedJSON = try JSONEncoder.stream.encode(payload)
-        let expected: [String: Any] = [
-            "id": payload.id,
-            "text": payload.text,
-            "type": "system",
-            "silent": false,
-            "pinned": false,
-            "show_in_channel": false
-        ]
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        AssertJSONEqual(serializedJSON, expectedJSON)
-    }
-
-    /// Check whether the message body is serialized when `isSilent` is not provided in `init`
-    func test_isSerializedWithoutSilent() throws {
-        let payload: MessageRequestBody = .init(
-            id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            command: .unique,
-            args: .unique,
-            parentId: .unique,
-            showReplyInChannel: true,
-            quotedMessageId: "quoted-message-id",
-            mentionedUserIds: [.unique],
-            pinned: true,
-            pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
-            extraData: ["secret_note": .string("Anakin is Vader ;-)")]
-        )
-
-        let serializedJSON = try JSONEncoder.stream.encode(payload)
-        let expected: [String: Any] = [
-            "id": payload.id,
-            "text": payload.text,
-            "parent_id": payload.parentId!,
-            "show_in_channel": true,
-            "silent": false,
-            "args": payload.args!,
-            "quoted_message_id": "quoted-message-id",
-            "mentioned_users": payload.mentionedUserIds,
-            "secret_note": "Anakin is Vader ;-)",
-            "command": payload.command!,
-            "pinned": true,
-            "pin_expires": "2021-05-15T06:43:08.776Z"
-        ]
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-
-        AssertJSONEqual(serializedJSON, expectedJSON)
     }
 }
 

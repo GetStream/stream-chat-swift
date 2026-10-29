@@ -36,8 +36,9 @@ final class ChannelRepository_Tests: XCTestCase {
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }
-        let expectedEndpoint = Endpoint<ChannelPayload>.createChannel(query: query)
+        let expectedEndpoint = query.endpoint
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
         XCTAssertEqual(1, database.writeSessionCounter, "Write is called, but rolled back")
         
         let databaseChannel = try database.readSynchronously { $0.channel(cid: cid) }
@@ -55,8 +56,9 @@ final class ChannelRepository_Tests: XCTestCase {
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }
-        let expectedEndpoint = Endpoint<ChannelPayload>.createChannel(query: query)
+        let expectedEndpoint = query.endpoint
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
+        XCTAssertEqual(apiClient.request_endpoint?.path.value, "/api/v2/chat/channels/\(query.type.rawValue)/\(try XCTUnwrap(query.id))/query")
         XCTAssertEqual(0, database.writeSessionCounter)
         
         let error = try XCTUnwrap(result.error)

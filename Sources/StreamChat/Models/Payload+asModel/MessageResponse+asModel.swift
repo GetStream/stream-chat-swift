@@ -79,7 +79,7 @@ extension MessageResponse {
             isShadowed: shadowed,
             deletedForMe: deletedForMe ?? false,
             reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
-            reactionCounts: (reactionCounts ?? [:]).mapKeys(MessageReactionType.init(rawValue:)),
+            reactionCounts: reactionCounts.mapKeys(MessageReactionType.init(rawValue:)),
             reactionGroups: (reactionGroups ?? [:]).reduce(into: [:]) { acc, element in
                 guard let group = element.value else { return }
                 let type = MessageReactionType(rawValue: element.key)

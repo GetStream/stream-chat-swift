@@ -15,8 +15,9 @@ final class CreatePollOptionRequestBody: Sendable, Encodable, JSONEncodable {
         self.text = text
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case text
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encode(text, forKey: .text)
     }
 }

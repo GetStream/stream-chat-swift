@@ -27,6 +27,22 @@ public protocol MediaLoader: AnyObject, Sendable {
         completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
     )
 
+    /// Loads a single image from the given URL and returns a task that can cancel the load.
+    ///
+    /// The completion is always called exactly once. When the task was cancelled before
+    /// the load finished, it receives a `CancellationError`.
+    ///
+    /// - Parameters:
+    ///   - url: The image URL. If nil, the completion is called with a failure.
+    ///   - options: Options controlling resize behavior.
+    ///   - completion: A completion handler called on the main actor with the loaded image.
+    /// - Returns: A task for cancelling the load.
+    func loadImageTask(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) -> ImageLoadingTask
+
     // MARK: - Video Loading
 
     /// Returns a video asset for the given URL.
@@ -103,6 +119,20 @@ public protocol MediaLoader: AnyObject, Sendable {
 // MARK: - Default Implementations
 
 extension MediaLoader {
+    /// Calls ``loadImage(url:options:completion:)``. Cancelling the returned task does not
+    /// stop the load; the completion receives a `CancellationError` once the load finishes.
+    public func loadImageTask(
+        url: URL?,
+        options: ImageLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) -> ImageLoadingTask {
+        let task = ImageLoadingTask()
+        loadImage(url: url, options: options) { result in
+            completion(task.isCancelled ? .failure(CancellationError()) : result)
+        }
+        return task
+    }
+
     /// Does nothing by default.
     public func trimImageMemoryCache(toCost limit: Int) {}
 }
@@ -153,10 +183,16 @@ extension MediaLoader {
         url: URL?,
         options: ImageLoadOptions = ImageLoadOptions()
     ) async throws -> MediaLoaderImage {
-        try await withCheckedThrowingContinuation { continuation in
-            loadImage(url: url, options: options) { result in
-                continuation.resume(with: result)
+        let task = ImageLoadingTask()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                let loadTask = loadImageTask(url: url, options: options) { result in
+                    continuation.resume(with: result)
+                }
+                task.addCancellationHandler { loadTask.cancel() }
             }
+        } onCancel: {
+            task.cancel()
         }
     }
 

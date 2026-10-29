@@ -26,23 +26,10 @@ public final class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class MemberAddedEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let member: MemberPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension MemberAddedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
+            let user,
             let userDTO = session.user(id: user.id),
             let memberUserId = member.memberId,
             let memberDTO = session.member(userId: memberUserId, cid: cid)
@@ -79,23 +66,10 @@ public final class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class MemberUpdatedEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let member: MemberPayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension MemberUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
+            let user,
             let userDTO = session.user(id: user.id),
             let memberUserId = member.memberId,
             let memberDTO = session.member(userId: memberUserId, cid: cid)
@@ -128,21 +102,9 @@ public final class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class MemberRemovedEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
+extension MemberRemovedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let user, let userDTO = session.user(id: user.id) else { return nil }
 
         return try? MemberRemovedEvent(
             user: userDTO.asModel(),

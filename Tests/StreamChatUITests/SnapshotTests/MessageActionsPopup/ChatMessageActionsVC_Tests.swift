@@ -124,6 +124,95 @@ import XCTest
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is BlockUserActionItem }))
     }
 
+    func test_messageActions_whenBlockingEnabled_isBlocked_containsUnblockAction() throws {
+        let messageAuthor = ChatUser.mock(id: .unique)
+        chatMessageController.simulateInitial(
+            message: .mock(author: messageAuthor, isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+        try chatMessageController.client.databaseContainer.writeSynchronously { session in
+            session.currentUser?.blockedUserIds = [messageAuthor.id]
+        }
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+        vc.components.isBlockingUsersEnabled = true
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is UnblockUserActionItem }))
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is BlockUserActionItem }))
+    }
+
+    func test_messageActions_whenAuthorIsMutedAndBlocked_containsFlagUnmuteAndUnblockActions() throws {
+        let messageAuthor = ChatUser.mock(id: .unique)
+        chatMessageController.simulateInitial(
+            message: .mock(author: messageAuthor, isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+        let currentUser = try XCTUnwrap(chatMessageController.dataStore.currentUser())
+        try chatMessageController.client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(
+                userPayload: .dummy(userId: currentUser.id),
+                mutedUsers: [.dummy(userId: messageAuthor.id)]
+            ))
+            session.currentUser?.blockedUserIds = [messageAuthor.id]
+        }
+
+        vc.channel = .mock(cid: .unique, config: .mock(mutesEnabled: true), ownCapabilities: [.flagMessage])
+        vc.components.isBlockingUsersEnabled = true
+
+        let actions = vc.messageActions
+        XCTAssertTrue(actions.contains(where: { $0 is FlagActionItem }))
+        XCTAssertTrue(actions.contains(where: { $0 is UnmuteUserActionItem }))
+        XCTAssertTrue(actions.contains(where: { $0 is UnblockUserActionItem }))
+        XCTAssertFalse(actions.contains(where: { $0 is MuteUserActionItem }))
+        XCTAssertFalse(actions.contains(where: { $0 is BlockUserActionItem }))
+    }
+
+    func test_blockActionItem_whenTapped_blocksMessageAuthor() {
+        let authorId = simulateMessageFromAnotherUser()
+        let item = vc.blockActionItem()
+
+        item.action(item)
+
+        XCTAssertEqual(
+            mockAPIClient.request_endpoint,
+            AnyEndpoint(Endpoint<BlockUsersResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: authorId)))
+        )
+    }
+
+    func test_unblockActionItem_whenTapped_unblocksMessageAuthor() {
+        let authorId = simulateMessageFromAnotherUser()
+        let item = vc.unblockActionItem()
+
+        item.action(item)
+
+        XCTAssertEqual(
+            mockAPIClient.request_endpoint,
+            AnyEndpoint(
+                Endpoint<UnblockUsersResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: authorId))
+            )
+        )
+    }
+
+    func test_muteActionItem_whenTapped_mutesMessageAuthor() {
+        let authorId = simulateMessageFromAnotherUser()
+        let item = vc.muteActionItem()
+
+        item.action(item)
+
+        XCTAssertEqual(mockAPIClient.request_endpoint, AnyEndpoint(.mute(muteRequest: .init(targetIds: [authorId]))))
+    }
+
+    func test_unmuteActionItem_whenTapped_unmutesMessageAuthor() {
+        let authorId = simulateMessageFromAnotherUser()
+        let item = vc.unmuteActionItem()
+
+        item.action(item)
+
+        XCTAssertEqual(mockAPIClient.request_endpoint, AnyEndpoint(.unmute(unmuteRequest: .init(targetIds: [authorId]))))
+    }
+
     func test_messageActions_whenQuotesEnabled_containsQuoteAction() {
         vc.channel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
 
@@ -455,6 +544,20 @@ import XCTest
 // MARK: - Helpers
 
 private extension ChatMessageActionsVC_Tests {
+    var mockAPIClient: APIClient_Spy {
+        (chatMessageController.client as! ChatClient_Mock).mockAPIClient
+    }
+
+    func simulateMessageFromAnotherUser() -> UserId {
+        let author = ChatUser.mock(id: .unique)
+        chatMessageController.simulateInitial(
+            message: .mock(author: author, isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+        return author.id
+    }
+
     func makeGiphyAttachmentPayload() -> AnyChatMessageAttachment {
         .dummy(
             type: .giphy,

@@ -51,11 +51,6 @@ final class ChannelId_Tests: XCTestCase {
         XCTAssertEqual(decode(value: "asd:123"), ChannelId(type: .custom("asd"), id: "123"))
     }
 
-    func test_apiPath() {
-        let channelId = ChannelId.unique
-        XCTAssertEqual(channelId.apiPath, channelId.type.rawValue + "/" + channelId.id)
-    }
-
     private func decode(value: String) -> ChannelId? {
         // We must decode it as a part of JSON because older iOS version don't support JSON fragments
         let key = String.unique

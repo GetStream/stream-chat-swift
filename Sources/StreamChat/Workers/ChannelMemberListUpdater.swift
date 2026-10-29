@@ -71,8 +71,7 @@ private extension ChannelMemberListUpdater {
     }
 
     func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
-        let query = ChannelQuery(cid: cid)
-        apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
+        apiClient.request(endpoint: ChannelQuery(cid: cid).endpoint) { [weak self] in
             switch $0 {
             case let .success(payload):
                 self?.database.write({ session in

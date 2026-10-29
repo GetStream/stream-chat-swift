@@ -19,11 +19,21 @@ final class AttachmentActionPayload: Sendable, Codable, JSONEncodable {
         self.value = value
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case name
-        case style
-        case text
-        case type
-        case value
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.style = try container.decodeIfPresent(String.self, forKey: .style)
+        self.text = try container.decode(String.self, forKey: .text)
+        self.type = try container.decode(String.self, forKey: .type)
+        self.value = try container.decodeIfPresent(String.self, forKey: .value)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(name, forKey: .name)
+        try container.encodeIfPresent(style, forKey: .style)
+        try container.encode(text, forKey: .text)
+        try container.encode(type, forKey: .type)
+        try container.encodeIfPresent(value, forKey: .value)
     }
 }

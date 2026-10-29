@@ -16,7 +16,7 @@ extension UserPayload {
 
     var imageURL: URL? { image.flatMap(URL.init(string:)) }
 
-    var isBanned: Bool { banned ?? false }
+    var isBanned: Bool { banned }
 
     var isOnline: Bool { online }
 
@@ -50,7 +50,7 @@ extension UserPayload {
             deactivatedAt: deactivatedAt,
             id: userId,
             image: imageUrl?.absoluteString,
-            language: language,
+            language: language ?? "",
             lastActive: lastActiveAt,
             name: name,
             online: isOnline,

@@ -1,6 +1,7 @@
 {
   "events": [
     {
+      "custom": {},
       "type": "message.new",
       "cid": "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F",
       "channel_id": "A2F4393C-D656-46B8-9A43-6148E9E62D7F",

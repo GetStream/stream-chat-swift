@@ -1994,7 +1994,263 @@ import XCTest
         XCTAssertFalse(layoutOptions.contains(.translation))
     }
 
+    // MARK: - Message grouping
+
+    func test_optionsForMessage_whenOwnMessageIsFollowedByErrorMessage_includesTimestampAndDeliveryStatus() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: true))
+        let author: ChatUser = .mock(id: .unique)
+        let message = makeGroupMessage(author: author, cid: channel.cid, createdAt: Date())
+        let errorMessage = makeGroupMessage(
+            author: author,
+            cid: channel.cid,
+            createdAt: message.createdAt.addingTimeInterval(1),
+            type: .error
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 1, section: 0),
+            in: channel,
+            with: .init([errorMessage, message]),
+            appearance: appearance
+        )
+
+        XCTAssertTrue(layoutOptions.contains(.timestamp))
+        XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+        XCTAssertFalse(layoutOptions.contains(.continuousBubble))
+    }
+
+    func test_optionsForMessage_whenOwnMessageIsFollowedByEphemeralMessage_includesTimestampAndDeliveryStatus() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: true))
+        let author: ChatUser = .mock(id: .unique)
+        let message = makeGroupMessage(author: author, cid: channel.cid, createdAt: Date())
+        let ephemeralMessage = makeGroupMessage(
+            author: author,
+            cid: channel.cid,
+            createdAt: message.createdAt.addingTimeInterval(1),
+            type: .ephemeral
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 1, section: 0),
+            in: channel,
+            with: .init([ephemeralMessage, message]),
+            appearance: appearance
+        )
+
+        XCTAssertTrue(layoutOptions.contains(.timestamp))
+        XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+        XCTAssertFalse(layoutOptions.contains(.continuousBubble))
+    }
+
+    func test_optionsForMessage_whenOwnMessageIsNotLastInGroup_doesNotIncludeTimestampAndDeliveryStatus() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: true))
+        let author: ChatUser = .mock(id: .unique)
+        let firstMessage = makeGroupMessage(author: author, cid: channel.cid, createdAt: Date())
+        let secondMessage = makeGroupMessage(
+            author: author,
+            cid: channel.cid,
+            createdAt: firstMessage.createdAt.addingTimeInterval(1)
+        )
+        let messages: AnyRandomAccessCollection<ChatMessage> = .init([secondMessage, firstMessage])
+
+        let firstMessageOptions = sut.optionsForMessage(
+            at: .init(item: 1, section: 0),
+            in: channel,
+            with: messages,
+            appearance: appearance
+        )
+        let secondMessageOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: messages,
+            appearance: appearance
+        )
+
+        XCTAssertFalse(firstMessageOptions.contains(.timestamp))
+        XCTAssertFalse(firstMessageOptions.contains(.deliveryStatusIndicator))
+        XCTAssertTrue(secondMessageOptions.contains(.timestamp))
+        XCTAssertTrue(secondMessageOptions.contains(.deliveryStatusIndicator))
+    }
+
+    func test_optionsForMessage_whenLastMessageInGroupIsHardDeleted_previousMessageIncludesTimestamp() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique)
+        let author: ChatUser = .mock(id: .unique)
+        let first = makeGroupMessage(author: author, cid: channel.cid, createdAt: Date())
+        let second = makeGroupMessage(author: author, cid: channel.cid, createdAt: first.createdAt.addingTimeInterval(1))
+        let third = makeGroupMessage(author: author, cid: channel.cid, createdAt: first.createdAt.addingTimeInterval(2))
+
+        let optionsBeforeDeletion = sut.optionsForMessage(
+            at: .init(item: 1, section: 0),
+            in: channel,
+            with: .init([third, second, first]),
+            appearance: appearance
+        )
+        let optionsAfterDeletion = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([second, first]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(optionsBeforeDeletion.contains(.timestamp))
+        XCTAssertTrue(optionsAfterDeletion.contains(.timestamp))
+    }
+
+    func test_optionsForMessage_whenLastMessageInGroupIsSoftDeleted_onlyTheDeletedMessageIncludesTimestamp() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique)
+        let author: ChatUser = .mock(id: .unique)
+        let first = makeGroupMessage(author: author, cid: channel.cid, createdAt: Date(), isSentByCurrentUser: false)
+        let second = makeGroupMessage(
+            author: author,
+            cid: channel.cid,
+            createdAt: first.createdAt.addingTimeInterval(1),
+            isSentByCurrentUser: false
+        )
+        let deletedThird = makeGroupMessage(
+            author: author,
+            cid: channel.cid,
+            createdAt: first.createdAt.addingTimeInterval(2),
+            type: .deleted,
+            deletedAt: Date(),
+            isSentByCurrentUser: false
+        )
+        let messages: AnyRandomAccessCollection<ChatMessage> = .init([deletedThird, second, first])
+
+        let timestampIndexes = (0..<messages.count).filter {
+            sut.optionsForMessage(
+                at: .init(item: $0, section: 0),
+                in: channel,
+                with: messages,
+                appearance: appearance
+            ).contains(.timestamp)
+        }
+
+        XCTAssertEqual(timestampIndexes, [0])
+    }
+
+    // MARK: - Delivery status with read events disabled
+
+    func test_optionsForMessage_whenHasPendingLocalStateAndReadEventsDisabled_includesDeliveryStatusIndicator() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: false))
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: .pendingSend,
+            isSentByCurrentUser: true
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertEqual(message.deliveryStatus(for: channel), .pending)
+        XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+
+    func test_optionsForMessage_whenMessageIsReadAndReadEventsDisabled_doesNotIncludeDeliveryStatusIndicator() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: false))
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [.mock(id: .unique), .mock(id: .unique)]
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertEqual(message.deliveryStatus(for: channel), .read)
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+
+    func test_optionsForMessage_whenMessageIsReadAndReadEventsEnabled_includesDeliveryStatusIndicator() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: true))
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [.mock(id: .unique)]
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertEqual(message.deliveryStatus(for: channel), .read)
+        XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+
+    func test_optionsForMessage_whenMessageIsDeletedAndReadEventsDisabled_doesNotIncludeDeliveryStatusIndicator() {
+        let sut = createOptionsResolver()
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(readEventsEnabled: false))
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
+            text: .unique,
+            type: .deleted,
+            author: .mock(id: .unique),
+            deletedAt: Date(),
+            isSentByCurrentUser: true
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+
     // MARK: - Helpers
+
+    private func makeGroupMessage(
+        author: ChatUser,
+        cid: ChannelId,
+        createdAt: Date,
+        type: MessageType = .regular,
+        deletedAt: Date? = nil,
+        isSentByCurrentUser: Bool = true
+    ) -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: type,
+            author: author,
+            createdAt: createdAt,
+            deletedAt: deletedAt,
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser
+        )
+    }
 
     private func createOptionsResolver() -> ChatMessageLayoutOptionsResolver {
         let config = ChatClientConfig(apiKey: .init(.unique))

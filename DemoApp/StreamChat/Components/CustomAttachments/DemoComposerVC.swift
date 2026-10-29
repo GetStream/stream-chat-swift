@@ -8,6 +8,102 @@ import StreamChatUI
 import UIKit
 
 class DemoComposerVC: ComposerVC {
+    var editingScheduledMessage: ScheduledMessage?
+    var editingScheduledContent: DemoScheduledMessageContent?
+    var componentsBeforeScheduledEditing: Components?
+    var isSubmittingScheduledMessage = false
+
+    // Observes the scheduled messages, for the message being edited.
+    var scheduledMessageListController: ScheduledMessageListController?
+
+    lazy var scheduledMessagesBannerView = DemoComposerBannerView()
+    lazy var scheduledEditingBannerView = DemoComposerBannerView()
+    // The part of the message list's inset that makes room for the banners.
+    var messageListBannerInset: CGFloat = 0
+
+    override func setUp() {
+        super.setUp()
+
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(sendButtonLongPressed(_:)))
+        composerView.sendButton.addGestureRecognizer(longPress)
+
+        scheduledMessagesBannerView.isHidden = true
+        scheduledMessagesBannerView.onTap = { [weak self] in
+            (self?.tabBarController as? DemoAppTabBarController)?.showScheduledMessages()
+        }
+
+        scheduledEditingBannerView.isHidden = true
+        scheduledEditingBannerView.onDismiss = { [weak self] in
+            self?.endScheduledMessageEditing()
+        }
+
+        // The channel and thread screens set the channel controller before setting up the composer.
+        if AppConfig.shared.isScheduledMessagesEnabled {
+            scheduledMessageListController = channelController?.client.scheduledMessageListController()
+            scheduledMessageListController?.delegate = self
+        }
+    }
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+
+        attachScheduledBanners()
+    }
+
+    override func showSuggestions() {
+        super.showSuggestions()
+
+        updateScheduledMessagesBanner()
+    }
+
+    override func dismissSuggestions() {
+        super.dismissSuggestions()
+
+        updateScheduledMessagesBanner()
+    }
+
+    override func updateContent() {
+        super.updateContent()
+
+        updateScheduledMessagesBanner()
+    }
+
+    // While editing a scheduled message, closing the quote removes only the quote, for example one of a deleted message.
+    override func clearContent(sender: UIButton) {
+        guard editingScheduledMessage != nil, sender === composerView.dismissButton, content.quotingMessage != nil else {
+            super.clearContent(sender: sender)
+            return
+        }
+        content = Content(
+            text: content.text,
+            state: .new,
+            editingMessage: nil,
+            quotingMessage: nil,
+            threadMessage: content.threadMessage,
+            attachments: content.attachments,
+            mentionedUsers: content.mentionedUsers,
+            command: content.command,
+            extraData: content.extraData,
+            cooldownTime: content.cooldownTime,
+            skipEnrichUrl: content.skipEnrichUrl,
+            showReplyInChannel: content.showReplyInChannel
+        )
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        saveEditedScheduledMessageIfNeeded()
+
+        super.viewWillDisappear(animated)
+    }
+
+    override func publishMessage(sender: UIButton) {
+        if editingScheduledMessage != nil {
+            confirmSendingEditedScheduledMessage()
+        } else {
+            super.publishMessage(sender: sender)
+        }
+    }
+
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
 
@@ -33,6 +129,16 @@ class DemoComposerVC: ComposerVC {
         let navigationController = UINavigationController(rootViewController: locationSelectionVC)
         
         present(navigationController, animated: true)
+    }
+
+    @objc private func sendButtonLongPressed(_ recognizer: UILongPressGestureRecognizer) {
+        guard recognizer.state == .began else { return }
+
+        if editingScheduledMessage != nil {
+            presentRescheduleSheet()
+        } else {
+            presentScheduleSheet()
+        }
     }
 }
 

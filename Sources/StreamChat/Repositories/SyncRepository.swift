@@ -189,6 +189,7 @@ class SyncRepository: @unchecked Sendable {
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
     ///      * oversized payloads skip event replay and refresh active watched channels via queryChannels
+    ///      * later pages of grouped lists, a grouped list `/sync` didn't cover is reset to its first page
     /// 4. Re-watch channels what we were watching before disconnect
     private func syncLocalState(lastSyncAt: Date, completion: @escaping @Sendable () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
@@ -215,7 +216,7 @@ class SyncRepository: @unchecked Sendable {
             /// 1. Collect all the **active** channel ids
             operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
             
-            // 2. Refresh channel lists (non-grouped lists individually, grouped lists via a single shared request)
+            // 2. Refresh non-grouped channel lists individually
             let allChannelLists = activeChannelLists.allObjects
             operations.append(contentsOf: allChannelLists
                 .filter { $0.groupKey == nil }
@@ -224,6 +225,8 @@ class SyncRepository: @unchecked Sendable {
             operations.append(contentsOf: activeChannelListControllers.allObjects
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
+
+            // 3. Refresh the first page of grouped lists via a single shared request, keeping their loaded pages
             let groupedChannelLists = allChannelLists.filter { $0.groupKey != nil }
             if !groupedChannelLists.isEmpty {
                 operations.append(SyncGroupedChannelsOperation(
@@ -233,10 +236,15 @@ class SyncRepository: @unchecked Sendable {
                 ))
             }
 
-            // 3. /sync (for channels what not part of active channel lists)
+            // 4. /sync (for channels what not part of refreshed channel lists, grouped lists' later pages first)
             operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
-            
-            // 4. Re-watch channels what we were watching before disconnect
+
+            // 5. Validate grouped lists and reset the ones `/sync` didn't cover to their first page
+            if !groupedChannelLists.isEmpty {
+                operations.append(GroupedChannelsSyncValidationOperation(channelListUpdater: channelListUpdater, context: context))
+            }
+
+            // 6. Re-watch channels what we were watching before disconnect
             // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
             operations.append(contentsOf: activeChannelControllers.allObjects.map {
                 WatchChannelOperation(controller: $0, context: context, recovery: false)
@@ -285,6 +293,7 @@ class SyncRepository: @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
+        watch: Bool = false,
         alreadySyncedChannelIds: Set<ChannelId> = [],
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
@@ -307,6 +316,7 @@ class SyncRepository: @unchecked Sendable {
             using: lastSyncAt,
             channelIds: channelIds,
             isRecoveryRequest: isRecovery,
+            watch: watch,
             alreadySyncedChannelIds: alreadySyncedChannelIds,
             completion: completion
         )
@@ -359,6 +369,7 @@ class SyncRepository: @unchecked Sendable {
         using date: Date,
         channelIds: [ChannelId],
         isRecoveryRequest: Bool,
+        watch: Bool,
         alreadySyncedChannelIds: Set<ChannelId>,
         completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
@@ -372,12 +383,17 @@ class SyncRepository: @unchecked Sendable {
             return
         }
 
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: @Sendable (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let endpoint: Endpoint<SyncResponse> = .sync(
+            syncRequest: SyncRequest(channelCids: channelIds.map(\.rawValue), lastSyncAt: date),
+            withInaccessibleCids: nil,
+            watch: watch ? true : nil,
+            requiresConnectionId: watch
+        )
+        let requestCompletion: @Sendable (Result<SyncResponse, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 guard let self else { return }
-                let eventCount = payload.eventPayloads.count
+                let eventCount = payload.events.count
                 let maximumEventCount = self.eventReplayPolicy.maximumEventCount
                 log.info(
                     "Received `/sync` payload with \(eventCount) event(s). replayThreshold=\(maximumEventCount)",
@@ -389,7 +405,7 @@ class SyncRepository: @unchecked Sendable {
                         subsystems: .offlineSupport
                     )
                     self.handleSyncEventReplayFallback(
-                        lastSyncAt: payload.eventPayloads.last?.createdAt ?? date,
+                        lastSyncAt: payload.events.last?.createdAt ?? date,
                         alreadySyncedChannelIds: alreadySyncedChannelIds,
                         completion: completion
                     )
@@ -398,7 +414,7 @@ class SyncRepository: @unchecked Sendable {
 
                 log.info("Processing pending events. Count \(eventCount)", subsystems: .offlineSupport)
                 self.processMissingEventsPayload(payload) { [weak self] in
-                    self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
+                    self?.updateLastSyncAt(with: payload.events.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
@@ -504,10 +520,10 @@ class SyncRepository: @unchecked Sendable {
         }
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable () -> Void) {
-        eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
+    private func processMissingEventsPayload(_ payload: SyncResponse, completion: @escaping @Sendable () -> Void) {
+        eventNotificationCenter.process(payload.events, postNotifications: false) {
             log.info(
-                "Successfully processed pending events. Count \(payload.eventPayloads.count)",
+                "Successfully processed pending events. Count \(payload.events.count)",
                 subsystems: .offlineSupport
             )
             completion()

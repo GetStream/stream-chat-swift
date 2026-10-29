@@ -11,7 +11,11 @@ final class MutedChannelPayloadResponse: Sendable, Decodable {
         self.channelMute = channelMute
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelMute = "channel_mute"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelMute = try container.decodeIfPresent(
+            MutedChannelPayload.self,
+            forKey: .channelMute
+        )
     }
 }

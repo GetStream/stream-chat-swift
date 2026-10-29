@@ -18,7 +18,6 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
     let apiKey: APIKey = .init("123")
     var testMessage: ChatMessage!
     var exampleMessageNotificationContent: UNMutableNotificationContent!
-    var exampleMessagePayload: MessagePayload.Boxed!
 
     override func setUp() {
         super.setUp()
@@ -49,10 +48,6 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let msgID: MessageId = .unique
 
-        exampleMessagePayload = .init(
-            message: .dummy(messageId: msgID, authorUserId: .unique, cid: cid)
-        )
-
         exampleMessageNotificationContent = UNMutableNotificationContent()
         exampleMessageNotificationContent.userInfo["stream"] = [
             "type": "message.new",
@@ -71,7 +66,6 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         clientWithOffline = nil
         testMessage = nil
         exampleMessageNotificationContent = nil
-        exampleMessagePayload = nil
         messageRepository = nil
         channelRepository = nil
         super.tearDown()

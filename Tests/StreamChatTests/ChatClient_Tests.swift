@@ -241,6 +241,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware }))
         // Assert `ChannelVisibilityEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware }))
+        // Assert `GroupedUnreadChannelsMiddleware` is just before the last one
+        XCTAssertTrue(middlewares.dropLast().last is GroupedUnreadChannelsMiddleware)
         // Assert `EventDTOConverterMiddleware` is the last one
         XCTAssertTrue(middlewares.last is EventDTOConverterMiddleware)
     }
@@ -268,7 +270,7 @@ final class ChatClient_Tests: XCTestCase {
         let firstCid = ChannelId.unique
         let secondCid = ChannelId.unique
 
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "new": .init(
                     channels: [dummyPayload(with: firstCid)],
@@ -291,7 +293,7 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
         try client.databaseContainer.createCurrentUser()
 
-        let payload = GroupedQueryChannelsPayload(
+        let payload = GroupedQueryChannelsResponse(
             groups: [
                 "new": .init(channels: [], unreadChannels: 0),
                 "current": .init(channels: [], unreadChannels: 0)
@@ -315,12 +317,51 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
         try client.databaseContainer.createCurrentUser()
 
-        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsPayload(groups: [:])))
+        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: [:])))
         _ = try await client.queryGroupedChannels(groups: [], limit: 4)
 
         let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
         XCTAssertEqual(4, body["limit"] as? Int)
         XCTAssertNil(body["groups"])
+    }
+
+    func test_queryGroupedChannels_withQuery_sendsGroupFiltersSortAndLimit() async throws {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
+        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsResponse(groups: [:])))
+
+        let query = GroupedChannelsQuery(
+            groups: [
+                .init(key: "all", filter: .or([
+                    .and([.equal(.group, to: "ended"), .greaterOrEqual(.queryTimestamp, than: .daysAgo(7))]),
+                    .in(.group, values: ["campaign", "new"])
+                ])),
+                .init(key: "new")
+            ],
+            sort: [.init(key: .queryTimestamp)],
+            limit: 10
+        )
+        _ = try await client.queryGroupedChannels(with: query)
+
+        let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
+        AssertJSONEqual(
+            Data("""
+            {
+                "limit": 10,
+                "presence": false,
+                "watch": true,
+                "sort": [{"field": "query_timestamp", "direction": -1}],
+                "groups": {
+                    "all": {"filter_conditions": {"$or": [
+                        {"$and": [{"group": {"$eq": "ended"}}, {"query_timestamp": {"$gte": "now-7d"}}]},
+                        {"group": {"$in": ["campaign", "new"]}}
+                    ]}},
+                    "new": {}
+                }
+            }
+            """.utf8),
+            try JSONSerialization.data(withJSONObject: body)
+        )
     }
 
     func test_makeChannelList_withGroupKey_startsTrackingChannelList() {
@@ -573,7 +614,7 @@ final class ChatClient_Tests: XCTestCase {
                 let chatClient = ChatClient(config: config)
                 chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
                 
-                let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userInfo: UserInfo(id: currentUserId)))
+                let expectedWebSocketEndpoint = AnyEndpoint(.connect())
                 // 1. Check `currentUserId` is fetched synchronously
                 // 2. `webSocket` has correct connect endpoint
                 if chatClient.currentUserId == currentUserId,

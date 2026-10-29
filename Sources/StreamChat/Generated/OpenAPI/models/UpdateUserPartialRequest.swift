@@ -16,9 +16,10 @@ final class UpdateUserPartialRequest: Sendable, Encodable, JSONEncodable {
         self.unset = unset
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case id
-        case set
-        case unset
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(set, forKey: .set)
+        try container.encodeIfPresent(unset, forKey: .unset)
     }
 }

@@ -294,24 +294,24 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                     lastEncounteredError = error
                 }
             }
-            if !deletedObjectIds.isEmpty, let contexts = self?.allContext {
+            FetchCache.clear()
+            // Main may be waiting for the writer, so the writer must never wait for main.
+            if !deletedObjectIds.isEmpty, let writableContext = self?.writableContext, let backgroundReadOnlyContext = self?.backgroundReadOnlyContext {
                 log.debug("Merging \(deletedObjectIds.count) deletions to contexts", subsystems: .database)
                 // Merging changes triggers DB observers to react to deletions which clears the state
                 NSManagedObjectContext.mergeChanges(
                     fromRemoteContextSave: [NSDeletedObjectsKey: deletedObjectIds],
-                    into: contexts
+                    into: [writableContext, backgroundReadOnlyContext]
                 )
             }
             // Finally reset states of all the contexts after batch delete and deletion propagation.
-            if let writableContext = self?.writableContext, let allContext = self?.allContext {
+            if let writableContext = self?.writableContext, let backgroundReadOnlyContext = self?.backgroundReadOnlyContext {
                 writableContext.invalidateCurrentUserCache()
                 writableContext.reset()
                 
-                for context in allContext where context != writableContext {
-                    context.performAndWait {
-                        context.invalidateCurrentUserCache()
-                        context.reset()
-                    }
+                backgroundReadOnlyContext.performAndWait {
+                    backgroundReadOnlyContext.invalidateCurrentUserCache()
+                    backgroundReadOnlyContext.reset()
                 }
                 
                 let downloadsDirectory = URL.streamAttachmentDownloadsDirectory(
@@ -325,7 +325,21 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                     }
                 }
             }
-            completion?(lastEncounteredError)
+            guard let viewContext = self?.viewContext else {
+                completion?(lastEncounteredError)
+                return
+            }
+            viewContext.perform { [deletedObjectIds, lastEncounteredError] in
+                if !deletedObjectIds.isEmpty {
+                    NSManagedObjectContext.mergeChanges(
+                        fromRemoteContextSave: [NSDeletedObjectsKey: deletedObjectIds],
+                        into: [viewContext]
+                    )
+                }
+                viewContext.invalidateCurrentUserCache()
+                viewContext.reset()
+                completion?(lastEncounteredError)
+            }
         }
     }
 

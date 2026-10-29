@@ -12,7 +12,8 @@ final class UnmuteRequest: Sendable, Encodable, JSONEncodable {
         self.targetIds = targetIds
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case targetIds = "target_ids"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(targetIds, forKey: .targetIds)
     }
 }

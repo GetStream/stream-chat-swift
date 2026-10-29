@@ -14,13 +14,12 @@ import UIKit
 /// response, so expired images are revalidated instead of being served indefinitely.
 /// Concurrent requests for the same image are coalesced into a single download.
 public final class StreamImageDownloader: ImageDownloading, Sendable {
-    private typealias ImageCompletion = @MainActor (Result<DownloadedImage, Error>) -> Void
     private typealias SourceCompletion = @Sendable (Result<Data, Error>) -> Void
 
     private let memoryCache: ImageMemoryCache
     let urlSession: URLSession
-    private let inFlightImages: AllocatedUnfairLock<[String: [ImageCompletion]]>
-    private let inFlightSources: AllocatedUnfairLock<[String: [SourceCompletion]]>
+    private let coalescedImageTasks = RequestCoalescer<DownloadedImage>()
+    private let coalescedDataTasks = RequestCoalescer<Data>()
 
     static let displayScale: CGFloat = UITraitCollection.current.displayScale
     private static let decodeQueue = DispatchQueue.global(qos: .userInitiated)
@@ -59,8 +58,6 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     ) {
         memoryCache = ImageMemoryCache(maxSizeInBytes: memoryCostLimit)
         self.urlSession = urlSession
-        inFlightImages = AllocatedUnfairLock([:])
-        inFlightSources = AllocatedUnfairLock([:])
     }
 
     // MARK: - ImageDownloading
@@ -70,34 +67,36 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         options: ImageDownloadingOptions,
         completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
     ) {
+        downloadImageTask(url: url, options: options, completion: completion)
+    }
+
+    @discardableResult
+    public func downloadImageTask(
+        url: URL,
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+    ) -> ImageLoadingTask {
         let key = cacheKey(url: url, options: options)
 
         // A warm memory cache completes synchronously, avoiding a flicker when the image
         // is already available on the main thread.
         if let cached = memoryCache.image(forKey: key) {
             StreamConcurrency.onMain { completion(.success(cached)) }
-            return
+            return ImageLoadingTask()
         }
 
         // Coalesce concurrent requests for the same key into a single download.
-        let isFirstRequest = inFlightImages.withLock { requests -> Bool in
-            if requests[key] != nil {
-                requests[key]?.append(completion)
-                return false
-            }
-            requests[key] = [completion]
-            return true
-        }
-        guard isFirstRequest else { return }
-
-        load(url: url, key: key, options: options) { result in
-            let completions = self.inFlightImages.withLock { $0.removeValue(forKey: key) ?? [] }
-            DispatchQueue.main.async {
-                for completion in completions {
+        return coalescedImageTasks.coalesce(
+            by: key,
+            sharedFetch: { fetchFinishedHandler in
+                self.load(url: url, key: key, options: options, completion: fetchFinishedHandler)
+            },
+            completion: { result in
+                DispatchQueue.main.async {
                     completion(result)
                 }
             }
-        }
+        )
     }
 
     // MARK: - Cache Management
@@ -135,10 +134,10 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         key: String,
         options: ImageDownloadingOptions,
         completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
-    ) {
+    ) -> ImageLoadingTask {
         let resize = options.resize
         let sourceKey = sourceKey(url: url, options: options)
-        loadSourceData(url: url, sourceKey: sourceKey, headers: options.headers) { result in
+        return loadSourceData(url: url, sourceKey: sourceKey, headers: options.headers) { result in
             switch result {
             case let .success(data):
                 self.decode(data, resize: resize, key: key) { image in
@@ -175,30 +174,22 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         sourceKey: String,
         headers: [String: String]?,
         completion: @escaping SourceCompletion
-    ) {
+    ) -> ImageLoadingTask {
         // Coalesce concurrent requests for the same source data into a single fetch.
-        let isFirstRequest = inFlightSources.withLock { requests -> Bool in
-            if requests[sourceKey] != nil {
-                requests[sourceKey]?.append(completion)
-                return false
-            }
-            requests[sourceKey] = [completion]
-            return true
-        }
-        guard isFirstRequest else { return }
-        fetch(url: url, headers: headers) { result in
-            let completions = self.inFlightSources.withLock { $0.removeValue(forKey: sourceKey) ?? [] }
-            for completion in completions {
-                completion(result)
-            }
-        }
+        return coalescedDataTasks.coalesce(
+            by: sourceKey,
+            sharedFetch: { completion in
+                self.fetch(url: url, headers: headers, completion: completion)
+            },
+            completion: completion
+        )
     }
 
     private func fetch(
         url: URL,
         headers: [String: String]?,
         completion: @escaping SourceCompletion
-    ) {
+    ) -> ImageLoadingTask {
         var request = URLRequest(url: url)
         headers?.forEach { request.setValue($1, forHTTPHeaderField: $0) }
         let task = urlSession.dataTask(with: request) { data, response, error in
@@ -217,6 +208,9 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
             completion(.success(data))
         }
         task.resume()
+        let loadingTask = ImageLoadingTask()
+        loadingTask.addCancellationHandler { task.cancel() }
+        return loadingTask
     }
 
     private func cacheKey(url: URL, options: ImageDownloadingOptions) -> String {
@@ -257,6 +251,71 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
         case nil:
             return nil
         }
+    }
+}
+
+private final class RequestCoalescer<Value>: Sendable where Value: Sendable {
+    typealias Completion = @Sendable (Result<Value, Error>) -> Void
+
+    private struct Request: Sendable {
+        let id = UUID()
+        var completions: [UUID: Completion] = [:]
+        var sharedFetch: ImageLoadingTask?
+    }
+
+    private let requests = AllocatedUnfairLock<[String: Request]>([:])
+
+    /// Coalesces requests by key and runs a shared fetch for all of them while
+    /// allowing to cancel individual tasks.
+    func coalesce(
+        by key: String,
+        sharedFetch: (@escaping Completion) -> ImageLoadingTask,
+        completion: @escaping Completion
+    ) -> ImageLoadingTask {
+        let perRequestTask = ImageLoadingTask()
+        let perRequestTaskID = UUID()
+        let (requestID, isFirst) = requests.withLock { requests -> (UUID, Bool) in
+            let isFirst = requests[key] == nil
+            var request = requests[key] ?? Request()
+            request.completions[perRequestTaskID] = completion
+            requests[key] = request
+            return (request.id, isFirst)
+        }
+        if isFirst {
+            let sharedFetchTask = sharedFetch { result in
+                let completions = self.requests.withLock { requests -> [Completion] in
+                    // A cancelled request may be replaced by a new one for the same key before
+                    // the fetch finishes, so the key alone does not identify the request.
+                    guard let request = requests[key], request.id == requestID else { return [] }
+                    requests[key] = nil
+                    return Array(request.completions.values)
+                }
+                completions.forEach { $0(result) }
+            }
+            let isRequestActive = requests.withLock { requests -> Bool in
+                guard requests[key]?.id == requestID else { return false }
+                requests[key]?.sharedFetch = sharedFetchTask
+                return true
+            }
+            if !isRequestActive {
+                sharedFetchTask.cancel()
+            }
+        }
+        perRequestTask.addCancellationHandler {
+            let (completion, fetchTask) = self.requests.withLock { requests -> (Completion?, ImageLoadingTask?) in
+                guard var request = requests[key], request.id == requestID,
+                      let completion = request.completions.removeValue(forKey: perRequestTaskID) else { return (nil, nil) }
+                guard request.completions.isEmpty else {
+                    requests[key] = request
+                    return (completion, nil)
+                }
+                requests[key] = nil
+                return (completion, request.sharedFetch)
+            }
+            fetchTask?.cancel()
+            completion?(.failure(URLError(.cancelled)))
+        }
+        return perRequestTask
     }
 }
 

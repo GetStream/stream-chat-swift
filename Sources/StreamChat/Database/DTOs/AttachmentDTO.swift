@@ -289,11 +289,11 @@ extension AttachmentDTO {
     func asRequestPayload() -> MessageAttachmentPayload? {
         do {
             let payload = try JSONDecoder.default.decode(RawJSON.self, from: data)
-            let reservedKeys = Set(MessageAttachmentPayload.CodingKeys.allCases.map(\.rawValue))
+            let reservedKeys = MessageAttachmentPayload.allKeys
             var nestedPayload: [String: RawJSON] = [:]
             var custom: [String: RawJSON] = [:]
             for (key, value) in payload.dictionaryValue ?? [:] {
-                if key == MessageAttachmentPayload.CodingKeys.custom.rawValue {
+                if key == StringCodingKey.custom.stringValue {
                     if case let .dictionary(nested) = value {
                         custom.merge(nested) { _, new in new }
                     }
@@ -303,8 +303,8 @@ extension AttachmentDTO {
                     custom[key] = value
                 }
             }
-            nestedPayload[MessageAttachmentPayload.CodingKeys.custom.rawValue] = .dictionary(custom)
-            nestedPayload[MessageAttachmentPayload.CodingKeys.type.rawValue] = .string(attachmentType.rawValue)
+            nestedPayload[StringCodingKey.custom.stringValue] = .dictionary(custom)
+            nestedPayload[StringCodingKey.type.stringValue] = .string(attachmentType.rawValue)
             let data = try JSONEncoder.default.encode(nestedPayload)
             return try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: data)
         } catch {

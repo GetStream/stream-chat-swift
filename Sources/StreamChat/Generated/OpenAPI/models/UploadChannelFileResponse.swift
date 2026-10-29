@@ -7,19 +7,17 @@ import Foundation
 final class UploadChannelFileResponse: Sendable, Decodable {
     /// URL to the uploaded asset. Should be used to put to `asset_url` attachment field
     let file: String?
-    let moderationAction: String?
     /// URL of the file thumbnail for supported file formats. Should be put to `thumb_url` attachment field
     let thumbUrl: String?
 
-    init(file: String? = nil, moderationAction: String? = nil, thumbUrl: String? = nil) {
+    init(file: String? = nil, thumbUrl: String? = nil) {
         self.file = file
-        self.moderationAction = moderationAction
         self.thumbUrl = thumbUrl
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case file
-        case moderationAction = "moderation_action"
-        case thumbUrl = "thumb_url"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.file = try container.decodeIfPresent(String.self, forKey: .file)
+        self.thumbUrl = try container.decodeIfPresent(String.self, forKey: .thumbUrl)
     }
 }

@@ -297,6 +297,31 @@ import XCTest
         XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, false)
     }
 
+    func test_jumpToMessage_whenShouldHighlight_highlightsTheMessageCell() {
+        var components = Components.mock
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        vc.jumpToMessage(id: "message", shouldHighlight: true)
+        messageListVCMock?.jumpToMessageCalledWith?.onHighlight?(IndexPath(item: 3, section: 0))
+
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.id, "message")
+        XCTAssertEqual(messageListVCMock?.highlightCellCalledWith, IndexPath(item: 3, section: 0))
+    }
+
+    func test_jumpToMessage_whenShouldNotHighlight_doesNotPassHighlight() {
+        var components = Components.mock
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        vc.jumpToMessage(id: "message", shouldHighlight: false)
+
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertNil(messageListVCMock?.jumpToMessageCalledWith?.onHighlight)
+    }
+
     // MARK: - Draft Messages
 
     func test_threadWithDraftReply_showsDraftInComposer() {

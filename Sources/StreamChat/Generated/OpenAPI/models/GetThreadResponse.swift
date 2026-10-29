@@ -11,7 +11,8 @@ final class GetThreadResponse: Sendable, Decodable {
         self.thread = thread
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case thread
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.thread = try container.decode(ThreadStateResponse.self, forKey: .thread)
     }
 }

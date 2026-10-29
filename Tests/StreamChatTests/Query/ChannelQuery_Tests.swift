@@ -38,55 +38,74 @@ final class ChannelQuery_Tests: XCTestCase {
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
 
-    func test_apiPath() {
-        // Create query without id specified
-        let query1: ChannelQuery = .init(channelPayload: .init(
-            type: .messaging,
-            name: .unique,
-            imageURL: .unique(),
-            team: nil,
-            members: [.unique],
-            invites: [],
-            filterTags: [],
-            extraData: [:]
-        ))
+    func test_endpoint_backendDefaultWatchersLimit_omitsLimit() throws {
+        let query = ChannelQuery(cid: .unique, watchersLimit: .backendDefaultPageSize)
 
-        // Assert only type is part of path
-        XCTAssertEqual(query1.apiPath, "\(query1.type)")
+        let request = try XCTUnwrap(query.endpoint.body as? ChannelGetOrCreateRequest)
+        let json = try JSONEncoder.default.encode(request)
 
-        // Create query with id and type specified
+        AssertJSONEqual(json, [
+            "messages": ["limit": 25],
+            "presence": true,
+            "state": true,
+            "watch": true,
+            "watchers": [:]
+        ])
+    }
+
+    func test_endpoint_channelInput_isSentAsData() throws {
         let cid: ChannelId = .unique
-        let query2: ChannelQuery = .init(cid: cid)
+        let member: UserId = .unique
+        let invite: UserId = .unique
+        let channelInput = ChannelInput(
+            name: "Team",
+            imageURL: URL(string: "https://getstream.io/image.jpg"),
+            team: "red",
+            members: [member],
+            invites: [invite],
+            filterTags: ["vip"],
+            extraData: ["color": .string("blue")]
+        )
+        let query = ChannelQuery(type: cid.type, id: cid.id, channelInput: channelInput)
 
-        // Assert type and id are part of path
-        XCTAssertEqual(query2.apiPath, "\(query2.type.rawValue)/\(query2.id!)")
+        XCTAssertEqual(query.cid, cid)
+        let body = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+        let data = try XCTUnwrap(body["data"] as? [String: Any])
+        XCTAssertEqual(data["custom"] as? [String: String], [
+            "name": "Team",
+            "image": "https://getstream.io/image.jpg",
+            "color": "blue"
+        ])
+        XCTAssertEqual(data["team"] as? String, "red")
+        XCTAssertEqual(data["filter_tags"] as? [String], ["vip"])
+        let invites = try XCTUnwrap(data["invites"] as? [[String: Any]])
+        XCTAssertEqual(invites.compactMap { $0["user_id"] as? String }, [invite])
+        let members = try XCTUnwrap(data["members"] as? [[String: Any]])
+        XCTAssertEqual(Set(members.compactMap { $0["user_id"] as? String }), [member, invite])
     }
 
-    func test_apiPath_customType() {
-        let query: ChannelQuery = .init(channelPayload: .init(
-            type: .custom("custom_type"),
-            name: .unique,
-            imageURL: .unique(),
-            team: nil,
-            members: [.unique],
-            invites: [],
-            filterTags: [],
-            extraData: [:]
-        ))
-        XCTAssertEqual(query.apiPath, "custom_type")
+    func test_cid_whenIdIsNil_isNil() {
+        let query = ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput())
+
+        XCTAssertNil(query.cid)
+        XCTAssertEqual(query.type, .messaging)
     }
 
-    func test_apiPath_customTypeAndId() {
-        let query: ChannelQuery = .init(channelPayload: .init(
-            cid: .init(type: .custom("custom_type"), id: "id"),
-            name: .unique,
-            imageURL: .unique(),
-            team: nil,
-            members: [.unique],
-            invites: [],
-            filterTags: [],
-            extraData: [:]
-        ))
-        XCTAssertEqual(query.apiPath, "custom_type/id")
+    func test_endpoint_includesScheduledMessages_onlyWhenRequested() throws {
+        var query = ChannelQuery(cid: .unique)
+        let defaultBody = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        query.includeScheduledMessages = true
+        let body = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(body["include_scheduled_messages"] as? Bool, true)
+        XCTAssertNil(defaultBody["include_scheduled_messages"])
+    }
+
+    func test_initWithNewCid_keepsIncludeScheduledMessages() {
+        var query = ChannelQuery(cid: .unique)
+        query.includeScheduledMessages = true
+
+        XCTAssertTrue(ChannelQuery(cid: .unique, channelQuery: query).includeScheduledMessages)
     }
 }

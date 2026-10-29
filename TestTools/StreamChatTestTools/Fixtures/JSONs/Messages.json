@@ -1,6 +1,9 @@
 {
     "messages" : [
     {
+    "custom" : {
+        "secret_note": "Anakin is Vader!"
+    },
     "cid" : "messaging:channel-ex7-63",
     "deleted_reply_count" : 0,
     "mentioned_channel" : false,
@@ -51,7 +54,6 @@
     "text" : "No, I am your father!",
     "show_in_channel": true,
     "parent_id": "3294-4c0c-9a62-c9d0928bf733",
-    "secret_note": "Anakin is Vader!",
     "attachments" : [
         {
             "type" : "image",
@@ -121,6 +123,9 @@
     "pinned_by": null
     },
     {
+    "custom" : {
+        "secret_note": "Anakin is Vader!"
+    },
     "cid" : "messaging:channel-ex7-63",
     "deleted_reply_count" : 0,
     "mentioned_channel" : false,
@@ -171,7 +176,6 @@
     "text" : "No, I am your father!",
     "show_in_channel": true,
     "parent_id": "3294-4c0c-9a62-c9d0928bf733",
-    "secret_note": "Anakin is Vader!",
     "attachments" : [
         {
             "type" : "image",

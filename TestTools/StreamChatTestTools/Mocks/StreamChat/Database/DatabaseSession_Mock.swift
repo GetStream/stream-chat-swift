@@ -79,6 +79,46 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteReminder(messageId: messageId)
     }
 
+    func createNewScheduledMessage(
+        id: String,
+        cid: ChannelId,
+        content: ScheduledMessageContent,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.createNewScheduledMessage(id: id, cid: cid, content: content, scheduledAt: scheduledAt)
+    }
+
+    func updateScheduledMessage(
+        id: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date?
+    ) throws -> ScheduledMessageDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.updateScheduledMessage(id: id, content: content, scheduledAt: scheduledAt)
+    }
+
+    func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveScheduledMessage(payload: payload)
+    }
+
+    func scheduledMessage(id: String) -> ScheduledMessageDTO? {
+        underlyingSession.scheduledMessage(id: id)
+    }
+
+    func deleteScheduledMessage(id: String) {
+        underlyingSession.deleteScheduledMessage(id: id)
+    }
+
+    func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?) {
+        underlyingSession.deleteScheduledMessages(notIn: ids, cid: cid)
+    }
+
+    func rescueScheduledMessagesStuckInSyncing() {
+        underlyingSession.rescueScheduledMessagesStuckInSyncing()
+    }
+
     func saveUserGroup(payload: UserGroup) throws -> UserGroupDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUserGroup(payload: payload)
@@ -164,6 +204,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
         underlyingSession.adjustUnreadChannelCount(forGroup: groupKey, by: delta)
+    }
+
+    func updateFilteredGroupUnreadChannelCounts(for queries: [ChannelListQueryDTO]) {
+        underlyingSession.updateFilteredGroupUnreadChannelCounts(for: queries)
     }
 
     func deleteDevice(id: DeviceId) {
@@ -311,8 +355,8 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO] {
-        underlyingSession.saveMessages(messagesPayload: messagesPayload, syncOwnReactions: syncOwnReactions)
+    func saveMessages(_ messages: [MessageResponse], syncOwnReactions: Bool) -> [MessageDTO] {
+        underlyingSession.saveMessages(messages, syncOwnReactions: syncOwnReactions)
     }
 
     func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
@@ -430,6 +474,20 @@ class DatabaseSession_Mock: DatabaseSession {
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
         underlyingSession.loadAllChannelListQueries()
     }
+
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO] {
+        underlyingSession.loadFilteredGroupChannelListQueries()
+    }
+
+    func unlinkGroupedChannels(in groupKey: String) throws {
+        try throwErrorIfNeeded()
+        try underlyingSession.unlinkGroupedChannels(in: groupKey)
+    }
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool {
+        try throwErrorIfNeeded()
+        return try underlyingSession.canLinkChannel(channel, toGroup: groupKey)
+    }
     
     func saveChannel(
         payload: ChannelPayload,
@@ -452,10 +510,6 @@ class DatabaseSession_Mock: DatabaseSession {
     ) throws -> MemberDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query, cache: cache)
-    }
-
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
     }
 
     func saveMembers(response: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {

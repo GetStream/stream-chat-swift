@@ -763,13 +763,15 @@ final class ChannelController_Tests: XCTestCase {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
+        let name: String = .unique
+        let imageURL: URL = .unique()
 
         // Create a new `ChannelController`
         for isCurrentUserMember in [true, false] {
             let controller = try client.channelController(
                 createChannelWithId: cid,
-                name: .unique,
-                imageURL: .unique(),
+                name: name,
+                imageURL: imageURL,
                 team: team,
                 members: members,
                 isCurrentUserMember: isCurrentUserMember,
@@ -779,13 +781,14 @@ final class ChannelController_Tests: XCTestCase {
 
             // Assert `ChannelQuery` created correctly
             XCTAssertEqual(cid, controller.channelQuery.cid)
-            XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+            let channelInput = try XCTUnwrap(controller.channelQuery.channelInput)
+            XCTAssertEqual(team, channelInput.team)
             XCTAssertEqual(
-                members.union(isCurrentUserMember ? [currentUserId] : []),
-                controller.channelQuery.channelPayload?.members
+                members.union(invites).union(isCurrentUserMember ? [currentUserId] : []),
+                Set(channelInput.members?.compactMap(\.userId) ?? [])
             )
-            XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
-            XCTAssertEqual([:], controller.channelQuery.channelPayload?.extraData)
+            XCTAssertEqual(invites, Set(channelInput.invites?.compactMap(\.userId) ?? []))
+            XCTAssertEqual(["name": .string(name), "image": .string(imageURL.absoluteString)], channelInput.custom)
         }
     }
 
@@ -836,7 +839,79 @@ final class ChannelController_Tests: XCTestCase {
             extraData: [:]
         )
 
-        XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
+        XCTAssertEqual(Set(controller.channelQuery.channelInput?.members?.compactMap(\.userId) ?? []), members.union([currentUserId]))
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_forwardsMemberRoleAndExtraData() throws {
+        let currentUserId: UserId = .unique
+        client.setToken(token: .unique(userId: currentUserId))
+
+        let moderatorId: UserId = .unique
+        let memberId: UserId = .unique
+        let inviteeId: UserId = .unique
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
+            members: [
+                MemberInfo(userId: moderatorId, channelRole: .moderator, extraData: ["department": .string("support")]),
+                MemberInfo(userId: memberId)
+            ],
+            invites: [inviteeId]
+        )
+
+        let channelInput = try XCTUnwrap(controller.channelQuery.channelInput)
+        let members = try XCTUnwrap(channelInput.members)
+        XCTAssertEqual(Set(members.compactMap(\.userId)), [moderatorId, memberId, inviteeId, currentUserId])
+        XCTAssertEqual(members.count, 4)
+        let moderator = members.first(where: { $0.userId == moderatorId })
+        XCTAssertEqual(moderator?.channelRole, "channel_moderator")
+        XCTAssertEqual(moderator?.custom, ["department": .string("support")])
+        let member = members.first(where: { $0.userId == memberId })
+        XCTAssertNil(member?.channelRole)
+        XCTAssertNil(member?.custom)
+        XCTAssertEqual(channelInput.invites?.compactMap(\.userId), [inviteeId])
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_keepsCurrentUserExtraData() throws {
+        let currentUserId: UserId = .unique
+        client.setToken(token: .unique(userId: currentUserId))
+
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
+            members: [MemberInfo(userId: currentUserId, channelRole: .moderator)]
+        )
+
+        let members = try XCTUnwrap(controller.channelQuery.channelInput?.members)
+        XCTAssertEqual(members.count, 1)
+        XCTAssertEqual(members.first?.userId, currentUserId)
+        XCTAssertEqual(members.first?.channelRole, "channel_moderator")
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_excludesCurrentUser_whenIsCurrentUserMemberIsFalse() throws {
+        let currentUserId: UserId = .unique
+        client.setToken(token: .unique(userId: currentUserId))
+
+        let memberId: UserId = .unique
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
+            members: [MemberInfo(userId: memberId)],
+            isCurrentUserMember: false
+        )
+
+        let members = try XCTUnwrap(controller.channelQuery.channelInput?.members)
+        XCTAssertEqual(members.compactMap(\.userId), [memberId])
+    }
+
+    func test_channelControllerForNewChannel_withMemberInfo_throwsError_ifCurrentUserDoesNotExist() {
+        let clientWithoutCurrentUser = ChatClient(config: .init(apiKeyString: .unique))
+
+        XCTAssertThrowsError(
+            try clientWithoutCurrentUser.channelController(
+                createChannelWithId: .unique,
+                members: [MemberInfo(userId: .unique)]
+            )
+        ) { error in
+            XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
+        }
     }
 
     func test_channelControllerForNew1on1Channel_createdCorrectly() throws {
@@ -848,26 +923,29 @@ final class ChannelController_Tests: XCTestCase {
             let team: String = .unique
             let members: Set<UserId> = [.unique]
             let channelType: ChannelType = .custom(.unique)
+            let name: String = .unique
+            let imageURL: URL = .unique()
 
             // Create a new `ChannelController`
             let controller = try client.channelController(
                 createDirectMessageChannelWith: members,
                 type: channelType,
                 isCurrentUserMember: isCurrentUserMember,
-                name: .unique,
-                imageURL: .unique(),
+                name: name,
+                imageURL: imageURL,
                 team: team,
                 extraData: [:]
             )
 
             // Assert `ChannelQuery` created correctly
-            XCTAssertEqual(controller.channelQuery.channelPayload?.team, team)
+            let channelInput = try XCTUnwrap(controller.channelQuery.channelInput)
+            XCTAssertEqual(channelInput.team, team)
             XCTAssertEqual(controller.channelQuery.type, channelType)
             XCTAssertEqual(
                 members.union(isCurrentUserMember ? [currentUserId] : []),
-                controller.channelQuery.channelPayload?.members
+                Set(channelInput.members?.compactMap(\.userId) ?? [])
             )
-            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, [:])
+            XCTAssertEqual(channelInput.custom, ["name": .string(name), "image": .string(imageURL.absoluteString)])
         }
     }
 
@@ -1019,7 +1097,7 @@ final class ChannelController_Tests: XCTestCase {
             extraData: .init()
         )
 
-        XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
+        XCTAssertEqual(Set(controller.channelQuery.channelInput?.members?.compactMap(\.userId) ?? []), members.union([currentUserId]))
     }
 
     func test_channelController_returnsNilCID_forNewDirectMessageChannel() throws {
@@ -1693,7 +1771,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_updateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `updateChannel` call and assert the error is returned
@@ -1720,7 +1798,13 @@ final class ChannelController_Tests: XCTestCase {
     func test_updateChannel_callsChannelUpdater() {
         // Simulate `updateChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
-        controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { error in
+        controller.updateChannel(
+            name: .unique,
+            imageURL: .unique(),
+            team: .unique,
+            autoTranslationLanguages: [.english],
+            extraData: .init()
+        ) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -1733,7 +1817,7 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Assert payload is passed to `channelUpdater`, completion is not called yet
-        XCTAssertNotNil(env.channelUpdater!.updateChannel_payload)
+        XCTAssertEqual(env.channelUpdater!.updateChannel_arguments?.autoTranslationLanguages, [.english])
 
         // Simulate successful update
         env.channelUpdater!.updateChannel_completion?(nil)
@@ -1765,7 +1849,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_partialChannelUpdate_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         nonisolated(unsafe) var receivedError: Error?
@@ -1811,12 +1895,12 @@ final class ChannelController_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.name, name)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.imageURL, imageURL)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.team, team)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.members, members)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.invites, invites)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.extraData, extraData)
+        XCTAssertEqual(updater.partialChannelUpdate_arguments?.name, name)
+        XCTAssertEqual(updater.partialChannelUpdate_arguments?.imageURL, imageURL)
+        XCTAssertEqual(updater.partialChannelUpdate_arguments?.team, team)
+        XCTAssertEqual(updater.partialChannelUpdate_arguments?.members, members)
+        XCTAssertEqual(updater.partialChannelUpdate_arguments?.invites, invites)
+        XCTAssertEqual(updater.partialChannelUpdate_arguments?.extraData, extraData)
         XCTAssertEqual(updater.partialChannelUpdate_unsetProperties, unsetProperties)
         XCTAssertNil(receivedError)
     }
@@ -1853,7 +1937,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_muteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `muteChannel` call and assert error is returned
@@ -1882,7 +1966,7 @@ final class ChannelController_Tests: XCTestCase {
         let expiration = 1_000_000
         
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `muteChannel` call and assert error is returned
@@ -2006,7 +2090,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_unmuteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `unmuteChannel` call and assert error is returned
@@ -2160,7 +2244,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_deleteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `deleteChannel` call and assert error is returned
@@ -2235,7 +2319,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_truncateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `truncateChannel` call and assert error is returned
@@ -2325,7 +2409,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_hideChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `hideChannel` call and assert error is returned
@@ -2400,7 +2484,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_showChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `showChannel` call and assert error is returned
@@ -3432,7 +3516,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_createNewMessage_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `createNewMessage` call and assert error is returned
@@ -3516,18 +3600,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, transformer.mockTransformedMessage.extraData)
     }
 
-    func test_createNewMessage_doesNotSendStopTyping_whenTypingEventsDisabled() {
-        let payload = dummyPayload(with: channelId, ownCapabilities: [])
-        writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
-            try session.saveChannel(payload: payload)
-        }
-
-        controller.createNewMessage(text: .unique)
-
-        XCTAssertNil(env.eventSender?.stopTyping_cid)
-    }
-
-    func test_createNewMessage_sendsStopTyping_whenTypingEventsEnabled() throws {
+    func test_createNewMessage_stopsTypingOnlyIfNeeded() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [ChannelCapability.sendTypingEvents.rawValue])
         writeAndWaitForMessageUpdates(count: payload.messages.count, channelChanges: true) { session in
             try session.saveChannel(payload: payload)
@@ -3535,8 +3608,7 @@ final class ChannelController_Tests: XCTestCase {
 
         controller.createNewMessage(text: .unique)
 
-        wait(for: [env.eventSender!.stopTyping_completion_expectation], timeout: defaultTimeout)
-        XCTAssertEqual(env.eventSender?.stopTyping_cid, channelId)
+        XCTAssertEqual(env.eventSender?.stopTypingIfNeeded_callCount, 1)
     }
 
     // MARK: - Create system message
@@ -3571,7 +3643,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_addMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
         let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
 
@@ -3842,7 +3914,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_removeMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
         let members: Set<UserId> = [.unique]
 
@@ -4014,7 +4086,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_whenChannelIsMissing_throws() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `markRead` call and assert error is returned
@@ -4125,7 +4197,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_propagatesErrorFromUpdater() throws {
         let payload = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: try XCTUnwrap(payload.read?.first).user.id, role: .user)
 
         // This is needed to determine if the channel needs to be marked as read
         client.setToken(token: .unique(userId: dummyUserPayload.id))
@@ -4155,7 +4227,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_markRead_keepsControllerAlive() throws {
         // GIVEN
         let channel = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
+        let currentUser: CurrentUserPayload = .dummy(userId: try XCTUnwrap(channel.read?.first).user.id, role: .user)
         client.setToken(token: .unique(userId: currentUser.id))
 
         writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
@@ -4454,7 +4526,7 @@ final class ChannelController_Tests: XCTestCase {
     
     func test_loadChannelReads_failsForNewChannel() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `loadChannelReads` call and assert error is returned
@@ -4516,7 +4588,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_enableSlowMode_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `enableSlowMode` call and assert error is returned
@@ -4590,7 +4662,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_disableSlowMode_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `disableSlowMode` call and assert error is returned
@@ -4731,7 +4803,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_startWatching_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `startWatching` call and assert error is returned
@@ -4821,19 +4893,8 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_watchActiveChannelWithoutCidAlreadyCreated() {
-        let editPayload = ChannelEditDetailPayload(
-            type: .messaging,
-            name: nil,
-            imageURL: nil,
-            team: nil,
-            members: Set(),
-            invites: Set(),
-            filterTags: [],
-            extraData: [:]
-        )
-
         let receivedError = watchActiveChannelAndWait(
-            channelQuery: ChannelQuery(channelPayload: editPayload),
+            channelQuery: ChannelQuery(type: .messaging, id: nil, channelInput: ChannelInput()),
             isChannelAlreadyCreated: true,
             requestBlock: { channelUpdater in
                 channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
@@ -4897,7 +4958,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_stopWatching_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `stopWatching` call and assert error is returned
@@ -4989,7 +5050,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_freezeChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `freezeChannel` call and assert error is returned
@@ -5068,7 +5129,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_unfreezeChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `unfreezeChannel` call and assert error is returned
@@ -5227,7 +5288,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_uploadAttachment_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `uploadFile` call and assert error is returned
@@ -5326,7 +5387,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_loadPinnedMessages_failsForNewChannel() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `loadPinnedMessages` call and assert error is returned
@@ -5386,7 +5447,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_queryBannedUsers_failsForNewChannel() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(type: .messaging, id: .unique, channelInput: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `queryBannedUsers` call and assert error is returned
@@ -6011,8 +6072,7 @@ extension ChannelController_Tests {
         otherUserId: UserId,
         channelListQuery: ChannelListQuery? = nil
     ) {
-        let payload = ChannelEditDetailPayload(
-            type: .messaging,
+        let channelInput = ChannelInput(
             name: nil,
             imageURL: nil,
             team: nil,
@@ -6023,7 +6083,7 @@ extension ChannelController_Tests {
         )
 
         controller = ChatChannelController(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(type: .messaging, id: nil, channelInput: channelInput),
             channelListQuery: channelListQuery,
             client: client,
             environment: env.environment,
@@ -6049,19 +6109,8 @@ extension ChannelController_Tests {
         cid: ChannelId,
         channelListQuery: ChannelListQuery? = nil
     ) {
-        let payload = ChannelEditDetailPayload(
-            cid: cid,
-            name: nil,
-            imageURL: nil,
-            team: nil,
-            members: [],
-            invites: [],
-            filterTags: [],
-            extraData: [:]
-        )
-
         controller = ChatChannelController(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(type: cid.type, id: cid.id, channelInput: ChannelInput()),
             channelListQuery: channelListQuery,
             client: client,
             environment: env.environment,

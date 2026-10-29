@@ -91,6 +91,11 @@ public class ChatClient: @unchecked Sendable {
         environment.remindersRepositoryBuilder(databaseContainer, apiClient)
     }()
 
+    /// Repository for handling scheduled messages.
+    lazy var scheduledMessagesRepository: ScheduledMessagesRepository = {
+        ScheduledMessagesRepository(database: databaseContainer, apiClient: apiClient)
+    }()
+
     /// Repository for handling user groups.
     lazy var userGroupsRepository: UserGroupsRepository = {
         environment.userGroupsRepositoryBuilder(databaseContainer, apiClient)
@@ -568,9 +573,9 @@ public class ChatClient: @unchecked Sendable {
         group.enter()
         databaseContainer.removeAllData { error in
             if let error = error {
-                log.error("Logging out current user failed with error \(error)", subsystems: .all)
+                log.error("Logging out current user failed with error \(error)", subsystems: .authentication)
             } else {
-                log.debug("Logging out current user successfully.", subsystems: .all)
+                log.debug("Logging out current user successfully.", subsystems: .authentication)
             }
             group.leave()
         }
@@ -681,14 +686,31 @@ public class ChatClient: @unchecked Sendable {
         presence: Bool = false,
         watch: Bool = true
     ) async throws -> [ChannelGroup] {
-        let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
-            result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
+        let groupRequests: [String: GroupedChannelsGroupRequest]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
+            result[key] = GroupedChannelsGroupRequest(limit: limit, next: nil)
         }
         return try await channelListUpdater.queryGroupedChannels(
             groups: groupRequests,
             limit: groupRequests == nil ? limit : nil,
             watch: watch,
             presence: presence
+        )
+    }
+
+    /// Fetches the first page of channels for the groups in the query in a single request.
+    ///
+    /// A group's filter and the query's sort are reused when its channels are paginated and refreshed.
+    ///
+    /// - Parameter query: The query describing the groups, their filters, the sort and the limit.
+    /// - Returns: The fetched ``ChannelGroup`` values.
+    /// - Throws: An error while communicating with the Stream API.
+    @discardableResult public func queryGroupedChannels(with query: GroupedChannelsQuery) async throws -> [ChannelGroup] {
+        try await channelListUpdater.queryGroupedChannels(
+            groups: query.groupRequests,
+            limit: query.limit,
+            sort: query.sortRequests,
+            watch: query.watch,
+            presence: query.presence
         )
     }
     
@@ -742,6 +764,11 @@ public class ChatClient: @unchecked Sendable {
                 apiClient: apiClient
             ),
             MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
+            MessageScheduler(
+                scheduledMessagesRepository: scheduledMessagesRepository,
+                database: databaseContainer,
+                apiClient: apiClient
+            ),
             AttachmentQueueUploader(
                 database: databaseContainer,
                 apiClient: apiClient,
@@ -809,6 +836,7 @@ extension ChatClient: ConnectionStateDelegate {
         )
         connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
         try? backgroundWorker(of: MessageSender.self).didUpdateConnectionState(state)
+        try? backgroundWorker(of: MessageScheduler.self).didUpdateConnectionState(state)
 
         switch state {
         case .connecting:

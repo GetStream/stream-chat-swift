@@ -13,8 +13,9 @@ final class VoteDataRequestBody: Sendable, Encodable, JSONEncodable {
         self.optionId = optionId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case answerText = "answer_text"
-        case optionId = "option_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(answerText, forKey: .answerText)
+        try container.encodeIfPresent(optionId, forKey: .optionId)
     }
 }

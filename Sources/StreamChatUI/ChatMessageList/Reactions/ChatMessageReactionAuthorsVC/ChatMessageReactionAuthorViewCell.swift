@@ -52,6 +52,7 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
+        .withAccessibilityIdentifier(identifier: "reactionAuthorNameLabel")
 
     /// The bubble view around the message reaction.
     open lazy var reactionBubbleView: ChatReactionBubbleBaseView = components

@@ -14,8 +14,6 @@ final class ReminderPayload: Sendable, Decodable {
     let messageId: String
     let remindAt: Date?
     let updatedAt: Date
-    /// User response object
-    let user: UserPayload?
     let userId: String
 
     init(
@@ -26,7 +24,6 @@ final class ReminderPayload: Sendable, Decodable {
         messageId: String,
         remindAt: Date? = nil,
         updatedAt: Date,
-        user: UserPayload? = nil,
         userId: String
     ) {
         self.channel = channel
@@ -36,19 +33,18 @@ final class ReminderPayload: Sendable, Decodable {
         self.messageId = messageId
         self.remindAt = remindAt
         self.updatedAt = updatedAt
-        self.user = user
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case message
-        case messageId = "message_id"
-        case remindAt = "remind_at"
-        case updatedAt = "updated_at"
-        case user
-        case userId = "user_id"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.channelCid = try container.decode(String.self, forKey: .channelCid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
+        self.messageId = try container.decode(String.self, forKey: .messageId)
+        self.remindAt = try container.decodeIfPresent(Date.self, forKey: .remindAt)
+        self.updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        self.userId = try container.decode(String.self, forKey: .userId)
     }
 }

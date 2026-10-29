@@ -36,6 +36,7 @@ final class DraftPayloads_Tests: XCTestCase {
                 "channel_cid": "messaging:123",
                 "created_at": "2025-02-11T12:27:04.780633395Z",
                 "message": {
+                    "custom": {},
                     "id": "draft-1",
                     "text": "Hello world"
                 }

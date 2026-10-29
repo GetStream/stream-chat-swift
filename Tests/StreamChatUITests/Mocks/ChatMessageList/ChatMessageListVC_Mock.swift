@@ -19,6 +19,11 @@ class ChatMessageListVC_Mock: ChatMessageListVC {
         jumpToMessageCalledWith = (id: id, animated: animated, onHighlight: onHighlight)
     }
 
+    var highlightCellCalledWith: IndexPath?
+    override func highlightCell(at indexPath: IndexPath) {
+        highlightCellCalledWith = indexPath
+    }
+
     var jumpToUnreadMessageCallCount = 0
     override func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable (IndexPath) -> Void)? = nil) {
         jumpToUnreadMessageCallCount += 1

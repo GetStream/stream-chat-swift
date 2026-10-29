@@ -18,6 +18,9 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         let json = """
         {
             "user" : {
+                "custom" : {},
+                "language" : "",
+                "teams" : [],
                 "id" : "\(userId)",
                 "banned" : false,
                 "unread_channels" : 0,
@@ -38,7 +41,9 @@ final class UnknownChannelEvent_Tests: XCTestCase {
             "cid" : "\(cid.rawValue)",
             "created_at" : "\(createdAt)",
             "type" : "\(IdeaEventPayload.eventType.rawValue)",
-            "idea" : "\(ideaPayload.idea)"
+            "custom" : {
+                "idea" : "\(ideaPayload.idea)"
+            }
         }
         """.data(using: .utf8)!
 
@@ -64,7 +69,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
             cid: .unique,
             userId: .unique,
             createdAt: .unique,
-            payload: ["idea": .string(payload.idea)]
+            payload: ["custom": .dictionary(["idea": .string(payload.idea)])]
         )
 
         // Assert payload is decoded.
@@ -95,7 +100,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
             cid: .unique,
             userId: .unique,
             createdAt: .unique,
-            payload: ["idea": .string(.unique)]
+            payload: ["custom": .dictionary(["idea": .string(.unique)])]
         )
 
         // Assert payload is not decoded because the type does not match.

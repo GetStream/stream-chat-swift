@@ -19,11 +19,13 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
 
     @Atomic var queryGroupedChannels_callCount = 0
-    @Atomic var queryGroupedChannels_groups: [[String: GroupedQueryChannelsRequestGroup]?] = []
+    @Atomic var queryGroupedChannels_groups: [[String: GroupedChannelsGroupRequest]?] = []
     @Atomic var queryGroupedChannels_limits: [Int?] = []
+    @Atomic var queryGroupedChannels_sorts: [[SortParamRequest]?] = []
     @Atomic var queryGroupedChannels_watchValues: [Bool] = []
     @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
     @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
+    @Atomic var queryGroupedChannels_results: [Result<[ChannelGroup], Error>] = []
 
     @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
 
@@ -54,9 +56,11 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         queryGroupedChannels_callCount = 0
         queryGroupedChannels_groups.removeAll()
         queryGroupedChannels_limits.removeAll()
+        queryGroupedChannels_sorts.removeAll()
         queryGroupedChannels_watchValues.removeAll()
         queryGroupedChannels_presenceValues.removeAll()
         queryGroupedChannels_result = nil
+        queryGroupedChannels_results.removeAll()
         markAllRead_completion = nil
 
         startWatchingChannels_callCount = 0
@@ -107,18 +111,26 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     }
 
     override func queryGroupedChannels(
-        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        groups: [String: GroupedChannelsGroupRequest]?,
         limit: Int?,
+        sort: [SortParamRequest]?,
         watch: Bool,
         presence: Bool,
+        keepingLoadedPages: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
         _queryGroupedChannels_groups.mutate { $0.append(groups) }
         _queryGroupedChannels_limits.mutate { $0.append(limit) }
+        _queryGroupedChannels_sorts.mutate { $0.append(sort) }
         _queryGroupedChannels_watchValues.mutate { $0.append(watch) }
         _queryGroupedChannels_presenceValues.mutate { $0.append(presence) }
-        if let result = queryGroupedChannels_result {
+        var queuedResult: Result<[ChannelGroup], Error>?
+        _queryGroupedChannels_results.mutate { results in
+            guard !results.isEmpty else { return }
+            queuedResult = results.removeFirst()
+        }
+        if let result = queuedResult ?? queryGroupedChannels_result {
             DispatchQueue.main.async {
                 completion(result)
             }
@@ -126,8 +138,10 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
             super.queryGroupedChannels(
                 groups: groups,
                 limit: limit,
+                sort: sort,
                 watch: watch,
                 presence: presence,
+                keepingLoadedPages: keepingLoadedPages,
                 completion: completion
             )
         }

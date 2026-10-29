@@ -152,23 +152,21 @@ extension NSManagedObjectContext {
         }
 
         // Save member specific data
-        if let channelRole = payload.channelRole {
-            dto.channelRoleRaw = channelRole
-        }
+        dto.channelRoleRaw = payload.channelRole
 
         dto.statusRaw = payload.status
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
         dto.memberDeletedAt = payload.deletedAt?.bridgeDate
-        dto.isBanned = payload.banned ?? false
-        dto.isShadowBanned = payload.shadowBanned ?? false
+        dto.isBanned = payload.banned
+        dto.isShadowBanned = payload.shadowBanned
         dto.banExpiresAt = payload.banExpires?.bridgeDate
         dto.isInvited = payload.invited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         dto.archivedAt = payload.archivedAt?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
-        dto.notificationsMuted = payload.notificationsMuted ?? false
+        dto.notificationsMuted = payload.notificationsMuted
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.custom)
@@ -195,21 +193,6 @@ extension NSManagedObjectContext {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
     }
 
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        // If it is the first page of the members list, make sure to clear the members from local cache
-        // which are not in the remote response anymore.
-        let isFirstPage = query?.pagination.offset == 0
-        if let queryHash = query?.queryHash, isFirstPage {
-            let queryDTO = ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
-            queryDTO?.members = []
-        }
-
-        let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.members.compactMapLoggingError {
-            try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
-        }
-    }
-    
     func saveMembers(response: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         // If it is the first page of the members list, make sure to clear the members from local cache
         // which are not in the remote response anymore.

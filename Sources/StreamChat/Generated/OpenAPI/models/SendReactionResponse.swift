@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class SendReactionResponse: Sendable, Decodable {
     /// Represents any chat message
     let message: MessageResponse
@@ -14,8 +15,9 @@ final class SendReactionResponse: Sendable, Decodable {
         self.reaction = reaction
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case message
-        case reaction
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.reaction = try container.decode(MessageReactionPayload.self, forKey: .reaction)
     }
 }

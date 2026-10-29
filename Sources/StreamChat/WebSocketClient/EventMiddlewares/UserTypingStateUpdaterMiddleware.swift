@@ -11,12 +11,13 @@ struct UserTypingStateUpdaterMiddleware: EventMiddleware {
         case let event as TypingEventDTO:
             guard event.parentId == nil else { break }
             guard let channelDTO = session.channel(cid: event.cid) else { break }
+            guard let user = event.user else { break }
 
             let userDTO: UserDTO?
-            if let existingUser = session.user(id: event.user.id) {
+            if let existingUser = session.user(id: user.id) {
                 userDTO = existingUser
             } else {
-                userDTO = try? session.saveUser(payload: event.user, query: nil, cache: nil)
+                userDTO = try? session.saveUser(payload: user, query: nil, cache: nil)
             }
 
             guard let userDTO else { break }

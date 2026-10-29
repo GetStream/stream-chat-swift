@@ -103,11 +103,7 @@ extension NSManagedObjectContext {
         }
 
         return payload.votes.compactMapLoggingError {
-            if let payload = $0 {
-                return try savePollVote(payload: payload, query: query, cache: cache)
-            } else {
-                return nil
-            }
+            try savePollVote(payload: $0, query: query, cache: cache)
         }
     }
     
@@ -122,8 +118,8 @@ extension NSManagedObjectContext {
         }
         
         var option: PollOptionDTO?
-        if let optionId = payload.optionId, !optionId.isEmpty {
-            option = try? self.option(id: optionId, pollId: payload.pollId)
+        if !payload.optionId.isEmpty {
+            option = try? self.option(id: payload.optionId, pollId: payload.pollId)
         }
         
         var user: UserDTO?

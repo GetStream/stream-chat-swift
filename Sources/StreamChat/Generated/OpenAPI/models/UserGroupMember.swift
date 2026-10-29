@@ -17,11 +17,12 @@ public final class UserGroupMember: Sendable, Decodable {
         self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        case groupId = "group_id"
-        case isAdmin = "is_admin"
-        case userId = "user_id"
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.groupId = try container.decode(String.self, forKey: .groupId)
+        self.isAdmin = try container.decode(Bool.self, forKey: .isAdmin)
+        self.userId = try container.decode(String.self, forKey: .userId)
     }
 }
 

@@ -76,6 +76,29 @@ class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
     override func loadFirstPage(limit: Int? = nil, _ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         loadFirstPageCallCount += 1
     }
+
+    var addReaction_types: [MessageReactionType] = []
+    var addReaction_enforceUnique: Bool?
+    override func addReaction(
+        _ type: MessageReactionType,
+        score: Int = 1,
+        enforceUnique: Bool = false,
+        skipPush: Bool = false,
+        pushEmojiCode: String? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        addReaction_types.append(type)
+        addReaction_enforceUnique = enforceUnique
+    }
+
+    var deleteReaction_types: [MessageReactionType] = []
+    override func deleteReaction(
+        _ type: MessageReactionType,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        deleteReaction_types.append(type)
+    }
 }
 
 extension ChatMessageController_Mock {

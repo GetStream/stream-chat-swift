@@ -12,7 +12,7 @@ extension OwnUserResponse {
 
     var imageURL: URL? { image.flatMap(URL.init(string:)) }
 
-    var isBanned: Bool { banned ?? false }
+    var isBanned: Bool { banned }
 
     var isOnline: Bool { online }
 
@@ -56,7 +56,7 @@ extension OwnUserResponse {
             id: id,
             image: imageURL?.absoluteString,
             invisible: isInvisible,
-            language: language,
+            language: language ?? "",
             lastActive: lastActiveAt,
             mutes: mutedUsers,
             name: name,
@@ -66,10 +66,10 @@ extension OwnUserResponse {
             role: role.rawValue,
             teams: teams,
             teamsRole: teamsRole?.mapValues(\.rawValue),
-            totalUnreadCount: unreadCount?.messages,
+            totalUnreadCount: unreadCount?.messages ?? 0,
             totalUnreadCountByTeam: totalUnreadCountByTeam,
-            unreadChannels: unreadCount?.channels,
-            unreadThreads: unreadCount?.threads,
+            unreadChannels: unreadCount?.channels ?? 0,
+            unreadThreads: unreadCount?.threads ?? 0,
             updatedAt: updatedAt
         )
     }
@@ -145,7 +145,7 @@ extension OwnUserResponse {
             isOnline: userPayload.isOnline,
             isInvisible: true,
             isBanned: userPayload.isBanned,
-            teams: userPayload.teams ?? [],
+            teams: userPayload.teams,
             language: userPayload.language,
             extraData: userPayload.extraData,
             devices: devices,

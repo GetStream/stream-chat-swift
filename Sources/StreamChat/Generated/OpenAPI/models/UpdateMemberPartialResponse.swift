@@ -11,7 +11,11 @@ final class UpdateMemberPartialResponse: Sendable, Decodable {
         self.channelMember = channelMember
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelMember = "channel_member"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channelMember = try container.decodeIfPresent(
+            MemberPayload.self,
+            forKey: .channelMember
+        )
     }
 }

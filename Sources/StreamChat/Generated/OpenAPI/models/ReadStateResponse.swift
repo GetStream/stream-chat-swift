@@ -29,12 +29,19 @@ final class ReadStateResponse: Sendable, Decodable {
         self.user = user
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case lastDeliveredAt = "last_delivered_at"
-        case lastDeliveredMessageId = "last_delivered_message_id"
-        case lastRead = "last_read"
-        case lastReadMessageId = "last_read_message_id"
-        case unreadMessages = "unread_messages"
-        case user
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.lastDeliveredAt = try container.decodeIfPresent(Date.self, forKey: .lastDeliveredAt)
+        self.lastDeliveredMessageId = try container.decodeIfPresent(
+            String.self,
+            forKey: .lastDeliveredMessageId
+        )
+        self.lastRead = try container.decode(Date.self, forKey: .lastRead)
+        self.lastReadMessageId = try container.decodeIfPresent(
+            String.self,
+            forKey: .lastReadMessageId
+        )
+        self.unreadMessages = try container.decode(Int.self, forKey: .unreadMessages)
+        self.user = try container.decode(UserPayload.self, forKey: .user)
     }
 }

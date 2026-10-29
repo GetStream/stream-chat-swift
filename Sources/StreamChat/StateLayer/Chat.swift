@@ -14,6 +14,7 @@ public class Chat: @unchecked Sendable {
     private let eventSender: EventSender
     private let memberUpdater: ChannelMemberUpdater
     private let messageUpdater: MessageUpdater
+    private let scheduledMessagesRepository: ScheduledMessagesRepository
     @MainActor private var stateBuilder: StateBuilder<ChatState>
     private let typingEventsSender: TypingEventsSender
     
@@ -45,6 +46,10 @@ public class Chat: @unchecked Sendable {
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
+            client.databaseContainer,
+            client.apiClient
+        )
+        scheduledMessagesRepository = environment.scheduledMessagesRepositoryBuilder(
             client.databaseContainer,
             client.apiClient
         )
@@ -263,9 +268,7 @@ public class Chat: @unchecked Sendable {
         hideHistory: Bool = false,
         hideHistoryBefore: Date? = nil
     ) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(
-            currentUserId: currentUserId,
             cid: cid,
             members: members,
             systemMessage: systemMessage,
@@ -343,9 +346,7 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func removeMembers(_ members: [UserId], systemMessage: SystemMessage?) async throws {
-        let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.removeMembers(
-            currentUserId: currentUserId,
             cid: cid,
             userIds: Set(members),
             systemMessage: systemMessage
@@ -600,7 +601,7 @@ public class Chat: @unchecked Sendable {
         messageId: MessageId? = nil,
         restrictedVisibility: [UserId] = []
     ) async throws -> ChatMessage {
-        Task { try? await stopTyping() }
+        typingEventsSender.stopTypingIfNeeded()
         let cid = try await self.cid
         let newMessageId = messageId ?? .newUniqueId
         async let sentMessage = waitForMessageSender(messageId: newMessageId)
@@ -699,7 +700,7 @@ public class Chat: @unchecked Sendable {
         skipEnrichURL: Bool = false,
         skipPush: Bool = false
     ) async throws -> ChatMessage {
-        Task { try? await stopTyping() }
+        typingEventsSender.stopTypingIfNeeded()
         async let updatedMessage = waitForMessageEditor(messageId: messageId)
         _ = try await messageUpdater.editMessage(
             messageId: messageId,
@@ -1108,7 +1109,7 @@ public class Chat: @unchecked Sendable {
         skipEnrichURL: Bool = false,
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
-        Task { try? await stopTyping() }
+        typingEventsSender.stopTypingIfNeeded()
         let cid = try await self.cid
         let newMessageId = messageId ?? .newUniqueId
         async let sentMessage = waitForMessageSender(messageId: newMessageId)
@@ -1349,7 +1350,192 @@ public class Chat: @unchecked Sendable {
             try await memberUpdater.pinMemberChannel(false, userId: currentUserId, cid: cid)
         }
     }
-    
+
+    // MARK: - Scheduling Messages
+
+    /// Schedules a new message to be sent to the channel at a later date.
+    ///
+    /// The message is not added to the channel until it is sent. It is saved locally first and sent to the server
+    /// once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///
+    /// - SeeAlso: Listing scheduled messages: ``ChatClient/makeScheduledMessageList(with:)``.
+    ///
+    /// - Parameters:
+    ///   - text: Text of the message.
+    ///   - attachments: An array of the attachments for the message.
+    ///   - quotedMessageId: An id of the quoted message.
+    ///   - mentions: An array of mentioned user ids.
+    ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
+    ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the message right away.
+    ///   - extraData: Additional extra data of the message object.
+    ///
+    /// - Throws: An error while saving the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
+    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Returns: The scheduled message.
+    @discardableResult
+    public func scheduleMessage(
+        with text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        quote quotedMessageId: MessageId? = nil,
+        mentions: [UserId] = [],
+        messageId: MessageId? = nil,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:]
+    ) async throws -> ScheduledMessage {
+        let cid = try await self.cid
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentions,
+            quotedMessageId: quotedMessageId,
+            parentId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
+        return try await scheduledMessagesRepository.schedule(
+            id: messageId ?? .newUniqueId,
+            cid: cid,
+            content: content,
+            scheduledAt: scheduledAt
+        )
+    }
+
+    /// Schedules a new reply to the specified message, to be sent at a later date.
+    ///
+    /// The reply is not added to the thread until it is sent. It is saved locally first and sent to the server
+    /// once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: The id of the message to reply to.
+    ///   - text: Text of the reply.
+    ///   - showReplyInChannel: If `true`, the reply is also visible in the channel, not only in the thread.
+    ///   - attachments: An array of the attachments for the reply.
+    ///   - quotedMessageId: An id of the quoted message.
+    ///   - mentions: An array of mentioned user ids.
+    ///   - messageId: A custom id for the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
+    ///   - scheduledAt: When to send the reply, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the reply right away.
+    ///   - extraData: Additional extra data of the reply.
+    ///
+    /// - Throws: An error while saving the scheduled reply locally, not an error of the server. Unlike `sendMessage`, it
+    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Returns: The scheduled reply.
+    @discardableResult
+    public func scheduleReply(
+        to parentMessageId: MessageId,
+        text: String,
+        showReplyInChannel: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        quote quotedMessageId: MessageId? = nil,
+        mentions: [UserId] = [],
+        messageId: MessageId? = nil,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:]
+    ) async throws -> ScheduledMessage {
+        let cid = try await self.cid
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentions,
+            quotedMessageId: quotedMessageId,
+            parentId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData
+        )
+        return try await scheduledMessagesRepository.schedule(
+            id: messageId ?? .newUniqueId,
+            cid: cid,
+            content: content,
+            scheduledAt: scheduledAt
+        )
+    }
+
+    /// Updates the content of a scheduled message, and optionally when it is sent.
+    ///
+    /// A scheduled reply stays in its thread. A failed scheduled message can not be changed: delete it and schedule a new one.
+    /// The changes are sent to the server once its attachments are uploaded, see `ScheduledMessage.status`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - text: The new text of the message.
+    ///   - attachments: The new attachments of the message.
+    ///   - quotedMessageId: The new quoted message of the message.
+    ///   - mentions: The new mentioned user ids of the message.
+    ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
+    ///   `nil` keeps the current date.
+    ///   - extraData: The new extra data of the message.
+    ///
+    /// - Throws: An error while updating the scheduled message locally, not an error of the server. Unlike `sendMessage`, it
+    /// does not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Returns: The updated scheduled message.
+    @discardableResult
+    public func updateScheduledMessage(
+        id: String,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        quote quotedMessageId: MessageId? = nil,
+        mentions: [UserId] = [],
+        scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:]
+    ) async throws -> ScheduledMessage {
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentions,
+            quotedMessageId: quotedMessageId,
+            parentId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
+        return try await scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt)
+    }
+
+    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    ///
+    /// The new date is sent to the server right after it is saved locally, see `ScheduledMessage.status`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
+    ///   next whole minute, at least 1 minute from now.
+    ///
+    /// - Throws: An error while rescheduling the message locally, not an error of the server. Unlike `sendMessage`, it does
+    /// not wait for the server: the server answers later, on the scheduled message, and a rejection sets
+    /// `ScheduledMessage.status` to `.failed`, with the reason in `ScheduledMessage.failure`.
+    /// - Returns: The rescheduled message.
+    @discardableResult
+    public func rescheduleMessage(id: String, scheduledAt: Date) async throws -> ScheduledMessage {
+        try await scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt)
+    }
+
+    /// Deletes a scheduled message, so it is never sent.
+    ///
+    /// - Parameter id: The id of the scheduled message.
+    ///
+    /// - Throws: An error while deleting the scheduled message.
+    public func deleteScheduledMessage(id: String) async throws {
+        try await scheduledMessagesRepository.delete(id: id)
+    }
+
+    /// Sends a scheduled message right away.
+    ///
+    /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
+    /// with older content. The message is added to the channel when it is sent, which is reported by the
+    /// `ScheduledMessageSentEvent`.
+    ///
+    /// - Parameter id: The id of the scheduled message.
+    ///
+    /// - Throws: An error when the message can't be sent, for example when its quoted message was deleted. It does not
+    /// wait for the server: a rejection sets `ScheduledMessage.status` to `.failed`, with the reason in
+    /// `ScheduledMessage.failure`.
+    public func sendScheduledMessageNow(id: String) async throws {
+        try await scheduledMessagesRepository.sendNow(id: id)
+    }
+
     // MARK: - Sending and Listening to Events
     
     /// Subscribes to web-socket events of a single type which is a channel specific event in this channel.
@@ -1505,57 +1691,61 @@ public class Chat: @unchecked Sendable {
     
     // MARK: - Updating the Channel
     
-    /// The update operation updates all of the channel data.
+    /// Updates the channel with a full update, which replaces the channel data.
     ///
-    /// - Warning: Any data that is present on the channel and is not included in a full update will be **deleted**.
+    /// - Warning: The name, image and extra data are replaced with the passed values, and values that are not passed are **removed**.
+    /// To change only specific fields and keep the rest, use ``updatePartial(name:imageURL:team:members:invites:filterTags:extraData:unsetProperties:)``.
     ///
     /// - Parameters:
-    ///   - name: - name: The name of the channel.
-    ///   - imageURL: The channel avatar URL.
-    ///   - team: The team for the channel.
+    ///   - name: The name of the channel. Passing `nil` removes the current name.
+    ///   - imageURL: The channel avatar URL. Passing `nil` removes the current image.
+    ///   - team: Changing the team is not supported client-side and fails with an API error. Defaults to `nil`, which keeps the current team.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
     ///   - filterTags: A list of tags to add to the channel.
-    ///   - extraData: Extra data for the new channel.
+    ///   - autoTranslationLanguages: The languages for automatically translating new messages. An empty set removes them.
+    ///     Takes effect when automatic translation is enabled. Defaults to `nil`, which keeps the current languages.
+    ///   - extraData: The extra data of the channel. Keys that are not passed are removed.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func update(
         name: String?,
         imageURL: URL?,
-        team: String?,
+        team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         filterTags: Set<String> = [],
+        autoTranslationLanguages: Set<TranslationLanguage>? = nil,
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await channelUpdater.update(
-            channelPayload: .init(
-                cid: cid,
-                name: name,
-                imageURL: imageURL,
-                team: team,
-                members: members,
-                invites: invites,
-                filterTags: filterTags,
-                extraData: extraData
-            )
+            cid: cid,
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            filterTags: filterTags,
+            autoTranslationLanguages: autoTranslationLanguages,
+            extraData: extraData
         )
     }
     
-    /// The update operation updates only specified fields and retain existing channel data.
+    /// Updates only the passed channel fields and keeps the rest of the channel data.
     ///
     /// A partial update can be used to set and unset specific fields when it is necessary to retain additional
-    /// custom data fields on the object (a patch style update).
+    /// custom data fields on the object (a patch style update). To replace all of the channel data instead,
+    /// use ``update(name:imageURL:team:members:invites:filterTags:autoTranslationLanguages:extraData:)``.
     ///
     /// - Parameters:
-    ///   - name: The name of the channel.
-    ///   - imageURL: The channel avatar URL.
-    ///   - team: The team for the channel.
+    ///   - name: The name of the channel. Passing `nil` keeps the current name.
+    ///   - imageURL: The channel avatar URL. Passing `nil` keeps the current image.
+    ///   - team: Setting the team is not supported client-side and fails with an API error.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
-    ///   - filterTags: A list of tags to add to the channel.
-    ///   - extraData: Extra data for the channel.
-    ///   - unsetProperties: A list of properties to reset.
+    ///   - filterTags: Replaces the channel's filter tags when not empty.
+    ///   - extraData: Extra data keys to set. Other extra data keys are kept.
+    ///   - unsetProperties: Custom fields to remove from the channel, such as extra data keys, `name` or `image`.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func updatePartial(
@@ -1569,16 +1759,14 @@ public class Chat: @unchecked Sendable {
         unsetProperties: [String] = []
     ) async throws {
         try await channelUpdater.updatePartial(
-            channelPayload: .init(
-                cid: cid,
-                name: name,
-                imageURL: imageURL,
-                team: team,
-                members: Set(members),
-                invites: Set(invites),
-                filterTags: filterTags,
-                extraData: extraData
-            ),
+            cid: cid,
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: Set(members),
+            invites: Set(invites),
+            filterTags: filterTags,
+            extraData: extraData,
             unsetProperties: unsetProperties
         )
     }
@@ -1772,6 +1960,11 @@ extension Chat {
             )
         }
         
+        var scheduledMessagesRepositoryBuilder: @Sendable (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ScheduledMessagesRepository = { ScheduledMessagesRepository(database: $0, apiClient: $1) }
+
         var typingEventsSenderBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient

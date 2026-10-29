@@ -18,10 +18,11 @@ final class MarkUnreadRequest: Sendable, Encodable, JSONEncodable {
         self.threadId = threadId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case messageId = "message_id"
-        case messageTimestamp = "message_timestamp"
-        case threadId = "thread_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(messageId, forKey: .messageId)
+        try container.encodeIfPresent(messageTimestamp, forKey: .messageTimestamp)
+        try container.encodeIfPresent(threadId, forKey: .threadId)
     }
 }
 

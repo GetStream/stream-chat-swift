@@ -97,6 +97,10 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
+    // The scheduled message this message is the content of, until it is sent.
+    // It is not part of the channel, so it stays out of the channel and thread messages.
+    @NSManaged var scheduledMessage: ScheduledMessageDTO?
+
     @NSManaged var location: SharedLocationDTO?
     @NSManaged var isActiveLiveLocation: Bool
     
@@ -150,6 +154,11 @@ class MessageDTO: NSManagedObject {
             }
         }
 
+        // The scheduled message list observes the scheduled messages, so changes of their content are propagated to them.
+        if let scheduledMessage, !scheduledMessage.hasChanges, !scheduledMessage.isDeleted {
+            scheduledMessage.id = scheduledMessage.id
+        }
+
         // Refresh messages referencing the current message
         if !quotedBy.isEmpty {
             for message in quotedBy where !message.hasChanges && !message.isDeleted {
@@ -179,7 +188,8 @@ class MessageDTO: NSManagedObject {
         )
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             pendingSendMessage,
-            allAttachmentsAreUploadedOrEmptyPredicate()
+            allAttachmentsAreUploadedOrEmptyPredicate(),
+            notScheduledMessagePredicate()
         ])
 
         return request
@@ -191,7 +201,8 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue),
-            allAttachmentsAreUploadedOrEmptyPredicate()
+            allAttachmentsAreUploadedOrEmptyPredicate(),
+            notScheduledMessagePredicate()
         ])
 
         return request
@@ -242,6 +253,11 @@ class MessageDTO: NSManagedObject {
     /// Returns a predicate that filters out all deleted messages
     private static func nonDeletedMessagesPredicate() -> NSPredicate {
         .init(format: "deletedAt == nil")
+    }
+
+    /// Scheduled messages are sent by the `MessageScheduler`, not by the `MessageSender` or the `MessageEditor`.
+    private static func notScheduledMessagePredicate() -> NSPredicate {
+        .init(format: "scheduledMessage == nil")
     }
 
     private static func ignoreDraftMessagesPredicate() -> NSPredicate {
@@ -974,7 +990,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         // Local text edit before receiving the WS event
         if let localDate = dto.textUpdatedAt?.bridgeDate,
            let payloadDate = payload.messageTextUpdatedAt,
-           localDate > payloadDate {
+           localDate.isLaterAtServerPrecision(than: payloadDate) {
+            dto.channel = channelDTO
             return dto
         }
 
@@ -1068,7 +1085,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.user = user
 
         dto.reactionScores = payload.reactionScores
-        dto.reactionCounts = payload.reactionCounts ?? [:]
+        dto.reactionCounts = payload.reactionCounts
         dto.reactionGroups = Set((payload.reactionGroups ?? [:]).compactMap { (type, groupPayload) in
             groupPayload.map {
                 MessageReactionGroupDTO(
@@ -1177,11 +1194,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     // swiftlint:enable function_body_length
 
     func saveMessages(
-        messagesPayload: MessageListPayload,
+        _ messages: [MessageResponse],
         syncOwnReactions: Bool = true
     ) -> [MessageDTO] {
-        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
-        return messagesPayload.messages.compactMapLoggingError {
+        let cache = messages.getPayloadToModelIdMappings(context: self)
+        return messages.compactMapLoggingError {
             try saveMessage(
                 payload: $0,
                 syncOwnReactions: syncOwnReactions,
@@ -1304,7 +1321,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         do {
             dto.extraData = try JSONEncoder.default.encode(
                 draftDetailsPayload.custom.removingValues(
-                    forKeys: [MessagePayloadsCodingKeys.args.rawValue, MessagePayloadsCodingKeys.command.rawValue]
+                    forKeys: [MessageResponse.argsKey, StringCodingKey.command.stringValue]
                 )
             )
         } catch {
@@ -1670,7 +1687,7 @@ extension MessageDTO {
         // Messages have no dedicated args field, it is stored as custom data.
         var custom = extraData
         if let args {
-            custom[MessagePayloadsCodingKeys.args.rawValue] = .string(args)
+            custom[MessageResponse.argsKey] = .string(args)
         }
 
         return MessageRequest(
@@ -1715,10 +1732,10 @@ extension MessageDTO {
         // Drafts have no dedicated command and args fields, they are stored as custom data.
         var custom = extraData
         if let command {
-            custom[MessagePayloadsCodingKeys.command.rawValue] = .string(command)
+            custom[StringCodingKey.command.stringValue] = .string(command)
         }
         if let args {
-            custom[MessagePayloadsCodingKeys.args.rawValue] = .string(args)
+            custom[MessageResponse.argsKey] = .string(args)
         }
 
         return MessageRequest(

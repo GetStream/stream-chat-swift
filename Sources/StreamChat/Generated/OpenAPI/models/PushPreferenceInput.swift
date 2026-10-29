@@ -11,12 +11,18 @@ public final class PushPreferenceLevel: RawRepresentable, Codable, Hashable, Sen
         self.rawValue = rawValue
     }
 
+    /// Behaves as all.
     public static let `default` = PushPreferenceLevel(rawValue: "default")
+    /// All push notifications will be delivered.
     public static let all = PushPreferenceLevel(rawValue: "all")
+    /// Push notifications will only be delivered when the user is mentioned directly or via @channel, @here, a role or a user group.
     public static let allMentions = PushPreferenceLevel(rawValue: "all_mentions")
+    /// Push notifications will only be delivered when the user is directly @mentioned by username.
     public static let directMentions = PushPreferenceLevel(rawValue: "direct_mentions")
+    /// Deprecated: behaves as direct_mentions.
     @available(*, deprecated, renamed: "directMentions")
     public static let mentions = PushPreferenceLevel(rawValue: "mentions")
+    /// No push notifications will be delivered.
     public static let none = PushPreferenceLevel(rawValue: "none")
 }
 
@@ -29,29 +35,25 @@ final class PushPreferenceInput: Sendable, Encodable, JSONEncodable {
     let disabledUntil: Date?
     /// Remove the disabled until time. (IE stop snoozing notifications)
     let removeDisable: Bool?
-    /// The user id for which to set the push preferences. Required when using server side auths, defaults to current user with client side auth.
-    let userId: String?
 
     init(
         channelCid: String? = nil,
         chatLevel: PushPreferenceLevel? = nil,
         disabledUntil: Date? = nil,
-        removeDisable: Bool? = nil,
-        userId: String? = nil
+        removeDisable: Bool? = nil
     ) {
         self.channelCid = channelCid
         self.chatLevel = chatLevel
         self.disabledUntil = disabledUntil
         self.removeDisable = removeDisable
-        self.userId = userId
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelCid = "channel_cid"
-        case chatLevel = "chat_level"
-        case disabledUntil = "disabled_until"
-        case removeDisable = "remove_disable"
-        case userId = "user_id"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(channelCid, forKey: .channelCid)
+        try container.encodeIfPresent(chatLevel, forKey: .chatLevel)
+        try container.encodeIfPresent(disabledUntil, forKey: .disabledUntil)
+        try container.encodeIfPresent(removeDisable, forKey: .removeDisable)
     }
 }
 
@@ -60,8 +62,7 @@ extension PushPreferenceInput: Hashable {
         lhs.channelCid == rhs.channelCid &&
             lhs.chatLevel == rhs.chatLevel &&
             lhs.disabledUntil == rhs.disabledUntil &&
-            lhs.removeDisable == rhs.removeDisable &&
-            lhs.userId == rhs.userId
+            lhs.removeDisable == rhs.removeDisable
     }
 
     func hash(into hasher: inout Hasher) {
@@ -69,6 +70,5 @@ extension PushPreferenceInput: Hashable {
         hasher.combine(chatLevel)
         hasher.combine(disabledUntil)
         hasher.combine(removeDisable)
-        hasher.combine(userId)
     }
 }

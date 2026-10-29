@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Sentry
         DemoAppConfiguration.configureSentry()
 
+        DemoAppLogging.setUp()
+
         return true
     }
 

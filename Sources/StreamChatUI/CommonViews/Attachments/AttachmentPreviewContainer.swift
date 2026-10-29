@@ -23,6 +23,8 @@ open class AttachmentPreviewContainer: _View, AppearanceProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
+        directionalLayoutMargins = .streamDefaultLayoutMargins
+
         addSubview(discardButton)
 
         discardButton.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true

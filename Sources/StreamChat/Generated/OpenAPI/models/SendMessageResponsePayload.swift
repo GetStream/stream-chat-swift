@@ -5,18 +5,22 @@
 import Foundation
 
 final class SendMessageResponsePayload: Sendable, Decodable {
-    /// Map of mentioned user ID to whether that user is currently an active channel member. Only set when include_mentioned_members was requested; omitted when the message has no mentions or the membership lookup failed
-    let mentionedMembers: [String: Bool]?
     /// Represents any chat message
     let message: MessageResponse
+    /// A message scheduled to be sent later
+    let scheduledMessage: ScheduledMessageResponse?
 
-    init(mentionedMembers: [String: Bool]? = nil, message: MessageResponse) {
-        self.mentionedMembers = mentionedMembers
+    init(message: MessageResponse, scheduledMessage: ScheduledMessageResponse? = nil) {
         self.message = message
+        self.scheduledMessage = scheduledMessage
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case mentionedMembers = "mentioned_members"
-        case message
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.message = try container.decode(MessageResponse.self, forKey: .message)
+        self.scheduledMessage = try container.decodeIfPresent(
+            ScheduledMessageResponse.self,
+            forKey: .scheduledMessage
+        )
     }
 }

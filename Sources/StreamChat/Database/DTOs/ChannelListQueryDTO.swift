@@ -26,9 +26,28 @@ class ChannelListQueryDTO: NSManagedObject {
     /// and sync refetches. Grouped queries only.
     @NSManaged var presence: Bool
 
+    @NSManaged var groupFilterJSONData: Data?
+    @NSManaged var groupSortJSONData: Data?
+    @NSManaged var groupNotLoadedUnreadCount: Int64
+
     // MARK: - Relationships
 
     @NSManaged var channels: Set<ChannelDTO>
+
+    func loadedUnreadChannelsCount(currentUserId: UserId) -> Int {
+        channels.filter { Self.unreadMessageCount(of: $0, currentUserId: currentUserId) > 0 }.count
+    }
+
+    func updateGroupNotLoadedUnreadCount(unreadChannels: Int, currentUserId: UserId) {
+        guard groupFilterJSONData != nil else { return }
+        groupNotLoadedUnreadCount = Int64(max(0, unreadChannels - loadedUnreadChannelsCount(currentUserId: currentUserId)))
+    }
+
+    static func unreadMessageCount(of channel: ChannelDTO, currentUserId: UserId) -> Int {
+        // Reads `reads` because `ChannelDTO.currentUserUnreadMessagesCount` is only updated on save.
+        guard !channel.isHidden, !channel.isDisabled, channel.deletedAt == nil else { return 0 }
+        return Int(channel.reads.first(where: { $0.user.id == currentUserId })?.unreadMessageCount ?? 0)
+    }
 
     static func load(query: ChannelListQuery, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         load(
@@ -58,6 +77,9 @@ extension NSManagedObjectContext {
     /// Callers compare `filter`/`sort` against the input (see `ChannelListQuery.isFilterEqual(to:)`)
     /// to detect whether the cached resolution actually differs from the current query.
     func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
+        if query.groupKey != nil {
+            return loadGroupedSort(for: query)
+        }
         guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty,
               let dto = channelListQuery(query) else {
             return nil
@@ -80,6 +102,13 @@ extension NSManagedObjectContext {
                 log.error("Failed decoding predefined sort from persisted data with error: \(error).")
             }
         }
+        return updated
+    }
+
+    private func loadGroupedSort(for query: ChannelListQuery) -> ChannelListQuery? {
+        guard let dto = channelListQuery(query) else { return nil }
+        var updated = query
+        updated.sort = (try? dto.groupSortJSONData.flatMap { try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: $0) }) ?? []
         return updated
     }
 
@@ -113,7 +142,7 @@ extension NSManagedObjectContext {
                 log.error("Failed encoding predefined filter from response with error: \(error).")
             }
             do {
-                dto.sortJSONData = try JSONEncoder.default.encode(predefinedFilter.sort)
+                dto.sortJSONData = try predefinedFilter.sort.map { try JSONEncoder.default.encode($0) }
             } catch {
                 log.error("Failed encoding predefined sort from response with error: \(error).")
             }
@@ -133,5 +162,47 @@ extension NSManagedObjectContext {
         }
 
         return queries
+    }
+
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO] {
+        let request = ChannelListQueryDTO.allQueriesFetchRequest
+        request.predicate = NSPredicate(format: "%K != nil", #keyPath(ChannelListQueryDTO.groupFilterJSONData))
+        do {
+            return try fetch(request)
+        } catch {
+            log.error("Failed to load filtered group channel list queries from the database: \(error).")
+            return []
+        }
+    }
+
+    func unlinkGroupedChannels(in groupKey: String) throws {
+        guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return }
+        let filterClosure = try groupedChannelsFilter(for: queryDTO)
+        let unlinked = queryDTO.channels.filter { !filterClosure($0, groupKey) }
+        guard !unlinked.isEmpty else { return }
+        queryDTO.channels.subtract(unlinked)
+        updateFilteredGroupUnreadChannelCounts(for: [queryDTO])
+    }
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool {
+        guard let queryDTO = channelListQuery(ChannelListQuery(groupKey: groupKey)) else { return false }
+        let filterClosure = try groupedChannelsFilter(for: queryDTO)
+        return filterClosure(channel, groupKey)
+    }
+    
+    private func groupedChannelsFilter(for queryDTO: ChannelListQueryDTO) throws -> (ChannelDTO, String) -> Bool {
+        let groupFilterPredicate: NSPredicate? = try {
+            guard let filterData = queryDTO.groupFilterJSONData else { return nil }
+            let filter = try Filter<GroupedChannelsFilterScope>.groupedFilter(fromJSONData: filterData)
+            return filter?.predicate
+        }()
+        let currentUserId = currentUser?.user.id
+        return { channel, groupKey in
+            let canShowChannel = !channel.isHidden && !channel.isDisabled && channel.deletedAt == nil
+            // Channels saved from notification events carry `members` but no `membership`.
+            let isMember = channel.membership != nil || channel.members.contains { $0.user.id == currentUserId }
+            let isMemberInGroup = isMember && (groupKey == GroupedChannelKey.all || channel.group == groupKey)
+            return canShowChannel && isMemberInGroup && (groupFilterPredicate?.evaluate(with: channel) ?? true)
+        }
     }
 }

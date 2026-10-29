@@ -156,6 +156,8 @@ open class InputTextView: UITextView, ThemeProvider {
     }
 
     open func setUpLayout() {
+        directionalLayoutMargins = .streamDefaultLayoutMargins
+
         addSubview(placeholderLabel)
         placeholderLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
         NSLayoutConstraint.activate([

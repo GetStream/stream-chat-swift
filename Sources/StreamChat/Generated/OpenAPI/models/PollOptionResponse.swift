@@ -11,7 +11,8 @@ final class PollOptionResponse: Sendable, Decodable {
         self.pollOption = pollOption
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case pollOption = "poll_option"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.pollOption = try container.decode(PollOptionPayload.self, forKey: .pollOption)
     }
 }

@@ -1343,6 +1343,7 @@
           "pinned_by": null
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:general",
@@ -1396,6 +1397,11 @@
       ],
       "watcher_count" : 7,
       "channel" : {
+        "custom" : {
+          "image" : "",
+          "example" : 1,
+          "name" : "The water cooler"
+        },
         "id" : "general",
         "created_at" : "2019-05-10T14:03:49.505006Z",
         "created_by" : {
@@ -1442,9 +1448,6 @@
           "uploads" : true,
           "name" : "messaging"
         },
-        "image" : "",
-        "example" : 1,
-        "name" : "The water cooler",
         "last_message_at" : "2020-06-10T05:59:48.054692Z"
       },
       "read" : [
@@ -2510,6 +2513,7 @@
           "pinned_by": null
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_8884",
@@ -2563,6 +2567,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 8884"
+        },
         "last_message_at" : "2020-06-09T18:45:13.582199Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -2614,7 +2621,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2019-12-12T15:41:05.022206Z",
-        "name" : "Channel 8884",
         "cid" : "messaging:new_channel_8884"
       },
       "read" : [
@@ -3527,6 +3533,7 @@
           "html" : "<p>Rr<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_7487",
@@ -3580,6 +3587,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 7487"
+        },
         "last_message_at" : "2020-06-09T15:45:16.569846Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -3631,7 +3641,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-05T12:53:09.857739Z",
-        "name" : "Channel 7487",
         "cid" : "messaging:new_channel_7487"
       },
       "read" : [
@@ -4669,6 +4678,7 @@
           "html" : "<p>Hello<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_1751",
@@ -4722,6 +4732,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 1751"
+        },
         "last_message_at" : "2020-06-09T15:44:22.45894Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -4773,7 +4786,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:57:36.660819Z",
-        "name" : "Channel 1751",
         "cid" : "messaging:new_channel_1751"
       },
       "read" : [
@@ -5505,6 +5517,7 @@
           "html" : "<p>Hi there I’m sorry to<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_5000",
@@ -5558,6 +5571,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 5000"
+        },
         "last_message_at" : "2020-06-08T11:54:33.028082Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -5609,7 +5625,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:52:39.731147Z",
-        "name" : "Channel 5000",
         "cid" : "messaging:new_channel_5000"
       },
       "read" : [
@@ -5882,6 +5897,7 @@
           "html" : "<p>Hey<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_3124",
@@ -5934,6 +5950,9 @@
           }
       ],
       "channel" : {
+        "custom" : {
+          "name" : "Channel 3124"
+        },
         "last_message_at" : "2020-06-08T11:52:36.594465Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -5985,7 +6004,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:51:12.271858Z",
-        "name" : "Channel 3124",
         "cid" : "messaging:new_channel_3124"
       },
       "read" : [
@@ -6213,6 +6231,7 @@
           "html" : "<p>How are you?<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_6264",
@@ -6266,6 +6285,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 6264"
+        },
         "last_message_at" : "2020-06-08T11:51:00.102246Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -6317,7 +6339,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:50:51.389239Z",
-        "name" : "Channel 6264",
         "cid" : "messaging:new_channel_6264"
       },
       "read" : [
@@ -6558,6 +6579,7 @@
           "html" : "<p>Good?<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_7940",
@@ -6611,6 +6633,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 7940"
+        },
         "last_message_at" : "2020-06-08T11:50:42.902008Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -6662,7 +6687,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2020-06-08T11:49:28.886904Z",
-        "name" : "Channel 7940",
         "cid" : "messaging:new_channel_7940"
       },
       "read" : [
@@ -6903,6 +6927,7 @@
           "html" : "<p>Message3 @noisy-mountain-3 06F27F58-7BB5-4A84-BEC6-A4755330530A<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
@@ -8404,6 +8429,7 @@
           "html" : "<p>The only reason I’m a fan I can be free<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_1877",
@@ -8457,6 +8483,9 @@
       ],
       "watcher_count" : 2,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 1877"
+        },
         "last_message_at" : "2020-06-05T13:01:29.915281Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -8508,7 +8537,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2019-12-13T14:29:33.347005Z",
-        "name" : "Channel 1877",
         "cid" : "messaging:new_channel_1877"
       },
       "read" : [
@@ -8853,6 +8881,7 @@
           "html" : "<p>Fjfjjf<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
@@ -10301,6 +10330,7 @@
           "html" : "<p><a href=\"http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333\" rel=\"nofollow\">http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333<\/a><\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:new_channel_4371",
@@ -10354,6 +10384,9 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "name" : "Channel 4371"
+        },
         "last_message_at" : "2020-05-22T17:59:19.387787Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
@@ -10405,7 +10438,6 @@
         },
         "type" : "messaging",
         "updated_at" : "2019-12-16T15:19:47.266902Z",
-        "name" : "Channel 4371",
         "cid" : "messaging:new_channel_4371"
       },
       "read" : [
@@ -12149,6 +12181,7 @@
           "html" : "<p>hey hey hey<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "messaging:test-channel-3011",
@@ -12202,6 +12235,10 @@
       ],
       "watcher_count" : 1,
       "channel" : {
+        "custom" : {
+          "image" : "https:\/\/i.imgur.com\/1Oe1TDf.jpg",
+          "name" : "Updated - Test Channel 3011"
+        },
         "id" : "test-channel-3011",
         "created_at" : "2019-12-12T20:41:06.189202Z",
         "created_by" : {
@@ -12361,8 +12398,6 @@
           "uploads" : true,
           "name" : "messaging"
         },
-        "image" : "https:\/\/i.imgur.com\/1Oe1TDf.jpg",
-        "name" : "Updated - Test Channel 3011",
         "last_message_at" : "2020-05-22T13:00:27.858999Z"
       },
       "read" : [
@@ -12741,6 +12776,7 @@
           "html" : "<p>Message3 @Noisy mountain B7895EDB-307D-4569-885A-3152FF8BC819<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
@@ -13084,6 +13120,7 @@
           "html" : "<p>Message3 @Noisy mountain C4BA9B5E-7B5D-4520-80A3-908126574515<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
@@ -13310,6 +13347,7 @@
           "html" : "<p>Message1 E06C4953-16DA-49FD-93CC-5056F9DB0BF4<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
@@ -13536,6 +13574,7 @@
           "html" : "<p>Message1 4BE7B6D3-E89D-4F34-92B5-D77229C8FE92<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:9E38A3E7-315C-441E-87CE-D65DEE26D390",
@@ -13879,6 +13918,7 @@
           "html" : "<p>Message3 @Noisy mountain 8F49CF86-7C06-42E7-BB1F-F66C9447E750<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
@@ -14241,6 +14281,7 @@
           "html" : "<p>Message3 @Noisy mountain 9886C94C-8BD5-4559-9FA5-05242182B3AE<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
@@ -14628,6 +14669,7 @@
           "html" : "<p>Message3 @Noisy mountain 2BB6B9BF-A104-40BD-BB6D-3BB2B2F75D91<\/p>\n"
         }
       ],
+      "threads": [],
       "pinned_messages": [
           {
             "cid" : "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",

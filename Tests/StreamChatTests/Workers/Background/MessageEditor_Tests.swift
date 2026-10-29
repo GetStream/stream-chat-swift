@@ -106,6 +106,37 @@ final class MessageEditor_Tests: XCTestCase {
         XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
     }
 
+    func test_editorSyncsMessage_whenPendingSyncMessageExistsBeforeEditorIsCreated() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        editor = nil
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
+        let messagePayload: MessageRequest = try database.readSynchronously { session in
+            try XCTUnwrap(session.message(id: messageId)?.asMessageRequest())
+        }
+
+        editor = MessageEditor(messageRepository: messageRepository, database: database, apiClient: apiClient)
+
+        AssertAsync.willBeTrue(
+            apiClient.request_allRecordedCalls.contains(
+                where: {
+                    $0.endpoint == AnyEndpoint(
+                        .updateMessage(
+                            id: messageId,
+                            updateMessageRequest: UpdateMessageRequest(
+                                message: messagePayload,
+                                skipEnrichUrl: false,
+                                skipPush: false
+                            )
+                        )
+                    )
+                }
+            )
+        )
+    }
+
     func test_editorSyncsMessage_whenMessageChangesToPendingSyncAndHasAttachmentsUploadedFromServer() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique

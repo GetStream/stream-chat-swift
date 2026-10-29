@@ -6,9 +6,11 @@ import Foundation
 
 // Generated properties are slightly different from the previously hand-written ones.
 extension MessageResponse {
-    var campaignId: String? { custom["created_by_campaign_id"]?.stringValue }
     // Messages have no dedicated args field, it is stored as custom data.
-    var args: String? { custom[MessagePayloadsCodingKeys.args.rawValue]?.stringValue }
+    static let argsKey = "args"
+
+    var campaignId: String? { custom["created_by_campaign_id"]?.stringValue }
+    var args: String? { custom[Self.argsKey]?.stringValue }
 
     var translations: [TranslationLanguage: String]? {
         guard let i18n, !i18n.isEmpty else { return nil }

@@ -35,7 +35,7 @@ final class MemberList_Tests: XCTestCase {
         let initialPayload = makeMemberListPayload(count: 5, offset: 0)
         try await env.client.databaseContainer.write { session in
             session.saveMembers(
-                payload: initialPayload,
+                response: initialPayload,
                 channelId: self.channelId,
                 query: self.query
             )
@@ -52,7 +52,7 @@ final class MemberList_Tests: XCTestCase {
         let initialPayload = makeMemberListPayload(count: 10, offset: 0)
         try await env.client.mockDatabaseContainer.write { session in
             session.saveMembers(
-                payload: initialPayload,
+                response: initialPayload,
                 channelId: self.channelId,
                 query: self.query
             )
@@ -103,7 +103,7 @@ final class MemberList_Tests: XCTestCase {
         let initialPayload = makeMemberListPayload(count: 5, offset: 0)
         try await env.client.databaseContainer.write { session in
             session.saveMembers(
-                payload: initialPayload,
+                response: initialPayload,
                 channelId: self.channelId,
                 query: self.query
             )
@@ -171,7 +171,7 @@ final class MemberList_Tests: XCTestCase {
         count: Int,
         offset: Int,
         memberNameCreator: ((Int) -> String?)? = nil
-    ) -> ChannelMemberListPayload {
+    ) -> MembersResponse {
         let members = (0..<count)
             .map { $0 + offset }
             .map { index in
@@ -188,7 +188,7 @@ final class MemberList_Tests: XCTestCase {
                     )
                 )
             }
-        return ChannelMemberListPayload(members: members)
+        return MembersResponse(members: members)
     }
 
     private func makeMembersResponse(

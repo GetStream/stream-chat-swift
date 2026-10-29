@@ -5,23 +5,13 @@
 import Foundation
 
 enum EndpointPath: Codable {
-    case custom(String)
-    case connect
-    case sync
-    case guest
-
-    case channels
-    case groupedChannels
-    case createChannel(String)
-    case updateChannel(String)
-    case channelUpdate(String)
-
     case addUserGroupMembers(id: String)
     case ban
     case blockUsers
     case castPollVote(messageId: String, pollId: String)
     case createDevice
     case createDraft(type: String, id: String)
+    case createGuest
     case createPoll
     case createPollOption(pollId: String)
     case createReminder(messageId: String)
@@ -38,6 +28,7 @@ enum EndpointPath: Codable {
     case deletePollVote(messageId: String, pollId: String, voteId: String)
     case deleteReaction(id: String, type: String)
     case deleteReminder(messageId: String)
+    case deleteScheduledMessage(id: String)
     case deleteUserGroup(id: String)
     case flag
     case getApp
@@ -45,12 +36,15 @@ enum EndpointPath: Codable {
     case getDraft(type: String, id: String)
     case getMessage(id: String)
     case getOG
+    case getOrCreateChannel(type: String, id: String)
+    case getOrCreateDistinctChannel(type: String)
     case getPinnedMessages(type: String, id: String)
     case getReactions(id: String)
     case getReplies(parentId: String)
     case getThread(messageId: String)
     case getUserGroup(id: String)
     case getUserLiveLocations
+    case groupedQueryChannels
     case hideChannel(type: String, id: String)
     case listDevices
     case listUserGroups
@@ -61,11 +55,13 @@ enum EndpointPath: Codable {
     case mute
     case muteChannel
     case queryBannedUsers
+    case queryChannels
     case queryDrafts
     case queryMembers
     case queryPollVotes(pollId: String)
     case queryReactions(id: String)
     case queryReminders
+    case queryScheduledMessages
     case queryThreads
     case queryUsers
     case removeUserGroupMembers(id: String)
@@ -76,8 +72,10 @@ enum EndpointPath: Codable {
     case sendEvent(type: String, id: String)
     case sendMessage(type: String, id: String)
     case sendReaction(id: String)
+    case sendScheduledMessageNow(id: String)
     case showChannel(type: String, id: String)
     case stopWatchingChannel(type: String, id: String)
+    case sync
     case translateMessage(id: String)
     case truncateChannel(type: String, id: String)
     case unban
@@ -85,6 +83,8 @@ enum EndpointPath: Codable {
     case unmute
     case unmuteChannel
     case unreadCounts
+    case updateChannel(type: String, id: String)
+    case updateChannelPartial(type: String, id: String)
     case updateLiveLocation
     case updateMemberPartial(type: String, id: String)
     case updateMessage(id: String)
@@ -92,6 +92,7 @@ enum EndpointPath: Codable {
     case updatePollPartial(pollId: String)
     case updatePushNotificationPreferences
     case updateReminder(messageId: String)
+    case updateScheduledMessage(id: String)
     case updateThreadPartial(messageId: String)
     case updateUserGroup(id: String)
     case updateUsersPartial
@@ -99,20 +100,13 @@ enum EndpointPath: Codable {
     case uploadChannelImage(type: String, id: String)
     case uploadFile
     case uploadImage
+    /// The websocket connect path.
+    case connect
+    /// An arbitrary path, used verbatim without escaping. Intended for debugging, tests, and experimentation.
+    case custom(String)
 
     var value: String {
         switch self {
-        case let .custom(path): return path
-        case .connect: return "connect"
-        case .sync: return "sync"
-        case .guest: return "guest"
-
-        case .channels: return "channels"
-        case .groupedChannels: return "channels/grouped"
-        case let .createChannel(queryString): return "channels/\(queryString)/query"
-        case let .updateChannel(queryString): return "channels/\(queryString)/query"
-        case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
-
         case let .addUserGroupMembers(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))/members"
         case .ban:
@@ -125,6 +119,8 @@ enum EndpointPath: Codable {
             return "/api/v2/devices"
         case let .createDraft(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/draft"
+        case .createGuest:
+            return "/api/v2/guest"
         case .createPoll:
             return "/api/v2/polls"
         case let .createPollOption(pollId: pollId):
@@ -157,6 +153,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction/\(APIHelper.escapedPathItem(type))"
         case let .deleteReminder(messageId: messageId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .deleteScheduledMessage(id: id):
+            return "/api/v2/chat/scheduled_messages/\(APIHelper.escapedPathItem(id))"
         case let .deleteUserGroup(id: id):
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .flag:
@@ -171,6 +169,10 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))"
         case .getOG:
             return "/api/v2/og"
+        case let .getOrCreateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/query"
+        case let .getOrCreateDistinctChannel(type: type):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/query"
         case let .getPinnedMessages(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/pinned_messages"
         case let .getReactions(id: id):
@@ -183,6 +185,8 @@ enum EndpointPath: Codable {
             return "/api/v2/usergroups/\(APIHelper.escapedPathItem(id))"
         case .getUserLiveLocations:
             return "/api/v2/users/live_locations"
+        case .groupedQueryChannels:
+            return "/api/v2/chat/channels/grouped"
         case let .hideChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/hide"
         case .listDevices:
@@ -203,6 +207,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/moderation/mute/channel"
         case .queryBannedUsers:
             return "/api/v2/chat/query_banned_users"
+        case .queryChannels:
+            return "/api/v2/chat/channels"
         case .queryDrafts:
             return "/api/v2/chat/drafts/query"
         case .queryMembers:
@@ -213,6 +219,8 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reactions"
         case .queryReminders:
             return "/api/v2/chat/reminders/query"
+        case .queryScheduledMessages:
+            return "/api/v2/chat/scheduled_messages/query"
         case .queryThreads:
             return "/api/v2/chat/threads"
         case .queryUsers:
@@ -233,10 +241,14 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/message"
         case let .sendReaction(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/reaction"
+        case let .sendScheduledMessageNow(id: id):
+            return "/api/v2/chat/scheduled_messages/\(APIHelper.escapedPathItem(id))/send_now"
         case let .showChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/show"
         case let .stopWatchingChannel(type: type, id: id):
             return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))/stop-watching"
+        case .sync:
+            return "/api/v2/chat/sync"
         case let .translateMessage(id: id):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(id))/translate"
         case let .truncateChannel(type: type, id: id):
@@ -251,6 +263,10 @@ enum EndpointPath: Codable {
             return "/api/v2/chat/moderation/unmute/channel"
         case .unreadCounts:
             return "/api/v2/chat/unread"
+        case let .updateChannel(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
+        case let .updateChannelPartial(type: type, id: id):
+            return "/api/v2/chat/channels/\(APIHelper.escapedPathItem(type))/\(APIHelper.escapedPathItem(id))"
         case .updateLiveLocation:
             return "/api/v2/users/live_locations"
         case let .updateMemberPartial(type: type, id: id):
@@ -265,6 +281,8 @@ enum EndpointPath: Codable {
             return "/api/v2/push_preferences"
         case let .updateReminder(messageId: messageId):
             return "/api/v2/chat/messages/\(APIHelper.escapedPathItem(messageId))/reminders"
+        case let .updateScheduledMessage(id: id):
+            return "/api/v2/chat/scheduled_messages/\(APIHelper.escapedPathItem(id))"
         case let .updateThreadPartial(messageId: messageId):
             return "/api/v2/chat/threads/\(APIHelper.escapedPathItem(messageId))"
         case let .updateUserGroup(id: id):
@@ -279,6 +297,10 @@ enum EndpointPath: Codable {
             return "/api/v2/uploads/file"
         case .uploadImage:
             return "/api/v2/uploads/image"
+        case .connect:
+            return "/api/v2/connect"
+        case let .custom(path):
+            return path
         }
     }
 }
@@ -307,17 +329,8 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
         self.body = body
     }
 
-    private enum CodingKeys: String, CodingKey {
-        case path
-        case method
-        case queryItems
-        case requiresConnectionId
-        case requiresToken
-        case body
-    }
-
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         path = try container.decode(EndpointPath.self, forKey: .path)
         method = try container.decode(EndpointMethod.self, forKey: .method)
         queryItems = try container.decodeIfPresent(Data.self, forKey: .queryItems)
@@ -327,7 +340,7 @@ final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
     }
 
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: StringCodingKey.self)
         try container.encode(path, forKey: .path)
         try container.encode(method, forKey: .method)
         if let queryItems = try queryItems?.encodedAsData() {
@@ -433,6 +446,20 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: createDraftRequest
+        )
+    }
+
+    static func createGuest(
+        createGuestRequest: CreateGuestRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<CreateGuestResponse> {
+        return .init(
+            path: .createGuest,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            requiresToken: false,
+            body: createGuestRequest
         )
     }
 
@@ -657,6 +684,16 @@ extension Endpoint {
         )
     }
 
+    static func deleteScheduledMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<DeleteScheduledMessageResponse> {
+        return .init(
+            path: .deleteScheduledMessage(id: id),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func deleteUserGroup(id: String, teamId: String?, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .deleteUserGroup(id: id),
@@ -735,6 +772,35 @@ extension Endpoint {
             ]),
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func getOrCreateChannel(
+        type: String,
+        id: String,
+        channelGetOrCreateRequest: ChannelGetOrCreateRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<ChannelStateResponse> {
+        return .init(
+            path: .getOrCreateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: channelGetOrCreateRequest
+        )
+    }
+
+    static func getOrCreateDistinctChannel(
+        type: String,
+        channelGetOrCreateRequest: ChannelGetOrCreateRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<ChannelStateResponse> {
+        return .init(
+            path: .getOrCreateDistinctChannel(type: type),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: channelGetOrCreateRequest
         )
     }
 
@@ -876,6 +942,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func groupedQueryChannels(
+        groupedQueryChannelsRequest: GroupedQueryChannelsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<GroupedQueryChannelsResponse> {
+        return .init(
+            path: .groupedQueryChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: groupedQueryChannelsRequest
         )
     }
 
@@ -1022,6 +1101,19 @@ extension Endpoint {
         )
     }
 
+    static func queryChannels(
+        queryChannelsRequest: QueryChannelsRequest,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<QueryChannelsResponse> {
+        return .init(
+            path: .queryChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryChannelsRequest
+        )
+    }
+
     static func queryDrafts(
         queryDraftsRequest: QueryDraftsRequest,
         requiresConnectionId: Bool = false
@@ -1088,6 +1180,19 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: queryRemindersRequest
+        )
+    }
+
+    static func queryScheduledMessages(
+        queryScheduledMessagesRequest: QueryScheduledMessagesRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<QueryScheduledMessagesResponse> {
+        return .init(
+            path: .queryScheduledMessages,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: queryScheduledMessagesRequest
         )
     }
 
@@ -1252,6 +1357,16 @@ extension Endpoint {
         )
     }
 
+    static func sendScheduledMessageNow(id: String, requiresConnectionId: Bool = false) -> Endpoint<SendScheduledMessageNowResponse> {
+        return .init(
+            path: .sendScheduledMessageNow(id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
+        )
+    }
+
     static func showChannel(type: String, id: String, requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
         return .init(
             path: .showChannel(type: type, id: id),
@@ -1269,6 +1384,24 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func sync(
+        syncRequest: SyncRequest,
+        withInaccessibleCids: Bool?,
+        watch: Bool?,
+        requiresConnectionId: Bool = true
+    ) -> Endpoint<SyncResponse> {
+        return .init(
+            path: .sync,
+            method: .post,
+            queryItems: APIHelper.mapValuesToQueryDictionary([
+                "with_inaccessible_cids": withInaccessibleCids,
+                "watch": watch
+            ]),
+            requiresConnectionId: requiresConnectionId,
+            body: syncRequest
         )
     }
 
@@ -1357,6 +1490,36 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: nil
+        )
+    }
+
+    static func updateChannel(
+        type: String,
+        id: String,
+        updateChannelRequest: UpdateChannelRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateChannelResponse> {
+        return .init(
+            path: .updateChannel(type: type, id: id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateChannelRequest
+        )
+    }
+
+    static func updateChannelPartial(
+        type: String,
+        id: String,
+        updateChannelPartialRequest: UpdateChannelPartialRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateChannelPartialResponse> {
+        return .init(
+            path: .updateChannelPartial(type: type, id: id),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateChannelPartialRequest
         )
     }
 
@@ -1457,6 +1620,20 @@ extension Endpoint {
         )
     }
 
+    static func updateScheduledMessage(
+        id: String,
+        updateScheduledMessageRequest: UpdateScheduledMessageRequest,
+        requiresConnectionId: Bool = false
+    ) -> Endpoint<UpdateScheduledMessageResponse> {
+        return .init(
+            path: .updateScheduledMessage(id: id),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: updateScheduledMessageRequest
+        )
+    }
+
     static func updateThreadPartial(
         messageId: String,
         updateThreadPartialRequest: UpdateThreadPartialRequest,
@@ -1545,6 +1722,17 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: requiresConnectionId,
             body: multipartFormData
+        )
+    }
+
+    /// The websocket connect endpoint. The auth message is sent as the first websocket frame, not as the request body.
+    static func connect(requiresConnectionId: Bool = false) -> Endpoint<EmptyResponse> {
+        return .init(
+            path: .connect,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId,
+            body: nil
         )
     }
 }

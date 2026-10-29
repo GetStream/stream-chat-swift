@@ -487,7 +487,7 @@ private class TestEnvironment {
 }
 
 private extension ChannelPayload {
-    static func channelJSONFile() throws -> Self {
+    static func channelJSONFile() throws -> ChannelPayload {
         let url = XCTestCase.mockData(fromJSONFile: "Channel")
         return try JSONDecoder.default.decode(ChannelPayload.self, from: url)
     }

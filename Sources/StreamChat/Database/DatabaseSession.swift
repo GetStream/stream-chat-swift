@@ -80,6 +80,8 @@ protocol CurrentUserDatabaseSession {
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
 
+    func updateFilteredGroupUnreadChannelCounts(for queries: [ChannelListQueryDTO])
+
     /// Adds the provided muted users to `CurrentUserDTO.mutedUsers`.
     /// If there's no current user set, an error will be thrown.
     @discardableResult
@@ -164,7 +166,7 @@ protocol MessageDatabaseSession {
     /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
     /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
-    func saveMessages(messagesPayload: MessageListPayload, syncOwnReactions: Bool) -> [MessageDTO]
+    func saveMessages(_ messages: [MessageResponse], syncOwnReactions: Bool) -> [MessageDTO]
 
     /// Saves a message into the local DB.
     /// - Parameters:
@@ -383,6 +385,12 @@ protocol ChannelDatabaseSession {
     /// - Returns: The array of channel list queries.
     func loadAllChannelListQueries() -> [ChannelListQueryDTO]
 
+    func loadFilteredGroupChannelListQueries() -> [ChannelListQueryDTO]
+
+    func unlinkGroupedChannels(in groupKey: String) throws
+
+    func canLinkChannel(_ channel: ChannelDTO, toGroup groupKey: String) throws -> Bool
+    
     @discardableResult
     func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO
 
@@ -462,14 +470,6 @@ protocol MemberDatabaseSession {
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO
-
-    /// Creates new `MemberDTO` objects in the database with the given `payload` in the channel with `channelId`.
-    @discardableResult
-    func saveMembers(
-        payload: ChannelMemberListPayload,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?
-    ) -> [MemberDTO]
 
     /// Creates new `MemberDTO` objects in the database with the given `response` in the channel with `channelId`.
     @discardableResult
@@ -630,6 +630,44 @@ protocol ReminderDatabaseSession {
     func deleteReminder(messageId: MessageId)
 }
 
+protocol ScheduledMessageDatabaseSession {
+    /// Creates a scheduled message locally, which is sent to the server once its attachments are uploaded.
+    @discardableResult
+    func createNewScheduledMessage(
+        id: String,
+        cid: ChannelId,
+        content: ScheduledMessageContent,
+        scheduledAt: Date
+    ) throws -> ScheduledMessageDTO
+
+    /// Changes a scheduled message locally, which is synced with the server once its attachments are uploaded.
+    @discardableResult
+    func updateScheduledMessage(
+        id: String,
+        content: ScheduledMessageContent?,
+        scheduledAt: Date?
+    ) throws -> ScheduledMessageDTO
+
+    /// Creates or updates a scheduled message with the provided payload.
+    ///
+    /// The content is kept when it has local changes that are not on the server yet.
+    @discardableResult
+    func saveScheduledMessage(payload: ScheduledMessageResponse) throws -> ScheduledMessageDTO
+
+    /// Returns the scheduled message with the specified id, if it exists.
+    func scheduledMessage(id: String) -> ScheduledMessageDTO?
+
+    /// Deletes the scheduled message with the specified id.
+    func deleteScheduledMessage(id: String)
+
+    /// Deletes the scheduled messages missing from the whole list of the server, except the ones that are not on the server yet.
+    func deleteScheduledMessages(notIn ids: Set<String>, cid: ChannelId?)
+
+    /// Changes the state to `.pendingSync` for all scheduled messages in `.syncing` state, at the beginning of the session.
+    /// They get stuck there when the app is killed while their changes are sent to the server.
+    func rescueScheduledMessagesStuckInSyncing()
+}
+
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
@@ -773,6 +811,7 @@ protocol DatabaseSession: UserDatabaseSession,
     ThreadReadDatabaseSession,
     PollDatabaseSession,
     ReminderDatabaseSession,
+    ScheduledMessageDatabaseSession,
     UserGroupDatabaseSession,
     LocationDatabaseSession,
     PollDatabaseSession {}
@@ -781,6 +820,16 @@ extension DatabaseSession {
     @discardableResult
     func saveChannel(payload: ChannelPayload) throws -> ChannelDTO {
         try saveChannel(payload: payload, query: nil, cache: nil)
+    }
+
+    // Events such as `member.updated` can carry a `channel` snapshotted before a concurrent
+    // `channel.updated`, so a snapshot older than the stored channel is skipped to not rewind it.
+    @discardableResult
+    func saveChannelSnapshot(payload: ChannelDetailPayload) throws -> ChannelDTO {
+        if let dto = channel(cid: payload.cid), dto.updatedAt.bridgeDate.isLaterAtServerPrecision(than: payload.updatedAt) {
+            return dto
+        }
+        return try saveChannel(payload: payload, query: nil, cache: nil)
     }
 
     @discardableResult
@@ -803,7 +852,8 @@ extension DatabaseSession {
 
     // MARK: - Event
 
-    func saveEvent(payload: EventPayload) throws {
+    func saveEvent(event: WSEvent) throws {
+        let payload = event.commonData
         // Save a user data.
         if let userPayload = payload.user {
             try saveUser(payload: userPayload)
@@ -811,7 +861,11 @@ extension DatabaseSession {
 
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
-            try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+            if case .typeMemberUpdatedEvent = event {
+                try saveChannelSnapshot(payload: channelDetailPayload)
+            } else {
+                try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+            }
         }
 
         if let currentUserPayload = payload.currentUser {
@@ -822,37 +876,39 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
 
-        if let unreadChannelCountsByGroup = payload.unreadChannelCountsByGroup {
+        if let unreadChannelCountsByGroup = payload.groupedUnreadChannels {
             try mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         }
 
-        if let threadPayload = payload.thread?.value {
+        if let threadPayload = payload.thread {
             try saveThread(partialPayload: threadPayload)
         }
 
-        try saveMessageIfNeeded(from: payload)
+        try saveMessageIfNeeded(from: event)
 
         // handle reaction events for messages that already exist in the database and for this user
         // this is needed because WS events do not contain message.own_reactions
         if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
             do {
-                switch try? payload.event() {
-                case let event as ReactionNewEventDTO:
-                    let reaction = try saveReaction(payload: event.reaction, query: nil, cache: nil)
+                switch event {
+                case let .typeReactionNewEvent(event):
+                    guard let reactionPayload = event.reaction else { break }
+                    let reaction = try saveReaction(payload: reactionPayload, query: nil, cache: nil)
                     if !reaction.message.ownReactions.contains(reaction.id) {
                         reaction.message.ownReactions.append(reaction.id)
                     }
-                case let event as ReactionUpdatedEventDTO:
-                    try saveReaction(payload: event.reaction, query: nil, cache: nil)
-                case let event as ReactionDeletedEventDTO:
-                    if let dto = reaction(
-                        messageId: event.message.id,
-                        userId: event.user.id,
-                        type: event.reaction.type
-                    ) {
-                        dto.message.ownReactions.removeAll(where: { $0 == dto.id })
-                        delete(reaction: dto)
-                    }
+                case let .typeReactionUpdatedEvent(event):
+                    guard let reactionPayload = event.reaction else { break }
+                    try saveReaction(payload: reactionPayload, query: nil, cache: nil)
+                case let .typeReactionDeletedEvent(event):
+                    guard
+                        let user = event.user,
+                        let message = event.message,
+                        let reactionPayload = event.reaction,
+                        let dto = reaction(messageId: message.id, userId: user.id, type: reactionPayload.type)
+                    else { break }
+                    dto.message.ownReactions.removeAll(where: { $0 == dto.id })
+                    delete(reaction: dto)
                 default:
                     break
                 }
@@ -861,16 +917,19 @@ extension DatabaseSession {
             }
         }
         
-        if let vote = payload.vote {
-            if payload.eventType == .pollVoteRemoved {
-                if let dto = try? pollVote(id: vote.id, pollId: vote.pollId) {
-                    delete(pollVote: dto)
-                }
-            } else if payload.eventType == .pollVoteChanged {
-                try handlePollVoteChangedEvent(vote: vote)
-            } else {
-                try handlePollVoteEvent(vote: vote, payload: payload)
+        switch event {
+        case let .typeNotificationChannelPartialUpdatedEvent(event):
+            handleNotificationChannelPartialUpdatedEvent(channel: event.channel)
+        case let .typePollVoteCastedEvent(pollEvent):
+            try handlePollVoteCastedEvent(vote: pollEvent.pollVote)
+        case let .typePollVoteChangedEvent(pollEvent):
+            try handlePollVoteChangedEvent(vote: pollEvent.pollVote)
+        case let .typePollVoteRemovedEvent(pollEvent):
+            if let dto = try? pollVote(id: pollEvent.pollVote.id, pollId: pollEvent.pollVote.pollId) {
+                delete(pollVote: dto)
             }
+        default:
+            break
         }
         
         if let poll = payload.poll {
@@ -878,7 +937,8 @@ extension DatabaseSession {
         }
     }
 
-    func saveMessageIfNeeded(from payload: EventPayload) throws {
+    func saveMessageIfNeeded(from event: WSEvent) throws {
+        let payload = event.commonData
         guard let messagePayload = payload.message else {
             // Event does not contain message
             return
@@ -890,7 +950,7 @@ extension DatabaseSession {
         }
 
         let messageExistsLocally = message(id: messagePayload.id) != nil
-        let messageMustBeCreated = shouldCreateMessageInDatabase(eventPayload: payload)
+        let messageMustBeCreated = shouldCreateMessageInDatabase(event: event, message: messagePayload)
 
         guard messageExistsLocally || messageMustBeCreated else {
             // Message does not exits locally and should not be saved
@@ -905,7 +965,7 @@ extension DatabaseSession {
             cache: nil
         )
 
-        if payload.eventType == .messageDeleted && payload.hardDelete {
+        if case let .typeMessageDeletedEvent(deleted) = event, deleted.hardDelete == true {
             // We should in fact delete it from the DB, but right now this produces a crash
             // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
             savedMessage.isHardDeleted = true
@@ -913,19 +973,25 @@ extension DatabaseSession {
         }
 
         // Update the message if deleted only for the current user.
-        if payload.eventType == .messageDeleted && payload.deletedForMe == true {
+        if case let .typeMessageDeletedEvent(deleted) = event, deleted.deletedForMe == true {
             savedMessage.deletedForMe = true
         }
 
         // When a message is updated, make sure to update
         // the messages quoting the edited message by triggering a DB Update.
-        if payload.eventType == .messageUpdated {
+        if case .typeMessageUpdatedEvent = event {
             savedMessage.quotedBy.forEach { message in
                 message.updatedAt = savedMessage.updatedAt
             }
         }
 
-        let isNewMessage = payload.eventType == .messageNew || payload.eventType == .notificationMessageNew
+        let isNewMessage: Bool
+        switch event {
+        case .typeMessageNewEvent, .typeNotificationNewMessageEvent:
+            isNewMessage = true
+        default:
+            isNewMessage = false
+        }
         let isThreadReply = savedMessage.parentMessageId != nil
         if isNewMessage && isThreadReply {
             savedMessage.showInsideThread = true
@@ -940,12 +1006,16 @@ extension DatabaseSession {
         }
     }
 
+    func handleNotificationChannelPartialUpdatedEvent(channel payload: ChannelPartialUpdateResponse) {
+        channel(cid: payload.cid)?.savePartialChannel(payload: payload)
+    }
+
     func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
         var voteUpdated = false
         let userId = vote.userId ?? "anon"
-        if let optionId = vote.optionId, !optionId.isEmpty {
+        if !vote.optionId.isEmpty {
             let id = PollVoteDTO.localVoteId(
-                optionId: optionId,
+                optionId: vote.optionId,
                 pollId: vote.pollId,
                 userId: vote.userId
             )
@@ -974,27 +1044,25 @@ extension DatabaseSession {
         }
     }
     
-    func handlePollVoteEvent(vote: PollVotePayload, payload: EventPayload) throws {
+    func handlePollVoteCastedEvent(vote: PollVotePayload) throws {
         var voteUpdated = false
-        if payload.eventType == .pollVoteCasted {
-            if vote.isAnswer == true, let userId = vote.userId {
-                let votes = try pollVotes(for: userId, pollId: vote.pollId)
-                for existing in votes {
-                    if existing.optionId == nil || existing.optionId?.isEmpty == true {
-                        delete(pollVote: existing)
-                    }
+        if vote.isAnswer == true, let userId = vote.userId {
+            let votes = try pollVotes(for: userId, pollId: vote.pollId)
+            for existing in votes {
+                if existing.optionId == nil || existing.optionId?.isEmpty == true {
+                    delete(pollVote: existing)
                 }
-            } else {
-                if let optionId = vote.optionId, !optionId.isEmpty {
-                    let id = PollVoteDTO.localVoteId(
-                        optionId: optionId,
-                        pollId: vote.pollId,
-                        userId: vote.userId
-                    )
-                    if let dto = try pollVote(id: id, pollId: vote.pollId) {
-                        dto.id = vote.id
-                        voteUpdated = true
-                    }
+            }
+        } else {
+            if !vote.optionId.isEmpty {
+                let id = PollVoteDTO.localVoteId(
+                    optionId: vote.optionId,
+                    pollId: vote.pollId,
+                    userId: vote.userId
+                )
+                if let dto = try pollVote(id: id, pollId: vote.pollId) {
+                    dto.id = vote.id
+                    voteUpdated = true
                 }
             }
         }
@@ -1006,12 +1074,11 @@ extension DatabaseSession {
 }
 
 private extension DatabaseSession {
-    func shouldCreateMessageInDatabase(eventPayload: EventPayload) -> Bool {
-        switch eventPayload.eventType {
-        case .channelUpdated, .messageNew, .notificationMessageNew, .channelTruncated:
+    func shouldCreateMessageInDatabase(event: WSEvent, message: MessageResponse) -> Bool {
+        switch event {
+        case .typeChannelUpdatedEvent, .typeMessageNewEvent, .typeNotificationNewMessageEvent, .typeChannelTruncatedEvent:
             return true
-        case .messageUpdated:
-            guard let message = eventPayload.message else { return false }
+        case .typeMessageUpdatedEvent:
             guard let currentUserId = currentUser?.user.id else { return false }
             return message.restrictedVisibility.contains(currentUserId)
         default:

@@ -5,7 +5,7 @@
 import Foundation
 
 public class ParticipantRobot {
-    private let mockServer: StreamMockServer
+    let mockServer: StreamMockServer
 
     public let name: String = "Count Dooku"
     public let id: String = "count_dooku"
@@ -41,6 +41,13 @@ public class ParticipantRobot {
     @discardableResult
     public func sleep(_ timeOutSeconds: TimeInterval) -> ParticipantRobot {
         Thread.sleep(forTimeInterval: timeOutSeconds)
+        return self
+    }
+
+    /// Marks the user's messages in the current channel as delivered, but not read, by the participant.
+    @discardableResult
+    public func markMessagesDelivered() -> ParticipantRobot {
+        _ = mockServer.postRequest(endpoint: "participant/delivered")
         return self
     }
 

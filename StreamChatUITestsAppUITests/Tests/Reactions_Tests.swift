@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatCommonUI
 import XCTest
 
 final class Reactions_Tests: StreamTestCase {
@@ -35,149 +36,33 @@ final class Reactions_Tests: StreamTestCase {
         WHEN("user sends the message: '\(message)'") {
             userRobot.sendMessage(message)
         }
-        AND("user adds the reaction") {
-            userRobot
-                .addReaction(type: .wow)
-                .waitForNewReaction()
-        }
-        AND("user removes the reaction") {
-            userRobot.deleteReaction(type: .wow)
-        }
-        THEN("the reaction is removed") {
-            userRobot.assertReaction(isPresent: false)
-        }
-    }
-
-    func test_reactionIsAdded_whenReactingToParticipantsMessage() throws {
-        linkToScenario(withId: 42)
-
-        let message = "test message"
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("participant sends the message: '\(message)'") {
-            participantRobot.sendMessage(message)
-        }
-        AND("user adds the reaction") {
-            userRobot
-                .addReaction(type: .love)
-                .waitForNewReaction()
-        }
-        THEN("the reaction is added") {
-            userRobot.assertReaction(isPresent: true)
-        }
-    }
-
-    func test_removesReaction_whenUnReactingToParticipantsMessage() throws {
-        linkToScenario(withId: 46)
-
-        let message = "test message"
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("participant sends the message: '\(message)'") {
-            participantRobot.sendMessage(message)
-        }
-        AND("user adds the reaction") {
-            userRobot
-                .addReaction(type: .lol)
-                .waitForNewReaction()
-        }
-        AND("user removes the reaction") {
-            userRobot.deleteReaction(type: .lol)
-        }
-        THEN("the reaction is removed") {
-            userRobot.assertReaction(isPresent: false)
-        }
-    }
-
-    func test_reactionIsAddedByParticipant_whenReactingToUsersMessage() throws {
-        linkToScenario(withId: 43)
-
-        let message = "test message"
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("user sends the message: '\(message)'") {
-            userRobot.sendMessage(message)
-        }
         AND("participant adds the reaction") {
-            participantRobot
-                .readMessage()
-                .addReaction(type: .like)
-        }
-        THEN("the reaction is added") {
-            userRobot.assertReaction(isPresent: true)
-        }
-    }
-
-    func test_reactionIsRemovedByParticipant_whenUnReactingToUsersMessage() throws {
-        linkToScenario(withId: 47)
-
-        let message = "test message"
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("user sends the message: '\(message)'") {
-            userRobot.sendMessage(message)
-        }
-        AND("participant adds the reaction") {
-            participantRobot
-                .readMessage()
-                .addReaction(type: .lol)
+            participantRobot.addReaction(type: .love)
             userRobot.waitForNewReaction()
         }
-        AND("participant removes the reaction") {
-            participantRobot.deleteReaction(type: .lol)
+        AND("user adds the reaction") {
+            userRobot.addReaction(type: .wow)
         }
-        THEN("the reaction is removed") {
-            userRobot.assertReaction(isPresent: false)
+        AND("user opens the reaction authors") {
+            userRobot.tapOnMessageReactions()
         }
-    }
-
-    func test_reactionIsAddedByParticipant_whenReactingToOwnMessage() throws {
-        linkToScenario(withId: 44)
-
-        let message = "test message"
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
+        THEN("the reaction authors show the user and the participant") {
+            userRobot
+                .assertReactionAuthor(L10n.you)
+                .assertReactionAuthor(participantRobot.name)
         }
-        WHEN("participant sends the message: '\(message)'") {
-            participantRobot.sendMessage(message)
+        WHEN("user removes the reaction") {
+            userRobot
+                .closeReactionAuthors()
+                .deleteReaction(type: .wow)
         }
-        AND("participant adds the reaction") {
-            participantRobot.addReaction(type: .wow)
+        AND("user opens the reaction authors") {
+            userRobot.tapOnMessageReactions()
         }
-        THEN("the reaction is added") {
-            userRobot.assertReaction(isPresent: true)
-        }
-    }
-
-    func test_reactionIsRemovedByParticipant_whenUnReactingToOwnMessage() throws {
-        linkToScenario(withId: 48)
-
-        let message = "test message"
-
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("participant sends the message: '\(message)'") {
-            participantRobot.sendMessage(message)
-        }
-        AND("participant adds the reaction") {
-            participantRobot.addReaction(type: .sad)
-            userRobot.waitForNewReaction()
-        }
-        AND("participant removes the reaction") {
-            participantRobot.deleteReaction(type: .sad)
-        }
-        THEN("the reaction is removed") {
-            userRobot.assertReaction(isPresent: false)
+        THEN("the reaction authors show only the participant") {
+            userRobot
+                .assertReactionAuthor(participantRobot.name)
+                .assertReactionAuthor(L10n.you, isPresent: false)
         }
     }
 

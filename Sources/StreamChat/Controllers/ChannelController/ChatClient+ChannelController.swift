@@ -87,8 +87,7 @@ public extension ChatClient {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        let payload = ChannelEditDetailPayload(
-            cid: cid,
+        let channelInput = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -99,7 +98,64 @@ public extension ChatClient {
         )
 
         return .init(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(type: cid.type, id: cid.id, channelInput: channelInput),
+            channelListQuery: channelListQuery,
+            client: self,
+            isChannelAlreadyCreated: false,
+            messageOrdering: messageOrdering
+        )
+    }
+
+    /// Creates a new `ChatChannelController` for creating a channel with the provided id and members with additional data.
+    ///
+    /// Use this overload to set member extra data when the channel is created, for example to assign the `channel_role` of a member.
+    ///
+    /// It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
+    /// it can be faster and more convenient to use `channelController(for cid: ChannelId)` to create a controller for it.
+    ///
+    /// - Parameters:
+    ///   - cid: The `ChannelId` for the new channel.
+    ///   - name: The new channel name.
+    ///   - imageURL: The new channel avatar URL.
+    ///   - team: Team for new channel.
+    ///   - members: The new channel members, with their optional extra data.
+    ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - invites: IDs for the new channel invitees.
+    ///   - filterTags: A list of tags to add to the channel.
+    ///   - extraData: Extra data for the new channel.
+    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
+    /// - Throws: `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
+    /// - Returns: A new instance of `ChatChannelController`.
+    func channelController(
+        createChannelWithId cid: ChannelId,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        members: [MemberInfo],
+        isCurrentUserMember: Bool = true,
+        messageOrdering: MessageOrdering = .topToBottom,
+        invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
+        extraData: [String: RawJSON] = [:],
+        channelListQuery: ChannelListQuery? = nil
+    ) throws -> ChatChannelController {
+        guard let currentUserId = currentUserId else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        let channelInput = ChannelInput(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members + (isCurrentUserMember ? [MemberInfo(userId: currentUserId)] : []),
+            invites: invites,
+            filterTags: filterTags,
+            extraData: extraData
+        )
+
+        return .init(
+            channelQuery: .init(type: cid.type, id: cid.id, channelInput: channelInput),
             channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,
@@ -145,8 +201,7 @@ public extension ChatClient {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
 
-        let payload = ChannelEditDetailPayload(
-            type: type,
+        let channelInput = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -156,7 +211,7 @@ public extension ChatClient {
             extraData: extraData
         )
         return .init(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(type: type, id: nil, channelInput: channelInput),
             channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,

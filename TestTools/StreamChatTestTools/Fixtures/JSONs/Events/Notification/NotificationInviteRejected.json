@@ -7,6 +7,9 @@
         "role" : "member"
     },
     "channel" : {
+        "custom" : {
+            "name" : "Channel 6293"
+        },
         "created_by" : {
             "id" : "steep-moon-9",
             "banned" : false,
@@ -109,7 +112,6 @@
         "member_count" : 2,
         "type" : "messaging",
         "updated_at" : "2020-07-21T15:51:36.162939Z",
-        "name" : "Channel 6293",
         "cid" : "messaging:new_channel_6293"
     },
     "channel_type" : "messaging",

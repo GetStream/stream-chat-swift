@@ -18,26 +18,17 @@ final class MemberInfoPayload: Sendable, Codable, JSONEncodable {
         self.notificationsMuted = notificationsMuted
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelRole = "channel_role"
-        case custom
-        case notificationsMuted = "notifications_muted"
-    }
-
-    class var customExcludedKeys: Set<String> {
-        Set(CodingKeys.allCases.map(\.rawValue))
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encode(channelRole, forKey: .channelRole)
+        try container.encodeIfPresent(custom, forKey: .custom)
+        try container.encode(notificationsMuted, forKey: .notificationsMuted)
     }
 
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
         channelRole = try container.decode(String.self, forKey: .channelRole)
-        if let decoded = try container.decodeIfPresent([String: RawJSON]?.self, forKey: .custom) {
-            custom = decoded
-        } else {
-            var flattened = try [String: RawJSON](from: decoder)
-            flattened.removeValues(forKeys: Array(Self.customExcludedKeys))
-            custom = flattened
-        }
-        notificationsMuted = try container.decode(Bool.self, forKey: .notificationsMuted)
+        custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom)
+        notificationsMuted = try container.decodeIfPresent(Bool.self, forKey: .notificationsMuted) ?? false
     }
 }

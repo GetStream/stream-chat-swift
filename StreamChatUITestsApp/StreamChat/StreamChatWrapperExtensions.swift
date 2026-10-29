@@ -53,7 +53,7 @@ extension StreamChatWrapper {
 
     func makeChannelListViewController() -> ChannelList {
         // UI
-        let query = ChannelListQuery(filter: .containMembers(userIds: [UserCredentials.default.id]))
+        let query = ChannelListQuery(filter: .containMembers(userIds: [loggedInUserCredentials.id]))
         let controller = client!.channelListController(query: query)
         let channelList = ChannelList.make(with: controller)
         return channelList

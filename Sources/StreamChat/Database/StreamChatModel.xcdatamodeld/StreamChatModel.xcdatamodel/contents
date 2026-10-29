@@ -29,6 +29,10 @@
         <attribute name="reactionsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="readEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="repliesEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="scheduledMessagesMaxLeadTime" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
+        <attribute name="scheduledMessagesMaxPerChannel" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="scheduledMessagesMaxPerUser" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <attribute name="scheduledMessagesMinLeadTime" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
         <attribute name="searchEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="sharedLocationsEnabled" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="skipLastMsgAtUpdateForSystemMsg" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -46,8 +50,10 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="currentUserUnreadMessagesCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="defaultSortingAt" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
+        <attribute name="queryTimestamp" attributeType="Date" defaultDateTimeInterval="0" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
+        <attribute name="group" optional="YES" attributeType="String"/>
         <attribute name="hasUnreadSorting" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
@@ -64,6 +70,7 @@
         <attribute name="oldestMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="ownCapabilities" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="team" optional="YES" attributeType="String"/>
+        <attribute name="touchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="truncatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="typeRawValue" attributeType="String" defaultValueString=""/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -85,12 +92,16 @@
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="channel" inverseEntity="ChannelReadDTO"/>
         <relationship name="reminders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReminderDTO" inverseName="channel" inverseEntity="MessageReminderDTO"/>
+        <relationship name="scheduledMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScheduledMessageDTO" inverseName="channel" inverseEntity="ScheduledMessageDTO"/>
         <relationship name="threads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadDTO" inverseName="channel" inverseEntity="ThreadDTO"/>
         <relationship name="truncatedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="truncatedChannels" inverseEntity="UserDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
         <relationship name="filterTags" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ChannelFilterTagDTO" inverseName="channel" inverseEntity="ChannelFilterTagDTO"/>
         <fetchIndex name="defaultSortingIndex">
             <fetchIndexElement property="defaultSortingAt" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="queryTimestampIndex">
+            <fetchIndexElement property="queryTimestamp" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="cid">
             <fetchIndexElement property="cid" type="Binary" order="ascending"/>
@@ -120,6 +131,9 @@
     <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="groupFilterJSONData" optional="YES" attributeType="Binary"/>
+        <attribute name="groupNotLoadedUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="groupSortJSONData" optional="YES" attributeType="Binary"/>
         <attribute name="next" optional="YES" attributeType="String"/>
         <attribute name="presence" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="sortJSONData" optional="YES" attributeType="Binary"/>
@@ -320,6 +334,7 @@
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="readMessagesFromCurrentUser" inverseEntity="ChannelReadDTO"/>
         <relationship name="reminder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageReminderDTO" inverseName="message" inverseEntity="MessageReminderDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
+        <relationship name="scheduledMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ScheduledMessageDTO" inverseName="message" inverseEntity="ScheduledMessageDTO"/>
         <relationship name="searches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageSearchQueryDTO" inverseName="messages" inverseEntity="MessageSearchQueryDTO"/>
         <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="UserDTO" inverseName="participatedThreads" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="messages" inverseEntity="UserDTO"/>
@@ -537,6 +552,34 @@
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="filterHash"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ScheduledMessageDTO" representedClassName="ScheduledMessageDTO" syncable="YES">
+        <attribute name="channelImageURL" optional="YES" attributeType="URI"/>
+        <attribute name="channelName" optional="YES" attributeType="String"/>
+        <attribute name="cid" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="failureReason" optional="YES" attributeType="String"/>
+        <attribute name="hasPendingScheduledAt" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="isPending" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="isPendingSendNow" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isSyncErrorLocal" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="syncErrorMessage" optional="YES" attributeType="String"/>
+        <attribute name="syncErrorReason" optional="YES" attributeType="String"/>
+        <attribute name="quotedMessageId" optional="YES" attributeType="String"/>
+        <attribute name="scheduledAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="status" attributeType="String"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="scheduledMessages" inverseEntity="ChannelDTO"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="scheduledMessage" inverseEntity="MessageDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

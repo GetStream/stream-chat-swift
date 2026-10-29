@@ -12,11 +12,34 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
-    @Atomic var updateChannel_payload: ChannelEditDetailPayload?
+    typealias ChannelUpdateArguments = (
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON]
+    )
+
+    typealias FullChannelUpdateArguments = (
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
+        extraData: [String: RawJSON]
+    )
+
+    @Atomic var updateChannel_arguments: FullChannelUpdateArguments?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
     @Atomic var updateChannel_completion_result: Result<Void, Error>?
 
-    @Atomic var partialChannelUpdate_updates: ChannelEditDetailPayload?
+    @Atomic var partialChannelUpdate_arguments: ChannelUpdateArguments?
     @Atomic var partialChannelUpdate_unsetProperties: [String]?
     @Atomic var partialChannelUpdate_completion: ((Error?) -> Void)?
     @Atomic var partialChannelUpdate_completion_result: Result<Void, Error>?
@@ -51,7 +74,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var showChannel_completion: ((Error?) -> Void)?
     @Atomic var showChannel_completion_result: Result<Void, Error>?
     
-    @Atomic var addMembers_currentUserId: UserId?
     @Atomic var addMembers_cid: ChannelId?
     @Atomic var addMembers_userIds: Set<UserId>?
     @Atomic var addMembers_memberInfos: [MemberInfo]?
@@ -76,7 +98,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var rejectInvite_completion: ((Error?) -> Void)?
     @Atomic var rejectInvite_completion_result: Result<Void, Error>?
     
-    @Atomic var removeMembers_currentUserId: UserId?
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
     @Atomic var removeMembers_message: String?
@@ -181,11 +202,11 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_onChannelCreated = nil
         update_completion = nil
 
-        updateChannel_payload = nil
+        updateChannel_arguments = nil
         updateChannel_completion = nil
         updateChannel_completion_result = nil
 
-        partialChannelUpdate_updates = nil
+        partialChannelUpdate_arguments = nil
         partialChannelUpdate_unsetProperties = nil
         partialChannelUpdate_completion = nil
         partialChannelUpdate_completion_result = nil
@@ -220,7 +241,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         showChannel_completion = nil
         showChannel_completion_result = nil
 
-        addMembers_currentUserId = nil
         addMembers_cid = nil
         addMembers_message = nil
         addMembers_systemMessage = nil
@@ -244,7 +264,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         rejectInvite_completion = nil
         rejectInvite_completion_result = nil
 
-        removeMembers_currentUserId = nil
         removeMembers_cid = nil
         removeMembers_message = nil
         removeMembers_systemMessage = nil
@@ -357,14 +376,36 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_callCount += 1
     }
 
-    override func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
-        updateChannel_payload = channelPayload
+    override func updateChannel(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        autoTranslationLanguages: Set<TranslationLanguage>?,
+        extraData: [String: RawJSON],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        updateChannel_arguments = (cid, name, imageURL, team, members, invites, filterTags, autoTranslationLanguages, extraData)
         updateChannel_completion = completion
         updateChannel_completion_result?.invoke(with: completion)
     }
 
-    override func partialChannelUpdate(updates: ChannelEditDetailPayload, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
-        partialChannelUpdate_updates = updates
+    override func partialChannelUpdate(
+        cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        filterTags: Set<String>,
+        extraData: [String: RawJSON],
+        unsetProperties: [String],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        partialChannelUpdate_arguments = (cid, name, imageURL, team, members, invites, filterTags, extraData)
         partialChannelUpdate_unsetProperties = unsetProperties
         partialChannelUpdate_completion = completion
         partialChannelUpdate_completion_result?.invoke(with: completion)
@@ -465,7 +506,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     override func addMembers(
-        currentUserId: UserId?,
         cid: ChannelId,
         members: [MemberInfo],
         systemMessage: SystemMessage?,
@@ -473,7 +513,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         hideHistoryBefore: Date? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        addMembers_currentUserId = currentUserId
         addMembers_cid = cid
         addMembers_userIds = Set(members.map(\.userId))
         addMembers_memberInfos = members
@@ -486,7 +525,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     func addMembers(
-        currentUserId: UserId?,
         cid: ChannelId,
         userIds: Set<UserId>,
         systemMessage: SystemMessage?,
@@ -494,7 +532,6 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         completion: ((Error?) -> Void)? = nil
     ) {
         addMembers(
-            currentUserId: currentUserId,
             cid: cid,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
             systemMessage: systemMessage,
@@ -535,13 +572,11 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     override func removeMembers(
-        currentUserId: UserId?,
         cid: ChannelId,
         userIds: Set<UserId>,
         systemMessage: SystemMessage?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        removeMembers_currentUserId = currentUserId
         removeMembers_cid = cid
         removeMembers_userIds = userIds
         removeMembers_message = systemMessage?.text

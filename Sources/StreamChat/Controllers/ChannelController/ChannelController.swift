@@ -248,24 +248,32 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     // MARK: - Actions
 
-    /// Updated channel with new data.
+    /// Updates the channel with a full update, which replaces the channel data.
+    ///
+    /// - Warning: The name, image and extra data are replaced with the passed values, and values that are not passed are **removed**.
+    /// To change only specific fields and keep the rest, use ``partialChannelUpdate(name:imageURL:team:members:invites:filterTags:extraData:unsetProperties:completion:)``.
     ///
     /// - Parameters:
-    ///   - team: New team.
+    ///   - name: The name of the channel. Passing `nil` removes the current name.
+    ///   - imageURL: The channel avatar URL. Passing `nil` removes the current image.
+    ///   - team: Changing the team is not supported client-side and fails with an API error. Defaults to `nil`, which keeps the current team.
     ///   - members: New members.
     ///   - invites: New invites.
     ///   - filterTags: A list of tags to add to the channel.
-    ///   - extraData: New `ExtraData`.
+    ///   - autoTranslationLanguages: The languages for automatically translating new messages. An empty set removes them.
+    ///     Takes effect when automatic translation is enabled. Defaults to `nil`, which keeps the current languages.
+    ///   - extraData: The extra data of the channel. Keys that are not passed are removed.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
     public func updateChannel(
         name: String?,
         imageURL: URL?,
-        team: String?,
+        team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         filterTags: Set<String> = [],
+        autoTranslationLanguages: Set<TranslationLanguage>? = nil,
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
@@ -275,7 +283,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelEditDetailPayload = .init(
+        updater.updateChannel(
             cid: cid,
             name: name,
             imageURL: imageURL,
@@ -283,25 +291,28 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             members: members,
             invites: invites,
             filterTags: filterTags,
+            autoTranslationLanguages: autoTranslationLanguages,
             extraData: extraData
-        )
-
-        updater.updateChannel(channelPayload: payload) { error in
+        ) { error in
             self.callback {
                 completion?(error)
             }
         }
     }
 
-    /// Updates  channel information with provided data, and removes unneeded properties.
+    /// Updates only the passed channel fields and keeps the rest of the channel data.
+    ///
+    /// To replace all of the channel data instead, use ``updateChannel(name:imageURL:team:members:invites:filterTags:autoTranslationLanguages:extraData:completion:)``.
     ///
     /// - Parameters:
-    ///   - team: New team.
+    ///   - name: The name of the channel. Passing `nil` keeps the current name.
+    ///   - imageURL: The channel avatar URL. Passing `nil` keeps the current image.
+    ///   - team: Setting the team is not supported client-side and fails with an API error.
     ///   - members: New members.
     ///   - invites: New invites.
-    ///   - filterTags: A list of tags to add to the channel.
-    ///   - extraData: New `ExtraData`.
-    ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
+    ///   - filterTags: Replaces the channel's filter tags when not empty.
+    ///   - extraData: Extra data keys to set. Other extra data keys are kept.
+    ///   - unsetProperties: Custom fields to remove from the channel, such as extra data keys, `name` or `image`.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
@@ -322,7 +333,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelEditDetailPayload = .init(
+        updater.partialChannelUpdate(
             cid: cid,
             name: name,
             imageURL: imageURL,
@@ -330,10 +341,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             members: members,
             invites: invites,
             filterTags: filterTags,
-            extraData: extraData
-        )
-
-        updater.partialChannelUpdate(updates: payload, unsetProperties: unsetProperties) { error in
+            extraData: extraData,
+            unsetProperties: unsetProperties
+        ) { error in
             self.callback {
                 completion?(error)
             }
@@ -1227,7 +1237,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         updater.addMembers(
-            currentUserId: client.currentUserId,
             cid: cid,
             members: members,
             systemMessage: systemMessage,
@@ -1330,7 +1339,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         updater.removeMembers(
-            currentUserId: client.currentUserId,
             cid: cid,
             userIds: userIds,
             systemMessage: systemMessage
@@ -1942,6 +1950,145 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    // MARK: - Scheduled Messages
+
+    /// Schedules a new message to be sent to the channel at a later date.
+    ///
+    /// The message is not added to the channel until it is sent. Local attachments are uploaded when scheduling.
+    ///
+    /// - Parameters:
+    ///   - messageId: The id of the scheduled message. Scheduling twice with the same id returns the existing scheduled message.
+    ///   - text: Text of the message.
+    ///   - attachments: An array of the attachments for the message.
+    ///   - mentionedUserIds: An array of the users mentioned in the message.
+    ///   - quotedMessageId: An id of the message the new message quotes.
+    ///   - scheduledAt: When to send the message, at most 120 days from now. The server rounds it up to the next whole minute,
+    ///   at least 1 minute from now. A date in the past sends the message right away.
+    ///   - extraData: Additional extra data of the message object.
+    ///   - completion: Called when the message is saved locally, with the scheduled message or an error saving it locally.
+    ///   It is sent to the server once its attachments are uploaded. The server answers later, on the scheduled message: a
+    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    public func scheduleMessage(
+        messageId: MessageId? = nil,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        guard let cid else {
+            callback { completion?(.failure(ClientError.ChannelNotCreatedYet())) }
+            return
+        }
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            parentId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
+        client.scheduledMessagesRepository.schedule(
+            id: messageId ?? .newUniqueId,
+            cid: cid,
+            content: content,
+            scheduledAt: scheduledAt
+        ) { result in
+            self.callback { completion?(result) }
+        }
+    }
+
+    /// Updates the content of a scheduled message, and optionally when it is sent.
+    ///
+    /// A failed scheduled message can not be changed: delete it and schedule a new one.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - text: The new text of the message.
+    ///   - attachments: The new attachments of the message.
+    ///   - mentionedUserIds: The new mentioned users of the message.
+    ///   - quotedMessageId: The new quoted message of the message.
+    ///   - scheduledAt: When to send the message, not in the past. The server rounds it up to the next whole minute.
+    ///   `nil` keeps the current date.
+    ///   - extraData: The new extra data of the message.
+    ///   - completion: Called when the message is updated locally, with the scheduled message or an error updating it
+    ///   locally. The changes are sent to the server once its attachments are uploaded. The server answers later, on the
+    ///   scheduled message: a rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says
+    ///   why.
+    public func updateScheduledMessage(
+        id: String,
+        text: String,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        scheduledAt: Date? = nil,
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        let content = ScheduledMessageContent(
+            text: text,
+            attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
+            quotedMessageId: quotedMessageId,
+            parentId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
+        client.scheduledMessagesRepository.update(id: id, content: content, scheduledAt: scheduledAt) { result in
+            self.callback { completion?(result) }
+        }
+    }
+
+    /// Changes when a scheduled message is sent. A failed scheduled message can not be changed: delete it and schedule a new one.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - scheduledAt: When to send the message, at most 120 days from now and not in the past. The server rounds it up to the
+    ///   next whole minute, at least 1 minute from now.
+    ///   - completion: Called when the message is rescheduled locally, with the scheduled message or an error rescheduling
+    ///   it locally. The new date is sent to the server right after. The server answers later, on the scheduled message: a
+    ///   rejection sets `ScheduledMessage.status` to `.failed`, and `ScheduledMessage.failure` says why.
+    public func rescheduleMessage(
+        id: String,
+        scheduledAt: Date,
+        completion: (@MainActor (Result<ScheduledMessage, Error>) -> Void)? = nil
+    ) {
+        client.scheduledMessagesRepository.reschedule(id: id, scheduledAt: scheduledAt) { result in
+            self.callback { completion?(result) }
+        }
+    }
+
+    /// Deletes a scheduled message, so it is never sent.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - completion: Called when the message is deleted, with an error if it failed.
+    public func deleteScheduledMessage(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
+        client.scheduledMessagesRepository.delete(id: id) { error in
+            self.callback { completion?(error) }
+        }
+    }
+
+    /// Sends a scheduled message right away.
+    ///
+    /// It is marked locally and sent once its local changes and attachments are on the server, so it is never sent
+    /// with older content. The message is added to the channel when it is sent, which is reported by the
+    /// `ScheduledMessageSentEvent`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of the scheduled message.
+    ///   - completion: Called when the message is marked locally, with an error if it can't be sent, for example when
+    ///   its quoted message was deleted. A rejection of the server sets `ScheduledMessage.status` to `.failed`, with the
+    ///   reason in `ScheduledMessage.failure`.
+    public func sendScheduledMessageNow(id: String, completion: (@MainActor (Error?) -> Void)? = nil) {
+        client.scheduledMessagesRepository.sendNow(id: id) { error in
+            self.callback { completion?(error) }
+        }
+    }
+
     // MARK: - Internal
 
     func recoverWatchedChannel(recovery: Bool, completion: @escaping @MainActor (Error?) -> Void) {
@@ -1980,11 +2127,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        /// Send stop typing event only if the channel supports typing events.
-        shouldSendTypingEvents { isEnabled in
-            guard isEnabled else { return }
-            self.eventSender.stopTyping(in: cid, parentMessageId: nil)
-        }
+        eventSender.stopTypingIfNeeded()
 
         updater.createNewMessage(
             in: cid,

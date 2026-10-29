@@ -15,6 +15,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
+    @NSManaged var group: String?
     @NSManaged var config: ChannelConfigDTO
     @NSManaged var filterTags: Set<ChannelFilterTagDTO>
     @NSManaged var ownCapabilities: [String]
@@ -22,6 +23,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate
     @NSManaged var deletedAt: DBDate?
     @NSManaged var defaultSortingAt: DBDate
+    @NSManaged var queryTimestamp: DBDate
+    @NSManaged var touchedAt: DBDate?
     @NSManaged var updatedAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
 
@@ -85,6 +88,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
     @NSManaged var draftMessage: MessageDTO?
     @NSManaged var activeLiveLocations: Set<SharedLocationDTO>
+    @NSManaged var scheduledMessages: Set<ScheduledMessageDTO>
 
     /// If the current channel is muted by the current user, `mute` contains details.
     @NSManaged var mute: ChannelMuteDTO?
@@ -143,6 +147,10 @@ class ChannelDTO: NSManagedObject {
         }
         if lastDate != defaultSortingAt {
             defaultSortingAt = lastDate
+        }
+        let newQueryTimestamp = max(lastDate.bridgeDate, touchedAt?.bridgeDate ?? .distantPast).bridgeDate
+        if newQueryTimestamp != queryTimestamp {
+            queryTimestamp = newQueryTimestamp
         }
     }
 
@@ -258,29 +266,7 @@ extension NSManagedObjectContext {
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
 
-        // `updatedAt` is only written from server payloads, never from optimistic local
-        // mutations. Events such as `member.updated` can still carry a full `channel`
-        // object snapshotted before a concurrent `channel.updated`. Skip the stale
-        // snapshot entirely so channel state is not rewound.
-        if payload.updatedAt < dto.updatedAt.bridgeDate {
-            if let query {
-                let queryDTO = saveQuery(query: query)
-                queryDTO.channels.insert(dto)
-            }
-            return dto
-        }
-
-        dto.name = payload.name
-        dto.imageURL = payload.imageURL
-        do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            dto.extraData = Data()
-        }
+        dto.saveChannelCustomCommonFields(payload: payload)
         dto.typeRawValue = payload.type
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
@@ -380,16 +366,16 @@ extension NSManagedObjectContext {
 
         // Save reads (note that returned reads are for currently fetched members)
         let reads = Set(
-            try payload.channelReads.map {
+            try payload.read?.map {
                 try saveChannelRead(payload: $0, for: payload.channel.cid, cache: cache)
-            }
+            } ?? []
         )
         dto.reads.formUnion(reads)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
         
         var pendingMessages = Set<MessageDTO>()
-        try payload.pendingMessages?.forEach {
+        try payload.pendingMessages?.compactMap(\.message).forEach {
             let pending = try saveMessage(
                 payload: $0,
                 channelDTO: dto,
@@ -404,7 +390,7 @@ extension NSManagedObjectContext {
         // Recalculate reads for existing messages (saveMessage updates it for messages in the payload)
         let channelReadDTOs = dto.reads
         let currentUserId = currentUser?.user.id
-        let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.map(\.id) ?? []))
+        let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.compactMap { $0.message?.id } ?? []))
         for message in dto.messages {
             guard message.user.id == currentUserId else { continue }
             guard !payloadMessageIds.contains(message.id) else { continue }
@@ -423,16 +409,24 @@ extension NSManagedObjectContext {
             }
         }
 
-        dto.activeLiveLocations = Set(try payload.activeLiveLocations.map {
+        if let scheduledMessages = payload.scheduledMessages {
+            saveScheduledMessages(payload: scheduledMessages, cid: payload.channel.cid)
+        }
+
+        dto.activeLiveLocations = Set(try payload.activeLiveLocations?.map {
             try saveLocation(payload: $0, cache: cache)
-        })
+        } ?? [])
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
+
+        _ = payload.threads.compactMapLoggingError {
+            try saveThread(payload: $0, cache: cache)
+        }
         
         // Save push preference
-        if let pushPreference = payload.pushPreference {
+        if let pushPreference = payload.pushPreferences {
             dto.pushPreference = try savePushPreference(
                 id: payload.channel.cid.rawValue,
                 payload: pushPreference
@@ -689,6 +683,10 @@ extension ChatChannel {
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
         
         let pushPreference = try dto.pushPreference?.asModel()
+        let scheduledMessages = dto.scheduledMessages
+            .filter { !$0.isDeleted }
+            .compactMap { try? $0.asModel() }
+            .sorted { ($0.status == .failed ? 1 : 0, $0.scheduledAt) < ($1.status == .failed ? 1 : 0, $1.scheduledAt) }
 
         let channel = try ChatChannel(
             cid: cid,
@@ -729,7 +727,8 @@ extension ChatChannel {
             muteDetails: muteDetails,
             draftMessage: draftMessage.map(DraftMessage.init),
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
 
         if let transformer = clientConfig.modelsTransformer {
@@ -745,6 +744,33 @@ extension ChatChannel {
 extension ChannelDTO {
     func cleanAllMessagesExcludingLocalOnly() {
         messages = messages.filter { $0.isLocalOnly }
+    }
+
+    func savePartialChannel(payload: ChannelPartialUpdateResponse) {
+        saveChannelCustomCommonFields(payload: payload)
+        updatedAt = payload.updatedAt.bridgeDate
+        if let payloadLastMessageAt = payload.lastMessageAt {
+            lastMessageAt = max(lastMessageAt?.bridgeDate ?? payloadLastMessageAt, payloadLastMessageAt).bridgeDate
+        }
+        isDisabled = payload.disabled
+        isFrozen = payload.frozen
+        team = payload.team
+    }
+
+    fileprivate func saveChannelCustomCommonFields(payload: some ChannelCustomCommonFields) {
+        name = payload.name
+        imageURL = payload.imageURL
+        do {
+            extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Channel with cid: <\(cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraData = Data()
+        }
+        group = payload.group
+        touchedAt = payload.touchedAt?.bridgeDate
     }
 
     /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.

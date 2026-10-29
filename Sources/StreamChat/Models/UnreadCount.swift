@@ -49,7 +49,7 @@ struct UnreadCountPayload: Decodable, Equatable {
     /// The number of threads with unread replies if available.
     let threads: Int?
 
-    init(channels: Int, messages: Int, threads: Int?) {
+    init(channels: Int?, messages: Int?, threads: Int?) {
         self.channels = channels
         self.messages = messages
         self.threads = threads

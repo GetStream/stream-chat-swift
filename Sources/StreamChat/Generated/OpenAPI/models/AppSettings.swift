@@ -4,12 +4,16 @@
 
 import Foundation
 
+/// A type representing the app settings.
 public final class AppSettings: Sendable, Decodable {
+    /// A boolean value determining if async url enrichment is enabled.
     public let asyncUrlEnrichEnabled: Bool
+    /// A boolean value determining if auto translation is enabled.
     public let autoTranslationEnabled: Bool
     public let fileUploadConfig: UploadConfig
     public let id: Int
     public let imageUploadConfig: UploadConfig
+    /// The name of the app.
     public let name: String
     public let placement: String
 
@@ -31,14 +35,18 @@ public final class AppSettings: Sendable, Decodable {
         self.placement = placement
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case asyncUrlEnrichEnabled = "async_url_enrich_enabled"
-        case autoTranslationEnabled = "auto_translation_enabled"
-        case fileUploadConfig = "file_upload_config"
-        case id
-        case imageUploadConfig = "image_upload_config"
-        case name
-        case placement
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.asyncUrlEnrichEnabled = try container.decode(Bool.self, forKey: .asyncUrlEnrichEnabled)
+        self.autoTranslationEnabled = try container.decode(
+            Bool.self,
+            forKey: .autoTranslationEnabled
+        )
+        self.fileUploadConfig = try container.decode(UploadConfig.self, forKey: .fileUploadConfig)
+        self.id = try container.decode(Int.self, forKey: .id)
+        self.imageUploadConfig = try container.decode(UploadConfig.self, forKey: .imageUploadConfig)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.placement = try container.decode(String.self, forKey: .placement)
     }
 }
 

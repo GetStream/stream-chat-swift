@@ -210,7 +210,7 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual("cursor-1", groups?["all"]?.next)
     }
 
-    func test_loadMoreChannels_whenQueryHasGroupKey_propagatesPersistedWatchAndPresence() async throws {
+    func test_loadMoreChannels_whenQueryHasGroupKey_propagatesPersistedRequestOptions() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
         channelList = ChannelList(
@@ -225,6 +225,8 @@ final class ChannelList_Tests: XCTestCase {
             queryDTO.next = "cursor-1"
             queryDTO.watch = true
             queryDTO.presence = true
+            queryDTO.groupFilterJSONData = Data(#"{"query_timestamp":{"$gte":"now-14d"}}"#.utf8)
+            queryDTO.groupSortJSONData = Data(#"[{"field":"query_timestamp","direction":-1}]"#.utf8)
         }
         env.channelListUpdaterMock.queryGroupedChannels_result = .success([
             ChannelGroup(
@@ -239,9 +241,12 @@ final class ChannelList_Tests: XCTestCase {
 
         XCTAssertEqual([true], env.channelListUpdaterMock.queryGroupedChannels_watchValues)
         XCTAssertEqual([true], env.channelListUpdaterMock.queryGroupedChannels_presenceValues)
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual(.dictionary(["query_timestamp": .dictionary(["$gte": .string("now-14d")])]), groups?["all"]?.filterConditions as? RawJSON)
+        XCTAssertEqual(["query_timestamp"], env.channelListUpdaterMock.queryGroupedChannels_sorts.first??.map(\.field))
     }
 
-    func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_marksAsFullyLoaded() async throws {
+    func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_loadsNextPageOnceCursorIsRestored() async throws {
         let groupedQuery = ChannelListQuery(groupKey: "all")
         let environment = env.channelListEnvironment(usesMockedUpdater: true)
         channelList = ChannelList(
@@ -259,8 +264,73 @@ final class ChannelList_Tests: XCTestCase {
 
         XCTAssertEqual([], returned)
         XCTAssertEqual(0, env.channelListUpdaterMock.queryGroupedChannels_callCount)
-        let fullyLoaded = await channelList.state.hasLoadedAllPreviousChannels
-        XCTAssertTrue(fullyLoaded)
+
+        try await env.client.mockDatabaseContainer.write { session in
+            session.saveQuery(query: groupedQuery).next = "cursor-2"
+        }
+        env.channelListUpdaterMock.queryGroupedChannels_result = .success([
+            ChannelGroup(groupKey: "all", channels: [], unreadChannels: 0, next: nil)
+        ])
+
+        try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual("cursor-2", groups?["all"]?.next)
+    }
+
+    func test_loadMoreChannels_whenPageHoldsOnlyLoadedChannels_loadsTheFollowingPage() async throws {
+        let loadedCid = ChannelId.unique
+        let newCid = ChannelId.unique
+        try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
+        env.channelListUpdaterMock.queryGroupedChannels_results = [
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid)], unreadChannels: 0, next: "page-3")]),
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: newCid)], unreadChannels: 0, next: "page-4")])
+        ]
+
+        let channels = try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual([newCid], channels.map(\.cid))
+        XCTAssertEqual(["page-2", "page-3"], env.channelListUpdaterMock.queryGroupedChannels_groups.map { $0?["all"]?.next })
+    }
+
+    func test_loadMoreChannels_whenPageHoldsOnlyLoadedChannelsAndTheSameCursor_stops() async throws {
+        let loadedCid = ChannelId.unique
+        try await setUpGroupedChannelList(loadedCid: loadedCid, next: "page-2")
+        env.channelListUpdaterMock.queryGroupedChannels_results = [
+            .success([ChannelGroup(groupKey: "all", channels: [.mock(cid: loadedCid)], unreadChannels: 0, next: "page-2")])
+        ]
+
+        try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+    }
+
+    func test_restoringState_whenQueryHasGroupKeyWithQueryTimestampSort_sortsByQueryTimestamp() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "expired")
+        let quietCid = ChannelId.unique
+        let touchedCid = ChannelId.unique
+        let now = Date()
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.groupSortJSONData = Data(#"[{"field":"query_timestamp","direction":-1}]"#.utf8)
+            let quiet = ChannelPayload.dummy(channel: .dummy(cid: quietCid, lastMessageAt: now.addingTimeInterval(-60)))
+            let touched = ChannelPayload.dummy(channel: .dummy(
+                cid: touchedCid,
+                extraData: [GroupedChannelKey.touchedAt: .string("2099-01-01T00:00:00Z")],
+                lastMessageAt: now.addingTimeInterval(-3600)
+            ))
+            queryDTO.channels.formUnion([try session.saveChannel(payload: quiet), try session.saveChannel(payload: touched)])
+        }
+
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: env.channelListEnvironment(usesMockedUpdater: true)
+        )
+
+        XCTAssertEqual([touchedCid, quietCid], await channelList.state.channels.map(\.cid))
     }
 
     func test_loadMoreChannels_withoutGroupHandler_usesOffsetPath() async throws {
@@ -339,7 +409,7 @@ final class ChannelList_Tests: XCTestCase {
         env.channelListUpdaterMock.update_completion_result = .failure(testError)
         await XCTAssertAsyncFailure(try await channelList.loadMoreChannels(), testError)
     }
-    
+
     // MARK: - Pagination and State
     
     func test_loadChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
@@ -595,15 +665,14 @@ final class ChannelList_Tests: XCTestCase {
             isHidden: nil,
             members: secondChannel.members ?? []
         )
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: channelPayloadWithoutBlockedAndHidden.cid,
-            user: .dummy(userId: memberId),
+        let notificationMarkReadEvent = WSEvent.typeNotificationMarkReadEvent(NotificationMarkReadEventDTO(
             channel: channelPayloadWithoutBlockedAndHidden,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: Date()
-        )
-        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
+            cid: channelPayloadWithoutBlockedAndHidden.cid,
+            createdAt: Date(),
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            user: .dummy(userId: memberId)
+        ))
         let expectation = XCTestExpectation()
         env.client.eventNotificationCenter.process(notificationMarkReadEvent, postNotification: true) {
             expectation.fulfill()
@@ -754,7 +823,23 @@ final class ChannelList_Tests: XCTestCase {
             _ = channelList.state
         }
     }
-    
+
+    private func setUpGroupedChannelList(loadedCid: ChannelId, next: String) async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.next = next
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy(channel: .dummy(cid: loadedCid))))
+        }
+        channelList = ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: env.channelListEnvironment(usesMockedUpdater: true)
+        )
+        _ = await channelList.state
+    }
+
     private func makeChannels(count: Int, createdAtOffset: Int) -> [ChatChannel] {
         (0..<count)
             .map { ChatChannel.mock(cid: .unique, createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))) }

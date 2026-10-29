@@ -5,6 +5,9 @@
 import XCTest
 
 final class Authentication_Tests: StreamTestCase {
+    // Covers the next token refresh, which happens once the current token expires after `StreamMockServer.jwtTimeout`.
+    let invalidationDuration = 10
+
     override func setUpWithError() throws {
         app.setLaunchArguments(.jwt)
         try super.setUpWithError()
@@ -33,7 +36,10 @@ final class Authentication_Tests: StreamTestCase {
                 .assertConnectionStatus(.connected)
         }
         WHEN("token invalidates") {
-            backendRobot.invalidateToken()
+            backendRobot.invalidateToken(duration: invalidationDuration)
+        }
+        AND("token expires") {
+            backendRobot.waitForJwtToExpire()
         }
         THEN("app requests a token refresh") {
             userRobot.assertConnectionStatus(.connected)
@@ -63,7 +69,10 @@ final class Authentication_Tests: StreamTestCase {
                 .assertConnectionStatus(.connected)
         }
         WHEN("token invalidates") {
-            backendRobot.invalidateTokenDate()
+            backendRobot.invalidateTokenDate(duration: invalidationDuration)
+        }
+        AND("token expires") {
+            backendRobot.waitForJwtToExpire()
         }
         THEN("app requests a token refresh") {
             userRobot.assertConnectionStatus(.connected)
@@ -93,7 +102,10 @@ final class Authentication_Tests: StreamTestCase {
                 .assertConnectionStatus(.connected)
         }
         WHEN("token invalidates") {
-            backendRobot.invalidateTokenSignature()
+            backendRobot.invalidateTokenSignature(duration: invalidationDuration)
+        }
+        AND("token expires") {
+            backendRobot.waitForJwtToExpire()
         }
         THEN("app requests a token refresh") {
             userRobot.assertConnectionStatus(.connected)

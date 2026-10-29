@@ -1,0 +1,28 @@
+//
+// Copyright © 2026 Stream.io Inc. All rights reserved.
+//
+
+import Foundation
+
+final class QueryChannelsResponse: Sendable, Decodable {
+    /// List of channels
+    let channels: [ChannelStateResponse]
+    let predefinedFilter: ParsedPredefinedFilterResponse?
+
+    init(channels: [ChannelStateResponse], predefinedFilter: ParsedPredefinedFilterResponse? = nil) {
+        self.channels = channels
+        self.predefinedFilter = predefinedFilter
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        channels = try container.decodeArrayIgnoringFailures(
+            [ChannelStateResponse].self,
+            forKey: .channels
+        )
+        predefinedFilter = try container.decodeIfPresent(
+            ParsedPredefinedFilterResponse.self,
+            forKey: .predefinedFilter
+        )
+    }
+}

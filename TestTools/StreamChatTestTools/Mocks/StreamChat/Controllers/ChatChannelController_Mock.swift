@@ -136,12 +136,16 @@ class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     }
 
     var loadPageAroundMessageIdCallCount = 0
+    var loadPageAroundMessageId_messageId: MessageId?
+    var loadPageAroundMessageId_completion: (@MainActor (Error?) -> Void)?
     override func loadPageAroundMessageId(
         _ messageId: MessageId,
         limit: Int? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         loadPageAroundMessageIdCallCount += 1
+        loadPageAroundMessageId_messageId = messageId
+        loadPageAroundMessageId_completion = completion
     }
 
     var sendKeystrokeEvent_callCount = 0

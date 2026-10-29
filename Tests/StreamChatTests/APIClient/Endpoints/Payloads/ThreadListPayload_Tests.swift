@@ -38,4 +38,45 @@ final class ThreadListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.read?.count, 3)
         XCTAssertEqual(payload.custom["custom_test"]?.numberValue, 10)
     }
+
+    func test_thread_dropsArrayElementsThatFailDecoding() throws {
+        let url = XCTestCase.mockData(fromJSONFile: "Thread")
+        var thread = try XCTUnwrap(JSONSerialization.jsonObject(with: url) as? [String: Any])
+        let latestReplies = try XCTUnwrap(thread["latest_replies"] as? [Any])
+        let read = try XCTUnwrap(thread["read"] as? [Any])
+        let threadParticipants = try XCTUnwrap(thread["thread_participants"] as? [Any])
+        thread["latest_replies"] = latestReplies + [["id": "broken"]]
+        thread["read"] = read + [["unread_messages": 0]]
+        thread["thread_participants"] = threadParticipants + [["created_at": "broken"]]
+        let data = try JSONSerialization.data(withJSONObject: thread)
+
+        let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: data)
+
+        XCTAssertEqual(payload.latestReplies.count, latestReplies.count)
+        XCTAssertEqual(payload.read?.count, read.count)
+        XCTAssertEqual(payload.threadParticipants?.count, threadParticipants.count)
+    }
+
+    func test_thread_latestRepliesDefaultToEmptyWhenMissing() throws {
+        let url = XCTestCase.mockData(fromJSONFile: "Thread")
+        var thread = try XCTUnwrap(JSONSerialization.jsonObject(with: url) as? [String: Any])
+        thread.removeValue(forKey: "latest_replies")
+        let data = try JSONSerialization.data(withJSONObject: thread)
+
+        let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: data)
+
+        XCTAssertEqual(payload.latestReplies.count, 0)
+    }
+
+    func test_threadList_shouldReturnThreadsIfOneThreadFailsParsing() throws {
+        let url = XCTestCase.mockData(fromJSONFile: "Thread")
+        let thread = try XCTUnwrap(JSONSerialization.jsonObject(with: url) as? [String: Any])
+        var brokenThread = thread
+        brokenThread.removeValue(forKey: "created_at")
+        let data = try JSONSerialization.data(withJSONObject: ["threads": [thread, brokenThread]])
+
+        let payload = try JSONDecoder.default.decode(ThreadListPayload.self, from: data)
+
+        XCTAssertEqual(payload.threads.count, 1)
+    }
 }

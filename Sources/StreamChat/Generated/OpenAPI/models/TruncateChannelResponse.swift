@@ -15,8 +15,9 @@ final class TruncateChannelResponse: Sendable, Decodable {
         self.message = message
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case message
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
     }
 }

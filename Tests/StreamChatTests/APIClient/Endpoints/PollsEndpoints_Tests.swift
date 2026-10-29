@@ -20,8 +20,6 @@ final class PollsEndpoints_Tests: XCTestCase {
             allowUserSuggestedOptions: true,
             description: "Desc",
             enforceUniqueVote: false,
-            id: "test",
-            isClosed: false,
             maxVotesAllowed: 1,
             name: "test"
         )
@@ -33,8 +31,6 @@ final class PollsEndpoints_Tests: XCTestCase {
             "allow_user_suggested_options": true,
             "description": "Desc",
             "enforce_unique_vote": false,
-            "id": "test",
-            "is_closed": false,
             "max_votes_allowed": 1
         ]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()

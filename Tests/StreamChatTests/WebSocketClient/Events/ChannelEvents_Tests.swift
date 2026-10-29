@@ -7,11 +7,11 @@
 import XCTest
 
 final class ChannelEvents_Tests: XCTestCase {
-    var eventDecoder: EventDecoder!
+    var eventDecoder: EventDTODecoder!
 
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder()
+        eventDecoder = EventDTODecoder()
     }
 
     override func tearDown() {
@@ -33,14 +33,14 @@ final class ChannelEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        XCTAssertEqual(event?.payload.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
     }
 
     func test_updated_usingServerSideAuth() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated_ServerSide")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        XCTAssertNil(event?.payload.user?.id)
+        XCTAssertNil(event?.user?.id)
     }
 
     func test_deleted() throws {
@@ -49,7 +49,7 @@ final class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "default-channel-1"))
         XCTAssertEqual(event?.createdAt.description, "2021-04-23 09:38:47 +0000")
         XCTAssertEqual(
-            event?.payload.channel?.cid,
+            event?.channel.cid,
             ChannelId(type: .messaging, id: "default-channel-1")
         )
     }
@@ -59,13 +59,13 @@ final class ChannelEvents_Tests: XCTestCase {
         var event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
         XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
-        XCTAssertEqual(event.isHistoryCleared, false)
+        XCTAssertEqual(event.clearHistory, false)
 
         json = XCTestCase.mockData(fromJSONFile: "ChannelHidden+HistoryCleared")
         event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
         XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
-        XCTAssertEqual(event.isHistoryCleared, true)
+        XCTAssertEqual(event.clearHistory, true)
     }
 
     func test_ChannelVisibleEvent_decoding() throws {
@@ -88,8 +88,7 @@ final class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
         XCTAssertNil(event?.message)
 
-        let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
-        XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
+        XCTAssertEqual(event?.createdAt.description, "2021-03-04 10:09:59 +0000")
     }
 
     func test_channelTruncatedEventWithMessage() throws {
@@ -98,8 +97,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "8372DE11-E"))
 
-        let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
-        XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
+        XCTAssertEqual(event?.createdAt.description, "2022-02-16 08:20:13 +0000")
         XCTAssertEqual(event?.message?.text, "Channel truncated")
         XCTAssertEqual(event?.message?.type, MessageType.system.rawValue)
     }
@@ -112,31 +110,26 @@ final class ChannelEvents_Tests: XCTestCase {
 
         // Create event payload
         let cid: ChannelId = .unique
-        let eventPayload = EventPayload(
-            eventType: .channelUpdated,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let eventPayload = ChannelUpdatedEventDTO(
             channel: .dummy(cid: cid),
+            createdAt: .unique,
             message: .dummy(messageId: .unique, authorUserId: .unique, cid: cid),
-            createdAt: .unique
+            user: .dummy(userId: .unique)
         )
 
-        // Create event DTO
-        let dto = try ChannelUpdatedEventDTO(from: eventPayload)
-
         // Assert event creation fails due to missing dependencies in database
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(eventPayload.toDomainEvent(session: session))
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel, query: nil, cache: nil)
         _ = try session.saveMessage(payload: eventPayload.message!, cache: nil)
 
         // Assert event can be created and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelUpdatedEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? ChannelUpdatedEvent)
         XCTAssertEqual(event.user?.id, eventPayload.user?.id)
         XCTAssertEqual(event.message?.id, eventPayload.message?.id)
-        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -145,27 +138,23 @@ final class ChannelEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .channelDeleted,
-            user: .dummy(userId: .unique),
+        let eventPayload = ChannelDeletedEventDTO(
             channel: .dummy(cid: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            user: .dummy(userId: .unique)
         )
 
-        // Create event DTO
-        let dto = try ChannelDeletedEventDTO(from: eventPayload)
-
         // Assert event creation fails due to missing dependencies in database
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(eventPayload.toDomainEvent(session: session))
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelDeletedEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? ChannelDeletedEvent)
         XCTAssertEqual(event.user?.id, eventPayload.user?.id)
-        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -174,27 +163,23 @@ final class ChannelEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .channelTruncated,
-            user: .dummy(userId: .unique),
+        let eventPayload = ChannelTruncatedEventDTO(
             channel: .dummy(cid: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            user: .dummy(userId: .unique)
         )
 
-        // Create event DTO
-        let dto = try ChannelTruncatedEventDTO(from: eventPayload)
-
         // Assert event creation fails due to missing dependencies in database
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(eventPayload.toDomainEvent(session: session))
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
-        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+        _ = try session.saveChannel(payload: eventPayload.channel, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelTruncatedEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? ChannelTruncatedEvent)
         XCTAssertEqual(event.user?.id, eventPayload.user?.id)
-        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -203,24 +188,21 @@ final class ChannelEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .channelVisible,
+        let eventPayload = ChannelVisibleEventDTO(
+            channel: .dummy(),
             cid: .unique,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            user: .dummy(userId: .unique)
         )
 
-        // Create event DTO
-        let dto = try ChannelVisibleEventDTO(from: eventPayload)
-
         // Assert event creation fails due to missing dependencies in database
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(eventPayload.toDomainEvent(session: session))
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 
         // Assert event can be created and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelVisibleEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? ChannelVisibleEvent)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
@@ -231,28 +213,25 @@ final class ChannelEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .channelHidden,
+        let eventPayload = ChannelHiddenEventDTO(
+            channel: .dummy(),
             cid: .unique,
-            user: .dummy(userId: .unique),
+            clearHistory: true,
             createdAt: .unique,
-            isChannelHistoryCleared: true
+            user: .dummy(userId: .unique)
         )
 
-        // Create event DTO
-        let dto = try ChannelHiddenEventDTO(from: eventPayload)
-
         // Assert event creation fails due to missing dependencies in database
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(eventPayload.toDomainEvent(session: session))
 
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 
         // Assert event can be created and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelHiddenEvent)
+        let event = try XCTUnwrap(eventPayload.toDomainEvent(session: session) as? ChannelHiddenEvent)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.isHistoryCleared, eventPayload.isChannelHistoryCleared)
+        XCTAssertEqual(event.isHistoryCleared, eventPayload.clearHistory)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

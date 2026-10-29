@@ -34,6 +34,9 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     public let membersLimit: Int?
     /// Query options.
     public var options: QueryOptions = [.watch]
+    /// Whether each channel is loaded with the current user's scheduled messages in it,
+    /// available in ``ChatChannel/scheduledMessages``. Defaults to `false`.
+    public var includeScheduledMessages = false
     /// The name of a server-side predefined filter to apply to this query.
     ///
     /// When set, the filter and sort templates configured for the predefined filter on the server
@@ -189,6 +192,32 @@ extension ChannelListQuery {
         guard filter.filterHash == other.filter.filterHash else { return false }
         guard sort.map(\.description) == other.sort.map(\.description) else { return false }
         return true
+    }
+}
+
+extension ChannelListQuery {
+    var endpoint: Endpoint<ChannelListPayload> {
+        let hasPredefinedFilter = predefinedFilter.map { !$0.isEmpty } ?? false
+        let sort = sort.map { SortParamRequest(direction: $0.direction, field: $0.key.remoteKey) }
+        let request = QueryChannelsRequest(
+            filterConditions: hasPredefinedFilter ? nil : filter,
+            filterValues: hasPredefinedFilter ? filterValues.flatMap { $0.isEmpty ? nil : $0 } : nil,
+            includeScheduledMessages: includeScheduledMessages ? true : nil,
+            limit: pagination.pageSize != .backendDefaultPageSize ? pagination.pageSize : nil,
+            memberLimit: membersLimit,
+            messageLimit: messagesLimit,
+            offset: pagination.offset != 0 ? pagination.offset : nil,
+            predefinedFilter: hasPredefinedFilter ? predefinedFilter : nil,
+            presence: options.contains(.presence),
+            sort: hasPredefinedFilter || sort.isEmpty ? nil : sort,
+            sortValues: hasPredefinedFilter ? sortValues.flatMap { $0.isEmpty ? nil : $0 } : nil,
+            state: options.contains(.state),
+            watch: options.contains(.watch)
+        )
+        return .queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: options.contains(oneOf: [.presence, .state, .watch])
+        )
     }
 }
 

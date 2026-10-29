@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class GetRepliesResponse: Sendable, Decodable {
     let messages: [MessageResponse]
 
@@ -11,7 +12,8 @@ final class GetRepliesResponse: Sendable, Decodable {
         self.messages = messages
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case messages
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.messages = try container.decode([MessageResponse].self, forKey: .messages)
     }
 }

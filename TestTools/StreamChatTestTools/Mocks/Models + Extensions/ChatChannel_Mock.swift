@@ -22,6 +22,10 @@ public extension ChannelConfig {
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
         messageRemindersEnabled: Bool = false,
         sharedLocationsEnabled: Bool = false,
+        scheduledMessagesMaxPerChannel: Int? = nil,
+        scheduledMessagesMaxPerUser: Int? = nil,
+        scheduledMessagesMaxLeadTime: TimeInterval? = nil,
+        scheduledMessagesMinLeadTime: TimeInterval? = nil,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [Command(name: "Giphy", description: "", set: "", args: "")],
@@ -43,6 +47,10 @@ public extension ChannelConfig {
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
             messageRemindersEnabled: messageRemindersEnabled,
             sharedLocationsEnabled: sharedLocationsEnabled,
+            scheduledMessagesMaxPerChannel: scheduledMessagesMaxPerChannel,
+            scheduledMessagesMaxPerUser: scheduledMessagesMaxPerUser,
+            scheduledMessagesMaxLeadTime: scheduledMessagesMaxLeadTime,
+            scheduledMessagesMinLeadTime: scheduledMessagesMinLeadTime,
             messageRetention: messageRetention,
             maxMessageLength: maxMessageLength,
             commands: commands,
@@ -107,12 +115,14 @@ public extension ChatChannel {
         cooldownDuration: Int = 0,
         extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
+        lastMessageFromCurrentUser: ChatMessage? = nil,
         pinnedMessages: [ChatMessage] = [],
         pendingMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
         draftMessage: DraftMessage? = nil,
         activeLiveLocations: [SharedLocation] = [],
-        pushPreference: PushPreference? = nil
+        pushPreference: PushPreference? = nil,
+        scheduledMessages: [ScheduledMessage] = []
     ) -> Self {
         self.init(
             cid: cid,
@@ -146,13 +156,14 @@ public extension ChatChannel {
             cooldownDuration: cooldownDuration,
             extraData: extraData,
             latestMessages: latestMessages,
-            lastMessageFromCurrentUser: nil,
+            lastMessageFromCurrentUser: lastMessageFromCurrentUser,
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            pushPreference: pushPreference,
+            scheduledMessages: scheduledMessages
         )
     }
 

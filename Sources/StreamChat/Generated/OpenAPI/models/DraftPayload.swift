@@ -35,13 +35,20 @@ final class DraftPayload: Sendable, Decodable {
         self.quotedMessage = quotedMessage
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        case channelCid = "channel_cid"
-        case createdAt = "created_at"
-        case message
-        case parentId = "parent_id"
-        case parentMessage = "parent_message"
-        case quotedMessage = "quoted_message"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        self.channelCid = try container.decode(String.self, forKey: .channelCid)
+        self.createdAt = try container.decode(Date.self, forKey: .createdAt)
+        self.message = try container.decode(DraftMessagePayload.self, forKey: .message)
+        self.parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
+        self.parentMessage = try container.decodeIfPresent(
+            MessageResponse.self,
+            forKey: .parentMessage
+        )
+        self.quotedMessage = try container.decodeIfPresent(
+            MessageResponse.self,
+            forKey: .quotedMessage
+        )
     }
 }

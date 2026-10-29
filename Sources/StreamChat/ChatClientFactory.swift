@@ -125,6 +125,7 @@ class ChatClientFactory {
             ThreadUpdaterMiddleware(),
             DraftUpdaterMiddleware(),
             ReminderUpdaterMiddleware(),
+            ScheduledMessageUpdaterMiddleware(),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),
@@ -133,6 +134,7 @@ class ChatClientFactory {
             UserUpdateMiddleware(),
             ChannelVisibilityEventMiddleware(),
             ChannelDeliveredMiddleware(deliveryTracker: channelDeliveryTracker),
+            GroupedUnreadChannelsMiddleware(),
             EventDTOConverterMiddleware()
         ]
 

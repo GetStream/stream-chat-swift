@@ -70,7 +70,11 @@ open class ComposerKeyboardHandler: KeyboardHandler {
         if isHidingKeyboard {
             composerBottomConstraint?.constant = originalBottomConstraintValue
         } else {
-            let convertedKeyboardFrame = composerParentView.convert(frame, from: UIScreen.main.coordinateSpace)
+            // The keyboard frame is in the coordinate space of the screen the app runs on, which
+            // is not the main screen when a device has more than one, like the iPhone Duo.
+            let keyboardCoordinateSpace = composerParentView.window?.screen.coordinateSpace
+            let convertedKeyboardFrame = keyboardCoordinateSpace
+                .map { composerParentView.convert(frame, from: $0) } ?? frame
             let intersectedKeyboardHeight = composerParentView.bounds.intersection(convertedKeyboardFrame).height
 
             let rootTabBar = composerParentView.window?.rootViewController?.tabBarController?.tabBar

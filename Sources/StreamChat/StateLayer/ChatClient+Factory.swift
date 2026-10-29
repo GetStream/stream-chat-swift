@@ -159,8 +159,7 @@ extension ChatClient {
         extraData: [String: RawJSON] = [:]
     ) throws -> Chat {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
-        let payload = ChannelEditDetailPayload(
-            cid: cid,
+        let channelInput = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -169,7 +168,7 @@ extension ChatClient {
             filterTags: filterTags,
             extraData: extraData
         )
-        let channelQuery = ChannelQuery(channelPayload: payload)
+        let channelQuery = ChannelQuery(type: cid.type, id: cid.id, channelInput: channelInput)
         return makeChat(
             with: channelQuery,
             messageOrdering: messageOrdering,
@@ -177,6 +176,61 @@ extension ChatClient {
         )
     }
     
+    /// An instance of `Chat` which represents a channel with specified configuration and members with additional data.
+    ///
+    /// Use this overload to set member extra data when the channel is created, for example to assign the `channel_role` of a member.
+    /// Creates a new channel or returns an existing channel by modifying its configuration if needed.
+    ///
+    /// - Note: It is caller's responsibility to call ``Chat/get(watch:)`` for receiving the most recent state from the server.
+    ///
+    /// - Parameters:
+    ///   - cid: The id of the channel.
+    ///   - name: The name of the channel.
+    ///   - imageURL: The channel avatar URL.
+    ///   - team: The team for the channel.
+    ///   - memberInfos: The members of the channel, with their optional extra data.
+    ///   - isCurrentUserMember: If `true`, the current user is added as member.
+    ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add to the channel.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
+    ///   - channelListQuery: The channel list query the channel belongs to.
+    ///   - extraData: Extra data for the new channel.
+    ///
+    /// - Throws: An error if no user is currently logged-in.
+    /// - Returns: An instance of `Chat` representing the channel.
+    public func makeChat(
+        with cid: ChannelId,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        memberInfos: [MemberInfo],
+        isCurrentUserMember: Bool = true,
+        invites: [UserId] = [],
+        filterTags: Set<String> = [],
+        messageOrdering: MessageOrdering = .topToBottom,
+        memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
+        channelListQuery: ChannelListQuery? = nil,
+        extraData: [String: RawJSON] = [:]
+    ) throws -> Chat {
+        guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
+        let channelInput = ChannelInput(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: memberInfos + (isCurrentUserMember ? [MemberInfo(userId: currentUserId)] : []),
+            invites: Set(invites),
+            filterTags: filterTags,
+            extraData: extraData
+        )
+        let channelQuery = ChannelQuery(type: cid.type, id: cid.id, channelInput: channelInput)
+        return makeChat(
+            with: channelQuery,
+            messageOrdering: messageOrdering,
+            memberSorting: memberSorting
+        )
+    }
+
     // MARK: - Create a Chat for Direct Messages
     
     /// An instance of `Chat` which represents a channel with specified members.
@@ -216,8 +270,7 @@ extension ChatClient {
     ) throws -> Chat {
         guard let currentUserId = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
-        let payload = ChannelEditDetailPayload(
-            type: type,
+        let channelInput = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -226,7 +279,7 @@ extension ChatClient {
             filterTags: filterTags,
             extraData: extraData
         )
-        let channelQuery = ChannelQuery(channelPayload: payload)
+        let channelQuery = ChannelQuery(type: type, id: nil, channelInput: channelInput)
         return makeChat(
             with: channelQuery,
             messageOrdering: messageOrdering,
@@ -308,6 +361,22 @@ extension ChatClient {
     /// - Returns: An instance of ``ReactionList`` which represents actions and the current state of the list.
     public func makeReactionList(with query: ReactionListQuery) -> ReactionList {
         ReactionList(query: query, client: self)
+    }
+}
+
+// MARK: - Factory Methods for Creating Scheduled Message Lists
+
+extension ChatClient {
+    /// Creates an instance of ``ScheduledMessageList`` which represents the current user's scheduled messages matching to the specified ``ScheduledMessageListQuery``.
+    ///
+    /// Loaded scheduled messages are stored in ``ScheduledMessageListState/scheduledMessages`` and kept up to date with local changes and events.
+    /// Call ``ScheduledMessageList/get()`` for loading the first page.
+    ///
+    /// - Parameter query: The query which filters the scheduled messages, for example by channel or status.
+    ///
+    /// - Returns: An instance of ``ScheduledMessageList`` which represents actions and the current state of the list.
+    public func makeScheduledMessageList(with query: ScheduledMessageListQuery = .init()) -> ScheduledMessageList {
+        ScheduledMessageList(query: query, client: self)
     }
 }
 

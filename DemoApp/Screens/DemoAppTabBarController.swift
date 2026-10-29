@@ -8,15 +8,17 @@ import StreamChatCommonUI
 import StreamChatUI
 import UIKit
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate, ScheduledMessageListControllerDelegate {
     private var locationProvider = LocationProvider.shared
     
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
     let reminderListVC: UIViewController
+    let scheduledMessageListVC: UIViewController
     let currentUserController: CurrentChatUserController
     let allRemindersListController: MessageReminderListController
+    let allScheduledMessagesListController: ScheduledMessageListController
 
     // Events controller for listening to chat events
     private var eventsController: EventsController!
@@ -26,15 +28,19 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC: UIViewController,
         draftListVC: UIViewController,
         reminderListVC: UIViewController,
+        scheduledMessageListVC: UIViewController,
         currentUserController: CurrentChatUserController,
-        allRemindersListController: MessageReminderListController
+        allRemindersListController: MessageReminderListController,
+        allScheduledMessagesListController: ScheduledMessageListController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
         self.draftListVC = draftListVC
         self.reminderListVC = reminderListVC
+        self.scheduledMessageListVC = scheduledMessageListVC
         self.currentUserController = currentUserController
         self.allRemindersListController = allRemindersListController
+        self.allScheduledMessagesListController = allScheduledMessagesListController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -72,7 +78,8 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
             updateRemindersBadge()
         }
 
-        tabBar.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
+        // Note: setting `tabBar.backgroundColor` makes the tab bar render empty once the system
+        // lays it out as a vertical bar, which is what an unfolded iPhone Duo does.
         tabBar.isTranslucent = true
 
         channelListVC.tabBarItem.title = "Channels"
@@ -96,12 +103,28 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         reminderListVC.tabBarItem.title = "Reminders"
         reminderListVC.tabBarItem.image = UIImage(systemName: "bell")
 
+        scheduledMessageListVC.tabBarItem.title = "Scheduled"
+        scheduledMessageListVC.tabBarItem.image = UIImage(systemName: "clock")
+
+        var tabs = [channelListVC, threadListVC, draftListVC]
         // Only show reminders tab if the feature is enabled
         if AppConfig.shared.demoAppConfig.isRemindersEnabled {
-            viewControllers = [channelListVC, threadListVC, draftListVC, reminderListVC]
-        } else {
-            viewControllers = [channelListVC, threadListVC, draftListVC]
+            tabs.append(reminderListVC)
         }
+        if AppConfig.shared.isScheduledMessagesEnabled {
+            tabs.append(scheduledMessageListVC)
+            allScheduledMessagesListController.delegate = self
+            allScheduledMessagesListController.synchronize()
+            updateScheduledMessagesBadge()
+        }
+        viewControllers = tabs
+    }
+
+    func showScheduledMessages() {
+        guard viewControllers?.contains(scheduledMessageListVC) == true else { return }
+
+        (scheduledMessageListVC as? UINavigationController)?.popToRootViewController(animated: false)
+        selectedViewController = scheduledMessageListVC
     }
     
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
@@ -152,5 +175,17 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
     private func updateRemindersBadge() {
         let reminders = allRemindersListController.reminders
         reminderListVC.tabBarItem.badgeValue = reminders.isEmpty ? nil : "\(reminders.count)"
+    }
+
+    func controller(
+        _ controller: ScheduledMessageListController,
+        didChangeScheduledMessages scheduledMessages: [ScheduledMessage]
+    ) {
+        updateScheduledMessagesBadge()
+    }
+
+    private func updateScheduledMessagesBadge() {
+        let pendingCount = allScheduledMessagesListController.scheduledMessages.filter { $0.status != .failed }.count
+        scheduledMessageListVC.tabBarItem.badgeValue = pendingCount > 0 ? "\(pendingCount)" : nil
     }
 }

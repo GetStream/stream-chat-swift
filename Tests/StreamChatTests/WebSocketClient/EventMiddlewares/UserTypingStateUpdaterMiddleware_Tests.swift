@@ -41,10 +41,10 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         let error = TestError()
         database.write_errorResponse = error
 
-        let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
+        let event = TypingStartEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
-        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
+        XCTAssertEqual(forwardedEvent as! TypingStartEventDTO, event)
     }
 
     func test_middleware_handlesTypingStartedEventCorrectly() throws {
@@ -57,11 +57,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         var channel = try self.channel(with: cid)
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
 
-        let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
+        let event = TypingStartEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         channel = try self.channel(with: cid)
-        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
+        XCTAssertEqual(forwardedEvent as! TypingStartEventDTO, event)
         XCTAssertEqual(channel.currentlyTypingUsers.first?.id, userId)
         XCTAssertEqual(channel.currentlyTypingUsers.count, 1)
     }
@@ -76,7 +76,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
 
         try database.createChannel(cid: cid)
 
-        let event = TypingEventDTO.startTyping(cid: cid, userId: userId, member: member)
+        let event = TypingStartEventDTO.startTyping(cid: cid, userId: userId, member: member)
         _ = middleware.handle(event: event, session: database.viewContext)
 
         let typingUser = try XCTUnwrap(try channel(with: cid).typingUsers.first)
@@ -98,11 +98,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
             channel.currentlyTypingUsers.insert(user)
         }
 
-        let event = TypingEventDTO.stopTyping(cid: cid, userId: userId)
+        let event = TypingStopEventDTO.stopTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         let channel = try self.channel(with: cid)
-        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
+        XCTAssertEqual(forwardedEvent as! TypingStopEventDTO, event)
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
     }
 
@@ -134,11 +134,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         try database.createChannel(cid: cid)
 
         _ = middleware.handle(
-            event: TypingEventDTO.startTyping(cid: cid, userId: userId, member: member),
+            event: TypingStartEventDTO.startTyping(cid: cid, userId: userId, member: member),
             session: database.viewContext
         )
         _ = middleware.handle(
-            event: TypingEventDTO.stopTyping(cid: cid, userId: userId),
+            event: TypingStopEventDTO.stopTyping(cid: cid, userId: userId),
             session: database.viewContext
         )
 
@@ -157,7 +157,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         try database.createChannel(cid: cidB)
 
         _ = middleware.handle(
-            event: TypingEventDTO.startTyping(cid: cidA, userId: userId, member: member),
+            event: TypingStartEventDTO.startTyping(cid: cidA, userId: userId, member: member),
             session: database.viewContext
         )
 
@@ -177,11 +177,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         try database.createUser(id: userId)
 
         _ = middleware.handle(
-            event: TypingEventDTO.startTyping(cid: cidA, userId: userId, member: member),
+            event: TypingStartEventDTO.startTyping(cid: cidA, userId: userId, member: member),
             session: database.viewContext
         )
         _ = middleware.handle(
-            event: TypingEventDTO.startTyping(cid: cidB, userId: userId, member: member),
+            event: TypingStartEventDTO.startTyping(cid: cidB, userId: userId, member: member),
             session: database.viewContext
         )
 

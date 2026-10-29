@@ -8,17 +8,18 @@ final class PollVoteListResponse: Sendable, Decodable {
     let next: String?
     let prev: String?
     /// Poll votes
-    let votes: [PollVotePayload?]
+    let votes: [PollVotePayload]
 
-    init(next: String? = nil, prev: String? = nil, votes: [PollVotePayload?]) {
+    init(next: String? = nil, prev: String? = nil, votes: [PollVotePayload]) {
         self.next = next
         self.prev = prev
         self.votes = votes
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case next
-        case prev
-        case votes
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.next = try container.decodeIfPresent(String.self, forKey: .next)
+        self.prev = try container.decodeIfPresent(String.self, forKey: .prev)
+        self.votes = try container.decode([PollVotePayload].self, forKey: .votes)
     }
 }

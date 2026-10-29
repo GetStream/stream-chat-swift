@@ -9,21 +9,23 @@ extension EndpointPath: Equatable {
     public static func == (_ lhs: EndpointPath, _ rhs: EndpointPath) -> Bool {
         switch (lhs, rhs) {
         case (.connect, .connect): return true
+        case let (.custom(path1), .custom(path2)): return path1 == path2
         case (.sync, .sync): return true
         case (.queryUsers, .queryUsers): return true
         case (.updateUsersPartial, .updateUsersPartial): return true
-        case (.guest, .guest): return true
+        case (.createGuest, .createGuest): return true
         case (.queryMembers, .queryMembers): return true
         case let (.updateMemberPartial(type1, id1), .updateMemberPartial(type2, id2)): return type1 == type2 && id1 == id2
         case (.search, .search): return true
         case (.createDevice, .createDevice): return true
         case (.deleteDevice, .deleteDevice): return true
         case (.listDevices, .listDevices): return true
-        case (.channels, .channels): return true
-        case let (.createChannel(string1), .createChannel(string2)): return string1 == string2
-        case let (.updateChannel(string1), .updateChannel(string2)): return string1 == string2
+        case (.queryChannels, .queryChannels): return true
+        case let (.getOrCreateChannel(type1, id1), .getOrCreateChannel(type2, id2)): return type1 == type2 && id1 == id2
+        case let (.getOrCreateDistinctChannel(type1), .getOrCreateDistinctChannel(type2)): return type1 == type2
         case let (.deleteChannel(type1, id1), .deleteChannel(type2, id2)): return type1 == type2 && id1 == id2
-        case let (.channelUpdate(string1), .channelUpdate(string2)): return string1 == string2
+        case let (.updateChannel(type1, id1), .updateChannel(type2, id2)): return type1 == type2 && id1 == id2
+        case let (.updateChannelPartial(type1, id1), .updateChannelPartial(type2, id2)): return type1 == type2 && id1 == id2
         case let (.truncateChannel(type1, id1), .truncateChannel(type2, id2)): return type1 == type2 && id1 == id2
         case let (.markRead(type1, id1), .markRead(type2, id2)): return type1 == type2 && id1 == id2
         case let (.markUnread(type1, id1), .markUnread(type2, id2)): return type1 == type2 && id1 == id2

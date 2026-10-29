@@ -277,12 +277,16 @@ open class PollCreationVC:
     }
 
     /// The button to create the poll.
-    open private(set) lazy var createPollButton = UIBarButtonItem(
-        image: appearance.images.pollCreationSendIcon,
-        style: .plain,
-        target: self,
-        action: #selector(createPoll)
-    )
+    open private(set) lazy var createPollButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: appearance.images.pollCreationSendIcon,
+            style: .plain,
+            target: self,
+            action: #selector(createPoll)
+        )
+        button.accessibilityIdentifier = "createPollButton"
+        return button
+    }()
 
     /// The button to cancel the poll creation.
     open private(set) lazy var cancelButton = UIBarButtonItem(

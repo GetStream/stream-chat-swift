@@ -243,6 +243,51 @@ final class EventNotificationCenter_Tests: XCTestCase {
         )
     }
 
+    func test_process_whenWSEventIsReceived_unwrapsEventForMiddlewaresAndPosting() {
+        // Create a notification center
+        let center = PersistentEventNotificationCenter(database: database)
+
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+
+        // Create incoming generated event wrapped in `WSEvent`
+        let dto = MessageNewEventDTO(
+            cid: .unique,
+            createdAt: .unique,
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            user: .dummy(userId: .unique)
+        )
+        let wsEvent = WSEvent.typeMessageNewEvent(dto)
+
+        // Inject spy middleware capturing the received events
+        var middlewareEvents: [Event] = []
+        let middleware = EventMiddleware_Mock { event, _ in
+            middlewareEvents.append(event)
+            return event
+        }
+        center.add(middleware: middleware)
+
+        // Feed the wrapped event and catch the completion
+        nonisolated(unsafe) var completionCalled = false
+        center.process([wsEvent]) {
+            completionCalled = true
+        }
+
+        // Wait completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        // Assert the middleware received the unwrapped event together with the `WSEvent`
+        XCTAssertEqual(middlewareEvents.count, 1)
+        XCTAssertTrue(middlewareEvents.first is MessageNewEventDTO)
+        XCTAssertEqual(middleware.handledWSEvents.count, 1)
+        XCTAssertEqual(middleware.handledWSEvents.first?.type, "message.new")
+
+        // Assert the unwrapped event is posted
+        XCTAssertEqual(eventLogger.events.count, 1)
+        XCTAssertTrue(eventLogger.events.first is MessageNewEventDTO)
+        XCTAssertFalse(eventLogger.events.contains { $0 is WSEvent })
+    }
+
     // Performance tests
 
     func test_measure_processMultipleNewMessageEvents() throws {
@@ -263,9 +308,13 @@ final class EventNotificationCenter_Tests: XCTestCase {
         // Check all messages were created
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.messages.count, existingPayloads.count)
 
-        let events: [MessageNewEventDTO] = try existingPayloads.map { message -> MessageNewEventDTO in
-            let payload = EventPayload(eventType: .messageNew, cid: channelId, user: UserPayload.dummy(userId: .unique), message: message, createdAt: Date())
-            return try MessageNewEventDTO(from: payload)
+        let events: [MessageNewEventDTO] = existingPayloads.map { message -> MessageNewEventDTO in
+            MessageNewEventDTO(
+                cid: channelId,
+                createdAt: Date(),
+                message: message,
+                user: UserPayload.dummy(userId: .unique)
+            )
         }
 
         // Create a notification center

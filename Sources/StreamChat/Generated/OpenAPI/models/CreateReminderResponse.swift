@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// Basic response information
 final class CreateReminderResponse: Sendable, Decodable {
     let reminder: ReminderPayload
 
@@ -11,7 +12,8 @@ final class CreateReminderResponse: Sendable, Decodable {
         self.reminder = reminder
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case reminder
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.reminder = try container.decode(ReminderPayload.self, forKey: .reminder)
     }
 }

@@ -67,6 +67,16 @@ import XCTest
         assertDidFailWithError(genericError)
     }
 
+    func test_beginRecording_audioSessionActivationFailsAsynchronously_callsDidFailWithErrorOnDelegateAndDoesNotRequestPermission() throws {
+        audioSessionConfigurator.activateRecordingSessionCompletionError = genericError
+        setAudioRecorder()
+
+        subject.beginRecording {}
+
+        XCTAssertEqual(audioSessionConfigurator.recordedFunctions, ["activateRecordingSession()"])
+        assertDidFailWithError(genericError)
+    }
+
     func test_beginRecording_audioSessionConfiguratorRequestRecordPersmissionReturnsFalse_callsDidFailWithErrorOnDelegate() throws {
         setAudioRecorder()
         let completionHandlerExpectation = expectation(description: "Completion handler was called.")
@@ -111,6 +121,12 @@ import XCTest
         XCTAssertTrue(stubAVAudioRecorder.delegate === subject)
         XCTAssertTrue(stubAVAudioRecorder.isMeteringEnabled)
         XCTAssertTrue(stubAVAudioRecorder.prepareToRecordWasCalled)
+    }
+
+    func test_beginRecording_prepareToRecordIsNotCalledOnTheMainThread() {
+        simulateIsRecording()
+
+        XCTAssertEqual(stubAVAudioRecorder.prepareToRecordWasCalledOnMainThread, false)
     }
 
     func test_beginRecording_failedToBeginRecording_callsDidFailWithErrorOnDelegate() throws {
@@ -202,6 +218,20 @@ import XCTest
         XCTAssertFalse(stubAVAudioRecorder.recordWasCalled)
     }
 
+    func test_resumeRecording_audioRecorderIsNotRecording_audioSessionActivationFailsAsynchronously_callsDidFailOnDelegate() {
+        simulateIsRecording()
+        subject.pauseRecording()
+        audioSessionConfigurator.clear()
+        stubAVAudioRecorder.recordWasCalled = false
+        stubAVAudioRecorder.stubProperty(\.isRecording, with: false)
+        audioSessionConfigurator.activateRecordingSessionCompletionError = genericError
+
+        subject.resumeRecording()
+
+        assertDidFailWithError(genericError)
+        XCTAssertFalse(stubAVAudioRecorder.recordWasCalled)
+    }
+
     func test_resumeRecording_audioRecorderIsNotRecording_failsToStartRecording_callsDidFailOnDelegate() {
         simulateIsRecording()
         subject.pauseRecording()
@@ -268,6 +298,15 @@ import XCTest
     func test_stopRecording_audioRecorderIsRecording_failsToDeactiveRecordingSession_callsDidFailOnDelegate() {
         simulateIsRecording()
         audioSessionConfigurator.deactivateRecordingSessionThrowsError = genericError
+
+        subject.stopRecording()
+
+        assertDidFailWithError(genericError)
+    }
+
+    func test_stopRecording_audioRecorderIsRecording_audioSessionDeactivationFailsAsynchronously_callsDidFailOnDelegate() {
+        simulateIsRecording()
+        audioSessionConfigurator.deactivateRecordingSessionCompletionError = genericError
 
         subject.stopRecording()
 
@@ -391,11 +430,13 @@ import XCTest
         }
 
         stubAVAudioRecorder.stubProperty(\.currentTime, with: 10)
+        // The recording observers read `isRecording` as soon as the recording starts, which now
+        // happens asynchronously, so the property is stubbed before the recording begins.
+        stubAVAudioRecorder.stubProperty(\.isRecording, with: true)
         subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
-        assertContextUpdate(.init(state: .recording, duration: 0, averagePower: 0), file: file, line: line)
-        stubAVAudioRecorder.stubProperty(\.isRecording, with: true)
         wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
+        assertContextUpdate(.init(state: .recording, duration: 0, averagePower: 0), file: file, line: line)
     }
 
     private func assertContextUpdate(
@@ -467,6 +508,7 @@ private final class StubAudioRecorder: AVAudioRecorder, Stub, @unchecked Sendabl
     var recordResult: Bool = false
 
     var prepareToRecordWasCalled = false
+    var prepareToRecordWasCalledOnMainThread: Bool?
     var prepareToRecordResult: Bool = false
 
     var averagePowerWasCalledWithChannelNumber: Int?
@@ -501,6 +543,7 @@ private final class StubAudioRecorder: AVAudioRecorder, Stub, @unchecked Sendabl
 
     override func prepareToRecord() -> Bool {
         prepareToRecordWasCalled = true
+        prepareToRecordWasCalledOnMainThread = Thread.isMainThread
         return prepareToRecordResult
     }
 

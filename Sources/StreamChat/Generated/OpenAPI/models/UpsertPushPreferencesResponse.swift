@@ -18,8 +18,15 @@ final class UpsertPushPreferencesResponse: Sendable, Decodable {
         self.userPreferences = userPreferences
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case userChannelPreferences = "user_channel_preferences"
-        case userPreferences = "user_preferences"
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: StringCodingKey.self)
+        self.userChannelPreferences = try container.decode(
+            [String: [String: PushPreference]].self,
+            forKey: .userChannelPreferences
+        )
+        self.userPreferences = try container.decode(
+            [String: PushPreference].self,
+            forKey: .userPreferences
+        )
     }
 }

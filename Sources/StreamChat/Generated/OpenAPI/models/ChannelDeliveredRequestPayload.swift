@@ -11,7 +11,8 @@ final class ChannelDeliveredRequestPayload: Sendable, Encodable, JSONEncodable {
         self.latestDeliveredMessages = latestDeliveredMessages
     }
 
-    enum CodingKeys: String, CodingKey, CaseIterable {
-        case latestDeliveredMessages = "latest_delivered_messages"
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: StringCodingKey.self)
+        try container.encodeIfPresent(latestDeliveredMessages, forKey: .latestDeliveredMessages)
     }
 }

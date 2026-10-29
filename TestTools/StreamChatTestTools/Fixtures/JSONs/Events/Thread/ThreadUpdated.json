@@ -26,6 +26,10 @@
     "thread": {
         "channel_cid": "messaging:456F834D-1",
         "channel": {
+            "custom": {
+                "name": "Cult meetup",
+                "is_cool": true
+            },
             "id": "456F834D-1",
             "type": "messaging",
             "cid": "messaging:456F834D-1",
@@ -95,9 +99,7 @@
                         "set": "fun_set"
                     }
                 ]
-            },
-            "name": "Cult meetup",
-            "is_cool": true
+            }
         },
         "parent_message_id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
         "parent_message": {
@@ -213,7 +215,7 @@
                 "user_id": "leia_organa",
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:31:51.209329Z",
-                "custom": null
+                "custom": {}
             },
             {
                 "app_pk": 0,
@@ -223,7 +225,7 @@
                 "user_id": "han_solo",
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:32:08.799903Z",
-                "custom": null
+                "custom": {}
             }
         ],
         "last_message_at": "2024-07-03T17:34:14.600702Z",

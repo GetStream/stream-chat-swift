@@ -645,7 +645,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Token Provider Failure
         let apiError = TestError()
-        apiClient.test_mockUnmanagedResponseResult(Result<GuestUserTokenPayload, Error>.failure(apiError))
+        apiClient.test_mockUnmanagedResponseResult(Result<CreateGuestResponse, Error>.failure(apiError))
 
         let completionExpectation = expectation(description: "Connect completion")
         nonisolated(unsafe) var receivedError: Error?
@@ -661,7 +661,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNil(repository.currentToken)
         XCTAssertEqual(receivedError, apiError)
         let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-        XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(request.path, .createGuest)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertEqual(delegate.logoutCallCount, 1)
@@ -674,7 +674,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.delegate = delegate
 
         // Token Provider Success
-        let apiToken = Token.unique()
+        let apiToken = Token.development(userId: userInfo.id)
 
         // Simulate Failure on Connection Repository
         let testError = TestError()
@@ -682,11 +682,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
-                user: CurrentUserPayload.dummy(userId: "", role: .user),
-                token: apiToken
-            )
-            )
+            Result<CreateGuestResponse, Error>.success(.dummy(token: apiToken))
         )
 
         let completionExpectation = expectation(description: "Connect completion")
@@ -702,7 +698,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-        XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(request.path, .createGuest)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
@@ -718,18 +714,14 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.delegate = delegate
 
         // Token Provider Success
-        let apiToken = Token.unique()
+        let apiToken = Token.development(userId: userInfo.id)
 
         // Simulate Success on Connection Repository
         connectionRepository.connectResult = .success(())
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
-                user: CurrentUserPayload.dummy(userId: "", role: .user),
-                token: apiToken
-            )
-            )
+            Result<CreateGuestResponse, Error>.success(.dummy(token: apiToken))
         )
 
         let completionExpectation = expectation(description: "Connect completion")
@@ -745,7 +737,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-        XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(request.path, .createGuest)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
