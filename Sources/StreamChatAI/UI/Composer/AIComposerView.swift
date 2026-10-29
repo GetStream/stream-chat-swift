@@ -39,8 +39,8 @@ import SwiftUI
 /// }
 /// ```
 ///
-/// - Note: Requires iOS 16 or later.
-@available(iOS 16, *)
+/// - Note: Before iOS 16 the text field is a single line, the attachment sheet opens at full
+///   height, and the sheet has no button that browses the whole photo library.
 public struct AIComposerView<ComposerFactory: AIComposerViewFactory>: View {
     private let viewFactory: ComposerFactory
 
@@ -87,8 +87,12 @@ public struct AIComposerView<ComposerFactory: AIComposerViewFactory>: View {
         .padding(.all, layout.spacingXs)
         .foregroundStyle(Color(colors.composerText))
         .sheet(isPresented: $viewModel.sheetShown) {
-            viewFactory.makeComposerPickerView(options: .init(viewModel: viewModel))
-                .presentationDetents([.medium, .large])
+            let picker = viewFactory.makeComposerPickerView(options: .init(viewModel: viewModel))
+            if #available(iOS 16, *) {
+                picker.presentationDetents([.medium, .large])
+            } else {
+                picker
+            }
         }
     }
 }

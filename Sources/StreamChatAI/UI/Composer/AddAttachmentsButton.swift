@@ -10,7 +10,6 @@ import SwiftUI
 /// Renders a circular `+` icon that, when tapped, opens the attachment picker sheet.
 /// The ``AIComposerViewFactory/makeLeadingComposerView(options:)`` default implementation
 /// returns this view. Supply your own factory method to replace it.
-@available(iOS 16, *)
 public struct AddAttachmentsButton: View {
     @Injected(\.aiAppearance.colors) private var colors
     @Injected(\.aiAppearance.images) private var images
@@ -28,7 +27,7 @@ public struct AddAttachmentsButton: View {
         } label: {
             images.composerAddAttachment
                 .foregroundStyle(Color(colors.composerAttachmentButtonIcon))
-                .fontWeight(.semibold)
+                .font(.body.weight(.semibold))
         }
         .padding(.all, layout.spacingSm)
         .background(Color(colors.composerAttachmentButtonBackground))

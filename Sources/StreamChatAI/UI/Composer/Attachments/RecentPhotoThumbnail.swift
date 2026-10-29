@@ -6,7 +6,6 @@ import Photos
 import SwiftUI
 import UIKit
 
-@available(iOS 16, *)
 struct RecentPhotoThumbnail: View {
     enum SelectionChange {
         case select(AttachmentLocation)

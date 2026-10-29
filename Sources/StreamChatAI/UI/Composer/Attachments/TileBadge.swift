@@ -6,7 +6,6 @@ import StreamCore
 import SwiftUI
 
 /// A round badge on a tile, such as its check mark or its remove button.
-@available(iOS 16, *)
 struct TileBadge: View {
     let image: Image
     let fill: Color

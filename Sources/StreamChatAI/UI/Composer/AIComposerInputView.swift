@@ -7,9 +7,9 @@ import SwiftUI
 
 /// The default central input area rendered by ``AIComposerView``.
 ///
-/// Contains a multi-line `TextField`, an inline ``SpeechToTextButton``, a send
-/// button, and a stop-generating button. It also shows attachment thumbnails and
-/// the active chat-option chip when those are present on the view model.
+/// Contains a multi-line `TextField` (a single line before iOS 16), an inline
+/// ``SpeechToTextButton``, a send button, and a stop-generating button. It also shows
+/// attachment thumbnails and the active chat-option chip when those are present on the view model.
 ///
 /// `AIComposerInputView` observes ``AIComposerViewModel/isTextFieldFocused`` and keeps
 /// the keyboard in sync: set `isTextFieldFocused = true` to programmatically focus
@@ -17,7 +17,6 @@ import SwiftUI
 ///
 /// Override ``AIComposerViewFactory/makeComposerInputView(options:)`` to replace this
 /// view with your own implementation while keeping the rest of the composer intact.
-@available(iOS 16, *)
 public struct AIComposerInputView<TrailingView: View>: View {
     @ObservedObject var viewModel: AIComposerViewModel
     @ObservedObject var speechHandler: SpeechHandler
@@ -63,11 +62,8 @@ public struct AIComposerInputView<TrailingView: View>: View {
             }
             
             HStack {
-                TextField(L10n.Composer.placeholderAskAnything, text: $viewModel.text, axis: .vertical)
-                    .lineLimit(1...5)
-                    .textFieldStyle(.plain)
-                    .focused($isFocused)
-                
+                textField
+
                 actions
             }
         }
@@ -89,12 +85,26 @@ public struct AIComposerInputView<TrailingView: View>: View {
         }
     }
 
+    // Before iOS 16 a text field can't grow as its text wraps, so it stays one line.
+    @ViewBuilder
+    private var textField: some View {
+        if #available(iOS 16, *) {
+            TextField(L10n.Composer.placeholderAskAnything, text: $viewModel.text, axis: .vertical)
+                .lineLimit(1...5)
+                .textFieldStyle(.plain)
+                .focused($isFocused)
+        } else {
+            TextField(L10n.Composer.placeholderAskAnything, text: $viewModel.text)
+                .textFieldStyle(.plain)
+                .focused($isFocused)
+        }
+    }
+
     // The trailing view, the send button and the stop button share one spot and only fade in
     // and out, so the field never changes width as you type.
     private var actions: some View {
         ZStack {
-            trailingView
-                .fontWeight(.semibold)
+            semiboldTrailingView
                 .opacity(viewModel.isGenerating ? 0 : (text.isEmpty ? 1 : 0))
             
             Button {
@@ -117,6 +127,17 @@ public struct AIComposerInputView<TrailingView: View>: View {
         }
     }
 
+    // `.font(_:)` would also replace the size of a custom view's font, so before iOS 16 the
+    // weight is left as it is.
+    @ViewBuilder
+    private var semiboldTrailingView: some View {
+        if #available(iOS 16, *) {
+            trailingView.fontWeight(.semibold)
+        } else {
+            trailingView
+        }
+    }
+
     private func send() {
         onMessageSend(.init(text: text, attachments: viewModel.attachments, chatOption: viewModel.selectedChatOption))
         viewModel.clearAfterSending()
@@ -130,7 +151,6 @@ public struct AIComposerInputView<TrailingView: View>: View {
     }
 }
 
-@available(iOS 16, *)
 public extension AIComposerInputView where TrailingView == SpeechToTextButton {
     /// Creates the input with the default ``SpeechToTextButton`` inside the field.
     init(
