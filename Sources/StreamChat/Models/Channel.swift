@@ -541,7 +541,8 @@ extension ChatChannel: Hashable {
         guard lhs.isFrozen == rhs.isFrozen else { return false }
         guard lhs.isDisabled == rhs.isDisabled else { return false }
         guard lhs.isHidden == rhs.isHidden else { return false }
-        guard lhs.memberCount == rhs.memberCount, lhs.activeMemberCount == rhs.activeMemberCount else { return false }
+        guard lhs.memberCount == rhs.memberCount else { return false }
+        guard lhs.activeMemberCount == rhs.activeMemberCount else { return false }
         guard lhs.membership == rhs.membership else { return false }
         guard lhs.typingUsers == rhs.typingUsers else { return false }
         guard lhs.team == rhs.team else { return false }
