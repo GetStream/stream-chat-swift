@@ -690,6 +690,37 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel.autoTranslationLanguages, [])
     }
 
+    func test_saveChannel_storesActiveMemberCount() throws {
+        let channelId: ChannelId = .unique
+        let payload = ChannelDetailPayload.dummy(cid: channelId, memberCount: 12, activeMemberCount: 10)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.memberCount, 12)
+        XCTAssertEqual(loadedChannel.activeMemberCount, 10)
+    }
+
+    func test_saveChannel_keepsActiveMemberCount_whenPayloadDoesNotContainIt() throws {
+        let channelId: ChannelId = .unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: channelId, activeMemberCount: 10), query: nil, cache: nil)
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
+        }
+
+        let loadedChannel = try database.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: channelId)?.asModel())
+        }
+        XCTAssertEqual(loadedChannel.activeMemberCount, 10)
+    }
+
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
 

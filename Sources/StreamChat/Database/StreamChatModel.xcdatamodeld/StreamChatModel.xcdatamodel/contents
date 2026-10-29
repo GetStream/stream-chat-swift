@@ -44,6 +44,7 @@
         <relationship name="commands" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CommandDTO" inverseName="channelConfig" inverseEntity="CommandDTO"/>
     </entity>
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
+        <attribute name="activeMemberCount" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="autoTranslationLanguage" optional="YES" attributeType="String"/>
         <attribute name="cid" attributeType="String"/>
         <attribute name="cooldownDuration" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>

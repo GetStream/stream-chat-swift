@@ -216,6 +216,17 @@ final class ChannelListQuery_Tests: XCTestCase {
 
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
+
+    func test_endpoint_includesActiveMemberCount_onlyWhenRequested() throws {
+        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        let defaultBody = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        query.includeActiveMemberCount = true
+        let body = try AnyEndpoint(query.endpoint).bodyAsDictionary()
+
+        XCTAssertEqual(body["include_active_member_count"] as? Bool, true)
+        XCTAssertNil(defaultBody["include_active_member_count"])
+    }
 }
 
 private extension ChatChannel {

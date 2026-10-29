@@ -6,6 +6,8 @@ import Foundation
 
 /// Represents channel in chat
 final class ChannelDetailPayload: Sendable, Decodable {
+    /// Number of members who are not deactivated or deleted
+    let activeMemberCount: Int?
     /// Whether auto translation is enabled or not
     let autoTranslationEnabled: Bool?
     /// Language (or comma-separated list of languages) to translate to when auto translation is active
@@ -56,6 +58,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
     let updatedAt: Date
 
     init(
+        activeMemberCount: Int? = nil,
         autoTranslationEnabled: Bool? = nil,
         autoTranslationLanguage: String? = nil,
         blocked: Bool? = nil,
@@ -82,6 +85,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
         type: String,
         updatedAt: Date
     ) {
+        self.activeMemberCount = activeMemberCount
         self.autoTranslationEnabled = autoTranslationEnabled
         self.autoTranslationLanguage = autoTranslationLanguage
         self.blocked = blocked
@@ -111,6 +115,7 @@ final class ChannelDetailPayload: Sendable, Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
+        activeMemberCount = try container.decodeIfPresent(Int.self, forKey: .activeMemberCount)
         autoTranslationEnabled = try container.decodeIfPresent(
             Bool.self,
             forKey: .autoTranslationEnabled
