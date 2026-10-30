@@ -24,6 +24,13 @@ extension AIUIRenderers {
     func reads(_ document: AIUIDocument) -> Bool {
         all.contains { $0.format == document.format && $0.supports(version: document.version) }
     }
+
+    // Gives a reply's document to the engine of the first renderer that reads its format and
+    // version.
+    func receive(_ document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) {
+        guard let position = all.firstIndex(where: { $0.reads(document) }) else { return }
+        all[position].deliver(document, messageID: messageID, in: context.after(position))
+    }
 }
 
 /// Two sets of renderers, the first one asked first, which ``AIUIRenderersBuilder`` puts

@@ -97,6 +97,16 @@ final class AIUIComponentDefinition_Tests: XCTestCase {
         XCTAssertThrowsError(try AIUIArguments.decode(Arguments.self, from: ["visit_on": .string("next Saturday")]))
         XCTAssertThrowsError(try AIUIArguments.decode(Arguments.self, from: ["visit_on": .string("2026-13-40")]))
         XCTAssertThrowsError(try AIUIArguments.decode(Arguments.self, from: ["visit_on": .number(1_794_648_600)]))
+        XCTAssertThrowsError(
+            try AIUIArguments.decode(Arguments.self, from: ["visit_on": .string("2026-02-29")]),
+            "not a day of 2026, rather than the 1st of March"
+        )
+        XCTAssertThrowsError(
+            try AIUIArguments.decode(Arguments.self, from: ["visit_on": .string("2026-11-14T09:30:00+bogus")]),
+            "a day is all there is to it"
+        )
+        XCTAssertThrowsError(try AIUIArguments.decode(Arguments.self, from: ["visit_on": .string("2026-11-4")]))
+        XCTAssertNoThrow(try AIUIArguments.decode(Arguments.self, from: ["visit_on": .string("2028-02-29")]))
     }
 
     func testArgumentsDecodeFromSnakeCaseWithDaysAndMoments() throws {
@@ -112,9 +122,11 @@ final class AIUIComponentDefinition_Tests: XCTestCase {
             "starts_at": .string("2026-11-14T09:30:00Z")
         ])
 
-        let day = Calendar.current.dateComponents([.year, .month, .day, .hour], from: arguments.visitOn)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .current
+        let day = calendar.dateComponents([.year, .month, .day, .hour], from: arguments.visitOn)
         XCTAssertEqual(arguments.title, "Ohrid")
-        XCTAssertEqual([day.year, day.month, day.day, day.hour], [2026, 11, 14, 0], "a day is midnight on this device's calendar")
+        XCTAssertEqual([day.year, day.month, day.day, day.hour], [2026, 11, 14, 0], "a day starts at midnight in this device's time zone")
         XCTAssertEqual(arguments.startsAt, Date(timeIntervalSince1970: 1_794_648_600))
         XCTAssertThrowsError(try AIUIArguments.decode(Arguments.self, from: ["title": .string("Ohrid")]))
     }

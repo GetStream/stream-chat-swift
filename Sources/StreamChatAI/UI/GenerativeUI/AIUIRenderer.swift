@@ -24,7 +24,8 @@ public protocol AIUIRenderer: AIUIRenderers where Content == Engine.Content {
     /// What the agent's backend needs to have its model write UI this renderer shows with
     /// `components`, such as the model's instructions. None by default.
     func capabilities(components: [any AIUIComponent]) -> [String: RawJSON]
-    /// Makes what shows the documents of one conversation.
+    /// Makes what shows the documents of one conversation. Keep `host` weakly: it keeps the
+    /// engine.
     func makeEngine(host: any AIUIHosting) -> Engine
 }
 
@@ -40,6 +41,13 @@ public extension AIUIRenderer {
     }
 }
 
+extension AIUIRenderer {
+    // Gives a reply's document to its engine, the one in `context`.
+    func deliver(_ document: AIUIDocument, messageID: String, in context: AIUIRenderingContext) {
+        context.engine(of: self).receive(document, messageID: messageID)
+    }
+}
+
 /// Shows the documents of one renderer in one conversation. The host makes one per renderer and
 /// keeps it while it is kept, so an engine can hold each reply's state, and a format whose
 /// later replies change an earlier one's UI can follow the conversation.
@@ -48,8 +56,20 @@ public protocol AIUIEngine: AnyObject {
     /// The view of a reply's document.
     associatedtype Content: View
 
+    /// Takes a reply's document as it arrives or changes, oldest reply first, whether or not the
+    /// reply is on screen, so a format whose later replies change an earlier one's UI can follow
+    /// them all. It comes as the conversation updates, before any reply's view is asked for:
+    /// change what is already on screen after the update, such as in a `Task`. Nothing by
+    /// default.
+    func receive(_ document: AIUIDocument, messageID: String)
+
     /// The view of a reply's document, or `nil` when it shows nothing of its own, such as a
     /// reply that only changed an earlier one's UI, so the reply's text shows. It is asked
-    /// again as the document changes.
+    /// again only as the reply's own document changes, so a view that later replies change
+    /// follows the engine's state, such as an object it observes.
     func view(for document: AIUIDocument, messageID: String) -> Content?
+}
+
+public extension AIUIEngine {
+    func receive(_ document: AIUIDocument, messageID: String) { /* Each reply's UI is its own. */ }
 }

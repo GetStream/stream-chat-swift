@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChatAI
+import SwiftUI
 import XCTest
 
 @MainActor
@@ -21,6 +22,21 @@ final class AIConversationEntryView_Tests: XCTestCase {
 
         func reasoningText(for step: AIReasoningPart) -> String? {
             thinking
+        }
+    }
+
+    private final class RecordingFactory: AIConversationViewFactory {
+        var answers: [String: String] = [:]
+        var repliesWithActions: Set<String> = []
+
+        func makeAssistantMessageView(options: AIAssistantMessageViewOptions) -> some View {
+            answers[String(describing: options.message.id)] = options.text
+            return EmptyView()
+        }
+
+        func makeReplyActionsView(options: AIReplyActionsViewOptions) -> some View {
+            repliesWithActions.insert(String(describing: options.message.id))
+            return EmptyView()
         }
     }
 
@@ -110,6 +126,22 @@ final class AIConversationEntryView_Tests: XCTestCase {
         XCTAssertNil(row(Message(id: "q1", role: .user, uiDocument: ui("root = Card([])")), host: host).generated)
     }
 
+    func test_uiRow_showsTheReplysActions_onceItsUIIsWrittenOut() throws {
+        guard #available(iOS 16, *) else { throw XCTSkip("Rows render with ImageRenderer") }
+        let factory = RecordingFactory()
+        let host = AIUIHost { AIUIHost_Tests.TestRenderer() } send: { _ in }
+        let finished = AIUIDocument(format: .openUI, content: .string("root = Card([title])"))
+
+        render(row(Message(id: "a1", text: "", isGenerating: false, uiDocument: finished), host: host, factory: factory))
+        render(row(Message(id: "a2", text: "", isGenerating: true, uiDocument: ui("root = Card([])")), host: host, factory: factory))
+        render(row(Message(id: "a3", text: "", isGenerating: false), host: host, factory: factory))
+        render(row(Message(id: "a4", isGenerating: false), host: host, factory: factory))
+
+        XCTAssertEqual(factory.repliesWithActions, ["a1", "a4"], "a finished reply has actions, whether it answers in UI or in text")
+        XCTAssertEqual(factory.answers["a1"], "", "the reply's UI shows in place of its text")
+        XCTAssertEqual(factory.answers["a4"], "Lisbon it is")
+    }
+
     private let noHost: AIUIHost<AIUIHost_Tests.TestRenderer>? = nil
 
     private func ui(_ program: String) -> AIUIDocument {
@@ -131,11 +163,24 @@ final class AIConversationEntryView_Tests: XCTestCase {
         _ message: Message,
         host: AIUIHost<Renderers>?
     ) -> AIUIConversationEntryView<Message, DefaultAIConversationViewFactory, Renderers> {
+        row(message, host: host, factory: .shared)
+    }
+
+    private func row<Renderers: AIUIRenderers, Factory: AIConversationViewFactory>(
+        _ message: Message,
+        host: AIUIHost<Renderers>?,
+        factory: Factory
+    ) -> AIUIConversationEntryView<Message, Factory, Renderers> {
         AIUIConversationEntryView(
             entry: AIConversationEntry(id: AnyHashable(message.id), message: message, sentAttachments: []),
-            factory: .shared,
+            factory: factory,
             approver: nil,
             host: host
         )
+    }
+
+    @available(iOS 16, *)
+    private func render(_ view: some View) {
+        _ = ImageRenderer(content: view.frame(width: 320, height: 480)).uiImage
     }
 }

@@ -10,11 +10,16 @@ import XCTest
 @MainActor
 final class AIUIHost_Tests: XCTestCase {
     final class TestEngine: AIUIEngine {
-        let host: any AIUIHosting
+        weak var host: (any AIUIHosting)?
+        var received: [(messageID: String, document: AIUIDocument)] = []
         var shown: [(messageID: String, document: AIUIDocument)] = []
 
         init(host: any AIUIHosting) {
             self.host = host
+        }
+
+        func receive(_ document: AIUIDocument, messageID: String) {
+            received.append((messageID, document))
         }
 
         func view(for document: AIUIDocument, messageID: String) -> Text? {
@@ -69,6 +74,13 @@ final class AIUIHost_Tests: XCTestCase {
         func body(arguments: Arguments, context: AIUIComponentContext) -> some View {
             Text(arguments.title)
         }
+    }
+
+    struct Reply: AIMessage {
+        var id: String
+        var role: AIMessageRole = .assistant
+        var text = ""
+        var uiDocument: AIUIDocument?
     }
 
     private let placeCard = PlaceCard()
@@ -153,7 +165,54 @@ final class AIUIHost_Tests: XCTestCase {
 
         XCTAssertTrue(host.canShow(nothing), "a renderer reads the format")
         XCTAssertNil(host.content(for: nothing, messageID: "m1"), "but shows nothing of its own for the reply, so its text shows")
+        XCTAssertFalse(AIUIView(host: host, document: nothing, messageID: "m1").canShow)
         XCTAssertNotNil(host.content(for: document(), messageID: "m2"))
+        XCTAssertTrue(AIUIView(host: host, document: document(), messageID: "m2").canShow)
+    }
+
+    func testEnginesReceiveEachReplysUIOldestFirstWhetherOrNotItShows() throws {
+        let openUI = TestRenderer()
+        let a2ui = TestRenderer(format: .a2ui)
+        let host = AIUIHost {
+            openUI
+            a2ui
+        } send: { _ in }
+        var replies = [
+            Reply(id: "q1", role: .user, uiDocument: document("root = Card([q])")),
+            Reply(id: "a1", uiDocument: document("root = Card([a])")),
+            Reply(id: "a2", text: "Ohrid it is"),
+            Reply(id: "a3", uiDocument: document("{}", format: .a2ui)),
+            Reply(id: "a4", uiDocument: document("root = Card([b])")),
+            Reply(id: "a5", uiDocument: document(format: "cards"))
+        ]
+
+        host.receive(replies)
+
+        let engine = try XCTUnwrap(openUI.engines.first)
+        XCTAssertEqual(engine.received.map(\.messageID), ["a1", "a4"], "a person's message carries no UI of the agent's")
+        XCTAssertEqual(a2ui.engines.first?.received.map(\.messageID), ["a3"], "each goes to the renderer that reads it")
+        XCTAssertTrue(engine.shown.isEmpty, "no reply's view is asked for")
+
+        replies[1].uiDocument = document("root = Card([a, c])")
+        replies.append(Reply(id: "a6", uiDocument: document("root = Card([d])")))
+        host.receive(replies)
+        host.receive(replies)
+
+        XCTAssertEqual(engine.received.map(\.messageID), ["a1", "a4", "a1", "a6"], "only what changed or arrived comes again")
+        XCTAssertEqual(engine.received.suffix(2).map(\.document.text), ["root = Card([a, c])", "root = Card([d])"])
+        XCTAssertEqual(openUI.engines.count, 1, "the engine that shows the replies is the one that receives them")
+    }
+
+    func testAConversationGivesEveryReplysUIToTheEnginesBeforeItsRowsShow() throws {
+        let renderer = TestRenderer()
+        let host = AIUIHost { renderer } send: { _ in }
+        let replies = (0..<80).map { Reply(id: "a\($0)", uiDocument: document("root = Card([t\($0)])")) }
+
+        _ = AIConversationView(messages: replies, ui: host).content(AIPendingMessageTracker())
+
+        let engine = try XCTUnwrap(renderer.engines.first)
+        XCTAssertEqual(engine.received.map(\.messageID), replies.map(\.id), "rows only show the replies on screen")
+        XCTAssertTrue(engine.shown.isEmpty)
     }
 
     func testWhatThePersonDoesGoesToTheAgent() async {

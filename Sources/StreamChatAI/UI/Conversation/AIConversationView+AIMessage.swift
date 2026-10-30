@@ -124,6 +124,8 @@ public extension AIConversationView {
         MessageContent == EquatableView<AIUIConversationEntryView<Item, Factory, Renderers>> {
         self.init(
             content: { tracker in
+                // The rows show only the replies on screen, so the engines take every reply's UI first.
+                ui?.receive(messages)
                 let entries = tracker.entries(for: messages, pending: pendingMessage)
                 return (entries, isThinking || tracker.isAwaitingReply(in: messages, pending: pendingMessage))
             },

@@ -61,6 +61,7 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
     private let sendAction: @MainActor (AIUIAction) async throws -> Void
     private let engines = AIUIEngines()
     private var states: [String: RawJSON] = [:]
+    private var received: [String: AIUIDocument] = [:]
 
     /// - Parameters:
     ///   - components: The app's views the agent can place.
@@ -79,7 +80,8 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
         sendAction = send
     }
 
-    /// Whether one of its renderers reads `document`, so it shows in place of the reply's text.
+    /// Whether one of its renderers reads `document`. The one that does can still show nothing
+    /// of its own for a reply, which then shows its text, as ``AIUIView/canShow`` tells.
     public func canShow(_ document: AIUIDocument) -> Bool {
         renderers.reads(document)
     }
@@ -126,24 +128,47 @@ public final class AIUIHost<Renderers: AIUIRenderers>: AIUIHosting, ObservableOb
         states[messageID] = state
     }
 
+    /// Gives its renderers the UI of the conversation's replies, oldest first, as each arrives or
+    /// changes, whether or not the reply is on screen, so a format whose later replies change an
+    /// earlier one's UI follows them all. ``AIConversationView`` does it: call it with the
+    /// conversation's messages when you show replies yourself with ``AIUIView``.
+    public func receive<Message: AIMessage>(_ messages: [Message]) {
+        for message in messages where message.role != .user {
+            guard let document = message.uiDocument else { continue }
+            let messageID = String(describing: message.id)
+            guard received[messageID] != document else { continue }
+            received[messageID] = document
+            renderers.receive(document, messageID: messageID, in: context)
+        }
+    }
+
     /// What the agent's backend needs to write UI this app shows: each format it reads, with
     /// what its renderer adds, and the app's components.
     public var capabilities: [String: RawJSON] {
-        let renderers = renderers.all.map { renderer -> RawJSON in
+        let formats = renderers.all.map { renderer -> RawJSON in
             var fields = renderer.capabilities(components: components)
             fields["format"] = .string(renderer.format.rawValue)
             return .dictionary(fields)
         }
-        let components = components.compactMap { component -> RawJSON? in
-            guard let data = try? JSONEncoder().encode(component.definition) else { return nil }
-            return try? JSONDecoder().decode(RawJSON.self, from: data)
+        let definitions = components.compactMap { component -> RawJSON? in
+            do {
+                return try JSONDecoder().decode(RawJSON.self, from: JSONEncoder().encode(component.definition))
+            } catch {
+                log.error("Couldn't describe the component \(component.name) to the agent", error: error)
+                return nil
+            }
         }
-        return ["v": .number(1), "renderers": .array(renderers), "components": .array(components)]
+        return ["v": .number(1), "renderers": .array(formats), "components": .array(definitions)]
     }
 
     // The view of a reply's document from the first renderer that reads its format and version.
     func content(for document: AIUIDocument, messageID: String) -> Renderers.Content? {
-        renderers.view(for: document, messageID: messageID, in: AIUIRenderingContext(host: self, engines: engines, position: 0))
+        renderers.view(for: document, messageID: messageID, in: context)
+    }
+
+    // Where its renderers show the documents of its conversation, with the engines it keeps.
+    private var context: AIUIRenderingContext {
+        AIUIRenderingContext(host: self, engines: engines, position: 0)
     }
 }
 

@@ -47,7 +47,7 @@ struct AIConversationRow<Message: AIMessage, Factory: AIConversationViewFactory,
                     if let generated {
                         generated
                     }
-                    if !message.isGenerating && !message.text.isEmpty && isWriting != true {
+                    if !message.isGenerating && (!message.text.isEmpty || generated != nil) && isWriting != true {
                         factory.makeReplyActionsView(
                             options: AIReplyActionsViewOptions(
                                 message: message,
