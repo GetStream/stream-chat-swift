@@ -56,6 +56,7 @@ extension ChannelDetailPayload {
         isHidden: Bool?,
         members: [MemberPayload]?,
         memberCount: Int?,
+        activeMemberCount: Int? = nil,
         messageCount: Int?,
         team: TeamId?,
         cooldownDuration: Int?,
@@ -71,6 +72,7 @@ extension ChannelDetailPayload {
         }
 
         self.init(
+            activeMemberCount: activeMemberCount,
             autoTranslationEnabled: autoTranslationEnabled,
             autoTranslationLanguage: autoTranslationLanguage,
             blocked: isBlocked,

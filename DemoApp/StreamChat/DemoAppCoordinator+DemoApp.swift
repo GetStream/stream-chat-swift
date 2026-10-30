@@ -159,6 +159,7 @@ extension DemoAppCoordinator {
         }
 
         channelListQuery.includeScheduledMessages = AppConfig.shared.isScheduledMessagesEnabled
+        channelListQuery.includeActiveMemberCount = AppConfig.shared.demoAppConfig.isActiveMemberCountEnabled
 
         let tuple = makeChannelVCs(for: cid)
         let selectedChannel = tuple.channelController?.channel
