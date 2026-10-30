@@ -13,7 +13,10 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         var role: AIMessageRole
         var text = "Text"
         var isGenerating = false
+        var uiDocument: AIUIDocument?
     }
+
+    private let writingUI = AIUIDocument(format: .openUI, isStreaming: true, content: .string("root = Card([title])"))
 
     private let tracker = AIPendingMessageTracker()
     private let photo = UIImage()
@@ -29,6 +32,18 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
         )
 
         XCTAssertEqual(entries.map(\.id), ["q1"])
+    }
+
+    func test_entries_keepAReplyThatShowsOnlyItsUISoFar() {
+        let entries = tracker.entries(
+            for: [
+                Message(id: "q1", role: .user),
+                Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
+            ],
+            pending: nil
+        )
+
+        XCTAssertEqual(entries.map(\.id), ["q1", "a1"])
     }
 
     func test_entries_showThePendingMessageAfterTheMessages() {
@@ -151,6 +166,15 @@ final class AIPendingMessageTracker_Tests: XCTestCase {
 
     func test_isAwaitingReply_onceTheReplyShowsSomething_isFalse() {
         let messages = [Message(id: "q1", role: .user), Message(id: "a1", role: .assistant, text: "Sure", isGenerating: true)]
+
+        XCTAssertFalse(tracker.isAwaitingReply(in: messages, pending: nil))
+    }
+
+    func test_isAwaitingReply_onceTheReplysUIShows_isFalse() {
+        let messages = [
+            Message(id: "q1", role: .user),
+            Message(id: "a1", role: .assistant, text: "", isGenerating: true, uiDocument: writingUI)
+        ]
 
         XCTAssertFalse(tracker.isAwaitingReply(in: messages, pending: nil))
     }

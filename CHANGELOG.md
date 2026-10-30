@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add Scheduled Messages [#4357](https://github.com/GetStream/stream-chat-swift/pull/4357)
 - Add `ChannelListQuery.includeActiveMemberCount` to load `ChatChannel.activeMemberCount`, the number of members who are neither deactivated nor deleted [#4368](https://github.com/GetStream/stream-chat-swift/pull/4368)
 
+## StreamChatAI
+### ✅ Added
+- Add generative UI: a reply can show interactive UI its agent wrote, in a format such as OpenUI or A2UI, in place of its text [#4370](https://github.com/GetStream/stream-chat-swift/pull/4370)
+
 # [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
 _October 22, 2026_
 
