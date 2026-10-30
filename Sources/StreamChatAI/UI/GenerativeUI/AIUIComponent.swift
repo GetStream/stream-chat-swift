@@ -52,10 +52,12 @@ public extension AIUIComponent {
     /// The name the agent places it by.
     var name: String { definition.name }
 
-    /// The component for the arguments the agent wrote, or `nil` while they don't fit its
-    /// parameters, such as while they are still streaming in.
-    func view(arguments: [String: RawJSON], context: AIUIComponentContext) -> Body? {
-        guard let decoded = try? AIUIArguments.decode(Arguments.self, from: arguments) else { return nil }
-        return body(arguments: decoded, context: context)
+    /// The component for the arguments the agent wrote, coming in as it shows (see
+    /// `aiUIEntrance()`), or `nil` while they don't fit its parameters, such as while they are
+    /// still streaming in.
+    func view(arguments: [String: RawJSON], context: AIUIComponentContext) -> (some View)? {
+        (try? AIUIArguments.decode(Arguments.self, from: arguments)).map { arguments in
+            body(arguments: arguments, context: context).aiUIEntrance()
+        }
     }
 }
