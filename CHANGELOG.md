@@ -8,8 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add Scheduled Messages [#4357](https://github.com/GetStream/stream-chat-swift/pull/4357)
 
 ## StreamChatAI
+### 🐞 Fixed
+- Tell the person when photos picked from the library can't be added, such as photos in iCloud without a connection [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 ### 🔄 Changed
 - `AIComposerView` is available on iOS 15, with a single-line text field and no "All photos" button there [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
+### 🎭 New Localizations
+- Add `composer.photos_failed.*` keys [#4369](https://github.com/GetStream/stream-chat-swift/pull/4369)
 
 # [5.15.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.15.0)
 _October 22, 2026_

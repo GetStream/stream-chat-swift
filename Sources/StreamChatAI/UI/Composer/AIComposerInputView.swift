@@ -104,7 +104,7 @@ public struct AIComposerInputView<TrailingView: View>: View {
     // and out, so the field never changes width as you type.
     private var actions: some View {
         ZStack {
-            semiboldTrailingView
+            trailingView
                 .opacity(viewModel.isGenerating ? 0 : (text.isEmpty ? 1 : 0))
             
             Button {
@@ -124,17 +124,6 @@ public struct AIComposerInputView<TrailingView: View>: View {
                     .foregroundStyle(Color(colors.composerIcon))
             }
             .opacity(viewModel.isGenerating ? 1 : 0)
-        }
-    }
-
-    // `.font(_:)` would also replace the size of a custom view's font, so before iOS 16 the
-    // weight is left as it is.
-    @ViewBuilder
-    private var semiboldTrailingView: some View {
-        if #available(iOS 16, *) {
-            trailingView.fontWeight(.semibold)
-        } else {
-            trailingView
         }
     }
 

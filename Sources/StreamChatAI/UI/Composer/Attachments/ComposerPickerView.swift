@@ -10,18 +10,23 @@ struct ComposerPickerView: View {
 
     @StateObject private var photoLibrary = PhotoLibraryService()
     @State private var cameraPresented = false
+    @State private var photosFailed = false
 
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
     var body: some View {
         VStack(spacing: layout.spacingMd) {
-            HStack {
-                Spacer()
-                if #available(iOS 16, *) {
-                    AllPhotosButton(viewModel: viewModel, photoLibrary: photoLibrary)
+            if #available(iOS 16, *) {
+                HStack {
+                    Spacer()
+                    AllPhotosButton(
+                        photoLibrary: photoLibrary,
+                        onPick: { viewModel.appendAttachment($0) },
+                        onFailure: { photosFailed = true }
+                    )
                 }
+                .padding()
             }
-            .padding()
             RecentPhotosRow(viewModel: viewModel, photoLibrary: photoLibrary) {
                 cameraPresented = true
             }
@@ -39,6 +44,9 @@ struct ComposerPickerView: View {
             CameraPicker(isPresented: $cameraPresented) { result in
                 viewModel.appendAttachment(result)
             }
+        }
+        .alert(L10n.Composer.photosFailedTitle, isPresented: $photosFailed) {} message: {
+            Text(L10n.Composer.photosFailedMessage)
         }
     }
 }

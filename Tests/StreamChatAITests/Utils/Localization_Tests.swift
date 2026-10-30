@@ -9,6 +9,11 @@ final class Localization_Tests: XCTestCase {
     func test_strings_areReadFromTheSDKBundle() {
         XCTAssertEqual(L10n.Composer.placeholderAskAnything, "Ask anything")
         XCTAssertEqual(L10n.Composer.buttonAllPhotos, "All Photos")
+        XCTAssertEqual(L10n.Composer.photosFailedTitle, "Photos Not Added")
+        XCTAssertEqual(
+            L10n.Composer.photosFailedMessage,
+            "Some photos couldn't be loaded. If they're in iCloud, check your internet connection and try again."
+        )
         XCTAssertEqual(L10n.StreamingMessage.codeBlockLanguageFallback, "plain text")
         XCTAssertEqual(L10n.Conversation.scrollToLatest, "Scroll to latest")
         XCTAssertEqual(L10n.Attachment.image, "Image")

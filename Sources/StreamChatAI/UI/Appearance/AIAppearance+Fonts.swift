@@ -20,6 +20,10 @@ extension AIAppearance {
         public lazy var chatOptionTitle: Font = fonts.headline
         public lazy var chatOptionDescription: Font = fonts.subheadline
         public lazy var suggestion: Font = fonts.subheadline
+        /// The icons of the composer's buttons, such as add attachment and dictation.
+        public lazy var composerIcon: Font = fonts.body.weight(.semibold)
+        /// The camera icon in the attachment picker.
+        public lazy var attachmentPickerTileIcon: Font = fonts.body.weight(.semibold)
 
         // MARK: - Message
 

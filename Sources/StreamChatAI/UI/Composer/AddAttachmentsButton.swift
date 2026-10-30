@@ -12,6 +12,7 @@ import SwiftUI
 /// returns this view. Supply your own factory method to replace it.
 public struct AddAttachmentsButton: View {
     @Injected(\.aiAppearance.colors) private var colors
+    @Injected(\.aiAppearance.fonts) private var fonts
     @Injected(\.aiAppearance.images) private var images
     @Injected(\.aiAppearance.tokens.layout) private var layout
 
@@ -27,7 +28,7 @@ public struct AddAttachmentsButton: View {
         } label: {
             images.composerAddAttachment
                 .foregroundStyle(Color(colors.composerAttachmentButtonIcon))
-                .font(.body.weight(.semibold))
+                .font(fonts.composerIcon)
         }
         .padding(.all, layout.spacingSm)
         .background(Color(colors.composerAttachmentButtonBackground))
