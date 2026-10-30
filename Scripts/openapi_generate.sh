@@ -133,7 +133,7 @@ allowed_models=(
   ChannelOwnCapability
   ChannelPartialUpdateResponse
   ChannelResponse
-  ChannelStateResponse
+  ChannelStateResponseFields
   CreateDraftRequest
   CreateDraftResponse
   CreateGuestRequest
@@ -185,6 +185,7 @@ allowed_models=(
   MessagePaginationParams
   MessageRequest
   MessageResponse
+  MessageWithChannelResponse
   ModerationV2Response
   MuteChannelRequest
   MuteChannelResponse
@@ -471,7 +472,7 @@ decodable_only_models=(
   BlockedUserResponse
   ChannelDetailPayload
   ChannelPartialUpdateResponse
-  ChannelStateResponse
+  ChannelStateResponseFields
   CreateDraftResponse
   CreateGuestResponse
   CreateReminderResponse
@@ -504,6 +505,7 @@ decodable_only_models=(
   MessageReactionPayload
   MessageReactionsPayload
   MessageResponse
+  MessageWithChannelResponse
   MutedChannelPayload
   MutedChannelPayloadResponse
   MutedUserPayload
@@ -591,6 +593,7 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/openapi generate-client --language swift \
     --opt immutable_models=true --opt access_modifier=internal \
     --opt encodable_filter_conditions=true \
+    --opt nested_embedded_models=true \
     --opt raw_representable_over_enum=true \
     --opt string_coding_keys=true \
     --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
@@ -689,8 +692,7 @@ rename_generated WrappedUnreadCountsResponse CurrentUserUnreads
 
 rename_generated_type AddUserGroupMembersResponse UserGroupResponse
 rename_generated_type ChannelPushPreferencesResponse PushPreference
-# CHA-5170
-rename_generated_type ChannelStateResponseFields ChannelStateResponse
+rename_generated_type ChannelStateResponse ChannelStateResponseFields
 rename_generated_type CreateUserGroupResponse UserGroupResponse
 rename_generated_type QueryReactionsResponse MessageReactionsPayload
 rename_generated_type RemoveUserGroupMembersResponse UserGroupResponse
@@ -756,12 +758,13 @@ optionalize_property MemberRemovedEventDTO channel
 optionalize_property MemberUpdatedEventDTO channel
 
 optionalize_property ThreadResponse createdByUserId
+optionalize_property UserPayload blockedUserIds
 
 # Will be changed on the generation side later
 # CHA-4621
 require_property ChannelDetailPayload config
 # CHA-5028
-require_property ChannelStateResponse channel
+require_property ChannelStateResponseFields channel
 # CHA-5105
 require_property SearchResult message
 # CHA-5607
@@ -803,7 +806,7 @@ remove_property ChannelInput autoTranslationEnabled autoTranslationLanguage conf
 remove_property ChannelInputRequest configOverrides createdBy
 remove_property ChannelMemberRequest user
 remove_property ChannelPartialUpdateResponse id type
-remove_property ChannelStateResponse cooldownRemainingMs hideMessagesBefore
+remove_property ChannelStateResponseFields cooldownRemainingMs hideMessagesBefore
 remove_property ChannelTruncatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelUpdatedEventDTO channelCustom channelId channelMemberCount channelType cid custom messageId receivedAt team
 remove_property ChannelVisibleEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt team
@@ -813,7 +816,7 @@ remove_property DraftDeletedEventDTO custom parentId receivedAt
 remove_property DraftMessagePayload html mml
 remove_property DraftUpdatedEventDTO custom parentId receivedAt
 remove_property FlagRequest entityCreatorId moderationPayload
-remove_property FullUserResponse banExpires deletedAt latestHiddenChannels revokeTokensIssuedBefore unreadCount
+remove_property FullUserResponse banExpires latestHiddenChannels unreadCount
 remove_property GetOGResponse actions authorIcon authorLink color fallback fields footer footerIcon giphy originalHeight originalWidth pretext type
 remove_property HealthCheckEventDTO cid custom receivedAt
 remove_property ImageUploadResponse uploadSizes
@@ -883,14 +886,12 @@ remove_property ScheduledMessageSentEventDTO cid custom receivedAt user
 remove_property ScheduledMessageUpdatedEventDTO cid custom receivedAt user
 remove_property SearchPayload forceDefaultSearch forceSqlV2Backend messageOptions query
 remove_property SearchResponse previous resultsWarning
-remove_property SearchResultMessage html imageLabels mml
 remove_property SendMessageRequest includeChannelContext includeMentionedMembers keepChannelHidden
 remove_property SendMessageResponsePayload channelContext mentionedMembers
 remove_property SharedLocation channel message
 remove_property SyncResponse inaccessibleCids
 remove_property ThreadParticipantPayload lastThreadMessageAt leftThreadAt userId
-remove_property ThreadResponse deletedAt threadParticipants
-remove_property ThreadStateResponse deletedAt
+remove_property ThreadResponse deletedAt
 remove_property ThreadUpdatedEventDTO channelId channelType cid custom receivedAt
 remove_property TruncateChannelRequest memberIds truncatedAt
 remove_property TypingStartEventDTO channelId channelType custom receivedAt
@@ -905,7 +906,7 @@ remove_property UploadChannelResponse moderationAction uploadSizes
 remove_property UserBannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType custom receivedAt reviewQueueItemId team totalBans
 remove_property UserGroupMember appPk
 remove_property UserMessagesDeletedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType cid custom receivedAt team
-remove_property UserPayload blockedUserIds deletedAt revokeTokensIssuedBefore
+remove_property UserPayload deletedAt revokeTokensIssuedBefore
 remove_property UserPresenceChangedEventDTO custom receivedAt
 remove_property UserRequest invisible language privacySettings
 remove_property UserUnbannedEventDTO channelCustom channelId channelMemberCount channelMessageCount channelType createdBy custom receivedAt shadow team

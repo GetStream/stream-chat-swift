@@ -6,10 +6,13 @@ import Foundation
 
 final class QueryChannelsResponse: Sendable, Decodable {
     /// List of channels
-    let channels: [ChannelStateResponse]
+    let channels: [ChannelStateResponseFields]
     let predefinedFilter: ParsedPredefinedFilterResponse?
 
-    init(channels: [ChannelStateResponse], predefinedFilter: ParsedPredefinedFilterResponse? = nil) {
+    init(
+        channels: [ChannelStateResponseFields],
+        predefinedFilter: ParsedPredefinedFilterResponse? = nil
+    ) {
         self.channels = channels
         self.predefinedFilter = predefinedFilter
     }
@@ -17,7 +20,7 @@ final class QueryChannelsResponse: Sendable, Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: StringCodingKey.self)
         channels = try container.decodeArrayIgnoringFailures(
-            [ChannelStateResponse].self,
+            [ChannelStateResponseFields].self,
             forKey: .channels
         )
         predefinedFilter = try container.decodeIfPresent(

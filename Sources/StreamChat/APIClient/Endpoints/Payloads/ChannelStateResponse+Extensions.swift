@@ -4,7 +4,7 @@
 
 import Foundation
 
-extension ChannelStateResponse {
+extension ChannelStateResponseFields {
     /// Returns the newest message from `messages` in O(1) assuming messages are sorted by `createdAt`.
     var newestMessage: MessageResponse? {
         guard let first = messages.first, let last = messages.last else { return nil }

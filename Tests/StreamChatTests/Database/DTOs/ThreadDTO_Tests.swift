@@ -133,12 +133,12 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.latestReplies.count, 2)
         XCTAssertEqual(dto.read.count, 1)
         XCTAssertEqual(dto.parentMessageId, payload.parentMessageId)
-        XCTAssertEqual(dto.parentMessage.id, payload.parentMessage?.id)
-        XCTAssertEqual(dto.channel.cid, payload.channel?.cid.rawValue)
-        XCTAssertEqual(dto.createdBy.id, payload.createdBy?.id)
-        XCTAssertEqual(dto.lastMessageAt, payload.lastMessageAt?.bridgeDate)
-        XCTAssertEqual(dto.createdAt, payload.createdAt.bridgeDate)
-        XCTAssertEqual(dto.updatedAt, payload.updatedAt.bridgeDate)
+        XCTAssertEqual(dto.parentMessage.id, payload.thread.parentMessage?.id)
+        XCTAssertEqual(dto.channel.cid, payload.thread.channel?.cid.rawValue)
+        XCTAssertEqual(dto.createdBy.id, payload.thread.createdBy?.id)
+        XCTAssertEqual(dto.lastMessageAt, payload.thread.lastMessageAt?.bridgeDate)
+        XCTAssertEqual(dto.createdAt, payload.thread.createdAt.bridgeDate)
+        XCTAssertEqual(dto.updatedAt, payload.thread.updatedAt.bridgeDate)
     }
 
     func test_asModel() throws {
@@ -176,12 +176,12 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.latestReplies.count, 2)
         XCTAssertEqual(model.reads.count, 1)
         XCTAssertEqual(model.parentMessageId, payload.parentMessageId)
-        XCTAssertEqual(model.parentMessage.id, payload.parentMessage?.id)
-        XCTAssertEqual(model.channel.cid, payload.channel?.cid)
-        XCTAssertEqual(model.createdBy.id, payload.createdBy?.id)
-        XCTAssertEqual(model.lastMessageAt, payload.lastMessageAt)
-        XCTAssertEqual(model.createdAt, payload.createdAt)
-        XCTAssertEqual(model.updatedAt, payload.updatedAt)
+        XCTAssertEqual(model.parentMessage.id, payload.thread.parentMessage?.id)
+        XCTAssertEqual(model.channel.cid, payload.thread.channel?.cid)
+        XCTAssertEqual(model.createdBy.id, payload.thread.createdBy?.id)
+        XCTAssertEqual(model.lastMessageAt, payload.thread.lastMessageAt)
+        XCTAssertEqual(model.createdAt, payload.thread.createdAt)
+        XCTAssertEqual(model.updatedAt, payload.thread.updatedAt)
     }
 
     func test_asModel_sortsLatestRepliesByCreatedAt() throws {
@@ -327,21 +327,21 @@ final class ThreadDTO_Tests: XCTestCase {
         // Save the same thread without a draft
         let payloadWithoutDraft = ThreadPayload.dummy(
             parentMessageId: payloadWithDraft.parentMessageId,
-            parentMessage: try XCTUnwrap(payloadWithDraft.parentMessage),
-            channel: try XCTUnwrap(payloadWithDraft.channel),
-            createdBy: try XCTUnwrap(payloadWithDraft.createdBy),
-            replyCount: payloadWithDraft.replyCount,
-            participantCount: payloadWithDraft.participantCount,
+            parentMessage: try XCTUnwrap(payloadWithDraft.thread.parentMessage),
+            channel: try XCTUnwrap(payloadWithDraft.thread.channel),
+            createdBy: try XCTUnwrap(payloadWithDraft.thread.createdBy),
+            replyCount: payloadWithDraft.thread.replyCount,
+            participantCount: payloadWithDraft.thread.participantCount,
             activeParticipantCount: 2,
-            threadParticipants: payloadWithDraft.threadParticipants ?? [],
-            lastMessageAt: payloadWithDraft.lastMessageAt,
-            createdAt: payloadWithDraft.createdAt,
-            updatedAt: payloadWithDraft.updatedAt,
-            title: payloadWithDraft.title,
+            threadParticipants: payloadWithDraft.thread.threadParticipants ?? [],
+            lastMessageAt: payloadWithDraft.thread.lastMessageAt,
+            createdAt: payloadWithDraft.thread.createdAt,
+            updatedAt: payloadWithDraft.thread.updatedAt,
+            title: payloadWithDraft.thread.title,
             latestReplies: payloadWithDraft.latestReplies,
             read: payloadWithDraft.read ?? [],
             draft: nil,
-            extraData: payloadWithDraft.custom
+            extraData: payloadWithDraft.thread.custom
         )
 
         let updatedDto = try database.viewContext.saveThread(
