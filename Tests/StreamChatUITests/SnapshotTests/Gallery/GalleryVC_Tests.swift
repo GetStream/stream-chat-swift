@@ -241,6 +241,36 @@ import XCTest
         XCTAssertNil(visibleVideoCell(in: gallery)?.player.currentItem)
     }
 
+    func test_videoCellCreatedAfterBind_bindsPlaybackBarOnDisplay() throws {
+        let loader = ControllableMediaLoader()
+        var components = Components.mock
+        components.mediaLoader = loader
+
+        let gallery = makeGalleryVC(
+            content: .init(message: makeMessage(with: [makeVideoAttachment().asAnyAttachment]), currentPage: 0),
+            components: components
+        )
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
+        window.rootViewController = gallery
+        window.isHidden = false
+        retainedWindow = window
+
+        // Bind before the collection view has created the current page's cell.
+        gallery.updateContent()
+        XCTAssertNil(visibleVideoCell(in: gallery))
+        XCTAssertTrue(gallery.videoPlaybackBar.isHidden)
+
+        gallery.view.frame = window.bounds
+        gallery.view.layoutIfNeeded()
+
+        let cell = try XCTUnwrap(visibleVideoCell(in: gallery))
+        XCTAssertTrue(gallery.videoPlaybackBar.player === cell.player)
+        XCTAssertFalse(gallery.videoPlaybackBar.isHidden)
+
+        loader.completeLastVideoAsset(with: .failure(GalleryTestError("load failed")))
+        assertShowsFailure(gallery.videoPlaybackBar)
+    }
+
     func test_loaderFailureAfterGalleryBind_reachesPlaybackBar() throws {
         let loader = ControllableMediaLoader()
         var components = Components.mock

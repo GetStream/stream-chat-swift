@@ -500,6 +500,19 @@ open class GalleryVC: _ViewController,
         )
     }
 
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        // The current page's cell can be created after the bar was bound (for example before the
+        // first layout pass), so bind the bar to it once it shows up.
+        guard indexPath == currentItemIndexPath,
+              let videoCell = cell as? VideoAttachmentGalleryCell,
+              videoCell !== boundVideoCell else { return }
+        bindVideoPlaybackBar(to: videoCell)
+    }
+
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         updateCurrentPage()
     }
@@ -535,10 +548,12 @@ open class GalleryVC: _ViewController,
     private weak var boundVideoCell: VideoAttachmentGalleryCell?
 
     private func bindVideoPlaybackBar() {
-        let videoCell = attachmentsCollectionView.cellForItem(
-            at: currentItemIndexPath
-        ) as? VideoAttachmentGalleryCell
+        bindVideoPlaybackBar(
+            to: attachmentsCollectionView.cellForItem(at: currentItemIndexPath) as? VideoAttachmentGalleryCell
+        )
+    }
 
+    private func bindVideoPlaybackBar(to videoCell: VideoAttachmentGalleryCell?) {
         if boundVideoCell !== videoCell {
             boundVideoCell?.onAssetLoadingErrorChange = nil
             boundVideoCell = videoCell
