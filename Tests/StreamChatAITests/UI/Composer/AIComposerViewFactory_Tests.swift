@@ -6,7 +6,6 @@
 import SwiftUI
 import XCTest
 
-@available(iOS 16, *)
 @MainActor
 final class AIComposerViewFactory_Tests: XCTestCase {
     func testTheInputDictatesByDefault() {
@@ -31,7 +30,6 @@ final class AIComposerViewFactory_Tests: XCTestCase {
     }
 }
 
-@available(iOS 16, *)
 private final class NoDictationFactory: AIComposerViewFactory {
     func makeComposerInputTrailingView(options: AIComposerInputTrailingViewOptions) -> some View {
         EmptyView()

@@ -13,6 +13,14 @@ enum L10n {
         static var buttonAllPhotos: String {
             localized("composer.button.all_photos", comment: "Label for the button that shows the full photo library.")
         }
+
+        static var photosFailedTitle: String {
+            localized("composer.photos_failed.title", comment: "Title of the alert shown when photos picked from the library couldn't be loaded.")
+        }
+
+        static var photosFailedMessage: String {
+            localized("composer.photos_failed.message", comment: "Message of the alert shown when photos picked from the library couldn't be loaded.")
+        }
     }
     
     enum StreamingMessage {

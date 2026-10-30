@@ -1,5 +1,7 @@
 "composer.placeholder.ask_anything" = "Ask anything";
 "composer.button.all_photos" = "All Photos";
+"composer.photos_failed.title" = "Photos Not Added";
+"composer.photos_failed.message" = "Some photos couldn't be loaded. If they're in iCloud, check your internet connection and try again.";
 "streaming.code_block.language_fallback" = "plain text";
 "conversation.button.scroll_to_latest" = "Scroll to latest";
 "attachment.image" = "Image";

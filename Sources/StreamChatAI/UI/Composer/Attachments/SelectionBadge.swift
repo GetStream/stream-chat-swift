@@ -5,7 +5,6 @@
 import StreamCore
 import SwiftUI
 
-@available(iOS 16, *)
 struct SelectionBadge: View {
     let isSelected: Bool
 
