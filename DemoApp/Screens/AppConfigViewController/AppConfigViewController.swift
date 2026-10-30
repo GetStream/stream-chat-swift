@@ -32,6 +32,8 @@ struct DemoAppConfig {
     var isRemindersEnabled: Bool
     /// A Boolean value to define if the scheduled messages feature is enabled.
     var isScheduledMessagesEnabled: Bool
+    /// A Boolean value to define if channels are loaded with their active member count.
+    var isActiveMemberCountEnabled: Bool
     /// A Boolean value to define if the poll should be deleted when the message is deleted.
     var shouldDeletePollOnMessageDeletion: Bool
 
@@ -74,6 +76,7 @@ class AppConfig: @unchecked Sendable {
             shouldShowPremiumBadge: false,
             isRemindersEnabled: true,
             isScheduledMessagesEnabled: true,
+            isActiveMemberCountEnabled: true,
             shouldDeletePollOnMessageDeletion: false
         )
 
@@ -86,6 +89,7 @@ class AppConfig: @unchecked Sendable {
             demoAppConfig.shouldShowPremiumBadge = true
             demoAppConfig.isRemindersEnabled = true
             demoAppConfig.isScheduledMessagesEnabled = true
+            demoAppConfig.isActiveMemberCountEnabled = true
             demoAppConfig.shouldDeletePollOnMessageDeletion = true
             demoAppConfig.isMessageDeliveredInfoEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
@@ -204,6 +208,7 @@ class AppConfigViewController: UITableViewController {
         case shouldShowPremiumBadge
         case isRemindersEnabled
         case isScheduledMessagesEnabled
+        case isActiveMemberCountEnabled
         case logSettings
 
         var title: String {
@@ -393,6 +398,10 @@ class AppConfigViewController: UITableViewController {
         case .isScheduledMessagesEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isScheduledMessagesEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isScheduledMessagesEnabled = newValue
+            }
+        case .isActiveMemberCountEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isActiveMemberCountEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isActiveMemberCountEnabled = newValue
             }
         case .logSettings:
             cell.accessoryType = .disclosureIndicator

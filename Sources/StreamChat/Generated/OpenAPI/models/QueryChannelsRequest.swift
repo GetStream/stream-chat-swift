@@ -9,6 +9,8 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
     let filterConditions: (any Encodable & Sendable)?
     /// Values to interpolate into the predefined filter template
     let filterValues: [String: RawJSON]?
+    /// Whether to include active_member_count for each channel
+    let includeActiveMemberCount: Bool?
     /// Adds scheduled_messages to each returned channel: the caller's own scheduled, sending and failed messages in that channel. Client-side only. Absent from every channel when there are more than 100 across the returned channels or they could not be loaded; use the scheduled messages query then
     let includeScheduledMessages: Bool?
     /// Number of channels to limit
@@ -33,6 +35,7 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
     init(
         filterConditions: (any Encodable & Sendable)? = nil,
         filterValues: [String: RawJSON]? = nil,
+        includeActiveMemberCount: Bool? = nil,
         includeScheduledMessages: Bool? = nil,
         limit: Int? = nil,
         memberLimit: Int? = nil,
@@ -47,6 +50,7 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
     ) {
         self.filterConditions = filterConditions
         self.filterValues = filterValues
+        self.includeActiveMemberCount = includeActiveMemberCount
         self.includeScheduledMessages = includeScheduledMessages
         self.limit = limit
         self.memberLimit = memberLimit
@@ -66,6 +70,7 @@ final class QueryChannelsRequest: Sendable, Encodable, JSONEncodable {
             try container.encode(filterConditions, forKey: .filterConditions)
         }
         try container.encodeIfPresent(filterValues, forKey: .filterValues)
+        try container.encodeIfPresent(includeActiveMemberCount, forKey: .includeActiveMemberCount)
         try container.encodeIfPresent(includeScheduledMessages, forKey: .includeScheduledMessages)
         try container.encodeIfPresent(limit, forKey: .limit)
         try container.encodeIfPresent(memberLimit, forKey: .memberLimit)

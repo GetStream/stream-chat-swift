@@ -45,6 +45,7 @@ class ChannelDTO: NSManagedObject {
 
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
+    @NSManaged var activeMemberCount: NSNumber?
     @NSManaged var messageCount: NSNumber?
 
     @NSManaged var isFrozen: Bool
@@ -291,6 +292,10 @@ extension NSManagedObjectContext {
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
+        if let activeMemberCount = payload.activeMemberCount {
+            dto.activeMemberCount = NSNumber(value: activeMemberCount)
+        }
+
         if let messageCount = payload.messageCount {
             dto.messageCount = NSNumber(value: messageCount)
         }
@@ -716,6 +721,7 @@ extension ChatChannel {
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
+            activeMemberCount: dto.activeMemberCount?.intValue,
             messageCount: dto.messageCount?.intValue,
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
